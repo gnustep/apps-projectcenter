@@ -57,16 +57,17 @@
   id button;
   id textField;
 
-  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(0,0,544,248)];
+  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];
   [componentView setTitlePosition:NSNoTitle];
   [componentView setBorderType:NSNoBorder];
   [componentView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+  [componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
 
   /*
    *
    */
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,40)];
 
   [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
@@ -91,7 +92,7 @@
    *
    */
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,276)];
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,92)];
 
   [scrollView2 setHasHorizontalScroller:NO];
   [scrollView2 setHasVerticalScroller:YES];
@@ -109,11 +110,10 @@
 
   [scrollView2 setDocumentView:stdError];
 
-  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
+  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,136)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
-  [split adjustSubviews];
   
   [componentView addSubview:split];
 
@@ -124,7 +124,7 @@
   /*
    */
 
-  _w_frame = NSMakeRect(0,194,88,44);
+  _w_frame = NSMakeRect(-1,144,120,60);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
@@ -140,7 +140,7 @@
 
   runButton = [matrix cellAtRow:0 column:0];
   [runButton setTag:0];
-  [runButton setImagePosition:NSImageOnly];
+  [runButton setImagePosition:NSImageAbove];
   [runButton setImage:IMAGE(@"ProjectCentre_run")];
   [runButton setAlternateImage:IMAGE(@"ProjectCentre_run")];
   [runButton setButtonType:NSOnOffButton];
@@ -149,12 +149,15 @@
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
   [button setImage:IMAGE(@"ProjectCenter_debug")];
   [button setAlternateImage:IMAGE(@"ProjectCenter_debug")];
   [button setButtonType:NSOnOffButton];
   [button setTitle:@"Clean"];
   [button setAction:@selector(debug:)];
+
+  [componentView sizeToFit];
+  [split adjustSubviews];
 }
 
 @end

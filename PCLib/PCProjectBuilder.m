@@ -56,18 +56,20 @@
   NSMatrix* matrix;
   NSRect _w_frame;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  NSBox *box;
   id button;
   id textField;
 
-  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(0,0,544,248)];
+  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];
   [componentView setTitlePosition:NSNoTitle];
   [componentView setBorderType:NSNoBorder];
   [componentView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+  [componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
 
   /*
    */
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,46)];
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,46)];
 
   [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
@@ -97,7 +99,7 @@
    *
    */
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,92)];
 
   [scrollView2 setHasHorizontalScroller:NO];
   [scrollView2 setHasVerticalScroller:YES];
@@ -123,7 +125,7 @@
 
   [scrollView2 setDocumentView:errorOutput];
 
-  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
+  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,152)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
@@ -136,15 +138,15 @@
   RELEASE(split);
 
   /*
-   * 6 build Buttons
+   * 2 build Buttons
    */
 
-  _w_frame = NSMakeRect(0,194,318,44);
+  _w_frame = NSMakeRect(-1,160,120,60);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
 			     numberOfRows:1
-			     numberOfColumns:7];
+			     numberOfColumns:2];
   [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -156,58 +158,42 @@
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
   [button setImage:IMAGE(@"ProjectCenter_make")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Build"];
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
   [button setImage:IMAGE(@"ProjectCenter_clean")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Clean"];
 
-  button = [matrix cellAtRow:0 column:2];
-  [button setTag:2];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_debug")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Debug"];
+  box = [[NSBox alloc] initWithFrame:NSMakeRect(128,160,204,60)];
+  [box setTitle:@"Build Target"];
+  [box setBorderType:NSBezelBorder];
+  [box setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [componentView addSubview:box];
+  RELEASE(box);
 
-  button = [matrix cellAtRow:0 column:3];
-  [button setTag:3];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_profile")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Profile"];
-
-  button = [matrix cellAtRow:0 column:4];
-  [button setTag:4];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_install")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Install"];
-
-  button = [matrix cellAtRow:0 column:5];
-  [button setTag:5];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_rpm")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Packaging"];
-
-  button = [matrix cellAtRow:0 column:6];
-  [button setTag:6];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_dist")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Packaging"];
+  popup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(8,6,172,21)];
+  [popup addItemWithTitle:@"Default"];
+  [popup addItemWithTitle:@"Debug"];
+  [popup addItemWithTitle:@"Profile"];
+  [popup addItemWithTitle:@"Install"];
+  [popup addItemWithTitle:@"Tarball"];
+  [popup addItemWithTitle:@"RPM"];
+  [popup setTarget:self];
+  [popup setAction:@selector(popupChanged:)];
+  [box addSubview:popup];
+  RELEASE(popup);
 
   /*
    * Status
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,220,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,192,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -224,7 +210,7 @@
    * Status message
    */
 
-  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,220,104,15)];
+  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,192,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
   [buildStatusField setEditable: NO];
@@ -242,7 +228,7 @@
    * Target
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,196,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,172,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setBezeled: NO];
@@ -259,7 +245,7 @@
    * Target message
    */
 
-  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,196,104,15)];
+  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,172,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -271,6 +257,7 @@
 				     NSViewMinYMargin)];
   [componentView addSubview:targetField];
 
+  [componentView sizeToFit];
   RELEASE(targetField);
 }
 
@@ -322,7 +309,6 @@
     NSPipe *errorPipe;
     NSDictionary *optionDict;
     NSString *status;
-    NSString *target;
     SEL postProcess = NULL;
     NSDictionary *env = [[NSProcessInfo processInfo] environment];
 
@@ -347,64 +333,69 @@
   optionDict = [currentProject buildOptions];
   args = [NSMutableArray array];
 
-  switch ([[sender selectedCell] tag]) {
-  case 0:
-    status = [NSString stringWithString:@"Building..."];
-    target = [NSString stringWithString:@"Default"];
-    break;
-  case 1:
-    if (NSRunAlertPanel(@"Clean Project?",@"Really clean %@?",@"Yes",@"No",nil,[currentProject projectName]) == NSAlertAlternateReturn) {
-      return;
-    }
-    status = [NSString stringWithString:@"Cleaning..."];
-    target = [NSString stringWithString:@"Clean"];
-    [args addObject:@"distclean"];
-    break;
-  case 2:
-    status = [NSString stringWithString:@"Building..."];
-    target = [NSString stringWithString:@"Debug"];
-    [args addObject:@"debug=yes"];
-    break;
-  case 3:
-    status = [NSString stringWithString:@"Building..."];
-    target = [NSString stringWithString:@"Profile"];
-    [args addObject:@"profile=yes"];
-    [args addObject:@"static=yes"];
-    break;
-  case 4:
-    status = [NSString stringWithString:@"Installing..."];
-    target = [NSString stringWithString:@"Install"];
-    [args addObject:@"install"];
-    break;
-  case 5:
-    status = [NSString stringWithString:@"Packaging..."];
-    target = [NSString stringWithString:@"Making RPM"];
-    [args addObject:@"rpm"];
-    postProcess = @selector(copyPackageTo:);
+  switch ([[sender selectedCell] tag]) 
+  {
+    case 0:
+      status = [NSString stringWithString:@"Building..."];
+      switch( [popup indexOfSelectedItem] )
+      {
+          case 0:
+	    break;
 
-    if ( [currentProject writeSpecFile] == NO )
-    {
-	return;
-    }
+          case 1:
+	    [args addObject:@"debug=yes"];
+	    break;
 
-    if( [env objectForKey:@"RPM_TOPDIR"] == nil )
-    {
-	NSRunAlertPanel(@"Attention!",
+          case 2:
+	    [args addObject:@"profile=yes"];
+	    [args addObject:@"static=yes"];
+	    break;
+
+          case 3:
+	    [args addObject:@"install"];
+	    break;
+	    
+          case 4:
+	    [args addObject:@"dist"];
+	    break;
+	    
+          case 5:
+	    [args addObject:@"rpm"];
+	    postProcess = @selector(copyPackageTo:);
+
+	    if ( [currentProject writeSpecFile] == NO )
+	    {
+		return;
+	    }
+
+	    if( [env objectForKey:@"RPM_TOPDIR"] == nil )
+	    {
+		NSRunAlertPanel(@"Attention!",
 	                @"First set the environment variable 'RPM_TOPDIR'!",
 			@"OK",nil,nil);     
-	return;
-    }
+		return;
+	    }
+	    break;
 
-    break;
-  case 6:
-    status = [NSString stringWithString:@"Packaging..."];
-    target = [NSString stringWithString:@"Making TGZ"];
-    [args addObject:@"dist"];
-    break;
+	  default:
+	    break;
+      }
+      break;
+    case 1:
+      if (NSRunAlertPanel(@"Clean Project?",
+                          @"Do you really want to clean project '%@'?",
+			  @"Yes",
+			  @"No",
+			  nil,
+			  [currentProject projectName]) == NSAlertAlternateReturn) {
+        return;
+      }
+      status = [NSString stringWithString:@"Cleaning..."];
+      [args addObject:@"distclean"];
+      break;
   }
 
   [buildStatusField setStringValue:status];  
-  [targetField setStringValue:target];  
 
   [NOTIFICATION_CENTER addObserver:self 
 		       selector:@selector(logStdOut:) 
@@ -443,7 +434,6 @@
   }
   
   [buildStatusField setStringValue:@"Waiting..."];  
-  [targetField setStringValue:@""];  
 
   [NOTIFICATION_CENTER removeObserver:self 
 		       name:NSFileHandleDataAvailableNotification
@@ -460,6 +450,36 @@
   RELEASE(readHandle);
   RELEASE(errorReadHandle);  
   AUTORELEASE(makeTask);
+}
+
+- (void)popupChanged:(id)sender
+{
+  NSString *target = [targetField stringValue];
+
+  switch ([sender indexOfSelectedItem]) 
+  {
+      case 0:
+	  target = [NSString stringWithString:@"Default"];
+          break;
+      case 1:
+	  target = [NSString stringWithString:@"Debug"];
+          break;
+      case 2:
+	  target = [NSString stringWithString:@"Profile"];
+          break;
+      case 3:
+	  target = [NSString stringWithString:@"Install"];
+          break;
+      case 4:
+	  target = [NSString stringWithString:@"Tarball"];
+          break;
+      case 5:
+	  target = [NSString stringWithString:@"RPM"];
+          break;
+      default:
+          break;
+  }
+  [targetField setStringValue:target];  
 }
 
 - (void)logStdOut:(NSNotification *)aNotif

@@ -31,6 +31,7 @@
 @interface PCProjectBuilder : NSObject
 {
   NSBox *componentView;
+  NSPopUpButton *popup;
 
   NSTextView *logOutput;
   NSTextView *errorOutput;
@@ -53,6 +54,7 @@
 - (NSView *)componentView;
 
 - (void)build:(id)sender;
+- (void)popupChanged:(id)sender;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;

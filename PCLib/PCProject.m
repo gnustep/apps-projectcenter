@@ -51,6 +51,7 @@
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id textField;
   id button;
+  NSSplitView *split;
 
   browserController = [[PCBrowserController alloc] init];
 
@@ -67,18 +68,20 @@
   [projectWindow setDelegate:self];
   [projectWindow setMinSize:NSMakeSize(560,448)];
 
-  browser = [[NSBrowser alloc] initWithFrame:NSMakeRect(8,251,544,128)];
+  browser = [[NSBrowser alloc] initWithFrame:NSMakeRect(-1,251,562,128)];
   [browser setDelegate:browserController];
   [browser setMaxVisibleColumns:3];
   [browser setAllowsMultipleSelection:NO];
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser:browser];
+  _w_frame.size.height -= 64;
   [browserController setProject:self];
  
-  box = [[NSBox alloc] initWithFrame:NSMakeRect (0,-1,560,252)];
+  box = [[NSBox alloc] initWithFrame:NSMakeRect (-1,-1,562,252)];
   [box setTitlePosition:NSNoTitle];
   [box setBorderType:NSNoBorder];
+  [box setContentViewMargins: NSMakeSize(0.0,0.0)];
   [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,200,500,21)];
@@ -97,13 +100,27 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"\tPlease report all bugs or other issues you don't like to phr@3dkit.org!"];
+  [textField setStringValue:@"\tPlease send your feedback to phr@3dkit.org!"];
   [box addSubview:textField];
   RELEASE(textField);
 
+  _w_frame = [[projectWindow contentView] frame];
+  _w_frame.size.height -= 76;
+  _w_frame.size.width -= 16;
+  _w_frame.origin.x += 8;
+  split = [[NSSplitView alloc] initWithFrame:_w_frame];
+  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+
   _c_view = [projectWindow contentView];
-  [_c_view addSubview:browser];
-  [_c_view addSubview:box];
+
+  //[_c_view addSubview:browser];
+  //[_c_view addSubview:box];
+
+  [split addSubview:browser];
+  [split addSubview:box];
+  [split adjustSubviews];
+  [_c_view addSubview:split];
+  RELEASE(split);
 
   RELEASE(browser);
 
@@ -111,12 +128,12 @@
    * Left button matrix
    */
 
-  _w_frame = NSMakeRect(8,388,330,48);
+  _w_frame = NSMakeRect(8,376,240,60);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
 			     numberOfRows: 1
-			     numberOfColumns: 7];
+			     numberOfColumns: 4];
   [matrix sizeToCells];
   [matrix setTarget:self];
   [matrix setAction:@selector(topButtonsPressed:)];
@@ -127,44 +144,30 @@
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Build"];
   [button setImage:IMAGE(@"ProjectCentre_build")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Settings"];
   [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:2];
   [button setTag:2];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Options"];
   [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:3];
   [button setTag:3];
-  [button setImagePosition:NSImageOnly];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Run"];
   [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
-
-  button = [matrix cellAtRow:0 column:4];
-  [button setTag:4];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_uml.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
-
-  button = [matrix cellAtRow:0 column:5];
-  [button setTag:5];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_documentation.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
-
-  button = [matrix cellAtRow:0 column:6];
-  [button setTag:6];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   /*
@@ -1109,6 +1112,7 @@
   view = [[projectBuilder componentView] retain];
   
   [box setContentView:view];
+  [box sizeToFit];
   [box display];
 }
 
