@@ -1,6 +1,5 @@
 {
     APPKIT = "GNUSTEP-GUI"; 
-    APPLICATIONICON = ""; 
     BUILDTOOL = "/usr/bin/make"; 
     CLASS_FILES = ();
     COMPILEROPTIONS = ""; 

@@ -22,24 +22,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCLibProject.h"
-#include "PCLibProj.h"
-
 #include <ProjectCenter/PCMakefileFactory.h>
 
-@interface PCLibProject (CreateUI)
-
-- (void)_initUI;
-
-@end
-
-@implementation PCLibProject (CreateUI)
-
-- (void)_initUI
-{
-}
-
-@end
+#include "PCLibProject.h"
+#include "PCLibProj.h"
 
 @implementation PCLibProject
 

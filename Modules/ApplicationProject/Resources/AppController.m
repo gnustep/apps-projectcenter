@@ -1,11 +1,13 @@
 /* 
    Project: $PROJECTNAME$
 
-   Copyright (C) 200_ Free Software Foundation
+   Copyright (C) $YEAR$ Free Software Foundation
 
    Author: $FULLUSERNAME$
 
    Created: $DATE$ by $USERNAME$
+   
+   Application Controller
 
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public

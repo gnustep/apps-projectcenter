@@ -171,7 +171,6 @@ static NSString * const PCLibraries            = @"LIBRARIES";
 static NSString * const PCNonProject           = @"NON_PROJECT_FILES";
 static NSString * const PCGSMarkupFiles	       = @"INTERFACES";
 
-static NSString * const PCAppIcon              = @"APPLICATIONICON";
 static NSString * const PCBuildTool            = @"BUILDTOOL";
 static NSString * const PCCompilerOptions      = @"COMPILEROPTIONS";
 static NSString * const PCPreprocessorOptions  = @"CPPOPTIONS";
@@ -200,17 +199,25 @@ static NSString * const PCSearchHeaders        = @"SEARCH_HEADER_DIRS";
 static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
 
 // Application specific
+static NSString * const PCAppIcon              = @"APPLICATIONICON";
 static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
 static NSString * const PCHelpFile             = @"HELP_FILE";
+
+// Library specific
+static NSString * const PCHeadersToInstall     = @"HEADERS_TO_INSTALL";
+static NSString * const PCHeadersInstallDir    = @"HEADERS_INSTALL_DIR";
 
 // Bundle specific
 static NSString * const PCBundleExtension      = @"BUNDLE_EXTENSION";
 
-// Uncategorized
-static NSString * const PCToolIcon             = @"TOOLICON";
-static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; // Will be removed
+// Tool specific
+static NSString * const PCToolIcon             = @"TOOL_ICON";
+
 static NSString * const PCPackageName          = @"PACKAGE_NAME";
 static NSString * const PCLibraryVar           = @"LIBRARY_VAR";
+
+// Will be removed
+static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; 
 
 #endif // _PCDEFINES_H_
 

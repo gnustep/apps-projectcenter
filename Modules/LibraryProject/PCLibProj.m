@@ -85,7 +85,6 @@ static PCLibProj *_creator = nil;
       projectDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
 
       // Customise the project
-      [project setProjectName:[path lastPathComponent]];
       [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
       // The path cannot be in the PC.project file!

@@ -1,5 +1,11 @@
 /*
-   AppController.h
+   Project: $PROJECTNAME$
+
+   Copyright (C) $YEAR$ Free Software Foundation
+
+   Author: $FULLUSERNAME$
+
+   Created: $DATE$ by $USERNAME$
  
    GNUstep Renaissance Application Controller
 

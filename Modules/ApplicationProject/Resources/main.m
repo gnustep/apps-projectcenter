@@ -1,7 +1,7 @@
 /* 
    Project: $PROJECTNAME$
 
-   Copyright (C) 200_ Free Software Foundation
+   Copyright (C) $YEAR$ Free Software Foundation
 
    Author: $FULLUSERNAME$
 

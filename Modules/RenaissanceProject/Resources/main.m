@@ -1,4 +1,12 @@
 /*
+   Project: $PROJECTNAME$
+
+   Copyright (C) $YEAR$ Free Software Foundation
+
+   Author: $FULLUSERNAME$
+
+   Created: $DATE$ by $USERNAME$
+
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either

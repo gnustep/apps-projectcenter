@@ -356,29 +356,6 @@ NSString
 // ==== To be overriden
 // ============================================================================
 
-- (BOOL)isEditableCategory:(NSString *)category
-{
-  NSString *key = [self keyForCategory:category];
-
-  if ([key isEqualToString:PCClasses]
-      || [key isEqualToString:PCHeaders]
-      || [key isEqualToString:PCSupportingFiles]
-      || [key isEqualToString:PCDocuFiles]
-      || [key isEqualToString:PCOtherSources]
-      || [key isEqualToString:PCOtherResources]
-      || [key isEqualToString:PCNonProject]) 
-    {
-      return YES;
-    }
-
-  return NO;
-}
-
-// TEMP! For compatibility with old PC*Project subclasses
-- (void)updateValuesFromProjectDict
-{
-}
-
 - (NSView *)projectAttributesView
 {
   return nil;
@@ -447,6 +424,24 @@ NSString
 - (NSArray *)localizableKeys
 {
   return nil;
+}
+
+- (BOOL)isEditableCategory:(NSString *)category
+{
+  NSString *key = [self keyForCategory:category];
+
+  if ([key isEqualToString:PCClasses]
+      || [key isEqualToString:PCHeaders]
+      || [key isEqualToString:PCSupportingFiles]
+      || [key isEqualToString:PCDocuFiles]
+      || [key isEqualToString:PCOtherSources]
+      || [key isEqualToString:PCOtherResources]
+      || [key isEqualToString:PCNonProject]) 
+    {
+      return YES;
+    }
+
+  return NO;
 }
 
 // Saves backup file

@@ -1,10 +1,26 @@
-/* 
- * PCMakefileFactory.m created by probert on 2002-02-28 22:16:25 +0000
- *
- * Project ProjectCenter
- *
- * Created with ProjectCenter - http://www.gnustep.org
- */
+/*
+   GNUstep ProjectCenter - http://www.gnustep.org
+
+   Copyright (C) 2002 Free Software Foundation
+
+   Author: Philippe C.D. Robert <phr@3dkit.org>
+
+   This file is part of GNUstep.
+
+   This application is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This application is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU General Public
+   License along with this library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
+*/
 
 #include "PCDefines.h"
 #include "PCProject.h"
@@ -307,57 +323,6 @@ static PCMakefileFactory *_factory = nil;
   NSAssert( mfile, @"No valid makefile available!");
 
   return [mfile dataUsingEncoding:[NSString defaultCStringEncoding]];
-}
-
-// Should be removed
-- (void)appendTailForTool
-{
-  [self appendString:@"\n\n"];
-
-  [self appendString:@"-include GNUmakefile.preamble\n"];
-  [self appendString:@"-include GNUmakefile.local\n"];
-  [self appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
-  [self appendString:@"include $(GNUSTEP_MAKEFILES)/tool.make\n"];
-  [self appendString:@"-include GNUmakefile.postamble\n"];
-}
-
-@end
-
-@implementation PCMakefileFactory (ToolProject)
-
-- (void)appendTool
-{
-  [self appendString:COMMENT_TOOL];
-
-  [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
-  [self appendString:[NSString stringWithFormat:@"TOOL_NAME=%@\n",pnme]];
-}
-
-- (void)appendToolIcon:(NSString*)icn
-{
-  [self appendString:
-    [NSString stringWithFormat:@"%@_TOOL_ICON=%@\n",pnme, icn]];
-}
-
-- (void)appendToolLibraries:(NSArray*)array
-{
-  [self appendString:COMMENT_LIBRARIES];
-
-  [self appendString:[NSString stringWithFormat:@"%@_TOOL_LIBS += ",pnme]];
-
-  if( array && [array count] )
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-
-      while ((tmp = [enumerator nextObject]) )
-	{
-	  if (![tmp isEqualToString:@"gnustep-base"])
-	    {
-	      [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-	    }
-	}
-    }
 }
 
 @end

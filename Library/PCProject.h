@@ -59,16 +59,12 @@ extern NSString *PCProjectDictDidSaveNotification;
   NSView              *builderContentView;
   NSView              *debuggerContentView;
  
-  // For compatibility. Should be changed later
-  NSView              *projectProjectInspectorView;
-  //
-
   NSMutableDictionary *projectDict;
   NSString            *projectName;
   NSString            *projectPath;
 
-  NSArray             *rootKeys;       // CLASS_FILES
-  NSArray             *rootCategories; // Classes
+  NSArray             *rootKeys;       // e.g. CLASS_FILES
+  NSArray             *rootCategories; // e.g. Classes
   NSDictionary        *rootEntries;    // Initialised by subclasses
   NSMutableDictionary *buildOptions;
 
@@ -85,7 +81,8 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (void)setProjectManager:(PCProjectManager *)aManager;
 - (BOOL)close:(id)sender;
 - (void)dealloc;
-- (BOOL)saveProjectWindowsAndPanels;
+
+- (BOOL)saveProjectWindowsAndPanels; // Not finished
 
 // ============================================================================
 // ==== Accessory methods
@@ -113,32 +110,29 @@ extern NSString *PCProjectDictDidSaveNotification;
 // ==== To be overriden!
 // ===========================================================================
 
-- (BOOL)isEditableCategory:(NSString *)category;
-
-// TEMP! For compatibility with old PC*Project subclasses
-- (void)updateValuesFromProjectDict;
-
+// Project Attributes Inspector
 - (NSView *)projectAttributesView;
 
 - (Class)builderClass;
-
-// Subclasses need to call this before their customised implementation!
-- (BOOL)writeMakefile;
+- (NSString *)projectDescription; // Project type
+- (BOOL)isExecutable;
+- (NSString *)execToolName;
 
 - (NSArray *)fileTypesForCategoryKey:(NSString *)key;
 - (NSString *)dirForCategoryKey:(NSString *)key;
 
+- (NSArray *)buildTargets;
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
 - (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
+- (NSArray *)allowableSubprojectTypes;
+- (NSArray *)defaultLocalizableKeys;
+- (NSArray *)localizableKeys;
 
-// Returns a string describing the project type
-- (NSString *)projectDescription;
+- (BOOL)isEditableCategory:(NSString *)category;
 
-// Returns NO by default.
-- (BOOL)isExecutable;
-- (NSString *)execToolName;
+// Subclasses need to call this before their customised implementation!
+- (BOOL)writeMakefile;
 
 // ============================================================================
 // ==== File Handling

@@ -12,9 +12,9 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 SUBPROJECTS = \
         ApplicationProject \
         BundleProject      \
-        ToolProject        \
         LibraryProject     \
-        RenaissanceProject
+        RenaissanceProject \
+        ToolProject        
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 
