@@ -127,7 +127,7 @@ static PCFileManager *_mgr = nil;
   title = [[[project rootCategories] allKeysForObject:key] objectAtIndex:0];
   title = [NSString stringWithFormat:@"Add to %@...",title];
 
-  types = [project fileExtensionsForCategory:key];
+  types = [project fileExtensionsForCategory:[key uppercaseString]];
 
   openPanel = [NSOpenPanel openPanel];
   [openPanel setAllowsMultipleSelection:YES];
