@@ -545,9 +545,11 @@
 {
   NSPipe              *logPipe;
   NSPipe              *errorPipe;
-//  NSDictionary        *optionDict = [currentProject buildOptions];
   NSDictionary        *env = [[NSProcessInfo processInfo] environment];
   NSMutableDictionary *data = [NSMutableDictionary dictionary];
+
+  // Support build options!!!
+  //NSDictionary        *optionDict = [currentProject buildOptions];
 
   // Checking prerequisites
   if ([[currentProject projectWindow] isDocumentEdited])
@@ -571,18 +573,17 @@
 
   // Prepearing to building
   logPipe = [NSPipe pipe];
-  readHandle = [logPipe fileHandleForReading];
-
-  errorPipe = [NSPipe pipe];
-  errorReadHandle = [errorPipe fileHandleForReading];
-
+  readHandle = [[logPipe fileHandleForReading] retain];
   [readHandle waitForDataInBackgroundAndNotify];
-  [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
                           selector: @selector (logStdOut:)
 			      name: NSFileHandleDataAvailableNotification
 			    object: readHandle];
+
+  errorPipe = [NSPipe pipe];
+  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+  [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
                           selector: @selector (logErrOut:) 
@@ -604,8 +605,6 @@
   [NSThread detachNewThreadSelector: @selector(make:)
                            toTarget: self
                          withObject: data];
-
-  return;
 }
 
 - (void)buildDidTerminate
@@ -620,8 +619,8 @@
                                  name: NSFileHandleDataAvailableNotification
                                object: errorReadHandle];
 
-  RELEASE (readHandle);
-  RELEASE (errorReadHandle);
+  AUTORELEASE(readHandle);
+  AUTORELEASE(errorReadHandle);
 
   if (status == 0)
     {
@@ -664,9 +663,6 @@
 
   [buildArgs removeAllObjects];
   [buildTarget setString: @"Default"];
-
-  RELEASE(makeTask);
-  makeTask = nil;
 }
 
 - (void)popupChanged:(id)sender
@@ -773,6 +769,8 @@
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+  RETAIN(data);
+
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments: [data objectForKey: @"args"]];
   [makeTask setCurrentDirectoryPath: [data objectForKey: @"currentDirectory"]];
@@ -792,7 +790,11 @@
 
   [self buildDidTerminate];
 
-  [pool release];
+  RELEASE(data);
+  RELEASE(makeTask);
+  makeTask = nil;
+
+  RELEASE(pool);
 }
 
 @end

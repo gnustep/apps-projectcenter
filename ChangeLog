@@ -1,3 +1,7 @@
+2003-08-25 Philippe C.D. Robert <probert@siggraph.org>
+
+	* Fixing "stop logging" fix: PCProjectBuilder.m
+
 2003-08-25 Serg Stoyan <stoyan@on.com.ua>
 
 	* PCProjectBuilder.[hm]: stop logging when building/cleaning.
