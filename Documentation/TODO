@@ -7,32 +7,35 @@ Feel free to propose changes to this list or make suggestions!
 ProjectCenter 0.4                                                   Owner
 -----------------                                                   ------
 
-- ProjectCenter localisation                                        robert
-- Editor enhancements                                               robert
-- Project Inspector completion                                      serg
-- UI using Gorm and overal code cleanup                             ??? (all)
-- Initial user documentation                                        ???
++ Review and cleanup of PC project bundles/templates                stoyan
++ Project Inspector completion                                      stoyan
++ Inspector UI using Gorm                                           stoyan
+- Initial support for subprojects                                   stoyan
+- Preferences enhancements and UI using Gorm                        stoyan
+- Remember project windows and panels in PC.project                 stoyan
+- File creation (File->New in project) cleanup and finishing        stoyan
 
 ProjectCenter 0.5
 -----------------
 
-- Initial support for subprojects                                   robert
-- Localisation support for GUI based projects                       robert
-- Review and cleanup of PC project bundles/templates                robert
-- Direct code documentation (using autogsdoc)                       ???
-- Better integration with other tools (Gorm, CodeEditor, EasyDiff)  ???
+- ProjectBuilder enhancements                                       ???
+- ProjectLauncher enhancements                                      ???
+- Editor enhancements                                               robert
 
 ProjectCenter 0.6
 -----------------
 
-- ProjectBuilder enhancements                                       ???
-- ProjectLauncher enhancements                                      ???
-- Initial support for integrated debugging                          ???
 - More options for file creation                                    ???
+- ProjectCenter localisation                                        robert
+- Localisation support for GUI based projects                       robert
+- Direct code documentation (using autogsdoc)                       ???
+- Better integration with other tools (Gorm, CodeEditor, EasyDiff)  ???
 
 ProjectCenter 0.7
 -----------------
 
+- Initial user documentation                                        ???
+- Initial support for integrated debugging                          ???
 - Optimised support for integrated debugging                        ???
 - More project customisation possibilities                          ???
 - CVS integration                                                   ???

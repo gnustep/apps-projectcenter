@@ -88,6 +88,9 @@ static PCLibProj *_creator = nil;
       [project setProjectName:[path lastPathComponent]];
       [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+      [project setProjectName:[path lastPathComponent]];
 
       // Copy the project files to the provided path
 
@@ -119,9 +122,6 @@ static PCLibProj *_creator = nil;
       _2file = [path stringByAppendingPathComponent:@"Version"];
       [fm copyPath:_file toPath:_2file handler:nil];
 
-      // The path cannot be in the PC.project file!
-      [project setProjectPath:path];
-
       // Set the new dictionary - this causes the GNUmakefile 
       // to be written to disc
       if (![project assignProjectDict:projectDict])
@@ -133,10 +133,7 @@ static PCLibProj *_creator = nil;
 	}
 
       // Save the project to disc
-      [projectDict
-	writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
-         atomically:YES];
-
+      [project save];
     }
 
   return project;

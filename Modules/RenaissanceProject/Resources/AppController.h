@@ -1,11 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
-
-   Copyright (C) 2001 Free Software Foundation
-
-   Author: Philippe C.D. Robert <probert@siggraph.org>
-
-   This file is part of GNUstep.
+   AppController.h
+ 
+   GNUstep Renaissance Application Controller
 
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -22,8 +18,20 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCFindController.h"
+#ifndef _APPCONTROLLER_H_
+#define _APPCONTROLLER_H_
 
-@implementation PCFindController
+#include <Foundation/Foundation.h>
+#include <Renaissance/Renaissance.h>
+
+@interface AppController : NSObject
+{
+
+}
+
+- (void) applicationDidFinishLaunching:(NSNotification *)aNotif;
 
 @end
+
+#endif /* _APPCONTROLLER_H_ */
+

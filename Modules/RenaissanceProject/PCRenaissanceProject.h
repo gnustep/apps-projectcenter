@@ -1,10 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2003 Free Software Foundation
+   Copyright (C) 2001 Free Software Foundation
 
    Author: Philippe C.D. Robert <phr@3dkit.org>
-   Modified by Daniel Luederwald <das_flip@gmx.de>
 
    This file is part of GNUstep.
 
@@ -24,61 +23,76 @@
 */
 
 /*
- Description:
+   Description:
 
- This is the project type 'RenaissanceApplication' for GNUstep. You never should create 
- it yourself but use PCRenaissanceProj for doing this. Otherwise needed files don't 
- get copied to the right place.
-
+   This is the project type 'Application' for GNUstep. You never should create 
+   it yourself but use PCAppProj for doing this. Otherwise needed files don't 
+   get copied to the right place.
  */
  
-#ifndef _PCRENAISSANCEPROJECT_H
-#define _PCRENAISSANCEPROJECT_H
+#ifndef _PCRenaissanceProject_h_
+#define _PCRenaissanceProject_h_
 
 #include <AppKit/AppKit.h>
 #include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectInspector.h>
+
+@interface PCAppTextField : NSTextField
+{
+}
+
+@end
 
 @interface PCRenaissanceProject : PCProject
 {
-  NSTextField *appClassField;
-  NSTextField *appImageField;
-  NSButton *setAppIconButton;
-  NSButton *clearAppIconButton;
-  NSImageView *appIconView;
-  NSImage *icon;
+  IBOutlet NSBox          *projectAttributesView;
+  IBOutlet NSTextField    *projectTypeField;
+  IBOutlet NSTextField    *projectNameField;
+  IBOutlet NSTextField    *projectLanguageField;
+  IBOutlet NSTextField    *appClassField;
+
+  PCAppTextField          *activeTextField;
+  IBOutlet PCAppTextField *appImageField;
+  IBOutlet PCAppTextField *helpFileField;
+  IBOutlet PCAppTextField *mainNIBField;
+
+  IBOutlet NSImageView    *iconView;
+  NSImage                 *icon;
+  IBOutlet NSButton       *setFieldButton;
+  IBOutlet NSButton       *clearFieldButton;
+
+  NSTableView             *docIconsList;
+  NSTableColumn           *docExtColumn;
+  NSTableColumn           *docIconColumn;
+  NSMutableArray          *docIconsItems;
+  IBOutlet NSScrollView   *docIconsScroll;
+
+  IBOutlet NSButton       *addDocIcon;
+  IBOutlet NSButton       *removeDocIcon;
+               
+  NSMutableDictionary *infoDict;
 }
 
-//----------------------------------------------------------------------------
-// Init and free
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// --- Init and free
+// ----------------------------------------------------------------------------
 
 - (id)init;
+- (void)assignInfoDict:(NSMutableDictionary *)dict;
+- (void)loadInfoFileAtPath:(NSString *)path;
 - (void)dealloc;
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+@end
 
-- (Class)builderClass;
+@interface PCRenaissanceProject (GeneratedFiles)
 
+- (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key;
+- (BOOL)writeInfoFile;
+- (NSArray *)convertExtensions;
 - (BOOL)writeMakefile;
-
-- (NSArray *)sourceFileKeys;
-- (NSArray *)resourceFileKeys;
-- (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
-- (NSString *)projectDescription;
-
-- (BOOL)isExecutable;
-
-- (void)updateValuesFromProjectDict;
-
-- (void)clearAppIcon:(id)sender;
-- (void)setAppIcon:(id)sender;
-
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-
-- (void)setAppClass:(id)sender;
+- (void)appendHead:(PCMakefileFactory *)mff;
+- (void)appendApplication:(PCMakefileFactory *)mff;
+- (void)appendTail:(PCMakefileFactory *)mff;
 
 @end
 

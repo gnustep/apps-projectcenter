@@ -90,8 +90,24 @@ static PCMakefileFactory *_factory = nil;
   // Linker flags
   [mfp appendString:@"# Additional flags to pass to the linker\n"];
   [mfp appendString:
-    [NSString stringWithFormat:@"ADDITIONAL_LDFLAGS += %@\n\n",
+    [NSString stringWithFormat:@"ADDITIONAL_LDFLAGS += %@ ",
      [projectDict objectForKey:PCLinkerOptions]]];
+  array = [projectDict objectForKey:PCLibraries];
+  if (array && [array count])
+    {
+      NSString     *tmp;
+      NSEnumerator *enumerator = [array objectEnumerator];
+      
+      while ((tmp = [enumerator nextObject]))
+        {
+          if (![tmp isEqualToString:@"gnustep-base"] &&
+              ![tmp isEqualToString:@"gnustep-gui"])
+            {
+              [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+            }
+        }
+    }
+  [mfp appendString:@"\n\n"];
 
   // Directories where to search headers
   [mfp appendString:
@@ -137,6 +153,21 @@ static PCMakefileFactory *_factory = nil;
     }
 
   return NO;
+}
+
+- (BOOL)createPostambleForProject:(PCProject *)project
+{
+  NSBundle      *bundle = nil;
+  NSString      *template = nil;
+  NSString      *postamble = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  
+  bundle = [NSBundle bundleForClass:[self class]];
+  template = [bundle pathForResource:@"postamble" ofType:@"template"];
+  postamble = [[project projectPath] 
+    stringByAppendingPathComponent:@"GNUmakefile.postamble"];
+
+  return [fm copyPath:template toPath:postamble handler:nil];
 }
 
 - (void)appendString:(NSString *)aString

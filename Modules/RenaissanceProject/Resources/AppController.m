@@ -1,11 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
-
-   Copyright (C) 2001 Free Software Foundation
-
-   Author: Philippe C.D. Robert <probert@siggraph.org>
-
-   This file is part of GNUstep.
+   AppController.h
+ 
+   GNUstep Renaissance Application Controller
 
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -22,8 +18,13 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCFindController.h"
+#include "AppController.h"
 
-@implementation PCFindController
+@implementation AppController
+
+- (void) applicationDidFinishLaunching:(NSNotification *)aNotif
+{
+  [NSBundle loadGSMarkupNamed:@"Main" owner:self];
+}
 
 @end

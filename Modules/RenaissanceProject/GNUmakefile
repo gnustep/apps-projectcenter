@@ -10,13 +10,6 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
-
-#
-# Subprojects
-#
-
-
-
 #
 # Bundle
 #
@@ -37,13 +30,14 @@ RenaissanceProject_LIBRARIES_DEPEND_UPON += -lProjectCenter
 #
 
 RenaissanceProject_RESOURCE_FILES= \
-PC.proj \
-main.m \
-AppController.m \
-AppController.h \
-Main.gsmarkup \
-MainMenu-GNUstep.gsmarkup \
-MainMenu-OSX.gsmarkup
+Resources/PC.project \
+Resources/main.m \
+Resources/AppController.m \
+Resources/AppController.h \
+Resources/Main.gsmarkup \
+Resources/MainMenu-GNUstep.gsmarkup \
+Resources/MainMenu-OSX.gsmarkup \
+Resources/Inspector.gorm
 
 
 #
@@ -52,7 +46,8 @@ MainMenu-OSX.gsmarkup
 
 RenaissanceProject_HEADERS= \
 PCRenaissanceProj.h \
-PCRenaissanceProject.h 
+PCRenaissanceProject.h \
+PCRenaissanceProject+Inspector.h 
 
 #
 # Class files
@@ -60,7 +55,8 @@ PCRenaissanceProject.h
 
 RenaissanceProject_OBJC_FILES= \
 PCRenaissanceProj.m \
-PCRenaissanceProject.m 
+PCRenaissanceProject.m \
+PCRenaissanceProject+Inspector.m 
 
 #
 # C files
@@ -70,3 +66,4 @@ RenaissanceProject_C_FILES=
 
 include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
+

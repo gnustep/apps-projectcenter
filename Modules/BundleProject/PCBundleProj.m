@@ -22,8 +22,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #include <ProjectCenter/PCFileCreator.h>
@@ -87,6 +85,9 @@ static PCBundleProj *_creator = nil;
       [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
       [projectDict setObject:[path lastPathComponent] forKey:PCPrincipalClass];
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+      [project setProjectName:[path lastPathComponent]];
 
       // Copy the project files to the provided path
       
@@ -114,9 +115,6 @@ static PCBundleProj *_creator = nil;
 	[path stringByAppendingPathComponent:@"Documentation"]
 	             attributes:nil];
 
-      // The path cannot be in the PC.project file!
-      [project setProjectPath:path];
-
       // Set the new dictionary - this causes the GNUmakefile to be written
       if (![project assignProjectDict:projectDict])
 	{
@@ -127,9 +125,7 @@ static PCBundleProj *_creator = nil;
 	}
 
       // Save the project to disc
-      [projectDict 
-	writeToFile:[path stringByAppendingPathComponent:@"PC.project"]
-	 atomically:YES];
+      [project save];
     }
 
   return project;

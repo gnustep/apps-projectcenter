@@ -25,6 +25,7 @@
 
 - (void)createMakefileForProject:(NSString *)prName;
 - (BOOL)createPreambleForProject:(PCProject *)project;
+- (BOOL)createPostambleForProject:(PCProject *)project;
 
 - (void)appendString:(NSString *)aString;
 

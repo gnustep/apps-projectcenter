@@ -80,8 +80,8 @@ Images/subprojectSuitcaseH.tiff \
 Modules/ApplicationProject/ApplicationProject.bundle \
 Modules/BundleProject/BundleProject.bundle \
 Modules/LibraryProject/LibraryProject.bundle \
-Modules/RenaissanceProject/RenaissanceProject.bundle \
-Modules/ToolProject/ToolProject.bundle
+Modules/ToolProject/ToolProject.bundle \
+Modules/RenaissanceProject/RenaissanceProject.bundle
 
 
 #

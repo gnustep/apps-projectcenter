@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #include "PCDefines.h"
@@ -586,22 +584,32 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       int ret;
 
-      ret = NSRunAlertPanel(@"Remove",
-			    @"Remove files...",
-			    @"...from Project and Disk",
-			    @"...from Project only",
-			    @"Cancel");
+      if ([categoryKey isEqualToString:PCLibraries])
+	{
+	  ret = NSRunAlertPanel(@"Remove",
+				@"Remove libraries from Project?",
+				@"Remove",
+				@"Cancel",
+				nil);
+	}
+      else
+	{
+	  ret = NSRunAlertPanel(@"Remove",
+				@"Remove files...",
+				@"...from Project and Disk",
+				@"...from Project only",
+				@"Cancel");
+	}
 
       if (ret == NSAlertDefaultReturn || ret == NSAlertAlternateReturn)
 	{
 	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
 	  ret = [activeProject removeFiles:files forKey:categoryKey];
-	  if (flag && ret)
+	  if (flag && ret && ![categoryKey isEqualToString:PCLibraries])
 	    {
 	      ret = [fileManager removeFiles:files fromDirectory:directory];
 	    }
-
 	  if (!ret)
 	    {
 	      NSRunAlertPanel(@"Alert",

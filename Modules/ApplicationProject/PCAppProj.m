@@ -20,15 +20,15 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
- Description:
+   Description:
 
- PCAppProj creates new project of the type Application!
+   PCAppProj creates new project of the type Application!
 */
+
+#include "ProjectCenter/PCFileCreator.h"
 
 #include "PCAppProj.h"
 #include "PCAppProject.h"
@@ -71,11 +71,13 @@ static PCAppProj *_creator = nil;
   if ([fm createDirectoryAtPath: path attributes: nil]) 
     {
       NSString            *_file = nil;
+      NSString            *_2file = nil;
 //      NSString            *_resourcePath = nil;
       NSMutableDictionary *projectDict = nil;
       NSDictionary        *infoDict = nil;
       NSBundle            *projBundle = [NSBundle bundleForClass:[self class]];
       NSString            *mainNibFile = nil;
+      PCFileCreator       *fc = [PCFileCreator sharedCreator];
 
       project = [[[PCAppProject alloc] init] autorelease];
 
@@ -89,32 +91,25 @@ static PCAppProj *_creator = nil;
 	              forKey:PCCreationDate];
       [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
       [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+      [project setProjectName:[path lastPathComponent]];
 
       // Copy the project files to the provided path
-      _file = [projBundle pathForResource:@"GNUmakefile" ofType:@"postamble"];
-      [fm copyPath:_file 
-            toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"]
-	   handler:nil];
-
-      _file = [projBundle pathForResource:@"GNUmakefile" ofType:@"preamble"];
-      [fm copyPath:_file 
-            toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] 
-	   handler:nil];
-
       _file = [projBundle pathForResource:@"main" ofType:@"m"];
-      [fm copyPath:_file
-            toPath:[path stringByAppendingPathComponent:@"main.m"]
-           handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"main.m"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       _file = [projBundle pathForResource:@"AppController" ofType:@"m"];
-      [fm copyPath:_file 
-            toPath:[path stringByAppendingPathComponent:@"AppController.m"]
-           handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"AppController.m"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       _file = [projBundle pathForResource:@"AppController" ofType:@"h"];
-      [fm copyPath:_file
-            toPath:[path stringByAppendingPathComponent:@"AppController.h"]
-	   handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"AppController.h"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       // Resources
 /*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
@@ -165,9 +160,6 @@ static PCAppProj *_creator = nil;
 	setObject:[NSArray arrayWithObjects:@"Info-gnustep.plist",nil] 
     	   forKey:PCOtherResources];
 
-      // The path cannot be in the PC.project file!
-      [project setProjectPath:path];
-
       // Set the new dictionary - this causes the GNUmakefile to be written 
       // to disc
       if(![project assignProjectDict:projectDict])
@@ -181,11 +173,9 @@ static PCAppProj *_creator = nil;
       [project assignInfoDict:(NSMutableDictionary *)infoDict];
 
       // Save the project to disc
-      [projectDict
-	writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
-	 atomically:YES];
-
+      [project save];
     }
+
   return project;
 }
 

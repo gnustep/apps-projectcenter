@@ -515,6 +515,11 @@
 	  [currentProject save];
 	}
     }
+  else
+    {
+      // Synchronize PC.project and generated files just for case
+      [currentProject save];
+    }
 
   if( [buildTarget isEqualToString: @"RPM"] 
       && [env objectForKey:@"RPM_TOPDIR"] == nil )

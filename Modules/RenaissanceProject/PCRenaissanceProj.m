@@ -27,18 +27,18 @@
 */
 
 /*
- Description:
+   Description:
 
- PCRenaissanceProj creates new project of the type RenaissanceApplication!
-
+   PCRenaissanceProj creates new project of the type RenaissanceApplication!
 */
+
+#include "ProjectCenter/PCMakefileFactory.h"
 
 #include "PCRenaissanceProj.h"
 #include "PCRenaissanceProject.h"
 
 @implementation PCRenaissanceProj
 
-static NSString *_projTypeName = @"RenaissanceApplication";
 static PCRenaissanceProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -47,145 +47,171 @@ static PCRenaissanceProj *_creator = nil;
 
 + (id)sharedCreator
 {
-    if (!_creator) {
-        _creator = [[[self class] alloc] init];
+  if (!_creator)
+    {
+      _creator = [[[self class] alloc] init];
     }
-    return _creator;
+  return _creator;
 }
 
 - (Class)projectClass
 {
-    return [PCRenaissanceProject class];
+  return [PCRenaissanceProject class];
 }
 
 - (NSString *)projectTypeName
 {
-    return _projTypeName;
-}
-
-- (NSDictionary *)typeTable
-{
-    NSString *_path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info" ofType:@"table"];
-
-    return [NSDictionary dictionaryWithContentsOfFile:_path];
+  return @"RenaissanceApplication";
 }
 
 - (PCProject *)createProjectAt:(NSString *)path
 {
-    PCRenaissanceProject *project = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
+  PCRenaissanceProject *project = nil;
+  NSFileManager        *fm = [NSFileManager defaultManager];
 
-    NSAssert(path,@"No valid project path provided!");
+  NSAssert(path,@"No valid project path provided!");
 
-    if ([fm createDirectoryAtPath:path attributes:nil]) {
-        NSString *_file;
-        NSString *_resourcePath;
-        NSMutableDictionary *dict;
-        NSDictionary *infoDict;
-	NSString *plistFileName;
-        NSString *projectFile;
+  if ([fm createDirectoryAtPath:path attributes:nil])
+    {
+      NSBundle            *projectBundle = nil;
+      NSMutableDictionary *projectDict = nil;
+      NSString            *_file = nil;
+      NSString            *_2file = nil;
+//      NSString            *_resourcePath = nil;
+      NSDictionary        *infoDict = nil;
+      NSString            *mainMarkup = nil;
 
-        project = [[[PCRenaissanceProject alloc] init] autorelease];
+      project = [[[PCRenaissanceProject alloc] init] autorelease];
+      projectBundle = [NSBundle bundleForClass:[self class]];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
-        dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-                
-        // Customise the project
-        [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[self projectTypeName] forKey:PCProjectType];
+      _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+      projectDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
 
-	// Create the AppNameInfo.plist
-	infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
-				   @"Automatically generated!",@"NOTE",
-				   [path lastPathComponent],@"ApplicationName",
-				   @"",@"ApplicationDescription",
-				   @"",@"ApplicationIcon",
-				   @"0.1",@"ApplicationRelease",
-				   @"0.1",@"FullVersionID",
-				   @"",@"Authors",
-				   @"",@"URL",
-				   @"Copyright (C) 200x by ...",@"Copyright",
-				   @"Released under ...",@"CopyrightDescription", nil];
-	plistFileName = [NSString stringWithFormat:@"%@Info.plist",[path lastPathComponent]];
-	[infoDict writeToFile:[path stringByAppendingPathComponent:plistFileName] atomically:YES];
+      // Customise the project
+      [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
+      [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
+      [projectDict setObject:[[NSCalendarDate date] description]
+	              forKey:PCCreationDate];
+      [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+      [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
 
-        [dict setObject:[NSArray arrayWithObjects:plistFileName,nil] 
-	      forKey:PCOtherResources];
-	//	[dict setObject:[NSArray arrayWithObject:[NSString stringWithFormat: @"%@.gsmarkup", [path lastPathComponent]]]
-	[dict setObject:[NSArray arrayWithObjects: @"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup",nil]
-	      forKey:PCInterfaces];
+      // Copy the project files to the provided path
+      _file = [projectBundle pathForResource:@"main" ofType:@"m"];
+      [fm copyPath:_file
+            toPath:[path stringByAppendingPathComponent:@"main.m"]
+           handler:nil];
 
-        // Save the project to disc
-	projectFile = [NSString stringWithString:[path lastPathComponent]];
-	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
-	[dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
-				               atomically:YES];
+      _file = [projectBundle pathForResource:@"AppController" ofType:@"m"];
+      [fm copyPath:_file 
+            toPath:[path stringByAppendingPathComponent:@"AppController.m"]
+           handler:nil];
 
-	/*
-	 * Copy the project files to the provided path
-	 *
-	 */
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"] handler:nil];
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"preamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] handler:nil];
+      _file = [projectBundle pathForResource:@"AppController" ofType:@"h"];
+      [fm copyPath:_file
+            toPath:[path stringByAppendingPathComponent:@"AppController.h"]
+	   handler:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
+      // GNUmakefile.postamble
+      [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"MainMenu-GNUstep" ofType:@"gsmarkup"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"MainMenu-GNUstep.gsmarkup"] handler:nil];
-	
+      _file = [projectBundle pathForResource:@"MainMenu-GNUstep" 
+	                              ofType:@"gsmarkup"];
+      _2file = [path stringByAppendingPathComponent:
+	                                     @"MainMenu-GNUstep.gsmarkup"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      _file = [projectBundle pathForResource:@"MainMenu-OSX" 
+	                              ofType:@"gsmarkup"];
+      _2file = [path stringByAppendingPathComponent:@"MainMenu-OSX.gsmarkup"];
+      [fm copyPath:_file toPath:_2file handler:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"MainMenu-OSX" ofType:@"gsmarkup"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"MainMenu-OSX.gsmarkup"] handler:nil];
+#ifdef GNUSTEP      
+      mainMarkup = [NSString stringWithString:@"MainMenu-GNUstep.gsmarkup"];
+#else
+      mainMarkup = [NSString stringWithString:@"MainMenu-OSX.gsmarkup"];
+#endif
 
+      [projectDict setObject:mainMarkup forKey:PCMainInterfaceFile];
+		      
+      _file = [projectBundle pathForResource:@"Main" ofType:@"gsmarkup"];
+      [fm copyPath:_file 
+	    toPath:[path stringByAppendingPathComponent:@"Main.gsmarkup"] 
+	   handler:nil];
+      [projectDict setObject:
+	[NSArray arrayWithObjects:@"Main.gsmarkup",mainMarkup,nil]
+	              forKey:PCInterfaces];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"Main" ofType:@"gsmarkup"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"Main.gsmarkup"] handler:nil];
+      // Resources
+/*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
+      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] 
+                     attributes:nil];
+      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"]
+	             attributes:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"AppController" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"AppController.m"] handler:nil];
-	
-	_file = [[NSBundle bundleForClass:[self class]] pathForResource:@"AppController" ofType:@"h"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"AppController.h"] handler:nil];
+      // Create the Info-gnustep.plist
+      infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
+	@"Generated by ProjectCenter, do not edit", @"!",
+//        @"", @"ApplicationDescription",
+//	@"", @"ApplicationIcon",
+      [path lastPathComponent], @"ApplicationName",
+      @"0.1", @"ApplicationRelease",
+      [NSArray array], @"Authors",
+      @"Copyright (C) 200x by ...", @"Copyright",
+      @"Released under...", @"CopyrightDescription",
+      @"0.1", @"FullVersionID",
+      [path lastPathComponent], @"NSExecutable",
+//	@"", @"NSIcon",
+      mainMarkup, @"GSMainMarkupFile",
+      [projectDict objectForKey:PCPrincipalClass], @"NSPrincipalClass",
+      @"Application", @"NSRole",
+//      @"", @"URL",
+      nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"baseInterface" ofType:@"gsmarkup"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:
-					  [[path lastPathComponent] stringByAppendingString: @".gsmarkup"]] handler:nil];
+      [infoDict 
+	writeToFile:[path stringByAppendingPathComponent:@"Info-gnustep.plist"]
+	 atomically:YES];
 
-        // Resources
-        _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-        [fm createDirectoryAtPath:_resourcePath attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
+      [projectDict 
+	setObject:[NSArray arrayWithObjects:@"Info-gnustep.plist",nil] 
+	   forKey:PCOtherResources];
 
-        // The path cannot be in the PC.project file!
-        [project setProjectPath:path];
+      // Set the new dictionary - this causes the GNUmakefile 
+      // to be written to disc
+      if (![project assignProjectDict:projectDict])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not load %@!",
+			  @"OK",nil,nil,path);
+	  return nil;
+	}
 
-        // Set the new dictionary - this causes the GNUmakefile to be written to disc
-        if(![project assignProjectDict:dict]) {
-            NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
-            return nil;
-        }
+      [project assignInfoDict:(NSMutableDictionary *)infoDict];
+
+      // Save the project to disc
+      [project save];
+/*      [projectDict 
+	writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
+	 atomically:YES];*/
     }
-    return project;
+
+  return project;
 }
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    id obj;
+  NSDictionary         *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  PCRenaissanceProject *project = nil;
 
-    NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
+  project = [[[PCRenaissanceProject alloc]
+    initWithProjectDictionary:dict 
+    path:[path stringByDeletingLastPathComponent]] autorelease];
 
-    obj = [dict objectForKey:PCProjectBuilderClass];    
-    if ([obj isEqualToString:@"PCRenaissanceProj"]) {
-      return [[[PCRenaissanceProject alloc] initWithProjectDictionary:dict path:[path stringByDeletingLastPathComponent]] autorelease];
-    }
-    return nil;
+  [project loadInfoFileAtPath:[path stringByDeletingLastPathComponent]];
+
+  return project;
+
 }
 
 @end

@@ -50,23 +50,22 @@ PCServer (don't used)
 TODO plan:
 ----------
 Part I:
-+ think about relations between PCMenuController and other PCProject
-  descendants;
-+ implement PCLaunchPanel;
-+ implement PCHistoryPanel (also make PCProjectHistory be a separate);
-+ implement PCInspectorPanel and move common inspectors to its suitable
-  position;
-+ refactor PC*Editor* family;
-- implement PCProjectFinder and PCFindPanel GUI;
+- test Projects and Files operations (Project and File menu entries);
+- add subprojects support;
+- GORMify Prefernces;
 - make PC prefernces changes applying immediately after changing;
+- finish Preferences;
+- remember ProjectWindow, BuildPanel, LaunchPanel, HistoryPanel geometry 
+  on per project basis;
+- remember splitviews geometry on per project basis;
 
 Part II:
 - finish PCProjectBrowser;
 - finish fileIcon/fileTitle;
-- finish Project Inspector (interaction with PC*Project bundles);
 - finish Project Builder
 - finish Project Debugger (launching part, later debugging part)
 - try to incorporate CodeEditor approach
+- implement PCProjectFinder and PCFindPanel GUI;
 - 
 
 

@@ -1,13 +1,4 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
-
-   Copyright (C) 2003 Free Software Foundation
-
-   Author: Philippe C.D. Robert <phr@3dkit.org>
-   Modified by Daniel Luederwald <das_flip@gmx.de>
-
-   This file is part of GNUstep.
-
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either
@@ -23,28 +14,25 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCRENAISSANCEPROJ_H
-#define _PCRENAISSANCEPROJ_H
-
+#include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
-#include <ProjectCenter/ProjectCenter.h>
+#include <Renaissance/Renaissance.h>
 
-@interface PCRenaissanceProj : NSObject <ProjectType>
+#include "AppController.h"
+
+int main(int argc, const char *argv[]) 
 {
+  CREATE_AUTORELEASE_POOL (pool);
+  [NSApplication sharedApplication];
+  [NSApp setDelegate:[AppController new]];
+  
+  #ifdef GNUSTEP
+    [NSBundle loadGSMarkupNamed:@"MainMenu-GNUstep"  owner:[NSApp delegate]];
+  #else
+    [NSBundle loadGSMarkupNamed:@"MainMenu-OSX"  owner:[NSApp delegate]];
+  #endif
+
+  RELEASE (pool);
+  return NSApplicationMain (argc, argv);
+
 }
-
-//----------------------------------------------------------------------------
-// ProjectType
-//----------------------------------------------------------------------------
-
-+ (id)sharedCreator;
-
-- (Class)projectClass;
-- (NSString *)projectTypeName;
-
-- (PCProject *)createProjectAt:(NSString *)path;
-- (PCProject *)openProjectAt:(NSString *)path;
-
-@end
-
-#endif

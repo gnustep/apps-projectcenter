@@ -528,12 +528,15 @@ NSString
     }
 
   // Copy files
-  if (![fileManager copyFiles:fileList intoDirectory:directory])
+  if (![key isEqualToString:PCLibraries]) // Don't copy libraries
     {
-      NSRunAlertPanel(@"Alert",
-		      @"Error adding files to project %@!",
-		      @"OK", nil, nil, projectName);
-      return NO;
+      if (![fileManager copyFiles:fileList intoDirectory:directory])
+	{
+	  NSRunAlertPanel(@"Alert",
+			  @"Error adding files to project %@!",
+			  @"OK", nil, nil, projectName);
+	  return NO;
+	}
     }
 
   // Add files to project
@@ -599,22 +602,52 @@ NSString
   NSString      *selectedCategoryKey = [self selectedRootCategoryKey];
   NSString      *fromPath = nil;
   NSString      *toPath = nil;
+  NSMutableDictionary *_pDict = nil;
+  NSString            *_file = nil;
+  NSMutableArray      *_array = nil;
+  BOOL                saveToFile = NO;
 
   fromPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:fromFile];
   toPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:toFile];
 
-  [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
-             forKey:selectedCategoryKey];
-  [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
-          forKey:selectedCategoryKey];
+  NSLog(@"PCProject: move %@ to %@", fromPath, toPath);
 
-  NSLog(@"PCproject: move %@ to %@", fromPath, toPath);
-  [fm movePath:fromPath toPath:toPath handler:nil];
+  if ([fm movePath:fromPath toPath:toPath handler:nil] == YES)
+    {
+      if ([self isProjectChanged])
+	{
+	  // Project already has changes
+	  saveToFile = YES;
+	}
 
-  [projectBrowser setPathForFile:toFile category:selectedCategory];
-  
+      // Make changes to projectDict
+      [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
+ 	         forKey:selectedCategoryKey];
+      [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
+   	      forKey:selectedCategoryKey];
+
+      // Put only this change to project file, leaving 
+      // other changes in memory(projectDict)
+      if (saveToFile)
+	{
+	  _file = [projectPath stringByAppendingPathComponent:@"PC.project"];
+	  _pDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+	  _array = [_pDict objectForKey:selectedCategoryKey];
+	  [_array removeObject:fromFile];
+	  [_array addObject:toFile];
+	  [_pDict setObject:_array forKey:selectedCategoryKey];
+	  [_pDict writeToFile:_file atomically:YES];
+	}
+      else
+	{
+	  [self save];
+	}
+
+      [projectBrowser setPathForFile:toFile category:selectedCategory];
+    }
+
   return YES;
 }
 
