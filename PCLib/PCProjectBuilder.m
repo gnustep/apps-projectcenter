@@ -30,6 +30,10 @@
 
 #import <AppKit/AppKit.h>
 
+#ifndef IMAGE
+#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#endif
+
 @interface PCProjectBuilder (CreateUI)
 
 - (void)_initUI;
@@ -134,31 +138,41 @@
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
-  [button setImagePosition:NSNoImage];
+  //[button setImagePosition:NSNoImage];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_make")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Build"];
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
-  [button setImagePosition:NSNoImage];
+  //[button setImagePosition:NSNoImage];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_clean")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Clean"];
 
   button = [matrix cellAtRow:0 column:2];
   [button setTag:2];
-  [button setImagePosition:NSNoImage];
+  //[button setImagePosition:NSNoImage];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_debug")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Debug"];
 
   button = [matrix cellAtRow:0 column:3];
   [button setTag:3];
-  [button setImagePosition:NSNoImage];
+  //[button setImagePosition:NSNoImage];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_profile")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Profile"];
 
   button = [matrix cellAtRow:0 column:4];
   [button setTag:4];
-  [button setImagePosition:NSNoImage];
+  //[button setImagePosition:NSNoImage];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_install")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Install"];
 

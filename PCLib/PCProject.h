@@ -221,6 +221,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 @interface PCProject (ProjectBuilding)
 
 - (void)showInspector:(id)sender;
+
 - (id)updatedAttributeView;
 - (id)updatedProjectView;
 - (id)updatedFilesView;
