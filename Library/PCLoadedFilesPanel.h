@@ -22,14 +22,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCHistoryPanel_h
-#define _PCHistoryPanel_h
+#ifndef _PCLoadedFilesPanel_h
+#define _PCLoadedFilesPanel_h
 
 #include <AppKit/AppKit.h>
 
 @class PCProjectManager;
 
-@interface PCHistoryPanel : NSPanel
+@interface PCLoadedFilesPanel : NSPanel
 {
   PCProjectManager *projectManager;
   NSBox            *contentBox;

@@ -2,33 +2,47 @@
  * Project ProjectCenter
  */
 
-#ifndef _PCProjectHistory_h_
-#define _PCProjectHistory_h_
+#ifndef _PCProjectLoadedFiles_h_
+#define _PCProjectLoadedFiles_h_
 
 #include <AppKit/AppKit.h>
 
 @class PCProject;
 
-@interface PCProjectHistory : NSObject
+typedef enum _PHSortType
+{
+  PHSortByTime,
+  PHSortByName
+} PHSortType;
+
+@interface PCProjectLoadedFiles : NSObject
 {
   PCProject      *project;
   NSTableView    *filesList;
   NSTableColumn  *filesColumn;
   NSScrollView   *filesScroll;
   NSMutableArray *editedFiles;
-  NSMutableArray *filesPath;
+
+  PHSortType     sortType;
 }
 
 - (id)initWithProject:(PCProject *)aProj;
 - (void)dealloc;
 - (NSView *)componentView;
+- (NSArray *)editedFilesRep;
+
+- (void)setSortType:(PHSortType)type;
+- (void)setSortByTime;
+- (void)setSortByName;
+- (void)selectNextFile;
+- (void)selectPreviousFile;
 
 - (void)click:(id)sender;
 - (void)doubleClick:(id)sender;
 
 @end
 
-@interface PCProjectHistory (HistoryTableDelegate)
+@interface PCProjectLoadedFiles (HistoryTableDelegate)
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView;
 

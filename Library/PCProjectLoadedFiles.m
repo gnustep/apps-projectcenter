@@ -2,13 +2,14 @@
  * Project ProjectCenter
  */
 
-#include "PCProjectHistory.h"
 #include "PCDefines.h"
 #include "PCProject.h"
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 
-@implementation PCProjectHistory
+#include "PCProjectLoadedFiles.h"
+
+@implementation PCProjectLoadedFiles
 
 - (id)initWithProject:(PCProject *)aProj 
 {
@@ -18,7 +19,6 @@
     {
       project = aProj;
       editedFiles = [[NSMutableArray alloc] init];
-      filesPath = [[NSMutableArray alloc] init];
 
       // Column
       filesColumn = [[NSTableColumn alloc] initWithIdentifier: @"Files List"];
@@ -53,10 +53,12 @@
       [filesScroll setHasHorizontalScroller:NO];
       [filesScroll setHasVerticalScroller:YES];
       if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-  	  objectForKey: SeparateHistory] isEqualToString: @"NO"])
+  	  objectForKey: SeparateLoadedFiles] isEqualToString: @"NO"])
 	{
 	  [filesScroll setBorderType:NSBezelBorder];
 	}
+
+      sortType = PHSortByTime;
 
       [filesList reloadData];
 
@@ -84,22 +86,104 @@
 
 - (void)dealloc
 {
-  NSLog (@"PCProjectHistory: dealloc");
+  NSLog (@"PCProjectLoadedFiles: dealloc");
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(filesColumn);
   RELEASE(filesList);
   RELEASE(editedFiles);
-  RELEASE(filesPath);
 
   [super dealloc];
+}
+
+- (NSView *)componentView
+{
+  return filesScroll;
+}
+
+- (NSArray *)editedFilesRep
+{
+  if (sortType == PHSortByName)
+    {
+      NSArray *sortedArray = nil;
+
+      sortedArray = [editedFiles 
+	sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
+      return sortedArray;
+    }
+
+  return editedFiles;
+}
+
+
+- (void)setSortType:(PHSortType)type
+{
+  int      row;
+  NSString *filePath = nil;
+  
+  if ([editedFiles count] > 0)
+    {
+      row = [filesList selectedRow];
+      filePath = [[self editedFilesRep] objectAtIndex:row];
+    }
+
+  sortType = type;
+  [filesList reloadData];
+
+  
+  if ([editedFiles count] > 0)
+    {
+      row = [[self editedFilesRep] indexOfObject:filePath];
+      [filesList selectRow:row byExtendingSelection:NO];
+    }
+}
+
+- (void)setSortByTime
+{
+  [self setSortType:PHSortByTime];
+}
+
+- (void)setSortByName
+{
+  [self setSortType:PHSortByName];
+}
+
+- (void)selectNextFile
+{
+  int row = [filesList selectedRow];
+
+  if (row == ([filesList numberOfRows]-1))
+    {
+      [filesList selectRow:0 byExtendingSelection:NO];
+    }
+  else
+    {
+      [filesList selectRow:row+1 byExtendingSelection:NO];
+    }
+  [self click:self];
+}
+
+- (void)selectPreviousFile
+{
+  int row = [filesList selectedRow];
+
+  if (row == 0)
+    {
+      [filesList selectRow:[filesList numberOfRows]-1 byExtendingSelection:NO];
+    }
+  else
+    {
+      [filesList selectRow:row-1 byExtendingSelection:NO];
+    }
+  [self click:self];
 }
 
 - (void)click:(id)sender
 {
   int      row = [filesList selectedRow];
-  NSString *path = [filesPath objectAtIndex:row];
+  NSString *path = [[self editedFilesRep] objectAtIndex:row];
 
   [[project projectEditor] orderFrontEditorForFile:path];
 }
@@ -107,12 +191,7 @@
 - (void)doubleClick:(id)sender
 {
   // TODO: Open separate editor window for file
-  NSLog(@"ProjectHistory doubleClick received");
-}
-
-- (NSView *)componentView
-{
-  return filesScroll;
+  NSLog(@"ProjectLoadedFiles doubleClick received");
 }
 
 // ===========================================================================
@@ -122,55 +201,63 @@
 - (void)fileDidOpen:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
-  NSString *path = nil;
-  NSString *file = nil;
+  NSString *filePath = nil;
+  int      row;
 
   if ([editor projectEditor] != [project projectEditor])
     {
       return;
     }
 
-  NSLog(@"PCProjectHistory: project %@", [project projectName]);
+  NSLog(@"PCProjectLoadedFiles: project %@", [project projectName]);
 
-  path = [editor path];
-  file = [path lastPathComponent];
+  filePath = [editor path];
   
-  if ([editedFiles containsObject:file] == YES)
+  if ([editedFiles containsObject:filePath] == YES)
     {
-      [editedFiles removeObject:file];
+      [editedFiles removeObject:filePath];
     }
 
-  [editedFiles insertObject:file atIndex:0];
-  [filesPath insertObject:path atIndex:0];
+  [editedFiles insertObject:filePath atIndex:0];
   [filesList reloadData];
+ 
+  row = [[self editedFilesRep] indexOfObject:filePath];
+  [filesList selectRow:row byExtendingSelection:NO];
   
-  NSLog(@"PCProjectHistory: fileDidOpen.END");
+  NSLog(@"PCProjectLoadedFiles: fileDidOpen.END");
 }
 
 - (void)fileDidClose:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
-  NSString *file = [[editor path] lastPathComponent];
+  NSString *filePath = [editor path];
 
   if ([editor projectEditor] != [project projectEditor])
     {
+      NSLog(@"File from other project closed");
       return;
     }
 
-  if ([editedFiles containsObject:file] == YES)
+  if ([editedFiles containsObject:filePath] == YES)
     {
-      unsigned index = [editedFiles indexOfObject:file];
-      
-      [editedFiles removeObject:file];
-      [filesPath removeObjectAtIndex:index];
+      [editedFiles removeObject:filePath];
       [filesList reloadData];
+
+      if ([editedFiles count] > 0)
+	{
+	  unsigned row;
+
+	  filePath = [editedFiles objectAtIndex:0];
+	  row = [[self editedFilesRep] indexOfObject:filePath];
+	  [filesList selectRow:row byExtendingSelection:NO];
+	}
     }
 }
 
 - (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
-  NSString *file = nil;
+  NSString *filePath = nil;
   unsigned index;
   
   if ([editor projectEditor] != [project projectEditor])
@@ -180,15 +267,15 @@
 
   if ([editedFiles count] > 0)
     {
-      file = [[editor path] lastPathComponent];
-      index = [editedFiles indexOfObject:file];
+      filePath = [editor path];
+      index = [[self editedFilesRep] indexOfObject:filePath];
       [filesList selectRow:index byExtendingSelection:NO];
     }
 }
 
 @end
 
-@implementation PCProjectHistory (HistoryTableDelegate)
+@implementation PCProjectLoadedFiles (LoadedFilesTableDelegate)
 
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
 {
@@ -209,7 +296,17 @@
       return nil;
     }
 
-  return [editedFiles objectAtIndex: rowIndex];
+  if (sortType == PHSortByName)
+    {
+      NSArray *sortedArray = nil;
+
+      sortedArray = [editedFiles
+	sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)];
+
+      return [[sortedArray objectAtIndex:rowIndex] lastPathComponent];
+    }
+
+  return [[editedFiles objectAtIndex:rowIndex] lastPathComponent];
 }
 
 - (void) tableView:(NSTableView *)aTableView

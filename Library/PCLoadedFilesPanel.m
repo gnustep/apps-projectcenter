@@ -24,19 +24,19 @@
 
 #include "PCProjectManager.h"
 #include "PCProject.h"
-#include "PCProjectHistory.h"
-#include "PCHistoryPanel.h"
+#include "PCProjectLoadedFiles.h"
+#include "PCLoadedFilesPanel.h"
 
-@implementation PCHistoryPanel
+@implementation PCLoadedFilesPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectHistory *projectHistory = nil;
-  PCProject        *activeProject = nil;
+  PCProjectLoadedFiles *projectLoadedFiles = nil;
+  PCProject            *activeProject = nil;
   
   projectManager = aManager;
   activeProject = [projectManager rootActiveProject];
-  projectHistory = [activeProject projectHistory];
+  projectLoadedFiles = [activeProject projectLoadedFiles];
 
   self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
                          styleMask: (NSTitledWindowMask 
@@ -57,7 +57,7 @@
   [contentBox setBorderType:NSNoBorder];
   [self setContentView:contentBox];
 
-  [contentBox setContentView:[projectHistory componentView]];
+  [contentBox setContentView:[projectLoadedFiles componentView]];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -76,7 +76,7 @@
 
 - (void)dealloc
 {
-  NSLog (@"PCHistoryPanel: dealloc");
+  NSLog (@"PCLoadedFilesPanel: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
@@ -102,7 +102,7 @@
   else
     {
       [contentBox 
-	setContentView:[[activeProject projectHistory] componentView]];
+	setContentView:[[activeProject projectLoadedFiles] componentView]];
     }
 }
 
