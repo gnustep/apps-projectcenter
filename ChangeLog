@@ -1,3 +1,16 @@
+2003-05-01 Serg Stoyan <stoyan@hologr.com>
+
+	* PCLib/PCProjectBuilder.h:
+	* PCLib/PCProjectBuilder.m:
+	Building was made a separate task.
+	
+	* PCLib/PCProjectManager.m:
+	(createProjectOfType:): Add pcproj filename before adding to 
+	loadedProjects array.
+
+	* ProjectCenter/Images/Stop.tiff: Added.
+	* ProjectCenter/GNUmakefile: Added Stop.tiff to resources.
+	
 2003-04-28  Adam Fedor  <fedor@gnu.org>
 
 	* PCLib/PCMakefileFactory.m (-appendOtherSources): Changed from
