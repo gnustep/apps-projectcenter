@@ -10,17 +10,15 @@ notice and permission notice.
 Installing `ProjectCenter'
 ====================
 
-   The ProjectCenter tool runs on OpenStep 4.2 and GNUstep. It's
-possible it will run on other versions of OPENSTEP, but it has not been
-tried yet.
+ProjectCenter requires GNUstep to be installed. MAke sure that you have an
+up to date version on your system installed!
 
-   Here is a quick-and-dirty example of installation commands:
+Here is a quick-and-dirty example of installation commands:
 
+GNUstep:	make install;
 
-OPENSTEP 4.2:	make; make install 
-
-		(or open the project in PB.app and compile it from there)
-
-GNUstep:	make; make install;
+		If you want to do make; make install, make sure that you
+		first make; make install PCLib, and *then* the rest of the
+		sources!
 
 In order to do this successfully you must first install PCLib and the bundles and then the application itself!
