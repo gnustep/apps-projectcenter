@@ -139,4 +139,9 @@
     return @"Project that handles GNUstep/ObjC based tools.";
 }
 
+- (BOOL)isExecutable
+{
+  return YES;
+}
+
 @end

@@ -63,5 +63,7 @@
 - (NSArray *)buildTargets;
 - (NSString *)projectDescription;
 
+- (BOOL)isExecutable;
+
 @end
 
