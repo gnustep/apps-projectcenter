@@ -2,6 +2,8 @@
 2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
 
         * Updated TODO, ANNOUNCE, README and INSTALL files
+        * PCProject+ComponentHandling.[hm]: Cleanup and fix
+        * PCProjectBuilder: Button state fix
 
 2003-07-04 Serg Stoyan <stoyan@hologr.com>
 
