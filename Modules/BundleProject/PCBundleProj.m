@@ -25,6 +25,7 @@
 */
 
 #include <ProjectCenter/PCFileCreator.h>
+#include "ProjectCenter/PCMakefileFactory.h"
 
 #include "PCBundleProj.h"
 #include "PCBundleProject.h"
@@ -104,6 +105,9 @@ static PCBundleProj *_creator = nil;
       _file = [NSString stringWithFormat:@"%@.h", [path lastPathComponent]];
       [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
 	              forKey:PCHeaders];
+
+      // GNUmakefile.postamble
+      [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
       // Resources
 /*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];

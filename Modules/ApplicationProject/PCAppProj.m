@@ -29,6 +29,7 @@
 */
 
 #include "ProjectCenter/PCFileCreator.h"
+#include "ProjectCenter/PCMakefileFactory.h"
 
 #include "PCAppProj.h"
 #include "PCAppProject.h"
@@ -110,6 +111,9 @@ static PCAppProj *_creator = nil;
       _2file = [path stringByAppendingPathComponent:@"AppController.h"];
       [fm copyPath:_file toPath:_2file handler:nil];
       [fc replaceTagsInFileAtPath:_2file withProject:project];
+
+      // GNUmakefile.postamble
+      [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
       // Resources
 /*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];

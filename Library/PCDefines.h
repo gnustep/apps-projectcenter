@@ -211,7 +211,7 @@ static NSString * const PCHeadersInstallDir    = @"HEADERS_INSTALL_DIR";
 static NSString * const PCBundleExtension      = @"BUNDLE_EXTENSION";
 
 // Tool specific
-static NSString * const PCToolIcon             = @"TOOL_ICON";
+static NSString * const PCToolIcon             = @"TOOLICON";
 
 static NSString * const PCPackageName          = @"PACKAGE_NAME";
 static NSString * const PCLibraryVar           = @"LIBRARY_VAR";

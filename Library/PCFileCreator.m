@@ -248,6 +248,7 @@ static NSDictionary  *dict = nil;
 {
   NSString *projectName = [aProject projectName];
   NSString *date = [[NSCalendarDate calendarDate] description];
+  int      year = [[NSCalendarDate calendarDate] yearOfCommonEra];
   NSString *aFile = [newFile lastPathComponent];
   NSString *UCfn = [[aFile stringByDeletingPathExtension] uppercaseString];
   NSString *fn = [aFile stringByDeletingPathExtension];
@@ -288,6 +289,12 @@ static NSDictionary  *dict = nil;
   while ((subRange = [file rangeOfString:@"$DATE$"]).length)
     {
       [file replaceCharactersInRange:subRange withString:date];
+    }
+    
+  while ((subRange = [file rangeOfString:@"$YEAR$"]).length)
+    {
+      [file replaceCharactersInRange:subRange 
+	withString:[[NSNumber numberWithInt:year] stringValue]];
     }
 
   [file writeToFile:newFile atomically:YES];

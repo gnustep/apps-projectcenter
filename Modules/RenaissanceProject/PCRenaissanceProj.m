@@ -32,6 +32,7 @@
    PCRenaissanceProj creates new project of the type RenaissanceApplication!
 */
 
+#include "ProjectCenter/PCFileCreator.h"
 #include "ProjectCenter/PCMakefileFactory.h"
 
 #include "PCRenaissanceProj.h"
@@ -80,6 +81,7 @@ static PCRenaissanceProj *_creator = nil;
 //      NSString            *_resourcePath = nil;
       NSDictionary        *infoDict = nil;
       NSString            *mainMarkup = nil;
+      PCFileCreator       *fc = [PCFileCreator sharedCreator];
 
       project = [[[PCRenaissanceProject alloc] init] autorelease];
       projectBundle = [NSBundle bundleForClass:[self class]];
@@ -96,22 +98,23 @@ static PCRenaissanceProj *_creator = nil;
       [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
       // The path cannot be in the PC.project file!
       [project setProjectPath:path];
+      [project setProjectName:[path lastPathComponent]];
 
       // Copy the project files to the provided path
       _file = [projectBundle pathForResource:@"main" ofType:@"m"];
-      [fm copyPath:_file
-            toPath:[path stringByAppendingPathComponent:@"main.m"]
-           handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"main.m"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       _file = [projectBundle pathForResource:@"AppController" ofType:@"m"];
-      [fm copyPath:_file 
-            toPath:[path stringByAppendingPathComponent:@"AppController.m"]
-           handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"AppController.m"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       _file = [projectBundle pathForResource:@"AppController" ofType:@"h"];
-      [fm copyPath:_file
-            toPath:[path stringByAppendingPathComponent:@"AppController.h"]
-	   handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"AppController.h"];
+      [fm copyPath:_file toPath:_2file handler:nil];
+      [fc replaceTagsInFileAtPath:_2file withProject:project];
 
       // GNUmakefile.postamble
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
@@ -135,20 +138,22 @@ static PCRenaissanceProj *_creator = nil;
       [projectDict setObject:mainMarkup forKey:PCMainInterfaceFile];
 		      
       _file = [projectBundle pathForResource:@"Main" ofType:@"gsmarkup"];
-      [fm copyPath:_file 
-	    toPath:[path stringByAppendingPathComponent:@"Main.gsmarkup"] 
-	   handler:nil];
+      _2file = [path stringByAppendingPathComponent:@"Main.gsmarkup"] ;
+      [fm copyPath:_file toPath:_2file handler:nil];
       [projectDict setObject:
 	[NSArray arrayWithObjects:@"Main.gsmarkup",mainMarkup,nil]
 	              forKey:PCInterfaces];
 
+      // GNUmakefile.postamble
+      [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
+
       // Resources
 /*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
       [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
-      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] 
-                     attributes:nil];
-      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"]
-	             attributes:nil];
+      _2file = [path stringByAppendingPathComponent:@"Images"];
+      [fm createDirectoryAtPath:_2file attributes:nil];
+      _2file = [path stringByAppendingPathComponent:@"Documentation"];
+      [fm createDirectoryAtPath:_2file attributes:nil];
 
       // Create the Info-gnustep.plist
       infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -191,9 +196,6 @@ static PCRenaissanceProj *_creator = nil;
 
       // Save the project to disc
       [project save];
-/*      [projectDict 
-	writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
-	 atomically:YES];*/
     }
 
   return project;

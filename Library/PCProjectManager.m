@@ -369,7 +369,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       projectTypeName = [projectFile objectForKey:PCProjectType];
       projectClassName = [[delegate projectTypes]objectForKey:projectTypeName];
     }
-    
+
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
 
    if (projectTypeName == nil)

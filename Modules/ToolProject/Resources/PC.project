@@ -1,5 +1,4 @@
 {
-    APPKIT = "GNUSTEP-GUI"; 
     BUILDTOOL = "/usr/bin/make"; 
     CLASS_FILES = ();
     COMPILEROPTIONS = ""; 
@@ -7,10 +6,8 @@
     LINKEROPTIONS = ""; 
     CREATION_DATE = ""; 
     DOCU_FILES = (); 
-    FOUNDATION = "GNUSTEP-BASE"; 
     FRAMEWORKS = (); 
     HEADER_FILES = ();
-    INTERFACES = (); 
     IMAGES = (); 
     LANGUAGE = "English"; 
     LAST_EDITING = ""; 
@@ -39,5 +36,5 @@
     SEARCH_LIB_DIRS = ();
     SUBPROJECTS = (); 
     SUPPORTING_FILES = ("GNUmakefile.preamble", "GNUmakefile", "GNUmakefile.postamble");
-    TOOL_ICON = "";
+    TOOLICON = "";
 }

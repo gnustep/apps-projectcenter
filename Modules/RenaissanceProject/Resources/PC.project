@@ -1,5 +1,4 @@
 {
-    APPKIT = "GNUSTEP-GUI"; 
     APPLICATIONICON = ""; 
     BUILDTOOL = "/usr/bin/make"; 
     CLASS_FILES = ("AppController.m");
@@ -8,7 +7,6 @@
     LINKEROPTIONS = ""; 
     CREATION_DATE = ""; 
     DOCU_FILES = (); 
-    FOUNDATION = "GNUSTEP-BASE"; 
     FRAMEWORKS = (); 
     HEADER_FILES = ("AppController.h"); 
     INTERFACES = ("Main.gsmarkup", "MainMenu-GNUstep.gsmarkup", "MainMenu-OSX.gsmarkup"); 
