@@ -37,10 +37,6 @@
 
 #import <AppKit/AppKit.h>
 
-@class PreferenceController;
-@class ProjectEditor;
-@class ProjectDebugger;
-
 @interface PCBundleLoader : NSObject
 {
     id 			delegate; // The PCAppController!
