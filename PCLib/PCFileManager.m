@@ -337,7 +337,7 @@ static PCFileManager *_mgr = nil;
 
 #ifdef DEBUG  
   NSLog(@"<%@ %x>: creating file at %@",[self class],self,path);
-#endif DEBUG
+#endif //DEBUG
 
   // Create file
   if (path) {
@@ -374,7 +374,7 @@ static PCFileManager *_mgr = nil;
 
 #ifdef DEBUG  
   NSLog(@"<%@ %x>: Registering creators...",[self class],self);
-#endif DEBUG
+#endif //DEBUG
 
   while (type = [enumerator nextObject]) {
     id creator = [[dict objectForKey:type] objectForKey:@"Creator"];

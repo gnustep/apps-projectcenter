@@ -150,7 +150,7 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 
 #ifdef DEBUG
     NSLog(@"<%@ %x>: create rows for column %d in %x",[self class],self,column,sender);
-#endif DEBUG
+#endif //DEBUG
     
     for (i = 0; i < count; ++i) {
       NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
@@ -172,7 +172,7 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 {
 #ifdef DEBUG
   NSLog(@"<%@ %x>: browser %x will display %@ %x at %d,%d",[self class],self,sender,[cell class],cell,row,column);
-#endif DEBUG
+#endif //DEBUG
 }
 
 - (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column

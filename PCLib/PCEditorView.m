@@ -94,7 +94,7 @@ static BOOL isInitialised = NO;
   [super setString:aString];
 #ifdef COLOURISE
   [self colourise:self];
-#endif COLOURISE
+#endif //COLOURISE
 }
 
 - (void)colourise:(id)sender
