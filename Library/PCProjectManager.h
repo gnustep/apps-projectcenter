@@ -106,7 +106,9 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ============================================================================
 // ==== Timer handling
 // ============================================================================
-- (void)resetSaveTimer:(NSNotification *)notif;
+- (BOOL)startSaveTimer;
+- (BOOL)resetSaveTimer:(NSNotification *)notif;
+- (BOOL)stopSaveTimer;
 
 // ============================================================================
 // ==== Accessory methods

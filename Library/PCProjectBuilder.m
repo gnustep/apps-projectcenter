@@ -22,16 +22,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCProjectBuilder.h"
+#include <AppKit/AppKit.h>
+
 #include "PCDefines.h"
-#include "PCProject.h"
-#include "PCProjectManager.h"
 #include "PCSplitView.h"
 #include "PCButton.h"
 
-#include "PCLogController.h"
+#include "PCProjectManager.h"
+#include "PCProject.h"
+#include "PCProjectBuilder.h"
 
-#include <AppKit/AppKit.h>
+#include "PCLogController.h"
 
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]
@@ -47,7 +48,7 @@
 {
   NSSplitView  *split;
   NSScrollView *scrollView1; 
-  NSScrollView *scrollView2; 
+  NSScrollView *scrollView2;
   id           textField;
 
   componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8,-1,464,322)];
@@ -108,7 +109,6 @@
    */
   scrollView1 = [[NSScrollView alloc] 
     initWithFrame:NSMakeRect (0, 0, 464, 120)];
-
   [scrollView1 setHasHorizontalScroller:NO];
   [scrollView1 setHasVerticalScroller:YES];
   [scrollView1 setBorderType: NSBezelBorder];
@@ -116,7 +116,6 @@
 
   errorOutput = [[NSTextView alloc] 
     initWithFrame: [[scrollView1 contentView] frame]];
-
   [errorOutput setRichText: NO];
   [errorOutput setEditable: NO];
   [errorOutput setSelectable: YES];
@@ -135,12 +134,12 @@
   [[errorOutput textContainer] setWidthTracksTextView:YES];
 
   [scrollView1 setDocumentView:errorOutput];
+  RELEASE(errorOutput);
 
   /*
    */
   scrollView2 = [[NSScrollView alloc] 
     initWithFrame:NSMakeRect (0, 0, 480, 133)];
-
   [scrollView2 setHasHorizontalScroller: NO];
   [scrollView2 setHasVerticalScroller: YES];
   [scrollView2 setBorderType: NSBezelBorder];
@@ -148,7 +147,6 @@
 
   logOutput = [[NSTextView alloc] 
     initWithFrame:[[scrollView2 contentView] frame]];
-
   [logOutput setRichText:NO];
   [logOutput setEditable:NO];
   [logOutput setSelectable:YES];
@@ -165,17 +163,18 @@
   [[logOutput textContainer] setWidthTracksTextView:YES];
 
   [scrollView2 setDocumentView:logOutput];
+  RELEASE(logOutput);
 
   split = [[PCSplitView alloc] initWithFrame: NSMakeRect (0, 0, 464, 255)];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+
   [split addSubview: scrollView1];
-  [split addSubview: scrollView2];
-  [split adjustSubviews];
-
-  [componentView addSubview: split];
-
   RELEASE (scrollView1);
+  [split addSubview: scrollView2];
   RELEASE (scrollView2);
+
+  [split adjustSubviews];
+  [componentView addSubview: split];
   RELEASE (split);
 
   /*
@@ -223,7 +222,6 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-//  [textField setBackgroundColor: [NSColor darkGrayColor]];
   [textField setStringValue:@"Status:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [componentView addSubview:textField];
@@ -389,6 +387,10 @@
   [buildArgs release];
   [makePath release];
 
+  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
+  PCLogInfo(self, @"RC: %i", [self retainCount]);
+  [componentView release];
+
   [super dealloc];
 }
 
@@ -449,7 +451,7 @@
     }
 }
 
-// --- Actions
+// --- GUI Actions
 - (void)startBuild:(id)sender
 {
   NSString *tFString = [targetField stringValue];
@@ -549,7 +551,7 @@
   [optionsPanel orderFront: nil];
 }
 
-
+// --- Actions
 - (void)build:(id)sender
 {
   NSPipe       *logPipe;

@@ -93,13 +93,10 @@ NSString *PCEditorDidResignActiveNotification =
 
   if (![editor isEqualToString:@"ProjectCenter"])
     {
-      NSTask         *editorTask;
-      NSMutableArray *args;
-      NSString       *app;
-      NSArray        *ea = [editor componentsSeparatedByString: @" "];
-
-      args = [NSMutableArray arrayWithArray:ea];
-      app = [args objectAtIndex: 0];
+//      NSTask         *editorTask;
+      NSArray        *ea = [editor componentsSeparatedByString:@" "];
+//      NSMutableArray *args = [NSMutableArray arrayWithArray:ea];
+      NSString       *app = [ea objectAtIndex: 0];
 
       if ([[app pathExtension] isEqualToString:@"app"])
 	{
@@ -114,16 +111,17 @@ NSString *PCEditorDidResignActiveNotification =
 	  return nil;
 	}
 
-      editorTask = [[NSTask alloc] init];
-
+      editor = [[PCEditor alloc] initExternalEditor:editor 
+	                                   withPath:path
+				      projectEditor:self];
+/*      editorTask = [[NSTask alloc] init];
       [editorTask setLaunchPath:app];
-      [args removeObjectAtIndex: 0];
+      [args removeObjectAtIndex:0];
       [args addObject:path];
-
       [editorTask setArguments:args];
 
       AUTORELEASE(editorTask);
-      [editorTask launch];
+      [editorTask launch];*/
     }
   else
     {
@@ -218,28 +216,38 @@ NSString *PCEditorDidResignActiveNotification =
                categoryPath:(NSString *)categoryPath
 	           windowed:(BOOL)yn
 {
-  PCEditor *editor;
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *ed = [ud objectForKey:Editor];
+  PCEditor       *editor;
 
   if (!(editor = [editorsDict objectForKey:path]))
     {
-      editor = [[PCEditor alloc] initWithPath:path 
-	                         categoryPath:categoryPath
-				projectEditor:self];
+      if ([ed isEqualToString:@"ProjectCenter"])
+	{
+	  editor = [[PCEditor alloc] initWithPath:path 
+	                             categoryPath:categoryPath
+	                            projectEditor:self];
+	  [editor setWindowed:yn];
+
+	  [componentView setContentView:[editor componentView]];
+	  [[project projectWindow] makeFirstResponder:[editor editorView]];
+
+	  if (yn)
+	    {
+	      [editor show];
+	    }
+	}
+      else
+	{
+	  editor = [[PCEditor alloc] initExternalEditor:ed
+	                                       withPath:path
+	                                  projectEditor:self];
+	}
 
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
     }
 
-  [editor setWindowed:yn];
-  
-  [componentView setContentView:[editor componentView]];
-  [[project projectWindow] makeFirstResponder:[editor editorView]];
-  
-  if (yn)
-    {
-      [editor show];
-    }
-  
   return editor;
 }
 

@@ -7,6 +7,7 @@
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 
+#include "PCPrefController.h"
 #include "PCLogController.h"
 
 #include "PCProjectLoadedFiles.h"
@@ -80,6 +81,13 @@
 	addObserver:self 
 	   selector:@selector(editorDidBecomeActive:)
 	       name:PCEditorDidBecomeActiveNotification
+	     object:nil];
+	     
+      // ProjectCenter preferences
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector(preferencesDidChange:)
+	       name:PCPreferencesDidChangeNotification
 	     object:nil];
     }
 
@@ -208,6 +216,7 @@
 
   if ([editor projectEditor] != [project projectEditor])
     {
+      PCLogWarning(self, @"File opened from other project");
       return;
     }
 
@@ -272,6 +281,19 @@
       filePath = [editor path];
       index = [[self editedFilesRep] indexOfObject:filePath];
       [filesList selectRow:index byExtendingSelection:NO];
+    }
+}
+
+- (void)preferencesDidChange:(NSNotification *)aNotif
+{
+  if ([[[aNotif object] objectForKey:SeparateLoadedFiles]
+      isEqualToString: @"NO"])
+    {
+      [filesScroll setBorderType:NSBezelBorder];
+    }
+  else
+    {
+      [filesScroll setBorderType:NSNoBorder];
     }
 }
 

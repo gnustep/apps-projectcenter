@@ -28,8 +28,6 @@
 
 #include "PCLogController.h"
 
-NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
-
 @implementation PCPrefController
 
 // ===========================================================================
@@ -475,7 +473,7 @@ static PCPrefController *_prefCtrllr = nil;
   [preferencesDict setObject:periodString forKey:AutoSavePeriod];
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:SavePeriodDidChangeNotification
+    postNotificationName:PCSavePeriodDidChangeNotification
                   object:periodString];
 }
 
@@ -603,23 +601,44 @@ static PCPrefController *_prefCtrllr = nil;
 - (void)setDebugger:(id)sender
 {
   NSString *path = [debuggerField stringValue];
-  
-  if (path)
+ 
+  if ([path isEqualToString:@""] || !path)
     {
-      [[NSUserDefaults standardUserDefaults] setObject:path forKey:Debugger];
-      [preferencesDict setObject:path forKey:Debugger];
+      [debuggerField setStringValue:@"/usr/bin/gdb"];
+      path = [debuggerField stringValue];
     }
+  else if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path])
+    {
+      [debuggerField selectText:self];
+      NSRunAlertPanel(@"Debugger not found!",
+		      @"File %@ doesn't exist!",
+      		      @"OK", nil, nil, path);
+    }
+
+  [[NSUserDefaults standardUserDefaults] setObject:path forKey:Debugger];
+  [preferencesDict setObject:path forKey:Debugger];
 }
 
 - (void)setEditor:(id)sender
 {
   NSString *path = [editorField stringValue];
   
-  if (path)
+  if ([path isEqualToString:@""] || !path)
     {
-      [[NSUserDefaults standardUserDefaults] setObject:path forKey:Editor];
-      [preferencesDict setObject:path forKey:Editor];
+      [editorField setStringValue:@"ProjectCenter"];
+      path = [editorField stringValue];
     }
+  else if (![[NSFileManager defaultManager] fileExistsAtPath:path]
+      && ![path isEqualToString:@"ProjectCenter"])
+    {
+      [editorField selectText:self];
+      NSRunAlertPanel(@"Editor not found!",
+		      @"File %@ doesn't exist!",
+      		      @"OK", nil, nil, path);
+    }
+    
+  [[NSUserDefaults standardUserDefaults] setObject:path forKey:Editor];
+  [preferencesDict setObject:path forKey:Editor];
 }
 
 // Interface
@@ -673,6 +692,9 @@ static PCPrefController *_prefCtrllr = nil;
 
   [preferencesDict setObject:[def objectForKey:key] 
                       forKey:key];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCPreferencesDidChangeNotification
+                  object:self];
 }
 
 - (void)setEditorSize:(id)sender

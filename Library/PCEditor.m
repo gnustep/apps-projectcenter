@@ -195,13 +195,87 @@
   return self;
 }
 
+- (id)initExternalEditor:(NSString *)editor
+                withPath:(NSString *)file
+           projectEditor:(PCProjectEditor *)aProjectEditor
+{
+  NSTask         *editorTask = nil;
+  NSArray        *ea = nil;
+  NSMutableArray *args = nil;
+  NSString       *app = nil;
+
+  if (!(self = [super init]))
+    {
+      return nil;
+    }
+
+  projectEditor = aProjectEditor;
+  _extScrollView = nil;
+  _extEditorView = nil;
+  _intScrollView = nil;
+  _intEditorView = nil;
+  _storage = nil;
+  _path = [file copy];
+  _categoryPath = nil;
+  _window = nil;
+
+  _isEdited = NO;
+  _isWindowed = NO;
+  _isExternal = YES;
+
+  // Task
+  ea = [editor componentsSeparatedByString:@" "];
+  args = [NSMutableArray arrayWithArray:ea];
+  app = [ea objectAtIndex:0];
+
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector (externalEditorDidClose:)
+           name:NSTaskDidTerminateNotification
+         object:nil];
+
+  editorTask = [[NSTask alloc] init];
+  [editorTask setLaunchPath:app];
+  [args removeObjectAtIndex:0];
+  [args addObject:file];
+  [editorTask setArguments:args];
+  
+  [editorTask launch];
+//  AUTORELEASE(editorTask);
+
+  // Inform about file opening
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorDidOpenNotification
+                  object:self];
+
+  return self;
+}
+
+- (void)externalEditorDidClose:(NSNotification *)aNotif
+{
+  NSString *path = [[[aNotif object] arguments] lastObject];
+
+  if (![path isEqualToString:_path])
+    {
+      PCLogError(self, @"external editor task terminated");
+      return;
+    }
+    
+  PCLogStatus(self, @"Our Editor task terminated");
+
+  // Inform about closing
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidCloseNotification
+                  object:self];
+}
+
 - (void)dealloc
 {
   NSLog(@"PCEditor: dealloc");
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-// _window is setReleasedWhenClosed:YES
+  // _window is setReleasedWhenClosed:YES
   RELEASE(_path);
   RELEASE(_categoryPath);
   RELEASE(_intScrollView);

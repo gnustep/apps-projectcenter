@@ -25,6 +25,9 @@
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
+#include "PCInfoController.h"
+#include "PCPrefController.h"
+#include "PCLogController.h"
 
 #include <ProjectCenter/ProjectCenter.h>
 
@@ -66,21 +69,7 @@
 }
 
 //============================================================================
-//==== Delegate
-//============================================================================
-
-- (id)delegate
-{
-  return delegate;
-}
-
-- (void)setDelegate:(id)aDelegate
-{
-  delegate = aDelegate;
-}
-
-//============================================================================
-//==== Bundle Management
+//==== Accessory methods
 //============================================================================
 
 - (PCProjectManager *)projectManager
@@ -238,11 +227,11 @@
       RELEASE(doConnection);
     }
 
-  RELEASE(prefController);
   RELEASE(infoController);
+  RELEASE(prefController);
   RELEASE(logController);
-  RELEASE(projectManager);
   RELEASE(menuController);
+  RELEASE(projectManager);
 
   RELEASE(doServer);
 

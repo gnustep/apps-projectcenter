@@ -23,20 +23,21 @@
 */
 
 #include "PCDefines.h"
-#include "PCProjectManager.h"
-#include "PCProject.h"
-#include "PCProjectEditor.h"
-#include "PCProjectBuilder.h"
-#include "PCProjectLauncher.h"
 #include "PCSplitView.h"
 #include "PCButton.h"
 
+#include "PCProjectManager.h"
+#include "PCProject.h"
+
+#include "PCProjectWindow.h"
 #include "PCProjectBrowser.h"
+#include "PCProjectEditor.h"
+#include "PCProjectBuilder.h"
+#include "PCProjectLauncher.h"
 #include "PCProjectLoadedFiles.h"
 #include "PCProjectInspector.h"
 
-#include "PCProjectWindow.h"
-
+#include "PCPrefController.h"
 #include "PCLogController.h"
 
 @implementation PCProjectWindow
@@ -44,6 +45,23 @@
 // ============================================================================
 // ==== Intialization & deallocation
 // ============================================================================
+
+- (void)_createCustomView
+{
+  customView = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
+  [customView setTitlePosition: NSNoTitle];
+  [customView setBorderType: NSNoBorder];
+  [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
+  [customView setAutoresizingMask:
+    NSViewWidthSizable | NSViewHeightSizable];
+
+  // Editor in the Box
+  [customView setContentView:[[project projectEditor] componentView]];
+
+  [h_split addSubview:customView];
+  RELEASE(customView);
+  [h_split adjustSubviews];
+}
 
 - (void)_initUI
 {
@@ -54,7 +72,6 @@
 		     | NSResizableWindowMask;
   NSRect       rect;
   NSRect       tmpRect;
-  NSDictionary *prefsDict = nil;
   NSView       *browserView = nil;
 
   /*
@@ -170,25 +187,16 @@
   [toolbarView addSubview: fileIconTitle];
   RELEASE (fileIconTitle);
 
-
-  prefsDict = [[project projectManager] preferencesDict];
   /*
    * Hosrizontal split view
-   * Create only if at least one subview (Editor, Builder, Launcher)
    */
-  if (![[prefsDict objectForKey:@"SeparateEditor"] isEqualToString:@"YES"]
-      || ![[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"]
-      || ![[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"]
-      )
-    {
-      rect = [[projectWindow contentView] frame];
-      rect.size.height -= 62;
-      rect.size.width -= 16;
-      rect.origin.x += 8;
-      rect.origin.y = -2;
-      h_split = [[PCSplitView alloc] initWithFrame:rect];
-      [h_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-    }
+  rect = [[projectWindow contentView] frame];
+  rect.size.height -= 62;
+  rect.size.width -= 16;
+  rect.origin.x += 8;
+  rect.origin.y = -2;
+  h_split = [[PCSplitView alloc] initWithFrame:rect];
+  [h_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   /*
    * Vertical split view
@@ -198,13 +206,13 @@
     {
       rect.size.height = 130;
     }
-  else
+/*  else
     {
       rect.size.height -= 64;
       rect.size.width -= 16;
       rect.origin.x += 8;
       rect.origin.y = 0;
-    }
+    }*/
   v_split = [[PCSplitView alloc] initWithFrame:rect];
   [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [v_split setVertical:YES];
@@ -213,68 +221,30 @@
    * File Browser
    */
   browserView = [[project projectBrowser] view];
-  if (v_split)
-    {
-      [v_split addSubview:browserView];
-    }
-  else if (h_split)
-    {
-      [h_split addSubview:browserView];
-    }
-/*  else
-    {
-      rect = [[projectWindow contentView] frame];
-      rect.size.height -= 60;
-      rect.size.width -= 16;
-      rect.origin.x += 8;
-      rect.origin.y = 0;
-      [browserView setAutoresizingMask:
-	NSViewWidthSizable | NSViewHeightSizable];
-      [browserView setFrame:rect];
-      [_c_view addSubview:[[project projectBrowser] view]];
-    }*/
+  [v_split addSubview:browserView];
   
   /*
    * LoadedFiles
-   * If it's separate panel nothing happened
    */
-  [self showProjectLoadedFiles:self];
+  if ([self hasLoadedFilesView])
+    {
+      [self showProjectLoadedFiles:self];
+    }
 
-  if (v_split && h_split)
-    {
-      [v_split adjustSubviews];
-      [h_split addSubview:v_split];
-      RELEASE(v_split);
-    }
-  else if (v_split && !h_split)
-    {
-      [v_split adjustSubviews];
-      [_c_view addSubview:v_split];
-      RELEASE(v_split);
-    }
+  [h_split addSubview:v_split];
+  RELEASE(v_split);
 
   /*
    * Custom view
    * View where non-separated Builder, Launcher, Editor goes.
    */ 
-  if (h_split)
+  if ([self hasCustomView])
     {
-      customView = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
-      [customView setTitlePosition: NSNoTitle];
-      [customView setBorderType: NSNoBorder];
-      [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
-      [customView setAutoresizingMask:
-	NSViewWidthSizable | NSViewHeightSizable];
-
-      // Editor in the Box
-      [customView setContentView:[[project projectEditor] componentView]];
-
-      [h_split addSubview:customView];
-      RELEASE(customView);
-      [h_split adjustSubviews];
-      [_c_view addSubview:h_split];
-      RELEASE(h_split);
+      [self _createCustomView];
     }
+
+  [_c_view addSubview:h_split];
+  RELEASE(h_split);
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -330,6 +300,13 @@
 	addObserver:self
 	   selector:@selector(activeProjectDidChange:)
 	       name:PCActiveProjectDidChangeNotification
+	     object:nil];
+	     
+      // ProjectCenter preferences
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector(preferencesDidChange:)
+	       name:PCPreferencesDidChangeNotification
 	     object:nil];
     }
   
@@ -478,6 +455,43 @@
   [fileIconTitle setStringValue:title];
 }
 
+- (BOOL)hasCustomView
+{
+  NSDictionary *prefsDict = nil;
+
+  prefsDict = [[project projectManager] preferencesDict];
+  if (![[prefsDict objectForKey:@"SeparateEditor"] isEqualToString:@"YES"]
+      || ![[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"]
+      || ![[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"]
+      )
+    {
+      _hasCustomView = YES;
+    }
+  else
+    {
+      _hasCustomView = NO;
+    }
+
+  return _hasCustomView;
+}
+
+- (BOOL)hasLoadedFilesView
+{
+  NSDictionary *prefsDict = nil;
+
+  prefsDict = [[project projectManager] preferencesDict];
+  if (![[prefsDict objectForKey:@"SeparateLoadedFiles"] isEqualToString:@"YES"])
+    {
+      _hasLoadedFilesView = YES;
+    }
+  else
+    {
+      _hasLoadedFilesView = NO;
+    }
+
+  return _hasLoadedFilesView;
+}
+
 - (NSView *)customContentView
 {
   return [customView contentView];
@@ -500,10 +514,16 @@
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateLoadedFiles] isEqualToString: @"NO"])
+  PCLogInfo(self, @"showProjectLoadedFiles");
+  if ([self hasLoadedFilesView])
     {
-      [v_split addSubview: [[project projectLoadedFiles] componentView]];
+      PCLogInfo(self, @"showProjectLoadedFiles: should show");
+      [v_split addSubview:[[project projectLoadedFiles] componentView]];
+      [v_split adjustSubviews];
+    }
+  else
+    {
+      // LoadedFiles panel
     }
 }
 
@@ -513,8 +533,8 @@
   NSView  *view = nil;
   NSPanel *buildPanel = nil;
   
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateBuilder] isEqualToString: @"YES"])
+  if ([[[PCPrefController sharedPCPreferences] objectForKey:SeparateBuilder]
+      isEqualToString: @"YES"])
     {
       separate = YES;
     }
@@ -712,6 +732,32 @@
     }
 
   [self makeKeyWindow];
+}
+
+- (void)preferencesDidChange:(NSNotification *)aNotif
+{
+  // Custom view (Builder, Launcher, Editor)
+  if ([self hasCustomView] && customView == nil)
+    {
+      [self _createCustomView];
+    }
+  else if (![self hasCustomView] && customView != nil)
+    {
+      [customView removeFromSuperview];
+      [h_split adjustSubviews];
+      customView = nil;
+    }
+
+  // Loaded Files view
+  if ([self hasLoadedFilesView] && [[v_split subviews] count] == 1)
+    {
+      [self showProjectLoadedFiles:self];
+    }
+  else if (![self hasLoadedFilesView] && [[v_split subviews] count] == 2)
+    {
+      [[[project projectLoadedFiles] componentView] removeFromSuperview];
+      [v_split adjustSubviews];
+    }
 }
 
 // ============================================================================

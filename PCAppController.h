@@ -28,19 +28,16 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCInfoController.h"
-#include "PCPrefController.h"
-#include "PCLogController.h"
-
 @class PCServer;
 @class PCProjectManager;
 @class PCFileManager;
 @class PCMenuController;
+@class PCInfoController;
+@class PCPrefController;
+@class PCLogController;
 
 @interface PCAppController : NSObject
 {
-  id		   delegate;
-
   PCProjectManager *projectManager;
   IBOutlet id      menuController;
   
@@ -62,13 +59,6 @@
 - (void)dealloc;
 
 //============================================================================
-//==== Delegate
-//============================================================================
-
-- (id)delegate;
-- (void)setDelegate:(id)aDelegate;
-
-//============================================================================
 //==== Accessory methods
 //============================================================================
 
@@ -77,6 +67,7 @@
 - (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
 - (PCLogController *)logController;
+
 - (PCServer *)doServer;
 
 //============================================================================

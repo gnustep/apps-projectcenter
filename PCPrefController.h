@@ -28,6 +28,9 @@
 
 #include <AppKit/AppKit.h>
 
+#define PCSavePeriodDidChangeNotification @"PCSavePeriodDidChangeNotification"
+#define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"
+
 @interface PCPrefController : NSObject
 {
   IBOutlet NSPanel       *panel;
@@ -112,8 +115,6 @@
 - (void)setBundlePath:(id)sender;
 
 @end
-
-extern NSString *SavePeriodDidChangeNotification;
 
 #endif
 

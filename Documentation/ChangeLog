@@ -1,3 +1,7 @@
+2004-05-27 Serg Stoyan <stoyan255@ukr.net>
+
+        * Finished support of external editors.
+
 2004-05-10 Serg Stoyan <stoyan@on.com.ua>
 
 	* Preferences interface created using GORM.

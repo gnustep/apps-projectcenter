@@ -55,6 +55,8 @@
   NSResponder *firstResponder;
 
   BOOL        _isToolbarVisible;
+  BOOL        _hasCustomView;
+  BOOL        _hasLoadedFilesView;
 }
 
 // ============================================================================
@@ -70,6 +72,8 @@
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
+- (BOOL)hasCustomView;
+- (BOOL)hasLoadedFilesView;
 - (NSView *)customContentView;
 - (void)setCustomContentView:(NSView *)subview;
 

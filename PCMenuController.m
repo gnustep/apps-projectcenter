@@ -24,6 +24,9 @@
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
+#include "PCInfoController.h"
+#include "PCPrefController.h"
+#include "PCLogController.h"
 #include <ProjectCenter/ProjectCenter.h>
 
 @implementation PCMenuController
@@ -52,6 +55,7 @@
 
 - (void)dealloc
 {
+  NSLog(@"PCMenuController: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [super dealloc];

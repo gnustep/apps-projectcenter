@@ -76,8 +76,7 @@
 
 - (void)dealloc
 {
-/*  NSLog (@"PCBuildPanel: dealloc (CV RC:%i)", 
-	 [[contentBox contentView] retainCount]);*/
+  NSLog(@"PCBuildPanel: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
@@ -90,9 +89,13 @@
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
+  NSLog(@"PCBuildPanel: activeProjectDidChange to: %@", 
+	[activeProject projectName]);
+
   if (!activeProject)
     {
-      [contentBox setContentView:nil];
+//      [contentBox setContentView:nil];
+      [[contentBox contentView] removeFromSuperview];
     }
   else
     {

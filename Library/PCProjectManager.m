@@ -23,13 +23,12 @@
 */
 
 #include "PCDefines.h"
+#include "PCPrefController.h"
+#include "PCLogController.h"
 
 #include "PCBundleLoader.h"
 #include "PCFileManager.h"
 #include "PCProjectManager.h"
-#include "PCLoadedFilesPanel.h"
-#include "PCBuildPanel.h"
-#include "PCLaunchPanel.h"
 
 #include "PCProject.h"
 #include "PCProjectWindow.h"
@@ -37,15 +36,15 @@
 #include "PCProjectInspector.h"
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
-#include "ProjectComponent.h"
+#include "PCBuildPanel.h"
+#include "PCLaunchPanel.h"
+#include "PCLoadedFilesPanel.h"
+
 #include "PCServer.h"
 
 #include "ProjectType.h"
 #include "ProjectBuilder.h"
-
-#include "PCLogController.h"
-
-#define SavePeriodDCN @"SavePeriodDidChangeNotification"
+#include "ProjectComponent.h"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
@@ -60,11 +59,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if ((self = [super init]))
     {
       NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-      NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
 
       [self loadProjectTypeBunldes];
 
       loadedProjects = [[NSMutableDictionary alloc] init];
+      
+      nonProjectEditors = [[NSMutableDictionary alloc] init];
 
       rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
       if (!rootBuildPath || [rootBuildPath isEqualToString:@""])
@@ -72,23 +72,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  rootBuildPath = [NSTemporaryDirectory() copy];
 	}
 
-      if (interval > 0)
-	{
-	  saveTimer = [NSTimer 
-	    scheduledTimerWithTimeInterval:interval
-	                            target:self
-	                          selector:@selector(saveAllProjectsIfNeeded)
-	                          userInfo:nil
-	                           repeats:YES];
-	}
-
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
 	   selector:@selector(resetSaveTimer:)
-	       name:SavePeriodDCN 
+	       name:PCSavePeriodDidChangeNotification
 	     object:nil];
-
-      nonProjectEditors = [[NSMutableDictionary alloc] init];
 
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
@@ -97,8 +85,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	     object:nil];
 
       fileManager = [[PCFileManager alloc] initWithProjectManager:self];
-
-      _needsReleasing = NO;
     }
 
   return self;
@@ -121,10 +107,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   RELEASE(rootBuildPath);
   RELEASE(loadedProjects);
 
-  if (projectInspector)  RELEASE(projectInspector);
-  if (loadedFilesPanel)      RELEASE(loadedFilesPanel);
-  if (buildPanel)        RELEASE(buildPanel);
-  if (launchPanel)       RELEASE(launchPanel);
+  if (projectInspector) RELEASE(projectInspector);
+  if (loadedFilesPanel) RELEASE(loadedFilesPanel);
+  if (buildPanel)       RELEASE(buildPanel);
+  if (launchPanel)      RELEASE(launchPanel);
 
   [super dealloc];
 }
@@ -188,22 +174,43 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== Timer handling
 // ============================================================================
 
-- (void)resetSaveTimer:(NSNotification *)notif
+- (BOOL)startSaveTimer
 {
-  NSTimeInterval interval = [[notif object] intValue];
-  SEL            sall = @selector(saveAllProjectsIfNeeded);
+  NSTimeInterval interval;
 
-  if ([saveTimer isValid])
+  interval = [[[PCPrefController sharedPCPreferences] 
+    objectForKey:AutoSavePeriod] intValue];
+
+  if (interval > 0 && saveTimer == nil)
+    {
+      saveTimer = [NSTimer 
+	scheduledTimerWithTimeInterval:interval
+	                        target:self
+	                      selector:@selector(saveAllProjectsIfNeeded)
+	                      userInfo:nil
+	                       repeats:YES];
+      return YES;
+    }
+  return NO;
+}
+
+- (BOOL)resetSaveTimer:(NSNotification *)notif
+{
+  [self stopSaveTimer];
+
+  return [self startSaveTimer];
+}
+
+- (BOOL)stopSaveTimer
+{
+  if (saveTimer && [saveTimer isValid])
     {
       [saveTimer invalidate];
+      saveTimer = nil;
+
+      return YES;
     }
-  
-    saveTimer = [NSTimer 
-      scheduledTimerWithTimeInterval:interval
-                              target:self
-                            selector:sall
-                            userInfo:nil
-                             repeats:YES];
+  return NO;
 }
 
 // ============================================================================
@@ -343,15 +350,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
+  PCLogInfo(self, @"saveAllProjectsIfNeeded");
+
   // If this method was called not by NSTimer, check if we should save projects
   if ([[defs objectForKey:AutoSavePeriod] intValue] > 0)
     {
       [self saveAllProjects];
-    }
-
-  if ([saveTimer isValid])
-    {
-      [saveTimer invalidate];
     }
 }
 
@@ -420,6 +424,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       PCLogStatus(self, @"Project %@ loaded as %@", 
 		  [project projectName], [projectCreator projectTypeName]);
+      [self startSaveTimer];
       return project;
     }
 
@@ -493,6 +498,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   [project setProjectManager:self];
+  [self startSaveTimer];
 
   return project;
 }
@@ -749,6 +755,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       if (buildPanel) [buildPanel close];
       if (launchPanel) [launchPanel close];
       [self setActiveProject: nil];
+      [self stopSaveTimer];
     }
   else if (currentProject == [self activeProject])
     {

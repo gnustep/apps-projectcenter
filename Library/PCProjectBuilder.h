@@ -43,19 +43,18 @@
   PCButton        *cleanButton;
   PCButton        *installButton;
   PCButton        *optionsButton;
+  id              buildStatusField;
+  id              targetField;
+  NSTextView      *logOutput;
+  NSTextView      *errorOutput;
+
   NSPopUpButton   *popup;
   
   NSPanel         *optionsPanel;
   NSTextField     *buildTargetHostField;
   NSTextField     *buildTargetArgsField;
 
-  NSTextView      *logOutput;
-  NSTextView      *errorOutput;
-
   NSString        *makePath;
-
-  id              buildStatusField;
-  id              targetField;
 
   PCProject       *currentProject;
   NSDictionary    *currentOptions;

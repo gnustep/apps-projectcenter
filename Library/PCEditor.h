@@ -31,6 +31,7 @@
 
   BOOL            _isEdited;
   BOOL            _isWindowed;
+  BOOL            _isExternal;
 }
 
 // ===========================================================================
@@ -39,6 +40,9 @@
 - (id)initWithPath:(NSString *)file
       categoryPath:(NSString *)categoryPath
      projectEditor:(PCProjectEditor *)projectEditor;
+- (id)initExternalEditor:(NSString *)editor
+                withPath:(NSString *)file
+           projectEditor:(PCProjectEditor *)aProjectEditor;
 - (void)dealloc;
 - (void)show;
 
