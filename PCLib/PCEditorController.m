@@ -176,7 +176,7 @@
     {
         editor = [editorDict objectForKey:key];
 
-	if( [editor saveFile] == NO )
+	if( [editor saveFileIfNeeded] == NO )
 	{
 	    ret = NO;
 	}
@@ -200,7 +200,7 @@
 	if( [window isKeyWindow] && [window isMainWindow] ||
 	    [project isEditorActive] && [[project projectWindow] isKeyWindow])
 	{
-	    return [editor saveFile];
+	    return [editor saveFileIfNeeded];
 	}
     }
 

@@ -44,6 +44,7 @@
 - (void)show;
 - (void)close;
 
+- (BOOL)saveFileIfNeeded;
 - (BOOL)saveFile;
 - (BOOL)revertFile;
 

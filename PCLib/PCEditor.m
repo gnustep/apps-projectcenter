@@ -243,6 +243,16 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
     }
 }
 
+- (BOOL)saveFileIfNeeded
+{
+    if( isEdited )
+    {
+        return [self saveFile];
+    }
+
+    return YES;
+}
+
 - (BOOL)saveFile
 {
     [self setIsEdited:NO];
