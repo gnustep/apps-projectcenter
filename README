@@ -26,3 +26,14 @@
 
     UI   - Many of the icons have been created by Andrew Lindsay
 
+
+    Notes
+    -----
+
+    ProjectCenter 0.3.5 does NOT compile on Mac OS X due to some GNUstep
+    specific code snippets. Please try the current code from CVS if you
+    are interested in using ProjectCenter on Mac OS X. 
+
+    We try to make the next release compile on this platform out of the box 
+    again. 
+

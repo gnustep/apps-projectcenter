@@ -1,6 +1,7 @@
 
 2003-07-10 Philippe C.D. Robert <probert@siggraph.org>
 
+        * Added note in README about using ProjectCenter with Cocoa
         * Disabled unused menu entries: ProjectCenter_main.m
         * Some spelling corrections: PCMenuController.m
 
