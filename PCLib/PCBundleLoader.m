@@ -102,7 +102,16 @@
     NSString 		*path = [[NSUserDefaults standardUserDefaults] objectForKey:BundlePaths];
 
     if (!path || [path isEqualToString:@""]) {
-      path = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+      NSDictionary *env = [[NSProcessInfo processInfo] environment];
+      NSString *prefix = [env objectForKey:@"GNUSTEP_LOCAL_ROOT"];
+      
+      if (prefix && ![prefix isEqualToString:@""]) {
+	path =[prefix stringByAppendingPathComponent:@"Library/ProjectCenter"];
+      }
+      else {
+	path = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+      }
+      
       [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
       [[NSUserDefaults standardUserDefaults] synchronize];
     }
