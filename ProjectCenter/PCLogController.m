@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCLogController.h"
+#include "PCLogController.h"
 
 @implementation PCLogController
 

@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
-#import <ProjectCenter/PCDefines.h>
-#import"PCAppController.h"
+#include <ProjectCenter/PCDefines.h>
+#include"PCAppController.h"
 
 void createMenu();
 
@@ -65,7 +65,7 @@ void createMenu()
 
   SEL action = @selector(method:);
 
-  menu = [[NSMenu alloc] initWithTitle:@"ProjectCenter"];
+  menu = [[NSMenu alloc] initWithTitle: @"PC"];
 
   /*
    * The main menu

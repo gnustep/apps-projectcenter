@@ -27,7 +27,7 @@
 #ifndef _PCPREFCONTROLLER_H
 #define _PCPREFCONTROLLER_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface PCPrefController : NSObject
 {

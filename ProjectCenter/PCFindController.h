@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface PCFindController : NSObject
 {

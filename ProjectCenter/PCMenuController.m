@@ -24,13 +24,13 @@
    $Id$
 */
 
-#import "PCMenuController.h"
+#include "PCMenuController.h"
 
-#import <ProjectCenter/ProjectCenter.h>
-#import "PCAppController.h"
+#include <ProjectCenter/ProjectCenter.h>
+#include "PCAppController.h"
 
 #if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
+#include <AppKit/IMLoading.h>
 #endif
 
 @implementation PCMenuController

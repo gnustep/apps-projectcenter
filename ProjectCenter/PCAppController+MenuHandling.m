@@ -24,14 +24,14 @@
    $Id$
 */
 
-#import "PCAppController+MenuHandling.h"
-#import "PCMenuController.h"
-#import "PCPrefController.h"
-#import "PCInfoController.h"
+#include "PCAppController+MenuHandling.h"
+#include "PCMenuController.h"
+#include "PCPrefController.h"
+#include "PCInfoController.h"
 
-#import <ProjectCenter/PCProject+ComponentHandling.h>
-#import <ProjectCenter/PCProjectManager.h>
-#import <ProjectCenter/PCTextFinder.h>
+#include <ProjectCenter/PCProject+ComponentHandling.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCTextFinder.h>
 
 @implementation PCAppController (MenuHandling)
 

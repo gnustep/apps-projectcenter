@@ -24,11 +24,11 @@
    $Id$
 */
 
-#import "PCPrefController.h"
-#import <ProjectCenter/ProjectCenter.h>
+#include "PCPrefController.h"
+#include <ProjectCenter/ProjectCenter.h>
 
 #if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
+#include <AppKit/IMLoading.h>
 #endif
 
 NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";

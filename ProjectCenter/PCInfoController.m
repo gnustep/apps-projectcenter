@@ -24,11 +24,11 @@
    $Id$
 */
 
-#import "PCInfoController.h"
-#import <ProjectCenter/ProjectCenter.h>
+#include "PCInfoController.h"
+#include <ProjectCenter/ProjectCenter.h>
 
 #if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
+#include <AppKit/IMLoading.h>
 #endif
 
 @implementation PCInfoController

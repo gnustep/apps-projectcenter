@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCFindController.h"
+#include "PCFindController.h"
 
 @implementation PCFindController
 

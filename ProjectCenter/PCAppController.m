@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import "PCAppController.h"
-#import "PCMenuController.h"
+#include "PCAppController.h"
+#include "PCMenuController.h"
 
-#import <ProjectCenter/ProjectCenter.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 #define REL_LIB_PC @"Library/ProjectCenter"
 #define ABS_LIB_PC @"/usr/GNUstep/Local/Library/ProjectCenter"

@@ -24,12 +24,12 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
-#import "PCPrefController.h"
-#import "PCFindController.h"
-#import "PCInfoController.h"
-#import "PCLogController.h"
+#include "PCPrefController.h"
+#include "PCFindController.h"
+#include "PCInfoController.h"
+#include "PCLogController.h"
 
 @class PCBundleLoader;
 @class PCServer;

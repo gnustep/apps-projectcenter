@@ -1,3 +1,11 @@
+2003-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* All *.tiff files moved to Images dir.
+
+	* ProjectCenter_main.m (createMenu()): Set title of app menu to "PC".
+
+	* Replace all occurrences of #import with #include.
+	
 2003-01-25 Daniel Luederwald <das_flip@gmx.de>
 
 	* PCBrowserController.m: Add gsmarkup to editable files.

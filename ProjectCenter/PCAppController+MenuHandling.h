@@ -24,8 +24,8 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
-#import "PCAppController.h"
+#include <AppKit/AppKit.h>
+#include "PCAppController.h"
 
 @interface PCAppController (MenuHandling)
 
