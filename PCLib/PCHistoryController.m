@@ -44,7 +44,7 @@
     [[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:file];
     //[browser selectRow:0 inColumn:0];
 
-    RELEASE(file);
+    AUTORELEASE(file);
 }
 
 - (void)setBrowser:(NSBrowser *)aBrowser

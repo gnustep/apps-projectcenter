@@ -33,6 +33,8 @@
 #import "PCEditorController.h"
 #import "PCHistoryController.h"
 
+#define ENABLE_HISTORY
+
 @interface PCProject (CreateUI)
 
 - (void)_initUI;
@@ -118,6 +120,7 @@
    * File Browser
    */
 
+#ifdef ENABLE_HISTORY
   historyController = [[PCHistoryController alloc] initWithProject:self];
 
   history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,232,60)];
@@ -132,7 +135,7 @@
 
   [_c_view addSubview:history];
   RELEASE(history);
-
+#endif
   /*
    * Left button matrix
    */
