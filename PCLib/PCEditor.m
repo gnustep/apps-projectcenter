@@ -76,6 +76,9 @@
     {
         NSString *text = [NSString stringWithContentsOfFile:file];
 
+        // Should take that from preferences!
+	isEmbedded = NO;
+
         [self _initUI];
 
 	[window setTitle:file];
@@ -110,9 +113,25 @@
     return window;
 }
 
+- (void)setEmbedded:(BOOL)yn
+{
+    isEmbedded = yn;
+}
+
+- (BOOL)isEmbedded
+{
+    return isEmbedded;
+}
+
 - (void)show
 {
-    [window makeKeyAndOrderFront:self];
+    if( isEmbedded == NO )
+    {
+	[window makeKeyAndOrderFront:self];
+    }
+    else
+    {
+    }
 }
 
 - (void)close

@@ -458,10 +458,20 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject:(PCProject *)aProject
 {
-    PCProject	*currentProject;
-    NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
+    PCProject *currentProject = nil;
+    NSString  *path = [aProject projectPath];
+    NSString  *projectName = [path lastPathComponent];
+    NSString  *key;
+    
+    key = [path stringByAppendingPathComponent:projectName];
+    key = [key stringByAppendingPathExtension:@"pcproj"];
   
     currentProject = [[loadedProjects objectForKey:key] retain];
+
+    if( !currentProject )
+    {
+        return;
+    }
     
     // Remove it from the loaded projects!
     [loadedProjects removeObjectForKey:key];

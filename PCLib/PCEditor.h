@@ -22,6 +22,8 @@
     NSMutableString *path;
 
     id delegate;
+
+    BOOL isEmbedded;
 }
 
 - (id)initWithPath:(NSString*)file;
@@ -29,6 +31,9 @@
 
 - (void)setDelegate:(id)aDelegate;
 - (id)delegate;
+
+- (void)setEmbedded:(BOOL)yn;
+- (BOOL)isEmbedded;
 
 - (NSWindow *)editorWindow;
 
