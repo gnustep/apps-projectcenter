@@ -124,7 +124,7 @@
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 5] autorelease];
-  [matrix setIntercellSpacing:NSMakeSize(1,1)];
+  [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget:self];

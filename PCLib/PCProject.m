@@ -111,7 +111,7 @@
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 3] autorelease];
-  [matrix setIntercellSpacing:NSMakeSize(1,1)];
+  [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
@@ -146,7 +146,7 @@
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 4] autorelease];
-  [matrix setIntercellSpacing:NSMakeSize(1,1)];
+  [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
