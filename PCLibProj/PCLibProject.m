@@ -58,7 +58,8 @@
 {
   if ((self = [super init])) {
     rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
-				      PCSubprojects, @"Subprojects", 
+				      PCSupportingFiles,@"Supporting Files",
+				    PCSubprojects, @"Subprojects", 
 				    PCLibraries, @"Libraries",
 				    PCDocuFiles,@"Documentation",
 				    PCOtherResources,@"Other Resources", 

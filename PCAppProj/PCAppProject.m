@@ -129,6 +129,7 @@
   if ((self = [super init])) {
     rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
 				      PCGModels,@"Interfaces",
+				    PCSupportingFiles,@"Supporting Files",
 				    PCImages,@"Images",
 				    PCOtherResources,@"Other Resources",
 				    PCSubprojects,@"Subprojects",
