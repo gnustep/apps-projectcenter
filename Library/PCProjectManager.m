@@ -395,20 +395,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSString *)convertLegacyProject:(NSMutableDictionary *)pDict
                             atPath:(NSString *)aPath
 {
-  NSString      *pPath = nil;
-  NSString      *projectClassName = nil;
-  NSString      *projectTypeName = nil;
-  NSString      *_projectPath = nil;
-  NSFileManager *fm = [NSFileManager defaultManager];
-  NSString      *_resPath = nil;
-  NSArray       *_fromDirArray = nil;
-  NSString      *_fromDirPath = nil;
-  NSString      *_file = nil;
-  NSString      *_2file = nil;
-  int           i = 0;
+  NSString        *pPath = nil;
+  NSString        *projectClassName = nil;
+  NSString        *projectTypeName = nil;
+  NSString        *_projectPath = nil;
+  NSFileManager   *fm = [NSFileManager defaultManager];
+  NSString        *_resPath = nil;
+  NSArray         *_fromDirArray = nil;
+  NSString        *_fromDirPath = nil;
+  NSString        *_file = nil;
+  NSString        *_2file = nil;
+  NSString        *_resFile = nil;
+  int             i = 0;
   id<ProjectType> projectCreator;
-  NSMutableArray *otherResArray = nil;
-  NSString       *plistFile = nil;
+  NSMutableArray  *otherResArray = nil;
+  NSString        *plistFile = nil;
 
   projectClassName = [pDict objectForKey:PCProjectBuilderClass];
   if (projectClassName == nil)
@@ -431,48 +432,61 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   // Documents
   _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Documentation"];
-  _fromDirArray = [fm directoryContentsAtPath:_fromDirPath];
-  if (_fromDirArray)
+  _fromDirArray = [pDict objectForKey:PCDocuFiles];
+  for (i = 0; i < [_fromDirArray count]; i++)
     {
-      for (i = 0; i < [_fromDirArray count]; i++)
-	{
-	  _file = [_fromDirPath 
-	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
-	  _2file = [_resPath 
-	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
-	  [fm movePath:_file toPath:_2file handler:nil];
-	}
+      _resFile = [_fromDirArray objectAtIndex:i];
+      _file = [_fromDirPath stringByAppendingPathComponent:_resFile];
+      _2file = [_resPath stringByAppendingPathComponent:_resFile];
+      [fm movePath:_file toPath:_2file handler:nil];
     }
   [fm removeFileAtPath:_fromDirPath handler:nil];
 
   // Images
   _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Images"];
-  _fromDirArray = [fm directoryContentsAtPath:_fromDirPath];
-  if (_fromDirArray)
+  _fromDirArray = [pDict objectForKey:PCImages];
+  for (i = 0; i < [_fromDirArray count]; i++)
     {
-      for (i = 0; i < [_fromDirArray count]; i++)
-	{
-	  _file = [_fromDirPath 
-	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
-	  _2file = [_resPath 
-	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
-	  [fm movePath:_file toPath:_2file handler:nil];
-	}
+      _resFile = [_fromDirArray objectAtIndex:i];
+      _file = [_fromDirPath stringByAppendingPathComponent:_resFile];
+      _2file = [_resPath stringByAppendingPathComponent:_resFile];
+      [fm movePath:_file toPath:_2file handler:nil];
     }
   [fm removeFileAtPath:_fromDirPath handler:nil];
+  
+  // Interfaces
+  _fromDirArray = [pDict objectForKey:PCInterfaces];
+  for (i = 0; i < [_fromDirArray count]; i++)
+    {
+      _resFile = [_fromDirArray objectAtIndex:i];
+      _file = [_projectPath stringByAppendingPathComponent:_resFile];
+      _2file = [_resPath stringByAppendingPathComponent:_resFile];
+      [fm movePath:_file toPath:_2file handler:nil];
+    }
 
-  // Info-gnustep.plist
-  plistFile = [NSString stringWithFormat:@"%@Info.plist",
-    [pDict objectForKey:PCProjectName]];
-  _file = [_projectPath stringByAppendingPathComponent:plistFile];
-  _2file = [_resPath stringByAppendingPathComponent:
-    [NSString stringWithString:@"Info-gnustep.plist"]];
-  [fm movePath:_file toPath:_2file handler:nil];
+  // Other resources
   otherResArray = [NSMutableArray 
     arrayWithArray:[pDict objectForKey:PCOtherResources]];
-  [otherResArray removeObject:plistFile];
-  [otherResArray addObject:@"Info-gnustep.plist"];
-  [pDict setObject:otherResArray forKey:PCOtherResources];
+  plistFile = [NSString stringWithFormat:@"%@Info.plist",
+               [pDict objectForKey:PCProjectName]];
+  for (i = 0; i < [otherResArray count]; i++)
+    {
+      _resFile = [otherResArray objectAtIndex:i];
+      _file = [_projectPath stringByAppendingPathComponent:_resFile];
+      if ([_resFile isEqualToString:plistFile])
+	{
+	  _2file = 
+	    [_resPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
+	  [otherResArray replaceObjectAtIndex:i 
+	                           withObject:@"Info-gnustep.plist"];
+	  [pDict setObject:otherResArray forKey:PCOtherResources];
+	}
+      else
+	{
+	  _2file = [_resPath stringByAppendingPathComponent:_resFile];
+	}
+      [fm movePath:_file toPath:_2file handler:nil];
+    }
 
   // GNUmakefiles will be generated in [PCProject initWithProjectDictionary:]
 
@@ -485,7 +499,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [pDict setObject:projectTypeName forKey:PCProjectType];
   [pDict removeObjectForKey:PCProjectBuilderClass];
   [pDict removeObjectForKey:PCPrincipalClass];
-  
+
   if ([pDict writeToFile:pPath atomically:YES] == YES)
     {
 //      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];

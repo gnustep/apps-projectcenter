@@ -1,3 +1,9 @@
+2004-06-16 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectManager.m:
+	(convertLegacyProject:atPath:): Get files list from .pcproj file not
+	from directories.
+	
 2004-06-15 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
