@@ -1,3 +1,28 @@
+2003-06-20 Serg Stoyan <stoyan@hologr.com>
+
+	* Images/ButtonTile.tiff: Added.
+	* GNUmakefile: Add Images/ButtonTile.tiff.
+	* ProjectCenterInfo.plist: Fixed order of authors.
+
+	* PCLib/GNUmakefile: Added PCButton.[hm].
+	* PCLib/PCButton.[hm]: Added and implemented.
+	* PCLib/PCBrowserController.h: PCBrowserDidSetPathNotification
+	delcaration added.
+	* PCLib/PCBrowserController.m:
+	(click:): Post PCBrowserDidSetPathNotification.
+	(doubleClick:): Idem. Return result instead of path.
+	* PCLib/PCProject+UInterface.m: Switch toolbar from matrix to number
+	of PCButtons. Added icon in top left corner that represents object
+	selected in browser.
+	(setFileIcon:): Added. Sets icon image according to the object
+	selected in browser.
+	* PCLib/PCProject.m:
+	(setProjectName:): Set label of icon to project name on loading.
+	* PCLib/PCProject.[mh]: Switch to using PCButtons.
+	(buildDidTerminate:): Check if notification object is build task
+	added.
+	* PCLib/PCProjectDebugger.[h]: Switch to using PCButtons.
+
 2003-05-30 Serg Stoyan <stoyan@hologr.com>
 
 	* PCLib/PCEditor.[hm]: Added becomeFirstResponder.
