@@ -45,8 +45,7 @@ PC.proj
 
 PCBundleProj_HEADERS= \
 PCBundleProject.h \
-PCBundleProj.h \
-PCBundleMakefileFactory.h 
+PCBundleProj.h 
 
 #
 
@@ -55,8 +54,7 @@ PCBundleMakefileFactory.h
 
 PCBundleProj_OBJC_FILES= \
 PCBundleProject.m \
-PCBundleProj.m \
-PCBundleMakefileFactory.m 
+PCBundleProj.m 
 
 #
 

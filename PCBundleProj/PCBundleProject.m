@@ -26,9 +26,11 @@
 
 #import "PCBundleProject.h"
 #import "PCBundleProj.h"
-#import "PCBundleMakefileFactory.h"
+#import "PCMakefileFactory.h"
 
 #import <ProjectCenter/ProjectCenter.h>
+
+#define BUNDLE_INSTALL @"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles/"
 
 @interface PCBundleProject (CreateUI)
 
@@ -117,19 +119,66 @@
 
 - (BOOL)writeMakefile
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *tmp;
     NSData   *mfd;
-    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    int i; 
+    PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
+    NSDictionary      *dict = [self projectDict];
+    NSArray           *classes = [dict objectForKey:PCClasses];
+    NSString          *iDir = [dict objectForKey:PCInstallDir];
 
     // Save the project file
     [super writeMakefile];
    
-    if(mfd = [[PCBundleMakefileFactory sharedFactory] makefileForProject:self]){
-        if ([mfd writeToFile:mf atomically:YES]) {
+    if( [iDir isEqualToString:@""] )
+    {
+        iDir = [NSString stringWithString:BUNDLE_INSTALL];
+    }
+
+    if ((tmp = [dict objectForKey:PCPrincipalClass]) &&
+        [tmp isEqualToString:@""] == NO)
+    {
+    }
+    else if ([classes count]) 
+    {
+        tmp = [[classes objectAtIndex:0] stringByDeletingPathExtension];
+    }
+    else tmp = [NSString string];
+
+    [mf createMakefileForProject:[self projectName]];
+
+    [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
+
+    [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
+
+    [mf appendBundle];
+    [mf appendBundleInstallDir:iDir];
+    [mf appendPrincipalClass:tmp];
+    [mf appendLibraries:[dict objectForKey:PCLibraries]];
+
+    [mf appendResources];
+    for (i=0;i<[[self resourceFileKeys] count];i++)
+    {
+        NSString *k = [[self resourceFileKeys] objectAtIndex:i];
+        [mf appendResourceItems:[dict objectForKey:k]];
+    }
+
+    [mf appendHeaders:[dict objectForKey:PCHeaders]];
+    [mf appendClasses:[dict objectForKey:PCClasses]];
+    [mf appendCFiles:[dict objectForKey:PCOtherSources]];
+
+    [mf appendTailForBundle];
+
+    // Write the new file to disc!
+    if (mfd = [mf encodedMakefile])
+    {
+        if ([mfd writeToFile:mfl atomically:YES])
+        {
             return YES;
         }
-    }   
-    
+    }
+
     return NO;
 }
 

@@ -5,8 +5,7 @@
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
 	PCBundleProject.m,
-	PCBundleProj.m,
-	PCBundleMakefileFactory.m
+	PCBundleProj.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -17,8 +16,7 @@
     );
     HEADER_FILES = (
 	PCBundleProject.h,
-	PCBundleProj.h,
-	PCBundleMakefileFactory.h
+	PCBundleProj.h
     );
     IMAGES = (
     );
