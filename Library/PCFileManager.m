@@ -151,12 +151,91 @@ static PCFileManager *_mgr = nil;
   return nil;
 }
 
+- (BOOL)createDirectoriesIfNeededAtPath:(NSString *)path
+{
+  NSString       *_path = [NSString stringWithString:path];
+  NSMutableArray *pathArray = [NSMutableArray array];
+  NSFileManager  *fm = [NSFileManager defaultManager];
+  BOOL           isDir;
+  int            i;
+
+  while (![fm fileExistsAtPath:_path isDirectory:&isDir])
+    {
+      [pathArray addObject:[_path lastPathComponent]];
+      _path = [_path stringByDeletingLastPathComponent];
+    }
+
+  if (!isDir)
+    {
+      return NO;
+    }
+
+  if ([_path length] != [path length])
+    {
+      for (i = [pathArray count]-1; i >= 0; i--)
+	{
+	  _path = 
+	    [_path stringByAppendingPathComponent:[pathArray objectAtIndex:i]];
+	  if ([fm createDirectoryAtPath:_path attributes:nil] == NO)
+	    {
+	      return NO;
+	    }
+	}
+    }
+
+  return YES;
+}
+
+- (BOOL)copyFile:(NSString *)file toFile:(NSString *)toFile
+{
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSString      *directory = nil;
+
+  if (!file)
+    {
+      return NO;
+    }
+
+  if (![fm fileExistsAtPath:toFile]) 
+    {
+      directory = [toFile stringByDeletingLastPathComponent];
+      if ([self createDirectoriesIfNeededAtPath:directory] == NO)
+	{
+	  return NO;
+	}
+
+      if (![fm copyPath:file toPath:toFile handler:nil])
+	{
+	  return NO;
+	}
+    }
+
+  return YES;
+}
+
+- (BOOL)copyFile:(NSString *)file intoDirectory:(NSString *)directory
+{
+  NSString *path = nil;
+
+  if (!file)
+    {
+      return NO;
+    }
+    
+  path = [directory stringByAppendingPathComponent:[file lastPathComponent]];
+
+  if (![self copyFile:file toFile:path])
+    {
+      return NO;
+    }
+
+  return YES;
+}
+
 - (BOOL)copyFiles:(NSArray *)files intoDirectory:(NSString *)directory
 {
-  NSEnumerator *enumerator;
+  NSEnumerator *enumerator = nil;
   NSString     *file = nil;
-  NSString     *fileName = nil;
-  NSString     *path = nil;
 
   if (!files)
     {
@@ -166,17 +245,9 @@ static PCFileManager *_mgr = nil;
   enumerator = [files objectEnumerator];
   while ((file = [enumerator nextObject]))
     {
-      NSFileManager *fm = [NSFileManager defaultManager];
-
-      fileName = [file lastPathComponent];
-      path = [directory stringByAppendingPathComponent:fileName];
-
-      if (![fm fileExistsAtPath:path]) 
+      if ([self copyFile:file intoDirectory:directory] == NO)
 	{
-	  if (![fm copyPath:file toPath:path handler:nil])
-	    {
-	      return NO;
-	    }
+	  return NO;
 	}
     }
 
@@ -340,7 +411,7 @@ static PCFileManager *_mgr = nil;
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
-  PCProject      *project = [projectManager rootActiveProject];
+  PCProject      *project = [projectManager activeProject];
   NSString       *selectedCategory = nil;
   int            retval;
 

@@ -238,8 +238,7 @@
   NSString *newEntry = [sender stringValue];
 
   // Build Atributes
-  if (sender == installPathField
-      && ![[[project projectDict] objectForKey:PCInstallDir] isEqualToString:newEntry])
+  if (sender == installPathField)
     {
       [project setProjectDictObject:newEntry forKey:PCInstallDir notify:YES];
     }
@@ -261,32 +260,32 @@
                              forKey:PCCompilerOptions
 			     notify:YES];
     }
-  else if ( sender == ldOptField )
+  else if (sender == ldOptField)
     {
       [project setProjectDictObject:newEntry
                              forKey:PCLinkerOptions
 			     notify:YES];
     }
   // Project Description
-  else if ( sender == descriptionField )
+  else if (sender == descriptionField)
     {
       [project setProjectDictObject:newEntry forKey:PCDescription notify:YES];
     }
-  else if ( sender == releaseField )
+  else if (sender == releaseField)
     {
       [project setProjectDictObject:newEntry forKey:PCRelease notify:YES];
     }
-  else if ( sender == licenseField )
+  else if (sender == licenseField)
     {
       [project setProjectDictObject:newEntry forKey:PCCopyright notify:YES];
     }
-  else if ( sender == licDescriptionField )
+  else if (sender == licDescriptionField)
     {
       [project setProjectDictObject:newEntry
 	                     forKey:PCCopyrightDescription
-			    notify:YES];
+			     notify:YES];
     }
-  else if ( sender == urlField )
+  else if (sender == urlField)
     {
       [project setProjectDictObject:newEntry forKey:PCURL notify:YES];
     }
@@ -296,6 +295,18 @@
 {
   [inspectorPopup selectItemWithTitle:sectionTitle];
   [self inspectorPopupDidChange:inspectorPopup];
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)aNotif
+{
+  NSControl  *anObject = [aNotif object];
+  id         target = [anObject target];
+  SEL        action = [anObject action];
+
+  if ([target respondsToSelector:action])
+    {
+      [target performSelector:action withObject:anObject];
+    }
 }
 
 // ============================================================================

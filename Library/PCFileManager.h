@@ -79,7 +79,16 @@
 		          title:(NSString *)title
 		        accView:(NSView *)accessoryView;
 
-// Return NO if coping of any file failed
+// Checks if directories in path exists and creates if not.
+- (BOOL)createDirectoriesIfNeededAtPath:(NSString *)path;
+
+// Create directories in toFile path if needed
+- (BOOL)copyFile:(NSString *)file toFile:(NSString *)toFile;
+
+// Calls copyFile:toFile:
+- (BOOL)copyFile:(NSString *)file intoDirectory:(NSString *)directory;
+
+// Calls copyFile:intoDirectory in cycle
 - (BOOL)copyFiles:(NSArray *)files intoDirectory:(NSString *)directory;
 
 // Return NO if removing of any file failed

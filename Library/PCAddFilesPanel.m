@@ -73,6 +73,7 @@ static PCAddFilesPanel *addFilesPanel = nil;
 
 - (void)setCategories:(NSArray *)categories
 {
+  [fileTypePopup removeAllItems];
   [fileTypePopup addItemsWithTitles:categories];
 }
 

@@ -384,12 +384,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:6];
   int                 selectedRow = [docTypesList selectedRow];
 
-  [entry setObject:@"" forKey:@"NSName"];
-  [entry setObject:@"" forKey:@"NSHumanReadableName"];
-  [entry setObject:[NSArray array] forKey:@"NSUnixExtensions"];
-  [entry setObject:@"" forKey:@"NSIcon"];
-  [entry setObject:@"Editor" forKey:@"NSRole"];
-  [entry setObject:@"NSDocument" forKey:@"NSDocumentClass"];
+  [entry setObject:[docTypeField stringValue] forKey:@"NSName"];
+  [entry setObject:[docNameField stringValue] forKey:@"NSHumanReadableName"];
+  [entry setObject:[[docExtensionsField stringValue] componentsSeparatedByString:@","] forKey:@"NSUnixExtensions"];
+  [entry setObject:[docIconField stringValue] forKey:@"NSIcon"];
+  [entry setObject:[docRoleField stringValue] forKey:@"NSRole"];
+  [entry setObject:[docClassField stringValue] forKey:@"NSDocumentClass"];
 
   if (selectedRow >= 0 && [docTypesItems count] > 0)
     {
@@ -431,6 +431,60 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [self setProjectDictObject:docTypesItems
                       forKey:PCDocumentTypes
                       notify:YES];
+}
+
+- (void)docFieldSet:(id)sender
+{
+  NSMutableDictionary *object = nil;
+ 
+  NSLog(@"docFieldSet");
+
+  if (sender != docTypeField && sender != docNameField 
+      && sender != docIconField && sender != docExtensionsField
+      && sender != docRoleField && sender != docClassField)
+    {
+      return;
+    }
+    
+  if ([docTypesItems count] <= 0)
+    {
+      [self addDocType:addDocTypeButton];
+    }
+
+  object = [[docTypesItems objectAtIndex:[docTypesList selectedRow]] 
+    mutableCopy];
+
+  if (sender == docTypeField)
+    {
+      [object setObject:[sender stringValue] forKey:@"NSName"];
+    }
+  else if (sender == docNameField)
+    {
+      [object setObject:[sender stringValue] forKey:@"NSHumanReadableName"];
+    }
+  else if (sender == docIconField)
+    {
+      [object setObject:[sender stringValue] forKey:@"NSIcon"];
+    }
+  else if (sender == docExtensionsField)
+    {
+      [object 
+	setObject:[[sender stringValue] componentsSeparatedByString:@","]
+	   forKey:@"NSUnixExtensions"];
+    }
+  else if (sender == docRoleField)
+    {
+      [object setObject:[sender stringValue] forKey:@"NSRole"];
+    }
+  else if (sender == docClassField)
+    {
+      [object setObject:[sender stringValue] forKey:@"NSDocumentClass"];
+    }
+
+  [docTypesItems replaceObjectAtIndex:[docTypesList selectedRow] 
+                          withObject:object];
+  [docTypesList reloadData];
+  [object release];
 }
 
 // ----------------------------------------------------------------------------
@@ -536,55 +590,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [docClassField setStringValue:[type objectForKey:@"NSDocumentClass"]];
 }
 
-- (void)docFieldSet:(id)sender
-{
-  NSMutableDictionary *object = nil;
- 
-  NSLog(@"docFieldSet");
-
-  if (sender != docTypeField && sender != docNameField 
-      && sender != docIconField && sender != docExtensionsField
-      && sender != docRoleField && sender != docClassField)
-    {
-      return;
-    }
-    
-  object = [[docTypesItems objectAtIndex:[docTypesList selectedRow]] 
-    mutableCopy]; 
-
-  if (sender == docTypeField)
-    {
-      [object setObject:[sender stringValue] forKey:@"NSName"];
-    }
-  else if (sender == docNameField)
-    {
-      [object setObject:[sender stringValue] forKey:@"NSHumanReadableName"];
-    }
-  else if (sender == docIconField)
-    {
-      [object setObject:[sender stringValue] forKey:@"NSIcon"];
-    }
-  else if (sender == docExtensionsField)
-    {
-      [object 
-	setObject:[[sender stringValue] componentsSeparatedByString:@","]
-	   forKey:@"NSUnixExtensions"];
-    }
-  else if (sender == docRoleField)
-    {
-      [object setObject:[sender stringValue] forKey:@"NSRole"];
-    }
-  else if (sender == docClassField)
-    {
-      [object setObject:[sender stringValue] forKey:@"NSDocumentClass"];
-    }
-
-  [docTypesItems replaceObjectAtIndex:[docTypesList selectedRow] 
-                          withObject:object];
-  [docTypesList reloadData];
-  [object release];
-}
-
 // ----------------------------------------------------------------------------
 // --- Notifications
 // ----------------------------------------------------------------------------
@@ -665,20 +670,27 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
-  id anObject = [aNotification object];
-  
-  if (anObject != appImageField 
-      && anObject != helpFileField 
-      && anObject != mainNIBField)
+  NSControl *anObject = [aNotification object];
+  id        target = [anObject target];
+  SEL       action = [anObject action];
+
+  if (anObject == appImageField
+      || anObject == helpFileField
+      || anObject == mainNIBField)
     {
+      activeTextField = nil;
+      [self setIconViewImage:nil];
+
+      [setFieldButton setEnabled:NO];
+      [clearFieldButton setEnabled:NO];
+
       return;
     }
 
-  activeTextField = nil;
-  [self setIconViewImage:nil];
-
-  [setFieldButton setEnabled:NO];
-  [clearFieldButton setEnabled:NO];
+  if ([target respondsToSelector:action])
+    {
+      [target performSelector:action withObject:anObject];
+    }
 }
 
 @end

@@ -52,6 +52,7 @@
 - (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendResources;
 - (void)appendResourceItems:(NSArray *)array;
+- (void)appendLocalization;
 - (void)appendSubprojects:(NSArray*)array;
 
 - (NSData *)encodedMakefile;

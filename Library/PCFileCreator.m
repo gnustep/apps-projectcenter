@@ -24,8 +24,9 @@
 */
 
 #include "PCDefines.h"
-#include "PCFileCreator.h"
 #include "PCProject.h"
+#include "PCFileManager.h"
+#include "PCFileCreator.h"
 
 #include "PCLogController.h"
 
@@ -120,7 +121,7 @@ static NSDictionary  *dict = nil;
                               path:(NSString *)path 
 		           project:(PCProject *)aProject
 {
-  NSFileManager       *fm = [NSFileManager defaultManager];
+  PCFileManager       *pcfm = [PCFileManager fileManager];
   NSString            *_file;
   NSString            *newFile = nil;
   NSMutableDictionary *files;
@@ -144,7 +145,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"m"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [files setObject:ObjCClass forKey:newFile];
 
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
@@ -152,7 +153,7 @@ static NSDictionary  *dict = nil;
       // Header must be created as well!
       newFile = [path stringByAppendingPathExtension:@"h"];
       _file = [bundle pathForResource:@"header" ofType:@"template"];
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ObjCHeader forKey:newFile];
@@ -167,7 +168,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ObjCHeader forKey:newFile];
     }
@@ -182,7 +183,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"c"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [files setObject:CFile forKey:newFile];
 
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
@@ -190,7 +191,7 @@ static NSDictionary  *dict = nil;
       // Header should be created as well.
       newFile = [path stringByAppendingPathExtension:@"h"];
       _file = [bundle pathForResource:@"cheader" ofType:@"template"];
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:CHeader forKey:newFile];
@@ -205,7 +206,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:CHeader forKey:newFile];
     }
@@ -219,7 +220,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [files setObject:GSMarkupFile forKey:newFile];
     }
   /*
@@ -232,7 +233,7 @@ static NSDictionary  *dict = nil;
 	{
 	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
-      [fm copyPath:_file toPath:newFile handler:nil];
+      [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ProtocolFile forKey:newFile];
     }

@@ -157,6 +157,7 @@
 - (void)beginFileRename;
 - (void)browserDidSetPath:(NSNotification *)aNotif;
 - (void)setFileName:(NSString *)name andIcon:(NSImage *)icon;
+- (void)fileNameDidChange:(id)sender;
 - (void)setPublicHeader:(id)sender;
 
 @end

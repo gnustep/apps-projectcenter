@@ -425,12 +425,6 @@
     }
 
   // Resources
-  // TODO: proper support for localization
-/*  [mf appendString:
-    [NSString stringWithFormat:@"%@_LANGUAGES = English\n", projectName]];
-  [mf appendString:
-    [NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES = ", projectName]];
-*/
   [mf appendResources];
   for (i = 0; i < [[self resourceFileKeys] count]; i++)
     {
@@ -453,6 +447,16 @@
       [mf appendResourceItems:resources];
       [resources release];
     }
+
+  // Localization
+  // TODO: proper support for localization
+/*  [mf appendLocalization];
+  [mf appendString:
+    [NSString stringWithFormat:@"%@_LANGUAGES = %@\n", 
+    projectName, [[projectDict objectForKey:PCUserLanguages] componentsJoinedByString:@" "]]];
+  [mf appendString:
+    [NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES = ", projectName]];
+*/
 
   [mf appendHeaders:[projectDict objectForKey:PCHeaders]];
   [mf appendClasses:[projectDict objectForKey:PCClasses]];

@@ -1,3 +1,12 @@
+2005-01-04 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFilesManager.[hm]:
+	(createDirectoriesIfNeededAtPath:): Added and implemented.
+	(copyFile:toFile:): ditto.
+	(copyFile:intoDirectory:): ditto.
+
+	* Use above methods where it's appropriate.
+
 2005-01-03 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCAddFilesPanel.[hm]: New implementation. Derived from 
@@ -12,7 +21,7 @@
 	libraries.
 
 	* Library/PCProjectInspector.m: Observe project dictionary changes and
-	reread it.
+	reread it. Accept entered value when textfields are losting focus.
 
 	* Library/PCProjectBrowser.m:
 	(doubleClick:): Don't try to open libraries.
@@ -26,6 +35,10 @@
 
 	* Library/PCEditor.m:
 	(_createEditorViewWithFrame:): Remove return of autoreleased ivar.
+
+	* Library/PCFileManager.m:
+	(filesForAddOfTypes:): Get list of categories from active project not 
+	from root active project.
 
 2004-12-24 Serg Stoyan <stoyan255@ukr.net>
 

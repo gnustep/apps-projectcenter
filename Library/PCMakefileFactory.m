@@ -27,16 +27,17 @@
 #include "PCProject.h"
 #include "PCMakefileFactory.h"
 
-#define COMMENT_HEADERS     @"\n\n#\n# Header files\n#\n"
-#define COMMENT_RESOURCES   @"\n\n#\n# Resource files\n#\n"
-#define COMMENT_CLASSES     @"\n\n#\n# Class files\n#\n"
-#define COMMENT_CFILES      @"\n\n#\n# C files\n#\n"
-#define COMMENT_SUBPROJECTS @"\n\n#\n# Subprojects\n#\n"
-#define COMMENT_APP         @"\n\n#\n# Main application\n#\n"
-#define COMMENT_LIBRARIES   @"\n\n#\n# Additional libraries\n#\n"
-#define COMMENT_BUNDLE      @"\n\n#\n# Bundle\n#\n"
-#define COMMENT_LIBRARY     @"\n\n#\n# Library\n#\n"
-#define COMMENT_TOOL        @"\n\n#\n# Tool\n#\n"
+#define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
+#define COMMENT_RESOURCES    @"\n\n#\n# Resource files\n#\n"
+#define COMMENT_CLASSES      @"\n\n#\n# Class files\n#\n"
+#define COMMENT_CFILES       @"\n\n#\n# C files\n#\n"
+#define COMMENT_SUBPROJECTS  @"\n\n#\n# Subprojects\n#\n"
+#define COMMENT_APP          @"\n\n#\n# Main application\n#\n"
+#define COMMENT_LIBRARIES    @"\n\n#\n# Additional libraries\n#\n"
+#define COMMENT_BUNDLE       @"\n\n#\n# Bundle\n#\n"
+#define COMMENT_LIBRARY      @"\n\n#\n# Library\n#\n"
+#define COMMENT_TOOL         @"\n\n#\n# Tool\n#\n"
+#define COMMENT_LOCALIZATION @"\n\n#\n# Localization\n#\n"
 
 @implementation PCMakefileFactory
 
@@ -197,47 +198,30 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendHeaders:(NSArray *)array
 {
-  [self appendHeaders: array forTarget: pnme];
+  [self appendHeaders:array forTarget:pnme];
 }
 
-- (void)appendHeaders:(NSArray *)array forTarget: (NSString *)target
+- (void)appendHeaders:(NSArray *)array forTarget:(NSString *)target
 {
   [self appendString:COMMENT_HEADERS];
-  [self appendString:[NSString stringWithFormat:@"%@_HEADER_FILES = ", 
-                      target]];
+  [self appendString:
+    [NSString stringWithFormat:@"%@_HEADER_FILES = \\\n", target]];
 
-  if( array && [array count] )
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-
-      while ( (tmp = [enumerator nextObject]) ) 
-	{
-	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-	}
-    }
+  [self appendString:[array componentsJoinedByString:@" \\\n"]];
 }
 
 - (void)appendClasses:(NSArray *)array
 {
-  [self appendClasses: array forTarget: pnme];
+  [self appendClasses:array forTarget:pnme];
 }
 
-- (void)appendClasses:(NSArray *)array forTarget: (NSString *)target
+- (void)appendClasses:(NSArray *)array forTarget:(NSString *)target
 {
   [self appendString:COMMENT_CLASSES];
-  [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES = ", target]];
+  [self appendString:
+    [NSString stringWithFormat:@"%@_OBJC_FILES = \\\n",target]];
 
-  if( array && [array count] )
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-
-      while ( (tmp = [enumerator nextObject] )) 
-	{
-	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-	}
-    }
+  [self appendString:[array componentsJoinedByString:@" \\\n"]];
 }
 
 - (void)appendOtherSources:(NSArray *)array
@@ -248,8 +232,8 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target
 {
   NSMutableArray *marray = nil;
-  NSEnumerator *oenum;
-  NSString *file;
+  NSEnumerator   *oenum;
+  NSString       *file;
   
   [self appendString:COMMENT_CFILES];
   [self appendString:[NSString stringWithFormat:@"%@_C_FILES = ", target]];
@@ -272,7 +256,7 @@ static PCMakefileFactory *_factory = nil;
 	}
     }
 
-  [self appendString: @"\n"];
+  [self appendString: @"\n\n"];
   [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES += ",pnme]];
   if ( marray )
     {
@@ -289,18 +273,24 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendResources
 {
   [self appendString:COMMENT_RESOURCES];
-  [self appendString:[NSString stringWithFormat:@"%@_RESOURCE_FILES = ",pnme]];
+  [self appendString:
+    [NSString stringWithFormat:@"%@_RESOURCE_FILES = ",pnme]];
 }
 
 - (void)appendResourceItems:(NSArray *)array
 {
-  NSString     *tmp;
-  NSEnumerator *enumerator = [array objectEnumerator];
-
-  while ((tmp = [enumerator nextObject]))
+  if ([array count] <= 0)
     {
-      [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
+      return;
     }
+
+  [self appendString:@"\\\n"];
+  [self appendString:[array componentsJoinedByString:@" \\\n"]];
+}
+
+- (void)appendLocalization
+{
+  [self appendString:COMMENT_LOCALIZATION];
 }
 
 - (void)appendSubprojects:(NSArray*)array
