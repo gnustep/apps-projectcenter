@@ -2,6 +2,7 @@
 2003-07-05 Philippe C.D. Robert <probert@siggraph.org>
 
         * Uppercase key for interface category lookup: PCFileManager.m
+        * Adjusting UI elements ... : PCGormProject.m
 
 2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
 

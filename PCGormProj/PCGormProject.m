@@ -39,12 +39,13 @@
 - (void)_initUI
 {
   NSTextField *textField;
-  NSRect frame = {{84,120}, {80, 80}};
-  NSBox *_box;
+  NSRect       frame = {{84,120}, {80, 80}};
+  NSBox       *_iconViewBox;
+  NSBox       *_appIconBox;
 
   [super _initUI];
 
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -54,7 +55,7 @@
   [projectProjectInspectorView addSubview:textField];
   RELEASE(textField);
 
-  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
+  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
   [appClassField setAlignment: NSLeftTextAlignment];
   [appClassField setBordered: YES];
   [appClassField setEditable: YES];
@@ -65,6 +66,7 @@
   [appClassField setAction:@selector(setAppClass:)];
   [projectProjectInspectorView addSubview:appClassField];
 
+#if 0
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
@@ -109,6 +111,52 @@
   RELEASE(setAppIconButton);
   RELEASE(clearAppIconButton);
   RELEASE(appIconView);
+
+#else
+  // Application Icon
+  _appIconBox = [[NSBox alloc] init];
+  [_appIconBox setFrame:NSMakeRect(6,154,270,84)];
+  [_appIconBox setContentViewMargins:NSMakeSize(4.0, 6.0)];
+  [_appIconBox setTitle:@"Application Icon"];
+  [projectProjectInspectorView addSubview:_appIconBox];
+  RELEASE(_appIconBox);
+
+  appImageField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,34,195,21)];
+  [appImageField setAlignment: NSLeftTextAlignment];
+  [appImageField setBordered: YES];
+  [appImageField setEditable: YES];
+  [appImageField setBezeled: YES];
+  [appImageField setDrawsBackground: YES];
+  [appImageField setStringValue:@""];
+  [_appIconBox addSubview:appImageField];
+  RELEASE(appImageField);
+
+  setAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(147,0,48,21)];
+  [setAppIconButton setTitle:@"Set..."];
+  [setAppIconButton setTarget:self];
+  [setAppIconButton setAction:@selector(setAppIcon:)];
+  [_appIconBox addSubview:setAppIconButton];
+  RELEASE(setAppIconButton);
+
+  clearAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(95,0,48,21)];
+  [clearAppIconButton setTitle:@"Clear"];
+  [clearAppIconButton setTarget:self];
+  [clearAppIconButton setAction:@selector(clearAppIcon:)];
+  [_appIconBox addSubview:clearAppIconButton];
+  RELEASE(clearAppIconButton);
+
+  frame = NSMakeRect(200,0,56,56);
+  _iconViewBox = [[NSBox alloc] init];
+  [_iconViewBox setFrame:frame];
+  [_iconViewBox setTitlePosition:NSNoTitle];
+  [_iconViewBox setBorderType:NSBezelBorder];
+  [_appIconBox addSubview:_iconViewBox];
+  RELEASE(_iconViewBox);
+
+  appIconView = [[NSImageView alloc] initWithFrame:frame];
+  [_iconViewBox addSubview:appIconView];
+  RELEASE(appIconView);
+#endif
 }
 
 @end
