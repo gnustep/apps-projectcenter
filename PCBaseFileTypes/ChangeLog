@@ -1,3 +1,17 @@
+2000-10-29 13:00  robert
+
+	* protocol.template: updated textfiles and new version coming
+	soon...
+
+2000-10-20 17:18  robert
+
+	* GNUmakefile, PCBaseFileType.m, protocol.template: Support for
+	protocols in file creation
+
+2000-09-20 17:51  robert
+
+	* ChangeLog: Added a changelog
+
 2000-09-13 12:45  robert
 
 	* PCBaseFileType.m: removed the gmodels completely from

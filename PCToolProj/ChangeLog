@@ -1,0 +1,36 @@
+2000-11-04 13:41  robert
+
+	* PCToolProject.h, PCToolProject.m: The project type is executable
+
+2000-10-15 20:29  robert
+
+	* PCToolProject.m: some code improvements regarding the inspector
+
+2000-10-11 15:15  robert
+
+	* PCToolProject.m: daily work
+
+2000-09-22 11:24  robert
+
+	* PCToolMakefileFactory.m: Fix in the makefile generation section
+
+2000-09-03 22:10  robert
+
+	* GNUmakefile.preamble: renamed libPC into libProjectCenter
+
+2000-08-27 21:13  robert
+
+	* PCToolProj.h, PCToolProj.m, h.template, m.template, Info.table,
+	PCToolProject.m, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCToolProject.h, main.m, PCToolMakefileFactory.m, GNUmakefile,
+	Info-project.plist, PC.proj, PCToolMakefileFactory.h: Initial
+	revision
+
+2000-08-27 21:13  robert
+
+	* PCToolProj.h, PCToolProj.m, h.template, m.template, Info.table,
+	PCToolProject.m, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCToolProject.h, main.m, PCToolMakefileFactory.m, GNUmakefile,
+	Info-project.plist, PC.proj, PCToolMakefileFactory.h: Initial
+	import
+

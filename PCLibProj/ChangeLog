@@ -1,3 +1,29 @@
+2000-10-15 20:29  robert
+
+	* PCLibProject.m: some code improvements regarding the inspector
+
+2000-09-24 15:37  robert
+
+	* PCLibProject.m: minor UI issue
+
+2000-09-23 17:45  robert
+
+	* PCLibMakefileFactory.m: another issue...
+
+2000-09-23 16:24  robert
+
+	* PCLibMakefileFactory.m, PCLibProject.m: Fixed some makefile
+	issues
+
+2000-09-21 09:07  robert
+
+	* PCLibMakefileFactory.m, PCLibProj.m: removed the English.lproj
+	stuff in libs
+
+2000-09-20 17:51  robert
+
+	* ChangeLog: Added a changelog
+
 2000-09-17 14:13  robert
 
 	* PCLibMakefileFactory.m: makefile improvements

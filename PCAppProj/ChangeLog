@@ -1,3 +1,39 @@
+2000-11-04 13:41  robert
+
+	* PCAppProj.m, PCAppProject.h, PCAppProject.m: we do not use
+	gmodels, and the project is executable
+
+2000-10-20 16:49  robert
+
+	* PCAppMakefileFactory.m, PCAppProj.m, PCAppProject.h,
+	PCAppProject.m: some more UI
+
+2000-10-15 20:29  robert
+
+	* PCAppProject.m: some code improvements regarding the inspector
+
+2000-10-15 14:36  robert
+
+	* AppController.h, AppController.m, main.m: fixed the info panel
+	issue
+
+2000-10-15 14:25  robert
+
+	* PCAppProj.m: Added the plist file to "Other Resources"
+
+2000-10-11 09:35  robert
+
+	* AppController.h, AppController.m: removed old method
+
+2000-10-11 09:33  robert
+
+	* AppController.h, AppController.m, PCAppProj.m, main.m: new info
+	panel approach - uch simpler, thanks Nicola!
+
+2000-09-20 17:51  robert
+
+	* ChangeLog: Added a changelog
+
 2000-09-20 10:50  robert
 
 	* AppController.h, AppController.m, PCAppMakefileFactory.m,
