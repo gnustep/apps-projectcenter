@@ -105,6 +105,7 @@
   [b setAction:@selector(setPromptOnClean:)];
   [b setContinuous:NO];
   [prefBuildingView addSubview:b];
+  [b sizeToFit];
 
   /*
    * Misc view
@@ -252,7 +253,7 @@
   [v setFrameFromContentFrame:NSMakeRect(16,208,228,72)];
   [prefSavingView addSubview:v];
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(13,32,124,15)] autorelease];
+  b = [[[NSButton alloc] initWithFrame:NSMakeRect(24,32,124,15)] autorelease];
   [b setTitle:@"Save Automatically"];
   [b setButtonType:NSSwitchButton];
   [b setBordered:NO];
@@ -260,8 +261,9 @@
   [b setAction:@selector(setSaveAutomatically:)];
   [b setContinuous:NO];
   [v addSubview:b];
+  [b sizeToFit];
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(13,13,124,15)] autorelease];
+  b = [[[NSButton alloc] initWithFrame:NSMakeRect(24,12,124,15)] autorelease];
   [b setTitle:@"Remove Backup"];
   [b setButtonType:NSSwitchButton];
   [b setBordered:NO];
@@ -269,10 +271,11 @@
   [b setAction:@selector(setRemoveBackup:)];
   [b setContinuous:NO];
   [v addSubview:b];
+  [b sizeToFit];
 
   v = [[[NSBox alloc] init] autorelease];
   [v setTitle:@"Auto-Save"];
-  [v setFrameFromContentFrame:NSMakeRect(16,104,228,80)];
+  [v setFrameFromContentFrame:NSMakeRect(16,104,228,48)];
   [prefSavingView addSubview:v];
 }
 

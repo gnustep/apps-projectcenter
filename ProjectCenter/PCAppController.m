@@ -261,7 +261,7 @@
         [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
 
 	// In objc.h there is already th like (char *)name...
-	//        [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
+	// [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
 }
 }
 
