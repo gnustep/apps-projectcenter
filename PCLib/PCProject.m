@@ -29,12 +29,12 @@
 #import "PCProject+ComponentHandling.h"
 
 #import "PCProjectBuilder.h"
+#import "PCProjectEditor.h"
+#import "PCProjectDebugger.h"
 #import "PCSplitView.h"
 #import "PCEditor.h"
 #import "PCEditorController.h"
 #import "PCHistoryController.h"
-#import "PCProjectDebugger.h"
-#import "PCProjectEditor.h"
 
 #define ENABLE_HISTORY
 
@@ -680,7 +680,7 @@
     [self showEditorView:self];
     [e showInProjectEditor:projectEditor];
 
-    [projectWindow makeFirstResponder:[projectEditor editorView]];
+    [projectWindow makeFirstResponder:(NSResponder*)[projectEditor editorView]];
 }
 
 - (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c

@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PROJECTTYPE_H
+#define _PROJECTTYPE_H
+
 /*
  Description:
 
@@ -51,3 +54,5 @@
 - (PCProject *)openProjectAt:(NSString *)path;
 
 @end
+
+#endif

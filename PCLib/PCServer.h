@@ -29,8 +29,13 @@
 
 #import <AppKit/AppKit.h>
 
-#import "Server.h"
-#import "PCProject.h"
+#ifndef GNUSTEP_BASE_VERSION
+#protocol Server;
+#else
+#import <ProjectCenter/Server.h>
+#endif
+
+@class PCProject;
 
 extern NSString *PCProjectWillOpenNotification;
 extern NSString *PCProjectDidOpenNotification;

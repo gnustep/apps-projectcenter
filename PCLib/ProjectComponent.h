@@ -8,6 +8,9 @@
  * $Id$
  */
 
+#ifndef _PROJECTCOMPONENT_H
+#define _PROJECTCOMPONENT_H
+
 @class PCProject;
 @class NSView;
 
@@ -18,3 +21,5 @@
 - (NSView *)componentView;
 
 @end
+
+#endif

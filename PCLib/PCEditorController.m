@@ -10,8 +10,9 @@
 
 #import "PCEditorController.h"
 #import "PCDefines.h"
-#import "PCEditor.h"
 #import "PCProject.h"
+#import "PCEditor.h"
+#import "PCProject+ComponentHandling.h"
 
 @implementation PCEditorController
 

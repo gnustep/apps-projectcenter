@@ -27,6 +27,7 @@
 #import "PCFileManager.h"
 #import "PCDefines.h"
 #import "PCProject.h"
+#import "PCServer.h"
 #import "FileCreator.h"
 #import <AppKit/AppKit.h>
 

@@ -26,6 +26,7 @@
 
 #import "PCServer.h"
 #import "PCDefines.h"
+#import "PCProject.h"
 #import "PCBrowserController.h"
 #import "PCEditor.h"
 

@@ -19,7 +19,11 @@
 @class PCEditorView;
 @class PCProject;
 
+#ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectComponent;
+#else
+#import <ProjectCenter/ProjectComponent.h>
+#endif
 
 @interface PCProjectEditor : NSObject <ProjectComponent>
 {
