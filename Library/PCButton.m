@@ -111,11 +111,11 @@
   for (i = 0; i < j; i++)
     {
       tr = [_tracking_rects objectAtIndex:i];
-      [self removeTrackingRect:tr->tag];
 
 //      NSLog(@"PCButton: tr: %i data: %@", tr->tag, tr->user_data);
 
       string = [(NSString *)tr->user_data copy];
+      [self removeTrackingRect:tr->tag];
 
       rect = [self frame];
       rect.origin.x = 0;

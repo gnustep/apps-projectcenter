@@ -1,3 +1,11 @@
+2005-02-12 Pascal Hoftsee <caelian@gmail.com>
+  	   Committed by Gregory Jonh Casamento <greg_casamento@yahoo.com>
+	
+	* Library/PCButton.m: Corrected issue in 
+	-[PCButton _updateTrackingRects:] which was causing a SIGBUS
+	to occur on FreeBSD by simply moving the remove method call below
+	the line which was referencing the rect.
+	
 2005-01-26 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.2
