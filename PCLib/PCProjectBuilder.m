@@ -509,6 +509,7 @@
 			  [currentProject projectName])
 	  == NSAlertAlternateReturn)
 	{
+	  [cleanButton setState: NSOffState];
 	  return;
 	}
     }
