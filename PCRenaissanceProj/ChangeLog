@@ -1,3 +1,9 @@
+Sun Feb  2 06:02:50 2003  Nicola Pero  <n.pero@mi.flashnet.it>
+                          Daniel Luederwald <das_flip@gmx.de>
+	
+	* h.template: Removed.
+	* m.template: Removed.
+
 Fri Jan 31 19:32:40 2003  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* MainMenu-GNUstep.gsmarkup: 
