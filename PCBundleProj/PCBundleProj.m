@@ -137,7 +137,7 @@ static PCBundleProj *_creator = nil;
 
 #ifdef DEBUG
     NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
-#endif DEBUG
+#endif //DEBUG
 
     obj = [dict objectForKey:PCProjectBuilderClass];    
     if ([obj isEqualToString:@"PCBundleProj"]) {
