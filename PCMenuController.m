@@ -343,7 +343,7 @@
 - (void)fileSaveAs:(id)sender
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
   NSString       *oldFilePath = nil;
   NSString 	 *newFilePath = nil;
   NSString       *directory = nil;
@@ -391,7 +391,7 @@
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString 	 *filePath = [projectManager selectedFileName];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
   int		 retval;
 
   [savePanel setTitle: @"Save To..."];

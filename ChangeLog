@@ -1,7 +1,7 @@
 
 2003-08-03 Philippe C.D. Robert <probert@siggraph.org>
 
-        * Fixed typo: PCLib/PCProject+ComponentHandling.m
+        * Fixed typo: PCLib/PCProject+ComponentHandling.m, PCMenuController.m
 
 2003-08-01 Philippe C.D. Robert <probert@siggraph.org>
 
