@@ -18,7 +18,7 @@
     LIBRARIES = ("gnustep-base","gnustep-gui"); 
     MAININTERFACE = ""; 
     MAKEFILEDIR = "$(GNUSTEP_SYSTEM_ROOT)/Makefiles"; 
-    INSTALLDIR = "$(GNUSTEP_LOCAL_ROOT)/Apps";
+    INSTALLDIR = "$(GNUSTEP_LOCAL_ROOT)/";
     OTHER_FILES = (); 
     OTHER_RESOURCES = (); 
     OTHER_SOURCES = (); 
