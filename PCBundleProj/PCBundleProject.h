@@ -64,5 +64,7 @@
 
 - (void)updateValuesFromProjectDict;
 
+- (void)setPrincipalClass:(id)sender;
+
 @end
 

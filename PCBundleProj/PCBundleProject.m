@@ -52,15 +52,19 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Principal class:"];
-  [projectProjectInspectorView addSubview:[textField autorelease]];
+  [projectProjectInspectorView addSubview:textField];
+  RELEASE(textField);
 
-  principalClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(106,240,144,21)];
+  frame = NSMakeRect(106,240,144,21);
+  principalClassField =[[NSTextField alloc] initWithFrame:frame];
   [principalClassField setAlignment: NSLeftTextAlignment];
   [principalClassField setBordered: YES];
   [principalClassField setEditable: YES];
   [principalClassField setBezeled: YES];
   [principalClassField setDrawsBackground: YES];
   [principalClassField setStringValue:@""];
+  [principalClassField setTarget:self];
+  [principalClassField setAction:@selector(setPrincipalClass:)];
   [projectProjectInspectorView addSubview:principalClassField];
 }
 
@@ -162,9 +166,23 @@
 
 - (void)updateValuesFromProjectDict
 {
+  NSString *pc;
+
   [super updateValuesFromProjectDict];
 
-  [principalClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
+  pc = [projectDict objectForKey:PCPrincipalClass];
+  [principalClassField setStringValue:pc];
+}
+
+- (void)setPrincipalClass:(id)sender
+{
+  [projectDict setObject:[principalClassField stringValue] 
+	       forKey:PCPrincipalClass];
+
+  [self writeMakefile];
 }
 
 @end
+
+
+
