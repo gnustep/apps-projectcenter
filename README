@@ -1,16 +1,18 @@
-Introduction
-************
-	
-    Read the NEWS file for the latest user visible changes. Read the INSTALL
-    file for installation instructions.
+
+    ProjectCenter 
+    =============
 
     This is ProjectCenter, the GNUstep IDE. ProjectCenter is part of the
     GNUstep project and is copyrighted by the Free Softare Foundation.
 
     ProjectCenter is released under the GPL - see file 'COPYING' for details.
     
-Status
-******
+    Read the NEWS file for the latest user visible changes. Read the INSTALL
+    file for installation instructions.
+
+
+    Status
+    ------
 
     A lot is still not done and not even designed. As for the moment the
     application can be used for creating and managing projects of different
@@ -19,20 +21,39 @@ Status
     What still needs a lot of effort:
 
     o Code editing/external editor support
-    o Debugging
+    o Debugging support
     o Code 'wizards' 
     o UML case tool?!
     o Overall code improvements and bug fixes!!!
     o ... and a lot more!
 
-Acknowledgements
-****************
+
+    ProjectCenter.app on Mac OS X
+    -----------------------------
+
+    It is possible to compile and run ProjectCenter on Mac OS X 10.2 using 
+    Cocoa. But since the application relies on the GNUstep makefile package 
+    it will not be really useable (yet). 
+
+    Installation: - Compile PCLib and install it in ~/Library/Frameworks/
+                  - Compile ProjectCenter.app and install it at the usual place
+                  - Compile all bundles and install them where appropriate
+                  - Run ProjectCenter.app and set the bundle path in the 
+                    preferences panel
+                  - Restart ProjectCenter.app - that's it!
+
+    Known issues: - The GUI is hardcoded therefore it is not adopted to Mac OS X
+                    metrics.
+
+
+    Acknowledgements
+    ----------------
 
     Icons     - Many are created by Andrew Lindsay.
 
     Code      - Pierre-Yves Rivaille
 	        Nicola Perot
+                Richard Frith-Macdonald
+                Adam Fedor
 
-    Makefiles - Adam Fedor
-	   
     And all I have forgotten...
