@@ -33,6 +33,7 @@
 {
   PCProjectManager *projectManager;
   NSBox            *contentBox;
+  NSBox            *emptyBox;
 }
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager;

@@ -48,12 +48,11 @@
 
 - (void)_createCustomView
 {
-  customView = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
-  [customView setTitlePosition: NSNoTitle];
-  [customView setBorderType: NSNoBorder];
-  [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
-  [customView setAutoresizingMask:
-    NSViewWidthSizable | NSViewHeightSizable];
+  customView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,252)];
+  [customView setTitlePosition:NSNoTitle];
+  [customView setBorderType:NSNoBorder];
+  [customView setContentViewMargins:NSMakeSize(0.0,0.0)];
+  [customView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
   // Editor in the Box
   [customView setContentView:[[project projectEditor] componentView]];
@@ -245,6 +244,7 @@
 
   [_c_view addSubview:h_split];
   RELEASE(h_split);
+
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -258,6 +258,8 @@
       _isToolbarVisible = YES;
 
       [self _initUI];
+      
+      // Window
       [projectWindow setFrameAutosaveName: @"ProjectWindow"];
 
       pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
@@ -271,6 +273,12 @@
       else if (![projectWindow setFrameUsingName: @"ProjectWindow"])
 	{
 	  [projectWindow center];
+	}
+	
+      // Toolbar
+      if ([[pcWindows objectForKey:@"ShowToolbar"] isEqualToString:@"NO"])
+	{
+	  [self toggleToolbar];
 	}
 
       [self setTitle];
@@ -457,19 +465,22 @@
 
 - (BOOL)hasCustomView
 {
-  NSDictionary *prefsDict = nil;
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
-  prefsDict = [[project projectManager] preferencesDict];
-  if (![[prefsDict objectForKey:@"SeparateEditor"] isEqualToString:@"YES"]
-      || ![[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"]
-      || ![[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"]
-      )
+  _hasCustomView = NO;
+  
+  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"]
+      && [[ud objectForKey:Editor] isEqualToString:@"ProjectCenter"])
     {
       _hasCustomView = YES;
     }
-  else
+  if (![[ud objectForKey:SeparateBuilder] isEqualToString:@"YES"])
     {
-      _hasCustomView = NO;
+      _hasCustomView = YES;
+    }
+  if (![[ud objectForKey:SeparateLauncher] isEqualToString:@"YES"])
+    {
+      _hasCustomView = YES;
     }
 
   return _hasCustomView;
@@ -477,10 +488,9 @@
 
 - (BOOL)hasLoadedFilesView
 {
-  NSDictionary *prefsDict = nil;
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
-  prefsDict = [[project projectManager] preferencesDict];
-  if (![[prefsDict objectForKey:@"SeparateLoadedFiles"] isEqualToString:@"YES"])
+  if (![[ud objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
     {
       _hasLoadedFilesView = YES;
     }
@@ -514,35 +524,38 @@
 
 - (void)showProjectLoadedFiles:(id)sender
 {
+  NSPanel       *panel = [[project projectManager] loadedFilesPanel];
+  NSScrollView  *componentView = [[project projectLoadedFiles] componentView];
+      
   PCLogInfo(self, @"showProjectLoadedFiles");
+
   if ([self hasLoadedFilesView])
     {
-      PCLogInfo(self, @"showProjectLoadedFiles: should show");
+      if ([panel isVisible])
+	{
+	  [panel close];
+	}
+
+      [componentView setBorderType:NSBezelBorder];
       [v_split addSubview:[[project projectLoadedFiles] componentView]];
       [v_split adjustSubviews];
     }
   else
     {
-      // LoadedFiles panel
+//      [[[project projectLoadedFiles] componentView] removeFromSuperview];
+      [componentView setBorderType:NSNoBorder];
+      [panel orderFront:nil];
+      [v_split adjustSubviews];
     }
 }
 
 - (void)showProjectBuild:(id)sender
 {
-  BOOL    separate = NO;
-  NSView  *view = nil;
-  NSPanel *buildPanel = nil;
+  NSView  *view = [[project projectBuilder] componentView];
+  NSPanel *buildPanel = [[project projectManager] buildPanel];
   
   if ([[[PCPrefController sharedPCPreferences] objectForKey:SeparateBuilder]
       isEqualToString: @"YES"])
-    {
-      separate = YES;
-    }
-
-  view = [[project projectBuilder] componentView];
-  buildPanel = [[project projectManager] buildPanel];
-
-  if (separate)
     {
       if ([customView contentView] == view)
 	{
@@ -552,39 +565,34 @@
     }
   else
     {
-      if (buildPanel)
+      if ([buildPanel isVisible])
 	{
 	  [buildPanel close];
 	}
       [self setCustomContentView:view];
     }
+
   [[project projectBuilder] setTooltips];
 }
 
 - (void)showProjectLaunch:(id)sender
 {
-  BOOL    separate = NO;
   NSView  *view = nil;
   NSPanel *launchPanel = nil;
 
   if ([project isExecutable] == NO)
-  {
-    NSRunAlertPanel(@"Attention!",
-                    @"This project is not executable!",
-                    @"OK",nil,nil);
-    return;
-  }
-  
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateLauncher] isEqualToString: @"YES"])
     {
-      separate = YES;
+      NSRunAlertPanel(@"Attention!",
+		      @"This project is not executable!",
+		      @"OK",nil,nil);
+      return;
     }
-
+  
   view = [[project projectLauncher] componentView];
   launchPanel = [[project projectManager] launchPanel];
 
-  if (separate)
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+           objectForKey: SeparateLauncher] isEqualToString: @"YES"])
     {
       if ([customView contentView] == view)
 	{
@@ -600,6 +608,7 @@
 	}
       [self setCustomContentView:view];
     }
+
   [[project projectLauncher] setTooltips];
 }
 
@@ -736,12 +745,54 @@
 
 - (void)preferencesDidChange:(NSNotification *)aNotif
 {
-  // Custom view (Builder, Launcher, Editor)
+  NSDictionary *prefsDict = [[aNotif object] preferencesDict];
+ 
+  PCLogStatus(self, @"Preferences did change");
+ 
+  //--- Add Custom view
   if ([self hasCustomView] && customView == nil)
     {
       [self _createCustomView];
     }
-  else if (![self hasCustomView] && customView != nil)
+
+  // Project Builder
+  if ([[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
+    {
+      if ([[[project projectBuilder] componentView] superview])
+	{
+	  [self showProjectBuild:self];
+	}
+    }
+  else
+    {
+      NSPanel *buildPanel = [[project projectManager] buildPanel];
+      
+      if ([buildPanel isVisible] == YES)
+	{
+	  [self showProjectBuild:self];
+	}
+    }
+
+  // Project Launcher
+  if ([[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"])
+    {
+      if ([[[project projectLauncher] componentView] superview])
+	{
+	  [self showProjectLaunch:self];
+	}
+    }
+  else
+    {
+      NSPanel *launchPanel = [[project projectManager] launchPanel];
+      
+      if ([launchPanel isVisible] == YES)
+	{
+	  [self showProjectLaunch:self];
+	}
+    }
+
+  //--- Remove Custom view
+  if (![self hasCustomView] && customView != nil)
     {
       [customView removeFromSuperview];
       [h_split adjustSubviews];
@@ -755,8 +806,7 @@
     }
   else if (![self hasLoadedFilesView] && [[v_split subviews] count] == 2)
     {
-      [[[project projectLoadedFiles] componentView] removeFromSuperview];
-      [v_split adjustSubviews];
+      [self showProjectLoadedFiles:self];
     }
 }
 

@@ -18,13 +18,13 @@
 {
   NSAssert(aProj, @"Project is mandatory!");
 
-  if((self = [super init]))
+  if ((self = [super init]))
     {
       project = aProj;
       editedFiles = [[NSMutableArray alloc] init];
 
       // Column
-      filesColumn = [[NSTableColumn alloc] initWithIdentifier: @"Files List"];
+      filesColumn = [[NSTableColumn alloc] initWithIdentifier:@"Files List"];
       [filesColumn setEditable:NO];
 
       // Table
@@ -82,13 +82,6 @@
 	   selector:@selector(editorDidBecomeActive:)
 	       name:PCEditorDidBecomeActiveNotification
 	     object:nil];
-	     
-      // ProjectCenter preferences
-      [[NSNotificationCenter defaultCenter] 
-	addObserver:self
-	   selector:@selector(preferencesDidChange:)
-	       name:PCPreferencesDidChangeNotification
-	     object:nil];
     }
 
   return self;
@@ -102,6 +95,7 @@
 
   RELEASE(filesColumn);
   RELEASE(filesList);
+  RELEASE(filesScroll);
   RELEASE(editedFiles);
 
   [super dealloc];
@@ -281,19 +275,6 @@
       filePath = [editor path];
       index = [[self editedFilesRep] indexOfObject:filePath];
       [filesList selectRow:index byExtendingSelection:NO];
-    }
-}
-
-- (void)preferencesDidChange:(NSNotification *)aNotif
-{
-  if ([[[aNotif object] objectForKey:SeparateLoadedFiles]
-      isEqualToString: @"NO"])
-    {
-      [filesScroll setBorderType:NSBezelBorder];
-    }
-  else
-    {
-      [filesScroll setBorderType:NSNoBorder];
     }
 }
 

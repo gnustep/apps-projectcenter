@@ -27,6 +27,8 @@
 #include "PCProjectLauncher.h"
 #include "PCLaunchPanel.h"
 
+#include "PCLogController.h"
+
 @implementation PCLaunchPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
@@ -58,8 +60,13 @@
   [contentBox setTitlePosition:NSNoTitle];
   [contentBox setBorderType:NSNoBorder];
   [super setContentView:contentBox];
-
-  [contentBox setContentView:[projectLauncher componentView]];
+  
+  // Empty content view of contentBox
+  emptyBox = [[NSBox alloc] init];
+  [emptyBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
+  [emptyBox setTitlePosition:NSNoTitle];
+  [emptyBox setBorderType:NSLineBorder];
+  [contentBox setContentView:emptyBox];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -84,16 +91,44 @@
   [super dealloc];
 }
 
+- (void)orderFront:(id)sender
+{
+  PCProject *activeProject = [projectManager rootActiveProject];
+  NSView    *launcherView = [[activeProject projectLauncher] componentView];
+
+  if (!([contentBox contentView] == launcherView))
+    {
+      [contentBox setContentView:launcherView];
+      [contentBox display];
+    }
+
+  PCLogInfo(self, @"orderFront: %@ -> %@", 
+	    launcherView, [launcherView superview]);
+
+  [super orderFront:self];
+}
+
+- (void)close
+{
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [contentBox setContentView:emptyBox];
+  
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [super close];
+}
+
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
   PCProject *activeProject = [projectManager rootActiveProject];
 
-  [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Launch", [activeProject projectName]]];
+  [self setTitle: [NSString stringWithFormat:
+                   @"%@ - Launch", [activeProject projectName]]];
 
   if (!activeProject)
     {
-      [contentBox setContentView:nil];
+      [contentBox setContentView:emptyBox];
     }
   else
     {

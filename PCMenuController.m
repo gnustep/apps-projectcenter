@@ -409,6 +409,7 @@
 	{
 	  if ([[menuItem title] isEqualToString:@"Inspector..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Show Tool Bar"]) return NO;
 	}
       if ([menuTitle isEqualToString: @"Project Build"])
 	{
@@ -529,6 +530,19 @@
 	{
 	  if ([[menuItem title] isEqualToString:@"Run"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Debug"]) return NO;
+	}
+    }
+    
+  // Loaded Files related
+  if (([menuTitle isEqualToString: @"Loaded Files"]))
+    {
+      if ([[[aProject projectLoadedFiles] editedFilesRep] count] <= 0)
+	{
+	  if ([[menuItem title] isEqualToString:@"Sort by Time Viewed"])
+	    return NO;
+	  if ([[menuItem title] isEqualToString:@"Sort by Name"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Next File"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Previous File"]) return NO;
 	}
     }
 

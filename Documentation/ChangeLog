@@ -1,3 +1,15 @@
+2004-06-01 Serg Stoyan <stoyan255@ukr.net>
+
+        * Finished on-the-fly applying "Tear-Off Panels" preferences.
+	
+	* Implemented remembering windows and panels visibility on project
+	opening.
+	
+	* Various PCProject fixes.
+	
+	* Remove PC.project.backup if preference "Keep Project Backup File"
+	is not set.
+
 2004-05-27 Serg Stoyan <stoyan255@ukr.net>
 
         * Finished support of external editors.

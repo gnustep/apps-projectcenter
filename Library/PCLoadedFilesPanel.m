@@ -27,6 +27,8 @@
 #include "PCProjectLoadedFiles.h"
 #include "PCLoadedFilesPanel.h"
 
+#include "PCLogController.h"
+
 @implementation PCLoadedFilesPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
@@ -51,13 +53,19 @@
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Loaded Files", [activeProject projectName]]];
 
+  // Panel's content view
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
   [contentBox setTitlePosition:NSNoTitle];
   [contentBox setBorderType:NSNoBorder];
   [self setContentView:contentBox];
 
-  [contentBox setContentView:[projectLoadedFiles componentView]];
+  // Empty content view of contentBox
+  emptyBox = [[NSBox alloc] init];
+  [emptyBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
+  [emptyBox setTitlePosition:NSNoTitle];
+  [emptyBox setBorderType:NSLineBorder];
+  [contentBox setContentView:emptyBox];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -77,9 +85,35 @@
 - (void)dealloc
 {
   NSLog (@"PCLoadedFilesPanel: dealloc");
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
+}
+
+- (void)orderFront:(id)sender
+{
+  PCProject *activeProject = [projectManager rootActiveProject];
+  NSView    *filesView = [[activeProject projectLoadedFiles] componentView];
+
+  if (!([contentBox contentView] == filesView))
+    {
+      [contentBox setContentView:filesView];
+      [contentBox display];
+    }
+
+  [super orderFront:self];
+}
+
+- (void)close
+{
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [contentBox setContentView:emptyBox];
+  
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [super close];
 }
 
 - (BOOL)canBecomeKeyWindow
@@ -97,7 +131,7 @@
 
   if (!activeProject)
     {
-      [contentBox setContentView:nil];
+      [contentBox setContentView:emptyBox];
     }
   else
     {

@@ -176,6 +176,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)click:(id)sender
 {
+  NSString       *category = nil;
+  NSString       *fileName = nil;
+  PCProject      *sp = nil;
+  NSString       *filePath = nil;
+  NSUserDefaults *ud = nil;
+
   if (sender != browser)
     {
       return;
@@ -183,12 +189,9 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
-      NSString  *category = [project categoryForCategoryPath:[browser path]];
-      NSString  *fileName = [[sender selectedCell] stringValue];
-      PCProject *sp = nil;
-      NSString  *filePath = nil;
-      NSDictionary *prefsDict = nil;
-
+      ud = [NSUserDefaults standardUserDefaults];
+      category = [project categoryForCategoryPath:[browser path]];
+      fileName = [[sender selectedCell] stringValue];
       if ((sp = [project activeSubproject]) != nil)
 	{
 	  filePath = [[sp projectPath] 
@@ -206,9 +209,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])
 	{
-	  prefsDict = [[project projectManager] preferencesDict];
-	  if (![[prefsDict objectForKey:@"SeparateEditor"] 
-	      isEqualToString:@"YES"])
+	  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	    {
 	      [[project projectEditor] editorForFile:filePath
 		                        categoryPath:[browser path]
@@ -247,7 +248,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	    stringByAppendingPathComponent:fileName];
 	}
 
-
+      PCLogInfo(self ,@"opening windowed editor");
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])
 	{
@@ -261,6 +262,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 			  @"Could not open %@.",
 			  @"OK",nil,nil,filePath);
 	}
+      PCLogInfo(self ,@"opening windowed editor.END");
     }
   else 
     {

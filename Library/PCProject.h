@@ -117,7 +117,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (Class)principalClass;
 
 // ===========================================================================
-// ==== To be overriden!
+// ==== Can be overriden
 // ===========================================================================
 
 // Project Attributes Inspector

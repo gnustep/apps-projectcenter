@@ -99,16 +99,34 @@ NSString
 {
   projectManager = aManager;
 
-  projectBrowser = [[PCProjectBrowser alloc] initWithProject:self];
-  projectLoadedFiles = [[PCProjectLoadedFiles alloc] initWithProject:self];
-  projectEditor = [[PCProjectEditor alloc] initWithProject:self];
-  projectWindow = [[PCProjectWindow alloc] initWithProject:self];
+  if (!projectBrowser)
+    {
+      projectBrowser = [[PCProjectBrowser alloc] initWithProject:self];
+    }
+  if (!projectLoadedFiles)
+    {
+      projectLoadedFiles = [[PCProjectLoadedFiles alloc] initWithProject:self];
+    }
+  if (!projectEditor)
+    {
+      projectEditor = [[PCProjectEditor alloc] initWithProject:self];
+    }
+  if (!projectWindow)
+    {
+      projectWindow = [[PCProjectWindow alloc] initWithProject:self];
+    }
 }
 
 - (BOOL)close:(id)sender
 {
   PCLogInfo(self, @"Closing %@ project", projectName);
-
+  
+  // Save visible windows and panels positions to project dictionary
+  if (isSubproject == NO && [self saveProjectWindowsAndPanels] == NO)
+    {
+      return NO;
+    }
+  
   // Project files (GNUmakefile, PC.project etc.)
   if (isSubproject == NO && [self isProjectChanged] == YES)
     {
@@ -149,12 +167,6 @@ NSString
       return YES;
     }
 
-  // Save visible windows and panels positions to project dictionary
-/*  if ([self saveProjectWindowsAndPanels] == NO)
-    {
-      return NO;
-    }*/
-    
   // Editors
   // "Cancel" button on "Save Edited Files" panel selected
   if ([projectEditor closeAllEditors] == NO)
@@ -174,20 +186,39 @@ NSString
   return YES;
 }
 
-// For future use. Doesn't save now. Should omit saving project dict when
-// it's changed and option "Save Project On Quit" doesn't set.
 - (BOOL)saveProjectWindowsAndPanels
 {
-  NSMutableDictionary *windows = [projectDict objectForKey:@"PC_WINDOWS"];
+  NSUserDefaults      *ud = [NSUserDefaults standardUserDefaults];
+  NSMutableDictionary *windows = [[NSMutableDictionary alloc] init];
+  NSString            *projectFile = nil;
+  NSMutableDictionary *projectFileDict = nil;
 
-  if (windows == nil)
-    {
-      windows = [[NSMutableDictionary alloc] init];
-    }
-  
+  projectFile = [projectPath stringByAppendingPathComponent:@"PC.project"];
+  projectFileDict = [NSMutableDictionary 
+    dictionaryWithContentsOfFile:projectFile];
+
   // Project Window
   [windows setObject:[projectWindow stringWithSavedFrame]
               forKey:@"ProjectWindow"];
+  if ([projectWindow isToolbarVisible] == YES)
+    {
+      [windows setObject:[NSString stringWithString:@"YES"]
+	          forKey:@"ShowToolbar"];
+    }
+  else
+    {
+      [windows setObject:[NSString stringWithString:@"NO"]
+                  forKey:@"ShowToolbar"];
+    }
+
+  // Write to file and exit if prefernces wasn't set to save panels
+  if (![[ud objectForKey:RememberWindows] isEqualToString:@"YES"])
+    {
+      [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
+      [projectFileDict writeToFile:projectFile atomically:YES];
+      return YES;
+    }
+
 
   // Project Build
   if (projectBuilder && [[projectManager buildPanel] isVisible])
@@ -233,9 +264,12 @@ NSString
     {
       [windows removeObjectForKey:@"LoadedFiles"];
     }
-    
-  [projectDict setObject:windows forKey:@"PC_WINDOWS"];
-  PCLogInfo(self, @"Windows saved");
+
+  // Now save it directly to PC.project file
+  [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
+  [projectFileDict writeToFile:projectFile atomically:YES];
+  
+  PCLogInfo(self, @"Windows and geometries saved");
 
   return YES;
 }
@@ -251,9 +285,7 @@ NSString
   RELEASE(projectDict);
   RELEASE(loadedSubprojects);
 
-  // Initialized in -init
-  // For subprojects we should release these objects, because we 
-  // use ASSIGN() macro.
+  // Initialized in -setProjectManager:
   RELEASE(projectWindow);
   RELEASE(projectBrowser);
   RELEASE(projectLoadedFiles);
@@ -384,7 +416,7 @@ NSString
 }
 
 // ============================================================================
-// ==== To be overriden
+// ==== Can be overriden
 // ============================================================================
 
 - (NSView *)projectAttributesView
@@ -643,12 +675,6 @@ NSString
   return YES;
 }
 
-// TODO
-- (BOOL)addAndCopyComplementariesForFiles:(NSArray *)files
-{
-  return YES;
-}
-
 - (void)addFiles:(NSArray *)files forKey:(NSString *)type
 {
   NSEnumerator   *enumerator = nil;
@@ -848,19 +874,17 @@ NSString
       [[loadedSubprojects objectAtIndex:i] save];
     }
 
-  if (shouldKeep == YES && [fm isWritableFileAtPath:backup])
+  // Remove backup file if exists
+  if ([fm fileExistsAtPath:backup] && ![fm removeFileAtPath:backup handler:nil])
     {
-      if (![fm removeFileAtPath:backup handler:nil])
-	{
-	  NSRunAlertPanel(@"Save project",
-			  @"Error removing the old project backup!",
-			  @"OK",nil,nil);
-	  return NO;
-	}
+      NSRunAlertPanel(@"Save project",
+		      @"Error removing the old project backup!",
+		      @"OK",nil,nil);
+      return NO;
     }
 
   // Save backup
-  if (shouldKeep && [fm isReadableFileAtPath:file]) 
+  if (shouldKeep == YES && [fm isReadableFileAtPath:file]) 
     {
       if ([fm copyPath:file toPath:backup handler:nil] == NO)
 	{
@@ -878,6 +902,7 @@ NSString
     {
       return NO;
     }
+
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCProjectDictDidSaveNotification 
                   object:self];

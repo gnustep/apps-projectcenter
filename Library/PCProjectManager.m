@@ -135,11 +135,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return prefController;
 }
 
-- (NSDictionary *)preferencesDict
-{
-  return [prefController preferencesDict];
-}
-
 - (void)createProjectTypeAccessaryView
 {
   NSRect fr = NSMakeRect(20,30,160,20);
@@ -186,7 +181,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       saveTimer = [NSTimer 
 	scheduledTimerWithTimeInterval:interval
 	                        target:self
-	                      selector:@selector(saveAllProjectsIfNeeded)
+	                      selector:@selector(saveAllProjects)
 	                      userInfo:nil
 	                       repeats:YES];
       return YES;
@@ -214,7 +209,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 }
 
 // ============================================================================
-// ==== Accessary methods
+// ==== Accessory methods
 // ============================================================================
 
 - (PCFileManager *)fileManager
@@ -353,7 +348,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCLogInfo(self, @"saveAllProjectsIfNeeded");
 
   // If this method was called not by NSTimer, check if we should save projects
-  if ([[defs objectForKey:AutoSavePeriod] intValue] > 0)
+  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
     {
       [self saveAllProjects];
     }
@@ -437,9 +432,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)openProjectAt:(NSString *)aPath
 {
-  BOOL      isDir = NO;
-  NSString  *projectName = nil;
-  PCProject *project = nil;
+  BOOL         isDir = NO;
+  NSString     *projectName = nil;
+  PCProject    *project = nil;
+  NSDictionary *wap = nil;
 
   projectName = [[aPath stringByDeletingLastPathComponent] lastPathComponent];
 
@@ -463,6 +459,23 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [project validateProjectDict];
       [loadedProjects setObject:project forKey:projectName];
       [self setActiveProject:project];
+
+      // Windows and panels
+      wap = [[NSDictionary dictionaryWithContentsOfFile:aPath]
+	     objectForKey:@"PC_WINDOWS"];
+      PCLogInfo(self, @"%s", wap);
+      if ([[wap allKeys] containsObject:@"ProjectBuild"])
+	{
+	  [[self buildPanel] orderFront:self];
+	}
+      if ([[wap allKeys] containsObject:@"ProjectLaunch"])
+	{
+	  [[self launchPanel] orderFront:self];
+	}
+      if ([[wap allKeys] containsObject:@"LoadedFiles"])
+	{
+	  [[self loadedFilesPanel] orderFront:self];
+	}
       [[project projectWindow] orderFront:self];
 
       return YES;
@@ -767,19 +780,31 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)closeProject
 {
+  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+
+  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+    {
+      [activeProject save];
+    }
+
   [activeProject close:self];
 }
 
 - (BOOL)closeAllProjects
 {
-  PCProject    *project = nil;
-  NSEnumerator *enumerator = [loadedProjects objectEnumerator];
+  PCProject      *project = nil;
+  NSEnumerator   *enumerator = [loadedProjects objectEnumerator];
+  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
   PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
 
   while ([loadedProjects count] > 0)
     {
       project = [enumerator nextObject];
+      if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+	{
+	  [project save];
+	}
       if ([project close:self] == NO)
 	{
 	  return NO;

@@ -27,6 +27,8 @@
 #include "PCProjectBuilder.h"
 #include "PCBuildPanel.h"
 
+#include "PCLogController.h"
+
 @implementation PCBuildPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
@@ -51,13 +53,19 @@
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
+  // Panel's content view
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
   [contentBox setTitlePosition:NSNoTitle];
   [contentBox setBorderType:NSNoBorder];
   [super setContentView:contentBox];
 
-  [contentBox setContentView:[projectBuilder componentView]];
+  // Empty content view of contentBox
+  emptyBox = [[NSBox alloc] init];
+  [emptyBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
+  [emptyBox setTitlePosition:NSNoTitle];
+  [emptyBox setBorderType:NSLineBorder];
+  [contentBox setContentView:emptyBox];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -77,9 +85,38 @@
 - (void)dealloc
 {
   NSLog(@"PCBuildPanel: dealloc");
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
+}
+
+- (void)orderFront:(id)sender
+{
+  PCProject *activeProject = [projectManager rootActiveProject];
+  NSView    *builderView = [[activeProject projectBuilder] componentView];
+
+  if (!([contentBox contentView] == builderView))
+    {
+      [contentBox setContentView:builderView];
+      [contentBox display];
+    }
+
+  PCLogInfo(self, @"orderFront: %@ -> %@", 
+	    builderView, [builderView superview]);
+
+  [super orderFront:self];
+}
+
+- (void)close
+{
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [contentBox setContentView:emptyBox];
+  
+  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+
+  [super close];
 }
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
@@ -89,13 +126,12 @@
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
-  NSLog(@"PCBuildPanel: activeProjectDidChange to: %@", 
-	[activeProject projectName]);
+  PCLogInfo(self, @"activeProjectDidChange to: %@", 
+	    [activeProject projectName]);
 
   if (!activeProject)
     {
-//      [contentBox setContentView:nil];
-      [[contentBox contentView] removeFromSuperview];
+      [contentBox setContentView:emptyBox];
     }
   else
     {

@@ -164,12 +164,9 @@
 
       if (categoryPath) // category == nil if we're non project editor
 	{
-	  NSDictionary *prefsDict = nil;
+	  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
-	  prefsDict = [[[projectEditor project] projectManager] 
-	    preferencesDict];
-	  if (![[prefsDict objectForKey:@"SeparateEditor"] 
-	      isEqualToString:@"YES"])
+	  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	    {
 	      [self _createInternalView];
     	      [[NSNotificationCenter defaultCenter]

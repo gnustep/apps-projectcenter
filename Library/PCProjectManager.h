@@ -101,7 +101,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (id)delegate;
 - (void)setPrefController:(id)aController;
 - (id)prefController;
-- (NSDictionary *)preferencesDict;
 
 // ============================================================================
 // ==== Timer handling
