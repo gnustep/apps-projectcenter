@@ -1,9 +1,27 @@
-2002-04-25  Adam Fedor  <fedor@gnu.org>
+2002-06-01 15:55  probert
 
-	* PCHistoryController.m (-click:): Don't send notification.
+	* PCMakefileFactory.m: Code cleanup
 
-	* PCProject.m: Don't retain or release projectManger.
-	(-dealloc): Don't release window (releasedWhenClosed).
+2002-06-01 15:46  probert
+
+	* GNUmakefile, PCBundleLoader.m, PCMakefileFactory.m,
+	ProjectCenter.pcproj: Fixed a bug in the lib makefile creation
+	part.
+
+2002-04-26 05:12  fedor
+
+	* ChangeLog, GNUmakefile, PCBrowserController.m,
+	PCHistoryController.m, PCProject.m, PCProjectManager.m: removed
+	bunches of duplicate calls, retains and releases.
+
+2002-04-25 23:12  fedor
+
+	* ChangeLog, PCBrowserController.m, PCHistoryController.m: Retain
+	browser
+
+2002-03-25 20:37  probert
+
+	* ChangeLog, Version: ChangeLog updates
 
 2002-03-03 14:47  probert
 

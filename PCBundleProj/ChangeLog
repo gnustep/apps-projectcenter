@@ -1,7 +1,21 @@
-2002-04-25  Adam Fedor  <fedor@gnu.org>
+2002-06-01 15:56  probert
 
-	* PCBundleProject.m (-init): Remove call to _iniUI - 
-	already in [PCProject -init].
+	* GNUmakefile, PCBundleProj.pcproj: Installation into
+	GNUSPTE_INSTALLATION_DIR
+
+2002-06-01 15:07  probert
+
+	* PC.proj, PCBundleProject.m: The default installation path prefix
+	for bundles is now set to $GNUSTEP_INSTALLATION_DIR
+
+2002-04-26 05:12  fedor
+
+	* ChangeLog, PCBundleProject.m: removed bunches of duplicate calls,
+	retains and releases.
+
+2002-03-25 20:37  probert
+
+	* ChangeLog: ChangeLog updates
 
 2002-03-01 15:22  probert
 
