@@ -32,21 +32,22 @@
 #include <ProjectCenter/PCDefines.h>
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectWindow.h>
+#include <ProjectCenter/PCProjectBrowser.h>
 #include <ProjectCenter/PCProjectHistory.h>
 #include <ProjectCenter/PCProjectEditor.h>
 #include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCServer.h>
-#include <ProjectCenter/PCProject+ComponentHandling.h>
 #include <ProjectCenter/PCProjectBuilder.h>
 #include <ProjectCenter/PCProjectLauncher.h>
+#include <ProjectCenter/PCProjectEditor.h>
+#include <ProjectCenter/PCServer.h>
+#include <ProjectCenter/PCProject+ComponentHandling.h>
 #include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCProjectBrowser.h>
 #include <ProjectCenter/PCEditor.h>
-#include <ProjectCenter/PCEditorController.h>
 #include <ProjectCenter/PCEditorView.h>
 #include <ProjectCenter/PCEditorView+Highlighting.h>
 #include <ProjectCenter/PCTextFinder.h>
 #include <ProjectCenter/PCMakefileFactory.h>
+
 #include <ProjectCenter/ProjectDebugger.h>
 #include <ProjectCenter/ProjectEditor.h>
 #include <ProjectCenter/ProjectType.h>

@@ -36,7 +36,7 @@
 #include "PCProjectWindow.h"
 #include "PCProjectBrowser.h"
 #include "PCProjectInspector.h"
-#include "PCEditorController.h"
+#include "PCProjectEditor.h"
 #include "ProjectComponent.h"
 #include "PCProject+ComponentHandling.h"
 #include "PCServer.h"
@@ -171,10 +171,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)showProjectHistory:(id)sender
 {
-  if (![[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateBuilder] isEqualToString: @"YES"])
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey: SeparateHistory] isEqualToString: @"YES"])
     {
-      [[activeProject projectWindow] showProjectHistory:self];
+      [[self historyPanel] orderFront: nil];
     }
 }
 
@@ -470,27 +470,27 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveFile
 {
-  return [[activeProject editorController] saveFile];
+  return [[activeProject projectEditor] saveFile];
 }
 
 - (BOOL)saveFileAs:(NSString *)path
 {
-  return [[activeProject editorController] saveFileAs:path];
+  return [[activeProject projectEditor] saveFileAs:path];
 }
 
 - (BOOL)saveFileTo:(NSString *)path
 {
-  return [[activeProject editorController] saveFileTo:path];
+  return [[activeProject projectEditor] saveFileTo:path];
 }
 
 - (BOOL)revertFileToSaved
 {
-  return [[activeProject editorController] revertFileToSaved];
+  return [[activeProject projectEditor] revertFileToSaved];
 }
 
 - (void)closeFile
 {
-  return [[activeProject editorController] closeFile:self];
+  return [[activeProject projectEditor] closeFile:self];
 }
 
 - (BOOL)renameFileTo:(NSString *)path
@@ -527,7 +527,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveProjectFiles
 {
-  return [[activeProject editorController] saveAllFiles];
+  return [[activeProject projectEditor] saveAllFiles];
 }
 
 - (BOOL)removeProjectFiles

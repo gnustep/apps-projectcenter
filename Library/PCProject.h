@@ -124,7 +124,6 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 @class PCProjectBuilder;
 @class PCProjectLauncher;
 @class PCProjectEditor;
-@class PCEditorController;
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
@@ -142,6 +141,7 @@ extern NSString *ProjectDictDidSaveNotification;
   PCProjectWindow     *projectWindow;
   PCProjectBrowser    *projectBrowser;
   PCProjectHistory    *projectHistory;
+  PCProjectEditor     *projectEditor;
   PCProjectBuilder    *projectBuilder;
   PCProjectLauncher   *projectLauncher;
 
@@ -150,8 +150,6 @@ extern NSString *ProjectDictDidSaveNotification;
  
   // For compatibility. Should be changed later
   NSView              *projectProjectInspectorView;
-  PCProjectEditor     *projectEditor;
-  PCEditorController  *editorController;
   //
 
   NSMutableDictionary *projectDict;
@@ -187,9 +185,7 @@ extern NSString *ProjectDictDidSaveNotification;
 - (PCProjectHistory *)projectHistory;
 - (PCProjectBuilder *)projectBuilder;
 - (PCProjectLauncher *)projectLauncher;
-
 - (PCProjectEditor *)projectEditor;
-- (PCEditorController *)editorController;
 
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
@@ -245,7 +241,6 @@ extern NSString *ProjectDictDidSaveNotification;
 
 - (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key;
 - (void)addFiles:(NSArray *)files forKey:(NSString *)key;
-
 - (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
 
 - (void)renameFile:(NSString *)aFile;

@@ -125,14 +125,14 @@
    * "Build Attributes" View
    */
   buildAttributesView = [[NSBox alloc] init];
-  [buildAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [buildAttributesView setFrame:NSMakeRect(0,0,295,384)];
   [buildAttributesView setTitlePosition:NSNoTitle];
   [buildAttributesView 
     setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [buildAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
   // Compiler Flags -- ADDITIONAL_OBJCFLAGS(?), ADDITIONAL_CFLAGS
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,343,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -142,7 +142,7 @@
   [buildAttributesView addSubview:textField];
   RELEASE(textField);
 
-  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,323,165,21)];
+  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,343,165,21)];
   [ccOptField setAlignment: NSLeftTextAlignment];
   [ccOptField setBordered: YES];
   [ccOptField setEditable: YES];
@@ -155,7 +155,7 @@
   RELEASE(ccOptField);
 
   // Linker Flags -- ADDITIONAL_LDFLAGS
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,318,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -165,7 +165,7 @@
   [buildAttributesView addSubview:textField];
   RELEASE(textField);
 
-  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,298,165,21)];
+  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,318,165,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
   [ldOptField setBordered: YES];
   [ldOptField setEditable: YES];
@@ -178,7 +178,7 @@
   RELEASE(ldOptField);
 
   // Install In
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,293,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -189,7 +189,7 @@
   RELEASE(textField);
 
   installPathField =[[NSTextField alloc] 
-    initWithFrame:NSMakeRect(111,273,165,21)];
+    initWithFrame:NSMakeRect(111,293,165,21)];
   [installPathField setAlignment: NSLeftTextAlignment];
   [installPathField setBordered: YES];
   [installPathField setEditable: YES];
@@ -202,7 +202,7 @@
   RELEASE(installPathField);
 
   // Build Tool
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,268,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -212,7 +212,7 @@
   [buildAttributesView addSubview:textField];
   RELEASE(textField);
 
-  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
+  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,268,165,21)];
   [toolField setAlignment: NSLeftTextAlignment];
   [toolField setBordered: YES];
   [toolField setEditable: YES];
@@ -225,7 +225,7 @@
   RELEASE(toolField);
 
   // Public Headers In -- ADDITIONAL_INCLUDE_DIRS
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,223,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,243,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -235,7 +235,7 @@
   [buildAttributesView addSubview:textField];
   RELEASE(textField);
 
-  headersField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,223,165,21)];
+  headersField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,243,165,21)];
   [headersField setAlignment: NSLeftTextAlignment];
   [headersField setBordered: YES];
   [headersField setEditable: YES];
@@ -248,7 +248,7 @@
   RELEASE(headersField);
 
   // Public Libraries In -- ADDITIONAL_TOOL_LIBS
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,198,104,21)];
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,218,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -258,7 +258,7 @@
   [buildAttributesView addSubview:textField];
   RELEASE(textField);
 
-  libsField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,198,165,21)];
+  libsField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,218,165,21)];
   [libsField setAlignment: NSLeftTextAlignment];
   [libsField setBordered: YES];
   [libsField setEditable: YES];
@@ -275,14 +275,14 @@
    * "Project Attributes" View
    */
   projectAttributesView = [[NSBox alloc] init];
-  [projectAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [projectAttributesView setFrame:NSMakeRect(0,0,295,384)];
   [projectAttributesView setTitlePosition:NSNoTitle];
   [projectAttributesView 
     setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [projectAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
   // Project Type
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,343,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -293,7 +293,7 @@
   RELEASE(textField);
 
   projectTypeField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,323,165,21)];
+    NSMakeRect(111,343,165,21)];
   [projectTypeField setAlignment: NSLeftTextAlignment];
   [projectTypeField setBordered: NO];
   [projectTypeField setEditable: NO];
@@ -306,7 +306,7 @@
   RELEASE(projectTypeField);
 
   // Project Name
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,318,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -317,7 +317,7 @@
   RELEASE(textField);
 
   projectNameField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,298,165,21)];
+    NSMakeRect(111,318,165,21)];
   [projectNameField setAlignment: NSLeftTextAlignment];
   [projectNameField setBordered: NO];
   [projectNameField setEditable: NO];
@@ -328,7 +328,7 @@
   RELEASE(projectNameField);
 
   // Project Language
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,293,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -339,7 +339,7 @@
   RELEASE(textField);
 
   projectLanguageField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,273,165,21)];
+    NSMakeRect(111,293,165,21)];
   [projectLanguageField setAlignment: NSLeftTextAlignment];
   [projectLanguageField setBordered: NO];
   [projectLanguageField setEditable: NO];
@@ -350,7 +350,7 @@
   RELEASE(projectLanguageField);
 
   // Application Class
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,268,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -361,7 +361,7 @@
   RELEASE(textField);
 
   appClassField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,248,165,21)];
+    NSMakeRect(111,268,165,21)];
   [appClassField setAlignment: NSLeftTextAlignment];
   [appClassField setBordered: YES];
   [appClassField setEditable: YES];
@@ -375,7 +375,7 @@
 
   // Application Icon
   _appIconBox = [[NSBox alloc] init];
-  [_appIconBox setFrame:NSMakeRect(6,154,270,84)];
+  [_appIconBox setFrame:NSMakeRect(6,174,270,84)];
   [_appIconBox setContentViewMargins:NSMakeSize(4.0, 6.0)];
   [_appIconBox setTitle:@"Application Icon"];
   [projectAttributesView addSubview:_appIconBox];
@@ -421,18 +421,18 @@
    * "File Attributes" View
    */
   fileAttributesView = [[NSBox alloc] init];
-  [fileAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [fileAttributesView setFrame:NSMakeRect(0,0,295,384)];
   [fileAttributesView setTitlePosition:NSNoTitle];
   [fileAttributesView setAutoresizingMask:
     (NSViewWidthSizable | NSViewHeightSizable)];
   [fileAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
-  fileIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(8,290,48,48)];
+  fileIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(8,310,48,48)];
   [fileIconView setImage:nil];
   [fileAttributesView addSubview:fileIconView];
   RELEASE(fileIconView);
 
-  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(60,290,216,48)];
+  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(60,310,216,48)];
   [fileNameField setAlignment: NSLeftTextAlignment];
   [fileNameField setBordered: NO];
   [fileNameField setEditable: NO];
@@ -444,7 +444,7 @@
   [fileAttributesView addSubview:fileNameField];
   RELEASE(fileNameField);
 
-  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,278,295,2)];
+  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,298,295,2)];
   [line setTitlePosition:NSNoTitle];
   [fileAttributesView addSubview:line];
   RELEASE(line);
@@ -605,6 +605,60 @@
   [appImageField setStringValue:@""];
   [appIconView setImage:nil];
   [appIconView display];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
+}
+
+- (void)setMainNib:(id)sender
+{
+  int         result;
+  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+  NSString    *dir = nil;
+
+  [openPanel setAllowsMultipleSelection:NO];
+  
+  dir = [[NSUserDefaults standardUserDefaults]
+    objectForKey:@"LastOpenDirectory"];
+  result = [openPanel runModalForDirectory:dir
+                                      file:nil 
+                                     types:[NSArray arrayWithObject:@"gorm"]];
+
+  if (result == NSOKButton)
+    {
+      NSString *file = [[openPanel filenames] objectAtIndex:0];
+
+      if (![self setMainNibWithFileAtPath:file])
+	{
+	  NSRunAlertPanel(@"Error while opening file!", 
+			  @"Couldn't open %@", @"OK", nil, nil,file);
+	}
+    }  
+}
+
+- (BOOL)setMainNibWithFileAtPath:(NSString *)path
+{
+  NSString *nibName = [path lastPathComponent];
+
+  [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCInterfaces];
+  [projectDict setObject:nibName forKey:PCMainInterfaceFile];
+  [infoDict setObject:nibName forKey:@"NSMainNibFile"];
+
+//  [mainNibField setStringValue:nibName];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
+
+  return YES;
+}
+
+- (void)clearMainNib:(id)sender
+{
+  [projectDict setObject:@"" forKey:PCMainInterfaceFile];
+  [infoDict setObject:@"" forKey:@"NSMainNibFile"];
+//  [mainNibField setStringValue:@""];
 
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:ProjectDictDidChangeNotification
@@ -825,6 +879,56 @@
 - (BOOL)isExecutable
 {
   return YES;
+}
+
+
+- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key
+{
+  NSMutableArray *filesToRemove = [[files mutableCopy] autorelease];
+  NSString       *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
+  NSString       *appIcon = [projectDict objectForKey:PCAppIcon];
+
+  if (!files || !key)
+    {
+      return NO;
+    }
+
+  // Check for main NIB file
+  if ([key isEqualToString:PCInterfaces] && [files containsObject:mainNibFile])
+    {
+      int ret;
+      ret = NSRunAlertPanel(@"Remove",
+			    @"You've selected to remove main interface file.\nDo you still want to remove it?",
+			    @"Remove", @"Leave", nil);
+			    
+      if (ret == NSAlertAlternateReturn) // Leave
+	{
+	  [filesToRemove removeObject:mainNibFile];
+	}
+      else
+	{
+	  [self clearMainNib:self];
+	}
+    }
+  // Check for application icon files
+  else if ([key isEqualToString:PCImages] && [files containsObject:appIcon])
+    {
+      int ret;
+      ret = NSRunAlertPanel(@"Remove",
+			    @"You've selected to remove application icon file.\nDo you still want to remove it?",
+			    @"Remove", @"Leave", nil);
+			    
+      if (ret == NSAlertAlternateReturn) // Leave
+	{
+	  [filesToRemove removeObject:appIcon];
+	}
+      else
+	{
+	  [self clearAppIcon:self];
+	}
+    }
+
+  return [super removeFiles:filesToRemove forKey:key];
 }
 
 @end

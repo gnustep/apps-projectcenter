@@ -63,7 +63,6 @@ libProjectCenter_HEADER_FILES = \
   PCEditor+UInterface.h \
   PCEditorView.h \
   PCEditorView+Highlighting.h \
-  PCEditorController.h \
   PCTextFinder.h \
   PCTextFinder+UInterface.h \
   \
@@ -109,7 +108,6 @@ libProjectCenter_OBJC_FILES = \
   PCEditor+UInterface.m \
   PCEditorView.m \
   PCEditorView+Highlighting.m \
-  PCEditorController.m \
   PCTextFinder.m \
   PCTextFinder+UInterface.m 
 

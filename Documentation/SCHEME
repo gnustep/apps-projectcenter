@@ -25,25 +25,24 @@ PCMenuController/      |   ||
                        |   +- [SI]PCProjectFinder
                        |   |
                        |   +- PCProjectEditor
-                       |
-                       PCEditorController
-                       | ||
-                       | PCEditor
-                       | |
-                       | +- PCEditorView 
+                       |      ||
+                       |      PCEditor
+                       |      |
+                       |      +- PCEditorView 
                        |
                        PCTextFinder
 		       |
 		       PCFileManager
+		         |
+			 +- PCFileCreator
 
 ------------------------------
 Other (controls, tools, etc.):
 ------------------------------
 PCButton
 PCSplitView
-PCOutputView
+PCOutputView (Should be implemented. Used by e.g. Project Builder)
 PCBundleLoader (Used in ProjectCenter application)
-PCFileManager (Used in PCLib)
 PCMakefileFactory (Used in PC*Project bundles)
 PCServer (don't used)
 
@@ -55,10 +54,10 @@ Part I:
   descendants;
 + implement PCLaunchPanel;
 + implement PCHistoryPanel (also make PCProjectHistory be a separate);
-- implement PCInspectorPanel and move common inspectors to its suitable
++ implement PCInspectorPanel and move common inspectors to its suitable
   position;
-- implement PCProjectFinder and PCFindPanel GUI;
 - refactor PC*Editor* family;
+- implement PCProjectFinder and PCFindPanel GUI;
 - make PC prefernces changes applying immediately after changing;
 
 Part II:

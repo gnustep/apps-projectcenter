@@ -305,7 +305,7 @@
       }
       else
       {
-	  [PCEditorController openFileInEditor:filePath];
+	  [PCProjectEditor openFileInEditor:filePath];
       }
   }
 }
@@ -331,7 +331,7 @@
   int		 retval = NSOKButton;
 
   oldFilePath = 
-    [[[[projectManager activeProject] editorController] activeEditor] path];
+    [[[[projectManager activeProject] projectEditor] activeEditor] path];
 
   [savePanel setTitle: @"Save As..."];
   while (![directory isEqualToString: [projectManager projectPath]] 
@@ -432,7 +432,7 @@
 		  @"OK",nil,nil);
 }
 
-// Edit. PCEditorController have to provide this menu and functionality
+// Edit. PCProjectEditor have to provide this menu and functionality
 - (void)findShowPanel:(id)sender
 {
   [[PCTextFinder sharedFinder] showFindPanel:self];
@@ -456,7 +456,6 @@
 
 - (void)showHistoryPanel:(id)sender
 {
-//  [[[projectManager activeProject] projectWindow] showProjectHistory:self];
   [projectManager showProjectHistory:self];
 }
 

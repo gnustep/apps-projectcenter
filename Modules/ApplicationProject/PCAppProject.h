@@ -59,6 +59,10 @@
   NSButton    *clearAppIconButton;
   NSImageView *appIconView;
   NSImage     *icon;
+  NSBox       *mainNibBox;
+  NSTextField *mainNibFileField;
+  NSButton    *setMainNibButton;
+  NSButton    *clearMainNibButton;
 
   NSBox       *fileAttributesView;
   NSImageView *fileIconView;
@@ -84,11 +88,15 @@
 - (NSView *)buildAttributesView;
 - (NSView *)projectAttributesView;
 - (NSView *)fileAttributesView;
-- (void)updateInspectorValues:(NSNotification *)aNotif;
-- (void)clearAppIcon:(id)sender;
+- (void)setAppClass:(id)sender;
 - (void)setAppIcon:(id)sender;
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-- (void)setAppClass:(id)sender;
+- (void)clearAppIcon:(id)sender;
+- (void)setMainNib:(id)sender;
+- (BOOL)setMainNibWithFileAtPath:(NSString *)path;
+- (void)clearMainNib:(id)sender;
+
+- (void)updateInspectorValues:(NSNotification *)aNotif;
 
 // ----------------------------------------------------------------------------
 // --- Project
@@ -105,6 +113,8 @@
 - (NSString *)projectDescription;
 
 - (BOOL)isExecutable;
+
+- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
 
 @end
 

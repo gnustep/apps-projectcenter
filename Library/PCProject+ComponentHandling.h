@@ -12,10 +12,7 @@
 
 @interface PCProject (ComponentHandling)
 
-//- (void)showBuildView:(id)sender;
-//- (void)showRunView:(id)sender;
 - (void)showEditorView:(id)sender;
-- (void)showInspector:(id)sender;
 
 - (void)runSelectedTarget:(id)sender;
 

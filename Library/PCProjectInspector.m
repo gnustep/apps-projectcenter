@@ -80,11 +80,11 @@
 {
   // Panel
   inspectorPanel = [[NSWindow alloc] 
-    initWithContentRect:NSMakeRect(200,300,280,384)
+    initWithContentRect:NSMakeRect(200,300,280,404)
               styleMask:NSTitledWindowMask | NSClosableWindowMask
                 backing:NSBackingStoreBuffered
                   defer:YES];
-  [inspectorPanel setMinSize:NSMakeSize(280,384)];
+  [inspectorPanel setMinSize:NSMakeSize(280,404)];
   [inspectorPanel setTitle:@"Project Inspector"];
   [inspectorPanel setTitle: [NSString stringWithFormat:
     @"%@ - Project Inspector", [[projectManager activeProject] projectName]]];
@@ -97,13 +97,13 @@
   // Content
   contentView = [[NSBox alloc] init];
   [contentView setTitlePosition:NSNoTitle];
-  [contentView setFrame:NSMakeRect(0,0,280,364)];
+  [contentView setFrame:NSMakeRect(0,0,280,384)];
   [contentView setBorderType:NSNoBorder];
   [contentView setContentViewMargins:NSMakeSize(0.0, 0.0)];
   [inspectorPanel setContentView:contentView];
 
   inspectorPopup = [[NSPopUpButton alloc] 
-    initWithFrame:NSMakeRect(80,358,128,20)];
+    initWithFrame:NSMakeRect(80,378,128,20)];
   [inspectorPopup setTarget:self];
   [inspectorPopup setAction:@selector(inspectorPopupDidChange:)];
   [contentView addSubview:inspectorPopup];
@@ -115,13 +115,13 @@
 
   hLine = [[[NSBox alloc] init] autorelease];
   [hLine setTitlePosition:NSNoTitle];
-  [hLine setFrame:NSMakeRect(0,336,280,2)];
+  [hLine setFrame:NSMakeRect(0,356,280,2)];
   [contentView addSubview:hLine];
 
   // Holder of PC*Proj inspectors
   inspectorView = [[NSBox alloc] init];
   [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrame:NSMakeRect(-8,-8,295,364)];
+  [inspectorView setFrame:NSMakeRect(-8,-8,295,384)];
   [inspectorView setBorderType:NSNoBorder];
   [contentView addSubview:inspectorView];
 

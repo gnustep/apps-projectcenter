@@ -40,7 +40,6 @@
 #include "PCProjectEditor.h"
 #include "PCProjectLauncher.h"
 #include "PCEditor.h"
-#include "PCEditorController.h"
 
 NSString *ProjectDictDidSetNotification = @"ProjectDictDidSetNotification";
 NSString *ProjectDictDidChangeNotification = @"ProjectDictDidChangeNotification";
@@ -59,13 +58,10 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
       buildOptions = [[NSMutableDictionary alloc] init];
       projectBrowser = [[PCProjectBrowser alloc] initWithProject:self];
       projectHistory = [[PCProjectHistory alloc] initWithProject:self];
+      projectEditor = [[PCProjectEditor alloc] initWithProject:self];
       projectWindow = [[PCProjectWindow alloc] initWithProject:self];
-
       projectBuilder = nil;
       projectLauncher = nil;
-
-      editorController = [[PCEditorController alloc] init];
-      [editorController setProject:self];
     }
 
   return self;
@@ -111,7 +107,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (void)close
 {
-  [editorController closeAllEditors];
+  [projectEditor closeAllEditors];
   [projectManager closeProject:self];
 }
 
@@ -133,7 +129,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   if (projectLauncher) RELEASE(projectLauncher);
   if (projectEditor)   RELEASE(projectEditor);
   
-  RELEASE(editorController);
+  RELEASE(projectEditor);
 
   RELEASE(buildOptions);
 
@@ -182,11 +178,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 - (PCProjectEditor *)projectEditor
 {
   return projectEditor;
-}
-
-- (PCEditorController*)editorController
-{
-  return editorController;
 }
 
 - (NSString *)selectedRootCategory
@@ -333,7 +324,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 //  [fileNameField setStringValue:fileName];
 
   // Show the file in the internal editor!
-  e = [editorController internalEditorForFile:p];
+  e = [projectEditor internalEditorForFile:p];
 
   if( e == nil )
     {
@@ -352,7 +343,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 {
   PCEditor *e;
 
-  e = [editorController editorForFile:fileName];
+  e = [projectEditor editorForFile:fileName];
 
   if (e)
     {
@@ -453,38 +444,17 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   NSString       *filePath = nil;
   NSString       *file = nil;
   NSMutableArray *projectFiles = nil;
-  NSMutableArray *filesToRemove = [[files mutableCopy] autorelease];
-  NSString       *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
-
-  if (!files || !key)
-    {
-      return NO;
-    }
-
-  // Check for main NIB files
-  if ([key isEqualToString:PCInterfaces] && [files containsObject:mainNibFile])
-    {
-      int ret;
-      ret = NSRunAlertPanel(@"Remove",
-			    @"You've selected to remove main interface file.\nDo you still want to remove it?",
-			    @"Remove", @"Leave", nil);
-			    
-      if (ret == NSAlertAlternateReturn) // Leave
-	{
-	  [filesToRemove removeObject:mainNibFile];
-	}
-    }
 
   // Remove files from project
   projectFiles = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
-  enumerator = [filesToRemove objectEnumerator];
+  enumerator = [files objectEnumerator];
   while ((file = [enumerator nextObject]))
     {
       [projectFiles removeObject:file];
 
       // Close editor
       filePath = [projectPath stringByAppendingPathComponent:file];
-      [editorController closeEditorForFile:filePath];
+      [projectEditor closeEditorForFile:filePath];
     }
 
   [projectDict setObject:projectFiles forKey:key];

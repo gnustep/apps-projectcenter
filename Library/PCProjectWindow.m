@@ -173,7 +173,7 @@
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
               objectForKey: SeparateHistory] isEqualToString: @"NO"])
     {
-      [v_split addSubview: [[project projectHistory] componentView]];
+      [self showProjectHistory:self];
     }
 
   [v_split adjustSubviews];
@@ -395,19 +395,7 @@
 
 - (void)showProjectHistory:(id)sender
 {
-  NSView  *view = nil;
-  NSPanel *historyPanel = nil;
-  
-  if (![[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateBuilder] isEqualToString: @"YES"])
-    {
-      return;
-    }
-
-  view = [[project projectHistory] componentView];
-  historyPanel = [[project projectManager] historyPanel];
-
-  [historyPanel orderFront: nil];
+  [v_split addSubview: [[project projectHistory] componentView]];
 }
 
 - (void)showProjectBuild:(id)sender

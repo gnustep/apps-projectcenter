@@ -25,7 +25,7 @@
 #include "PCFileManager.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
-#include "PCEditorController.h"
+#include "PCProjectEditor.h"
 #include "PCProjectBrowser.h"
 
 NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
@@ -230,7 +230,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       NSString *path = [[browserPath componentsSeparatedByString:@"/"] objectAtIndex:1];
 
       if (![browserPath isEqualToString:path] 
-	  && [[[project editorController] allEditors] count] == 0)
+	  && [[[project projectEditor] allEditors] count] == 0)
 	{
 	  [self setPathForFile:nil category:path];
 	}
