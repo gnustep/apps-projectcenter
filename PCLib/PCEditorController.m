@@ -15,7 +15,8 @@
 #include "PCProject.h"
 #include "PCEditor.h"
 #include "PCProject+ComponentHandling.h"
-#include "PCBrowserController.h"
+#include "PCProjectBrowser.h"
+#include "PCProjectWindow.h"
 
 @implementation PCEditorController
 
@@ -292,13 +293,13 @@
   else
     {
       [[project projectEditor] setEditorView:nil];
-      [[project browserController] projectDictDidChange:nil];
+//      [[project browserController] projectDictDidChange:nil];
     }
 }
 
 - (void)setBrowserPath:(NSString *)file category:(NSString *)category
 {
-  [[project browserController] setPathForFile:file category:category];
+  [[project projectBrowser] setPathForFile:file category:category];
 }
 
 @end

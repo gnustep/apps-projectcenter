@@ -11,19 +11,22 @@
 #include "PCProject+ComponentHandling.h"
 #include "PCDefines.h"
 #include "PCProject.h"
+#include "PCProjectWindow.h"
 #include "ProjectComponent.h"
+#include "PCProjectInspector.h"
 #include "PCProjectBuilder.h"
-#include "PCProjectDebugger.h"
+#include "PCProjectLauncher.h"
 #include "PCProjectEditor.h"
 #include "PCProjectManager.h"
 #include "PCEditor.h"
 
 @implementation PCProject (ComponentHandling)
 
-- (void)showBuildView:(id)sender
+/*- (void)showBuildView:(id)sender
 {
-  NSView *view = nil;
-  BOOL   separate = NO;
+  BOOL    separate = NO;
+  NSView  *view = nil;
+  NSPanel *buildPanel = nil;
   
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
               objectForKey: SeparateBuilder] isEqualToString: @"YES"])
@@ -31,55 +34,29 @@
       separate = YES;
     }
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName: PCEditorDidResignKeyNotification
-                  object: self];
-
-  editorIsActive = NO;
-
-  if (!projectBuilder)
-    {
-      projectBuilder = [[PCProjectBuilder alloc] initWithProject: self];
-    }
-
-  view = [[projectBuilder componentView] retain];
+  view = [[self projectBuilder] componentView];
+  buildPanel = [projectManager buildPanel];
 
   if (separate)
     {
-      NSPanel *panel;
-      NSRect  panelFrame;
-
-      panel = [projectBuilder createBuildPanel];
-      panelFrame = [NSPanel contentRectForFrameRect: [panel frame]
-                                          styleMask: [panel styleMask]];
-      panelFrame.origin.x = 8;
-      panelFrame.origin.y = -2;
-      panelFrame.size.height += 2;
-      panelFrame.size.width -= 16;
-      [view setFrame: panelFrame];
-     
-      if ([box contentView] == view)
+      if ([projectWindow customContentView] == view)
 	{
-	  [self showEditorView: self];
+	  [self showEditorView:self];
 	}
-      [[panel contentView] addSubview: view];
-      [panel orderFront: nil];
+      [buildPanel orderFront: nil];
     }
   else
     {
-      NSPanel *panel = [projectBuilder buildPanel];
-
-      if (panel)
+      if (buildPanel)
 	{
-	  [panel close];
+	  [buildPanel close];
 	}
-      [box setContentView: view];
-      [box display];
+      [projectWindow setCustomContentView:view];
     }
   [projectBuilder setTooltips];
-}
+}*/
 
-- (void)showRunView:(id)sender
+/*- (void)showRunView:(id)sender
 {
   NSView *view = nil;
   BOOL   separate = NO;
@@ -106,14 +83,14 @@
 
   if (!projectDebugger)
     {
-      projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
+      projectDebugger = [[PCProjectLauncher alloc] initWithProject:self];
     }
 
   view = [[projectDebugger componentView] retain];
 
   if (separate)
     {
-      NSPanel *panel = [projectDebugger createLaunchPanel];;
+      NSPanel *panel = [projectDebugger createLaunchPanel];
       NSRect  frame = [NSPanel contentRectForFrameRect: [panel frame]
                                              styleMask: [panel styleMask]];
 
@@ -123,7 +100,7 @@
       frame.size.width -= 16;
       [view setFrame: frame];
      
-      if ([box contentView] == view)
+      if ([projectWindow customContentView] == view)
 	{
 	  [self showEditorView: self];
 	}
@@ -138,89 +115,56 @@
 	{
 	  [panel close];
 	}
-      [box setContentView: view];
-      [box display];
+      [projectWindow setCustomContentView: view];
     }
   [projectDebugger setTooltips];
-}
+}*/
 
 - (void)showEditorView:(id)sender
 {
   NSView *view = nil;
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidBecomeKeyNotification
+                  object:self];
 
   editorIsActive = YES;
 
-  if (!projectEditor) {
-    projectEditor = [[PCProjectEditor alloc] initWithProject:self];
-  }
+  if (!projectEditor)
+    {
+      projectEditor = [[PCProjectEditor alloc] initWithProject:self];
+    }
 
   view = [[projectEditor componentView] retain];
 
-  [box setContentView:view];
-  [box display];
+  [projectWindow setCustomContentView:view];
 }
 
 - (void)showInspector:(id)sender
 {
-    [projectManager showInspectorForProject:self];
+  [self createInspectors];
+  [[[projectManager projectInspector] panel] makeKeyAndOrderFront:self];
 }
 
+//
 - (void)runSelectedTarget:(id)sender
 {
-  if (!projectDebugger) {
-    projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
-  }
-
-  [projectDebugger run:sender];
-}
-
-- (id)updatedAttributeView
-{
-    return projectAttributeInspectorView;
-}
-
-- (id)updatedProjectView
-{
-    return projectProjectInspectorView;
-}
-
-- (id)updatedFilesView
-{
-    return projectFileInspectorView;
-}
-
-- (void)showBuildTargetPanel:(id)sender
-{
-    if (![buildTargetPanel isVisible])
+  if (!projectLauncher)
     {
-        [buildTargetPanel center];
+      projectLauncher = [[PCProjectLauncher alloc] initWithProject:self];
     }
 
-    [buildTargetPanel makeKeyAndOrderFront:self];
-}
-
-- (void)setHost:(id)sender
-{
-    NSString *host = [buildTargetHostField stringValue];
-    [buildOptions setObject:host forKey:BUILD_HOST_KEY];
-}
-
-- (void)setArguments:(id)sender
-{
-    NSString *args = [buildTargetArgsField stringValue];
-    [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
+  [projectLauncher run:sender];
 }
 
 - (NSDictionary *)buildOptions
 {
-    return (NSDictionary *)buildOptions;
+  return (NSDictionary *)buildOptions;
 }
 
 - (BOOL)isEditorActive
 {
-    return editorIsActive;
+  return editorIsActive;
 }
 
 @end

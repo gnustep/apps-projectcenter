@@ -24,103 +24,174 @@
    $Id$
 */
 
+#include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCDefines.h"
 #include "ProjectBuilder.h"
 #include "PCProject+ComponentHandling.h"
+
+#include "PCProjectWindow.h"
+#include "PCProjectBrowser.h"
+#include "PCProjectHistory.h"
+
+#include "PCProjectInspector.h"
 #include "PCProjectBuilder.h"
 #include "PCProjectEditor.h"
-#include "PCProjectDebugger.h"
+#include "PCProjectLauncher.h"
 #include "PCEditor.h"
 #include "PCEditorController.h"
-#include "PCHistoryController.h"
-#include "PCBrowserController.h"
 
-#include "PCProject+UInterface.h"
+NSString *ProjectDictDidSetNotification = @"ProjectDictDidSetNotification";
+NSString *ProjectDictDidChangeNotification = @"ProjectDictDidChangeNotification";
+NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 @implementation PCProject
 
-//==============================================================================
+// ============================================================================
 // ==== Init and free
-//==============================================================================
+// ============================================================================
 
 - (id)init
 {
-    if ((self = [super init])) 
+  if ((self = [super init])) 
     {
-	buildOptions = [[NSMutableDictionary alloc] init];
-        [self _initUI];
+      buildOptions = [[NSMutableDictionary alloc] init];
+      projectBrowser = [[PCProjectBrowser alloc] initWithProject:self];
+      projectHistory = [[PCProjectHistory alloc] initWithProject:self];
+      projectWindow = [[PCProjectWindow alloc] initWithProject:self];
 
-	editorController = [[PCEditorController alloc] init];
-	[editorController setProject:self];
+      projectBuilder = nil;
+      projectLauncher = nil;
+
+      editorController = [[PCEditorController alloc] init];
+      [editorController setProject:self];
     }
-    return self;
+
+  return self;
 }
 
 - (id)initWithProjectDictionary:(NSDictionary *)dict path:(NSString *)path;
 {
-    NSAssert(dict,@"No valid project dictionary!");
-    
-    if ((self = [self init])) 
-    {
-        if ([[path lastPathComponent] isEqualToString:@"PC.project"])
-	  {
-	    projectPath = [[path stringByDeletingLastPathComponent] copy];
-	  }
-        else
-	  {
-	    projectPath = [path copy];
-	  }
+  NSAssert(dict,@"No valid project dictionary!");
 
-        if(![self assignProjectDict:dict])
-	  {
-	    NSLog(@"<%@ %x>: could not load the project...",[self class],self);
-	    [self autorelease];
-	    return nil;
-	  }
+  if ((self = [self init])) 
+    {
+      if ([[path lastPathComponent] isEqualToString:@"PC.project"])
+	{
+	  projectPath = [[path stringByDeletingLastPathComponent] copy];
+	}
+      else
+	{
+	  projectPath = [path copy];
+	}
+
+      NSLog (@"PCProject initWithProjectDictionary");
+
+      if(![self assignProjectDict:dict])
+	{
+	  NSLog(@"<%@ %x>: could not load the project...",[self class],self);
+	  [self autorelease];
+	  return nil;
+	}
     }
-    return self;
+
+  return self;
+}
+
+- (void)setProjectManager:(PCProjectManager *)aManager
+{
+  projectManager = aManager;
+}
+
+- (PCProjectManager *)projectManager
+{
+  return projectManager;
+}
+
+- (void)close
+{
+  [editorController closeAllEditors];
+
+  [projectManager closeProject:self];
 }
 
 - (void)dealloc
 {
+  NSLog (@"PCProject: dealloc");
+  
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  
   RELEASE(projectName);
   RELEASE(projectPath);
   RELEASE(projectDict);
 
+  RELEASE(projectWindow);
+  RELEASE(projectBrowser);
+
+  if (projectHistory)  RELEASE(projectHistory);
   if (projectBuilder)  RELEASE(projectBuilder);
-  if (projectDebugger) RELEASE(projectDebugger);
+  if (projectLauncher) RELEASE(projectLauncher);
   if (projectEditor)   RELEASE(projectEditor);
   
-  RELEASE(historyController);
-  RELEASE(browserController);
   RELEASE(editorController);
 
-  RELEASE(buildTargetPanel); // ?
-  
   RELEASE(buildOptions);
-
-  RELEASE(projectAttributeInspectorView);
-  RELEASE(projectProjectInspectorView);
-  RELEASE(projectFileInspectorView);
-
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [super dealloc];
 }
 
-//==============================================================================
+// ============================================================================
 // ==== Accessor methods
-//==============================================================================
+// ============================================================================
 
-- (id)browserController
+- (PCProjectBrowser *)projectBrowser
 {
-  return browserController;
+  return projectBrowser;
+}
+
+- (PCProjectHistory *)projectHistory
+{
+  if (!projectHistory)
+    {
+      projectHistory = [[PCProjectHistory alloc] initWithProject:self];
+    }
+
+  return projectHistory;
+}
+
+- (PCProjectBuilder *)projectBuilder
+{
+  if (!projectBuilder)
+    {
+      projectBuilder = [[PCProjectBuilder alloc] initWithProject:self];
+    }
+
+  return projectBuilder;
+}
+
+- (PCProjectLauncher *)projectLauncher
+{
+  if (!projectLauncher)
+    {
+      projectLauncher = [[PCProjectLauncher alloc] initWithProject:self];
+    }
+
+  return projectLauncher;
+}
+
+- (PCProjectEditor *)projectEditor
+{
+  return projectEditor;
+}
+
+- (PCEditorController*)editorController
+{
+  return editorController;
 }
 
 - (NSString *)selectedRootCategory
 {
-  NSString *_path = [browserController pathOfSelectedFile];
+  NSString *_path = [[self projectBrowser] pathOfSelectedFile];
 
   return [self projectKeyForKeyPath:_path];
 }
@@ -159,113 +230,109 @@
 {
   AUTORELEASE(projectName);
   projectName = [aName copy];
-  [fileIconTitle setStringValue:projectName];
+  [projectWindow setFileIconTitle:projectName];
 }
 
 - (NSString *)projectName
 {
-    return projectName;
+  return projectName;
 }
 
-- (NSWindow *)projectWindow
+- (PCProjectWindow *)projectWindow
 {
-    return projectWindow;
+  return projectWindow;
+}
+
+- (BOOL)isProjectChanged
+{
+  return [projectWindow isDocumentEdited];
 }
 
 - (Class)principalClass
 {
-    return [self class];
+  return [self class];
 }
 
-- (PCProjectEditor *)projectEditor
-{
-  return projectEditor;
-}
-
-- (PCEditorController*)editorController
-{
-    return editorController;
-}
-
-//==============================================================================
-// ==== Delegate and manager
-//==============================================================================
-
-- (id)delegate
-{
-    return delegate;
-}
-
-- (void)setDelegate:(id)aDelegate
-{
-    delegate = aDelegate;
-}
-
-- (void)setProjectBuilder:(id<ProjectBuilder,NSObject>)aBuilder
-{
-  // This is our owner, don't retain.
-  //projectManager = aBuilder;
-  ASSIGN(projectManager, aBuilder);
-}
-
-- (id<ProjectBuilder>)projectBuilder
-{
-    return projectManager;
-}
-
-//==============================================================================
+// ============================================================================
 // ==== To be overriden
-//==============================================================================
+// ============================================================================
+
+// TEMP!
+- (void)updateValuesFromProjectDict
+{
+}
+
+- (void)createInspectors
+{
+}
+
+- (NSView *)buildAttributesView
+{
+  return nil;
+}
+
+- (NSView *)projectAttributesView
+{
+  return nil;
+}
+
+- (NSView *)fileAttributesView
+{
+  return nil;
+}
 
 - (Class)builderClass
 {
-    return Nil;
+  return nil;
 }
 
 - (BOOL)writeMakefile
 {
-    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-    NSString *bu = [projectPath stringByAppendingPathComponent:@"GNUmakefile~"];
-    NSFileManager *fm = [NSFileManager defaultManager];
+  NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+  NSString *bu = [projectPath stringByAppendingPathComponent:@"GNUmakefile~"];
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-    if( [fm isReadableFileAtPath:mf] ) {
-        if( [fm isWritableFileAtPath:bu] ) {
-	    [fm removeFileAtPath:bu handler:nil];
+  if ([fm isReadableFileAtPath:mf])
+    {
+      if ([fm isWritableFileAtPath:bu])
+	{
+	  [fm removeFileAtPath:bu handler:nil];
 	}
 
-        if (![fm copyPath:mf toPath:bu handler:nil]) {
-            NSRunAlertPanel(@"Attention!",
-    	                    @"Could not keep a backup of the GNUMakefile!",
-	                    @"OK",nil,nil);
-        }
+      if (![fm copyPath:mf toPath:bu handler:nil])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not keep a backup of the GNUMakefile!",
+			  @"OK",nil,nil);
+	}
     }
 
-    return YES;
+  return YES;
 }
 
 - (NSArray *)sourceFileKeys
 {
-    return nil;
+  return nil;
 }
 
 - (NSArray *)resourceFileKeys
 {
-    return nil;
+  return nil;
 }
 
 - (NSArray *)otherKeys
 {
-    return nil;
+  return nil;
 }
 
 - (NSArray *)buildTargets
 {
-    return nil;
+  return nil;
 }
 
 - (NSString *)projectDescription
 {
-    return @"Abstract PCProject class!";
+  return @"Abstract PCProject class!";
 }
 
 - (BOOL)isExecutable
@@ -273,9 +340,9 @@
   return NO;
 }
 
-//=============================================================================
+// ============================================================================
 // ==== File Handling
-//=============================================================================
+// ============================================================================
 
 - (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c
 {
@@ -283,7 +350,7 @@
   PCEditor *e;
 
   // Set the name in the inspector
-  [fileNameField setStringValue:fileName];
+//  [fileNameField setStringValue:fileName];
 
   // Show the file in the internal editor!
   e = [editorController internalEditorForFile:p];
@@ -334,86 +401,94 @@
 
 - (void)addFile:(NSString *)file forKey:(NSString *)type copy:(BOOL)yn
 {
-    NSArray *types = [projectDict objectForKey:type];
-    NSMutableArray *files = [NSMutableArray arrayWithArray:types];
-    NSString *lpc = [file lastPathComponent];
-    NSMutableString *newFile = [NSMutableString stringWithString:lpc];
-  
-    if ([type isEqualToString:PCLibraries]) {
-        [newFile deleteCharactersInRange:NSMakeRange(0,3)];
-        newFile = (NSMutableString*)[newFile stringByDeletingPathExtension];
+  NSArray         *types = [projectDict objectForKey:type];
+  NSMutableArray  *files = [NSMutableArray arrayWithArray:types];
+  NSString        *lpc = [file lastPathComponent];
+  NSMutableString *newFile = [NSMutableString stringWithString:lpc];
+
+  if ([type isEqualToString:PCLibraries])
+    {
+      [newFile deleteCharactersInRange:NSMakeRange(0,3)];
+      newFile = (NSMutableString*)[newFile stringByDeletingPathExtension];
     }
-  
-    if ([files containsObject:newFile]) {
-        NSRunAlertPanel(@"Attention!",
-	                @"The file %@ is already part of this project!",
-			@"OK",nil,nil,newFile);
-        return;
+
+  if ([files containsObject:newFile])
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"The file %@ is already part of this project!",
+		      @"OK",nil,nil,newFile);
+      return;
     }
-  
+
 #ifdef DEBUG
-    NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
+  NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
 #endif// DEBUG
-  
-    // Add the new file
-    [files addObject:newFile];
-    [projectDict setObject:files forKey:type];
 
-    [projectWindow setDocumentEdited:YES];
-  
-    if (yn) {
-        NSFileManager *manager = [NSFileManager defaultManager];
-        NSString *destination = [[self projectPath] stringByAppendingPathComponent:newFile];
-    
-        if (![manager copyPath:file toPath:destination handler:nil]) {
-            NSRunAlertPanel(@"Attention!",
-	                    @"The file %@ could not be copied to %@!",
-			    @"OK",nil,nil,newFile,destination);
-        }
+  // Add the new file
+  [files addObject:newFile];
+  [projectDict setObject:files forKey:type];
+
+  if (yn)
+    {
+      NSFileManager *manager = [NSFileManager defaultManager];
+      NSString *destination = [[self projectPath] 
+	                        stringByAppendingPathComponent:newFile];
+
+      if (![manager copyPath:file toPath:destination handler:nil])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"The file %@ could not be copied to %@!",
+			  @"OK",nil,nil,newFile,destination);
+	}
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key
 {
-    NSMutableArray  *array;
-    NSMutableString *filePath;
+  NSMutableArray  *array;
+  NSMutableString *filePath;
 
-    if (!file || !key) {
-        return;
+  if (!file || !key)
+    {
+      return;
     }
 
-    // Close editor
-    filePath = [[NSMutableString alloc] initWithString:projectPath];
-    [filePath appendString:@"/"];
-    [filePath appendString:file];
-    [editorController closeEditorForFile:filePath];
-    [filePath release];
+  // Close editor
+  filePath = [[NSMutableString alloc] initWithString:projectPath];
+  [filePath appendString:@"/"];
+  [filePath appendString:file];
+  [editorController closeEditorForFile:filePath];
+  [filePath release];
 
-    array = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
-    [array removeObject:file];
-    [projectDict setObject:array forKey:key];
+  array = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
+  [array removeObject:file];
+  [projectDict setObject:array forKey:key];
 
-    [projectWindow setDocumentEdited:YES];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 - (BOOL)removeSelectedFilesPermanently:(BOOL)yn
 {
-  NSEnumerator *files = [[browserController selectedFiles] objectEnumerator];
-  NSString     *file = nil;
-  NSString     *key = nil;
-  NSString     *otherKey = nil;
-  NSString     *ext = nil;
-  NSString     *fn = nil;
-  BOOL         ret = NO;
+  NSEnumerator *files = [[[self projectBrowser] selectedFiles] objectEnumerator];
+  NSString *file = nil;
+  NSString *key = nil;
+  NSString *otherKey = nil;
+  NSString *ext = nil;
+  NSString *fn = nil;
+  BOOL     ret = NO;
 
   if (!files)
     {
       return NO;
     }
 
-  key = [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
+  key = [self projectKeyForKeyPath:[[self projectBrowser] pathOfSelectedFile]];
 
   while ((file = [files nextObject]))
     {
@@ -473,7 +548,8 @@
     }
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:@"ProjectDictDidChangeNotification" object:self];
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 
   return YES;
 }
@@ -484,24 +560,21 @@
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict
 {
-    NSAssert(aDict,@"No valid project dictionary!");
+  NSAssert(aDict,@"No valid project dictionary!");
 
-    [projectDict autorelease];
-    projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
+//  [projectDict autorelease];
+  projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
 
-    [self setProjectName:[projectDict objectForKey:PCProjectName]];
-    [projectWindow setTitle:[NSString stringWithFormat: @"%@ - %@", 
-      projectName, 
-      [projectPath stringByAbbreviatingWithTildeInPath]]];
+  NSLog (@"PCProject assignProjectDict");
 
-    // Update the interface
-    [self updateValuesFromProjectDict];
+  [self setProjectName:[projectDict objectForKey:PCProjectName]];
 
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName:@"ProjectDictDidChangeNotification" 
-                    object:self];
+  // Notify on dictionary changes. Update the interface and so on.
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification 
+                  object:self];
 
-    return YES;
+  return YES;
 }
 
 - (NSDictionary *)projectDict
@@ -560,7 +633,9 @@
   ret = [projectDict writeToFile:file atomically:YES];
   if( ret == YES )
     {
-      [projectWindow setDocumentEdited:NO];
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:ProjectDictDidSaveNotification 
+                      object:self];
     }
 
   [self writeMakefile];
@@ -606,9 +681,9 @@
   return [specIn writeToFile:specInPath atomically:YES];
 }
 
-//=============================================================================
+// ============================================================================
 // ==== Subprojects
-//=============================================================================
+// ============================================================================
 
 - (NSArray *)subprojects
 {
@@ -642,51 +717,9 @@
     return NO;
 }
 
-//=============================================================================
+// ============================================================================
 // ==== Project Handling
-//=============================================================================
-
-- (void)updateValuesFromProjectDict
-{
-    [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
-    [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
-    [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
-    [installPathField setStringValue:[projectDict objectForKey:PCInstallDir]];
-    [toolField setStringValue:[projectDict objectForKey:PCBuildTool]];
-    [ccOptField setStringValue:[projectDict objectForKey:PCCompilerOptions]];
-    [ldOptField setStringValue:[projectDict objectForKey:PCLinkerOptions]];
-}
-
-- (void)changeCommonProjectEntry:(id)sender
-{
-    NSString *newEntry = [sender stringValue];
-
-    if( sender == installPathField )
-    {
-        [projectDict setObject:newEntry forKey:PCInstallDir];
-    }
-    else if ( sender == toolField )
-    {
-        [projectDict setObject:newEntry forKey:PCBuildTool];
-
-	if( ![[NSFileManager defaultManager] isExecutableFileAtPath:newEntry] )
-	{
-            NSRunAlertPanel(@"Build Tool Error!",
-                            @"No valid executable found at '%@'!",
-                            @"OK",nil,nil,newEntry);
-	}
-    }
-    else if ( sender == ccOptField )
-    {
-        [projectDict setObject:newEntry forKey:PCCompilerOptions];
-    }
-    else if ( sender == ldOptField )
-    {
-        [projectDict setObject:newEntry forKey:PCLinkerOptions];
-    }
-
-    [projectWindow setDocumentEdited:YES];
-}
+// ============================================================================
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
 {
@@ -745,10 +778,12 @@
         }
     }
 
-    if( projectHasChanged == YES )
-    {
-	[projectWindow setDocumentEdited:YES];
-    }
+    if (projectHasChanged == YES)
+      {
+    	[[NSNotificationCenter defaultCenter] 
+  	  postNotificationName:ProjectDictDidChangeNotification 
+	                object:self];
+      }
 }
 
 - (void)validateProjectDict
@@ -768,9 +803,6 @@
 }
 
 @end
-
-//=============================================================================
-//=============================================================================
 
 @implementation PCProject (ProjectKeyPaths)
 
@@ -817,55 +849,3 @@
 
 @end
 
-@implementation PCProject (ProjectWindowDelegate)
-
-- (void)windowDidResignKey:(NSNotification *)aNotification
-{
-}
-
-- (void)windowDidBecomeKey:(NSNotification *)aNotification
-{
-  [projectManager setActiveProject:self];
-}
-
-- (void)windowDidBecomeMain:(NSNotification *)aNotification
-{
-  [projectManager setActiveProject:self];
-}
-
-- (void)windowWillClose:(NSNotification *)aNotification
-{
-  id object = [aNotification object];
-
-  if (object == [self projectWindow]) 
-    {
-      if ([[self projectWindow] isDocumentEdited]) 
-	{
-	  if (NSRunAlertPanel(@"Close Project",
-			      @"The project %@ has been edited!\nShould it be saved before closing?",
-			      @"Yes", @"No", nil,[self projectName])) 
-	    {
-	      [self save];
-	    }
-	}
-
-      [editorController closeAllEditors];
-
-      if (projectBuilder && [projectBuilder buildPanel])
-	{
-	  [[projectBuilder buildPanel] performClose: self];
-	  [[projectBuilder buildPanel] release];
-	}
-      if (projectDebugger && [projectDebugger launchPanel])
-	{
-	  [[projectDebugger launchPanel] performClose: self];
-	  [[projectDebugger launchPanel] release];
-	}
-
-      // The PCProjectController is our delegate!
-      [[NSNotificationCenter defaultCenter] removeObserver:browserController];
-      [projectManager closeProject:self];
-    }
-}
-
-@end

@@ -24,12 +24,17 @@
    $Id$
 */
 
-#ifndef _PCPROJECTMANAGER_H
-#define _PCPROJECTMANAGER_H
+#ifndef _PCProjectManager_h_
+#define _PCProjectManager_h_
 
 #include <AppKit/AppKit.h>
 
 @class PCProject;
+@class PCProjectInspector;
+@class PCProjectBuilder;
+@class PCProjectLauncher;
+@class PCProjectHistory;
+@class PCProjectFinder;
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
@@ -39,14 +44,18 @@
 #include <ProjectCenter/ProjectDelegate.h>
 #endif
 
+extern NSString *ActiveProjectDidChangeNotification;
+
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {
-  id<ProjectDelegate> delegate;      // The PCAppController
-  id                  fileManager;
+  id                  delegate;
 
-  id                  inspector;
-  id                  inspectorView;
-  id                  inspectorPopup;
+  PCProjectInspector  *projectInspector;
+  
+  NSPanel             *buildPanel;
+  NSPanel             *launchPanel;
+  NSPanel             *historyPanel;
+  NSPanel             *findPanel;
   
   NSMutableDictionary *loadedProjects;
   PCProject           *activeProject;
@@ -56,32 +65,35 @@
   NSTimer             *saveTimer;
 
   @private
-  BOOL _needsReleasing;
+    BOOL _needsReleasing;
 }
 
-// ===========================================================================
+// ============================================================================
 // ==== Intialization & deallocation
-// ===========================================================================
+// ============================================================================
 
 - (id)init;
 - (void)dealloc;
 
-// ===========================================================================
-// ==== Delegate
-// ===========================================================================
-
-- (id)delegate;
-- (void)setDelegate:(id)aDelegate;
-
-// ===========================================================================
+// ============================================================================
 // ==== Timer handling
-// ===========================================================================
+// ============================================================================
 
 - (void)resetSaveTimer:(NSNotification *)notif;
 
-// ===========================================================================
+// ============================================================================
+// ==== Accessory methods
+// ============================================================================
+- (PCProjectInspector *)projectInspector;
+- (void)showProjectInspector:(id)sender;
+- (NSPanel *)historyPanel;
+- (NSPanel *)buildPanel;
+- (NSPanel *)launchPanel;
+- (NSPanel *)projectFinderPanel;
+
+// ============================================================================
 // ==== Project management
-// ===========================================================================
+// ============================================================================
 
 // Returns all currently loaded projects. They are stored with their absolut
 // paths as the keys.
@@ -99,12 +111,12 @@
 // Returns active project's path
 - (NSString *)projectPath;
 
-// Returns name of file selected in browser(and visible in internal editor)
+// Returns name of file selected in browser (and visible in internal editor)
 - (NSString *)selectedFileName;
 
-// ===========================================================================
+// ============================================================================
 // ==== Project actions
-// ===========================================================================
+// ============================================================================
 
 // Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
@@ -125,28 +137,22 @@
 // Saves all projects if needed.
 - (void)saveAllProjects;
 
-
 - (BOOL)saveProjectAs:(NSString *)projName;
 
-- (void)inspectorPopupDidChange:(id)sender;
-
-- (void)showInspectorForProject:(PCProject *)aProject;
-    // Opens the inspector for aProject
-
+// Reverts the currently active project
 - (void)revertToSaved;
-   // Reverts the currently active project
 
 - (BOOL)newSubproject;
 - (BOOL)addSubprojectAt:(NSString *)path;
 - (void)removeSubproject;
 
 - (void)closeProject:(PCProject *)aProject;
+// Closes the currently active project
 - (void)closeProject;
-   // Closes the currently active project
 
-// ===========================================================================
+// ============================================================================
 // ==== File actions
-// ===========================================================================
+// ============================================================================
 
 - (BOOL)saveAllFiles;
 - (BOOL)saveFile;
@@ -162,19 +168,27 @@
 
 @interface  PCProjectManager (FileManagerDelegates)
 
-- (NSString *)fileManager:(id)sender willCreateFile:(NSString *)aFile withKey:(NSString *)key;
-    // Returns the full path if the type is valid, nil else.
+// Returns the full path if the type is valid, nil else.
+- (NSString *)fileManager:(id)sender 
+           willCreateFile:(NSString *)aFile
+	          withKey:(NSString *)key;
 
-- (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key;
-    // Adds the file to the project and updates the makefile!
+// Adds the file to the project and updates the makefile!
+- (void)fileManager:(id)sender 
+      didCreateFile:(NSString *)aFile
+            withKey:(NSString *)key;
 
+// Returns the active project
 - (id)fileManagerWillAddFiles:(id)sender;
-    // Returns the active project
 
-- (BOOL)fileManager:(id)sender shouldAddFile:(NSString *)file forKey:(NSString *)key;
+- (BOOL)fileManager:(id)sender 
+      shouldAddFile:(NSString *)file
+             forKey:(NSString *)key;
 
-- (void)fileManager:(id)sender didAddFile:(NSString *)file forKey:(NSString *)key;
-    // Adds the file to the project and update the makefile!
+// Adds the file to the project and update the makefile!
+- (void)fileManager:(id)sender 
+         didAddFile:(NSString *)file
+	     forKey:(NSString *)key;
 
 @end
 
@@ -186,7 +200,5 @@
 - (BOOL)projectManager:(id)sender shouldOpenProject:(PCProject *)aProject;
 
 @end
-
-extern NSString *ActiveProjectDidChangeNotification;
 
 #endif

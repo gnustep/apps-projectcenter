@@ -24,105 +24,17 @@
    $Id$
 */
 
-#include "PCProject+UInterface.h"
+#include <ProjectCenter/ProjectCenter.h>
+#include <ProjectCenter/PCProjectBrowser.h>
+
 #include "PCAppProject.h"
 #include "PCAppProj.h"
 
-#include <ProjectCenter/ProjectCenter.h>
-
-@interface PCAppProject (CreateUI)
-
-- (void)_initUI;
-
-@end
-
-@implementation PCAppProject (CreateUI)
-
-- (void)_initUI
-{
-  NSTextField *textField;
-  NSRect      frame;
-  NSBox       *_iconViewBox;
-  NSBox       *_appIconBox;
-
-  [super _initUI];
-
-  // Application Class
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Application Class:"];
-  [projectProjectInspectorView addSubview:textField];
-  RELEASE(textField);
-
-  appClassField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,248,165,21)];
-  [appClassField setAlignment: NSLeftTextAlignment];
-  [appClassField setBordered: YES];
-  [appClassField setEditable: YES];
-  [appClassField setBezeled: YES];
-  [appClassField setDrawsBackground: YES];
-  [appClassField setStringValue:@""];
-  [appClassField setTarget:self];
-  [appClassField setAction:@selector(setAppClass:)];
-  [projectProjectInspectorView addSubview:appClassField];
-  RELEASE(appClassField);
-
-  // Application Icon
-  _appIconBox = [[NSBox alloc] init];
-  [_appIconBox setFrame:NSMakeRect(6,154,270,84)];
-  [_appIconBox setContentViewMargins:NSMakeSize(4.0, 6.0)];
-  [_appIconBox setTitle:@"Application Icon"];
-  [projectProjectInspectorView addSubview:_appIconBox];
-  RELEASE(_appIconBox);
-  
-  appImageField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,34,195,21)];
-  [appImageField setAlignment: NSLeftTextAlignment];
-  [appImageField setBordered: YES];
-  [appImageField setEditable: YES];
-  [appImageField setBezeled: YES];
-  [appImageField setDrawsBackground: YES];
-  [appImageField setStringValue:@""];
-  [_appIconBox addSubview:appImageField];
-  RELEASE(appImageField);
-
-  setAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(147,0,48,21)];
-  [setAppIconButton setTitle:@"Set..."];
-  [setAppIconButton setTarget:self];
-  [setAppIconButton setAction:@selector(setAppIcon:)];
-  [_appIconBox addSubview:setAppIconButton];
-  RELEASE(setAppIconButton);
-
-  clearAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(95,0,48,21)];
-  [clearAppIconButton setTitle:@"Clear"];
-  [clearAppIconButton setTarget:self];
-  [clearAppIconButton setAction:@selector(clearAppIcon:)];
-  [_appIconBox addSubview:clearAppIconButton];
-  RELEASE(clearAppIconButton);
-
-  frame = NSMakeRect(200,0,56,56);
-  _iconViewBox = [[NSBox alloc] init];
-  [_iconViewBox setFrame:frame];
-  [_iconViewBox setTitlePosition:NSNoTitle];
-  [_iconViewBox setBorderType:NSBezelBorder];
-  [_appIconBox addSubview:_iconViewBox];
-  RELEASE(_iconViewBox);
-  
-  appIconView = [[NSImageView alloc] initWithFrame:frame];
-  [_iconViewBox addSubview:appIconView];
-  RELEASE(appIconView);
-}
-
-@end
-
 @implementation PCAppProject
 
-//----------------------------------------------------------------------------
-// Init and free
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// --- Init and free
+// ----------------------------------------------------------------------------
 
 - (id)init
 {
@@ -165,109 +77,533 @@
 
 - (void)dealloc
 {
-  [rootCategories release];
-  [rootObjects release];
-  [rootKeys release];
+  RELEASE(buildAttributesView);
+  RELEASE(projectAttributesView);
+  RELEASE(fileAttributesView);
+
+  RELEASE(rootCategories);
+  RELEASE(rootObjects);
+  RELEASE(rootKeys);
 
   [super dealloc];
 }
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// --- User Interface
+// ----------------------------------------------------------------------------
 
-- (Class)builderClass
+- (void)createInspectors
 {
-    return [PCAppProj class];
-}
+  NSTextField *textField = nil;
+  NSBox       *_iconViewBox = nil;
+  NSBox       *_appIconBox = nil;
+  NSBox       *line = nil;
 
-- (BOOL)writeMakefile
-{
-    NSData   *mfd;
-    NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-    int i; 
-    PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
-    NSDictionary      *dict = [self projectDict];
-
-    // Save the project file
-    [super writeMakefile];
-    
-    // Create the new file
-    [mf createMakefileForProject:[self projectName]];
-
-    [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
-    
-    [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
-
-    [mf appendApplication];
-    [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
-    [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
-
-    [mf appendResources];
-    for (i=0;i<[[self resourceFileKeys] count];i++)
+  if (buildAttributesView && projectAttributesView && fileAttributesView)
     {
-        NSString *k = [[self resourceFileKeys] objectAtIndex:i];
-        [mf appendResourceItems:[dict objectForKey:k]];
+      return;
     }
 
-    [mf appendHeaders:[dict objectForKey:PCHeaders]];
-    [mf appendClasses:[dict objectForKey:PCClasses]];
-    [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
+  /*
+   * "Build Attributes" View
+   */
+  buildAttributesView = [[NSBox alloc] init];
+  [buildAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [buildAttributesView setTitlePosition:NSNoTitle];
+  [buildAttributesView 
+    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [buildAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
-    [mf appendTailForApp];
+  // Compiler Flags -- ADDITIONAL_OBJCFLAGS(?), ADDITIONAL_CFLAGS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Compiler Flags:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
 
-    // Write the new file to disc!
-    if ((mfd = [mf encodedMakefile])) 
+  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,323,165,21)];
+  [ccOptField setAlignment: NSLeftTextAlignment];
+  [ccOptField setBordered: YES];
+  [ccOptField setEditable: YES];
+  [ccOptField setBezeled: YES];
+  [ccOptField setDrawsBackground: YES];
+  [ccOptField setStringValue:@""];
+  [ccOptField setAction:@selector(changeCommonProjectEntry:)];
+  [ccOptField setTarget:self];
+  [buildAttributesView addSubview:ccOptField];
+  RELEASE(ccOptField);
+
+  // Linker Flags -- ADDITIONAL_LDFLAGS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Linker Flags:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,298,165,21)];
+  [ldOptField setAlignment: NSLeftTextAlignment];
+  [ldOptField setBordered: YES];
+  [ldOptField setEditable: YES];
+  [ldOptField setBezeled: YES];
+  [ldOptField setDrawsBackground: YES];
+  [ldOptField setStringValue:@""];
+  [ldOptField setAction:@selector(changeCommonProjectEntry:)];
+  [ldOptField setTarget:self];
+  [buildAttributesView addSubview:ldOptField];
+  RELEASE(ldOptField);
+
+  // Install In
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Install In:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  installPathField =[[NSTextField alloc] 
+    initWithFrame:NSMakeRect(111,273,165,21)];
+  [installPathField setAlignment: NSLeftTextAlignment];
+  [installPathField setBordered: YES];
+  [installPathField setEditable: YES];
+  [installPathField setBezeled: YES];
+  [installPathField setDrawsBackground: YES];
+  [installPathField setStringValue:@""];
+  [installPathField setAction:@selector(changeCommonProjectEntry:)];
+  [installPathField setTarget:self];
+  [buildAttributesView addSubview:installPathField];
+  RELEASE(installPathField);
+
+  // Build Tool
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Build Tool:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
+  [toolField setAlignment: NSLeftTextAlignment];
+  [toolField setBordered: YES];
+  [toolField setEditable: YES];
+  [toolField setBezeled: YES];
+  [toolField setDrawsBackground: YES];
+  [toolField setStringValue:@""];
+  [toolField setAction:@selector(changeCommonProjectEntry:)];
+  [toolField setTarget:self];
+  [buildAttributesView addSubview:toolField];
+  RELEASE(toolField);
+
+  // Public Headers In -- ADDITIONAL_INCLUDE_DIRS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,223,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Public Headers In:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  headersField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,223,165,21)];
+  [headersField setAlignment: NSLeftTextAlignment];
+  [headersField setBordered: YES];
+  [headersField setEditable: YES];
+  [headersField setBezeled: YES];
+  [headersField setDrawsBackground: YES];
+  [headersField setStringValue:@""];
+  [headersField setAction:@selector(changeCommonProjectEntry:)];
+  [headersField setTarget:self];
+  [buildAttributesView addSubview:headersField];
+  RELEASE(headersField);
+
+  // Public Libraries In -- ADDITIONAL_TOOL_LIBS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,198,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Public Libraries In:"];
+  [buildAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  libsField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,198,165,21)];
+  [libsField setAlignment: NSLeftTextAlignment];
+  [libsField setBordered: YES];
+  [libsField setEditable: YES];
+  [libsField setBezeled: YES];
+  [libsField setDrawsBackground: YES];
+  [libsField setStringValue:@""];
+  [libsField setAction:@selector(changeCommonProjectEntry:)];
+  [libsField setTarget:self];
+  [buildAttributesView addSubview:libsField];
+  RELEASE(libsField);
+
+
+  /*
+   * "Project Attributes" View
+   */
+  projectAttributesView = [[NSBox alloc] init];
+  [projectAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [projectAttributesView setTitlePosition:NSNoTitle];
+  [projectAttributesView 
+    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [projectAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
+
+  // Project Type
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Project Type:"];
+  [projectAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  projectTypeField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,323,165,21)];
+  [projectTypeField setAlignment: NSLeftTextAlignment];
+  [projectTypeField setBordered: NO];
+  [projectTypeField setEditable: NO];
+  [projectTypeField setSelectable: NO];
+  [projectTypeField setBezeled: NO];
+  [projectTypeField setDrawsBackground: NO];
+  [projectTypeField setFont:[NSFont boldSystemFontOfSize: 12.0]];
+  [projectTypeField setStringValue:@""];
+  [projectAttributesView addSubview:projectTypeField];
+  RELEASE(projectTypeField);
+
+  // Project Name
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Project Name:"];
+  [projectAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  projectNameField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,298,165,21)];
+  [projectNameField setAlignment: NSLeftTextAlignment];
+  [projectNameField setBordered: NO];
+  [projectNameField setEditable: NO];
+  [projectNameField setBezeled: YES];
+  [projectNameField setDrawsBackground: YES];
+  [projectNameField setStringValue:@""];
+  [projectAttributesView addSubview:projectNameField];
+  RELEASE(projectNameField);
+
+  // Project Language
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Language:"];
+  [projectAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  projectLanguageField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,273,165,21)];
+  [projectLanguageField setAlignment: NSLeftTextAlignment];
+  [projectLanguageField setBordered: NO];
+  [projectLanguageField setEditable: NO];
+  [projectLanguageField setBezeled: YES];
+  [projectLanguageField setDrawsBackground: YES];
+  [projectLanguageField setStringValue:@""];
+  [projectAttributesView addSubview:projectLanguageField];
+  RELEASE(projectLanguageField);
+
+  // Application Class
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Application Class:"];
+  [projectAttributesView addSubview:textField];
+  RELEASE(textField);
+
+  appClassField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,248,165,21)];
+  [appClassField setAlignment: NSLeftTextAlignment];
+  [appClassField setBordered: YES];
+  [appClassField setEditable: YES];
+  [appClassField setBezeled: YES];
+  [appClassField setDrawsBackground: YES];
+  [appClassField setStringValue:@""];
+  [appClassField setTarget:self];
+  [appClassField setAction:@selector(setAppClass:)];
+  [projectAttributesView addSubview:appClassField];
+  RELEASE(appClassField);
+
+  // Application Icon
+  _appIconBox = [[NSBox alloc] init];
+  [_appIconBox setFrame:NSMakeRect(6,154,270,84)];
+  [_appIconBox setContentViewMargins:NSMakeSize(4.0, 6.0)];
+  [_appIconBox setTitle:@"Application Icon"];
+  [projectAttributesView addSubview:_appIconBox];
+  
+  appImageField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,34,195,21)];
+  [appImageField setAlignment: NSLeftTextAlignment];
+  [appImageField setBordered: YES];
+  [appImageField setEditable: YES];
+  [appImageField setBezeled: YES];
+  [appImageField setDrawsBackground: YES];
+  [appImageField setStringValue:@""];
+  [_appIconBox addSubview:appImageField];
+  RELEASE(appImageField);
+
+  setAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(147,0,48,21)];
+  [setAppIconButton setTitle:@"Set..."];
+  [setAppIconButton setTarget:self];
+  [setAppIconButton setAction:@selector(setAppIcon:)];
+  [_appIconBox addSubview:setAppIconButton];
+  RELEASE(setAppIconButton);
+
+  clearAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(95,0,48,21)];
+  [clearAppIconButton setTitle:@"Clear"];
+  [clearAppIconButton setTarget:self];
+  [clearAppIconButton setAction:@selector(clearAppIcon:)];
+  [_appIconBox addSubview:clearAppIconButton];
+  RELEASE(clearAppIconButton);
+
+  _iconViewBox = [[NSBox alloc] initWithFrame:NSMakeRect(200,0,56,56)];
+  [_iconViewBox setTitlePosition:NSNoTitle];
+  [_iconViewBox setBorderType:NSBezelBorder];
+  [_iconViewBox setContentViewMargins:NSMakeSize(2.0, 2.0)];
+  [_appIconBox addSubview:_iconViewBox];
+  RELEASE(_iconViewBox);
+  
+  appIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(200,0,56,56)];
+  [_iconViewBox addSubview:appIconView];
+  RELEASE(appIconView);
+
+  RELEASE(_appIconBox);
+
+  /*
+   * "File Attributes" View
+   */
+  fileAttributesView = [[NSBox alloc] init];
+  [fileAttributesView setFrame:NSMakeRect(0,0,295,364)];
+  [fileAttributesView setTitlePosition:NSNoTitle];
+  [fileAttributesView setAutoresizingMask:
+    (NSViewWidthSizable | NSViewHeightSizable)];
+  [fileAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
+
+  fileIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(8,290,48,48)];
+  [fileIconView setImage:nil];
+  [fileAttributesView addSubview:fileIconView];
+  RELEASE(fileIconView);
+
+  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(60,290,216,48)];
+  [fileNameField setAlignment: NSLeftTextAlignment];
+  [fileNameField setBordered: NO];
+  [fileNameField setEditable: NO];
+  [fileNameField setSelectable: NO];
+  [fileNameField setBezeled: NO];
+  [fileNameField setDrawsBackground: NO];
+  [fileNameField setFont:[NSFont systemFontOfSize:20.0]];
+  [fileNameField setStringValue:@"No files selected"];
+  [fileAttributesView addSubview:fileNameField];
+  RELEASE(fileNameField);
+
+  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,278,295,2)];
+  [line setTitlePosition:NSNoTitle];
+  [fileAttributesView addSubview:line];
+  RELEASE(line);
+
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:self
+       selector:@selector(browserDidSetPath:)
+           name:PCBrowserDidSetPathNotification
+         object:[self projectBrowser]];
+
+  [self updateInspectorValues:nil];
+}
+
+- (NSView *)buildAttributesView
+{
+  if (!buildAttributesView)
     {
-        if ([mfd writeToFile:mfl atomically:YES]) 
-        {
-            return YES;
-        }
+      [self createInspectors];
     }
 
-    return NO;
+  return buildAttributesView;
 }
 
-- (NSArray *)sourceFileKeys
+- (NSView *)projectAttributesView
 {
-    return [NSArray arrayWithObjects:PCClasses,PCOtherSources,nil];
+  if (!projectAttributesView)
+    {
+      [self createInspectors];
+    }
+  return projectAttributesView;
 }
 
-- (NSArray *)resourceFileKeys
+- (NSView *)fileAttributesView
 {
-    return [NSArray arrayWithObjects:PCGModels,PCOtherResources,PCImages,nil];
+  if (!fileAttributesView)
+    {
+      [self createInspectors];
+    }
+  return fileAttributesView;
 }
 
-- (NSArray *)otherKeys
+// ----------------------------------------------------------------------------
+// --- Actions
+// ----------------------------------------------------------------------------
+
+- (void)changeCommonProjectEntry:(id)sender
 {
-    return [NSArray arrayWithObjects:PCDocuFiles,PCSupportingFiles, 
-    PCNonProject,nil];
+  NSString *newEntry = [sender stringValue];
+
+  if (sender == installPathField)
+    {
+      [projectDict setObject:newEntry forKey:PCInstallDir];
+    }
+  else if ( sender == toolField )
+    {
+      [projectDict setObject:newEntry forKey:PCBuildTool];
+
+      if( ![[NSFileManager defaultManager] isExecutableFileAtPath:newEntry] )
+	{
+	  NSRunAlertPanel(@"Build Tool Error!",
+			  @"No valid executable found at '%@'!",
+			  @"OK",nil,nil,newEntry);
+	}
+    }
+  else if ( sender == ccOptField )
+    {
+      [projectDict setObject:newEntry forKey:PCCompilerOptions];
+    }
+  else if ( sender == ldOptField )
+    {
+      [projectDict setObject:newEntry forKey:PCLinkerOptions];
+    }
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
-- (NSArray *)buildTargets
+- (void)setAppClass:(id)sender
 {
-  return nil;
+  [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
-- (NSString *)projectDescription
+- (void)setAppIcon:(id)sender
 {
-    return @"Project that handles GNUstep/ObjC based applications.";
+  int         result;  
+  NSArray     *fileTypes = [NSImage imageFileTypes];
+  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+
+  [openPanel setAllowsMultipleSelection:NO];
+  result = [openPanel runModalForDirectory:NSHomeDirectory()
+                                      file:nil 
+                                     types:fileTypes];
+
+  if (result == NSOKButton)
+    {
+      NSString *imageFilePath = [[openPanel filenames] objectAtIndex:0];
+
+      if (![self setAppIconWithImageAtPath:imageFilePath])
+	{
+	  NSRunAlertPanel(@"Error while opening file!", 
+			  @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
+	}
+    }  
 }
 
-- (BOOL)isExecutable
+- (BOOL)setAppIconWithImageAtPath:(NSString *)path
 {
+  NSRect  frame = {{0,0}, {64, 64}};
+  NSImage *image;
+
+  if (!(image = [[NSImage alloc] initWithContentsOfFile:path]))
+    {
+      return NO;
+    }
+
+  [self addFile:path forKey:PCImages copy:YES];
+  [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
+
+  [appImageField setStringValue:[path lastPathComponent]];
+
+  [appIconView setImage:nil];
+  [appIconView display];
+
+  frame.size = [image size];
+  [appIconView setFrame:frame];
+  [appIconView setImage:image];
+  [appIconView display];
+  RELEASE(image);
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
+
   return YES;
 }
 
-- (void)updateValuesFromProjectDict
+- (void)clearAppIcon:(id)sender
+{
+  [projectDict setObject:@"" forKey:PCAppIcon];
+  [appImageField setStringValue:@""];
+  [appIconView setImage:nil];
+  [appIconView display];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
+}
+
+// ----------------------------------------------------------------------------
+// --- Notifications
+// ----------------------------------------------------------------------------
+
+- (void)updateInspectorValues:(NSNotification *)aNotif
 {
   NSRect   frame = {{0,0}, {48,48}};
   NSImage  *image = nil;
   NSString *path = nil;
   NSString *_icon = nil;
 
-  [super updateValuesFromProjectDict];
+  NSLog (@"PCAppProject: updateInspectorValues");
 
+  // Build Attributes view
+  [installPathField setStringValue:[projectDict objectForKey:PCInstallDir]];
+  [toolField setStringValue:[projectDict objectForKey:PCBuildTool]];
+  [ccOptField setStringValue:[projectDict objectForKey:PCCompilerOptions]];
+  [ldOptField setStringValue:[projectDict objectForKey:PCLinkerOptions]];
+
+  // Project Attributes view
+  [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
+  [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
+  [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
   [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
 
@@ -285,70 +621,111 @@
       [appIconView display];
       RELEASE(image);
     }
+
+  // File Attributes view
 }
 
-- (void)clearAppIcon:(id)sender
+- (void)browserDidSetPath:(NSNotification *)aNotif
 {
-    [projectDict setObject:@"" forKey:PCAppIcon];
-    [appImageField setStringValue:@"No Icon!"];
-    [appIconView setImage:nil];
-    [appIconView display];
+  NSString *fileName = [[aNotif object] nameOfSelectedFile];
 
-    [projectWindow setDocumentEdited:YES];
-}
-
-- (void)setAppIcon:(id)sender
-{
-  int result;  
-  NSArray *fileTypes = [NSImage imageFileTypes];
-  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-
-  [openPanel setAllowsMultipleSelection:NO];
-  result = [openPanel runModalForDirectory:NSHomeDirectory()
-		      file:nil 
-		      types:fileTypes];
-  
-  if (result == NSOKButton) {
-    NSArray *files = [openPanel filenames];
-    NSString *imageFilePath = [files objectAtIndex:0];      
-
-    if (![self setAppIconWithImageAtPath:imageFilePath]) {
-      NSRunAlertPanel(@"Error while opening file!", 
-		      @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
+  if (fileName)
+    {
+      [fileNameField setStringValue:fileName];
     }
-  }  
+  else
+    {
+      [fileNameField setStringValue:@"No files selected"];
+    }
 }
 
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path
-{
-    NSRect frame = {{0,0}, {64, 64}};
-    NSImage *image;
+// ----------------------------------------------------------------------------
+// --- Project
+// ----------------------------------------------------------------------------
 
-    if (!(image = [[NSImage alloc] initWithContentsOfFile:path])) {
-	return NO;
+- (Class)builderClass
+{
+  return [PCAppProj class];
+}
+
+- (BOOL)writeMakefile
+{
+  NSData   *mfd;
+  NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+  int i; 
+  PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
+  NSDictionary      *dict = [self projectDict];
+
+  // Save the project file
+  [super writeMakefile];
+
+  // Create the new file
+  [mf createMakefileForProject:[self projectName]];
+
+  [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
+
+  [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
+
+  [mf appendApplication];
+  [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
+  [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
+
+  [mf appendResources];
+  for (i=0;i<[[self resourceFileKeys] count];i++)
+    {
+      NSString *k = [[self resourceFileKeys] objectAtIndex:i];
+      [mf appendResourceItems:[dict objectForKey:k]];
     }
 
-    [self addFile:path forKey:PCImages copy:YES];
-    [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
+  [mf appendHeaders:[dict objectForKey:PCHeaders]];
+  [mf appendClasses:[dict objectForKey:PCClasses]];
+  [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
 
-    [appImageField setStringValue:[path lastPathComponent]];
+  [mf appendTailForApp];
 
-    frame.size = [image size];
-    [appIconView setFrame:frame];
-    [appIconView setImage:image];
-    [appIconView display];
-    RELEASE(image);
+  // Write the new file to disc!
+  if ((mfd = [mf encodedMakefile])) 
+    {
+      if ([mfd writeToFile:mfl atomically:YES]) 
+	{
+	  return YES;
+	}
+    }
 
-    [projectWindow setDocumentEdited:YES];
-
-    return YES;
+  return NO;
 }
 
-- (void)setAppClass:(id)sender
+- (NSArray *)sourceFileKeys
 {
-    [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
+  return [NSArray arrayWithObjects:
+    PCClasses, PCOtherSources, nil];
+}
 
-    [projectWindow setDocumentEdited:YES];
+- (NSArray *)resourceFileKeys
+{
+  return [NSArray arrayWithObjects:
+    PCGModels, PCOtherResources, PCImages, nil];
+}
+
+- (NSArray *)otherKeys
+{
+  return [NSArray arrayWithObjects:
+    PCDocuFiles, PCSupportingFiles, PCNonProject, nil];
+}
+
+- (NSArray *)buildTargets
+{
+  return [NSArray arrayWithObjects: @"app", @"debug", @"profile", nil];
+}
+
+- (NSString *)projectDescription
+{
+  return @"Project that handles GNUstep/ObjC based applications.";
+}
+
+- (BOOL)isExecutable
+{
+  return YES;
 }
 
 @end

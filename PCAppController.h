@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -67,6 +67,10 @@
 
 - (id)init;
 - (void)dealloc;
+
+- (BOOL)respondsToSelector:(SEL)aSelector; 
+- (void)forwardInvocation:(NSInvocation *)anInvocation;
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
 
 //============================================================================
 //==== Delegate

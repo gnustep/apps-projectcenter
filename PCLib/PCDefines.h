@@ -29,9 +29,11 @@
 #define SuccessSound                    @"SuccessSound"
 #define FailureSound                    @"FailureSound"
 #define ExternalEditor                  @"ExternalEditor"
+#define ExternalDebugger                @"ExternalDebugger"
 #define TabBehaviour                    @"TabBehaviour"
 #define SeparateBuilder			@"SeparateBuilder"
 #define SeparateLauncher		@"SeparateLauncher"
+#define SeparateHistory                 @"SeparateLauncher"
 #define SeparateEditor			@"SeparateEditor"
 
 #define PCAppDidInitNotification        @"PCAppDidInit"

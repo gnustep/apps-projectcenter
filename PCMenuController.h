@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -102,8 +102,8 @@
 // Tools
 - (void)showInspector:(id)sender;
 - (void)showEditorPanel:(id)sender;
-- (void)showRunPanel:(id)sender;
 - (void)showBuildPanel:(id)sender;
+- (void)showLaunchPanel:(id)sender;
 - (void)runTarget:(id)sender;
 
 //============================================================================
@@ -118,3 +118,4 @@
 @end
 
 #endif
+

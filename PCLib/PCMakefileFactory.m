@@ -274,6 +274,10 @@ static PCMakefileFactory *_factory = nil;
 
     [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
     [self appendString:[NSString stringWithFormat:@"APP_NAME=%@\n",pnme]];
+
+    // TODO: proper support for localisation!!!
+    //[self appendString:[NSString stringWithFormat:@"%@_LANGUAGES=English\n",pnme]];
+    //[self appendString:[NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES=Localizable.strings\n",pnme]];
 }
 
 - (void)appendAppIcon:(NSString*)icn

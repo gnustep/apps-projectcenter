@@ -40,7 +40,6 @@
 
 @interface PCProjectBuilder : NSObject <ProjectComponent>
 {
-  NSPanel         *buildPanel;
   NSBox           *componentView;
   PCButton        *buildButton;
   PCButton        *cleanButton;
@@ -73,24 +72,28 @@
   NSFileHandle    *errorReadHandle;
 }
 
-- (id) initWithProject: (PCProject *)aProject;
-- (void) dealloc;
+- (id)initWithProject:(PCProject *)aProject;
+- (void)dealloc;
 
-- (NSPanel *) createBuildPanel;
-- (NSPanel *) buildPanel;
-- (NSView *) componentView;
-- (void) setTooltips;
+- (NSView *)componentView;
+- (void)setTooltips;
 
-- (void) build: (id)sender;
-- (void) popupChanged: (id)sender;
+- (void)build:(id)sender;
+- (void)buildDidTerminate;
 
-- (void) logStdOut: (NSNotification *)aNotif;
-- (void) logErrOut: (NSNotification *)aNotif;
+- (void)popupChanged:(id)sender;
 
-- (void) buildDidTerminate: (NSNotification *)aNotif;
-//- (void) buildDidTerminate: (int)status;
+- (void)logStdOut:(NSNotification *)aNotif;
+- (void)logErrOut:(NSNotification *)aNotif;
 
-- (void) copyPackageTo: (NSString *)path;
+- (void)copyPackageTo:(NSString *)path;
+
+@end
+
+@interface PCProjectBuilder (UserInterface)
+
+- (void) _createComponentView;
+- (void) _createOptionsPanel;
 
 @end
 
@@ -104,7 +107,7 @@
 
 @interface PCProjectBuilder (BuildThread)
 
-- (void) make: (NSDictionary *)data;
+- (void)make:(NSDictionary *)data;
 
 @end
 

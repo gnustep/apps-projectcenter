@@ -10,7 +10,6 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include Version
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
 
 #
@@ -23,11 +22,11 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 # Library
 #
 
-PACKAGE_NAME=ProjectCenter
-LIBRARY_VAR=PROJECTCENTER
-LIBRARY_NAME=libProjectCenter
-libProjectCenter_HEADER_FILES_DIR=.
-libProjectCenter_HEADER_FILES_INSTALL_DIR=/ProjectCenter
+PACKAGE_NAME = ProjectCenter
+LIBRARY_VAR = PROJECTCENTER
+LIBRARY_NAME = libProjectCenter
+libProjectCenter_HEADER_FILES_DIR = .
+libProjectCenter_HEADER_FILES_INSTALL_DIR = /ProjectCenter
 ADDITIONAL_INCLUDE_DIRS = -I..
 srcdir = .
 PROJECTCENTER_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)
@@ -44,79 +43,90 @@ libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 # Header files
 #
 
-libProjectCenter_HEADER_FILES= \
-PCButton.h \
-PCBrowserController.h \
+libProjectCenter_HEADER_FILES = \
 PCBundleLoader.h \
-PCDataSource.h \
-PCEditorView.h \
 PCFileManager.h \
-PCProject.h \
-PCProjectBuilder.h \
-PCProjectDebugger.h \
-PCProjectManager.h \
 PCServer.h \
+PCMakefileFactory.h \
+PCSplitView.h \
+PCButton.h \
+\
+PCProjectManager.h \
+PCHistoryPanel.h \
+PCBuildPanel.h \
+PCLaunchPanel.h \
+PCProject.h \
+PCProject+ComponentHandling.h \
+PCProjectWindow.h \
+PCProjectInspector.h \
+PCProjectBuilder.h \
+PCProjectLauncher.h \
+PCProjectEditor.h \
+\
+PCProjectBrowser.h \
+PCProjectHistory.h \
+\
+PCEditor.h \
+PCEditor+UInterface.h \
+PCEditorView.h \
+PCEditorView+Highlighting.h \
+PCEditorController.h \
+PCTextFinder.h \
+PCTextFinder+UInterface.h \
+\
+PCDefines.h \
 FileCreator.h \
 PreferenceController.h \
 ProjectBuilder.h \
 ProjectCenter.h \
-ProjectDebugger.h \
+ProjectLauncher.h \
 ProjectEditor.h \
 ProjectType.h \
 Server.h \
-PCSplitView.h \
-PCEditor.h \
-PCEditorController.h \
-PCDefines.h \
-PCTextFinder.h \
-PCProjectEditor.h \
-ProjectComponent.h \
-PCProject+ComponentHandling.h \
-PCEditorView+Highlighting.h \
-PCHistoryController.h \
-PCMakefileFactory.h \
-PCEditor+UInterface.h \
-PCFileManager+UInterface.h \
-PCProjectManager+UInterface.h \
-PCProject+UInterface.h \
-PCTextFinder+UInterface.h 
+ProjectComponent.h
 
 #
 # Class files
 #
 
-libProjectCenter_OBJC_FILES= \
-PCButton.m \
-PCBrowserController.m \
+libProjectCenter_OBJC_FILES = \
 PCBundleLoader.m \
-PCDataSource.m \
-PCEditorView.m \
 PCFileManager.m \
-PCProject.m \
-PCProjectBuilder.m \
-PCProjectDebugger.m \
-PCProjectManager.m \
+PCFileManager+UInterface.m \
 PCServer.m \
+PCMakefileFactory.m \
 PCSplitView.m \
+PCButton.m \
+\
+PCProjectManager.m \
+PCHistoryPanel.m \
+PCBuildPanel.m \
+PCLaunchPanel.m \
+PCProject.m \
+PCProject+ComponentHandling.m \
+PCProjectWindow.m \
+PCProjectInspector.m \
+PCProjectBuilder.m \
+PCProjectLauncher.m \
+PCProjectEditor.m \
+\
+PCProjectBrowser.m \
+PCProjectHistory.m \
+\
 PCEditor.m \
+PCEditor+UInterface.m \
+PCEditorView.m \
+PCEditorView+Highlighting.m \
 PCEditorController.m \
 PCTextFinder.m \
-PCProjectEditor.m \
-PCProject+ComponentHandling.m \
-PCEditorView+Highlighting.m \
-PCHistoryController.m \
-PCMakefileFactory.m \
-PCEditor+UInterface.m \
-PCFileManager+UInterface.m \
-PCProjectManager+UInterface.m \
-PCProject+UInterface.m \
 PCTextFinder+UInterface.m 
+
 
 #
 # C files
 #
 
-libProjectCenter_C_FILES= 
+libProjectCenter_C_FILES = 
 
 HEADERS_INSTALL = $(libProjectCenter_HEADER_FILES)
 

@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -29,16 +29,12 @@
 #include <ProjectCenter/ProjectCenter.h>
 #include "PCAppController.h"
 
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
-
 @implementation PCMenuController
 
 - (id)init
 {
   if ((self = [super init])) 
-    {
+  {
       NSRect fr = NSMakeRect(20,30,160,20);
 
       [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -67,7 +63,7 @@
 	NSViewMinXMargin | NSViewMaxXMargin];
 
       RELEASE(projectTypePopup);
-    }
+  }
 
   return self;
 }
@@ -99,19 +95,20 @@
 - (void)setAppController:(id)anObject
 {
   [appController autorelease];
-  appController = [anObject retain];
+  appController = anObject;
+  RETAIN(appController);
 }
 
 - (void)setFileManager:(id)anObject
 {
   [fileManager autorelease];
-  fileManager = [anObject retain];
+  fileManager = anObject;
+  RETAIN(fileManager);
 }
 
 - (void)setProjectManager:(id)anObject
 {
-  [projectManager autorelease];
-  projectManager = [anObject retain];
+  projectManager = anObject;
 }
 
 //============================================================================
@@ -137,8 +134,10 @@
 // Project
 - (void)projectOpen:(id)sender
 {
-  NSString 	*projPath;
-  NSOpenPanel	*openPanel;
+  NSString 	*projPath = nil;
+  NSString      *lastOpenDir = nil;
+  NSArray       *fileTypes = nil;
+  NSOpenPanel	*openPanel = nil;
   int		retval;
 
   openPanel = [NSOpenPanel openPanel];
@@ -146,14 +145,21 @@
   [openPanel setCanChooseDirectories:NO];
   [openPanel setCanChooseFiles:YES];
 
-  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
+  lastOpenDir = [[NSUserDefaults standardUserDefaults] 
+    objectForKey:@"LastOpenDirectory"];
+  fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+
+  retval = [openPanel runModalForDirectory:lastOpenDir
+                                      file:nil 
+				     types:fileTypes];
 
   if (retval == NSOKButton) 
     {
       BOOL isDir;
 
-      [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
-	forKey:@"LastOpenDirectory"];
+      [[NSUserDefaults standardUserDefaults]
+	setObject:[openPanel directory] 
+	   forKey:@"LastOpenDirectory"];
 
       projPath = [[openPanel filenames] objectAtIndex:0];
 
@@ -173,36 +179,38 @@
 
 - (void)projectNew:(id)sender
 {
-  NSSavePanel *sp;
-  int 	 runResult;
-  NSString    *dir = nil;
+  NSSavePanel *savePanel = nil;
+  NSString    *lastOpenDir = nil;
+  int 	      runResult;
 
-  sp = [NSSavePanel savePanel];
+  savePanel = [NSSavePanel savePanel];
 
-  [sp setTitle:@"Create new project..."];
-  [sp setAccessoryView:nil];
-  [sp setAccessoryView:projectTypeAccessaryView];
+  [savePanel setTitle:@"Create new project..."];
+  [savePanel setAccessoryView:nil];
+  [savePanel setAccessoryView:projectTypeAccessaryView];
 
-  dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];
-  if( !dir )
+  lastOpenDir = [[NSUserDefaults standardUserDefaults] 
+    objectForKey:@"LastNewDirectory"];
+  if (!lastOpenDir)
     {
-      dir = NSHomeDirectory();
+      lastOpenDir = NSHomeDirectory();
     }
 
-  runResult = [sp runModalForDirectory:dir file:@""];
+  runResult = [savePanel runModalForDirectory:lastOpenDir file:@""];
   if (runResult == NSOKButton) 
     {
       NSString *projectType = [projectTypePopup titleOfSelectedItem];
       NSString *className = [[appController projectTypes] objectForKey:projectType];
 
-      [[NSUserDefaults standardUserDefaults] setObject:[sp directory] 
-	forKey:@"LastNewDirectory"];
+      [[NSUserDefaults standardUserDefaults] 
+	setObject:[savePanel directory] 
+	   forKey:@"LastNewDirectory"];
 
-      if (![projectManager createProjectOfType:className path:[sp filename]])
+      if (![projectManager createProjectOfType:className path:[savePanel filename]])
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Failed to create %@!",
-			  @"OK",nil,nil,[sp filename]);
+			  @"OK",nil,nil,[savePanel filename]);
 	}
     }
 }
@@ -238,10 +246,10 @@
 {
   NSString  *fileName = nil;
   PCProject *proj = [projectManager activeProject];
-  NSArray   *files = [[proj browserController] selectedFiles];
+  NSArray   *files = [[proj projectBrowser] selectedFiles];
 
-  if ((fileName = [[proj browserController] nameOfSelectedFile]))
-    {
+  if ((fileName = [[proj projectBrowser] nameOfSelectedFile]))
+  {
       int ret;
 
       ret = NSRunAlertPanel(@"Remove File!",
@@ -252,12 +260,12 @@
 			    files, [proj projectName]);
 
       if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
-	{
+      {
 	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
 
 	  [projectManager removeFilesPermanently:flag];
-	}
-    }
+       }
+  }
 }
 
 - (void)projectRevertToSaved:(id)sender
@@ -318,16 +326,16 @@
       filePath = [[openPanel filenames] objectAtIndex:0];
 
       if (![fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
-	{
+      {
 	  NSRunAlertPanel(@"Attention!",
 			  @"Couldn't open %@!",
 			  @"OK",nil,nil,filePath);
-	}
+      }
       else
-	{
+      {
 	  [PCEditorController openFileInEditor:filePath];
-	}
-    }
+      }
+  }
 }
 
 - (void)fileNew:(id)sender
@@ -344,7 +352,7 @@
 - (void)fileSaveAs:(id)sender
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
   NSString       *oldFilePath = nil;
   NSString 	 *newFilePath = nil;
   NSString       *directory = nil;
@@ -392,7 +400,7 @@
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString 	 *filePath = [projectManager selectedFileName];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
   int		 retval;
 
   [savePanel setTitle: @"Save To..."];
@@ -427,7 +435,7 @@
 - (void)fileOpenQuickly:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
@@ -440,18 +448,18 @@
   [projectManager renameFileTo:proj];*/
 
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
 - (void)fileNewUntitled:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
-// Edit
+// Edit. PCEditorController have to provide this menu and functionality
 - (void)findShowPanel:(id)sender
 {
   [[PCTextFinder sharedFinder] showFindPanel:self];
@@ -470,17 +478,23 @@
 // Tools
 - (void)showInspector:(id)sender
 {
-  [projectManager showInspectorForProject:[projectManager activeProject]];
+  [projectManager showProjectInspector:self];
 }
 
-- (void)showRunPanel:(id)sender
+- (void)showHistoryPanel:(id)sender
 {
-  [[projectManager activeProject] showRunView:self];
+  [[[projectManager activeProject] projectWindow] showProjectHistory:self];
+  [projectManager showProjectHistory:self];
 }
 
 - (void)showBuildPanel:(id)sender
 {
-  [[projectManager activeProject] showBuildView:self];
+  [[[projectManager activeProject] projectWindow] showProjectBuild:self];
+}
+
+- (void)showLaunchPanel:(id)sender
+{
+  [[[projectManager activeProject] projectWindow] showProjectLaunch:self];
 }
 
 - (void)runTarget:(id)sender
@@ -624,3 +638,4 @@
 }
 
 @end
+

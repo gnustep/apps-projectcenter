@@ -35,7 +35,6 @@
 
 - (void)setActiveProject:(PCProject *)aProject;
 - (void)closeProject:(PCProject *)aProject;
-- (void)showInspectorForProject:(PCProject *)aProject;
 
 @end
 

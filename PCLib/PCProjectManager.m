@@ -24,22 +24,24 @@
    $Id$
 */
 
-#include "PCProjectManager.h"
 #include "PCDefines.h"
+
+#include "PCProjectManager.h"
+#include "PCHistoryPanel.h"
+#include "PCBuildPanel.h"
+#include "PCLaunchPanel.h"
+
 #include "PCProject.h"
-#include "PCServer.h"
-#include "PCBrowserController.h"
+#include "PCProjectWindow.h"
+#include "PCProjectBrowser.h"
+#include "PCProjectInspector.h"
 #include "PCEditorController.h"
 #include "ProjectComponent.h"
-#include "ProjectType.h"
 #include "PCProject+ComponentHandling.h"
+#include "PCServer.h"
+
+#include "ProjectType.h"
 #include "ProjectBuilder.h"
-
-#include "PCProjectManager+UInterface.h"
-
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
 
 #define SavePeriodDCN @"SavePeriodDidChangeNotification"
 
@@ -47,82 +49,75 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 @implementation PCProjectManager
 
-// ===========================================================================
+// ============================================================================
 // ==== Intialization & deallocation
-// ===========================================================================
+// ============================================================================
 
 - (id)init
 {
-    if ((self = [super init])) {
-        NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-	SEL sall = @selector(saveAllProjectsIfNeeded);
-	SEL spdc = @selector(resetSaveTimer:);
-	NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
+  if ((self = [super init]))
+    {
+      NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+      SEL            sall = @selector(saveAllProjectsIfNeeded);
+      SEL            spdc = @selector(resetSaveTimer:);
+      NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
 
-       	loadedProjects = [[NSMutableDictionary alloc] init];
+      loadedProjects = [[NSMutableDictionary alloc] init];
 
-        rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
-        if (!rootBuildPath || [rootBuildPath isEqualToString:@""]) {
-            rootBuildPath = [NSTemporaryDirectory() copy];
-        }
+      rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
+      if (!rootBuildPath || [rootBuildPath isEqualToString:@""])
+	{
+	  rootBuildPath = [NSTemporaryDirectory() copy];
+	}
 
-        if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) {
-	    saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
-	                                                 target:self
-	                                               selector:sall
-                                                       userInfo:nil
-                                                        repeats:YES];
-        }
+      if ( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] )
+	{
+	  saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+	                                               target:self
+	                                             selector:sall
+	                                             userInfo:nil
+	                                              repeats:YES];
+	}
 
-        [[NSNotificationCenter defaultCenter] addObserver:self 
-	                                         selector:spdc 
-						     name:SavePeriodDCN 
-						   object:nil];
+      [[NSNotificationCenter defaultCenter] addObserver:self 
+	                                       selector:spdc 
+	                                           name:SavePeriodDCN 
+	                                         object:nil];
+/*      projectInspector = nil;
+      buildPan = nil;
+      projectDebugger = nil;
+      projectHistory = nil;
+      projectFinder = nil;*/
 
-	_needsReleasing = NO;
+      _needsReleasing = NO;
     }
-    return self;
+
+  return self;
 }
 
 - (void)dealloc
 {
-    RELEASE(rootBuildPath);
-    RELEASE(loadedProjects);
+  NSLog (@"PCProjectManager: dealloc");
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    if( [saveTimer isValid] )
+  if ([saveTimer isValid])
     {
-        [saveTimer invalidate];
+      [saveTimer invalidate];
     }
 
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
-  
-    if (_needsReleasing) 
-    {
-      RELEASE(inspector);
-      RELEASE(inspectorView);
-      RELEASE(inspectorPopup);
-    }
-  
-    [super dealloc];
+  RELEASE(rootBuildPath);
+  RELEASE(loadedProjects);
+
+  if (historyPanel) RELEASE(historyPanel);
+  if (buildPanel)   RELEASE(buildPanel);
+  if (launchPanel)  RELEASE(launchPanel);
+
+  [super dealloc];
 }
 
-// ===========================================================================
-// ==== Delegate
-// ===========================================================================
-
-- (id)delegate
-{
-    return delegate;
-}
-
-- (void)setDelegate:(id)aDelegate
-{
-    delegate = aDelegate;
-}
-
-// ===========================================================================
+// ============================================================================
 // ==== Timer handling
-// ===========================================================================
+// ============================================================================
 
 - (void)resetSaveTimer:(NSNotification *)notif
 {
@@ -141,9 +136,63 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 						repeats:YES];
 }
 
-// ===========================================================================
+// ============================================================================
+// ==== Accessory methods
+// ============================================================================
+- (PCProjectInspector *)projectInspector
+{
+  if (!projectInspector)
+    {
+      projectInspector = 
+	[[PCProjectInspector alloc] initWithProjectManager:self];
+    }
+
+  return projectInspector;
+}
+
+- (void)showProjectInspector:(id)sender
+{
+  [[[self projectInspector] panel] makeKeyAndOrderFront:self];
+}
+
+- (NSPanel *)historyPanel
+{
+  if (!historyPanel)
+    {
+      historyPanel = [[PCHistoryPanel alloc] initWithProjectManager:self];
+    }
+
+  return historyPanel;
+}
+
+- (NSPanel *)buildPanel
+{
+  if (!buildPanel)
+    {
+      buildPanel = [[PCBuildPanel alloc] initWithProjectManager:self];
+    }
+
+  return buildPanel;
+}
+
+- (NSPanel *)launchPanel
+{
+  if (!launchPanel)
+    {
+      launchPanel = [[PCLaunchPanel alloc] initWithProjectManager:self];
+    }
+
+  return launchPanel;
+}
+
+- (NSPanel *)projectFinderPanel
+{
+  return findPanel;
+}
+
+// ============================================================================
 // ==== Project management
-// ===========================================================================
+// ============================================================================
 
 - (NSMutableDictionary *)loadedProjects
 {
@@ -157,19 +206,13 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)setActiveProject:(PCProject *)aProject
 {
-    if (aProject != activeProject) {
-        activeProject = aProject;
+  if (aProject != activeProject)
+    {
+      activeProject = aProject;
 
-        [[NSNotificationCenter defaultCenter] postNotificationName:ActiveProjectDidChangeNotification object:activeProject];
-    
-        //~ Is this needed?
-        if (activeProject) {
-            [[activeProject projectWindow] makeKeyAndOrderFront:self];
-        }
-    
-        if ([inspector isVisible]) {
-          [self inspectorPopupDidChange:inspectorPopup];
-        }
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:ActiveProjectDidChangeNotification
+	              object:activeProject];
     }
 }
 
@@ -223,179 +266,122 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (NSString *)selectedFileName
 {
-  return [[activeProject browserController] nameOfSelectedFile];
+  return [[activeProject projectBrowser] nameOfSelectedFile];
 }
 
-// ===========================================================================
+// ============================================================================
 // ==== Project actions
-// ===========================================================================
+// ============================================================================
 
 - (PCProject *)loadProjectAt:(NSString *)aPath
-{    
-  if (delegate && [delegate respondsToSelector:@selector(projectTypes)])
-  {
-    NSDictionary *builders = [delegate projectTypes];
-    NSEnumerator *enumerator = [builders keyEnumerator];
-    NSString 	 *builderKey;
-    
-    while ((builderKey = [enumerator nextObject]))
-    {
-      id<ProjectType>	concretBuilder;
-      PCProject		*project;
-      
-#ifdef DEBUG
-      NSLog([NSString stringWithFormat:@"Builders %@ for key %@",[builders description],builderKey]);
-#endif // DEBUG
-      
-      concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
-      
-      if ((project = [concretBuilder openProjectAt:aPath])) 
-      {
-	return project;
-      }
-    }
-  }
+{
+  NSDictionary    *projectFile;
+  NSString        *projectClassName;
+  id<ProjectType> projectCreator;
+  PCProject       *project;
 
-  NSRunAlertPanel(@"Loading Project Failed!",@"Could not load project '%@'!",@"OK",nil,nil,aPath); 
+  projectFile = [NSDictionary dictionaryWithContentsOfFile:aPath];
+  projectClassName = [projectFile objectForKey:PCProjectBuilderClass];
+  projectCreator = [NSClassFromString(projectClassName) sharedCreator];
+
+  NSLog (@"Load project at %@", aPath);
+  
+  if ((project = [projectCreator openProjectAt:aPath])) 
+    {
+      NSLog (@"Project loaded as %@", [projectCreator projectTypeName]);
+      return project;
+    }
+
+  NSRunAlertPanel(@"Loading Project Failed!",
+		  @"Could not load project '%@'!",
+		  @"OK",nil,nil,aPath); 
 
   return nil;
 }
 
 - (BOOL)openProjectAt:(NSString *)aPath
 {
-    BOOL isDir = NO;
+  BOOL isDir = NO;
 
-    if ([loadedProjects objectForKey:aPath]) 
+  if ([loadedProjects objectForKey:aPath]) 
     {
-        NSRunAlertPanel(@"Attention!",
-	                @"Project '%@' has already been opened!", 
-			@"OK",nil,nil,aPath);
-	return NO;
+      NSRunAlertPanel(@"Attention!",
+		      @"Project '%@' has already been opened!", 
+		      @"OK",nil,nil,aPath);
+      return NO;
     }
-    
-    if ([[NSFileManager defaultManager] fileExistsAtPath:aPath 
-                                             isDirectory:&isDir] && !isDir) 
+
+  if ([[NSFileManager defaultManager] fileExistsAtPath:aPath 
+                                           isDirectory:&isDir] && !isDir) 
     {
-	PCProject *project = [self loadProjectAt:aPath];
-      
-	if (!project) 
+      PCProject *project = [self loadProjectAt:aPath];
+
+      if (!project) 
 	{
-	    return NO;
+	  return NO;
 	}
-      
-	[project setProjectBuilder:self];
-	[loadedProjects setObject:project forKey:aPath];
-	[self setActiveProject:project];
-	[project setDelegate:self];
 
-	[project validateProjectDict];
+      [project setProjectManager:self];
+      [loadedProjects setObject:project forKey:aPath];
+      [self setActiveProject:project];
 
-	return YES;
+      [project validateProjectDict];
+
+      return YES;
     }
-    return NO;
+
+  return NO;
 }
 
 - (BOOL)createProjectOfType:(NSString *)projectType path:(NSString *)aPath
 {
-    Class	creatorClass = NSClassFromString(projectType);
-    PCProject * project;
+  Class	    creatorClass = NSClassFromString(projectType);
+  PCProject *project;
 
-    if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
+  if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
     {
-        [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
-	            format:@"%@ does not conform to ProjectType!",projectType];
-        return NO;
+      [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
+	          format:@"%@ does not conform to ProjectType!",projectType];
+      return NO;
     }
 
-    if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) 
+  if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) 
     {
-        return NO;
+      return NO;
     }
 
-    [[project projectWindow] center];
+  [project setProjectManager:self];
 
-    [project setProjectBuilder:self];
-    
-    aPath = [aPath stringByAppendingPathComponent: [aPath lastPathComponent]];
-    aPath = [aPath stringByAppendingPathExtension: @"pcproj"];
-    [loadedProjects setObject:project forKey:aPath];
-    
-    [self setActiveProject:project];
-    [project setDelegate:self];
-    
-    return YES;
+  aPath = [aPath stringByAppendingPathComponent: [aPath lastPathComponent]];
+  aPath = [aPath stringByAppendingPathExtension: @"pcproj"];
+  [loadedProjects setObject:project forKey:aPath];
+
+  [self setActiveProject:project];
+
+  return YES;
 }
 
 - (BOOL)saveProject
 {
-  BOOL ret;
-
   if (![self activeProject])
     {
       return NO;
     }
 
   // Save PC.project and the makefiles!
-  ret = [activeProject save];
-  if( ret == NO )
+  if ([activeProject save] == NO)
     {
       NSRunAlertPanel(@"Attention!",
 		      @"Couldn't save project %@!", 
 		      @"OK",nil,nil,[activeProject projectName]);
     }
+
   return YES;
 }
 
 - (BOOL)saveProjectAs:(NSString *)projName
 {
   return NO;
-}
-
-- (void)inspectorPopupDidChange:(id)sender
-{
-    NSView *view = nil;
-  
-    if (![self activeProject]) 
-    {
-	return;
-    }
-  
-    switch([sender indexOfSelectedItem]) 
-    {
-	case 0:
-	    view = [[[self activeProject] updatedAttributeView] retain];
-	    break;
-	case 1:
-	    view = [[[self activeProject] updatedProjectView] retain];
-	    break;
-	case 2:
-	    view = [[[self activeProject] updatedFilesView] retain];
-	    break;
-    }
-
-    [(NSBox *)inspectorView setContentView:view];
-    [inspectorView display];
-}
-
-- (void)showInspectorForProject:(PCProject *)aProject
-{
-    if (!inspectorPopup) 
-    {
-	[self _initUI];
-
-	[inspectorPopup removeAllItems];
-	[inspectorPopup addItemWithTitle:@"Build Attributes"];
-	[inspectorPopup addItemWithTitle:@"Project Attributes"];
-	[inspectorPopup addItemWithTitle:@"File Attributes"];
-    }
-  
-    [self inspectorPopupDidChange:inspectorPopup];  
-
-    if (![inspector isVisible]) 
-    {
-	[inspector setFrameUsingName:@"Inspector"];
-    }
-    [inspector makeKeyAndOrderFront:self];
 }
 
 - (void)revertToSaved
@@ -435,14 +421,18 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   // Remove it from the loaded projects! This is the only place it
   // is retained, so it should dealloc after this.
   [loadedProjects removeObjectForKey:key];
-  if ([loadedProjects count] == 0)
-    [self setActiveProject: nil];
-  else if (currentProject == [self activeProject])
-    [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-  if ([loadedProjects count] == 0) 
+  if ([loadedProjects count] == 0)
     {
-      [inspector performClose:self];
+      [projectInspector close];
+      [historyPanel close];
+      [buildPanel close];
+      [launchPanel close];
+      [self setActiveProject: nil];
+    }
+  else if (currentProject == [self activeProject])
+    {
+      [self setActiveProject:[[loadedProjects allValues] lastObject]];
     }
 
   RELEASE(currentProject);
@@ -453,9 +443,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   [[[self activeProject] projectWindow] performClose:self];
 }
 
-// ===========================================================================
+// ============================================================================
 // ==== File actions
-// ===========================================================================
+// ============================================================================
 
 - (BOOL)saveAllFiles
 {

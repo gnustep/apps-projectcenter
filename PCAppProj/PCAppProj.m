@@ -28,7 +28,6 @@
  Description:
 
  PCAppProj creates new project of the type Application!
-
 */
 
 #include "PCAppProj.h"
@@ -36,7 +35,7 @@
 
 @implementation PCAppProj
 
-static NSString *_projTypeName = @"Application";
+//static NSString  *_projTypeName = @"Application";
 static PCAppProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -45,30 +44,35 @@ static PCAppProj *_creator = nil;
 
 + (id)sharedCreator
 {
-    if (!_creator) {
-        _creator = [[[self class] alloc] init];
+  if (!_creator)
+    {
+      _creator = [[[self class] alloc] init];
     }
-    return _creator;
+
+  return _creator;
 }
 
 - (Class)projectClass
 {
-    return [PCAppProject class];
+  return [PCAppProject class];
 }
 
 - (NSString *)projectTypeName
 {
-    return _projTypeName;
+  return @"Application";
 }
 
 - (NSDictionary *)typeTable
 {
-    NSString *_path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info" ofType:@"table"];
+  NSString *_path;
+  
+  _path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info"
+                                                           ofType:@"table"];
 
-    return [NSDictionary dictionaryWithContentsOfFile:_path];
+  return [NSDictionary dictionaryWithContentsOfFile:_path];
 }
 
-- (PCProject *) createProjectAt: (NSString *)path
+- (PCProject *)createProjectAt:(NSString *)path
 {
   PCAppProject  *project = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
@@ -179,16 +183,10 @@ static PCAppProj *_creator = nil;
 - (PCProject *)openProjectAt:(NSString *)path
 {
   NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-  id obj;
 
-  NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
-
-  obj = [dict objectForKey:PCProjectBuilderClass];    
-  if ([obj isEqualToString:@"PCAppProj"])
-    {
-      return [[[PCAppProject alloc] initWithProjectDictionary:dict path:[path stringByDeletingLastPathComponent]] autorelease];
-    }
-  return nil;
+  return [[[PCAppProject alloc]
+    initWithProjectDictionary:dict 
+    path:[path stringByDeletingLastPathComponent]] autorelease];
 }
 
 @end

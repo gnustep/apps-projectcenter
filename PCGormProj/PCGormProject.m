@@ -22,7 +22,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCProject+UInterface.h"
 #include "PCGormProject.h"
 #include "PCGormProj.h"
 
@@ -39,12 +38,11 @@
 - (void)_initUI
 {
   NSTextField *textField;
-  NSRect frame = {{84,120}, {80, 80}};
-  NSBox *_box;
+  NSRect       frame = {{84,120}, {80, 80}};
+  NSBox       *_iconViewBox;
+  NSBox       *_appIconBox;
 
-  [super _initUI];
-
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -54,7 +52,7 @@
   [projectProjectInspectorView addSubview:textField];
   RELEASE(textField);
 
-  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
+  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
   [appClassField setAlignment: NSLeftTextAlignment];
   [appClassField setBordered: YES];
   [appClassField setEditable: YES];
@@ -65,49 +63,48 @@
   [appClassField setAction:@selector(setAppClass:)];
   [projectProjectInspectorView addSubview:appClassField];
 
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"App icon:"];
-  [projectProjectInspectorView addSubview:textField];
-  RELEASE(textField);
+  // Application Icon
+  _appIconBox = [[NSBox alloc] init];
+  [_appIconBox setFrame:NSMakeRect(6,154,270,84)];
+  [_appIconBox setContentViewMargins:NSMakeSize(4.0, 6.0)];
+  [_appIconBox setTitle:@"Application Icon"];
+  [projectProjectInspectorView addSubview:_appIconBox];
+  RELEASE(_appIconBox);
 
-  appImageField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
+  appImageField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,34,195,21)];
   [appImageField setAlignment: NSLeftTextAlignment];
   [appImageField setBordered: YES];
-  [appImageField setEditable: NO];
+  [appImageField setEditable: YES];
   [appImageField setBezeled: YES];
   [appImageField setDrawsBackground: YES];
   [appImageField setStringValue:@""];
-  [projectProjectInspectorView addSubview:appImageField];
+  [_appIconBox addSubview:appImageField];
+  RELEASE(appImageField);
 
-  setAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(220,180,40,21)];
-  [setAppIconButton setTitle:@"Set"];
+  setAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(147,0,48,21)];
+  [setAppIconButton setTitle:@"Set..."];
   [setAppIconButton setTarget:self];
   [setAppIconButton setAction:@selector(setAppIcon:)];
-  [projectProjectInspectorView addSubview:setAppIconButton];
+  [_appIconBox addSubview:setAppIconButton];
+  RELEASE(setAppIconButton);
 
-  clearAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(180,180,40,21)];
+  clearAppIconButton = [[NSButton alloc] initWithFrame:NSMakeRect(95,0,48,21)];
   [clearAppIconButton setTitle:@"Clear"];
   [clearAppIconButton setTarget:self];
   [clearAppIconButton setAction:@selector(clearAppIcon:)];
-  [projectProjectInspectorView addSubview:clearAppIconButton];
-
-  _box = [[NSBox alloc] init];
-  [_box setFrame:frame];
-  [_box setTitlePosition:NSNoTitle];
-  [_box setBorderType:NSBezelBorder];
-  [projectProjectInspectorView addSubview:_box];
-  
-  appIconView = [[NSImageView alloc] initWithFrame:frame];
-  [_box addSubview:appIconView];
-
-  RELEASE(_box);
-  RELEASE(setAppIconButton);
+  [_appIconBox addSubview:clearAppIconButton];
   RELEASE(clearAppIconButton);
+
+  frame = NSMakeRect(200,0,56,56);
+  _iconViewBox = [[NSBox alloc] init];
+  [_iconViewBox setFrame:frame];
+  [_iconViewBox setTitlePosition:NSNoTitle];
+  [_iconViewBox setBorderType:NSBezelBorder];
+  [_appIconBox addSubview:_iconViewBox];
+  RELEASE(_iconViewBox);
+
+  appIconView = [[NSImageView alloc] initWithFrame:frame];
+  [_iconViewBox addSubview:appIconView];
   RELEASE(appIconView);
 }
 
@@ -263,7 +260,7 @@
   NSString *path = nil;
   NSString *_icon;
 
-  [super updateValuesFromProjectDict];
+//  [super updateValuesFromProjectDict];
 
   [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
@@ -288,7 +285,9 @@
   [appIconView setImage:nil];
   [appIconView display];
 
-  [projectWindow setDocumentEdited:YES];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 - (void)setAppIcon:(id)sender
@@ -333,7 +332,9 @@
   [appIconView display];
   RELEASE(image);
 
-  [projectWindow setDocumentEdited:YES];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 
   return YES;
 }
@@ -341,7 +342,10 @@
 - (void)setAppClass:(id)sender
 {
   [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
-  [projectWindow setDocumentEdited:YES];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 @end

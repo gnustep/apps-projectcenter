@@ -24,8 +24,8 @@
    $Id$
 */
 
-#ifndef _PCPROJECT_H
-#define _PCPROJECT_H
+#ifndef _PCProject_h_
+#define _PCProject_h_
 
 #include <AppKit/AppKit.h>
 
@@ -115,11 +115,16 @@ static NSString * const PCSource              = @"PROJECT_SOURCE";
 static NSString * const PCInstallDir          = @"INSTALLDIR";
 static NSString * const PCBuildTool           = @"BUILDTOOL";
 
+@class PCProjectManager;
+@class PCProjectWindow;
+@class PCProjectBrowser;
+@class PCProjectHistory;
+
+@class PCProjectInspector;
 @class PCProjectBuilder;
-@class PCProjectDebugger;
+@class PCProjectLauncher;
 @class PCProjectEditor;
 @class PCEditorController;
-@class PCButton;
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
@@ -127,123 +132,112 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 #include <ProjectCenter/ProjectBuilder.h>
 #endif
 
+extern NSString *ProjectDictDidSetNotification;
+extern NSString *ProjectDictDidChangeNotification;
+extern NSString *ProjectDictDidSaveNotification;
+
 @interface PCProject : NSObject
 {
-    id projectWindow;
-    id delegate;
-    id projectManager;
-    id browserController;
-    id historyController;
+  PCProjectManager    *projectManager; 
+  PCProjectWindow     *projectWindow;
+  PCProjectBrowser    *projectBrowser;
+  PCProjectHistory    *projectHistory;
+  PCProjectBuilder    *projectBuilder;
+  PCProjectLauncher   *projectLauncher;
 
-    PCProjectBuilder   *projectBuilder;
-    PCProjectDebugger  *projectDebugger;
-    PCProjectEditor    *projectEditor;
-    PCEditorController *editorController;
-    NSBox *box;
+  NSView              *builderContentView;
+  NSView              *debuggerContentView;
+ 
+  // For compatibility. Should be changed later
+  NSView              *projectProjectInspectorView;
+  PCProjectEditor     *projectEditor;
+  PCEditorController  *editorController;
+  //
 
-    NSImageView        *fileIcon;
-    NSTextField        *fileIconTitle;
+  NSMutableDictionary *projectDict;
+  NSString            *projectName;
+  NSString            *projectPath;
 
-    id                 projectAttributeInspectorView;
-    NSTextField        *ccOptField;
-    NSTextField        *ldOptField;
-    NSTextField        *installPathField;
-    NSTextField        *toolField;
-    NSTextField        *headersField;
-    NSTextField        *libsField;
+  NSArray             *rootObjects;
+  NSArray             *rootKeys;
+  NSDictionary        *rootCategories; // Needs to be initialised by subclasses!
+  NSMutableDictionary *buildOptions;
 
-    id          projectProjectInspectorView;
-    NSTextField *projectTypeField;
-    NSTextField *projectNameField;
-    NSTextField *projectLanguageField;
-
-    id          projectFileInspectorView;
-    NSImageView  *fileIconView;
-    NSTextField *fileNameField;
-    NSButton    *changeFileNameButton;
-    
-    id buildTargetPanel;
-    id buildTargetHostField;
-    id buildTargetArgsField;
-    
-    NSString            *projectName;
-    NSString            *projectPath;
-    NSMutableDictionary *projectDict;
-
-    NSArray      *rootObjects;
-    NSArray      *rootKeys;
-    NSDictionary *rootCategories; // Needs to be initialised by subclasses!
-    NSMutableDictionary *buildOptions;
-
-    BOOL editorIsActive;
+  BOOL                editorIsActive;
 }
 
-//=============================================================================
+// ============================================================================
 // ==== Init and free
-//=============================================================================
+// ============================================================================
 
 - (id)init;
 - (id)initWithProjectDictionary:(NSDictionary *)dict path:(NSString *)path;
-
+- (PCProjectManager *)projectManager;
+- (void)setProjectManager:(PCProjectManager *)aManager;
+- (void)close;
 - (void)dealloc;
 
-//=============================================================================
+// ============================================================================
 // ==== Accessor methods
-//=============================================================================
+// ============================================================================
 
-- (id)browserController;
-- (NSString *)selectedRootCategory;
-
-- (NSArray *)fileExtensionsForCategory:(NSString *)key;
-
-- (void)setProjectName:(NSString *)aName;
-- (NSString *)projectName;
-- (NSWindow *)projectWindow;
-
-- (Class)principalClass;
+- (PCProjectManager *)projectManager;
+- (PCProjectWindow *)projectWindow;
+- (PCProjectBrowser *)projectBrowser;
+- (PCProjectHistory *)projectHistory;
+- (PCProjectBuilder *)projectBuilder;
+- (PCProjectLauncher *)projectLauncher;
 
 - (PCProjectEditor *)projectEditor;
 - (PCEditorController *)editorController;
 
-//=============================================================================
-// ==== Delegate and manager
-//=============================================================================
+- (NSArray *)fileExtensionsForCategory:(NSString *)key;
 
-- (id)delegate;
-- (void)setDelegate:(id)aDelegate;
+- (NSString *)projectName;
+- (void)setProjectName:(NSString *)aName;
+- (BOOL)isProjectChanged;
+- (NSString *)selectedRootCategory;
 
-- (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder;
-- (id<ProjectBuilder>)projectBuilder;
+- (Class)principalClass;
 
-//=============================================================================
+// ===========================================================================
 // ==== To be overriden!
-//=============================================================================
+// ===========================================================================
+
+// TEMP! For compatibility with PC*Project subclasses
+- (void)updateValuesFromProjectDict;
+
+- (void)createInspectors;
+- (NSView *)buildAttributesView;
+- (NSView *)projectAttributesView;
+- (NSView *)fileAttributesView;
 
 - (Class)builderClass;
 
+// Subclasses need to call this before their customised implementation!
 - (BOOL)writeMakefile;
-    // Subclasses need to call this before their customised implementation!
 
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
 - (NSArray *)otherKeys;
 - (NSArray *)buildTargets;
 
+// Returns a string describing the project type
 - (NSString *)projectDescription;
-    // Returns a string describing the project type
 
+// Returns NO by default.
 - (BOOL)isExecutable;
-    // Returns NO by default.
 
-//=============================================================================
+// ============================================================================
 // ==== File Handling
-//=============================================================================
+// ============================================================================
 
 - (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c;
 - (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c;
 
+// Returns YES if type is a valid key and file is not contained in the 
+// project already
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
-    // Returns YES if type is a valid key and file is not contained in the project already
 
 - (void)addFile:(NSString *)file forKey:(NSString *)key;
 - (void)addFile:(NSString *)file forKey:(NSString *)key copy:(BOOL)yn;
@@ -265,9 +259,9 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 - (BOOL)writeSpecFile;
 
-//=============================================================================
+// ============================================================================
 // ==== Subprojects
-//=============================================================================
+// ============================================================================
 
 - (NSArray *)subprojects;
 - (void)addSubproject:(PCProject *)aSubproject;
@@ -278,22 +272,19 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 - (BOOL)isSubProject;
 
-//=============================================================================
+// ============================================================================
 // ==== Project Handling
-//=============================================================================
+// ============================================================================
 
-- (void)updateValuesFromProjectDict;
-    // Updates all values in the inspector based on the current project dict
-
-- (void)changeCommonProjectEntry:(id)sender;
-    // Gets invoked upon UI interaction in the inspector
+// Updates all values in the inspector based on the current project dict
+//- (void)updateValuesFromProjectDict;
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict;
 - (void)updateProjectDict;
 
+// Validates the project dictionary and inserts missing keys if needed. It
+// calls isValidDictionary to validate.
 - (void)validateProjectDict;
-    // Validates the project dictionary and inserts missing keys if needed. It
-    // calls isValidDictionary to validate.
 
 @end
 
@@ -302,15 +293,6 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (NSArray *)contentAtKeyPath:(NSString *)keyPath;
 - (BOOL)hasChildrenAtKeyPath:(NSString *)keyPath;
 - (NSString *)projectKeyForKeyPath:(NSString *)kp;
-
-@end
-
-@interface PCProject (ProjectWindowDelegate)
-
-- (void)windowDidResignKey:(NSNotification *)aNotification;
-- (void)windowDidBecomeKey:(NSNotification *)aNotification;
-- (void)windowDidBecomeMain:(NSNotification *)aNotification;
-- (void)windowWillClose:(NSNotification *)aNotification;
 
 @end
 

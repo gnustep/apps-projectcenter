@@ -32,32 +32,63 @@
  get copied to the right place.
  */
  
-#ifndef _PCAPPPROJ_PCAPPPROJECT_H
-#define _PCAPPPROJ_PCAPPPROJECT_H
+#ifndef _PCAppProj_PCAppProject_h_
+#define _PCAppProj_PCAppProject_h_
 
 #include <AppKit/AppKit.h>
 #include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectInspector.h>
 
 @interface PCAppProject : PCProject
 {
+  NSBox       *buildAttributesView;
+  NSTextField *ccOptField;
+  NSTextField *ldOptField;
+  NSTextField *installPathField;
+  NSTextField *toolField;
+  NSTextField *headersField;
+  NSTextField *libsField;
+
+  NSBox       *projectAttributesView;
+  NSTextField *projectTypeField;
+  NSTextField *projectNameField;
+  NSTextField *projectLanguageField;
   NSTextField *appClassField;
   NSTextField *appImageField;
-  NSButton *setAppIconButton;
-  NSButton *clearAppIconButton;
+  NSButton    *setAppIconButton;
+  NSButton    *clearAppIconButton;
   NSImageView *appIconView;
-  NSImage *icon;
+  NSImage     *icon;
+
+  NSBox       *fileAttributesView;
+  NSImageView *fileIconView;
+  NSTextField *fileNameField;
 }
 
-//----------------------------------------------------------------------------
-// Init and free
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// --- Init and free
+// ----------------------------------------------------------------------------
 
 - (id)init;
 - (void)dealloc;
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+// ----------------------------------------------------------------------------
+// --- User Interfave
+// ----------------------------------------------------------------------------
+
+- (void)createInspectors;
+- (NSView *)buildAttributesView;
+- (NSView *)projectAttributesView;
+- (NSView *)fileAttributesView;
+- (void)updateInspectorValues:(NSNotification *)aNotif;
+- (void)clearAppIcon:(id)sender;
+- (void)setAppIcon:(id)sender;
+- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
+- (void)setAppClass:(id)sender;
+
+// ----------------------------------------------------------------------------
+// --- Project
+// ----------------------------------------------------------------------------
 
 - (Class)builderClass;
 
@@ -70,15 +101,6 @@
 - (NSString *)projectDescription;
 
 - (BOOL)isExecutable;
-
-- (void)updateValuesFromProjectDict;
-
-- (void)clearAppIcon:(id)sender;
-- (void)setAppIcon:(id)sender;
-
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-
-- (void)setAppClass:(id)sender;
 
 @end
 

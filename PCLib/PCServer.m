@@ -27,7 +27,6 @@
 #include "PCServer.h"
 #include "PCDefines.h"
 #include "PCProject.h"
-#include "PCBrowserController.h"
 #include "PCEditor.h"
 
 @implementation PCServer

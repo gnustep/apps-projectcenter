@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -61,6 +61,7 @@
   [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
 
   [defaults setObject:@"YES" forKey:ExternalEditor];
+  [defaults setObject:@"YES" forKey:ExternalDebugger];
 
   [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
@@ -80,22 +81,19 @@
 {
   if ((self = [super init]))
     {
-      // The bundle loader
       bundleLoader = [[PCBundleLoader alloc] init];
       [bundleLoader setDelegate:self];
 
-      // They are registered by the bundleLoader
       projectTypes = [[NSMutableDictionary alloc] init];
 
       prefController = [[PCPrefController alloc] init];
-      finder = [[PCFindController alloc] init];
+      finder         = [[PCFindController alloc] init];
       infoController = [[PCInfoController alloc] init];
-      logger = [[PCLogController alloc] init];
+      logger         = [[PCLogController alloc] init];
       projectManager = [[PCProjectManager alloc] init];
-      fileManager = [PCFileManager fileManager];
+      fileManager    = [PCFileManager fileManager];
       menuController = [[PCMenuController alloc] init];
 
-      [projectManager setDelegate:self];
       [fileManager setDelegate:projectManager];
 
       [menuController setAppController:self];
@@ -108,24 +106,6 @@
 
 - (void)dealloc
 {
-  if (doConnection)
-    {
-      [doConnection invalidate];
-      [doConnection release];
-    }
-  
-  [prefController release];
-  [finder release];
-  [infoController release];
-  [logger release];
-  [projectManager release];
-  [fileManager release];
-  [menuController release];
-  
-  [bundleLoader release];
-  [doServer release];
-  [projectTypes release];
-  
   [super dealloc];
 }
 
@@ -143,16 +123,16 @@
   delegate = aDelegate;
 }
 
-- (BOOL)respondsToSelector: (SEL)aSelector
+- (BOOL)respondsToSelector:(SEL)aSelector
 {
-  if (![super respondsToSelector: aSelector])
-    {
-      return [menuController respondsToSelector: aSelector];
-    }
+  if (![super respondsToSelector:aSelector])
+  {
+    return [menuController respondsToSelector:aSelector];
+  }
   else
-    {
-      return YES;
-    }
+  {
+    return YES;
+  }
 }
                             
 - (void)forwardInvocation:(NSInvocation *)anInvocation
@@ -167,6 +147,19 @@
     {
       [super forwardInvocation: anInvocation];
     }
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+  NSMethodSignature *sig;
+
+  sig = [super methodSignatureForSelector:aSelector];
+  if (sig == nil)
+  {
+    sig = [menuController methodSignatureForSelector:aSelector];
+  }
+
+  return sig;
 }
 
 //============================================================================
@@ -242,11 +235,9 @@
 {
   NSString *h = [[NSProcessInfo processInfo] hostName];
   NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
+
   [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
 
-  //[bundleLoader loadBundles];
-    
-  // The DO server
   doServer = [[PCServer alloc] init];
   
   NS_DURING
@@ -256,10 +247,14 @@
   
   NS_HANDLER
     
-  NSRunAlertPanel(@"Warning!",@"Could not register the DO connection %@",@"OK",nil,nil,nil,connectionName);
+  NSRunAlertPanel(@"Warning!",@"Could not register the DO connection %@",
+                  @"OK",nil,nil,nil,connectionName);
   NS_ENDHANDLER
     
-  [[NSNotificationCenter defaultCenter] addObserver:doServer selector:@selector(connectionDidDie:) name:NSConnectionDidDieNotification object:doConnection];
+  [[NSNotificationCenter defaultCenter] addObserver:doServer 
+                                           selector:@selector(connectionDidDie:)
+                                             name:NSConnectionDidDieNotification
+                                            object:doConnection];
   
   [doConnection setDelegate:doServer];
 
@@ -292,13 +287,37 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-    // [[PCLogController sharedController] logMessageWithTag:INFORMATION object:self format:@"ProjectCenter is going down..."];
-
-    if ([[[NSUserDefaults standardUserDefaults] stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) {
-        [[NSFileManager defaultManager] removeFileAtPath:[projectManager rootBuildPath] handler:nil];
+  NSLog (@"Applictaion will terminate");
+  if ([[[NSUserDefaults standardUserDefaults] 
+      stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
+    {
+      [[NSFileManager defaultManager] 
+	removeFileAtPath:[projectManager rootBuildPath]
+	         handler:nil];
     }
 
-    [[NSUserDefaults standardUserDefaults] synchronize];
+  [[NSUserDefaults standardUserDefaults] synchronize];
+
+  //--- Cleanup
+  if (doConnection)
+  {
+    [doConnection invalidate];
+    RELEASE(doConnection);
+  }
+
+  NSLog (@"AppController close: PM RC: %i", [projectManager retainCount]);
+  
+  RELEASE(prefController);
+  RELEASE(finder);
+  RELEASE(infoController);
+  RELEASE(logger);
+  RELEASE(projectManager);
+  RELEASE(fileManager);
+  RELEASE(menuController);
+  
+  RELEASE(bundleLoader);
+  RELEASE(doServer);
+  RELEASE(projectTypes);
 }
 
 //============================================================================
@@ -312,23 +331,25 @@
   NSAssert(aBundle,@"No valid bundle!");
 
   principalClass = [aBundle principalClass];
-  if ([principalClass conformsToProtocol:@protocol(ProjectType)]) {
+  if ([principalClass conformsToProtocol:@protocol(ProjectType)]) 
+    {
       NSString	*name = [[principalClass sharedCreator] projectTypeName];
 
-      [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully loaded!",name] tag:INFORMATION];
+      [logger logMessage: [NSString stringWithFormat:@"Project type %@ successfully loaded!",name] tag:INFORMATION];
 
-      if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) {
+      if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) 
+	{
 	  [menuController addProjectTypeNamed:name];
-
 	  [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully registered!",name] tag:INFORMATION];
-      }
-  }
-  else if ([principalClass conformsToProtocol:@protocol(FileCreator)]) {
+	}
+    }
+  else if ([principalClass conformsToProtocol:@protocol(FileCreator)]) 
+    {
       [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
 
       // In objc.h there is already th like (char *)name...
       // [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
-  }
+    }
 }
 
 @end
@@ -337,7 +358,8 @@
 
 - (BOOL)registerProjectCreator:(NSString *)className forKey:(NSString *)aKey
 {
-    if ([projectTypes objectForKey:aKey]) {
+    if ([projectTypes objectForKey:aKey]) 
+    {
         return NO;
     }
 

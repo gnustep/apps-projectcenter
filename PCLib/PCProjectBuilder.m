@@ -42,39 +42,7 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-#define DEFAULT_RPM_ROOT @"/usr/src/redhat/"
-
-@interface PCProjectBuilder (CreateUI)
-
-- (void) _createBuildPanel;
-- (void) _createComponentView;
-- (void) _createOptionsPanel;
-
-@end
-
-@implementation PCProjectBuilder (CreateUI)
-
-- (void) _createBuildPanel
-{
-  buildPanel = [[NSPanel alloc]
-    initWithContentRect: NSMakeRect (0, 300, 480, 322)
-              styleMask: (NSTitledWindowMask 
-		          | NSClosableWindowMask
-		          | NSResizableWindowMask)
-                backing: NSBackingStoreRetained
-                  defer: YES];
-  [buildPanel setMinSize: NSMakeSize(440, 322)];
-  [buildPanel setFrameAutosaveName: @"ProjectBuilder"];
-  [buildPanel setReleasedWhenClosed: NO];
-  [buildPanel setHidesOnDeactivate: NO];
-  [buildPanel setTitle: [NSString stringWithFormat: 
-                         @"%@ - Project Build", [currentProject projectName]]];
-
-  if (![buildPanel setFrameUsingName: @"ProjectBuilder"])
-    {
-      [buildPanel center];
-    }
-}
+@implementation PCProjectBuilder (UserInterface)
 
 - (void) _createComponentView
 {
@@ -83,7 +51,7 @@
   NSScrollView *scrollView2; 
   id           textField;
 
-  componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8, -1, 464, 322)];
+  componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8,-1,464,322)];
   [componentView setTitlePosition: NSNoTitle];
   [componentView setBorderType: NSNoBorder];
   [componentView setAutoresizingMask: NSViewWidthSizable 
@@ -93,9 +61,9 @@
   /*
    * 4 build Buttons
    */
-  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,264,50,50)];
+  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,271,43,43)];
   [buildButton setTitle: @"Build"];
-  [buildButton setImage: IMAGE(@"ProjectCenter_make")];
+  [buildButton setImage: IMAGE(@"Build")];
   [buildButton setAlternateImage: IMAGE(@"Stop")];
   [buildButton setTarget: self];
   [buildButton setAction: @selector(startBuild:)];
@@ -104,9 +72,9 @@
   [componentView addSubview: buildButton];
   RELEASE (buildButton);
   
-  cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(50,264,50,50)];
+  cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,271,43,43)];
   [cleanButton setTitle: @"Clean"];
-  [cleanButton setImage: IMAGE(@"ProjectCenter_clean")];
+  [cleanButton setImage: IMAGE(@"Clean")];
   [cleanButton setAlternateImage: IMAGE(@"Stop")];
   [cleanButton setTarget: self];
   [cleanButton setAction: @selector(startClean:)];
@@ -115,9 +83,9 @@
   [componentView addSubview: cleanButton];
   RELEASE (cleanButton);
 
-  installButton = [[PCButton alloc] initWithFrame: NSMakeRect(100,264,50,50)];
+  installButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,271,43,43)];
   [installButton setTitle: @"Install"];
-  [installButton setImage: IMAGE(@"ProjectCenter_install")];
+  [installButton setImage: IMAGE(@"Install")];
   [installButton setAlternateImage: IMAGE(@"Stop")];
   [installButton setTarget: self];
   [installButton setAction: @selector(startInstall:)];
@@ -126,9 +94,9 @@
   [componentView addSubview: installButton];
   RELEASE (installButton);
 
-  optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(150,264,50,50)];
+  optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,271,43,43)];
   [optionsButton setTitle: @"Options"];
-  [optionsButton setImage: IMAGE(@"ProjectCenter_prefs")];
+  [optionsButton setImage: IMAGE(@"Options")];
   [optionsButton setTarget: self];
   [optionsButton setAction: @selector(showOptionsPanel:)];
   [optionsButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -199,7 +167,7 @@
 
   [scrollView2 setDocumentView:logOutput];
 
-  split = [[PCSplitView alloc] initWithFrame: NSMakeRect (-1, -1, 464, 253)];
+  split = [[PCSplitView alloc] initWithFrame: NSMakeRect (0, 0, 464, 255)];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
@@ -387,12 +355,15 @@
 
 @implementation PCProjectBuilder
 
-- (id)initWithProject: (PCProject *)aProject
+- (id)initWithProject:(PCProject *)aProject
 {
   NSAssert(aProject, @"No project specified!");
 
+  NSLog (@"PCProjectBuilder: initWithProject");
+  
   if ((self = [super init]))
     {
+      currentProject = aProject;
       makePath = [[aProject projectDict] objectForKey: PCBuildTool];
 
       if( [makePath isEqualToString: @""] )
@@ -404,15 +375,15 @@
       buildTarget = [[NSMutableString alloc] initWithString: @"Default"];
       buildArgs = [[NSMutableArray array] retain];
       postProcess = NULL;
-      currentProject = aProject;
       makeTask = nil;
     }
 
   return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
+  NSLog (@"PCProjectBuilder: dealloc");
   [buildTarget release];
   [buildArgs release];
   [makePath release];
@@ -420,22 +391,7 @@
   [super dealloc];
 }
 
-- (NSPanel *) createBuildPanel
-{
-  if (!buildPanel)
-    {
-      [self _createBuildPanel];
-    }
-
-  return buildPanel;
-}
-
-- (NSPanel *) buildPanel
-{
-  return buildPanel;
-}
-
-- (NSView *) componentView
+- (NSView *)componentView
 {
   if (!componentView)
     {
@@ -545,12 +501,14 @@
 {
   NSPipe              *logPipe;
   NSPipe              *errorPipe;
-//  NSDictionary        *optionDict = [currentProject buildOptions];
   NSDictionary        *env = [[NSProcessInfo processInfo] environment];
   NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
+  // Support build options!!!
+  //NSDictionary        *optionDict = [currentProject buildOptions];
+
   // Checking prerequisites
-  if ([[currentProject projectWindow] isDocumentEdited])
+  if ([currentProject isProjectChanged])
     {
       if (NSRunAlertPanel(@"Project Changed!",
 			  @"Should it be saved first?",
@@ -571,20 +529,17 @@
 
   // Prepearing to building
   logPipe = [NSPipe pipe];
-//  readHandle = [[logPipe fileHandleForReading] retain];
-  readHandle = [logPipe fileHandleForReading];
-
-  errorPipe = [NSPipe pipe];
-//  errorReadHandle = [[errorPipe fileHandleForReading] retain];
-  errorReadHandle = [errorPipe fileHandleForReading];
-
+  readHandle = [[logPipe fileHandleForReading] retain];
   [readHandle waitForDataInBackgroundAndNotify];
-  [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
                           selector: @selector (logStdOut:)
 			      name: NSFileHandleDataAvailableNotification
 			    object: readHandle];
+
+  errorPipe = [NSPipe pipe];
+  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+  [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
                           selector: @selector (logErrOut:) 
@@ -606,76 +561,64 @@
   [NSThread detachNewThreadSelector: @selector(make:)
                            toTarget: self
                          withObject: data];
-
-  [NOTIFICATION_CENTER addObserver: self
-                          selector: @selector (buildDidTerminate:)
-			      name: NSTaskDidTerminateNotification
-			    object: makeTask];
-
-  return;
 }
 
-- (void)buildDidTerminate:(NSNotification *)aNotif
+- (void)buildDidTerminate
 {
-  int status = [[aNotif object] terminationStatus];
+  int status = [makeTask terminationStatus];
 
-  if ([aNotif object] == makeTask)
+  [NOTIFICATION_CENTER removeObserver: self 
+                                 name: NSFileHandleDataAvailableNotification
+                               object: readHandle];
+
+  [NOTIFICATION_CENTER removeObserver: self 
+                                 name: NSFileHandleDataAvailableNotification
+                               object: errorReadHandle];
+
+  AUTORELEASE(readHandle);
+  AUTORELEASE(errorReadHandle);
+
+  if (status == 0)
     {
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSFileHandleDataAvailableNotification
-	                           object: readHandle];
-
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSFileHandleDataAvailableNotification
- 	                           object: errorReadHandle];
-
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSTaskDidTerminateNotification 
-	                           object: makeTask];
-      //  RELEASE (readHandle);
-      //  RELEASE (errorReadHandle);
-
-      if (status == 0)
-	{
-	  [self logString: 
-	    [NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
-	    error: NO
-	    newLine: NO];
-	  [buildStatusField setStringValue: [NSString stringWithFormat: @"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
-	} 
-      else
-	{
-	  [self logString: [NSString stringWithFormat: @"=== %@ terminated!", buildTarget] error: NO newLine: NO];
-	  [buildStatusField setStringValue: [NSString stringWithFormat: 
-	    @"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
-	}
-
-      // Rstore buttons state
-      if ([buildTarget isEqualToString: @"Build"])
-	{
-	  [buildButton setState: NSOffState];
-	  [cleanButton setEnabled:YES];
-	  [installButton setEnabled:YES];
-	}
-      else if ([buildTarget isEqualToString: @"Clean"])
-	{
-	  [cleanButton setState: NSOffState];
-	  [buildButton setEnabled:YES];
-	  [installButton setEnabled:YES];
-	}
-      else if ([buildTarget isEqualToString: @"Install"])
-	{
-	  [installButton setState: NSOffState];
-	  [buildButton setEnabled:YES];
-	  [cleanButton setEnabled:YES];
-	}
-
-      [buildArgs removeAllObjects];
-      [buildTarget setString: @"Default"];
-
-      /*  RELEASE (makeTask);*/
-      makeTask = nil;
+      [self logString: 
+	[NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
+	error: NO newLine: NO];
+      [buildStatusField setStringValue: 
+	[NSString stringWithFormat: 
+	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
+    } 
+  else
+    {
+      [self logString: 
+	[NSString stringWithFormat: @"=== %@ terminated!", buildTarget]
+	error: NO newLine: NO];
+      [buildStatusField setStringValue: 
+	[NSString stringWithFormat: 
+	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
     }
+
+  // Rstore buttons state
+  if ([buildTarget isEqualToString: @"Build"])
+    {
+      [buildButton setState: NSOffState];
+      [cleanButton setEnabled: YES];
+      [installButton setEnabled: YES];
+    }
+  else if ([buildTarget isEqualToString: @"Clean"])
+    {
+      [cleanButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [installButton setEnabled: YES];
+    }
+  else if ([buildTarget isEqualToString: @"Install"])
+    {
+      [installButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [cleanButton setEnabled: YES];
+    }
+
+  [buildArgs removeAllObjects];
+  [buildTarget setString: @"Default"];
 }
 
 - (void)popupChanged:(id)sender
@@ -782,6 +725,8 @@
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
 
+  RETAIN(data);
+
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments: [data objectForKey: @"args"]];
   [makeTask setCurrentDirectoryPath: [data objectForKey: @"currentDirectory"]];
@@ -799,7 +744,13 @@
       postProcess = NULL;
     }
 
-  [pool release];
+  [self buildDidTerminate];
+
+  RELEASE(data);
+  RELEASE(makeTask);
+  makeTask = nil;
+
+  RELEASE(pool);
 }
 
 @end

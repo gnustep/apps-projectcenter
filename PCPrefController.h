@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -52,6 +52,7 @@
   id saveOnQuit;
 
   id useExternalEditor;
+  id useExternalDebugger;
   id promptWhenQuit;
   id promptOnClean;
   
@@ -63,6 +64,7 @@
   id separateBuilder;
   id separateLauncher;
   id separateEditor;
+  id separateHistory;
   
   NSMutableDictionary *preferencesDict;
 }
@@ -83,6 +85,7 @@
 - (void)setSaveOnQuit:(id)sender;
 
 - (void)setUseExternalEditor:(id)sender;
+- (void)setUseExternalDebugger:(id)sender;
 
 - (void)setEditor:(id)sender;
 - (void)setCompiler:(id)sender;
@@ -101,3 +104,4 @@
 extern NSString *SavePeriodDidChangeNotification;
 
 #endif
+

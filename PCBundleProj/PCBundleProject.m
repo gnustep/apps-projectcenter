@@ -24,7 +24,6 @@
    $Id$
 */
 
-#include "PCProject+UInterface.h"
 #include "PCBundleProject.h"
 #include "PCBundleProj.h"
 
@@ -47,8 +46,6 @@
 {
   NSTextField *textField;
   NSRect frame = {{84,120}, {80, 80}};
-
-  [super _initUI];
 
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,240,88,21)];
   [textField setAlignment: NSRightTextAlignment];
@@ -243,7 +240,9 @@
   [projectDict setObject:[principalClassField stringValue] 
 	       forKey:PCPrincipalClass];
 
-  [projectWindow setDocumentEdited:YES];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 @end

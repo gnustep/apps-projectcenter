@@ -24,7 +24,6 @@
    $Id$
 */
 
-#include "PCProject+UInterface.h"
 #include "PCToolProject.h"
 #include "PCToolProj.h"
 
@@ -40,7 +39,6 @@
 
 - (void)_initUI
 {
-  [super _initUI];
 }
 
 @end
