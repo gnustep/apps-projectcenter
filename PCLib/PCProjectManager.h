@@ -43,8 +43,6 @@
   
   NSString		*rootBuildPath;
 
-  NSWindow              *loadedProjectsWindow;
-  
   @private
   BOOL _needsReleasing;
 }
@@ -110,9 +108,6 @@
 
 - (void)showInspectorForProject:(PCProject *)aProject;
     // Opens the inspector for aProject
-
-- (void)showLoadedProjects;
-   // Opens a panel containing all opened projects
 
 - (void)saveFiles;
    // Saves all the edited files from the currently active project

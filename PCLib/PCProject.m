@@ -559,7 +559,17 @@
 
 - (BOOL)writeMakefile
 {
-    return [projectDict writeToFile:[projectPath stringByAppendingPathComponent:@"PC.project"] atomically:YES];
+    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *bu = [projectPath stringByAppendingPathComponent:@"GNUmakefile~"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+
+    if (![fm movePath:mf toPath:bu handler:nil]) {
+        NSRunAlertPanel(@"Attention!",
+	                @"Could not keep a backup of the GNUMakefile!",
+			@"OK",nil,nil);
+    }
+
+    return [self save];
 }
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
@@ -626,38 +636,44 @@
 
 - (void)addFile:(NSString *)file forKey:(NSString *)type copy:(BOOL)yn
 {
-  NSMutableArray *files = [NSMutableArray arrayWithArray:[projectDict objectForKey:type]];
-  NSMutableString *newFile = [NSMutableString stringWithString:[file lastPathComponent]];
+    NSArray *types = [projectDict objectForKey:type];
+    NSMutableArray *files = [NSMutableArray arrayWithArray:types];
+    NSString *lpc = [file lastPathComponent];
+    NSMutableString *newFile = [NSMutableString stringWithString:lpc];
   
-  if ([type isEqualToString:PCLibraries]) {
-    [newFile deleteCharactersInRange:NSMakeRange(0,3)];
-    newFile = [newFile stringByDeletingPathExtension];
-  }
+    if ([type isEqualToString:PCLibraries]) {
+        [newFile deleteCharactersInRange:NSMakeRange(0,3)];
+        newFile = [newFile stringByDeletingPathExtension];
+    }
   
-  if ([files containsObject:newFile]) {
-    NSRunAlertPanel(@"Attention!",@"The file %@ is already part of this project!",@"OK",nil,nil,newFile);
-    return;
-  }
+    if ([files containsObject:newFile]) {
+        NSRunAlertPanel(@"Attention!",
+	                @"The file %@ is already part of this project!",
+			@"OK",nil,nil,newFile);
+        return;
+    }
   
 #ifdef DEBUG
-  NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
-#endif DEBUG
+    NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
+#endif// DEBUG
   
-  // Add the new file
-  [files addObject:newFile];
-  [projectDict setObject:files forKey:type];
+    // Add the new file
+    [files addObject:newFile];
+    [projectDict setObject:files forKey:type];
   
-  // Synchronise the makefile!
-  [self writeMakefile];
+    // Synchronise the makefile!
+    [self writeMakefile];
   
-  if (yn) {
-    NSFileManager *manager = [NSFileManager defaultManager];
-    NSString *destination = [[self projectPath] stringByAppendingPathComponent:newFile];
+    if (yn) {
+        NSFileManager *manager = [NSFileManager defaultManager];
+        NSString *destination = [[self projectPath] stringByAppendingPathComponent:newFile];
     
-    if (![manager copyPath:file toPath:destination handler:nil]) {
-      NSRunAlertPanel(@"Attention!",@"The file %@ could not be copied to %@!",@"OK",nil,nil,newFile,destination);
+        if (![manager copyPath:file toPath:destination handler:nil]) {
+            NSRunAlertPanel(@"Attention!",
+	                    @"The file %@ could not be copied to %@!",
+			    @"OK",nil,nil,newFile,destination);
+        }
     }
-  }
 }
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key
@@ -783,22 +799,57 @@
 
 - (BOOL)save
 {
+    BOOL ret = NO;
+    NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
+    NSString *backup = [file stringByAppendingPathExtension:@"backup"];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+    NSString *keepBackup = [defs objectForKey:KeepBackup];
+    BOOL shouldKeep = [keepBackup isEqualToString:@"YES"];
+
+    if ( shouldKeep == NO && [fm isWritableFileAtPath:backup] ) {
+        [fm removeFileAtPath:backup handler:nil];
+    }
+
+    if (shouldKeep && [fm isReadableFileAtPath:file]) {
+        ret = [fm copyPath:file toPath:backup handler:nil];
+
+	if( ret == NO ) {
+	    NSString *name = [projectDict objectForKey:PCProjectName];
+
+            NSRunAlertPanel(@"Attention!",
+	                    @"Could not save the backup file for '%@'!",
+			    @"OK",nil,nil,name);
+	}
+    }
+
+    ret = [projectDict writeToFile:file atomically:YES];
+
+    return ret;
 }
 
 - (BOOL)saveAt:(NSString *)projPath
 {
+    return NO;
 }
 
 - (BOOL)saveFileNamed:(NSString *)file
 {
+    return NO;
 }
 
 - (BOOL)saveAllFiles
 {
+    BOOL ret = NO;
+
+    return ret;
 }
 
 - (BOOL)saveAllFilesIfNeeded
 {
+    BOOL ret = YES;
+
+    return ret;
 }
 
 //=============================================================================

@@ -49,21 +49,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   NSBox *line;
 
   /*
-   * Projects Window
-   *
-   */
- 
-  _w_frame = NSMakeRect(200,300,560,384);
-  loadedProjectsWindow = [[NSWindow alloc] initWithContentRect:_w_frame
-					   styleMask:style
-					   backing:NSBackingStoreBuffered
-					   defer:YES];
-  [loadedProjectsWindow setMinSize:NSMakeSize(560,384)];
-  [loadedProjectsWindow setTitle:@"Loaded Projects"];
-  [loadedProjectsWindow setReleasedWhenClosed:NO];
-  [loadedProjectsWindow setFrameAutosaveName:@"LoadedProjects"];
-
-  /*
    * Inspector Window
    *
    */
@@ -139,7 +124,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     [inspector release];
     [inspectorView release];
     [inspectorPopup release];
-    [loadedProjectsWindow release];
   }
   
   [super dealloc];
@@ -193,6 +177,21 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)saveAllProjects
 {
+    NSEnumerator *enumerator = [loadedProjects keyEnumerator];
+    NSString *key;
+    BOOL ret;
+    PCProject *project;
+
+    while ( key = [enumerator nextObject] )
+    {
+        project = [loadedProjects objectForKey:key];
+	ret = [project save];
+        if( ret == NO ) {
+            NSRunAlertPanel(@"Attention!",
+                            @"Couldn't save project %@!", 
+                            @"OK",nil,nil,[project projectName]);
+        }
+    }
 }
 
 - (NSString *)rootBuildPath
@@ -217,7 +216,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       
 #ifdef DEBUG
       NSLog([NSString stringWithFormat:@"Builders %@ for key %@",[builders description],builderKey]);
-#endif DEBUG
+#endif // DEBUG
       
       concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
       
@@ -232,7 +231,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   else {
     NSLog(@"No project manager delegate available!");
   }
-#endif DEBUG
+#endif // DEBUG
   
   return nil;
 }
@@ -244,7 +243,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     if ([loadedProjects objectForKey:aPath]) {
 #ifdef DEBUG
       NSLog([NSString stringWithFormat:@"Project %@ is already loaded!",aPath]);
-#endif DEBUG
+#endif // DEBUG
       return NO;
     }
     
@@ -254,7 +253,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       if (!project) {
 #ifdef DEBUG
 	NSLog(@"Couldn't instantiate the project...");
-#endif DEBUG
+#endif // DEBUG
 	return NO;
       }
       
@@ -294,13 +293,34 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveProject
 {
+    BOOL ret;
+
+    if (![self activeProject]) {
+      return;
+    }
+  
     // Save all files that need to be saved
+    ret = [activeProject saveAllFilesIfNeeded];
+    if( ret == NO ) {
+        NSRunAlertPanel(@"Attention!",
+	                @"Couldn't save the files for project %@!", 
+			@"OK",nil,nil,[activeProject projectName]);
+    }
 
     // Save PC.project and the makefile!
+    ret = [activeProject save];
+    if( ret == NO ) {
+        NSRunAlertPanel(@"Attention!",
+	                @"Couldn't save project %@!", 
+			@"OK",nil,nil,[activeProject projectName]);
+    }
 }
 
 - (BOOL)saveProjectAs:(NSString *)projName
 {
+    NSRunAlertPanel(@"Attention!",
+                @"This feature is not yet implemented!", 
+		@"OK",nil,nil);
 }
 
 - (void)inspectorPopupDidChange:(id)sender
@@ -343,14 +363,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     [inspector setFrameUsingName:@"Inspector"];
   }
   [inspector makeKeyAndOrderFront:self];
-}
-
-- (void)showLoadedProjects
-{
-  if (![loadedProjectsWindow isVisible]) {
-    [loadedProjectsWindow center];
-  }
-  [loadedProjectsWindow makeKeyAndOrderFront:self];
 }
 
 - (void)saveFiles
@@ -451,7 +463,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   
 #ifdef DEBUG
   NSLog(@"%@ %x: will create file %@ for key %@.",[self class],self,aFile,key);
-  #endif DEBUG
+  #endif // DEBUG
 
   if ([activeProject doesAcceptFile:aFile forKey:key] ) {
     path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
@@ -464,7 +476,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
 #ifdef DEBUG
     NSLog(@"<%@ %x>: did create file %@ for key %@",[self class],self,aFile,key);
-#endif DEBUG
+#endif // DEBUG
 
     [activeProject addFile:aFile forKey:key];
 }
@@ -480,7 +492,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 #ifdef DEBUG
   NSLog(@"<%@ %x>: should add file %@ for key %@",[self class],self,file,key);
-#endif DEBUG
+#endif // DEBUG
   
   if ([key isEqualToString:PCLibraries]) {
     [fn deleteCharactersInRange:NSMakeRange(1,3)];
@@ -498,7 +510,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
 #ifdef DEBUG
   NSLog(@"<%@ %x>: did add file %@ for key %@",[self class],self,file,key);
-#endif DEBUG
+#endif // DEBUG
 
   [activeProject addFile:file forKey:key];
 }
