@@ -80,6 +80,7 @@
 	menuController = [[PCMenuController alloc] init];
 
 	[projectManager setDelegate:self];
+	[fileManager setDelegate:projectManager];
 
 	[menuController setAppController:self];
 	[menuController setFileManager:fileManager];
