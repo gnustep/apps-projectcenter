@@ -32,9 +32,12 @@
  get copied to the right place.
 
  */
+ 
+#ifndef _PCBUNDLEPROJECT_H
+#define _PCBUNDLEPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCBundleProject : PCProject
 {
@@ -68,3 +71,4 @@
 
 @end
 
+#endif

@@ -1,7 +1,7 @@
 $$
 /* $FILENAME$ created by $USERNAME$ on $DATE$ */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface $FILENAMESANSEXTENSION$ : NSObject
 {

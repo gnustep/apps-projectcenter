@@ -31,8 +31,8 @@
 
 */
 
-#import "PCLibProj.h"
-#import "PCLibProject.h"
+#include "PCLibProj.h"
+#include "PCLibProject.h"
 
 @implementation PCLibProj
 

@@ -31,8 +31,8 @@
 
 */
 
-#import "PCToolProj.h"
-#import "PCToolProject.h"
+#include "PCToolProj.h"
+#include "PCToolProject.h"
 
 @implementation PCToolProj
 

@@ -24,8 +24,11 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/ProjectCenter.h>
+#ifndef _PCBUNDLEPROJ_H
+#define _PCBUNDLEPROJ_H
+
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 @interface PCBundleProj : NSObject <ProjectType>
 {
@@ -47,3 +50,4 @@
 
 @end
 
+#endif

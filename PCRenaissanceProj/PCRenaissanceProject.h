@@ -31,9 +31,12 @@
  get copied to the right place.
 
  */
+ 
+#ifndef _PCRENAISSANCEPROJECT_H
+#define _PCRENAISSANCEPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCRenaissanceProject : PCProject
 {
@@ -79,4 +82,4 @@
 
 @end
 
-
+#endif

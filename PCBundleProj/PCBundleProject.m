@@ -24,12 +24,12 @@
    $Id$
 */
 
-#import "PCBundleProject.h"
-#import "PCBundleProj.h"
+#include "PCBundleProject.h"
+#include "PCBundleProj.h"
 
-#import <ProjectCenter/PCMakefileFactory.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
-#import <ProjectCenter/ProjectCenter.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 //#define BUNDLE_INSTALL @"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles/"
 #define BUNDLE_INSTALL @"$(GNUSTEP_INSTALLATION_DIR)/Library/Bundles/"

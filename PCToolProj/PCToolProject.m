@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import "PCToolProject.h"
-#import "PCToolProj.h"
+#include "PCToolProject.h"
+#include "PCToolProj.h"
 
-#import <ProjectCenter/PCMakefileFactory.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCToolProject (CreateUI)
 

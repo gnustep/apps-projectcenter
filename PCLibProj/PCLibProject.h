@@ -31,9 +31,12 @@
  use PCLibProj for doing this. Otherwise needed files don't get copied to the right place.
 
  */
+ 
+#ifndef _PCLIBPROJECT_H
+#define _PCLIBPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCLibProject : PCProject
 {
@@ -63,3 +66,5 @@
 - (void)updateValuesFromProjectDict;
 
 @end
+
+#endif

@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import "PCLibProject.h"
-#import "PCLibProj.h"
+#include "PCLibProject.h"
+#include "PCLibProj.h"
 
-#import <ProjectCenter/PCMakefileFactory.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCLibProject (CreateUI)
 

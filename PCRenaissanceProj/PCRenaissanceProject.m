@@ -23,10 +23,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#import "PCRenaissanceProject.h"
-#import "PCRenaissanceProj.h"
+#include "PCRenaissanceProject.h"
+#include "PCRenaissanceProj.h"
 
-#import <ProjectCenter/PCMakefileFactory.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCRenaissanceProject (CreateUI)
 

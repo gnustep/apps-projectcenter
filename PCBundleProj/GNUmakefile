@@ -21,11 +21,11 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # Bundle
 #
 
-PACKAGE_NAME=PCBundleProj
-BUNDLE_NAME=PCBundleProj
-BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter
-PCBundleProj_PRINCIPAL_CLASS=PCBundleProj
+PACKAGE_NAME = PCBundleProj
+BUNDLE_NAME = PCBundleProj
+BUNDLE_EXTENSION = .bundle
+BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+PCBundleProj_PRINCIPAL_CLASS = PCBundleProj
 
 
 #

@@ -1,3 +1,9 @@
+2003-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* GNUmakefile: Set BUNDLE_INSTALL_DIR to GNUSTEP_SYSTEM_ROOT.
+
+	* .h, .m: Replace #import with #include and add #ifndefs.
+
 Sun Feb  2 06:02:50 2003  Nicola Pero  <n.pero@mi.flashnet.it>
                           Daniel Luederwald <das_flip@gmx.de>
 	

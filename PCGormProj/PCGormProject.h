@@ -30,9 +30,12 @@
  get copied to the right place.
 
  */
+ 
+#ifndef _PCGORMPROJECT_H
+#define _PCGORMPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCGormProject : PCProject
 {
@@ -78,4 +81,4 @@
 
 @end
 
-
+#endif

@@ -24,8 +24,11 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/ProjectCenter.h>
+#ifndef _PCTOOLPROJ_H
+#define _PCTOOLPROJ_H
+
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 @interface PCToolProj : NSObject <ProjectType>
 {
@@ -46,3 +49,5 @@
 - (PCProject *)openProjectAt:(NSString *)path;
 
 @end
+
+#endif

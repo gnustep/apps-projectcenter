@@ -31,8 +31,8 @@
 
 */
 
-#import "PCGormProj.h"
-#import "PCGormProject.h"
+#include "PCGormProj.h"
+#include "PCGormProject.h"
 
 @implementation PCGormProj
 

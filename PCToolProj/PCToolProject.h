@@ -32,9 +32,12 @@
  get copied to the right place.
 
  */
+ 
+#ifndef _PCTOOLPROJECT_H
+#define _PCTOOLPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCToolProject : PCProject
 {
@@ -67,3 +70,4 @@
 
 @end
 
+#endif

@@ -31,8 +31,8 @@
 
 */
 
-#import "PCBundleProj.h"
-#import "PCBundleProject.h"
+#include "PCBundleProj.h"
+#include "PCBundleProject.h"
 
 @implementation PCBundleProj
 

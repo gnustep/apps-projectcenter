@@ -22,8 +22,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/ProjectCenter.h>
+#ifndef _PCGORMPROJ_H
+#define _PCGORMPROJ_H
+
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 @interface PCGormProj : NSObject <ProjectType>
 {
@@ -44,3 +47,5 @@
 - (PCProject *)openProjectAt:(NSString *)path;
 
 @end
+
+#endif
