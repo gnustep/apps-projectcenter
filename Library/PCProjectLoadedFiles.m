@@ -26,7 +26,8 @@
       editedFiles = [[NSMutableArray alloc] init];
 
       // Column
-      filesColumn = [[NSTableColumn alloc] initWithIdentifier:@"Files List"];
+      filesColumn = [(NSTableColumn *)[NSTableColumn alloc] 
+	initWithIdentifier:@"Files List"];
       [filesColumn setEditable:NO];
 
       // Table

@@ -3,7 +3,8 @@
 
    Copyright (C) 2000-2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -198,10 +199,11 @@ static PCFileManager *_mgr = nil;
 
 - (void)createFile
 {
-  NSString *path = nil;
-  NSString *fileName = [nfNameField stringValue];
-  NSString *fileType = [nfTypePB titleOfSelectedItem];
-  NSString *key = [[creators objectForKey:fileType] objectForKey:@"ProjectKey"];
+  NSString     *path = nil;
+  NSString     *fileName = [nfNameField stringValue];
+  NSString     *fileType = [nfTypePB titleOfSelectedItem];
+  NSDictionary *theCreator = [creators objectForKey:fileType];
+  NSString     *key = [theCreator objectForKey:@"ProjectKey"];
 
   PCLogInfo(self, @"[createFile] %@", fileName);
 
@@ -220,7 +222,7 @@ static PCFileManager *_mgr = nil;
       NSEnumerator  *enumerator;
       NSString      *aFile;
 
-      creator = [[creators objectForKey:fileType] objectForKey:@"Creator"];
+      creator = [theCreator objectForKey:@"Creator"];
       if (!creator) 
 	{
 	  NSRunAlertPanel(@"Attention!",
@@ -236,11 +238,11 @@ static PCFileManager *_mgr = nil;
       enumerator = [[newFiles allKeys] objectEnumerator]; 
       while ((aFile = [enumerator nextObject])) 
 	{
-	  NSString *theType = [newFiles objectForKey:aFile];
-	  NSString *theKey = [[creators objectForKey:theType] 
-	                       objectForKey:@"ProjectKey"];
-	    
-	  [projectManager fileManager:self didCreateFile:aFile withKey:theKey];
+	  fileType = [newFiles objectForKey:aFile];
+	  theCreator = [creators objectForKey:fileType];
+	  key = [theCreator objectForKey:@"ProjectKey"];
+	   
+	  [projectManager fileManager:self didCreateFile:aFile withKey:key];
 	}
     }
 }
@@ -296,12 +298,12 @@ static PCFileManager *_mgr = nil;
 
 - (void)newFilePopupChanged:(id)sender
 {
-  NSString *type = [sender titleOfSelectedItem];
+  NSString     *type = [sender titleOfSelectedItem];
+  NSDictionary *creator = [creators objectForKey:type];
 
   if (type)
     {
-      [nfDescriptionTV setString:
-	[[creators objectForKey:type] objectForKey:@"TypeDescription"]];
+      [nfDescriptionTV setString:[creator objectForKey:@"TypeDescription"]];
     }
 }
 

@@ -44,13 +44,10 @@
 #include <ProjectCenter/PCTextFinder.h>
 #include <ProjectCenter/PCMakefileFactory.h>
 
-#include <ProjectCenter/ProjectDebugger.h>
 #include <ProjectCenter/ProjectEditor.h>
 #include <ProjectCenter/ProjectType.h>
 #include <ProjectCenter/Server.h>
 #include <ProjectCenter/ProjectComponent.h>
-#include <ProjectCenter/PreferenceController.h>
-#include <ProjectCenter/ProjectBuilder.h>
 
 #endif
 

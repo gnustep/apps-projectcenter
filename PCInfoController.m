@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -29,15 +30,17 @@
 
 - (id)init
 {
-  if ((self = [super init])) {
-    NSString *file;
-    
-    file = [[NSBundle mainBundle] pathForResource:@"Info-gnustep" 
-                                           ofType:@"plist"];
+  if ((self = [super init]))
+    {
+      NSString *file;
 
-    infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
-    RETAIN(infoDict);
-  }
+      file = [[NSBundle mainBundle] pathForResource:@"Info-gnustep" 
+	ofType:@"plist"];
+
+      infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
+      RETAIN(infoDict);
+    }
+
   return self;
 }
 
@@ -46,9 +49,9 @@
   RELEASE(infoDict);
 
   if (infoWindow) 
-  {
-    RELEASE(infoWindow);
-  }
+    {
+      RELEASE(infoWindow);
+    }
 
   [super dealloc];
 }

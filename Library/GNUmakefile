@@ -61,13 +61,14 @@ ProjectCenter_HEADER_FILES = \
   PCTextFinder+UInterface.h \
   \
   PCDefines.h \
-  PreferenceController.h \
-  ProjectBuilder.h \
   ProjectCenter.h \
   ProjectEditor.h \
   ProjectType.h \
   Server.h \
-  ProjectComponent.h
+  ProjectComponent.h \
+  PreferenceController.h \
+  ProjectBuilder.h \
+  ProjectDebugger.h
 
 #
 # Class files

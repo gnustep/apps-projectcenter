@@ -3,7 +3,8 @@
 
    Copyright (C) 2000-2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -24,7 +25,7 @@
 
 #include "PCBundleLoader.h"
 #include "PCDefines.h"
-#include "PreferenceController.h"
+//#include "PreferenceController.h"
 #include "ProjectEditor.h"
 #include "ProjectDebugger.h"
 

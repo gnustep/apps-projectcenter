@@ -3,7 +3,8 @@
 
    Copyright (C) 2000-2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -458,13 +459,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)openProjectAt:(NSString *)aPath
 {
-  BOOL         isDir = NO;
+  NSDictionary *pDict = [NSDictionary dictionaryWithContentsOfFile:aPath];
   NSString     *projectName = nil;
   PCProject    *project = nil;
   NSDictionary *wap = nil;
+  BOOL         isDir = NO;
 
-  projectName = [[NSDictionary dictionaryWithContentsOfFile:aPath] 
-                 objectForKey:PCProjectName];
+  projectName = [pDict objectForKey:PCProjectName];
 
   if ((project = [loadedProjects objectForKey:projectName]) != nil)
     {
@@ -487,8 +488,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [project setProjectManager:self];
 
       // Windows and panels
-      wap = [[NSDictionary dictionaryWithContentsOfFile:aPath]
-	     objectForKey:@"PC_WINDOWS"];
+      wap = [pDict objectForKey:@"PC_WINDOWS"];
       if ([[wap allKeys] containsObject:@"ProjectBuild"])
 	{
 	  [[project projectWindow] showProjectBuild:self];

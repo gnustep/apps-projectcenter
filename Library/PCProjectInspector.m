@@ -3,7 +3,8 @@
 
    Copyright (C) 2000-2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -381,7 +382,8 @@
   [searchOrderPopup selectItemAtIndex:0];
 
   // Table column
-  searchOrderColumn = [[NSTableColumn alloc] initWithIdentifier: @"SO List"];
+  searchOrderColumn = [(NSTableColumn *)[NSTableColumn alloc] 
+    initWithIdentifier: @"SO List"];
   [searchOrderColumn setEditable:NO];
 
   // Table
@@ -538,7 +540,8 @@
     }
 
   // Authors table
-  authorsColumn = [[NSTableColumn alloc] initWithIdentifier: @"Authors List"];
+  authorsColumn = [(NSTableColumn *)[NSTableColumn alloc] 
+    initWithIdentifier: @"Authors List"];
   [authorsColumn setEditable:YES];
 
   authorsList = [[NSTableView alloc]

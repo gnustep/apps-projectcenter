@@ -3,7 +3,7 @@
 
    Copyright (C) 2003 Free Software Foundation
 
-   Author: Serg Stoyan <stoyan@on.com.ua>
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 

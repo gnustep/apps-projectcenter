@@ -400,7 +400,7 @@
   NSMutableArray *extensions = [NSMutableArray arrayWithCapacity:1];
   NSArray        *docIE = [projectDict objectForKey:PCDocumentExtensions];
   NSEnumerator   *enumerator = [docIE objectEnumerator];
-  id             anObject;
+  NSDictionary   *anObject;
 
   NSMutableArray      *resArray = [[NSMutableArray alloc] init];
   NSMutableDictionary *tmpDict = [NSMutableDictionary dictionaryWithCapacity:1];

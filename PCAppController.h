@@ -3,8 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Authors: Philippe C.D. Robert <probert@siggraph.org>
-            Serg Stoyan <stoyan@on.com.ua>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -39,7 +39,7 @@
 @interface PCAppController : NSObject
 {
   PCProjectManager *projectManager;
-  IBOutlet id      menuController;
+  PCMenuController *menuController;
   
   PCInfoController *infoController;
   PCPrefController *prefController;

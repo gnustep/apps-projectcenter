@@ -3,8 +3,12 @@
 
    Copyright (C) 2000-2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Author: Philippe C.D. Robert
+           Serg Stoyan
 
+   Description: Loads all PC bundles from all the paths that are stored 
+                in the defaults under the key BundlePaths.
+ 
    This file is part of GNUstep.
 
    This application is free software; you can redistribute it and/or
@@ -24,14 +28,6 @@
 
 #ifndef _PCBUNDLELOADER_H
 #define _PCBUNDLELOADER_H
-
-/*
- Description:
-
- PCBundleLoader loads all PC bundles from all the paths that are stored in the
- defaults under the key BundlePaths.
-
- */
 
 #include <AppKit/AppKit.h>
 

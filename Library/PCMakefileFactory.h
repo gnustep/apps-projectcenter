@@ -3,7 +3,8 @@
 
    Copyright (C) 2002 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 

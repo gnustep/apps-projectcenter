@@ -57,10 +57,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
   // Document Icons
   //
-  docExtColumn = [[NSTableColumn alloc] initWithIdentifier: @"extension"];
+  docExtColumn = [(NSTableColumn *)[NSTableColumn alloc] 
+    initWithIdentifier: @"extension"];
   [[docExtColumn headerCell] setStringValue:@"Extenstion"];
   [docExtColumn setWidth:75];
-  docIconColumn = [[NSTableColumn alloc] initWithIdentifier: @"icon"];
+  docIconColumn = [(NSTableColumn *)[NSTableColumn alloc] 
+    initWithIdentifier: @"icon"];
   [[docIconColumn headerCell] setStringValue:@"Icon name"];
 
   docIconsList = [[NSTableView alloc] initWithFrame:NSMakeRect(2,0,211,108)];
@@ -349,13 +351,15 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
                         row: (int)rowIndex
 {
+  NSDictionary *object = [docIconsItems objectAtIndex:rowIndex];
+
   if ([[aTableColumn identifier] isEqualToString:@"extension"])
     {
-      return [[docIconsItems objectAtIndex:rowIndex] objectForKey:@"Extension"];
+      return [object objectForKey:@"Extension"];
     }
   else if ([[aTableColumn identifier] isEqualToString:@"icon"])
     {
-      return [[docIconsItems objectAtIndex:rowIndex] objectForKey:@"Icon"];
+      return [object objectForKey:@"Icon"];
     }
 
   return nil;
@@ -366,22 +370,23 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     forTableColumn:(NSTableColumn *)aTableColumn
                row:(int)rowIndex
 {
+  NSMutableDictionary *ext = nil;
+  
   if (docIconsItems == nil || [docIconsItems count] <= 0)
     {
       return;
     }
 
+  ext = [docIconsItems objectAtIndex:rowIndex];
   if ([[aTableColumn identifier] isEqualToString:@"extension"])
     {
-      [[docIconsItems objectAtIndex:rowIndex] removeObjectForKey:@"Extension"];
-      [[docIconsItems objectAtIndex:rowIndex] setObject:anObject
-	                                         forKey:@"Extension"];
+      [ext removeObjectForKey:@"Extension"];
+      [ext setObject:anObject forKey:@"Extension"];
     }
   else if ([[aTableColumn identifier] isEqualToString:@"icon"])
     {
-      [[docIconsItems objectAtIndex:rowIndex] removeObjectForKey:@"Icon"];
-      [[docIconsItems objectAtIndex:rowIndex] setObject:anObject
-	                                         forKey:@"Icon"];
+      [ext removeObjectForKey:@"Icon"];
+      [ext setObject:anObject forKey:@"Icon"];
     }
   
   [self setProjectDictObject:docIconsItems forKey:PCDocumentExtensions];

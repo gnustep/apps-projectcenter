@@ -5,6 +5,8 @@
 	* PCPrefController.m:
 	Fix bugs related to opening legacy projects.
 	
+	* Fixes made, to compile with gcc 3.4.0.
+	
 2004-06-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:

@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -78,7 +79,7 @@
 // Info
 - (void)showPrefWindow:(id)sender
 {
-  [[[NSApp delegate] prefController] showPanel:sender];
+  [[appController prefController] showPanel:sender];
 }
 
 - (void)showInfoPanel:(id)sender

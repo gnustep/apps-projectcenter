@@ -4,8 +4,6 @@
  * Project ProjectCenter
  *
  * Created with ProjectCenter - http://www.gnustep.org
- *
- * $Id$
  */
 
 #ifndef _PCEditor_h_
