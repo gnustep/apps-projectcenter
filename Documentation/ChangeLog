@@ -1,3 +1,25 @@
+2004-07-04 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProject.m:
+	(projectFileFromFile:forKey:): If adding files from subproject to
+	project add it with relative path to project's one.
+
+	* Modules/ApplicationProject/PCAppProject.m:
+	(writeMakefile): Do not add "Resources/" prefix if resource file
+	is part of subproject.
+	
+	* Modules/BundleProject/PCBundleProject.m: 
+	(writeMakefile): ditto.
+	
+	* Modules/LibraryProject/PCLibProject.m: 
+	(writeMakefile): ditto.
+	
+	* Modules/RenaissanceProject/PCRenaissanceProject.m: 
+	(writeMakefile): ditto.
+
+	* Modules/ToolProject/PCToolProject.m: 
+	(writeMakefile): ditto.
+	
 2004-07-03 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:

@@ -621,8 +621,22 @@ NSString
 - (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type
 {
   NSMutableString *projectFile = nil;
+  NSString        *path = nil;
+  NSRange         pathRange;
 
-  projectFile = [NSMutableString stringWithString:[file lastPathComponent]];
+  path = [file stringByDeletingLastPathComponent];
+  pathRange = [path rangeOfString:projectPath];
+
+  if (pathRange.length)
+    {
+      pathRange.length++;
+      projectFile = [NSMutableString stringWithString:file];
+      [projectFile deleteCharactersInRange:pathRange];
+    }
+  else
+    {
+      projectFile = [NSMutableString stringWithString:[file lastPathComponent]];
+    }
 
   if ([type isEqualToString:PCLibraries])
     {

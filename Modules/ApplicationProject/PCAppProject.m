@@ -439,8 +439,12 @@
 
       for (j = 0; j < [resources count]; j++)
 	{
-	  resourceItem = [NSString stringWithFormat:@"Resources/%@",
-	                  [resources objectAtIndex:j]];
+	  resourceItem = [resources objectAtIndex:j];
+	  if ([[resourceItem pathComponents] count] == 1)
+	    {
+	      resourceItem = [NSString stringWithFormat:@"Resources/%@",
+	                      resourceItem];
+	    }
 	  [resources replaceObjectAtIndex:j
 	                       withObject:resourceItem];
 	}
