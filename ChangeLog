@@ -3,6 +3,7 @@
 
         * Uppercase key for interface category lookup: PCFileManager.m
         * Adjusting UI elements ... : PCGormProject.m
+        * Adding proper header: PCLib/PCButton.h, PCLib/PCButton.m
         * Code cleanup and corrected contact address: PCInfoController.m,
           PCInfoController.h, PCLogController.m, PCLogController.h, 
           PCAppController.h, PCAppController.m, PCFindController.h,
