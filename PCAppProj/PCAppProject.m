@@ -56,7 +56,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"App class:"];
-  [projectProjectInspectorView addSubview:[textField autorelease]];
+  [projectProjectInspectorView addSubview:textField];
+  RELEASE(textField);
 
   appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
   [appClassField setAlignment: NSLeftTextAlignment];
@@ -74,7 +75,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"App icon:"];
-  [projectProjectInspectorView addSubview:[textField autorelease]];
+  [projectProjectInspectorView addSubview:textField];
+  RELEASE(textField);
 
   appImageField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [appImageField setAlignment: NSLeftTextAlignment];
@@ -245,6 +247,7 @@
   [appImageField setStringValue:@"No Icon!"];
   [appIconView setImage:nil];
   [appIconView display];
+
   [self writeMakefile];
 }
 

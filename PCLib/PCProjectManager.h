@@ -42,6 +42,8 @@
   PCProject 		*activeProject;
   
   NSString		*rootBuildPath;
+
+  NSWindow              *loadedProjectsWindow;
   
   @private
   BOOL _needsReleasing;

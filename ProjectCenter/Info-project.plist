@@ -23,10 +23,10 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "ProjectCenter 0.2";
-  FullVersionID = "0.2";
+  ApplicationRelease = "ProjectCenter 0.22";
+  FullVersionID = "0.22";
   Authors = ("Philippe C.D. Robert <phr@projectcenter.ch>");
   URL = "http://www.projectcenter.ch";
-  Copyright = "Copyright (C) 2000 Philippe C.D. Robert";
+  Copyright = "Copyright (C) 2000-2001 Philippe C.D. Robert";
   CopyrightDescription = "Released under the GNU General Public License 2.0";
 }

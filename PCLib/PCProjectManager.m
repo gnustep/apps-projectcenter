@@ -49,6 +49,21 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   NSBox *line;
 
   /*
+   * Projects Window
+   *
+   */
+ 
+  _w_frame = NSMakeRect(200,300,560,384);
+  loadedProjectsWindow = [[NSWindow alloc] initWithContentRect:_w_frame
+					   styleMask:style
+					   backing:NSBackingStoreBuffered
+					   defer:YES];
+  [loadedProjectsWindow setMinSize:NSMakeSize(560,384)];
+  [loadedProjectsWindow setTitle:@"Loaded Projects"];
+  [loadedProjectsWindow setReleasedWhenClosed:NO];
+  [loadedProjectsWindow setFrameAutosaveName:@"LoadedProjects"];
+
+  /*
    * Inspector Window
    *
    */
@@ -57,7 +72,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   inspector = [[NSWindow alloc] initWithContentRect:_w_frame
                                           styleMask:style
                                             backing:NSBackingStoreBuffered
-                                              defer:NO];
+                                              defer:YES];
   [inspector setMinSize:NSMakeSize(280,384)];
   [inspector setTitle:@"Inspector"];
   [inspector setReleasedWhenClosed:NO];
@@ -124,6 +139,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     [inspector release];
     [inspectorView release];
     [inspectorPopup release];
+    [loadedProjectsWindow release];
   }
   
   [super dealloc];
@@ -331,6 +347,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)showLoadedProjects
 {
+  if (![loadedProjectsWindow isVisible]) {
+    [loadedProjectsWindow center];
+  }
+  [loadedProjectsWindow makeKeyAndOrderFront:self];
 }
 
 - (void)saveFiles

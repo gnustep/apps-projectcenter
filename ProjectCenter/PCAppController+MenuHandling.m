@@ -49,7 +49,7 @@
 
 - (void)showBuildPanel:(id)sender;
 {
-  [[projectManager activeProject] build:self];
+  [[projectManager activeProject] showBuildView:self];
 }
 
 - (void)openProject:(id)sender
