@@ -43,14 +43,14 @@
 
 #ifdef DEBUG
     NSLog([NSString stringWithFormat:@"Loading bundle %@...",path]);
-#endif DEBUG
+#endif// DEBUG
 
     if ((bundle = [NSBundle bundleWithPath:path])) {
         [loadedBundles addObject:bundle];
 
 #ifdef DEBUG
         NSLog([NSString stringWithFormat:@"Bundle %@ successfully loaded!",path]);
-#endif DEBUG
+#endif// DEBUG
 
         if (delegate && [delegate respondsToSelector:@selector(bundleLoader: didLoadBundle:)]) {
             [delegate bundleLoader:self didLoadBundle:bundle];
@@ -103,13 +103,13 @@
 
     if (!path || [path isEqualToString:@""]) {
       NSDictionary *env = [[NSProcessInfo processInfo] environment];
-      NSString *prefix = [env objectForKey:@"GNUSTEP_LOCAL_ROOT"];
+      NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
       
       if (prefix && ![prefix isEqualToString:@""]) {
 	path =[prefix stringByAppendingPathComponent:@"Library/ProjectCenter"];
       }
       else {
-	path = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+	path = [NSString stringWithString:@"/usr/GNUstep/System/Library/ProjectCenter"];
       }
       
       [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
@@ -117,14 +117,14 @@
     }
 
     if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-      [NSException raise:@"PCBundleLoaderPathException" format:@"No valid bundle path specified!"];
+      [NSException raise:@"PCBundleLoaderPathException" format:@"No valid bundle path specified:\n%@",path];
       return;
     }
 #ifdef DEBUG
     else {
       NSLog([NSString stringWithFormat:@"Loading bundles at %@",path]);
     }
-#endif DEBUG
+#endif// DEBUG
 
     dir = [[NSFileManager defaultManager] directoryContentsAtPath:path];
     enumerator = [dir objectEnumerator];

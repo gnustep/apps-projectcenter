@@ -33,7 +33,11 @@ In order to do this successfully you must first install PCLib and the bundles an
 Important!
 ==========
 
-When ProjectCenter fails to launch due to a missing bundle path, you can set it
-using GNUstep's defaults tool:
+o ProjectCenter now installs into GNUSTEP_SYSTEM_ROOT. Be sure to have the 
+  correct privileges when installing it!
 
-opentool defaults write ProjectCenter BundlePaths /usr/GNUstep/Local/Library/ProjectCenter
+o When ProjectCenter fails to launch due to a missing bundle path, you can set 
+  it using GNUstep's defaults tool:
+
+  defaults write ProjectCenter BundlePaths /usr/GNUstep/System/Library/ProjectCenter
+

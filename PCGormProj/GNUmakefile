@@ -23,11 +23,13 @@
 #   along with this program; if not, write to the Free Software
 #   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 
+GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
+
 include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME 		= PCGormProj
 BUNDLE_EXTENSION	=.bundle
-BUNDLE_INSTALL_DIR	=$(GNUSTEP_LOCAL_ROOT)/Library/ProjectCenter/
+BUNDLE_INSTALL_DIR	=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter/
 
 PCGormProj_OBJC_FILES = 		\
 	PCGormProj.m 		\

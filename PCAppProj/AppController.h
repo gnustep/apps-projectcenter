@@ -1,7 +1,7 @@
 /* 
  * AppController.h created by phr on 2000-08-27 11:38:59 +0000
  *
- * Project TestApp
+ * GNUstep Application Controller
  *
  * Created with ProjectCenter - http://www.gnustep.org
  *

@@ -42,7 +42,7 @@
 {
     NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
     NSDictionary *env = [[NSProcessInfo processInfo] environment];
-    NSString *prefix = [env objectForKey:@"GNUSTEP_LOCAL_ROOT"];
+    NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
     NSString *_bundlePath;
 
     if (prefix && ![prefix isEqualToString:@""]) {

@@ -12,7 +12,7 @@
     LAST_EDITING = ""; 
     LIBRARIES = ("gnustep-base"); 
     MAKEFILEDIR = "/usr/GNUstep/Makefiles"; 
-    INSTALLDIR = "$(HOME)/Apps";
+    INSTALLDIR = "$(GNUSTEP_LOCAL_ROOT)";
     OTHER_FILES = (); 
     OTHER_RESOURCES = ("Version"); 
     OTHER_SOURCES = (); 
