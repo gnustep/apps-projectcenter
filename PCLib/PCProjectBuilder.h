@@ -28,7 +28,7 @@
 #define _PCPROJECTBUILDER_H
 
 #import <AppKit/AppKit.h>
-#import <ProjectCenter/ProjectComponent.h>
+#import "ProjectComponent.h"
 
 @class PCProject;
 

@@ -9,7 +9,9 @@
  */
 
 #import "PCProjectEditor.h"
+#import "PCDefines.h"
 #import "PCEditorView.h"
+#import "ProjectComponent.h"
 
 @interface PCProjectEditor (CreateUI)
 

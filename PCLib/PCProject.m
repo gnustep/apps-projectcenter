@@ -25,13 +25,16 @@
 */
 
 #import "PCProject.h"
+#import "PCBrowserController.h"
 #import "PCProject+ComponentHandling.h"
 
-#import "ProjectCenter.h"
 #import "PCProjectBuilder.h"
 #import "PCSplitView.h"
+#import "PCEditor.h"
 #import "PCEditorController.h"
 #import "PCHistoryController.h"
+#import "PCProjectDebugger.h"
+#import "PCProjectEditor.h"
 
 #define ENABLE_HISTORY
 

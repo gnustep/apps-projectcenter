@@ -46,6 +46,10 @@ typedef enum _PCTabFlags {
   NSRange range;
   NSArray *_keywords;
   PCEditor *editor;
+  
+#ifndef GNUSTEP_BASE_VERSION
+  id _textStorage;
+#endif
 }
 
 //=============================================================================

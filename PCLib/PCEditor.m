@@ -10,7 +10,9 @@
  */
 
 #import "PCEditor.h"
+#import "PCDefines.h"
 #import "PCEditorView.h"
+#import "ProjectComponent.h"
 #import "PCProjectEditor.h"
 
 NSString *PCEditorDidBecomeKeyNotification=@"PCEditorDidBecomeKeyNotification";
@@ -292,6 +294,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   [_iView setNeedsDisplay:YES];
   [_eView setNeedsDisplay:YES];
+  
+  return YES;
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification

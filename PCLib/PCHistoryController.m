@@ -9,6 +9,7 @@
  */
 
 #import "PCHistoryController.h"
+#import "PCDefines.h"
 #import "PCProject.h"
 
 @implementation PCHistoryController

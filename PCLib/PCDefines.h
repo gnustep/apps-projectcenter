@@ -44,5 +44,42 @@
 #define PROJECT_SAVE_FAILED_EXCEPTION   @"ProjectSaveFailedException"
 #define BUNDLE_MANAGER_EXCEPTION        @"BundleManagerException"
 
+#ifndef GNUSTEP_BASE_VERSION
+#define RETAIN(object)          [object retain]
+#define RELEASE(object)         [object release]
+#define AUTORELEASE(object)     [object autorelease]
+#define TEST_RELEASE(object)    ({ if (object) [object release]; })
+#define ASSIGN(object,value)    ({\
+id __value = (id)(value); \
+id __object = (id)(object); \
+if (__value != __object) \
+  { \
+    if (__value != nil) \
+      { \
+        [__value retain]; \
+      } \
+    object = __value; \
+    if (__object != nil) \
+      { \
+        [__object release]; \
+      } \
+  } \
+})
+#define DESTROY(object) ({ \
+  if (object) \
+    { \
+      id __o = object; \
+      object = nil; \
+      [__o release]; \
+    } \
+})
+
+#define NSLocalizedString(key, comment) \
+  [[NSBundle mainBundle] localizedStringForKey:(key) value:@"" table:nil]
+
+#define _(X) NSLocalizedString (X, @"")
+
+#endif
+
 #endif // _PCDEFINES_H_
 

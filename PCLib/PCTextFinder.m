@@ -15,6 +15,7 @@
  */
 
 #import "PCTextFinder.h"
+#import "PCDefines.h"
 
 #define Forward YES
 #define Backward NO

@@ -12,11 +12,14 @@
 #define _PCPROJECTEDITOR_H_
 
 #import <Foundation/Foundation.h>
-#import <ProjectCenter/ProjectComponent.h>
 
 @class NSBox;
+@class NSView;
 @class NSScrollView;
 @class PCEditorView;
+@class PCProject;
+
+@protocol ProjectComponent;
 
 @interface PCProjectEditor : NSObject <ProjectComponent>
 {

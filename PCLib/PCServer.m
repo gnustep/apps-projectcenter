@@ -25,7 +25,7 @@
 */
 
 #import "PCServer.h"
-#import "ProjectCenter.h"
+#import "PCDefines.h"
 #import "PCBrowserController.h"
 #import "PCEditor.h"
 
@@ -57,62 +57,77 @@
 
 - (BOOL)registerProjectSubmenu:(NSMenu *)menu
 {
+  return NO;
 }
 
 - (BOOL)registerFileSubmenu:(NSMenu *)menu
 {
+  return NO;
 }
 
 - (BOOL)registerToolsSubmenu:(NSMenu *)menu
 {
+  return NO;
 }
 
 - (BOOL)registerPrefController:(id<PreferenceController>)prefs
 {
+  return NO;
 }
 
 - (BOOL)registerEditor:(id<ProjectEditor>)anEditor
 {
+  return NO;
 }
 
 - (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger
 {
+  return NO;
 }
 
 - (PCProject *)activeProject
 {
+  return NO;
 }
 
 - (NSString*)pathToActiveProject
 {
+  return NO;
 }
 
 - (id)activeFile
 {
+  return nil;
 }
 
 - (NSString*)pathToActiveFile
 {
+  return nil;
 }
 
 - (NSArray*)selectedFiles
 {
+  return nil;
 }
 
 - (NSArray*)touchedFiles
 {
+  return nil;
 }
 
 - (BOOL)queryTouchedFiles
 {
+  return NO;
 }
 
 - (BOOL)addFileAt:(NSString*)filePath toProject:(PCProject *)projectPath
 {
+  return NO;
 }
 
 - (BOOL)removeFileFromProject:(NSString *)filePath
 {
+  return NO;
 }
 
 - (void)connectionDidDie:(NSNotification *)notif

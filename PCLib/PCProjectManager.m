@@ -25,8 +25,11 @@
 */
 
 #import "PCProjectManager.h"
+#import "PCDefines.h"
+#import "PCProject.h"
 #import "PCEditorController.h"
-#import "ProjectCenter.h"
+#import "ProjectComponent.h"
+#import "ProjectType.h"
 
 #if defined(GNUSTEP)
 #import <AppKit/IMLoading.h>

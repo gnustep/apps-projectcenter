@@ -25,7 +25,7 @@
 */
 
 #import "PCBundleLoader.h"
-#import "ProjectCenter.h"
+#import "PCDefines.h"
 
 @interface PCBundleLoader (PrivateLoader)
 

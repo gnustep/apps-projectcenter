@@ -24,6 +24,8 @@
    $Id$
 */
 
+#import "PCEditorView.h"
+#import "PCDefines.h"
 #import "PCEditorView+Highlighting.h"
 
 #define SCANLOC [scanner scanLocation]

@@ -9,9 +9,9 @@
  */
 
 #import "PCEditorController.h"
+#import "PCDefines.h"
 #import "PCEditor.h"
 #import "PCProject.h"
-#import "ProjectCenter.h"
 
 @implementation PCEditorController
 

@@ -11,7 +11,9 @@
 #ifndef _PCPROJECT_COMPONENTHANDLING_H_
 #define _PCPROJECT_COMPONENTHANDLING_H_
 
-#import <ProjectCenter/PCProject.h>
+#import "PCProject.h"
+#import "ProjectComponent.h"
+#import "PCDefines.h"
 
 @interface PCProject (ComponentHandling)
 

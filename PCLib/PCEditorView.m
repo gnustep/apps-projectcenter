@@ -138,7 +138,7 @@ static int  _tabFlags       = PCTab4Sp;
 - (void)highlightTextInRange:(NSRange)txtRange
 {
   //NSDictionary *aDict;
-  NSArray      *keywords;
+  //NSArray      *keywords;
 
 /*
   aDict = [NSDictionary dictionaryWithObjectsAndKeys:
