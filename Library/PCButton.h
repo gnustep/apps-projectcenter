@@ -32,19 +32,15 @@
  */
 @interface PCButton : NSButton 
 {
-  NSString          *_toolTipText;
+  NSToolTipTag        mainToolTip;
 
-  NSTrackingRectTag tRectTag;
-  NSTimer           *ttTimer;
-  NSWindow          *ttWindow;
-  NSPoint           mouseLocation;
+  NSTimer             *ttTimer;
+  NSWindow            *ttWindow;
+  NSMutableDictionary *ttTitleAttrs;
+  NSColor             *ttBackground;
 
-  BOOL _hasTooltip;
+  BOOL                _hasTooltips;
 }
-
-- (void)setShowTooltip:(BOOL)yn;
-
-- (void)updateTrackingRect;
 
 @end
 

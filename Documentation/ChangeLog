@@ -1,3 +1,14 @@
+2004-07-22 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCButton.m: Rewritten tooltips code. Almost ready for 
+	incorporation into NSView.
+
+	* Library/PCProjectBuilder.m: Use new tooltip code and remove old
+	style code.
+	* Library/PCProjectLauncher.m: ditto.
+	* Library/PCProjectWindow.m: ditto.
+
+	
 2004-07-15 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProject.m: 

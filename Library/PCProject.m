@@ -679,7 +679,7 @@ NSString
       return YES;
     }
 
-  while (key = [keyEnum nextObject])
+  while ((key = [keyEnum nextObject]))
     {
       projectFiles = [projectDict objectForKey:key];
       if ([projectFiles containsObject:pFile])
@@ -1322,8 +1322,6 @@ NSString
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)categoryPath
 {
   NSString  *listEntry = nil;
-  NSString  *categoryKey = nil;
-  NSString  *category = nil;
   PCProject *activeProject = [projectManager activeProject];
 
   if (self != activeProject)

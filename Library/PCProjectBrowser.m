@@ -228,8 +228,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (BOOL)setPath:(NSString *)path
 {
-  int      selectedColumn;
-  NSMatrix *columnMatrix = nil;
   BOOL     res;
 
   if ([[browser path] isEqualToString: path])

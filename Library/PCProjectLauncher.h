@@ -55,7 +55,6 @@
 - (void)dealloc;
 
 - (NSView *) componentView;
-- (void)setTooltips;
 
 - (BOOL)isRunning;
 - (BOOL)isDebugging;

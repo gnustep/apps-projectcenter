@@ -175,12 +175,6 @@ enum {
   return componentView;
 }
 
-- (void)setTooltips
-{
-  [runButton setShowTooltip:YES];
-  [debugButton setShowTooltip:YES];
-}
-
 - (BOOL)isRunning
 {
   return _isRunning;

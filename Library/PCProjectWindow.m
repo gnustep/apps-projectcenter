@@ -105,62 +105,57 @@
   
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,5,43,43)];
   [buildButton setRefusesFirstResponder:YES];
-  [buildButton setTitle: @"Build"];
+  [buildButton setToolTip: @"Build"];
   [buildButton setImage: IMAGE(@"Build")];
   [buildButton setTarget: self];
   [buildButton setAction: @selector(showProjectBuild:)];
   [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [buildButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: buildButton];
-//  [buildButton setShowTooltip:YES];
   RELEASE (buildButton);
   
   launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,5,43,43)];
   [launchButton setRefusesFirstResponder:YES];
-  [launchButton setTitle: @"Launch/Debug"];
+  [launchButton setToolTip: @"Launch/Debug"];
   [launchButton setImage: IMAGE(@"Run")];
   [launchButton setTarget: self];
   [launchButton setAction: @selector(showProjectLaunch:)];
   [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [launchButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: launchButton];
-//  [launchButton setShowTooltip:YES];
   RELEASE (launchButton);
   
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
   [editorButton setRefusesFirstResponder:YES];
-  [editorButton setTitle: @"Editor"];
+  [editorButton setToolTip: @"Editor"];
   [editorButton setImage: IMAGE(@"Editor")];
   [editorButton setTarget: self];
   [editorButton setAction: @selector(showProjectEditor:)];
   [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [editorButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: editorButton];
-//  [editorButton setShowTooltip:YES];
   RELEASE (editorButton);
 
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
   [findButton setRefusesFirstResponder:YES];
-  [findButton setTitle: @"Find"];
+  [findButton setToolTip: @"Find"];
   [findButton setImage: IMAGE(@"Find")];
   [findButton setTarget: project];
   [findButton setAction: @selector(showFindView:)];
   [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [findButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: findButton];
-//  [findButton setShowTooltip:YES];
   RELEASE (findButton);
   
   inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(176,5,43,43)];
   [inspectorButton setRefusesFirstResponder:YES];
-  [inspectorButton setTitle: @"Inspector"];
+  [inspectorButton setToolTip: @"Inspector"];
   [inspectorButton setImage: IMAGE(@"Inspector")];
   [inspectorButton setTarget: [project projectManager]];
   [inspectorButton setAction: @selector(showProjectInspector:)];
   [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
   [inspectorButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: inspectorButton];
-//  [inspectorButton setShowTooltip:YES];
   RELEASE (inspectorButton);
   
 
@@ -557,6 +552,7 @@
 	}
 
       [componentView setBorderType:NSBezelBorder];
+      [componentView setFrame:NSMakeRect(0,0,128,130)];
       [v_split addSubview:[[project projectLoadedFiles] componentView]];
       [v_split adjustSubviews];
     }
@@ -590,8 +586,6 @@
 	}
       [self setCustomContentView:view];
     }
-
-  [[project projectBuilder] setTooltips];
 }
 
 - (void)showProjectLaunch:(id)sender
@@ -619,8 +613,6 @@
 	}
       [self setCustomContentView:view];
     }
-
-  [[project projectLauncher] setTooltips];
 }
 
 - (void)showProjectEditor:(id)sender

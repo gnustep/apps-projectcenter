@@ -71,7 +71,6 @@
 - (void)dealloc;
 
 - (NSView *)componentView;
-- (void)setTooltips;
 
 // --- Accessory
 - (BOOL)isBuilding;

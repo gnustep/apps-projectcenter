@@ -63,12 +63,7 @@
       [filesList setHeaderView:nil];
       [filesList addTableColumn:filesColumn];
       [filesList setDataSource:self];
-/*      [filesList setBackgroundColor: [NSColor colorWithDeviceRed:0.88
-                                                           green:0.76 
-                                                            blue:0.60 
-                                                           alpha:1.0]];*/
-      // Hack! Should be [filesList setDrawsGrid:NO]
-      [filesList setGridColor: [NSColor lightGrayColor]];
+      [filesList setDrawsGrid:NO];
       [filesList setTarget:self];
       [filesList setDoubleAction:@selector(doubleClick:)];
       [filesList setAction:@selector(click:)];

@@ -63,7 +63,7 @@
    * 4 build Buttons
    */
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,271,43,43)];
-  [buildButton setTitle: @"Build"];
+  [buildButton setToolTip: @"Build"];
   [buildButton setImage: IMAGE(@"Build")];
   [buildButton setAlternateImage: IMAGE(@"Stop")];
   [buildButton setTarget: self];
@@ -74,7 +74,7 @@
   RELEASE (buildButton);
   
   cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,271,43,43)];
-  [cleanButton setTitle: @"Clean"];
+  [cleanButton setToolTip: @"Clean"];
   [cleanButton setImage: IMAGE(@"Clean")];
   [cleanButton setAlternateImage: IMAGE(@"Stop")];
   [cleanButton setTarget: self];
@@ -85,7 +85,7 @@
   RELEASE (cleanButton);
 
   installButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,271,43,43)];
-  [installButton setTitle: @"Install"];
+  [installButton setToolTip: @"Install"];
   [installButton setImage: IMAGE(@"Install")];
   [installButton setAlternateImage: IMAGE(@"Stop")];
   [installButton setTarget: self];
@@ -96,7 +96,7 @@
   RELEASE (installButton);
 
   optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,271,43,43)];
-  [optionsButton setTitle: @"Options"];
+  [optionsButton setToolTip: @"Options"];
   [optionsButton setImage: IMAGE(@"Options")];
   [optionsButton setTarget: self];
   [optionsButton setAction: @selector(showOptionsPanel:)];
@@ -405,14 +405,6 @@
     }
 
   return componentView;
-}
-
-- (void)setTooltips
-{
-  [buildButton setShowTooltip:NO];
-  [cleanButton setShowTooltip:NO];
-  [installButton setShowTooltip:NO];
-  [optionsButton setShowTooltip:NO];
 }
 
 // --- Accessory
