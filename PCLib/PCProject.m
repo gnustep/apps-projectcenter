@@ -75,7 +75,8 @@
 
   [browserController setBrowser:browser];
   [browserController setProject:self];
-  [browser autorelease];
+ 
+  RELEASE(browser);
 
   box = [[NSBox alloc] initWithFrame:NSMakeRect (0,-1,560,252)];
   [box setTitlePosition:NSNoTitle];
@@ -371,7 +372,6 @@
    *
    */
 
-  // Redisplay!
   [browser loadColumnZero];
 }
 
@@ -998,12 +998,17 @@
   }
   else if (object == [self projectWindow]) {
     if ([[self projectWindow] isDocumentEdited]) {
-      if (NSRunAlertPanel(@"Project changed!",@"The project %@ has unsaved files! Should they be saved before closing it?",@"Yes",@"No",nil,[self projectName])) {
+      if (NSRunAlertPanel(@"Project changed!",
+			  @"The project %@ has unsaved files! Should they be saved before closing?",
+			  @"Yes",
+			  @"No",
+			  nil,[self projectName])) {
 	[self save];
       }
     }
     
     // The PCProjectController is our delegate!
+    [[NSNotificationCenter defaultCenter] removeObserver:browserController];
     [projectManager closeProject:self];
   }
 }

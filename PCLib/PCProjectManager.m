@@ -356,9 +356,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   [loadedProjects removeObjectForKey:key];
   [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-  [currentProject autorelease];
-  
-  //~ Should I activate another project here?!
+  if ([loadedProjects count] == 0) {
+    [inspector performClose:self];
+  }
+
+  AUTORELEASE(currentProject);
 }
 
 - (void)closeProject
