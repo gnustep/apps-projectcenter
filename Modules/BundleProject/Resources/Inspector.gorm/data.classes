@@ -138,18 +138,24 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "setPrincipalClass:",
+	    "setBundleExtension:"
 	);
 	Super = NSObject;
     };
-    PCLibraryProject = {
+    PCBundleProject = {
 	Actions = (
+	    "setPrincipalClass:",
+	    "setBundleExtension:"
 	);
 	Outlets = (
 	    projectAttributesView,
 	    projectTypeField,
 	    projectNameField,
-	    projectLanguageField
+	    projectLanguageField,
+	    principalClassField,
+	    bundleExtensionField
 	);
 	Super = NSObject;
     };
