@@ -165,6 +165,26 @@
 // ==== File handling
 // ===========================================================================
 
+- (BOOL)saveAllFiles
+{
+    NSEnumerator *enumerator = [editorDict keyEnumerator];
+    PCEditor     *editor;
+    NSString     *key;
+    BOOL          ret = YES;
+
+    while(( key = [enumerator nextObject] ))
+    {
+        editor = [editorDict objectForKey:key];
+
+	if( [editor saveFile] == NO )
+	{
+	    ret = NO;
+	}
+    }
+
+    return ret;
+}
+
 - (BOOL)saveFile
 {
     NSEnumerator *enumerator = [editorDict keyEnumerator];

@@ -890,10 +890,12 @@
 	}
     }
 
-    if (shouldKeep && [fm isReadableFileAtPath:file]) {
+    if (shouldKeep && [fm isReadableFileAtPath:file]) 
+    {
         ret = [fm copyPath:file toPath:backup handler:nil];
 
-	if( ret == NO ) {
+	if( ret == NO ) 
+	{
             NSRunAlertPanel(@"Attention!",
 	                    @"Could not save the project backup file '%@'!",
 			    @"OK",nil,nil,file);
@@ -907,6 +909,7 @@
 	[projectWindow setDocumentEdited:NO];
     }
 
+    [self saveAllFiles];
     [self writeMakefile];
 
     return ret;
@@ -924,9 +927,7 @@
 
 - (BOOL)saveAllFiles
 {
-    BOOL ret = NO;
-
-    return ret;
+    return [editorController saveAllFiles];
 }
 
 - (BOOL)saveAllFilesIfNeeded

@@ -246,7 +246,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     {
         project = [loadedProjects objectForKey:key];
 	ret = [project save];
-        if( ret == NO ) {
+
+        if( ret == NO ) 
+	{
             NSRunAlertPanel(@"Attention!",
                             @"Couldn't save project %@!", 
                             @"OK",nil,nil,[project projectName]);

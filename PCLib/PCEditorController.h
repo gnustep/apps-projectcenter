@@ -54,6 +54,8 @@
 // ==== File handling
 // ===========================================================================
 
+- (BOOL)saveAllFiles;
+
 - (BOOL)saveFile;
 - (BOOL)revertFile;
 
