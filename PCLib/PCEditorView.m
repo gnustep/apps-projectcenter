@@ -57,7 +57,21 @@ static BOOL isInitialised = NO;
       isInitialised = YES;
     }
 
-    _keywords = [[NSArray alloc] initWithObjects:@"@class",@"@selector",@"#import",@"#include",@"#define",@"#pragma",@"#warning",@"@interface",@"@implementation",@"@end",@"@protocol",nil];
+    _keywords = [[NSArray alloc] initWithObjects:@"@class",
+                                                 @"@selector",
+						 @"#import",
+						 @"#include",
+						 @"#ifndef",
+						 @"#if defined",
+						 @"#define",
+						 @"#endif",
+						 @"#pragma",
+						 @"#warning",
+						 @"@interface",
+						 @"@implementation",
+						 @"@end",
+						 @"@protocol",
+						 nil];
   }
   return self;
 }
