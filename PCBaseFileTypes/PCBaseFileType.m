@@ -27,11 +27,12 @@
 #import "PCBaseFileType.h"
 #import <ProjectCenter/PCProject.h>
 
-#define ObjCClass	@"ObjC Class"
-#define ObjCHeader	@"ObjC Header"
+#define ObjCNSViewClass	@"Objective-C NSView Subclass"
+#define ObjCClass	@"Objective-C Class"
+#define ObjCHeader	@"Objective-C Header"
 #define CFile		@"C File"
 #define CHeader	        @"C Header"
-#define ProtocolFile	@"ObjC Protocol"
+#define ProtocolFile	@"Objective-C Protocol"
 
 @implementation PCBaseFileType
 
@@ -42,34 +43,57 @@ static NSDictionary *dict = nil;
 + (id)sharedCreator
 {
   if (!_creator) {
+    NSDictionary *nsviewClassDict;
     NSDictionary *classDict;
     NSDictionary *headerDict;
     NSDictionary *ccDict;
     NSDictionary *chDict;
     NSDictionary *protocolDict;
+    NSString     *descr;
     
     _creator = [[[self class] alloc] init];
     
     // Setting up the dictionary needed for registration!
+    descr = [NSString stringWithString:@"Special Objective-C class.\n\nThis is a subclass of NSView which includes AppKit.h."];
+    nsviewClassDict = [NSDictionary dictionaryWithObjectsAndKeys:
+				_creator,@"Creator",
+			      PCClasses,@"ProjectKey",
+			      descr,@"TypeDescription",
+			      nil];
+    // Setting up the dictionary needed for registration!
+    descr = [NSString stringWithString:@"Generic Objective-C class.\n\nThis is a plain subclass of NSObject which includes only Foundation.h."];
     classDict = [NSDictionary dictionaryWithObjectsAndKeys:
 				_creator,@"Creator",
 			      PCClasses,@"ProjectKey",
+			      descr,@"TypeDescription",
 			      nil];
+
+    descr = [NSString stringWithString:@"Generic Objective-C header.\n\nThis is a plain interface subclassing NSObject. The file includes Foundation.h"];
     headerDict =[NSDictionary dictionaryWithObjectsAndKeys:
 				_creator,@"Creator",
 			      PCHeaders,@"ProjectKey",
+			      descr,@"TypeDescription",
 			      nil];
+
+    descr = [NSString stringWithString:@"Generic ANSI-C implementation file.\n\nThis file contains no Objective-C dependency in any form."];
     ccDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			     _creator,@"Creator",
 			   PCOtherSources,@"ProjectKey",
+			      descr,@"TypeDescription",
 			   nil];
+
+    descr = [NSString stringWithString:@"Generic ANSI-C header.\n\nThis file contains no Objective-C dependency in any form."];
     chDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			     _creator,@"Creator",
 			   PCHeaders,@"ProjectKey",
+			      descr,@"TypeDescription",
 			   nil];
+
+    descr = [NSString stringWithString:@"Generic Objective-C protocol.\n\nThis is common Objective-C protocol, comparable i.e. to a Java interface."];
     protocolDict = [NSDictionary dictionaryWithObjectsAndKeys:
 				   _creator,@"Creator",
 				 PCHeaders,@"ProjectKey",
+			      descr,@"TypeDescription",
 				 nil];
     
     dict = [[NSDictionary alloc] initWithObjectsAndKeys:
@@ -78,6 +102,7 @@ static NSDictionary *dict = nil;
 				 protocolDict,ProtocolFile,
 				 headerDict,ObjCHeader,
 				 classDict,ObjCClass,
+				 nsviewClassDict,ObjCNSViewClass,
 				 nil];
   }
   return _creator;
@@ -109,7 +134,8 @@ static NSDictionary *dict = nil;
    *
    */
   
-  if ([type isEqualToString:ObjCClass]) {
+  if ([type isEqualToString:ObjCClass]) 
+  {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"class" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"m"];
     [fm copyPath:_file toPath:newFile handler:nil];
@@ -119,20 +145,51 @@ static NSDictionary *dict = nil;
     
     // Should a header be created as well?
     newFile = [path stringByAppendingPathExtension:@"h"];
-    if (NSRunAlertPanel(@"Attention!",@"Should %@ be created and inserted in the project as well?",@"Yes",@"No",nil,[newFile lastPathComponent])) {
+    if (NSRunAlertPanel(@"Attention!",
+                        @"Should %@ be created and inserted into the project?",
+			@"Yes",@"No",nil,[newFile lastPathComponent])) 
+    {
       _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"header" ofType:@"template"];
       [fm copyPath:_file toPath:newFile handler:nil];
       
       [self replaceTagsInFileAtPath:newFile withProject:aProject type:ObjCHeader];
       [files setObject:ObjCHeader forKey:newFile];
-    }        
+    }
   }
   
   /*
    *
    */
   
-  else if ([type isEqualToString:CFile]) {
+  else if ([type isEqualToString:ObjCNSViewClass]) 
+  {
+    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"nsviewclass" ofType:@"template"];
+    newFile = [path stringByAppendingPathExtension:@"m"];
+    [fm copyPath:_file toPath:newFile handler:nil];
+    [files setObject:ObjCNSViewClass forKey:newFile];
+    
+    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+    
+    // Should a header be created as well?
+    newFile = [path stringByAppendingPathExtension:@"h"];
+    if (NSRunAlertPanel(@"Attention!",
+                        @"Should %@ be created and inserted into the project?",
+			@"Yes",@"No",nil,[newFile lastPathComponent])) 
+    {
+      _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"nsviewheader" ofType:@"template"];
+      [fm copyPath:_file toPath:newFile handler:nil];
+      
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:ObjCHeader];
+      [files setObject:ObjCHeader forKey:newFile];
+    }
+  }
+
+  /*
+   *
+   */
+  
+  else if ([type isEqualToString:CFile]) 
+  {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cfile" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"c"];
     [fm copyPath:_file toPath:newFile handler:nil];
@@ -155,7 +212,8 @@ static NSDictionary *dict = nil;
    *
    */
   
-  else if ([type isEqualToString:ObjCHeader]) {
+  else if ([type isEqualToString:ObjCHeader]) 
+  {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"header" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
@@ -167,7 +225,8 @@ static NSDictionary *dict = nil;
    *
    */
   
-  else if ([type isEqualToString:CHeader]) {
+  else if ([type isEqualToString:CHeader]) 
+  {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
@@ -179,7 +238,8 @@ static NSDictionary *dict = nil;
    *
    */
   
-  else if ([type isEqualToString:ProtocolFile]) {
+  else if ([type isEqualToString:ProtocolFile]) 
+  {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"protocol" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
@@ -217,7 +277,8 @@ static NSDictionary *dict = nil;
   [file replaceCharactersInRange:
 	  [file rangeOfString:@"$DATE$"] withString:date];
 
-    if ([aType isEqualToString:ObjCHeader] || [aType isEqualToString:CHeader]) {
+    if ([aType isEqualToString:ObjCHeader] || [aType isEqualToString:CHeader]) 
+    {
 	NSString *nm = [[aFile stringByDeletingPathExtension] uppercaseString];
 
 	[file replaceCharactersInRange:
@@ -230,6 +291,7 @@ static NSDictionary *dict = nil;
 
   if ([aType isEqualToString:ObjCClass] || 
       [aType isEqualToString:CFile] ||
+      [aType isEqualToString:ObjCNSViewClass] ||
       [aType isEqualToString:ProtocolFile] ||
       [aType isEqualToString:ObjCHeader]) {
     NSString *name = [aFile stringByDeletingPathExtension];
@@ -237,7 +299,9 @@ static NSDictionary *dict = nil;
     [file replaceCharactersInRange:
 	    [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
 
-    if ([aType isEqualToString:ObjCClass]) {
+    if ([aType isEqualToString:ObjCClass] ||
+        [aType isEqualToString:ObjCNSViewClass]) 
+    {
       [file replaceCharactersInRange:
 	      [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
     }

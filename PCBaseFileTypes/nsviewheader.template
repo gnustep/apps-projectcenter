@@ -1,0 +1,28 @@
+/* 
+ * $FILENAME$ created by $USERNAME$ on $DATE$
+ *
+ * Project $PROJECTNAME$
+ *
+ * Created with ProjectCenter - http://www.gnustep.org
+ *
+ * $Id$
+ */
+
+#ifndef _$UCFILENAMESANSEXTENSION$_H_
+#define _$UCFILENAMESANSEXTENSION$_H_
+
+#import <AppKit/AppKit.h>
+
+@interface $FILENAMESANSEXTENSION$ : NSView
+{
+
+}
+
+- (id)initWithFrame:(NSRect)aFrame;
+
+- (void)drawRect:(NSRect)rect;
+
+@end
+
+#endif // _$UCFILENAMESANSEXTENSION$_H_
+

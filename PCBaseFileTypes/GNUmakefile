@@ -40,7 +40,9 @@ cfile.template \
 cheader.template \
 class.template \
 header.template \
-protocol.template 
+protocol.template \
+nsviewclass.template \
+nsviewheader.template 
 
 #
 
