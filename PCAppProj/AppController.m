@@ -65,18 +65,5 @@ static NSDictionary *infoDict = nil;
 - (void)showPrefPanel:(id)sender
 {
 }
-/*
-- (void)showInfoPanel:(id)sender
-{
-  if (!infoDict) {
-    NSString *fp;
-    NSBundle *bundle = [NSBundle mainBundle];
 
-    fp = [bundle pathForResource:@"Info-project" ofType:@"plist"];
-    infoDict = [[NSDictionary dictionaryWithContentsOfFile:fp] retain];
-  }
-
-  [[NSApplication sharedApplication] orderFrontStandardInfoPanelWithOptions:infoDict];
-}
-*/
 @end
