@@ -31,8 +31,8 @@
 
 */
 
-#import "PCAppProj.h"
-#import "PCAppProject.h"
+#include "PCAppProj.h"
+#include "PCAppProject.h"
 
 @implementation PCAppProj
 

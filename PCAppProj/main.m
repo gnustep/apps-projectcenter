@@ -1,7 +1,7 @@
 /* $Id$ */
 
-#import <AppKit/AppKit.h>
-#import "AppController.h"
+#include <AppKit/AppKit.h>
+#include "AppController.h"
 
 #define APP_NAME @"GNUstep"
 

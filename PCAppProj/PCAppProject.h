@@ -30,11 +30,13 @@
  This is the project type 'Application' for GNUstep. You never should create 
  it yourself but use PCAppProj for doing this. Otherwise needed files don't 
  get copied to the right place.
-
  */
+ 
+#ifndef _PCAPPPROJ_PCAPPPROJECT_H
+#define _PCAPPPROJ_PCAPPPROJECT_H
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/PCProject.h>
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/PCProject.h>
 
 @interface PCAppProject : PCProject
 {
@@ -80,4 +82,4 @@
 
 @end
 
-
+#endif

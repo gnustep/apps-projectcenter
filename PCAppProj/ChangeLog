@@ -1,3 +1,7 @@
+2002-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* *.h, *.m: Replace #import with #include and add #ifndefs.
+	
 2002-06-01 15:53  probert
 
 	* GNUmakefile, PCAppProj.pcproj, PCAppProject.m: Fixed a bug in the

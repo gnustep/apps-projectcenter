@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import "PCAppProject.h"
-#import "PCAppProj.h"
+#include "PCAppProject.h"
+#include "PCAppProj.h"
 
-#import <ProjectCenter/ProjectCenter.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 @interface PCAppProject (CreateUI)
 

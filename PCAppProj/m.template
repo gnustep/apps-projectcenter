@@ -11,7 +11,7 @@ $$ $DATE$                    e.g. Jan-1-1994
 $$
 /* $FILENAME$ created by $USERNAME$ on $DATE$ */
 
-#import "$FILENAMESANSEXTENSION$.h"
+#include "$FILENAMESANSEXTENSION$.h"
 
 @implementation $FILENAMESANSEXTENSION$
 

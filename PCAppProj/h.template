@@ -1,7 +1,10 @@
 $$
 /* $FILENAME$ created by $USERNAME$ on $DATE$ */
 
-#import <AppKit/AppKit.h>
+#ifndef _$FILENAMESANSEXTENSION$_H
+#define _$FILENAMESANSEXTENSION$_H
+
+#include <AppKit/AppKit.h>
 
 @interface $FILENAMESANSEXTENSION$ : NSObject
 {
@@ -9,3 +12,5 @@ $$
 }
 
 @end
+
+#endif
