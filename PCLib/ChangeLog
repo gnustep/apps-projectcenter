@@ -1,3 +1,138 @@
+2002-02-17 21:02  probert
+
+	* PCDefines.h: Added the TabBehaviour define required by the
+	preferences
+
+2002-02-17 18:40  probert
+
+	* GNUmakefile, PCEditorView+Highlighting.h,
+	PCEditorView+Highlighting.m, PCEditorView.h, PCEditorView.m,
+	ProjectCenter.h, ProjectCenter.pcproj: Moved the (deprecated)
+	highlighting code into PCEditorView+Highlighting and implemented
+	tab (\t) capabilities.
+
+2002-02-17 14:14  probert
+
+	* PCEditor.m, PCEditorController.m, PCEditorView.m, PCProject.m,
+	PCProjectEditor.m, PCProjectManager.m: Fixed 2 bugs which caused a
+	severe crash.
+
+2002-02-16 21:46  probert
+
+	* PCBrowserController.m, PCFileManager.h, PCFileManager.m,
+	PCProject+ComponentHandling.m, PCProjectEditor.m: Enhanced the 'new
+	file window' by adding a description view.
+
+2002-02-12 22:44  probert
+
+	* PCProject.m: Fixed the bug that when clicking on a source file
+	for the first time, the editor did not display the file's content.
+
+2002-02-12 21:05  probert
+
+	* PCProjectBuilder.m, PCProjectDebugger.h, PCProjectDebugger.m:
+	Added a launch target popup which lets the user choose between the
+	default or the debug target.
+
+2002-02-11 23:19  probert
+
+	* GNUmakefile, PCEditor.h, PCEditor.m, PCEditorController.m,
+	PCEditorView.h, PCEditorView.m, PCFileManager.m,
+	PCProject+ComponentHandling.h, PCProject+ComponentHandling.m,
+	PCProject.h, PCProject.m, PCProjectBuilder.h, PCProjectBuilder.m,
+	PCProjectDebugger.h, PCProjectEditor.h, PCProjectEditor.m,
+	ProjectCenter.h, ProjectCenter.pcproj, ProjectComponent.h: Began to
+	work on support for an integrated editor, thus much has been
+	rewritten related to editor handling. This is work in progress...
+	Every PCProject component now has to conform to the
+	ProjectComponent protocol.  Syntax highlighting is disabled for
+	now, this will undergo a major rewrite soon.  Furthermore I
+	separated the component handling stuff from the main class file and
+	put it into PCProject+ComponentHandling.
+
+2002-02-03 20:31  probert
+
+	* PCEditor.h, PCEditor.m, PCProject.m, PCTextFinder.m: Optimised
+	text edition reflection. Embedded editing will need more changes in
+	that respect, I fear...
+
+2002-02-03 17:30  probert
+
+	* GNUmakefile, PCEditor.m, PCTextFinder.h, PCTextFinder.m,
+	ProjectCenter.h, ProjectCenter.pcproj: Added a text finder to
+	ProjectCenter (based on Ali Ozer's code).
+
+2002-02-02 22:13  probert
+
+	* PCDefines.h: Defines belong into PCDefines.h now
+
+2002-02-02 22:12  probert
+
+	* GNUmakefile, PCBrowserController.h, PCBundleLoader.h, PCEditor.h,
+	PCEditor.m, PCEditorView.m, PCFileManager.h, PCProject.h,
+	PCProjectBuilder.h, PCProjectManager.h, PCProjectManager.m,
+	PCServer.h, PreferenceController.h, ProjectBuilder.h,
+	ProjectCenter.h, ProjectCenter.pcproj, ProjectDebugger.h,
+	ProjectEditor.h, Server.h: Cleaned up the header files ( added
+	ifndef/define statements ), splitted the ProjectCenter.h header and
+	some other cleanups. Editor now send notifications whenever they
+	become or resign key.
+
+2002-02-02 20:21  probert
+
+	* PCBrowserController.m, PCEditor.h, PCEditor.m,
+	PCEditorController.h, PCEditorController.m, PCEditorView.h,
+	PCEditorView.m, PCProject.h, PCProject.m, PCProjectManager.m: Kind
+	of implemented saving and reverting of common files. A long way to
+	go, but for now it works...
+
+2002-02-02 18:56  probert
+
+	* GNUmakefile, PCBrowserController.h, PCBrowserController.m,
+	PCBundleLoader.h, PCBundleLoader.m, PCEditor.h, PCEditor.m,
+	PCEditorController.h, PCEditorController.m, PCEditorView.h,
+	PCEditorView.m, PCProject.h, PCProject.m, PCProjectManager.m,
+	PCServer.h, PCServer.m, ProjectCenter.pcproj: Rewriting the entire
+	editor code. Hence introduced a PCEditorController and cleaned up
+	the PCServer class. Every project now has a controller which
+	controls all editors. Editors itself use an editor view to display
+	the files or external editors.
+
+2002-01-29 22:46  probert
+
+	* PCEditor.h, PCEditor.m, PCProjectManager.m: Fixed a bug
+	preventing reopening projects. Also added 2 methods which will be
+	used to make an editor embedded.
+
+2002-01-29 22:29  probert
+
+	* GNUmakefile, PCEditor.h, PCEditor.m, PCServer.h, PCServer.m,
+	ProjectCenter.pcproj: Cleaning up the internal editor code. More to
+	come...
+
+2002-01-27 14:55  probert
+
+	* GNUmakefile, PCProject.m, PCProjectDebugger.m, PCSplitView.h,
+	PCSplitView.m, ProjectCenter.pcproj: Using a customised split view
+	instead of a NSSplitView - more to come...
+
+2002-01-27 14:37  probert
+
+	* PCProject.m: Minor UI enhancement: main button alignement
+	adjusted.
+
+2002-01-27 14:32  probert
+
+	* PCProject.m, PCProjectBuilder.h, PCProjectBuilder.m,
+	PCProjectDebugger.m: Removed unneeded buttons, added a title to the
+	remaining ones and introduced a splitview between the project
+	browser and component view. In the build view a popup button is now
+	used for build targets.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 11:00  probert
 
 	* GNUmakefile, PCBrowserController.m, PCEditorView.m,

@@ -1,3 +1,45 @@
+2002-02-17 21:03  probert
+
+	* PCPrefController.h, PCPrefController.m: Added a new preference
+	panel related to code editing. For now there is only 1 option
+	available, the tab behaviour.
+
+2002-02-12 21:14  probert
+
+	* ProjectCenterInfo.plist: Updated copyright message...
+
+2002-02-11 23:19  probert
+
+	* PCAppController+MenuHandling.m: Began to work on support for an
+	integrated editor, thus much has been rewritten related to editor
+	handling. This is work in progress... Every PCProject component now
+	has to conform to the ProjectComponent protocol.  Syntax
+	highlighting is disabled for now, this will undergo a major rewrite
+	soon.  Furthermore I separated the component handling stuff from
+	the main class file and put it into PCProject+ComponentHandling.
+
+2002-02-03 17:31  probert
+
+	* PCAppController+MenuHandling.h, PCAppController+MenuHandling.m,
+	PCAppController.m, PCMenuController.m, ProjectCenter_main.m:
+	Integrated the text finder into the menu structure and cleaned up
+	some parts of the code related to menus.
+
+2002-02-02 22:15  probert
+
+	* PCAppController+MenuHandling.h, PCAppController+MenuHandling.m,
+	PCMenuController.h, PCMenuController.m, ProjectCenter_main.m: Menus
+	are now enabled/disabled whenever they should...
+
+2002-02-02 20:21  probert
+
+	* PCAppController.m: Kind of implemented saving and reverting of
+	common files. A long way to go, but for now it works...
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 10:37  probert
 
 	* PC.project, PCMenuController.m, ProjectCenter.pcproj,

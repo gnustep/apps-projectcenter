@@ -1,3 +1,14 @@
+2002-02-16 21:43  probert
+
+	* GNUmakefile, PCBaseFileType.m, PCBaseFileTypes.pcproj,
+	nsviewclass.template, nsviewheader.template: Added support for a
+	NSView subclass template. Also added a description to every file
+	template.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 16:01  probert
 
 	* GNUmakefile, PCBaseFileTypes.pcproj: Added libProjectCenter to

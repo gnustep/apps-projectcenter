@@ -1,3 +1,22 @@
+2002-02-16 22:21  probert
+
+	* baseInterface.gorm: Enhanced the default menu entries by adding
+	standard submenu.
+
+2002-02-16 22:12  probert
+
+	* baseInterface.classes, baseInterface.gorm: Updated the Gorm
+	generated files using the latest Gorm CVS code.
+
+2002-01-07 16:36  probert
+
+	* PC.proj: Somehow $(GNUSTEP_LOCAL_ROOT) is enough for the install
+	path to be correct.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 16:01  probert
 
 	* GNUmakefile, GNUmakefile.preamble, PCGormProj.pcproj: Added
