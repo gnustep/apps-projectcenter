@@ -98,7 +98,7 @@
   [scrollView2 setBorderType: NSBezelBorder];
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
-  stdError = [[NSTextView alloc] initWithFrame:[[scrollView2 contentView] frame]];
+  stdError=[[NSTextView alloc] initWithFrame:[[scrollView2 contentView]frame]];
 
   [stdError setRichText:NO];
   [stdError setEditable:NO];
@@ -134,24 +134,26 @@
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget:self];
-  [matrix setAction:@selector(run:)];
   [componentView addSubview:matrix];
 
   RELEASE(matrix);
 
-  button = [matrix cellAtRow:0 column:0];
-  [button setTag:0];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCenter_run")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Run"];
+  runButton = [matrix cellAtRow:0 column:0];
+  [runButton setTag:0];
+  [runButton setImagePosition:NSImageOnly];
+  [runButton setImage:IMAGE(@"ProjectCenter_run")];
+  [runButton setAlternateImage:IMAGE(@"ProjectCenter_run")];
+  [runButton setButtonType:NSOnOffButton];
+  [runButton setTitle:@"Run"];
+  [runButton setAction:@selector(run:)];
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
   [button setImagePosition:NSImageOnly];
-  //[button setImage:IMAGE(@"ProjectCenter_clean")];
+  [button setImage:IMAGE(@"ProjectCenter_debug")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Clean"];
+  [button setAction:@selector(debug:)];
 }
 
 @end
@@ -170,10 +172,13 @@
 
 - (void)dealloc
 {
-  [componentView release];
+  RELEASE(componentView);
 
   RELEASE(stdOut);
   RELEASE(stdError);
+
+  if (readHandle) RELEASE(readHandle); 
+  if (errorReadHandle) RELEASE(errorReadHandle);
 
   [super dealloc];
 }
@@ -187,22 +192,30 @@
   return componentView;
 }
 
+- (void)debug:(id)sender
+{
+  NSRunAlertPanel(@"Attention!",@"Integrated debugging is not yet available...",@"OK",nil,nil);
+}
+
 - (void)run:(id)sender
 {
-  NSTask *makeTask;
   NSMutableArray *args;
   NSPipe *logPipe;
   NSPipe *errorPipe;
   NSString *openPath;
 
   logPipe = [NSPipe pipe];
+  RELEASE(readHandle);
   readHandle = [[logPipe fileHandleForReading] retain];
 
   errorPipe = [NSPipe pipe];
+  RELEASE(errorReadHandle);
   errorReadHandle = [[errorPipe fileHandleForReading] retain];
 
-  makeTask = [[NSTask alloc] init];
-  args = [NSMutableArray array];
+  RELEASE(task);
+  task = [[NSTask alloc] init];
+
+  args = [[NSMutableArray alloc] init];
 
   /*
    * Ugly hack! We should ask the porject itself about the req. information!
@@ -226,15 +239,6 @@
   }
 
   /*
-   * Debugging, running, ...
-   */
-
-  switch ([[sender selectedCell] tag]) {
-  case 0:
-    break;
-  }
-
-  /*
    * Setting everything up
    */
 
@@ -247,13 +251,20 @@
 		       selector:@selector(logErrOut:) 
 		       name:NSFileHandleDataAvailableNotification
 		       object:errorReadHandle];
+
+  [NOTIFICATION_CENTER addObserver:self
+		       selector: @selector(buildDidTerminate:)
+		       name: NSTaskDidTerminateNotification
+		       object:task];  
   
-  [makeTask setArguments:args];  
-  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
-  [makeTask setLaunchPath:openPath];
+  [task setArguments:args];  
+  RELEASE(args);
+
+  [task setCurrentDirectoryPath:[currentProject projectPath]];
+  [task setLaunchPath:openPath];
   
-  [makeTask setStandardOutput:logPipe];
-  [makeTask setStandardError:errorPipe];
+  [task setStandardOutput:logPipe];
+  [task setStandardError:errorPipe];
 
   [stdOut setString:@""];
   [readHandle waitForDataInBackgroundAndNotify];
@@ -265,26 +276,37 @@
    * Go! Later on this will be handled much more optimised!
    *
    */
-  
-  [makeTask launch];
-  [makeTask waitUntilExit];
 
-  /*
-   * Clean up...
-   *
-   */
+  [task launch];
+}
 
-  [NOTIFICATION_CENTER removeObserver:self 
-		       name:NSFileHandleDataAvailableNotification
-		       object:readHandle];
-  
-  [NOTIFICATION_CENTER removeObserver:self 
-		       name:NSFileHandleDataAvailableNotification
-		       object:errorReadHandle];
-  
-  RELEASE(readHandle);
-  RELEASE(errorReadHandle);  
-  RELEASE(makeTask);
+- (void)buildDidTerminate:(NSNotification *)aNotif
+{
+  if ([aNotif object] == task) {
+
+    /*
+     * Clean up...
+     *
+     */
+    
+    [NOTIFICATION_CENTER removeObserver:self 
+			 name:NSFileHandleDataAvailableNotification
+			 object:readHandle];
+    
+    [NOTIFICATION_CENTER removeObserver:self 
+			 name:NSFileHandleDataAvailableNotification
+			 object:errorReadHandle];
+
+    [NOTIFICATION_CENTER removeObserver:self 
+			 name:NSTaskDidTerminateNotification 
+			 object:task];
+
+    RELEASE(task);
+    task = nil;
+
+    [runButton setNextState];
+    [componentView display];
+  }
 }
 
 - (void)logStdOut:(NSNotification *)aNotif
@@ -322,13 +344,16 @@
 {
   NSTextView *out = (yn)?stdError:stdOut;
 
-  [out replaceCharactersInRange:NSMakeRange([[out string] length],0) withString:str];
+  [out replaceCharactersInRange:NSMakeRange([[out string] length],0) 
+       withString:str];
 
   if (newLine) {
-    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@"\n"];
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) 
+	 withString:@"\n"];
   }
   else {
-    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@" "];
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) 
+	 withString:@" "];
   }
   
   [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];

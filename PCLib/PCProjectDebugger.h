@@ -32,14 +32,17 @@
 {
   NSBox *componentView;
 
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
+  NSButton *runButton;
+
+  PCProject *currentProject;    // Not retained!
+  NSDictionary *currentOptions; // Not retained!
 
   NSTextView *stdOut;
   NSTextView *stdError;
 
   NSFileHandle *readHandle;
   NSFileHandle *errorReadHandle;
+  NSTask *task;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -47,7 +50,10 @@
 
 - (NSView *)componentView;
 
+- (void)debug:(id)sender;
 - (void)run:(id)sender;
+
+- (void)buildDidTerminate:(NSNotification *)aNotif;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;

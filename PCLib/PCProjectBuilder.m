@@ -403,7 +403,6 @@
 
   RELEASE(readHandle);
   RELEASE(errorReadHandle);  
-
   AUTORELEASE(makeTask);
 }
 
