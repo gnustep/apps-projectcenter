@@ -101,7 +101,7 @@
 
 - (void)dealloc
 {
-#idef DEVELOPMENT
+#ifdef DEVELOPMENT
   NSLog (@"PCAppProject: dealloc");
 #endif
 
