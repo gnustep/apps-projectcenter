@@ -128,7 +128,7 @@
    * Left button matrix
    */
 
-  _w_frame = NSMakeRect(8,376,240,60);
+  _w_frame = NSMakeRect(8,372,240,60);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
