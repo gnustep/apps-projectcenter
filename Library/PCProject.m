@@ -550,7 +550,7 @@ NSString
     }
   else if ([key isEqualToString:PCInterfaces])
     {
-      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
+      return [NSArray arrayWithObjects:@"gmodel",@"gorm", @"gsmarkup", nil];
     }
   else if ([key isEqualToString:PCImages])
     {

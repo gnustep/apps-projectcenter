@@ -27,7 +27,9 @@ Application_RESOURCE_FILES= \
   Resources/PC.project \
   Resources/Main.gorm \
   Resources/Inspector.gorm \
-  Resources/Renaissance
+  Resources/Renaissance/Main.gsmarkup \
+  Resources/Renaissance/MainMenu-GNUstep.gsmarkup \
+  Resources/Renaissance/MainMenu-OSX.gsmarkup
 
 #
 # Header files

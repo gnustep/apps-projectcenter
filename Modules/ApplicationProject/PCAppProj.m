@@ -133,10 +133,23 @@ static PCAppProj *_creator = nil;
   [pcfm copyFile:_file toFile:mainNibFile];
 
   [projectDict setObject:[mainNibFile lastPathComponent]
-    forKey:PCMainInterfaceFile];
-  [projectDict 
-    setObject:[NSArray arrayWithObject:[mainNibFile lastPathComponent]]
-    forKey:PCInterfaces];
+                  forKey:PCMainInterfaceFile];
+
+  // Renaissance
+  _file = [projBundle pathForResource:@"Main" ofType:@"gsmarkup"];
+  _2file = [_resourcePath stringByAppendingPathComponent:@"Main.gsmarkup"];
+  [pcfm copyFile:_file toFile:_2file];
+  _file = [projBundle pathForResource:@"MainMenu-GNUstep" ofType:@"gsmarkup"];
+  _2file = [_resourcePath 
+    stringByAppendingPathComponent:@"MainMenu-GNUstep.gsmarkup"];
+  [pcfm copyFile:_file toFile:_2file];
+  _file = [projBundle pathForResource:@"MainMenu-OSX" ofType:@"gsmarkup"];
+  _2file = [_resourcePath 
+    stringByAppendingPathComponent:@"MainMenu-OSX.gsmarkup"];
+  [pcfm copyFile:_file toFile:_2file];
+
+  [projectDict setObject:[NSArray arrayWithObjects:[mainNibFile lastPathComponent], @"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup", nil] 
+                  forKey:PCInterfaces];
 
   // Create the Info-gnutstep.plist
   infoDict = [NSDictionary dictionaryWithObjectsAndKeys:

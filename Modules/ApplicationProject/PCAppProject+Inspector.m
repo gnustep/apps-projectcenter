@@ -101,9 +101,21 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)setAppType:(id)sender
 {
-  [self setProjectDictObject:[appTypeField stringValue]
-                      forKey:PCAppType
-		      notify:YES];
+  NSString       *appType = [appTypeField stringValue];
+  NSMutableArray *libs = [[projectDict objectForKey:PCLibraries] mutableCopy];
+
+  if ([appType isEqualToString:@"Renaissance"])
+    {
+      [libs addObject:@"Renaissance"];
+    }
+  else
+    {
+      [libs removeObject:@"Renaissance"];
+    }
+
+  [self setProjectDictObject:libs forKey:PCLibraries notify:YES];
+  RELEASE(libs);
+  [self setProjectDictObject:appType forKey:PCAppType notify:YES];
 }
 
 - (void)setAppClass:(id)sender
@@ -238,15 +250,22 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   int         result;
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
   NSString    *dir = nil;
+  NSArray     *types = nil;
 
   [openPanel setAllowsMultipleSelection:NO];
   [openPanel setTitle:@"Set Main Interface File"];
+  if ([[projectDict objectForKey:PCAppType] isEqualToString:@"GORM"])
+    {
+      types = [NSArray arrayWithObject:@"gorm"];
+    }
+  else
+    {
+      types = [NSArray arrayWithObject:@"gsmarkup"];
+    }
   
   dir = [[NSUserDefaults standardUserDefaults]
     objectForKey:@"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory:dir
-                                      file:nil 
-                                     types:[NSArray arrayWithObject:@"gorm"]];
+  result = [openPanel runModalForDirectory:dir file:nil types:types];
 
   if (result == NSOKButton)
     {
@@ -591,6 +610,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 //  NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
+  [appTypeField selectItemWithTitle:[projectDict objectForKey:PCAppType]];
   [appClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
 
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];

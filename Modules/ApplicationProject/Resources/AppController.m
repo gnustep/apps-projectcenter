@@ -64,6 +64,8 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotif
 {
+// Uncomment if your application is Renaissance-based
+//  [NSBundle loadGSMarkupNamed:@"Main" owner:self];
 }
 
 - (BOOL)applicationShouldTerminate:(id)sender

@@ -43,7 +43,7 @@
 @interface PCAppProject : PCProject
 {
   IBOutlet NSBox          *projectAttributesView;
-  IBOutlet NSTextField    *appTypeField;
+  IBOutlet NSPopUpButton  *appTypeField;
   IBOutlet NSTextField    *appClassField;
 
   PCAppTextField          *activeTextField;

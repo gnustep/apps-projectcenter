@@ -324,10 +324,12 @@
   if ([[projectDict objectForKey:PCAppType] isEqualToString:@"GORM"])
     {
       [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
+      [infoDict removeObjectForKey:@"GSMainMarkupFile"];
     }
   else
     {
       [self writeInfoEntry:@"GSMainMarkupFile" forKey:PCMainInterfaceFile];
+      [infoDict removeObjectForKey:@"NSMainNibFile"];
     }
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
   [infoDict setObject:@"Application" forKey:@"NSRole"];

@@ -28,6 +28,8 @@
 #define _PCAPPPROJ_APPCONTROLLER_H
 
 #include <AppKit/AppKit.h>
+// Uncomment if your application is Renaissance-based
+//#include <Renaissance/Renaissance.h>
 
 @interface AppController : NSObject
 {
