@@ -8,12 +8,12 @@ distribute, and modify it freely as long as you preserve this copyright
 notice and permission notice.
 
 Installing `ProjectCenter'
-====================
+=========================
 
 ProjectCenter requires GNUstep to be installed. Make sure that you have an
-up to date version on your system installed! In order to use apps built with
-ProjectCenter, you will need at least a version not older than from October 
-2000.
+up to date version on your system installed! 
+In order to use apps built with ProjectCenter, you will need at least a 
+version not older than from October 2000.
 
 Here is a quick-and-dirty example of installation commands:
 
@@ -24,3 +24,11 @@ GNUstep:	make install;
 		sources!
 
 In order to do this successfully you must first install PCLib and the bundles and then the application itself!
+
+Important!
+==========
+
+When ProjectCenter fails to launch due to a missing bundle path, you can set it
+using GNUstep's defaults tool:
+
+opentool defaults write ProjectCenter BundlePaths /usr/GNUstep/Local/Library/ProjectCenter
