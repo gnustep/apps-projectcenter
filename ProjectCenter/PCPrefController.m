@@ -73,10 +73,11 @@
   [prefPopup setAction:@selector(popupChanged:)];
   [_c_view addSubview:prefPopup];
 
-  line = [[[NSBox alloc] init] autorelease];
+  line = [[NSBox alloc] init];
   [line setTitlePosition:NSNoTitle];
   [line setFrameFromContentFrame:NSMakeRect(0,312,272,2)];
   [_c_view addSubview:line];
+  RELEASE(line);
 
   prefEmptyView = [[NSBox alloc] init];
   [prefEmptyView setTitlePosition:NSNoTitle];
@@ -94,20 +95,21 @@
   [prefBuildingView setFrameFromContentFrame:NSMakeRect(1,1,260,308)];
   [prefBuildingView setBorderType:NSNoBorder];
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"Sound"];
   [v setFrameFromContentFrame:NSMakeRect(16,208,228,72)];
   [prefBuildingView addSubview:v];
+  RELEASE(v);
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(72,176,108,15)] autorelease];
-  [b setTitle:@"Prompt on clean"];
-  [b setButtonType:NSSwitchButton];
-  [b setBordered:NO];
-  [b setTarget:self];
-  [b setAction:@selector(setPromptOnClean:)];
-  [b setContinuous:NO];
-  [prefBuildingView addSubview:b];
-  [b sizeToFit];
+  promptOnClean = [[NSButton alloc] initWithFrame:NSMakeRect(72,176,108,15)];
+  [promptOnClean setTitle:@"Prompt on clean"];
+  [promptOnClean setButtonType:NSSwitchButton];
+  [promptOnClean setBordered:NO];
+  [promptOnClean setTarget:self];
+  [promptOnClean setAction:@selector(setPromptOnClean:)];
+  [promptOnClean setContinuous:NO];
+  [prefBuildingView addSubview:promptOnClean];
+  [promptOnClean sizeToFit];
 
   /*
    * Misc view
@@ -119,10 +121,11 @@
   [prefMiscView setFrameFromContentFrame:NSMakeRect(1,1,260,308)];
   [prefMiscView setBorderType:NSNoBorder];
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"External Tools"];
   [v setFrameFromContentFrame:NSMakeRect(16,192,228,88)];
   [prefMiscView addSubview:v];
+  RELEASE(v);
 
   /*
    * Editor
@@ -135,7 +138,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Editor:"];
-  [v addSubview:[textField autorelease]];
+  [v addSubview:textField];
+  RELEASE(textField);
 
   editorField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,16,144,21)];
   [editorField setAlignment: NSLeftTextAlignment];
@@ -145,7 +149,7 @@
   [editorField setDrawsBackground: YES];
   [editorField setTarget:self];
   [editorField setAction:@selector(setEditor:)];
-  [v addSubview:[editorField autorelease]];
+  [v addSubview:editorField];
 
   /*
    * Compiler
@@ -158,7 +162,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Compiler:"];
-  [v addSubview:[textField autorelease]];
+  [v addSubview:textField];
+  RELEASE(textField);
 
   compilerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,40,144,21)];
   [compilerField setAlignment: NSLeftTextAlignment];
@@ -168,7 +173,7 @@
   [compilerField setDrawsBackground: YES];
   [compilerField setTarget:self];
   [compilerField setAction:@selector(setCompiler:)];
-  [v addSubview:[compilerField autorelease]];
+  [v addSubview:compilerField];
 
   /*
    * Debugger
@@ -181,7 +186,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Debugger:"];
-  [v addSubview:[textField autorelease]];
+  [v addSubview:textField];
+  RELEASE(textField);
 
   debuggerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,64,144,21)];
   [debuggerField setAlignment: NSLeftTextAlignment];
@@ -191,22 +197,23 @@
   [debuggerField setDrawsBackground: YES];
   [debuggerField setTarget:self];
   [debuggerField setAction:@selector(setDebugger:)];
-  [v addSubview:[debuggerField autorelease]];
+  [v addSubview:debuggerField];
 
   /*
    * Bundles Box
    */
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"Bundle Path"];
   [v setFrameFromContentFrame:NSMakeRect(16,104,228,48)];
   [prefMiscView addSubview:v];
+  RELEASE(v);
 
   /*
    * Bundle path
    */
 
-  bundlePathField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,24,212,21)];
+  bundlePathField=[[NSTextField alloc] initWithFrame:NSMakeRect(12,24,212,21)];
   [bundlePathField setAlignment: NSLeftTextAlignment];
   [bundlePathField setBordered: NO];
   [bundlePathField setEditable: YES];
@@ -214,26 +221,27 @@
   [bundlePathField setDrawsBackground: YES];
   [bundlePathField setTarget:self];
   [bundlePathField setAction:@selector(setBundlePath:)];
-  [v addSubview:[bundlePathField autorelease]];
+  [v addSubview:bundlePathField];
 
   /*
    * Some buttons
    */
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"Misc"];
   [v setFrameFromContentFrame:NSMakeRect(16,16,228,48)];
   [prefMiscView addSubview:v];
+  RELEASE(v);
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(16,28,204,15)] autorelease];
-  [b setTitle:@"Prompt when quitting"];
-  [b setButtonType:NSSwitchButton];
-  [b setBordered:NO];
-  [b setTarget:self];
-  // [b setAction:@selector()];
-  [b setContinuous:NO];
-  [v addSubview:b];
-  [b sizeToFit];
+  promptWhenQuit = [[NSButton alloc] initWithFrame:NSMakeRect(16,28,204,15)];
+  [promptWhenQuit setTitle:@"Prompt when quitting"];
+  [promptWhenQuit setButtonType:NSSwitchButton];
+  [promptWhenQuit setBordered:NO];
+  [promptWhenQuit setTarget:self];
+  [promptWhenQuit setAction:@selector(promptWhenQuitting:)];
+  [promptWhenQuit setContinuous:NO];
+  [v addSubview:promptWhenQuit];
+  [promptWhenQuit sizeToFit];
 
   useExternalEditor =[[NSButton alloc] initWithFrame:NSMakeRect(16,8,220,15)];
   [useExternalEditor setTitle:@"Use external Editor"];
@@ -242,7 +250,7 @@
   [useExternalEditor setTarget:self];
   [useExternalEditor setAction:@selector(setUseExternalEditor:)];
   [useExternalEditor setContinuous:NO];
-  [v addSubview:[useExternalEditor autorelease]];
+  [v addSubview:useExternalEditor];
   [useExternalEditor sizeToFit];
 
   /*
@@ -255,35 +263,57 @@
   [prefSavingView setFrameFromContentFrame:NSMakeRect(1,1,260,308)];
   [prefSavingView setBorderType:NSNoBorder];
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"Saving"];
   [v setFrameFromContentFrame:NSMakeRect(16,208,228,72)];
   [prefSavingView addSubview:v];
+  RELEASE(v);
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(24,32,124,15)] autorelease];
-  [b setTitle:@"Save Automatically"];
-  [b setButtonType:NSSwitchButton];
-  [b setBordered:NO];
-  [b setTarget:self];
-  [b setAction:@selector(setSaveAutomatically:)];
-  [b setContinuous:NO];
-  [v addSubview:b];
-  [b sizeToFit];
+  saveAutomatically=[[NSButton alloc] initWithFrame:NSMakeRect(24,32,124,15)];
+  [saveAutomatically setTitle:@"Save Project Automatically"];
+  [saveAutomatically setButtonType:NSSwitchButton];
+  [saveAutomatically setBordered:NO];
+  [saveAutomatically setTarget:self];
+  [saveAutomatically setAction:@selector(setSaveAutomatically:)];
+  [saveAutomatically setContinuous:NO];
+  [v addSubview:saveAutomatically];
+  [saveAutomatically sizeToFit];
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(24,12,124,15)] autorelease];
-  [b setTitle:@"Remove Backup"];
-  [b setButtonType:NSSwitchButton];
-  [b setBordered:NO];
-  [b setTarget:self];
-  [b setAction:@selector(setRemoveBackup:)];
-  [b setContinuous:NO];
-  [v addSubview:b];
-  [b sizeToFit];
+  removeBackup = [[NSButton alloc] initWithFrame:NSMakeRect(24,12,124,15)];
+  [removeBackup setTitle:@"Remove Backup Project"];
+  [removeBackup setButtonType:NSSwitchButton];
+  [removeBackup setBordered:NO];
+  [removeBackup setTarget:self];
+  [removeBackup setAction:@selector(setRemoveBackup:)];
+  [removeBackup setContinuous:NO];
+  [v addSubview:removeBackup];
+  [removeBackup sizeToFit];
 
-  v = [[[NSBox alloc] init] autorelease];
+  v = [[NSBox alloc] init];
   [v setTitle:@"Auto-Save"];
   [v setFrameFromContentFrame:NSMakeRect(16,104,228,48)];
   [prefSavingView addSubview:v];
+  RELEASE(v);
+
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,16,60,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Seconds:"];
+  [v addSubview:textField];
+  RELEASE(textField);
+
+  autoSaveField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,16,144,21)];
+  [autoSaveField setAlignment: NSLeftTextAlignment];
+  [autoSaveField setBordered: NO];
+  [autoSaveField setEditable: YES];
+  [autoSaveField setBezeled: YES];
+  [autoSaveField setDrawsBackground: YES];
+  [autoSaveField setTarget:self];
+  [autoSaveField setAction:@selector(setSavePeriod:)];
+  [v addSubview:autoSaveField];
 }
 
 @end
@@ -304,15 +334,28 @@
 
 - (void)dealloc
 {
-  [preferencesDict release];
+  RELEASE(preferencesDict);
   
-  [prefWindow release];
-  [prefPopup release];
+  RELEASE(prefWindow);
+  RELEASE(prefPopup);
   
-  [prefEmptyView release];
-  [prefBuildingView release];
-  [prefMiscView release];
-  [prefSavingView release];
+  RELEASE(prefEmptyView);
+  RELEASE(prefBuildingView);
+  RELEASE(prefMiscView);
+  RELEASE(prefSavingView);
+
+  RELEASE(useExternalEditor);
+  RELEASE(promptWhenQuit);
+  RELEASE(promptOnClean);
+  RELEASE(saveAutomatically);
+  RELEASE(removeBackup);
+
+  RELEASE(editorField);
+  RELEASE(debuggerField);
+  RELEASE(compilerField);
+  RELEASE(bundlePathField);
+
+  RELEASE(autoSaveField);
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 

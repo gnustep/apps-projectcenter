@@ -39,9 +39,13 @@
   id successField;
   id failureField;
   
-  id autoSaveField;;
+  id autoSaveField;
+  id saveAutomatically;
+  id removeBackup;
 
   id useExternalEditor;
+  id promptWhenQuit;
+  id promptOnClean;
   
   id editorField;
   id debuggerField;
