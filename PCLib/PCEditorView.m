@@ -27,11 +27,21 @@
 #include "PCEditorView.h"
 #include "PCEditor.h"
 #include "PCEditorView+Highlighting.h"
+#include "PCEditorController.h"
 
 @implementation PCEditorView
 
 static BOOL shouldHighlight = NO;
 static int  _tabFlags       = PCTab4Sp;
+
+- (BOOL) becomeFirstResponder
+{
+  NSString *file = [[editor path] lastPathComponent];
+
+  [(PCEditorController *)[self delegate] setBrowserPath:file];
+
+  return YES;
+}
 
 + (void)setTabBehaviour:(int)tabFlags
 {

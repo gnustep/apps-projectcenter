@@ -52,14 +52,13 @@
 
 - (void)setBrowser:(NSBrowser *)aBrowser;
 - (void)setProject:(PCProject *)aProj;
+- (BOOL)setPathForFile:(NSString *)file;
 
 @end
 
 @interface PCBrowserController (ProjectBrowserDelegate)
 
 - (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix;
-- (void)browser:(NSBrowser *)sender willDisplayCell:(id)cell atRow:(int)row column:(int)column;
-- (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column;
 
 @end
 

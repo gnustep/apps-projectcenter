@@ -163,6 +163,55 @@
   return nil;
 }
 
+- (NSString *)categoryForFile:(NSString *)file
+{
+  NSString *fileExt = [[file componentsSeparatedByString: @"."] lastObject];
+
+  if ([fileExt isEqualToString:@"gmodel"] || [fileExt isEqualToString:@"gorm"])
+    {
+      return PCGModels;
+    }
+  else if ([fileExt isEqualToString:@"gsmarkup"])
+    {
+      return PCGSMarkupFiles;
+    }
+  else if ([fileExt isEqualToString:@"h"] || [fileExt isEqualToString:@"H"])
+    {
+      return PCHeaders;
+    }
+  else if ([fileExt isEqualToString:@"m"] || [fileExt isEqualToString:@"M"])
+    {
+      return PCClasses;
+    }
+  else if ([fileExt isEqualToString:@"c"] || [fileExt isEqualToString:@"C"])
+    {
+      return PCOtherSources;
+    }
+  else if ([fileExt isEqualToString:@"so"] || [fileExt isEqualToString:@"lib"]
+	   || [fileExt isEqualToString:@"a"])
+    {
+      return PCLibraries;
+    }
+  else if ([fileExt isEqualToString:@"subproj"])
+    {
+      return PCSubprojects;
+    }
+  else if ([[NSImage imageFileTypes] containsObject: fileExt])
+    {
+      return PCImages;
+    }
+  else if ([file hasPrefix: @"GNUmakefile"])
+    {
+      return PCSupportingFiles;
+    }
+  else if (file != nil)
+    {
+      return PCOtherResources;
+    }
+
+  return nil;
+}
+
 - (void)setProjectName:(NSString *)aName
 {
     AUTORELEASE(projectName);
@@ -182,6 +231,11 @@
 - (Class)principalClass
 {
     return [self class];
+}
+
+- (PCProjectEditor *)projectEditor
+{
+  return projectEditor;
 }
 
 - (PCEditorController*)editorController
@@ -281,25 +335,25 @@
 
 - (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c
 {
-    NSString *p = [[self projectPath] stringByAppendingPathComponent:fileName];
-    PCEditor *e;
+  NSString *p = [[self projectPath] stringByAppendingPathComponent:fileName];
+  PCEditor *e;
 
-    // Set the name in the inspector
-    [fileNameField setStringValue:fileName];
+  // Set the name in the inspector
+  [fileNameField setStringValue:fileName];
 
-    // Show the file in the internal editor!
-    e = [editorController internalEditorForFile:p];
+  // Show the file in the internal editor!
+  e = [editorController internalEditorForFile:p];
 
-    if( e == nil )
+  if( e == nil )
     {
-        NSLog(@"No editor for file '%@'...",p);
-        return;
+      NSLog(@"No editor for file '%@'...",p);
+      return;
     }
 
-    [self showEditorView:self];
-    [e showInProjectEditor:projectEditor];
+  [self showEditorView:self];
+  [e showInProjectEditor:projectEditor];
 
-    [projectWindow makeFirstResponder:(NSResponder*)[projectEditor editorView]];
+  [projectWindow makeFirstResponder:(NSResponder*)[projectEditor editorView]];
 }
 
 - (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c
@@ -563,28 +617,6 @@
   return NO;
 }
 
-- (BOOL)saveFile
-{
-  return [editorController saveFile];
-}
-
-- (BOOL)saveAllFiles
-{
-  return [editorController saveAllFiles];
-}
-
-- (BOOL)saveAllFilesIfNeeded
-{
-  BOOL ret = YES;
-
-  return ret;
-}
-
-- (BOOL)revertFile
-{
-  return [editorController revertFile];
-}
-
 - (BOOL)writeSpecFile
 {
   NSString *name = [projectDict objectForKey:PCProjectName];
@@ -830,25 +862,16 @@
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-    if( editorIsActive )
-    {
-	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
-    }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-    if( editorIsActive )
-    {
-	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
-    }
-
-    [projectManager setActiveProject:self];
+  [projectManager setActiveProject:self];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)aNotification
 {
-    [projectManager setActiveProject:self];
+  [projectManager setActiveProject:self];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
@@ -859,8 +882,8 @@
     {
       if ([[self projectWindow] isDocumentEdited]) 
 	{
-	  if (NSRunAlertPanel(@"Project changed!",
-			      @"The project %@ has been edited! Should it be saved before closing?",
+	  if (NSRunAlertPanel(@"Close Project",
+			      @"The project %@ has been edited!\nShould it be saved before closing?",
 			      @"Yes", @"No", nil,[self projectName])) 
 	    {
 	      [self save];

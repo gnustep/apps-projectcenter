@@ -58,6 +58,7 @@
                                         defer:YES];
   [_window setReleasedWhenClosed:NO];
   [_window setMinSize:NSMakeSize(512,320)];
+  [_window setDelegate:self];
   rect = [[_window contentView] frame];
 
   /*
@@ -67,24 +68,23 @@
   scrollView = [[NSScrollView alloc] initWithFrame:rect];
   [scrollView setHasHorizontalScroller:  NO];
   [scrollView setHasVerticalScroller:   YES];
-  [scrollView setBorderType:  NSBezelBorder];
   [scrollView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
   rect = [[scrollView contentView] frame];
 
   /*
    * Creating external view
    */
-
   _eView = [self _createEditorViewWithFrame:rect];
 
   /*
    * Setting up external view / scroll view / window
    */
-
   [scrollView setDocumentView:_eView];
-  [_window setContentView:scrollView];
-  [_window setDelegate:self];
+  [[_eView textContainer] setContainerSize:NSMakeSize(rect.size.width, 1e7)];
+  RELEASE (_eView);
+
   [_window makeFirstResponder:_eView];
+  [_window setContentView:scrollView];
   RELEASE(scrollView);
 
   /*
@@ -95,9 +95,7 @@
    * The height should be large as this will be the height it will be
    * will be visible.
    */
-
-  rect = NSMakeRect( 0, 0, 1e7, 1e7);
-  _iView = [self _createEditorViewWithFrame:rect];
+  _iView = [self _createEditorViewWithFrame:NSMakeRect(0, 0, 1e7, 1e7)];
   RETAIN(_iView);
 }
 
@@ -126,12 +124,13 @@
 
   [ev setMinSize: NSMakeSize(  0,   0)];
   [ev setMaxSize: NSMakeSize(1e7, 1e7)];
-  [ev setRichText:                 YES];
+  [ev setRichText: YES];
+  [ev setEditable: YES];
+  [ev setVerticallyResizable: YES];
+  [ev setHorizontallyResizable: NO];
   [ev setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
-  [ev setVerticallyResizable:      YES];
-  [ev setHorizontallyResizable:     NO];
   [ev setTextContainerInset:   NSMakeSize( 5, 5)];
-  [[ev textContainer] setWidthTracksTextView:YES];
+  [[ev textContainer] setWidthTracksTextView: YES];
 
   return AUTORELEASE(ev);
 }

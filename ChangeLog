@@ -1,3 +1,69 @@
+2003-05-23 Serg Stoyan <stoyan@hologr.com>
+
+	* PCMenuController.h: Added fileOpenQuickly:, fileNewUntitled: 
+	methods.
+	* PCMenuController.m:
+	(projectSaveFiles:): Call [projectManager saveAllFiles].
+	(openFile:): Check existance of opening file and call
+	[PCEditorController openFileInEditor:] here.
+	(fileSaveTo:): Implemented.
+	(fileRevertToSaved:): Call [projectManager revertFileToSaved].
+	(fileOpenQuickly:): Added with alert panel.
+	(fileNewUntitled:): Ditto.
+	(validateMenuItem:): "File" menu items enabled for external editor 
+	window.
+
+	* ProjectCenter_main.m: (createMenu): Added actions to 
+	"Open Quickly..." and "New Untitled" menu items.
+
+	* PCLib/PCBrowserController.[hm]: setPathForFile: method added.
+	Removed browser:willDisplayCell:atRow:column: and 
+	browser:selectCellWithString:inColumn: methods.
+
+	* PCLib/PCBrowserController.m:
+	(click:): Don't load file into editor if multiple files selected.
+
+	* PCLib/PCEditor+UInterface.m:
+	(_initUI): Set delegate for window to self. Removed bezel border.
+	Set text container added. Cleanup.
+
+	* PCLib/PCEditor.[hm]: Added methods internalView, externalView, 
+	setPath:, isEdited, saveFileAs:, saveFileTo:, revertFileToSaved,
+	closeFile:, editorShouldClose, windowShouldClose:
+
+	* PCLib/PCEditor.m:
+	(setDelegate:): Set delegate for internal and external text views.
+	(revertFileToSaved): Set attributes to saved text before loading
+	into text view.
+
+	* PCLib/PCEditorController.[hm]: Added methods saveFileAs:,
+	saveFileTo:, closeFile:, revertFileToSaved, setBrowserPath:.
+
+	* PCLib/PCEditorController.m:
+	(openFileInEditor:): Set delegate to editor.
+	(closeAllEditors): Call PCEditor closeFile instead of 
+	editor's window performClose.
+	(editorDidClose): After closing editor, show next in list. Set
+	to / if no editors left.
+
+	* PCLib/PCEditorView.m: becomeFirstResponder method added.
+
+	* PCLib/PCProject.[hm]: categoryForFile:, projectEditor,
+	editorController methodd added. saveFile, saveAllFiles,
+	saveAllFilesIfNeeded, revertFile methods removed.
+
+	* PCLib/PCProjectDebugger.h: textAttributes ivar added.
+	logString:error: and logString:error:newLine: methods removed.
+	logString:newLine: added.
+
+	* PCLib/PCProjectDebugger.m: Cleanup. Error view removed.
+	
+	* PCLib/PCProjectEditor.m: Removed horizonal scroller.
+
+	* PCLib/PCProjectManager.[hm]: saveAllFiles, saveFileAs:,
+	saveFileTo:, revertFileToSaved, closeFile, activeProject,
+	projectPath, selectedFileName methods added.
+	
 2003-05-16 Serg Stoyan <stoyan@hologr.com>
 
 	* GNUmakefile: Remove PCAppController+MenuHandling.h and 

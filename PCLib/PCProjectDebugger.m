@@ -77,13 +77,14 @@ enum {
 
 - (void)_createComponentView
 {
-//  NSSplitView  *split;
-//  NSScrollView *scrollView1; 
-  NSScrollView *scrollView2; 
+  NSScrollView *scrollView; 
   NSMatrix     *matrix;
   NSRect       _w_frame;
   NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id           button;
+
+  NSString           *string;
+  NSAttributedString *attributedString;
 
   componentView = [[NSBox alloc] initWithFrame:NSMakeRect(8,-1,464,322)];
   [componentView setTitlePosition:NSNoTitle];
@@ -129,64 +130,39 @@ enum {
   /*
    *
    */
+  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,-1,464,253)];
 
-/*  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,46)];
+  [scrollView setHasHorizontalScroller:NO];
+  [scrollView setHasVerticalScroller:YES];
+  [scrollView setBorderType: NSBezelBorder];
+  [scrollView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
-  [scrollView1 setHasHorizontalScroller: NO];
-  [scrollView1 setHasVerticalScroller: YES];
-  [scrollView1 setBorderType: NSBezelBorder];
-  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  stdOut=[[NSTextView alloc] initWithFrame:[[scrollView contentView] frame]];
 
-  stdOut = [[NSTextView alloc] initWithFrame:[[scrollView1 contentView]frame]];
-
-  [stdOut setRichText:NO];
+  [stdOut setMinSize: NSMakeSize(0, 0)];
+  [stdOut setMaxSize: NSMakeSize(1e7, 1e7)];
+  [stdOut setRichText:YES];
   [stdOut setEditable:NO];
   [stdOut setSelectable:YES];
+  [stdOut setVerticallyResizable: YES];
+  [stdOut setHorizontallyResizable: NO];
   [stdOut setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [stdOut setBackgroundColor:[NSColor colorWithDeviceRed:0.95
-				      green:0.75
-				      blue:0.85
-				      alpha:1.0]];
   [[stdOut textContainer] setWidthTracksTextView:YES];
+  [[stdOut textContainer] setContainerSize:
+    NSMakeSize([stdOut frame].size.width, 1e7)];
 
-  [scrollView1 setDocumentView:stdOut];*/
+  // Font
+  string  = [NSString stringWithString:@"=== Launcher ready ==="];
+  attributedString = 
+    [[NSAttributedString alloc] initWithString:string 
+                                    attributes:textAttributes];
+  [[stdOut textStorage] setAttributedString:attributedString];
 
-  /*
-   *
-   */
+  [scrollView setDocumentView:stdOut];
+  RELEASE (stdOut);
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,-1,464,253)];
-
-  [scrollView2 setHasHorizontalScroller:NO];
-  [scrollView2 setHasVerticalScroller:YES];
-  [scrollView2 setBorderType: NSBezelBorder];
-  [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-
-  stdError=[[NSTextView alloc] initWithFrame:[[scrollView2 contentView]frame]];
-
-  [stdError setRichText:NO];
-  [stdError setEditable:NO];
-  [stdError setSelectable:YES];
-  [stdError setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [stdError setBackgroundColor:[NSColor whiteColor]];
-  [[stdError textContainer] setWidthTracksTextView:YES];
-
-  [scrollView2 setDocumentView:stdError];
-
-/*  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,152)];  
-  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [split addSubview: scrollView1];
-  [split addSubview: scrollView2];
-  
-  [componentView addSubview:split];*/
-  [componentView addSubview: scrollView2];
-
-//  RELEASE(scrollView1);
-  RELEASE(scrollView2);
-//  RELEASE(split);
-
-//  [componentView sizeToFit];
-//  [split adjustSubviews];
+  [componentView addSubview: scrollView];
+  RELEASE(scrollView);
 }
 
 @end
@@ -195,26 +171,37 @@ enum {
 
 - (id)initWithProject:(PCProject *)aProject
 {
-  NSAssert(aProject,@"No project specified!");
+  NSAssert (aProject, @"No project specified!");
 
-  if ((self = [super init])) 
-  {
-    currentProject = aProject;
-    debugTarget = DEBUG_DEFAULT_TARGET;
+  if ((self = [super init]))
+    {
+      NSFont *font = [NSFont userFixedPitchFontOfSize: 10.0];
 
-  }
+      currentProject = aProject;
+      debugTarget = DEBUG_DEFAULT_TARGET;
+
+      textAttributes = 
+	[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
+      [textAttributes retain];
+    }
+
   return self;
 }
 
 - (void)dealloc
 {
-  RELEASE(componentView);
+  RELEASE (componentView);
+  RELEASE (textAttributes);
 
-  RELEASE(stdOut);
-  RELEASE(stdError);
-
-  if (readHandle) RELEASE(readHandle); 
-  if (errorReadHandle) RELEASE(errorReadHandle);
+  if (readHandle)
+    {
+      RELEASE (readHandle);
+    }
+    
+  if (errorReadHandle)
+    {
+      RELEASE (errorReadHandle);
+    }
 
   [super dealloc];
 }
@@ -236,9 +223,10 @@ enum {
 
 - (NSView *)componentView;
 {
-  if (!componentView) {
-    [self _createComponentView];
-  }
+  if (!componentView)
+    {
+      [self _createComponentView];
+    }
 
   return componentView;
 }
@@ -355,7 +343,7 @@ enum {
   [stdOut setString:@""];
   [readHandle waitForDataInBackgroundAndNotify];
 
-  [stdError setString:@""];
+  [stdOut setString:@""];
   [errorReadHandle waitForDataInBackgroundAndNotify];
 
   /*
@@ -399,9 +387,10 @@ enum {
 {
   NSData *data;
 
-  if ((data = [readHandle availableData])) {
-    [self logData:data error:NO];
-  }
+  if ((data = [readHandle availableData]))
+    {
+      [self logData:data error:NO];
+    }
 
   [readHandle waitForDataInBackgroundAndNotifyForModes:nil];
 }
@@ -409,11 +398,12 @@ enum {
 - (void)logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
-
-  if ((data = [errorReadHandle availableData])) {
-    [self logData:data error:YES];
-  }
-
+   
+  if ((data = [errorReadHandle availableData]))
+    {
+      [self logData:data error:YES];
+    }
+                       
   [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
 }
 
@@ -421,37 +411,38 @@ enum {
 
 @implementation PCProjectDebugger (BuildLogging)
 
-- (void)logString:(NSString *)string error:(BOOL)yn
+- (void)logString:(NSString *)str newLine:(BOOL)newLine
 {
-  [self logString:string error:yn newLine:YES];
-}
-
-- (void)logString:(NSString *)str error:(BOOL)yn newLine:(BOOL)newLine
-{
-  NSTextView *out = (yn)?stdError:stdOut;
-
-  [out replaceCharactersInRange:NSMakeRange([[out string] length],0) 
+  [stdOut replaceCharactersInRange:NSMakeRange([[stdOut string] length],0) 
        withString:str];
 
   if (newLine) {
-    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) 
+    [stdOut replaceCharactersInRange:NSMakeRange([[stdOut string] length], 0) 
 	 withString:@"\n"];
   }
   else {
-    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) 
+    [stdOut replaceCharactersInRange:NSMakeRange([[stdOut string] length], 0) 
 	 withString:@" "];
   }
   
-  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
+  [stdOut scrollRangeToVisible:NSMakeRange([[stdOut string] length], 0)];
 }
 
 - (void)logData:(NSData *)data error:(BOOL)yn
 {
-  NSString *s = [[NSString alloc] initWithData:data 
-				  encoding:[NSString defaultCStringEncoding]];
+  NSString *s = nil;
+  NSAttributedString *as = nil;
 
-  [self logString:s error:yn newLine:YES];
-  [s autorelease];
+//  [self logString:s newLine:NO];
+  s = [[NSString alloc] initWithData:data
+                            encoding:[NSString defaultCStringEncoding]];
+  as = [[NSAttributedString alloc] initWithString:s
+                                       attributes:textAttributes];
+  [[stdOut textStorage] appendAttributedString: as];
+  [stdOut scrollRangeToVisible:NSMakeRange([[stdOut string] length], 0)];
+
+  [s release];
+  [as release];
 }
 
 @end

@@ -39,7 +39,7 @@
 
 - (void)click:(id)sender
 {
-  if ([[sender selectedCell] isLeaf]) 
+  if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
   {
     NSString *ltitle   = [[sender selectedCell] stringValue];
     NSString *category = [[sender selectedCellInColumn:0] stringValue];
@@ -82,7 +82,6 @@
 
     if ([k isEqualToString:PCClasses] || 
 	[k isEqualToString:PCHeaders] || 
-	[k isEqualToString:PCOtherResources] || 
 	[k isEqualToString:PCSupportingFiles] || 
 	[k isEqualToString:PCDocuFiles] || 
 	[k isEqualToString:PCOtherSources]) 
@@ -123,8 +122,8 @@
 {
   NSArray        *cells = [browser selectedCells];
   NSMutableArray *files = [[NSMutableArray alloc] initWithCapacity: 1];
-  int     i;
-  int     count = [cells count];
+  int            i;
+  int            count = [cells count];
 
   for (i = 0; i < count; i++)
     {
@@ -164,43 +163,62 @@
   project = aProj;
 }
 
+- (BOOL)setPathForFile:(NSString *)file
+{
+  NSString *category = [project categoryForFile:file];
+  NSString *browserCategory = [[[project rootCategories] 
+                                 allKeysForObject: category]
+				 lastObject];
+  NSArray  *comp = [NSArray arrayWithObjects: @"/",browserCategory,file,nil];
+  NSString *path = [NSString pathWithComponents:comp];
+
+  int      selectedColumn;
+  NSMatrix *columnMatrix = nil;
+
+  if ([[browser path] isEqualToString: path])
+    {
+      return YES;
+    }
+
+  // Workaround!!! NSBrowser needs fixing!!!
+  while ((selectedColumn = [browser selectedColumn]) >= 0)
+    {
+      columnMatrix = [browser matrixInColumn:selectedColumn];
+      [columnMatrix deselectAllCells];
+    }
+  // End of workaround
+
+  return [browser setPath:path];
+}
+
 @end
 
 @implementation PCBrowserController (ProjectBrowserDelegate)
 
 - (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix
 {
-    NSString 	*pathToCol = [sender pathToColumn:column];
-    NSArray	*files = [project contentAtKeyPath:pathToCol];
-    int 	i;
-    int		count = [files count];
-    
-    if( sender != browser ) return;
+  NSString *pathToCol = [sender pathToColumn:column];
+  NSArray  *files = [project contentAtKeyPath:pathToCol];
+  int      i;
+  int      count = [files count];
 
-    for (i = 0; i < count; ++i) 
+  if( sender != browser ) return;
+
+  for (i = 0; i < count; ++i) 
     {
       NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
       id cell;
-      
+
       [matrix insertRow:i];
-      
+
       cell = [matrix cellAtRow:i column:0];
       [cell setStringValue:[files objectAtIndex:i]];
-      
+
       [keyPath appendString:@"/"];
       [keyPath appendString:[files objectAtIndex:i]];
-      
+
       [cell setLeaf:![project hasChildrenAtKeyPath:keyPath]];
     }
-}
-
-- (void)browser:(NSBrowser *)sender willDisplayCell:(id)cell atRow:(int)row column:(int)column
-{
-}
-
-- (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column
-{
-    return YES;
 }
 
 @end

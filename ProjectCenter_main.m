@@ -186,7 +186,7 @@ createMenu()
                   action:@selector(fileSaveTo:)
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"Revert to Saved"
-                  action:@selector(fileRevert:)
+                  action:@selector(fileRevertToSaved:)
 	   keyEquivalent:@"u"];
   [file addItemWithTitle:@"Close"
                   action:@selector(fileClose:)
@@ -195,13 +195,13 @@ createMenu()
                   action:action
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"Open Quickly..."
-                  action:action
+                  action:@selector(fileOpenQuickly:)
 	   keyEquivalent:@"D"];
   [file addItemWithTitle:@"Rename"
                   action:@selector(fileRename:)
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"New Untitled"
-                  action:action
+                  action:@selector(fileNewUntitled:)
 	   keyEquivalent:@""];
 		  
   file_view = [[[NSMenu alloc] init] autorelease];

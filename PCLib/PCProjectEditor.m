@@ -35,7 +35,7 @@
 
   frame = NSMakeRect (0, 0, 562, 40);
   _scrollView = [[NSScrollView alloc] initWithFrame:frame];
-  [_scrollView setHasHorizontalScroller: YES];
+  [_scrollView setHasHorizontalScroller: NO];
   [_scrollView setHasVerticalScroller: YES];
   [_scrollView setBorderType: NSBezelBorder];
   [_scrollView setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];

@@ -18,15 +18,15 @@
 
 @interface PCEditor : NSObject
 {
-    PCEditorView    *_iView; // internal (embedded) view
-    PCEditorView    *_eView; // external (window) view
-    NSTextStorage   *_storage;
-    NSWindow        *_window;
-    NSMutableString *_path;
+  PCEditorView    *_iView; // internal (embedded) view
+  PCEditorView    *_eView; // external (window) view
+  NSTextStorage   *_storage;
+  NSWindow        *_window;
+  NSMutableString *_path;
 
-    id   _delegate;
+  id   _delegate;
 
-    BOOL _isEdited;
+  BOOL _isEdited;
 }
 
 - (id)initWithPath:(NSString*)file;
@@ -35,20 +35,27 @@
 - (void)setDelegate:(id)aDelegate;
 - (id)delegate;
 
+- (PCEditorView *)internalView;
+- (PCEditorView *)externalView;
 - (NSWindow *)editorWindow;
 - (NSString *)path;
-
+- (void)setPath:(NSString *)path;
+- (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 
 - (void)showInProjectEditor:(PCProjectEditor *)pe;
 - (void)show;
-- (void)close;
-
 - (BOOL)saveFileIfNeeded;
 - (BOOL)saveFile;
-- (BOOL)revertFile;
+- (BOOL)saveFileAs:(NSString *)path;
+- (BOOL)saveFileTo:(NSString *)path;
+- (BOOL)revertFileToSaved;
+- (BOOL)closeFile:(id)sender;
 
-- (void)windowWillClose:(NSNotification *)aNotif;
+// Delegates
+- (BOOL)editorShouldClose;
+
+- (BOOL)windowShouldClose:(id)sender;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidResignKey:(NSNotification *)aNotification;
 
@@ -56,7 +63,7 @@
 
 @end
 
-@interface NSObject (PCEditorDelegate )
+@interface NSObject (PCEditorDelegate)
 
 - (void)editorDidClose:(id)sender;
 

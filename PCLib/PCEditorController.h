@@ -33,14 +33,7 @@
 // ===========================================================================
 
 - (id)init;
-
 - (void)dealloc;
-
-// ===========================================================================
-// ==== Acessor methods
-// ===========================================================================
-
-- (PCEditor *) activeEditor;
 
 // ===========================================================================
 // ==== Project and Editor handling
@@ -50,20 +43,29 @@
 
 - (PCEditor *)internalEditorForFile:(NSString *)path;
 - (PCEditor *)editorForFile:(NSString *)path;
+- (PCEditor *)activeEditor;
 - (NSArray *)allEditors;
-
 - (void)closeAllEditors;
 
-- (void)editorDidClose:(id)sender;
 
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
 - (BOOL)saveAllFiles;
-
 - (BOOL)saveFile;
-- (BOOL)revertFile;
+- (BOOL)saveFileAs:(NSString *)file;
+- (BOOL)saveFileTo:(NSString *)file;
+- (void)closeFile:(id)sender;
+- (BOOL)revertFileToSaved;
+
+// ===========================================================================
+// ==== Delegate
+// ===========================================================================
+
+- (void)editorDidClose:(id)sender;
+
+- (void)setBrowserPath:(NSString *)file;
 
 @end
 

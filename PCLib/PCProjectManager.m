@@ -28,6 +28,7 @@
 #include "PCDefines.h"
 #include "PCProject.h"
 #include "PCServer.h"
+#include "PCBrowserController.h"
 #include "PCEditorController.h"
 #include "ProjectComponent.h"
 #include "ProjectType.h"
@@ -151,7 +152,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (PCProject *)activeProject
 {
-    return activeProject;
+  return activeProject;
 }
 
 - (void)setActiveProject:(PCProject *)aProject
@@ -213,6 +214,16 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (NSString *)rootBuildPath
 {
     return rootBuildPath;
+}
+
+- (NSString *)projectPath
+{
+  return [activeProject projectPath];
+}
+
+- (NSString *)selectedFileName
+{
+  return [[activeProject browserController] nameOfSelectedFile];
 }
 
 // ===========================================================================
@@ -387,11 +398,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     [inspector makeKeyAndOrderFront:self];
 }
 
-- (void)saveFiles
-{
-  [activeProject saveAllFiles];
-}
-
 - (void)revertToSaved
 {
 }
@@ -450,39 +456,34 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 // ==== File actions
 // ===========================================================================
 
-- (BOOL)openFile:(NSString *)path
+- (BOOL)saveAllFiles
 {
-  BOOL isDir;
-  NSFileManager *fm = [NSFileManager defaultManager];
-
-  if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir)
-    {
-      [PCEditorController openFileInEditor:path];
-
-      return YES;
-    }
-
-  return NO;
+  return [[activeProject editorController] saveAllFiles];
 }
 
 - (BOOL)saveFile
 {
-  if (!activeProject) 
-    {
-      return NO;
-    }
-
-  return [activeProject saveFile];
+  return [[activeProject editorController] saveFile];
 }
 
-- (BOOL)revertFile
+- (BOOL)saveFileAs:(NSString *)path
 {
-    if (!activeProject) 
-    {
-        return NO;
-    }
+  return [[activeProject editorController] saveFileAs:path];
+}
 
-    return [activeProject revertFile];
+- (BOOL)saveFileTo:(NSString *)path
+{
+  return [[activeProject editorController] saveFileTo:path];
+}
+
+- (BOOL)revertFileToSaved
+{
+  return [[activeProject editorController] revertFileToSaved];
+}
+
+- (void)closeFile
+{
+  return [[activeProject editorController] closeFile:self];
 }
 
 - (BOOL)renameFileTo:(NSString *)path
@@ -492,11 +493,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)removeFilePermanently:(BOOL)yn
 {
-    if (!activeProject) {
-        return NO;
+  if (!activeProject)
+    {
+      return NO;
     }
 
-    return [activeProject removeSelectedFilePermanently:yn];
+  return [activeProject removeSelectedFilePermanently:yn];
 }
 
 @end
@@ -565,7 +567,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
     [activeProject addFile:file forKey:key];
 }
-
 
 @end
 

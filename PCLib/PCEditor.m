@@ -22,6 +22,10 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 @implementation PCEditor
 
+// ===========================================================================
+// ==== Initialisation
+// ===========================================================================
+
 - (id)initWithPath:(NSString*)file
 {
   if((self = [super init]))
@@ -76,6 +80,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 - (void)setDelegate:(id)aDelegate
 {
   _delegate = aDelegate;
+  [_iView setDelegate: aDelegate];
+  [_eView setDelegate: aDelegate];
 }
 
 - (id)delegate
@@ -83,9 +89,23 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return _delegate;
 }
 
+// ===========================================================================
+// ==== Accessor methods
+// ===========================================================================
+
 - (NSWindow *)editorWindow
 {
   return _window;
+}
+
+- (PCEditorView *)internalView
+{
+  return _iView;
+}
+
+- (PCEditorView *)externalView
+{
+  return _eView;
 }
 
 - (NSString *)path
@@ -93,11 +113,26 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return _path;
 }
 
+- (void)setPath:(NSString *)path
+{
+  [_path autorelease];
+  _path = [path copy];
+}
+
+- (BOOL)isEdited
+{
+  return _isEdited;
+}
+
 - (void)setIsEdited:(BOOL)yn
 {
   [_window setDocumentEdited:yn];
   _isEdited = yn;
 }
+
+// ===========================================================================
+// ==== Object managment
+// ===========================================================================
 
 - (void)showInProjectEditor:(PCProjectEditor *)pe
 {
@@ -109,48 +144,12 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [_window makeKeyAndOrderFront:self];
 }
 
-- (void)close
-{
-  if( _isEdited )
-  {
-    BOOL ret;
-
-    if( [_window isVisible] )
-    {
-      [_window makeKeyAndOrderFront:self];
-    }
-
-    ret = NSRunAlertPanel(@"Edited File!",
-                          @"Should '%@' be saved before closing?",
-                          @"Yes",@"No",nil,_path);
-
-    if( ret == YES )
-    {
-      ret = [self saveFile];
-
-      if((ret == NO))
-      {
-        NSRunAlertPanel(@"Save Failed!",
-                        @"Could not save file '%@'!",
-                        @"OK",nil,nil,_path);
-      }
-    }
-
-    [self setIsEdited:NO];
-  }
-
-  if( _delegate && [_delegate respondsToSelector:@selector(editorDidClose:)] )
-  {
-    [_delegate editorDidClose:self];
-  }
-}
-
 - (BOOL)saveFileIfNeeded
 {
-  if((_isEdited))
-  {
-    return [self saveFile];
-  }
+  if ((_isEdited))
+    {
+      return [self saveFile];
+    }
 
   return YES;
 }
@@ -163,10 +162,32 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return [[_storage string] writeToFile:_path atomically:YES];
 }
 
-- (BOOL)revertFile
+- (BOOL)saveFileAs:(NSString *)path
 {
-  NSString *text = [NSString stringWithContentsOfFile:_path];
-  NSAttributedString *as = [[NSAttributedString alloc] initWithString:text];
+  // Unfinished
+/*  [self setPath:file];
+
+  // Operate on the text storage!*/
+  return [self saveFile];
+}
+
+- (BOOL)saveFileTo:(NSString *)path
+{
+  // Operate on the text storage!
+  return [[_storage string] writeToFile:path atomically:YES];
+}
+
+- (BOOL)revertFileToSaved
+{
+  NSString           *text = [NSString stringWithContentsOfFile:_path];
+  NSAttributedString *as = nil;
+  NSDictionary       *at = nil;
+  NSFont             *ft = nil;
+
+  // This is temporary
+  ft = [NSFont userFixedPitchFontOfSize:0.0];
+  at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
+  as = [[NSAttributedString alloc] initWithString:text attributes:at];
 
   [self setIsEdited:NO];
 
@@ -180,19 +201,106 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return YES;
 }
 
-- (void)windowWillClose:(NSNotification *)aNotification
+- (BOOL)closeFile:(id)sender
 {
-  if( [[aNotification object] isEqual:_window] )
-  {
-    [self close];
-  }
+  if ([self editorShouldClose])
+    {
+      // Close window first if visible
+      if ([_window isVisible] && (sender != _window))
+	{
+	  [_window close];
+	}
+
+      // Remove internal editor view
+      if ([_iView superview])
+	{
+	  [_iView removeFromSuperview];
+	}
+
+      // Inform delegate
+      if (_delegate 
+	  && [_delegate respondsToSelector:@selector(editorDidClose:)])
+	{
+	  [_delegate editorDidClose:self];
+	}
+
+      return YES;
+    }
+  return NO;
+}
+
+- (BOOL)editorShouldClose
+{
+  if (_isEdited)
+    {
+      BOOL ret;
+
+      if ([_window isVisible])
+	{
+	  [_window makeKeyAndOrderFront:self];
+	}
+
+      ret = NSRunAlertPanel(@"Close File",
+			    @"Save changes to\n%@?",
+			    @"Save", @"Don't save", @"Cancel", _path);
+
+      if (ret == YES)
+	{
+	  if ([self saveFile] == NO)
+	    {
+	      NSRunAlertPanel(@"Close File",
+		    	      @"Save failed!\nCould not save file '%@'!",
+		    	      @"OK", nil, nil, _path);
+	      return NO;
+	    }
+	  else
+	    {
+	      return YES;
+	    }
+	}
+      else if (ret == NO) // Close but don't save
+	{
+	  return YES;
+	}
+      else               // Cancel closing
+	{
+	  return NO;
+	}
+
+      [self setIsEdited:NO];
+    }
+
+  return YES;
+}
+
+// ===========================================================================
+// ==== Window delegate
+// ===========================================================================
+
+- (BOOL)windowShouldClose:(id)sender
+{
+  if ([sender isEqual:_window])
+    {
+      if ([_iView superview] != nil) 
+	{
+	  // Just close if this file also displayed in internal view
+	  return YES;
+	}
+      else
+	{
+	  return [self closeFile:_window];
+	}
+    }
+
+  return NO;
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
   if( [[aNotification object] isEqual:_window] )
   {
-    [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName:PCEditorDidBecomeKeyNotification object:self];
   }
 }
 
@@ -200,9 +308,14 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 {
   if( [[aNotification object] isEqual:_window] )
   {
-    [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName:PCEditorDidResignKeyNotification object:self];
   }
 }
+
+// ===========================================================================
+// ==== TextView (_iView, _eView) delegate
+// ===========================================================================
 
 - (void)textDidChange:(NSNotification *)aNotification
 {

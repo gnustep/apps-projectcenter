@@ -46,7 +46,7 @@
   NSDictionary  *currentOptions; // Not retained!
 
   NSTextView    *stdOut;
-  NSTextView    *stdError;
+  NSDictionary  *textAttributes;
 
   NSFileHandle  *readHandle;
   NSFileHandle  *errorReadHandle;
@@ -76,8 +76,7 @@
 
 @interface PCProjectDebugger (BuildLogging)
 
-- (void)logString:(NSString *)string error:(BOOL)yn;
-- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
+- (void)logString:(NSString *)string newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end

@@ -137,25 +137,25 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     PCEditorController *editorController;
     NSBox *box;
 
-    id projectAttributeInspectorView;
+    id          projectAttributeInspectorView;
     NSTextField *installPathField;
     NSTextField *toolField;
     NSTextField *ccOptField;
     NSTextField *ldOptField;
 
-    id projectProjectInspectorView;
+    id          projectProjectInspectorView;
     NSTextField *projectTypeField;
 
-    id projectFileInspectorView;
+    id          projectFileInspectorView;
     NSTextField *fileNameField;
-    NSButton *changeFileNameButton;
+    NSButton    *changeFileNameButton;
     
     id buildTargetPanel;
     id buildTargetHostField;
     id buildTargetArgsField;
     
-    NSString *projectName;
-    NSString *projectPath;
+    NSString            *projectName;
+    NSString            *projectPath;
     NSMutableDictionary *projectDict;
 
     NSDictionary *rootCategories; // Needs to be initialised by subclasses!
@@ -181,6 +181,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (NSString *)selectedRootCategory;
 
 - (NSArray *)fileExtensionsForCategory:(NSString *)key;
+- (NSString *)categoryForFile:(NSString *)file;
 
 - (void)setProjectName:(NSString *)aName;
 - (NSString *)projectName;
@@ -188,7 +189,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 - (Class)principalClass;
 
-- (PCEditorController*)editorController;
+- (PCProjectEditor *)projectEditor;
+- (PCEditorController *)editorController;
 
 //=============================================================================
 // ==== Delegate and manager
@@ -247,13 +249,6 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 - (BOOL)save;
 - (BOOL)saveAt:(NSString *)projPath;
-
-- (BOOL)saveFile;
-- (BOOL)saveAllFiles;
-- (BOOL)saveAllFilesIfNeeded;
-    // Saves all the files that need to be saved.
-
-- (BOOL)revertFile;
 
 - (BOOL)writeSpecFile;
 

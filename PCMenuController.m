@@ -231,7 +231,7 @@
 
 - (void)projectSaveFiles:(id)sender
 {
-  [projectManager saveFiles];
+  [projectManager saveAllFiles];
 }
 
 - (void)projectRemoveFiles:(id)sender
@@ -291,7 +291,6 @@
 }
 
 // File
-
 - (void)fileOpen:(id)sender
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -304,29 +303,31 @@
   [openPanel setCanChooseDirectories:NO];
   [openPanel setCanChooseFiles:YES];
 
-  retval = [openPanel runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
-                                                       file:nil
-					              types:nil];
+  retval = [openPanel 
+    runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
+                    file:nil
+                   types:nil];
 
   if (retval == NSOKButton)
     {
       BOOL isDir;
+      NSFileManager *fm = [NSFileManager defaultManager];
 
       [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
 
       filePath = [[openPanel filenames] objectAtIndex:0];
 
-      if ([[NSFileManager defaultManager] fileExistsAtPath:filePath 
-                                               isDirectory:&isDir] && !isDir) 
+      if (![fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
 	{
-	  if (![projectManager openFile:filePath]) 
-	    {
-	      NSRunAlertPanel(@"Attention!",
-			      @"Couldn't open %@!",
-			      @"OK",nil,nil,filePath);
-	    }
+	  NSRunAlertPanel(@"Attention!",
+			  @"Couldn't open %@!",
+			  @"OK",nil,nil,filePath);
 	}
-  }
+      else
+	{
+	  [PCEditorController openFileInEditor:filePath];
+	}
+    }
 }
 
 - (void)fileNew:(id)sender
@@ -339,43 +340,102 @@
   [projectManager saveFile];
 }
 
+// Not finished
 - (void)fileSaveAs:(id)sender
 {
-//  [projectManager saveFileAs];
+/*  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  NSString       *oldFilePath;
+  NSString 	 *newFilePath;
+  int		 retval;
+
+  oldFilePath = 
+    [[[[projectManager activeProject] editorController] activeEditor] path];
+
+  [savePanel setTitle: @"Save As..."];
+  retval = [savePanel runModalForDirectory:[projectManager projectPath]
+                                      file:[projectManager selectedFileName]];
+
+  if (retval == NSOKButton)
+    {
+      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
+
+      newFilePath = [savePanel filename];
+		  
+      if (![projectManager saveFileAs:newFilePath]) 
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Couldn't save file as\n%@!",
+			  @"OK",nil,nil,newFilePath);
+	}
+    }*/
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-  		  @"This feature is not yet implemented!",
-    		  @"OK",nil,nil);
+		  @"This feature not finished yet",
+		  @"OK",nil,nil);
 }
 
 - (void)fileSaveTo:(id)sender
 {
-//  [projectManager saveFileTo];
-  NSRunAlertPanel(@"PCMenuController: Sorry!",
-  		  @"This feature is not yet implemented!",
-    		  @"OK",nil,nil);
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString 	 *filePath = [projectManager selectedFileName];
+  NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
+  int		 retval;
+
+  [savePanel setTitle: @"Save To..."];
+  retval = [savePanel runModalForDirectory:[projectManager projectPath]
+                                      file:filePath];
+
+  if (retval == NSOKButton)
+    {
+      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
+
+      filePath = [savePanel filename];
+		  
+      if (![projectManager saveFileTo:filePath]) 
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Couldn't save file to\n%@!",
+			  @"OK",nil,nil,filePath);
+	}
+    }
 }
 
 - (void)fileRevertToSaved:(id)sender
 {
-  [projectManager revertFile];
+  [projectManager revertFileToSaved];
 }
 
 - (void)fileClose:(id)sender
 {
+  [projectManager closeFile];
+}
+
+- (void)fileOpenQuickly:(id)sender
+{
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-  		  @"This feature is not yet implemented!",
-    		  @"OK",nil,nil);
+		  @"This feature not finished yet",
+		  @"OK",nil,nil);
 }
 
 - (void)fileRename:(id)sender
 {
-  NSString *proj = nil;
+/*  NSString *proj = nil;
 
-  // Show open panel
+  // Show Inspector panel with "File Attributes" section
 
-  [projectManager renameFileTo:proj];
+  [projectManager renameFileTo:proj];*/
+
+  NSRunAlertPanel(@"PCMenuController: Sorry!",
+		  @"This feature not finished yet",
+		  @"OK",nil,nil);
 }
 
+- (void)fileNewUntitled:(id)sender
+{
+  NSRunAlertPanel(@"PCMenuController: Sorry!",
+		  @"This feature not finished yet",
+		  @"OK",nil,nil);
+}
 
 // Edit
 - (void)findShowPanel:(id)sender
@@ -420,9 +480,9 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-  NSString            *menuTitle = [[menuItem menu] title];
-  PCProject           *aProject = [projectManager activeProject];
-  NSResponder         *firstResponder = [[aProject projectWindow] firstResponder];
+  NSString    *menuTitle = [[menuItem menu] title];
+  PCProject   *aProject = [projectManager activeProject];
+  NSResponder *firstResponder = [[NSApp keyWindow] firstResponder];
 
   if ([[projectManager loadedProjects] count] == 0) 
     {
@@ -510,8 +570,7 @@
   // File related menu items
   if (([menuTitle isEqualToString: @"File"]))
     {
-      if (![[firstResponder className] isEqualToString: @"PCEditorView"]
-	  || ![[aProject projectWindow] isKeyWindow])
+      if (![[firstResponder className] isEqualToString: @"PCEditorView"])
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;

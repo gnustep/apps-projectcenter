@@ -89,8 +89,10 @@
 - (void)fileSaveAs:(id)sender;
 - (void)fileSaveTo:(id)sender;
 - (void)fileRevertToSaved:(id)sender;
-- (void)fileRename:(id)sender;
 - (void)fileClose:(id)sender;
+- (void)fileOpenQuickly:(id)sender;
+- (void)fileRename:(id)sender;
+- (void)fileNewUntitled:(id)sender;
 
 // Edit
 - (void)findShowPanel:(id)sender;

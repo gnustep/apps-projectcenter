@@ -8,11 +8,14 @@
  * $Id$
  */
 
+#include "PCProjectEditor.h"
 #include "PCEditorController.h"
+#include "PCEditorView.h"
 #include "PCDefines.h"
 #include "PCProject.h"
 #include "PCEditor.h"
 #include "PCProject+ComponentHandling.h"
+#include "PCBrowserController.h"
 
 @implementation PCEditorController
 
@@ -64,6 +67,7 @@
         PCEditor *editor;
 
 	editor = [[PCEditor alloc] initWithPath:path];
+	[editor setDelegate:self];
 	[editor show];
     }
 }
@@ -87,32 +91,6 @@
     RELEASE( editorDict );
 
     [super dealloc];
-}
-
-// ===========================================================================
-// ==== Acessor methods
-// ===========================================================================
-
-- (PCEditor *) activeEditor
-{
-  NSEnumerator *enumerator = [editorDict keyEnumerator];
-  PCEditor     *editor;
-  NSString     *key;
-  NSWindow     *window;
-
-  while(( key = [enumerator nextObject] ))
-    {
-      editor = [editorDict objectForKey:key];
-      window = [editor editorWindow];
-
-      if( ([window isKeyWindow] && [window isMainWindow]) ||
-	  ([project isEditorActive] && [[project projectWindow] isKeyWindow]))
-	{
-	  return editor;
-	}
-    }
-
-  return nil;
 }
 
 // ===========================================================================
@@ -161,6 +139,30 @@
     }
 }
 
+- (PCEditor *)activeEditor
+{
+  NSEnumerator *enumerator = [editorDict keyEnumerator];
+  PCEditor     *editor;
+  NSString     *key;
+  NSWindow     *window;
+
+  while(( key = [enumerator nextObject] ))
+    {
+      editor = [editorDict objectForKey:key];
+      window = [editor editorWindow];
+
+      if (([window isVisible] && [window isKeyWindow])
+	  || ([[editor internalView] superview]
+	      && [project isEditorActive]
+	      && [[project projectWindow] isKeyWindow]))
+	{
+	  return editor;
+	}
+    }
+
+  return nil;
+}
+
 - (NSArray *)allEditors
 {
     return [editorDict allValues];
@@ -168,24 +170,16 @@
 
 - (void)closeAllEditors
 {
-    NSEnumerator *enumerator = [editorDict keyEnumerator];
-    PCEditor *editor;
-    NSString *key;
+  NSEnumerator *enumerator = [editorDict keyEnumerator];
+  PCEditor     *editor;
+  NSString     *key;
 
-    while(( key = [enumerator nextObject] ))
+  while ((key = [enumerator nextObject]))
     {
-        editor = [editorDict objectForKey:key];
-	[editor close];
-	[[editor editorWindow] performClose:self];
+      editor = [editorDict objectForKey:key];
+      [editor closeFile:self];
     }
-    [editorDict removeAllObjects];
-}
-
-- (void)editorDidClose:(id)sender
-{
-    PCEditor *editor = (PCEditor*)sender;
-
-    [editorDict removeObjectForKey:[editor path]];
+  [editorDict removeAllObjects];
 }
 
 // ===========================================================================
@@ -224,16 +218,74 @@
   return NO;
 }
 
-- (BOOL)revertFile
+- (BOOL)saveFileAs:(NSString *)file
 {
   PCEditor *editor = [self activeEditor];
 
   if (editor != nil)
     {
-      return [editor revertFile];
+      return [editor saveFileAs:file];
     }
 
   return NO;
+}
+
+- (BOOL)saveFileTo:(NSString *)file
+{
+  PCEditor *editor = [self activeEditor];
+
+  if (editor != nil)
+    {
+      return [editor saveFileTo:file];
+    }
+
+  return NO;
+}
+
+- (BOOL)revertFileToSaved
+{
+  PCEditor *editor = [self activeEditor];
+
+  if (editor != nil)
+    {
+      return [editor revertFileToSaved];
+    }
+
+  return NO;
+}
+
+- (void)closeFile:(id)sender
+{
+  [[self activeEditor] closeFile:self];
+}
+
+
+// ===========================================================================
+// ==== Delegate
+// ===========================================================================
+
+- (void)editorDidClose:(id)sender
+{
+  PCEditor *editor = (PCEditor*)sender;
+  
+  [editorDict removeObjectForKey:[editor path]];
+
+  if ([editorDict count])
+    {
+      editor = [editorDict objectForKey: [[editorDict allKeys] lastObject]];
+      [editor showInProjectEditor: [project projectEditor]];
+      [[project projectWindow] makeFirstResponder:[editor internalView]];
+    }
+  else
+    {
+      [[project projectEditor] setEditorView:nil];
+      [self setBrowserPath:nil];
+    }
+}
+
+- (void)setBrowserPath:(NSString *)file
+{
+  [(PCBrowserController *)[project browserController] setPathForFile:file];
 }
 
 @end

@@ -41,19 +41,19 @@
 
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {
-  id<ProjectDelegate>	delegate;      // The PCAppController
-  id			fileManager;
+  id<ProjectDelegate> delegate;      // The PCAppController
+  id                  fileManager;
 
-  id			inspector;
-  id			inspectorView;
-  id			inspectorPopup;
+  id                  inspector;
+  id                  inspectorView;
+  id                  inspectorPopup;
   
-  NSMutableDictionary	*loadedProjects;
-  PCProject 		*activeProject;
+  NSMutableDictionary *loadedProjects;
+  PCProject           *activeProject;
   
-  NSString		*rootBuildPath;
+  NSString            *rootBuildPath;
 
-  NSTimer		*saveTimer;
+  NSTimer             *saveTimer;
 
   @private
   BOOL _needsReleasing;
@@ -83,39 +83,48 @@
 // ==== Project management
 // ===========================================================================
 
+// Returns all currently loaded projects. They are stored with their absolut
+// paths as the keys.
 - (NSMutableDictionary *)loadedProjects;
-    // Returns all currently loaded projects. They are stored with their absolut paths as the keys.
 
+// Returns the currently active project
 - (PCProject *)activeProject;
-    // Returns the currently active project
 
+// Sets the new currently active project
 - (void)setActiveProject:(PCProject *)aProject;
-    // Sets the new currently active project
 
-- (void)saveAllProjectsIfNeeded;
-    // Calls saveAllProjects if the preferences are setup accordingly.
-
-- (void)saveAllProjects;
-    // Saves all projects if needed.
-
+// Gets set while initialising!
 - (NSString *)rootBuildPath;
-    // Gets set while initialising!
+
+// Returns active project's path
+- (NSString *)projectPath;
+
+// Returns name of file selected in browser(and visible in internal editor)
+- (NSString *)selectedFileName;
 
 // ===========================================================================
 // ==== Project actions
 // ===========================================================================
 
+// Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
-    // Returns the loaded project if the builder class is known, nil else.
 
+// Invokes loadProjectAt to load the project properly.
 - (BOOL)openProjectAt:(NSString *)aPath;
-    // Invokes loadProjectAt to load the project properly.
 
+// projectType is exactly the name of the class to be invoked to create the
+// project!
 - (BOOL)createProjectOfType:(NSString *)projectType path:(NSString *)aPath;
-    // projectType is exactly the name of the class to be invoked to create the project!
 
+// Saves the current project
 - (BOOL)saveProject;
-   // Saves the current project
+
+// Calls saveAllProjects if the preferences are setup accordingly.
+- (void)saveAllProjectsIfNeeded;
+
+// Saves all projects if needed.
+- (void)saveAllProjects;
+
 
 - (BOOL)saveProjectAs:(NSString *)projName;
 
@@ -123,9 +132,6 @@
 
 - (void)showInspectorForProject:(PCProject *)aProject;
     // Opens the inspector for aProject
-
-- (void)saveFiles;
-   // Saves all the edited files from the currently active project
 
 - (void)revertToSaved;
    // Reverts the currently active project
@@ -142,10 +148,13 @@
 // ==== File actions
 // ===========================================================================
 
-- (BOOL)openFile:(NSString *)path;
-
+- (BOOL)saveAllFiles;
 - (BOOL)saveFile;
-- (BOOL)revertFile;
+- (BOOL)saveFileAs:(NSString *)path;
+- (BOOL)saveFileTo:(NSString *)path;
+- (BOOL)revertFileToSaved;
+- (void)closeFile;
+
 - (BOOL)renameFileTo:(NSString *)path;
 - (BOOL)removeFilePermanently:(BOOL)yn;
 
