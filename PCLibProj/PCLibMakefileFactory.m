@@ -94,7 +94,7 @@ static PCLibMakefileFactory *_factory = nil;
     [string appendString:@"# Additional libraries\n"];
     [string appendString:@"#\n\n"];
 
-    [string appendString:[NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",prName]];
+    [string appendString:[NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",libName]];
 
     if ([[prDict objectForKey:PCLibraries] count]) {
         enumerator = [[prDict objectForKey:PCLibraries] objectEnumerator];
