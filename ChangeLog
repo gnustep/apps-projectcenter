@@ -1,3 +1,11 @@
+2003-05-06 Serg Stoyan <stoyan@hologr.com>
+
+	* PCAppProj/Templates: Created. AppController.h, AppController.m, 
+	PC.proj, main.m moved here. Added GNUmakefile.preamble and
+	GNUmakefile.postamble files.
+	* PCAppProj/GNUmakefile: Changed resources' locations to new.
+	* PCAppProj/Info-project.plist: Removed.
+
 2003-05-05 Serg Stoyan <stoyan@hologr.com>
 
 	* GNUmakefile: Place ProjectCenter subproject after PCLib.
