@@ -4,6 +4,8 @@
 
 	* .h, .m: Replace #import with #include and add #ifndefs.
 
+	* h.template and m.template removed.
+
 2002-11-27 15:45  probert
 
         * Mac OS X port using Cocoa

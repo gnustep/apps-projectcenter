@@ -12,6 +12,8 @@
 	(_createComponentView): Install and Options buttons added. Move
 	target popup into _createOptionsPanel.
 	(_createOptionsPanel): Added.
+
+	* h.template and m.template removed.
 	
 2003-01-25 Daniel Luederwald <das_flip@gmx.de>
 

@@ -1,8 +1,11 @@
 2002-04-21 Serg Stoyan <stoyan@hologr.com>
 
 	* *.h, *.m: Replace #import with #include and add #ifndefs.
+	
 	* GNUmakefile: Set BUNDLE_INSTALL_DIR to 
 	$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+
+	* h.template and m.template removed.
 	
 2002-06-01 15:53  probert
 
