@@ -38,6 +38,11 @@
 
 @interface PCAppProject : PCProject
 {
+  NSTextField *appClassField;
+  NSTextField *appImageField;
+  NSButton *setAppIconButton;
+  NSImageView *appIconView;
+  NSImage *icon;
 }
 
 //----------------------------------------------------------------------------

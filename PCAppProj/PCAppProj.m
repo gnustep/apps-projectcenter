@@ -91,7 +91,7 @@ static PCAppProj *_creator = nil;
         [dict setObject:[path lastPathComponent] forKey:PCProjectName];
         [dict setObject:[project principalClass] forKey:PCProjType];
 
-	// Create the Info-project.plist
+	// Create the AppNameInfo.plist
 	infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
 				   @"Automatically generated!",@"NOTE",
 				   [path lastPathComponent],@"ApplicationName",

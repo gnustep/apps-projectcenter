@@ -108,11 +108,9 @@ static PCAppMakefileFactory *_factory = nil;
         
         enumerator = [[prDict objectForKey:k] objectEnumerator];
         while (tmp = [enumerator nextObject]) {
-            [string appendString:[NSString stringWithFormat:@"\\\nEnglish.lproj/%@ ",tmp]];
+            [string appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
         }
     }
-
-    [string appendString:[NSString stringWithFormat:@"\\\nInfo-project.plist "]];
 
     [string appendString:@"\n\n#\n\n"];
     [string appendString:@"# Header files\n"];

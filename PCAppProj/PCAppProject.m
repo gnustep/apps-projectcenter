@@ -43,7 +43,63 @@
 
 - (void)_initUI
 {
+  NSTextField *textField;
+  NSRect frame = {{84,120}, {80, 80}};
+  NSBox *box;
+
   [super _initUI];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"App class:"];
+  [projectProjectInspectorView addSubview:[textField autorelease]];
+
+  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
+  [appClassField setAlignment: NSLeftTextAlignment];
+  [appClassField setBordered: YES];
+  [appClassField setEditable: YES];
+  [appClassField setBezeled: YES];
+  [appClassField setDrawsBackground: YES];
+  [appClassField setStringValue:@""];
+  [projectProjectInspectorView addSubview:appClassField];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"App icon:"];
+  [projectProjectInspectorView addSubview:[textField autorelease]];
+
+  appImageField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
+  [appImageField setAlignment: NSLeftTextAlignment];
+  [appImageField setBordered: YES];
+  [appImageField setEditable: YES];
+  [appImageField setBezeled: YES];
+  [appImageField setDrawsBackground: YES];
+  [appImageField setStringValue:@""];
+  [projectProjectInspectorView addSubview:appImageField];
+
+  setAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(180,180,80,21)];
+  [setAppIconButton setTitle:@"Set..."];
+  [setAppIconButton setTarget:self];
+  [setAppIconButton setAction:@selector(setAppIcon:)];
+  [projectProjectInspectorView addSubview:setAppIconButton];
+
+  box = [[NSBox alloc] init];
+  [box setFrame:frame];
+  [box setTitlePosition:NSNoTitle];
+  //[box setBorderType:NSNoBorder];
+  [projectProjectInspectorView addSubview:box];
+  AUTORELEASE(box);
+
+  appIconView = [[NSImageView alloc] initWithFrame:frame];
+  [box addSubview:appIconView];
 }
 
 @end
@@ -77,7 +133,11 @@
 - (void)dealloc
 {
   [rootCategories release];
-    
+  [appClassField release];
+  [appImageField release];
+  [setAppIconButton release];
+  [appIconView release];
+
   [super dealloc];
 }
 
