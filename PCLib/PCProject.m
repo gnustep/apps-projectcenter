@@ -563,10 +563,16 @@
     NSString *bu = [projectPath stringByAppendingPathComponent:@"GNUmakefile~"];
     NSFileManager *fm = [NSFileManager defaultManager];
 
-    if (![fm movePath:mf toPath:bu handler:nil]) {
-        NSRunAlertPanel(@"Attention!",
-	                @"Could not keep a backup of the GNUMakefile!",
-			@"OK",nil,nil);
+    if( [fm isReadableFileAtPath:mf] ) {
+        if( [fm isWritableFileAtPath:bu] ) {
+	    [fm removeFileAtPath:bu handler:nil];
+	}
+
+        if (![fm copyPath:mf toPath:bu handler:nil]) {
+            NSRunAlertPanel(@"Attention!",
+    	                    @"Could not keep a backup of the GNUMakefile!",
+	                    @"OK",nil,nil);
+        }
     }
 
     return [self save];
@@ -807,19 +813,23 @@
     NSString *keepBackup = [defs objectForKey:KeepBackup];
     BOOL shouldKeep = [keepBackup isEqualToString:@"YES"];
 
-    if ( shouldKeep == NO && [fm isWritableFileAtPath:backup] ) {
-        [fm removeFileAtPath:backup handler:nil];
+    if ( shouldKeep == YES && [fm isWritableFileAtPath:backup] ) {
+        ret = [fm removeFileAtPath:backup handler:nil];
+
+	if( ret == NO ) {
+            NSRunAlertPanel(@"Attention!",
+	                    @"Could not remove the old project backup '%@'!",
+			    @"OK",nil,nil,backup);
+	}
     }
 
     if (shouldKeep && [fm isReadableFileAtPath:file]) {
         ret = [fm copyPath:file toPath:backup handler:nil];
 
 	if( ret == NO ) {
-	    NSString *name = [projectDict objectForKey:PCProjectName];
-
             NSRunAlertPanel(@"Attention!",
-	                    @"Could not save the backup file for '%@'!",
-			    @"OK",nil,nil,name);
+	                    @"Could not save the project backup file '%@'!",
+			    @"OK",nil,nil,file);
 	}
     }
 
