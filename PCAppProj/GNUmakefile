@@ -37,11 +37,12 @@ PCAppProj_LIBRARIES_DEPEND_UPON += -lProjectCenter
 #
 
 PCAppProj_RESOURCE_FILES= \
-AppController.h \
-AppController.m \
-Info-project.plist \
-main.m \
-PC.proj 
+Templates/AppController.h \
+Templates/AppController.m \
+Templates/main.m \
+Templates/PC.proj \
+Templates/GNUmakefile.preamble \
+Templates/GNUmakefile.postamble
 
 #
 # Header files

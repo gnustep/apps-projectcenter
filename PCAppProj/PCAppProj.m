@@ -68,99 +68,116 @@ static PCAppProj *_creator = nil;
     return [NSDictionary dictionaryWithContentsOfFile:_path];
 }
 
-- (PCProject *)createProjectAt:(NSString *)path
+- (PCProject *) createProjectAt: (NSString *)path
 {
-    PCAppProject *project = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
+  PCAppProject  *project = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-    NSAssert(path,@"No valid project path provided!");
+  NSAssert(path,@"No valid project path provided!");
 
-    if ([fm createDirectoryAtPath:path attributes:nil]) 
+  if ([fm createDirectoryAtPath: path attributes: nil]) 
     {
-        NSString *_file;
-        NSString *_resourcePath;
-        NSMutableDictionary *dict;
-        NSDictionary *infoDict;
-	NSString *plistFileName;
-	NSString *projectFile;
+      NSString            *_file;
+      NSString            *_resourcePath;
+      NSMutableDictionary *dict;
+      NSDictionary        *infoDict;
+      NSString            *plistFileName;
+      NSString            *projectFile;
+      NSBundle            *projBundle = [NSBundle bundleForClass:[self class]];
 
-        project = [[[PCAppProject alloc] init] autorelease];
+      project = [[[PCAppProject alloc] init] autorelease];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" 
-	                                                        ofType:@"proj"];
-        dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-                
-        // Customise the project
-        [dict setObject:[path lastPathComponent] forKey:PCProjectName];
+      _file = [projBundle pathForResource:@"PC" ofType:@"proj"];
+      dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+
+      // Customise the project
+      [dict setObject:[path lastPathComponent] forKey:PCProjectName];
 #ifndef GNUSTEP_BASE_VERSION
-        [dict setObject:[[project principalClass] description] forKey:PCProjType];
+      [dict setObject:[[project principalClass] description] forKey:PCProjType];
 #else
-        [dict setObject:[project principalClass] forKey:PCProjType];
+      [dict setObject:[project principalClass] forKey:PCProjType];
 #endif
-	// Create the AppNameInfo.plist
-	infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
-				   @"Automatically generated!",@"NOTE",
-				   [path lastPathComponent],@"ApplicationName",
-				   @"",@"ApplicationDescription",
-				   @"",@"ApplicationIcon",
-				   @"0.1",@"ApplicationRelease",
-				   @"0.1",@"FullVersionID",
-				   @"",@"Authors",
-				   @"",@"URL",
-				   @"Copyright (C) 200x by ...",@"Copyright",
-				   @"Released under...",@"CopyrightDescription",
-				   nil];
-	plistFileName = [NSString stringWithFormat:@"%@Info.plist",
-	                                           [path lastPathComponent]];
-	[infoDict writeToFile:[path stringByAppendingPathComponent:plistFileName] atomically:YES];
 
-        [dict setObject:[NSArray arrayWithObjects:plistFileName,nil] 
-	         forKey:PCOtherResources];
+      // Create the AppNameInfo.plist
+      infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
+	          @"Automatically generated!", @"NOTE",
+		  [path lastPathComponent], @"ApplicationName",
+		  @"", @"ApplicationDescription",
+		  @"", @"ApplicationIcon",
+		  @"0.1", @"ApplicationRelease",
+		  @"0.1", @"FullVersionID",
+		  @"", @"Authors",
+		  @"", @"URL",
+		  @"Copyright (C) 200x by ...", @"Copyright",
+		  @"Released under...", @"CopyrightDescription",
+		  nil];
+      plistFileName = [NSString stringWithFormat:@"%@Info.plist", 
+                                [path lastPathComponent]];
+      [infoDict writeToFile:[path stringByAppendingPathComponent:plistFileName]
+                 atomically:YES];
 
-        // Save the project to disc
-	//projectFile = [NSString stringWithString:@"PC.project"];
-	projectFile = [NSString stringWithString:[path lastPathComponent]];
-	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
-        
-        [dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
-	       atomically:YES];
+      [dict setObject:[NSArray arrayWithObjects:plistFileName,nil] 
+	       forKey:PCOtherResources];
 
-	/*
-	 * Copy the project files to the provided path
-	 *
-	 */
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"] handler:nil];
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"preamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] handler:nil];
+      // Save the project to disc
+      //projectFile = [NSString stringWithString:@"PC.project"];
+      projectFile = [NSString stringWithString:[path lastPathComponent]];
+      projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
+      [dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
+	     atomically:YES];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"AppController" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"AppController.m"] handler:nil];
+      /*
+       * Copy the project files to the provided path
+       */
+      _file = [projBundle pathForResource:@"GNUmakefile" ofType:@"postamble"];
+      [fm copyPath:_file 
+            toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"]
+	   handler:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"AppController" ofType:@"h"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"AppController.h"] handler:nil];
+      _file = [projBundle pathForResource:@"GNUmakefile" ofType:@"preamble"];
+      [fm copyPath:_file 
+            toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] 
+	   handler:nil];
 
-        // Resources
-        _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-        [fm createDirectoryAtPath:_resourcePath attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
+      _file = [projBundle pathForResource:@"main" ofType:@"m"];
+      [fm copyPath:_file
+            toPath:[path stringByAppendingPathComponent:@"main.m"]
+           handler:nil];
 
-        // The path cannot be in the PC.project file!
-        [project setProjectPath:path];
+      _file = [projBundle pathForResource:@"AppController" ofType:@"m"];
+      [fm copyPath:_file 
+            toPath:[path stringByAppendingPathComponent:@"AppController.m"]
+           handler:nil];
 
-        // Set the new dictionary - this causes the GNUmakefile to be written to disc
-        if(![project assignProjectDict:dict]) {
-            NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
-            return nil;
-        }
+      _file = [projBundle pathForResource:@"AppController" ofType:@"h"];
+      [fm copyPath:_file
+            toPath:[path stringByAppendingPathComponent:@"AppController.h"]
+	   handler:nil];
+
+      // Resources
+      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+      [fm createDirectoryAtPath:_resourcePath
+                     attributes:nil];
+      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"]
+                     attributes:nil];
+      [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"]
+	             attributes:nil];
+
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+
+      // Set the new dictionary - this causes the GNUmakefile to be written 
+      // to disc
+      if(![project assignProjectDict:dict])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not load %@!",
+			  @"OK", nil, nil, path);
+	  return nil;
+	}
     }
-    return project;
+  return project;
 }
 
 - (PCProject *)openProjectAt:(NSString *)path
