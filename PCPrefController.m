@@ -28,6 +28,9 @@
 
 #include "PCLogController.h"
 
+// TODO: rewrite it as PCPrefernces, use +sharedPreferences instead of
+// [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
+
 @implementation PCPrefController
 
 // ===========================================================================
@@ -60,6 +63,11 @@ static PCPrefController *_prefCtrllr = nil;
   prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
   preferencesDict = [[NSMutableDictionary alloc] initWithDictionary:prefs];
 
+  if ([preferencesDict objectForKey:@"Version"] == nil)
+    {
+      [self setDefaultValues];
+    }
+
   return self;
 }
 
@@ -79,6 +87,54 @@ static PCPrefController *_prefCtrllr = nil;
   [[NSUserDefaults standardUserDefaults] synchronize];
 
   [super dealloc];
+}
+
+- (void)setDefaultValues
+{
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+
+  PCLogInfo(self, @"setDefaultValues");
+
+  // Clean preferences
+  [preferencesDict removeAllObjects];
+
+  [preferencesDict setObject:@"0.4" forKey:@"Version"];
+  
+  // Building
+  [preferencesDict setObject:@"" forKey:SuccessSound];
+  [preferencesDict setObject:@"" forKey:FailureSound];
+  [preferencesDict setObject:@"YES" forKey:PromptOnClean];
+  [preferencesDict setObject:@"" forKey:RootBuildDirectory];
+
+  // Saving
+  [preferencesDict setObject:@"YES" forKey:SaveOnQuit];
+  [preferencesDict setObject:@"YES" forKey:KeepBackup];
+  [preferencesDict setObject:@"120" forKey:AutoSavePeriod];
+
+  // Key Bindings
+  [preferencesDict setObject:@"Tab" forKey:TabBehaviour];
+
+  // Miscellaneous
+  [preferencesDict setObject:@"YES" forKey:PromptOnQuit];
+  [preferencesDict setObject:@"YES" forKey:DeleteCacheWhenQuitting];
+  [preferencesDict setObject:@"YES" forKey:FullPathInFilePanels];
+  [preferencesDict setObject:@"/usr/bin/gdb" forKey:Debugger];
+  [preferencesDict setObject:@"ProjectCenter" forKey:Editor];
+
+  // Interface
+  [preferencesDict setObject:@"YES" forKey:SeparateBuilder];
+  [preferencesDict setObject:@"YES" forKey:SeparateLauncher];
+  [preferencesDict setObject:@"NO" forKey:SeparateEditor];
+  [preferencesDict setObject:@"YES" forKey:SeparateLoadedFiles];
+  
+  [preferencesDict setObject:@"30" forKey:EditorLines];
+  [preferencesDict setObject:@"80" forKey:EditorColumns];
+
+  [preferencesDict setObject:@"YES" forKey:RememberWindows];
+  [preferencesDict setObject:@"NO" forKey:DisplayLog];
+
+  [ud setPersistentDomain:preferencesDict forName:@"ProjectCenter"];
+  [ud synchronize];
 }
 
 - (void)loadPrefernces

@@ -83,6 +83,7 @@
 
 - (id)init;
 - (void)dealloc;
+- (void)setDefaultValues;
 - (void)loadPrefernces;
 
 - (NSDictionary *)preferencesDict;

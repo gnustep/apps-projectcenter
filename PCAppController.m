@@ -46,6 +46,7 @@
   if ((self = [super init]))
     {
       infoController = [[PCInfoController alloc] init];
+      // Termporary workaround to initialize defaults values
       prefController = [PCPrefController sharedPCPreferences];
       logController  = [PCLogController sharedLogController];
       

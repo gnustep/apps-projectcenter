@@ -409,6 +409,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       projectTypeName = [NSString stringWithString:@"Application"];;
       projectClassName = [projectTypes objectForKey:projectTypeName];
+      projectTypeName = nil;
     }
   
   if (projectClassName == nil)
@@ -426,11 +427,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       pPath = [[aPath stringByDeletingLastPathComponent]
         stringByAppendingPathComponent:@"PC.project"];
 
-      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
+//      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
 
       [projectFile removeObjectForKey:PCProjectBuilderClass];
       projectTypeName = [projectCreator projectTypeName];
       [projectFile setObject:projectTypeName forKey:PCProjectType];
+      [projectFile removeObjectForKey:PCPrincipalClass];
       [projectFile writeToFile:pPath atomically:YES];
 
       aPath = pPath;
@@ -443,6 +445,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       // Started only if there's not save timer yet
       [self startSaveTimer];
       [project validateProjectDict];
+
       return project;
     }
 

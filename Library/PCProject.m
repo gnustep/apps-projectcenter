@@ -1000,18 +1000,11 @@ NSString
 {
   if ([self isValidDictionary:projectDict] == NO)
     {
-      int ret = NSRunAlertPanel(@"Attention!", 
-				@"The project file lacks some entries\nUpdate it automatically?", 
-				@"Update",@"Leave",nil);
+      [self updateProjectDict];
 
-      if (ret == NSAlertDefaultReturn)
-	{
-	  [self updateProjectDict];
-
-	  NSRunAlertPanel(@"Project updated!", 
-			  @"The project file has been updated successfully!\nPlease make sure that all new project keys contain valid entries!", 
-			  @"OK",nil,nil);
-	}
+      NSRunAlertPanel(@"Project updated!", 
+		      @"The project file was converted from previous version!\nPlease make sure that every project attribute contain valid values!", 
+		      @"OK",nil,nil);
     }
 }
 
