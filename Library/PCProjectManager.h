@@ -80,6 +80,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
   IBOutlet NSPanel       *nsPanel;
   IBOutlet NSImageView   *nsImage;
   IBOutlet NSTextField   *nsTitle;
+  IBOutlet NSTextField   *projectNameField;
   IBOutlet NSTextField   *nsNameField;
   IBOutlet NSPopUpButton *nsTypePB;
   IBOutlet NSButton      *nsCancelButton;
@@ -114,6 +115,9 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (NSPanel *)buildPanel;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;
+- (NSString *)rootBuildPath;
+- (NSString *)projectPath;
+- (NSString *)selectedFileName;
 
 // ============================================================================
 // ==== Project management
@@ -122,21 +126,9 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // Returns all currently loaded projects. They are stored with their absolut
 // paths as the keys.
 - (NSMutableDictionary *)loadedProjects;
-
-// Returns the currently active project
 - (PCProject *)activeProject;
-
-// Sets the new currently active project
+- (PCProject *)rootActiveProject;
 - (void)setActiveProject:(PCProject *)aProject;
-
-// Gets set while initialising!
-- (NSString *)rootBuildPath;
-
-// Returns active project's path
-- (NSString *)projectPath;
-
-// Returns name of file selected in browser (and visible in internal editor)
-- (NSString *)selectedFileName;
 
 // ============================================================================
 // ==== Project actions

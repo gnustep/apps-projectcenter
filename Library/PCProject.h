@@ -70,7 +70,10 @@ extern NSString *PCProjectDictDidSaveNotification;
 
   BOOL                editorIsActive;
 
+  PCProject           *activeSubproject;
+
   // Subproject
+  NSMutableArray      *loadedSubprojects;
   BOOL                isSubproject;
   PCProject           *rootProject;
   PCProject           *superProject;
@@ -187,16 +190,17 @@ extern NSString *PCProjectDictDidSaveNotification;
 // ==== Subprojects
 // ============================================================================
 
-- (NSArray *)subprojects;
-- (void)addSubproject:(PCProject *)aSubproject;
+- (NSArray *)loadedSubprojects;
+- (PCProject *)activeSubproject;
 
-- (BOOL)isSubProject;
+- (BOOL)isSubproject;
 - (void)setIsSubproject:(BOOL)yn;
 - (PCProject *)superProject;
 - (void)setSuperProject:(PCProject *)project;
-- (PCProject *)rootProject;
-- (void)setRootProject:(PCProject *)project;
 
+- (PCProject *)subprojectWithName:(NSString *)name;
+
+- (void)addSubproject:(PCProject *)aSubproject;
 - (void)newSubprojectNamed:(NSString *)aName;
 - (void)removeSubproject:(PCProject *)aSubproject;
 

@@ -39,6 +39,11 @@
 	  NSLog(@"PCFileManager: error loading NewFile NIB!");
 	  return;
 	}
+      [newFilePanel setFrameAutosaveName:@"NewFile"];
+      if (![newFilePanel setFrameUsingName: @"NewFile"])
+    	{
+	  [newFilePanel center];
+	}
       [newFilePanel center];
       [nfImage setImage:[NSApp applicationIconImage]];
       [nfTypePB setRefusesFirstResponder:YES];

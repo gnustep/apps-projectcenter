@@ -243,20 +243,20 @@
 	addObserver:self
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification
-	     object:project];
+	     object:nil];
 
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self
 	   selector:@selector(projectDictDidSave:)
 	       name:PCProjectDictDidSaveNotification
-	     object:project];
+	     object:nil];
 
       // Active project changing
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self
 	   selector:@selector(activeProjectDidChange:)
 	       name:PCActiveProjectDidChangeNotification
-	     object:project];
+	     object:nil];
     }
   
   return self;
@@ -514,7 +514,10 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  if ([aNotif object] != project)
+  NSArray *sps = [project loadedSubprojects];
+
+  if ([aNotif object] != project
+      && ![sps containsObject:[aNotif object]])
     {
       return;
     }
@@ -531,16 +534,24 @@
 
 - (void)projectDictDidSave:(NSNotification *)aNotif
 {
+  if ([aNotif object] != project
+      && ![[project loadedSubprojects] containsObject:[aNotif object]])
+    {
+      return;
+    }
+
   [projectWindow setDocumentEdited:NO];
 }
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif 
 {
-//  [projectWindow makeKeyAndOrderFront:nil];
-  if ([aNotif object] == project)
+  if ([aNotif object] != project
+      && ![[project loadedSubprojects] containsObject:[aNotif object]])
     {
-      [self makeKeyWindow];
+      return;
     }
+
+  [self makeKeyWindow];
 }
 
 // ============================================================================
@@ -612,8 +623,16 @@
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
   [projectWindow makeMainWindow];
-  [[project projectManager] setActiveProject:project];
   [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
+
+  if ([project activeSubproject] != nil)
+    {
+      [[project projectManager] setActiveProject:[project activeSubproject]];
+    }
+  else
+    {
+      [[project projectManager] setActiveProject:project];
+    }
 
   // Workaround
   if ([projectWindow isDocumentEdited])

@@ -31,11 +31,12 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectHistory *projectHistory;
+  PCProjectHistory *projectHistory = nil;
+  PCProject        *activeProject = nil;
   
   projectManager = aManager;
-
-  projectHistory = [[aManager activeProject] projectHistory];
+  activeProject = [projectManager rootActiveProject];
+  projectHistory = [activeProject projectHistory];
 
   self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
                          styleMask: (NSTitledWindowMask 
@@ -48,7 +49,7 @@
   [self setReleasedWhenClosed: NO];
   [self setHidesOnDeactivate: YES];
   [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Loaded Files", [[projectManager activeProject] projectName]]];
+    @"%@ - Loaded Files", [activeProject projectName]]];
 
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
@@ -56,7 +57,7 @@
   [contentBox setBorderType:NSNoBorder];
   [self setContentView:contentBox];
 
-  [self setContentView: [projectHistory componentView]];
+  [contentBox setContentView:[projectHistory componentView]];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -84,41 +85,24 @@
 - (BOOL)canBecomeKeyWindow
 {
   // Panels controls doesn't receive mouse click if return NO
-
   return YES;
-}
-
-- (void)setContentView:(NSView *)view
-{
-  if (view == contentBox)
-    {
-      [super setContentView:view];
-    }
-  else
-    {
-      [contentBox setContentView:view];
-    }
 }
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *activeProject = [aNotif object];
-
-  if (![self isVisible])
-    {
-      return;
-    }
+  PCProject *activeProject = [projectManager rootActiveProject];
 
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Loaded Files", [activeProject projectName]]];
 
   if (!activeProject)
     {
-      [[contentBox contentView] removeFromSuperview];
+      [contentBox setContentView:nil];
     }
   else
     {
-      [self setContentView:[[activeProject projectHistory] componentView]];
+      [contentBox 
+	setContentView:[[activeProject projectHistory] componentView]];
     }
 }
 

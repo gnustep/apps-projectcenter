@@ -31,9 +31,12 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectLauncher *projectLauncher;
+  PCProjectLauncher *projectLauncher = nil;
+  PCProject         *activeProject = nil;
   
   projectManager = aManager;
+  activeProject = [projectManager rootActiveProject];
+  projectLauncher = [activeProject projectLauncher];
 
   projectLauncher = [[aManager activeProject] projectLauncher];
 
@@ -48,7 +51,7 @@
   [self setReleasedWhenClosed: NO];
   [self setHidesOnDeactivate: NO];
   [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Launch", [[projectManager activeProject] projectName]]];
+    @"%@ - Launch", [activeProject projectName]]];
 
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
@@ -83,7 +86,7 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *activeProject = [aNotif object];
+  PCProject *activeProject = [projectManager rootActiveProject];
 
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Launch", [activeProject projectName]]];

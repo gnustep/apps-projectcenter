@@ -173,7 +173,7 @@
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
-    @"Bundle", @"Tool", @"Palette", nil];
+    @"Bundle", @"Tool", nil];
 }
 
 - (NSArray *)defaultLocalizableKeys

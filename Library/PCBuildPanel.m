@@ -31,10 +31,13 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectBuilder *projectBuilder = [[aManager activeProject] projectBuilder];
+  PCProjectBuilder *projectBuilder = nil;
+  PCProject        *activeProject = nil;
   
   projectManager = aManager;
-
+  activeProject = [projectManager rootActiveProject];
+  projectBuilder = [activeProject projectBuilder];
+  
   self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
                          styleMask: (NSTitledWindowMask 
 		                    | NSClosableWindowMask
@@ -46,7 +49,7 @@
   [self setReleasedWhenClosed: NO];
   [self setHidesOnDeactivate: NO];
   [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Project Build", [[projectManager activeProject] projectName]]];
+    @"%@ - Project Build", [activeProject projectName]]];
 
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
@@ -82,7 +85,7 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *activeProject = [aNotif object];
+  PCProject *activeProject = [projectManager rootActiveProject];
 
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];

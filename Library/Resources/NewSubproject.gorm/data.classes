@@ -156,7 +156,8 @@
 	    nsNameField,
 	    nsTypePB,
 	    nsCancelButton,
-	    nsCreateButton
+	    nsCreateButton,
+	    projectNameField
 	);
 	Super = NSObject;
     };

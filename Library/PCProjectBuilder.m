@@ -357,7 +357,7 @@
 {
   NSAssert(aProject, @"No project specified!");
 
-  NSLog (@"PCProjectBuilder: initWithProject");
+  NSLog (@"PCProjectBuilder: initWithProject %@", [aProject projectName]);
   
   if ((self = [super init]))
     {

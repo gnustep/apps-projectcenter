@@ -61,6 +61,10 @@ NSString
       projectWindow = [[PCProjectWindow alloc] initWithProject:self];
       projectBuilder = nil;
       projectLauncher = nil;
+
+      loadedSubprojects = [[NSMutableArray alloc] init];
+      isSubproject = NO;
+      activeSubproject = nil;
     }
 
   return self;
@@ -102,13 +106,15 @@ NSString
 
 - (BOOL)close:(id)sender
 {
-  int ret;
+  NSLog(@"Closing %@ project", projectName);
 
   // Project files (GNUmakefile, PC.project etc.)
-  if ([self isProjectChanged] == YES)
+  if (isSubproject == NO && [self isProjectChanged] == YES)
     {
+      int ret;
+
       ret = NSRunAlertPanel(@"Alert",
-			    @"Project is modified",
+			    @"Project or subprojects are modified",
 			    @"Save and Close",@"Don't save",@"Cancel");
       switch (ret)
 	{
@@ -126,6 +132,20 @@ NSString
 	  return NO;
 	  break;
 	}
+    }
+    
+  // Close subprojects
+  while ([loadedSubprojects count])
+    {
+      [(PCProject *)[loadedSubprojects objectAtIndex:0] close:self];
+      // We should release subproject here, because it retains us
+      // and we never reach -dealloc in other case.
+      [loadedSubprojects removeObjectAtIndex:0];
+    }
+
+  if (isSubproject == YES)
+    {
+      return YES;
     }
 
   // Save visible windows and panels positions to project dictionary
@@ -220,24 +240,33 @@ NSString
 
 - (void)dealloc
 {
-  NSLog (@"PCProject: dealloc");
+  NSLog (@"PCProject %@: dealloc", projectName);
   
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-  
+
   RELEASE(projectName);
   RELEASE(projectPath);
   RELEASE(projectDict);
+  RELEASE(loadedSubprojects);
 
   // Initialized in -init
+  // For subprojects we should release these objects, because we 
+  // use ASSIGN() macro.
   RELEASE(projectWindow);
   RELEASE(projectBrowser);
   RELEASE(projectHistory);
   RELEASE(projectEditor);
-
+  
   if (projectBuilder) RELEASE(projectBuilder);
   if (projectLauncher) RELEASE(projectLauncher);
-  
+
   RELEASE(buildOptions);
+
+  if (isSubproject == YES)
+    {
+      RELEASE(rootProject);
+      RELEASE(superProject);
+    }
 
   [super dealloc];
 }
@@ -258,7 +287,7 @@ NSString
 
 - (PCProjectHistory *)projectHistory
 {
-  if (!projectHistory)
+  if (!projectHistory && !isSubproject)
     {
       projectHistory = [[PCProjectHistory alloc] initWithProject:self];
     }
@@ -268,7 +297,7 @@ NSString
 
 - (PCProjectBuilder *)projectBuilder
 {
-  if (!projectBuilder)
+  if (!projectBuilder && !isSubproject)
     {
       projectBuilder = [[PCProjectBuilder alloc] initWithProject:self];
     }
@@ -278,7 +307,7 @@ NSString
 
 - (PCProjectLauncher *)projectLauncher
 {
-  if (!projectLauncher)
+  if (!projectLauncher && !isSubproject)
     {
       projectLauncher = [[PCProjectLauncher alloc] initWithProject:self];
     }
@@ -727,6 +756,13 @@ NSString
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
   NSString       *keepBackup = [defs objectForKey:KeepBackup];
   BOOL           shouldKeep = [keepBackup isEqualToString:@"YES"];
+  int            spCount = [loadedSubprojects count];
+  int            i;
+
+  for (i = 0; i < spCount; i++)
+    {
+      [[loadedSubprojects objectAtIndex:i] save];
+    }
 
   if (shouldKeep == YES && [fm isWritableFileAtPath:backup])
     {
@@ -901,23 +937,17 @@ NSString
 // ==== Subprojects
 // ============================================================================
 
-- (NSArray *)subprojects
+- (NSArray *)loadedSubprojects
 {
-  return [projectDict objectForKey:PCSubprojects];
+  return loadedSubprojects;
 }
 
-- (void)addSubproject:(PCProject *)aSubproject
+- (PCProject *)activeSubproject
 {
-  NSMutableArray *subprojects;
-
-  subprojects = [NSMutableArray 
-    arrayWithArray:[projectDict objectForKey:PCSubprojects]];
-
-  [subprojects addObject:aSubproject];
-  [self setProjectDictObject:subprojects forKey:PCSubprojects];
+  return activeSubproject;
 }
 
-- (BOOL)isSubProject
+- (BOOL)isSubproject
 {
   return isSubproject;
 }
@@ -934,19 +964,71 @@ NSString
 
 - (void)setSuperProject:(PCProject *)project
 {
-  superProject = project;
+  if (superProject != nil)
+    {
+      return;
+    }
+
+  ASSIGN(superProject, project);
+
+  // Assigning releases left part
+  ASSIGN(projectBrowser,[project projectBrowser]);
+  ASSIGN(projectHistory,[project projectHistory]);
+  ASSIGN(projectEditor,[project projectEditor]);
+  ASSIGN(projectWindow,[project projectWindow]);
 }
 
-- (PCProject *)rootProject
+- (PCProject *)subprojectWithName:(NSString *)name
 {
-  return rootProject;
+  int       count = [loadedSubprojects count];
+  int       i;
+  PCProject *sp = nil;
+  NSString  *spName = nil;
+  NSString  *spFile = nil;
+
+  // Subproject in project but not loaded
+  if ([[projectDict objectForKey:PCSubprojects] containsObject:name])
+    {
+      // Search for subproject with name in subprojects array
+      for (i = 0; i < count; i++)
+	{
+	  sp = [loadedSubprojects objectAtIndex:i];
+	  spName = [sp projectName];
+	  if ([spName isEqualToString:name])
+	    {
+	      break;
+	    }
+	  sp = nil;
+	}
+
+      // Subproject not found in array, load subproject
+      if (sp == nil)
+	{
+	  spFile = [projectPath stringByAppendingPathComponent:name];
+	  spFile = [spFile stringByAppendingPathExtension:@"subproj"];
+	  spFile = [spFile stringByAppendingPathComponent:@"PC.project"];
+	  sp = [projectManager loadProjectAt:spFile];
+	  [sp setIsSubproject:YES];
+	  [sp setSuperProject:self];
+	  [loadedSubprojects addObject:sp];
+	}
+    }
+  
+  return sp;
 }
 
-- (void)setRootProject:(PCProject *)project
+
+- (void)addSubproject:(PCProject *)aSubproject
 {
-  rootProject = project;
-}
+  NSMutableArray *_subprojects;
 
+  _subprojects = [NSMutableArray 
+    arrayWithArray:[projectDict objectForKey:PCSubprojects]];
+
+  [_subprojects addObject:[aSubproject projectName]];
+  [loadedSubprojects addObject:aSubproject];
+  [self setProjectDictObject:_subprojects forKey:PCSubprojects];
+}
 
 - (void)newSubprojectNamed:(NSString *)aName
 {
@@ -962,35 +1044,94 @@ NSString
 
 - (NSArray *)contentAtCategoryPath:(NSString *)categoryPath
 {
-  NSString *key = nil;
+  NSString *key = [self keyForCategoryPath:categoryPath];
+  NSArray  *pathArray = nil;
+
+  pathArray = [categoryPath componentsSeparatedByString:@"/"];
+
+  if ([pathArray count] == 2)
+    {
+      [projectManager setActiveProject:self];
+      activeSubproject = nil;
+    }
 
   if ([categoryPath isEqualToString:@""] || [categoryPath isEqualToString:@"/"])
     {
       return rootCategories;
     }
+  else if ([key isEqualToString:PCSubprojects])
+    {
+      PCProject      *_subproject = nil;
+      NSString       *spCategoryPath = nil;
+      NSMutableArray *mCategoryPath = nil;
 
-  key = [self keyForCategoryPath:categoryPath];
+      mCategoryPath = [pathArray mutableCopy];
+//      NSLog(@"1. mCategoryPath: %@", mCategoryPath);
 
-  return [projectDict objectForKey:key];;
+//      NSLog(@"path: %@ array count: %i", categoryPath, [pathArray count]);
+      if ([pathArray count] == 2)
+	{ // Click on "/Subprojects"
+	  return [projectDict objectForKey:PCSubprojects];
+	}
+      else if ([pathArray count] > 2)
+	{ // CLick on "/Subprojects/Name.subproj+"
+	  _subproject = [self 
+	    subprojectWithName:[pathArray objectAtIndex:2]];
+
+	  [projectManager setActiveProject:_subproject];
+	  activeSubproject = _subproject;
+
+	  [mCategoryPath removeObjectAtIndex:1];
+	  [mCategoryPath removeObjectAtIndex:1];
+//	  NSLog(@"2. mCategoryPath: %@", mCategoryPath);
+
+     	  spCategoryPath = [mCategoryPath componentsJoinedByString:@"/"];
+	  
+/*	  NSLog(@"%@: retreiving content from %@ subproject\n> path: %@", 
+		projectName, [_subproject projectName], spCategoryPath);*/
+
+	  return [_subproject contentAtCategoryPath:spCategoryPath];
+	}
+    }
+
+  return [projectDict objectForKey:key];
 }
 
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)categoryPath
 {
-  NSString *listEntry = nil;
+  NSString       *listEntry = nil;
+/*  NSString       *key = nil;
+  NSMutableArray *pathArray = nil;
+  NSString       *path = nil;
+  PCProject      *_subproject = nil;
 
-  if (!categoryPath || [categoryPath isEqualToString:@""]
-      ||[categoryPath isEqualToString:@"/"])
+  pathArray = [[categoryPath componentsSeparatedByString:@"/"] mutableCopy];
+
+  NSLog(@"PCP: hasChildren %@", categoryPath);
+  if ([categoryPath isEqualToString:@""] 
+      || [categoryPath isEqualToString:@"/"])
     {
       return NO;
-    }
+    }*/
 
   listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
-
   if ([rootCategories containsObject:listEntry]
       || [[projectDict objectForKey:PCSubprojects] containsObject:listEntry])
     {
       return YES;
     }
+  
+/*  key = [self keyForCategoryPath:categoryPath];
+  if ([key isEqualToString:PCSubprojects])
+    {
+      NSLog(@"PCP: has choldren subprojects");
+      _subproject = [self subprojectWithName:[pathArray objectAtIndex:2]];
+
+      [pathArray removeObjectAtIndex:1];
+      [pathArray removeObjectAtIndex:1];
+      path = [pathArray componentsJoinedByString:@"/"];
+      return [_subproject hasChildrenAtCategoryPath:path];
+    }*/
 
   return NO;
 }

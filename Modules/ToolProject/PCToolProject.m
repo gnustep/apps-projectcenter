@@ -192,7 +192,7 @@
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
-    @"Bundle", @"Library", @"Palette", nil];
+    @"Bundle", @"Library", nil];
 }
 
 - (NSArray *)defaultLocalizableKeys

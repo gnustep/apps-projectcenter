@@ -305,6 +305,7 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendSubprojects:(NSArray*)array
 {
   [self appendString:COMMENT_SUBPROJECTS];
+  [self appendString:@"SUBPROJECTS = "];
 
   if (array && [array count]) 
     {
@@ -313,7 +314,8 @@ static PCMakefileFactory *_factory = nil;
 
       while ((tmp = [enumerator nextObject]))
 	{
-	  [self appendString:[NSString stringWithFormat:@"\\\n\t%@ ",tmp]];
+	  tmp = [tmp stringByAppendingPathExtension:@"subproj"];
+	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
 	}
     }
 }

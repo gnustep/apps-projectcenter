@@ -67,10 +67,11 @@ static PCBundleProj *_creator = nil;
 
   if ([fm createDirectoryAtPath:path attributes:nil])
     {
-      NSBundle            *projectBundle;
-      NSMutableDictionary *projectDict;
-      NSString            *_file;
-      NSString            *_2file;
+      NSBundle            *projectBundle = nil;
+      NSMutableDictionary *projectDict = nil;
+      NSString            *projectName = nil;
+      NSString            *_file = nil;
+      NSString            *_2file = nil;
 //      NSString            *_resourcePath;
       PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
 
@@ -82,19 +83,23 @@ static PCBundleProj *_creator = nil;
       projectDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
 
       // Customise the project
-      [project setProjectName:[path lastPathComponent]];
-      [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
+      projectName = [path lastPathComponent];
+      if ([[projectName pathExtension] isEqualToString:@"subproj"])
+	{
+	  projectName = [projectName stringByDeletingPathExtension];
+	}
+      [projectDict setObject:projectName forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
-      [projectDict setObject:[path lastPathComponent] forKey:PCPrincipalClass];
+      [projectDict setObject:projectName forKey:PCPrincipalClass];
       // The path cannot be in the PC.project file!
       [project setProjectPath:path];
-      [project setProjectName:[path lastPathComponent]];
+      [project setProjectName:projectName];
 
       // Copy the project files to the provided path
       
       // $PROJECTNAME$.m
-      _file = [NSString stringWithFormat:@"%@", [path lastPathComponent]];
-      _2file = [NSString stringWithFormat:@"%@.m", [path lastPathComponent]];
+      _file = [NSString stringWithFormat:@"%@", projectName];
+      _2file = [NSString stringWithFormat:@"%@.m", projectName];
       [pcfc createFileOfType:ObjCClass 
 	                path:[path stringByAppendingPathComponent:_file]
 		     project:project];
@@ -102,7 +107,7 @@ static PCBundleProj *_creator = nil;
 	              forKey:PCClasses];
 
       // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
-      _file = [NSString stringWithFormat:@"%@.h", [path lastPathComponent]];
+      _file = [NSString stringWithFormat:@"%@.h", projectName];
       [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
 	              forKey:PCHeaders];
 

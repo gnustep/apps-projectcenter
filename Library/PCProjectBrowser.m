@@ -165,11 +165,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
-      NSString *category = [[sender selectedCellInColumn:0] stringValue];
-      NSString *fn = [[sender selectedCell] stringValue];
-      NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
+      PCProject *sp = nil;
+      NSString  *category = [[sender selectedCellInColumn:0] stringValue];
+      NSString  *fn = [[sender selectedCell] stringValue];
+      NSString  *fp = [[project projectPath] stringByAppendingPathComponent:fn];
 
-      if ([project isEditableCategory:category])
+      if ((sp = [project activeSubproject]) != nil)
+	{
+	  fp = [[sp projectPath] stringByAppendingPathComponent:fn];
+	}
+
+      NSLog(@"Open file %@ in editor", fp);
+
+      if ([project isEditableCategory:category] 
+	  || [sp isEditableCategory:category])
 	{
 	  [[project projectEditor] editorForFile:fp
 	                                category:category
@@ -220,7 +229,9 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  if (browser && ([aNotif object] == project))
+  if (browser && 
+      ([aNotif object] == project 
+       || [[project loadedSubprojects] containsObject:[aNotif object]]))
     {
       NSString *browserPath = [browser path];
       NSString *slctdCategory = [project selectedRootCategory];
@@ -270,7 +281,10 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       cell = [matrix cellAtRow:i column:0];
       [cell setStringValue:[files objectAtIndex:i]];
 
-      [categoryPath appendString:@"/"];
+      if (![categoryPath isEqualToString:@"/"])
+	{
+	  [categoryPath appendString:@"/"];
+	}
       [categoryPath appendString:[files objectAtIndex:i]];
 
       [cell setLeaf:![project hasChildrenAtCategoryPath:categoryPath]];
