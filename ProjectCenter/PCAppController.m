@@ -172,7 +172,7 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
-  if ([[fileName lastPAthComponent] isEqualToString:@"PC.project"] == NO) {
+  if ([[fileName lastPathComponent] isEqualToString:@"PC.project"] == NO) {
     return NO;
   }
 
@@ -189,6 +189,8 @@
   NSString *h = [[NSProcessInfo processInfo] hostName];
   NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
   [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+
+  //[bundleLoader loadBundles];
     
   // The DO server
   doServer = [[PCServer alloc] init];

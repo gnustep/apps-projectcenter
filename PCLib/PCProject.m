@@ -331,7 +331,7 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Project Type:"];
+  [textField setStringValue:@"Type:"];
   [projectProjectInspectorView addSubview:[textField autorelease]];
 
   projectTypeField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
