@@ -131,9 +131,9 @@ static PCFileManager *_mgr = nil;
 
   openPanel = [NSOpenPanel openPanel];
   [openPanel setAllowsMultipleSelection:YES];
-  [openPanel setCanChooseDirectories:NO];
   [openPanel setCanChooseFiles:YES];
   [openPanel setTitle:title];
+  [openPanel setCanChooseDirectories:[key isEqualToString: @"Interfaces"]];
 
   retval = [openPanel 
     runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
