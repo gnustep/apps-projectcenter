@@ -27,16 +27,16 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.3.2";
-  FullVersionID = "ProjectCenter 0.3.2";
+  ApplicationRelease = "0.3.5";
+  FullVersionID = "ProjectCenter 0.3.5";
   Authors = (
-    "Philippe C.D. Robert <probert@siggraph.org>",
-    "Adam Fedor <fedor@gnu.org>",
-    "Pierre-Yves Rivaille  <pyrivail@ens-lyon.fr>",
-    "Nicola Pero  <n.pero@mi.flashnet.it>",
-    "Richard Frith-Macdonald <rfm@gnu.org>",
     "David Ayers <d.ayers@inode.at>",
-    "Serg Stoyan <stoyan@on.com.ua>");
+    "Richard Frith-Macdonald <rfm@gnu.org>",
+    "Nicola Pero  <n.pero@mi.flashnet.it>",
+    "Pierre-Yves Rivaille  <pyrivail@ens-lyon.fr>",
+    "Adam Fedor <fedor@gnu.org>",
+    "Serg Stoyan <stoyan@on.com.ua>",
+    "Philippe C.D. Robert <probert@siggraph.org>");
 
   URL = "http://www.gnustep.org";
   Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
