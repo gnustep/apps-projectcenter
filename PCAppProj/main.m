@@ -1,3 +1,5 @@
+/* $Id$ */
+
 #import <AppKit/AppKit.h>
 #import "AppController.h"
 
@@ -14,9 +16,9 @@ void createMenu();
  */
 
 int main(int argc, const char *argv[]) {
-  NSApplication *theApp;
-  id pool = [[NSAutoreleasePool alloc] init];
-  AppController *controller;
+  NSApplication     *theApp;
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  AppController     *controller;
   
 #ifndef NX_CURRENT_COMPILER_RELEASE
   initialize_gnustep_backend();
@@ -39,8 +41,8 @@ int main(int argc, const char *argv[]) {
    * ...and finish!
    */
 
-  [controller release];
-  [pool release];
+  RELEASE(controller);
+  RELEASE(pool);
   
   return 0;
 }
@@ -64,13 +66,13 @@ void createMenu()
   [menu addItemWithTitle:@"Hide" action:@selector(hide:) keyEquivalent:@"h"];
   [menu addItemWithTitle:@"Quit" action:@selector(terminate:) keyEquivalent:@"q"];
 
-  info = [[[NSMenu alloc] init] autorelease];
+  info = AUTORELEASE([[NSMenu alloc] init]);
   [menu setSubmenu:info forItem:[menu itemWithTitle:@"Info"]];
   [info addItemWithTitle:@"Info Panel..." action:@selector(showInfoPanel:) keyEquivalent:@""];
   [info addItemWithTitle:@"Preferences" action:@selector(showPrefPanel:) keyEquivalent:@""];
   [info addItemWithTitle:@"Help" action:action keyEquivalent:@"?"];
 
-  edit = [[[NSMenu alloc] init] autorelease];
+  edit = AUTORELEASE([[NSMenu alloc] init]);
   [edit addItemWithTitle:@"Cut" action:action keyEquivalent:@"x"];
   [edit addItemWithTitle:@"Copy" action:action keyEquivalent:@"c"];
   [edit addItemWithTitle:@"Paste" action:action keyEquivalent:@"v"];
@@ -78,7 +80,7 @@ void createMenu()
   [edit addItemWithTitle:@"Select All" action:action keyEquivalent:@"a"];
   [menu setSubmenu:edit forItem:[menu itemWithTitle:@"Edit"]];
 
-  windows = [[[NSMenu alloc] init] autorelease];
+  windows = AUTORELEASE([[NSMenu alloc] init]);
   [windows addItemWithTitle:@"Arrange"
 		   action:@selector(arrangeInFront:)
 		   keyEquivalent:@""];
@@ -90,7 +92,7 @@ void createMenu()
 		   keyEquivalent:@"w"];
   [menu setSubmenu:windows forItem:[menu itemWithTitle:@"Windows"]];
 
-  services = [[[NSMenu alloc] init] autorelease];
+  services = AUTORELEASE([[NSMenu alloc] init]);
   [menu setSubmenu:services forItem:[menu itemWithTitle:@"Services"]];
 
   [[NSApplication sharedApplication] setMainMenu:menu];

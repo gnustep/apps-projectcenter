@@ -112,6 +112,8 @@ static PCAppMakefileFactory *_factory = nil;
         }
     }
 
+    [string appendString:[NSString stringWithFormat:@"\\\nInfo-project.plist "]];
+
     [string appendString:@"\n\n#\n\n"];
     [string appendString:@"# Header files\n"];
     [string appendString:@"#\n\n"];
