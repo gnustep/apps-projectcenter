@@ -30,6 +30,7 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+    RELEASE(browser);
     RELEASE(editedFiles);
 
     [super dealloc];
@@ -51,7 +52,7 @@
 {
     NSAssert(browser==nil,@"The browser is already set!");
 
-    browser = aBrowser;
+    ASSIGN(browser, aBrowser);
 
     [browser setTitled:NO];
 
