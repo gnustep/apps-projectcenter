@@ -62,5 +62,16 @@
 
 @end
 
+@interface PCMakefileFactory (LibraryProject)
+
+- (void)appendLibrary;
+- (void)appendLibraryInstallDir:(NSString*)dir;
+- (void)appendLibraryLibraries:(NSArray*)array;
+- (void)appendLibraryHeaders:(NSArray*)array;
+- (void)appendLibraryClasses:(NSArray *)array;
+- (void)appendLibraryCFiles:(NSArray *)array;
+
+@end
+
 #endif // _PCMAKEFILEFACTORY_H_
 
