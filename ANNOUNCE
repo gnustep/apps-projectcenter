@@ -32,8 +32,8 @@ Machines
 
    GNUstep ProjectCenter is known to compile on the following machines.
 
-	* Linux x86, GNUstep 0.6.6 or newer
-	* Linux	PPC, GNUstep 0.6.6 or newer
+	* Linux x86, GNUstep 0.6.9 or newer
+	* Linux	PPC, GNUstep 0.6.9 or newer
 
 Where do I send bug reports?
 ============================
