@@ -18,36 +18,36 @@
 
 @interface PCEditor : NSObject
 {
-  PCEditorView    *_iView; // internal (embedded) view
-  PCEditorView    *_eView; // external (window) view
+  NSScrollView    *_extScrollView;
+  PCEditorView    *_extEditorView;
+  NSScrollView    *_intScrollView;
+  PCEditorView    *_intEditorView;
   NSTextStorage   *_storage;
-  NSWindow        *_window;
   NSMutableString *_path;
   NSString        *_category;
+  NSWindow        *_window;
 
-  id   _delegate;
-
-  BOOL _isEdited;
+  BOOL            _isEdited;
+  BOOL            _isWindowed;
 }
 
-- (id)initWithPath:(NSString*)file;
+- (id)initWithPath:(NSString *)file
+          category:(NSString *)category;
 - (void)dealloc;
+- (void)show;
 
-- (void)setDelegate:(id)aDelegate;
-- (id)delegate;
+- (void)setWindowed:(BOOL)yn;
+- (BOOL)isWindowed;
 
-- (PCEditorView *)internalView;
-- (PCEditorView *)externalView;
 - (NSWindow *)editorWindow;
+- (PCEditorView *)editorView;
+- (NSView *)componentView;
+- (NSString *)category;
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
-- (NSString *)category;
-- (void)setCategory:(NSString *)category;
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 
-- (void)showInProjectEditor:(PCProjectEditor *)pe;
-- (void)show;
 - (BOOL)saveFileIfNeeded;
 - (BOOL)saveFile;
 - (BOOL)saveFileTo:(NSString *)path;
@@ -58,11 +58,20 @@
 - (BOOL)editorShouldClose;
 
 - (BOOL)windowShouldClose:(id)sender;
-- (void)windowDidBecomeKey:(NSNotification *)aNotification;
-- (void)windowDidResignKey:(NSNotification *)aNotification;
+/*- (void)windowDidBecomeKey:(NSNotification *)aNotification;
+- (void)windowDidResignKey:(NSNotification *)aNotification;*/
 
 - (void)textDidChange:(NSNotification *)aNotification;
 - (BOOL)becomeFirstResponder;
+- (BOOL)resignFirstResponder;
+
+@end
+
+@interface PCEditor (UInterface)
+
+- (void)_createWindow;
+- (void)_createInternalView;
+- (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr;
 
 @end
 
@@ -72,9 +81,6 @@
 - (void)setBrowserPath:(NSString *)file category:(NSString *)category;
 
 @end
-
-extern NSString *PCEditorDidBecomeKeyNotification;
-extern NSString *PCEditorDidResignKeyNotification;
 
 #endif // _PCEDITOR_H_
 

@@ -178,16 +178,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 {
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
-      NSString *ltitle   = [[sender selectedCell] stringValue];
       NSString *category = [[sender selectedCellInColumn:0] stringValue];
+      NSString *fn = [[sender selectedCell] stringValue];
+      NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
 
-      if ([self isEditableCategory:category file:ltitle])
+      if ([self isEditableCategory:category file:fn])
 	{
-	  [[NSNotificationCenter defaultCenter] 
-	    postNotificationName:@"FileBecomesEditedNotification" 
-	    object:ltitle];
-
-	  [project browserDidClickFile:ltitle category:category];
+	  [[project projectEditor] editorForFile:fp
+	                                category:category
+					windowed:NO];
 	}
     }
 
@@ -201,16 +200,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   if ([[sender selectedCell] isLeaf]) 
     {
       NSString *category = [[sender selectedCellInColumn:0] stringValue];
-      NSString *fn = [self nameOfSelectedFile];
-      NSString *f = [[project projectPath] stringByAppendingPathComponent:fn];
+      NSString *fn = [[sender selectedCell] stringValue];
+      NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
 
       if ([self isEditableCategory:category file: fn])
 	{
-	  [project browserDidDblClickFile:f category:category];
+	  [[project projectEditor] editorForFile:fp
+	                                category:category
+					windowed:YES];
 	}
-      else if([[NSWorkspace sharedWorkspace] openFile:f] == NO) 
+      else if([[NSWorkspace sharedWorkspace] openFile:fp] == NO) 
 	{
-	  NSRunAlertPanel(@"Attention!",@"Could not open %@.",@"OK",nil,nil,f);
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not open %@.",
+			  @"OK",nil,nil,fp);
 	}
     }
   else 
@@ -222,6 +225,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // ============================================================================
 // ==== Notifications
 // ============================================================================
+
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
   if (browser) 

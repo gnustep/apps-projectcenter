@@ -198,7 +198,7 @@ extern NSString *ProjectDictDidSaveNotification;
 // ==== To be overriden!
 // ===========================================================================
 
-// TEMP! For compatibility with PC*Project subclasses
+// TEMP! For compatibility with old PC*Project subclasses
 - (void)updateValuesFromProjectDict;
 
 - (void)createInspectors;
@@ -229,9 +229,6 @@ extern NSString *ProjectDictDidSaveNotification;
 // ==== File Handling
 // ============================================================================
 
-- (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c;
-- (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c;
-
 // Remove path from "file" and handle special cases like libraries
 - (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type;
 
@@ -244,6 +241,10 @@ extern NSString *ProjectDictDidSaveNotification;
 - (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
 
 - (void)renameFile:(NSString *)aFile;
+
+// ============================================================================
+// ==== Project handling
+// ============================================================================
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict;
 - (NSDictionary *)projectDict;
@@ -258,6 +259,13 @@ extern NSString *ProjectDictDidSaveNotification;
 
 - (BOOL)writeSpecFile;
 
+- (BOOL)isValidDictionary:(NSDictionary *)aDict;
+- (void)updateProjectDict;
+
+// Validates the project dictionary and inserts missing keys if needed. It
+// calls isValidDictionary to validate.
+- (void)validateProjectDict;
+
 // ============================================================================
 // ==== Subprojects
 // ============================================================================
@@ -270,20 +278,6 @@ extern NSString *ProjectDictDidSaveNotification;
 - (void)removeSubproject:(PCProject *)aSubproject;
 
 - (BOOL)isSubProject;
-
-// ============================================================================
-// ==== Project Handling
-// ============================================================================
-
-// Updates all values in the inspector based on the current project dict
-//- (void)updateValuesFromProjectDict;
-
-- (BOOL)isValidDictionary:(NSDictionary *)aDict;
-- (void)updateProjectDict;
-
-// Validates the project dictionary and inserts missing keys if needed. It
-// calls isValidDictionary to validate.
-- (void)validateProjectDict;
 
 @end
 

@@ -40,12 +40,10 @@ typedef enum _PCTabFlags {
 
 @interface PCEditorView : NSTextView
 {
+  PCEditor  *editor;
   NSScanner *scanner;
-
-  @private
-  NSRange range;
-  NSArray *_keywords;
-  PCEditor *editor;
+  NSRange   range;
+  NSArray   *_keywords;
   
 #ifndef GNUSTEP_BASE_VERSION
   id _textStorage;

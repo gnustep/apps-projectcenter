@@ -43,7 +43,7 @@
 				    | NSResizableWindowMask)
 			   backing: NSBackingStoreRetained
 			     defer: YES];
-  [self setMinSize: NSMakeSize(230, 23)];
+  [self setMinSize: NSMakeSize(120, 23)];
   [self setFrameAutosaveName: @"ProjectHistory"];
   [self setReleasedWhenClosed: NO];
   [self setHidesOnDeactivate: YES];

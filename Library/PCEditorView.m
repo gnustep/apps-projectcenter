@@ -24,20 +24,33 @@
    $Id$
 */
 
-#include "PCEditorView.h"
 #include "PCEditor.h"
+#include "PCEditorView.h"
 #include "PCEditorView+Highlighting.h"
-#include "PCEditorController.h"
 
 @implementation PCEditorView
 
 static BOOL shouldHighlight = NO;
 static int  _tabFlags       = PCTab4Sp;
 
-- (BOOL) becomeFirstResponder
+- (BOOL)becomeFirstResponder
 {
   return [editor becomeFirstResponder];
 }
+
+- (BOOL)resignFirstResponder
+{
+  return [editor resignFirstResponder];
+}
+
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
+{
+  return YES;
+}
+
+//=============================================================================
+// ==== Class methods
+//=============================================================================
 
 + (void)setTabBehaviour:(int)tabFlags
 {
@@ -58,6 +71,10 @@ static int  _tabFlags       = PCTab4Sp;
 {
     return shouldHighlight;
 }
+
+//=============================================================================
+// ==== Init
+//=============================================================================
 
 - (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer*)tc
 {
@@ -94,55 +111,59 @@ static int  _tabFlags       = PCTab4Sp;
 - (void)dealloc
 {
   if (scanner) 
-  {
-    [scanner release];
-  }
+    {
+      [scanner release];
+    }
+
   [_keywords release];
 
   [super dealloc];
 }
 
+//=============================================================================
+// ==== Accessor methods
+//=============================================================================
+
 - (void)setEditor:(PCEditor *)anEditor
 {
-    editor = anEditor;
+  editor = anEditor;
 }
 
 - (void)setString:(NSString *)aString
 {
-    [scanner autorelease];
-    scanner = [[NSScanner alloc] initWithString:aString];
+  [scanner autorelease];
+  scanner = [[NSScanner alloc] initWithString:aString];
 
-    [super setString:aString];
+  [super setString:aString];
 
-    if( shouldHighlight )
+  if( shouldHighlight )
     {
-	[self highlightText];
+      [self highlightText];
     }
 }
 
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
-{
-    return YES;
-}
+//=============================================================================
+// ==== Text handling
+//=============================================================================
 
 - (void)insertText:(id)aString
 {
-    NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
+  NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
 
-    [super insertText:aString];
+  [super insertText:aString];
 
-    if( shouldHighlight )
+  if( shouldHighlight )
     {
-	[[self textStorage] invalidateAttributesInRange:txtRange];
-	[self highlightTextInRange:txtRange];
+      [[self textStorage] invalidateAttributesInRange:txtRange];
+      [self highlightTextInRange:txtRange];
     }
 }
 
 - (void)highlightText
 {
-    NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
+  NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
 
-    [self highlightTextInRange:txtRange];
+  [self highlightTextInRange:txtRange];
 }
 
 - (void)highlightTextInRange:(NSRange)txtRange

@@ -51,6 +51,7 @@
   PCSplitView *v_split;
 
   NSBox       *customView;
+  NSResponder *firstResponder;
 }
 
 // ============================================================================
@@ -77,6 +78,7 @@
 - (void)showProjectHistory:(id)sender;
 - (void)showProjectBuild:(id)sender;
 - (void)showProjectLaunch:(id)sender;
+- (void)showProjectEditor:(id)sender;
 
 // ============================================================================
 // ==== Notifications
@@ -92,10 +94,10 @@
 - (void)performClose:(id)sender;
 - (BOOL)isDocumentEdited;
 - (BOOL)isKeyWindow;
-- (void)makeFirstResponder:(id)responder;
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder;
 
-- (void)windowDidResignKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
+- (void)windowDidResignKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeMain:(NSNotification *)aNotification;
 - (void)windowWillClose:(NSNotification *)aNotification;
 

@@ -25,6 +25,7 @@
 #include "PCDefines.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
+#include "PCProjectEditor.h"
 #include "PCProjectBuilder.h"
 #include "PCProjectLauncher.h"
 #include "PCProject+ComponentHandling.h"
@@ -91,8 +92,8 @@
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(96,397,43,43)];
   [editorButton setTitle: @"Editor"];
   [editorButton setImage: IMAGE(@"Editor")];
-  [editorButton setTarget: project];
-  [editorButton setAction: @selector(showEditorView:)];
+  [editorButton setTarget: self];
+  [editorButton setAction: @selector(showProjectEditor:)];
   [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [editorButton setButtonType: NSMomentaryPushButton];
   [_c_view addSubview: editorButton];
@@ -169,12 +170,9 @@
   
   /*
    * History
+   * If it's separate panel nothing happened
    */
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateHistory] isEqualToString: @"NO"])
-    {
-      [self showProjectHistory:self];
-    }
+  [self showProjectHistory:self];
 
   [v_split adjustSubviews];
   [h_split addSubview:v_split];
@@ -190,14 +188,14 @@
   [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
   [customView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
+  // Editor in the Box
+  [customView setContentView:[[project projectEditor] componentView]];
+
   [h_split addSubview:customView];
   RELEASE(customView);
   [h_split adjustSubviews];
   [_c_view addSubview:h_split];
   RELEASE(h_split);
-
-  // Editor in the Box
-  [project showEditorView:self];
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -389,13 +387,18 @@
   [customView display];
 }
 
+
 // ============================================================================
 // ==== Actions
 // ============================================================================
 
 - (void)showProjectHistory:(id)sender
 {
-  [v_split addSubview: [[project projectHistory] componentView]];
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey: SeparateHistory] isEqualToString: @"NO"])
+    {
+      [v_split addSubview: [[project projectHistory] componentView]];
+    }
 }
 
 - (void)showProjectBuild:(id)sender
@@ -417,7 +420,7 @@
     {
       if ([customView contentView] == view)
 	{
-	  [project showEditorView:self];
+	  [self showProjectEditor:self];
 	}
       [buildPanel orderFront: nil];
     }
@@ -459,7 +462,7 @@
     {
       if ([customView contentView] == view)
 	{
-	  [project showEditorView:self];
+	  [self showProjectEditor:self];
 	}
       [launchPanel orderFront: nil];
     }
@@ -472,6 +475,16 @@
       [self setCustomContentView:view];
     }
   [[project projectLauncher] setTooltips];
+}
+
+- (void)showProjectEditor:(id)sender
+{
+  NSView *view = nil;
+
+  view = [[[project projectEditor] componentView] retain];
+
+  [self setCustomContentView:view];
+  [self makeFirstResponder:firstResponder];
 }
 
 // ============================================================================
@@ -505,6 +518,7 @@
 // ==== Window delegate
 // ============================================================================
 
+
 - (void)makeKeyAndOrderFront:(id)sender
 {
   [projectWindow makeKeyAndOrderFront:sender];
@@ -530,18 +544,27 @@
   return [projectWindow isKeyWindow];
 }
 
-- (void)makeFirstResponder:(id)responder
+- (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
-  [projectWindow makeFirstResponder:responder];
-}
+  firstResponder = aResponder;
+  [projectWindow makeFirstResponder:firstResponder];
+  if (![projectWindow isKeyWindow])
+    {
+      [projectWindow makeKeyAndOrderFront:nil];
+    }
 
-- (void)windowDidResignKey:(NSNotification *)aNotification
-{
+  return YES;
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
   [[project projectManager] setActiveProject:project];
+  [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
+}
+
+- (void)windowDidResignKey:(NSNotification *)aNotification
+{
+  [projectWindow makeFirstResponder:projectWindow];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)aNotification

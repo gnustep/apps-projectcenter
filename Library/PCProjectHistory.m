@@ -5,6 +5,8 @@
 #include "PCProjectHistory.h"
 #include "PCDefines.h"
 #include "PCProject.h"
+#include "PCProjectEditor.h"
+#include "PCEditor.h"
 
 @implementation PCProjectHistory
 
@@ -16,6 +18,7 @@
     {
       project = aProj;
       editedFiles = [[NSMutableArray alloc] init];
+      filesPath = [[NSMutableArray alloc] init];
 
       // Column
       filesColumn = [[NSTableColumn alloc] initWithIdentifier: @"Files List"];
@@ -39,6 +42,9 @@
                                                            alpha:1.0]];*/
       // Hack! Should be [filesList setDrawsGrid:NO]
       [filesList setGridColor: [NSColor lightGrayColor]];
+      [filesList setTarget:self];
+      [filesList setDoubleAction:@selector(doubleClick:)];
+      [filesList setAction:@selector(click:)];
 
       // Scrollview
       filesScroll = [[NSScrollView alloc] initWithFrame:
@@ -55,9 +61,21 @@
       [filesList reloadData];
 
       [[NSNotificationCenter defaultCenter]
-	addObserver:self
-	   selector:@selector(historyDidChange:)
-	       name:@"FileBecomesEditedNotification"
+	addObserver:self 
+	   selector:@selector(fileDidOpen:)
+	       name:PCEditorDidOpenNotification
+	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(fileDidClose:)
+	       name:PCEditorDidCloseNotification
+	     object:nil];
+	     
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidBecomeActive:)
+	       name:PCEditorDidBecomeActiveNotification
 	     object:nil];
     }
 
@@ -73,30 +91,39 @@
   RELEASE(filesColumn);
   RELEASE(filesList);
   RELEASE(editedFiles);
+  RELEASE(filesPath);
 
   [super dealloc];
 }
 
 - (void)click:(id)sender
 {
-/*  NSString *file = [[[sender selectedCell] stringValue] copy];
-
-  [project filesListDidClickFile:file category:nil];*/
-
-    /* This causes a problem because we try to reloadColumn on the filesList
-       in the middle of someone clicking in it (-click: sends notification
-       which is received by histortDidChange:, etc. Is there a better
-       way around this? */
-/*  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:@"FileBecomesEditedNotification"
-                  object:file];
-
-  AUTORELEASE(file);*/
+  // NSTableView doesn't call setAction: action
+  NSLog(@"ProjectHistory click received");
 }
 
-- (void)historyDidChange:(NSNotification *)notif
+- (void)doubleClick:(id)sender
 {
-  NSString *file = [notif object];
+  int      row = [filesList selectedRow];
+  NSString *path = [filesPath objectAtIndex:row];
+
+  [[project projectEditor] orderFrontEditorForFile:path];
+}
+
+- (NSView *)componentView
+{
+  return filesScroll;
+}
+
+// ===========================================================================
+// ==== Notifications
+// ===========================================================================
+
+- (void)fileDidOpen:(NSNotification *)aNotif
+{
+  PCEditor *editor = [aNotif object];
+  NSString *path = [editor path];
+  NSString *file = [path lastPathComponent];
 
   if ([editedFiles containsObject:file] == YES)
     {
@@ -104,12 +131,32 @@
     }
 
   [editedFiles insertObject:file atIndex:0];
+  [filesPath insertObject:path atIndex:0];
   [filesList reloadData];
 }
 
-- (NSView *)componentView
+- (void)fileDidClose:(NSNotification *)aNotif
 {
-  return filesScroll;
+  PCEditor *editor = [aNotif object];
+  NSString *file = [[editor path] lastPathComponent];
+
+  if ([editedFiles containsObject:file] == YES)
+    {
+      unsigned index = [editedFiles indexOfObject:file];
+      
+      [editedFiles removeObject:file];
+      [filesPath removeObjectAtIndex:index];
+      [filesList reloadData];
+    }
+}
+
+- (void)editorDidBecomeActive:(NSNotification *)aNotif
+{
+  PCEditor *editor = [aNotif object];
+  NSString *file = [[editor path] lastPathComponent];
+  unsigned index = [editedFiles indexOfObject:file];
+  
+  [filesList selectRow:index byExtendingSelection:NO];
 }
 
 @end
@@ -133,10 +180,15 @@
     forTableColumn:(NSTableColumn *)aTableColumn
                row:(int)rowIndex
 {
+/*  NSString *path = nil;
   NSParameterAssert (rowIndex >= 0 && rowIndex < [editedFiles count]);
 
   [editedFiles removeObjectAtIndex:rowIndex];
   [editedFiles insertObject:anObject atIndex:rowIndex];
+
+  path = 
+  [filesPath removeObjectAtIndex:rowIndex];
+  [filesPath insertObject:[editor path] atIndex:rowIndex];*/
 }
 
 @end

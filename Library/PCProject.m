@@ -129,8 +129,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   if (projectLauncher) RELEASE(projectLauncher);
   if (projectEditor)   RELEASE(projectEditor);
   
-  RELEASE(projectEditor);
-
   RELEASE(buildOptions);
 
   [super dealloc];
@@ -218,7 +216,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 // ==== To be overriden
 // ============================================================================
 
-// TEMP!
+// TEMP! For compatibility with old PC*Project subclasses
 - (void)updateValuesFromProjectDict
 {
 }
@@ -314,43 +312,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 // ============================================================================
 // ==== File Handling
 // ============================================================================
-
-- (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c
-{
-  NSString *p = [[self projectPath] stringByAppendingPathComponent:fileName];
-  PCEditor *e;
-
-  // Set the name in the inspector
-//  [fileNameField setStringValue:fileName];
-
-  // Show the file in the internal editor!
-  e = [projectEditor internalEditorForFile:p];
-
-  if( e == nil )
-    {
-      NSLog(@"No editor for file '%@'...",p);
-      return;
-    }
-
-  [self showEditorView:self];
-  [e setCategory:c];
-  [e showInProjectEditor:projectEditor];
-
-  [projectWindow makeFirstResponder:(NSResponder*)[projectEditor editorView]];
-}
-
-- (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c
-{
-  PCEditor *e;
-
-  e = [projectEditor editorForFile:fileName];
-
-  if (e)
-    {
-      [e setCategory:c];
-      [e show];
-    }
-}
 
 - (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type
 {
@@ -469,6 +430,10 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 - (void)renameFile:(NSString *)aFile
 {
 }
+
+// ============================================================================
+// ==== Project handling
+// ============================================================================
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict
 {
@@ -593,71 +558,32 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   return [specIn writeToFile:specInPath atomically:YES];
 }
 
-// ============================================================================
-// ==== Subprojects
-// ============================================================================
-
-- (NSArray *)subprojects
-{
-    return [projectDict objectForKey:PCSubprojects];
-}
-
-- (void)addSubproject:(PCProject *)aSubproject
-{
-}
-
-- (PCProject *)superProject
-{
-    return nil;
-}
-
-- (PCProject *)rootProject
-{
-    return self;
-}
-
-- (void)newSubprojectNamed:(NSString *)aName
-{
-}
-
-- (void)removeSubproject:(PCProject *)aSubproject
-{
-}
-
-- (BOOL)isSubProject
-{
-    return NO;
-}
-
-// ============================================================================
-// ==== Project Handling
-// ============================================================================
-
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
 {
-    NSString *_file;
-    NSString *key;
-    Class projClass = [self builderClass];
-    NSDictionary *origin;
-    NSArray *keys;
-    NSEnumerator *enumerator;
+  NSString     *_file;
+  NSString     *key;
+  Class        projClass = [self builderClass];
+  NSDictionary *origin;
+  NSArray      *keys;
+  NSEnumerator *enumerator;
 
-    _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
-                                                          ofType:@"proj"];
+  _file = [[NSBundle bundleForClass:projClass] 
+    pathForResource:@"PC"
+             ofType:@"project"];
 
-    origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-    keys   = [origin allKeys];
+  origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+  keys   = [origin allKeys];
 
-    enumerator = [keys objectEnumerator];
-    while( (key = [enumerator nextObject]) )
+  enumerator = [keys objectEnumerator];
+  while ((key = [enumerator nextObject]))
     {
-        if( [aDict objectForKey:key] == nil )
-        {
-            return NO;
-        }
+      if ([aDict objectForKey:key] == nil)
+	{
+	  return NO;
+	}
     }
 
-    return YES;
+  return YES;
 }
 
 - (void)updateProjectDict
@@ -700,18 +626,58 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (void)validateProjectDict
 {
-    if( [self isValidDictionary:projectDict] == NO )
+  if( [self isValidDictionary:projectDict] == NO )
     {
-	int ret = NSRunAlertPanel(@"Attention!", @"The project is not up to date, should it be updated automatically?", @"OK",@"No",nil);
+      int ret = NSRunAlertPanel(@"Attention!", 
+				@"The project is not up to date, should it be updated automatically?", 
+				@"Update",@"Leave",nil);
 
-        if( ret == NSAlertDefaultReturn )
+      if( ret == NSAlertDefaultReturn )
 	{
-	    [self updateProjectDict];
-	    [self save];
+	  [self updateProjectDict];
+	  [self save];
 
-	    NSRunAlertPanel(@"Project updated!", @"The project file has been updated successfully!\nPlease make sure that all new project keys contain valid entries!", @"OK",nil,nil);
+	  NSRunAlertPanel(@"Project updated!", 
+			  @"The project file has been updated successfully!\nPlease make sure that all new project keys contain valid entries!", 
+			  @"OK",nil,nil);
 	}
     }
+}
+
+// ============================================================================
+// ==== Subprojects
+// ============================================================================
+
+- (NSArray *)subprojects
+{
+    return [projectDict objectForKey:PCSubprojects];
+}
+
+- (void)addSubproject:(PCProject *)aSubproject
+{
+}
+
+- (PCProject *)superProject
+{
+    return nil;
+}
+
+- (PCProject *)rootProject
+{
+    return self;
+}
+
+- (void)newSubprojectNamed:(NSString *)aName
+{
+}
+
+- (void)removeSubproject:(PCProject *)aSubproject
+{
+}
+
+- (BOOL)isSubProject
+{
+    return NO;
 }
 
 @end

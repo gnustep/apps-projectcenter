@@ -16,16 +16,15 @@
   NSTableColumn  *filesColumn;
   NSScrollView   *filesScroll;
   NSMutableArray *editedFiles;
+  NSMutableArray *filesPath;
 }
 
 - (id)initWithProject:(PCProject *)aProj;
 - (void)dealloc;
-
 - (NSView *)componentView;
 
 - (void)click:(id)sender;
-
-- (void)historyDidChange:(NSNotification *)notif;
+- (void)doubleClick:(id)sender;
 
 @end
 

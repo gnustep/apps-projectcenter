@@ -27,23 +27,21 @@
 #include <ProjectCenter/ProjectComponent.h>
 #endif
 
-@interface PCProjectEditor : NSObject <ProjectComponent>
+@interface PCProjectEditor : NSObject
 {
   PCProject           *project;
-  NSMutableDictionary *editorsDict;
   NSBox               *componentView;
-  PCEditorView        *editorView;
   NSScrollView        *scrollView;
-}
 
-- (void)setEditorView:(PCEditorView *)ev;
-- (PCEditorView *)editorView;
+  NSMutableDictionary *editorsDict;
+  PCEditor            *activeEditor;
+}
 
 // ===========================================================================
 // ==== Class Methods
 // ===========================================================================
 
-+ (void)openFileInEditor:(NSString *)path;
++ (PCEditor *)openFileInEditor:(NSString *)path;
  
 // ===========================================================================
 // ==== Initialisation
@@ -51,20 +49,22 @@
 
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
-- (NSView *)emptyEditorView;
 - (NSView *)componentView;
 
 // ===========================================================================
 // ==== Project and Editor handling
 // ===========================================================================
 
-- (PCEditor *)internalEditorForFile:(NSString *)path;
-- (PCEditor *)editorForFile:(NSString *)path;
+- (PCEditor *)editorForFile:(NSString *)path
+                   category:(NSString *)category
+	           windowed:(BOOL)yn;
+- (void)orderFrontEditorForFile:(NSString *)path;
 - (PCEditor *)activeEditor;
+- (void)setActiveEditor:(PCEditor *)anEditor;
 - (NSArray *)allEditors;
+- (void)closeActiveEditor:(id)sender;
 - (void)closeEditorForFile:(NSString *)file;
 - (void)closeAllEditors;
-
 
 // ===========================================================================
 // ==== File handling
@@ -74,7 +74,6 @@
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)file;
 - (BOOL)saveFileTo:(NSString *)file;
-- (void)closeFile:(id)sender;
 - (BOOL)revertFileToSaved;
 
 // ===========================================================================
@@ -82,9 +81,27 @@
 // ===========================================================================
 
 - (void)editorDidClose:(id)sender;
-- (void)setBrowserPath:(NSString *)file category:(NSString *)category;
+- (void)editorDidBecomeActive:(NSNotification *)aNotif;
+- (void)editorDidResignActive:(NSNotification *)aNotif;
 
 @end
+
+extern NSString *PCEditorWillOpenNotification;
+extern NSString *PCEditorDidOpenNotification;
+extern NSString *PCEditorWillCloseNotification;
+extern NSString *PCEditorDidCloseNotification;
+
+extern NSString *PCEditorDidBecomeActiveNotification;
+extern NSString *PCEditorDidResignActiveNotification;
+
+/*extern NSString *PCEditorDidChangeNotification;
+extern NSString *PCEditorWillSaveNotification;
+extern NSString *PCEditorDidSaveNotification;
+extern NSString *PCEditorSaveDidFailNotification;
+extern NSString *PCEditorWillRevertNotification;
+extern NSString *PCEditorDidRevertNotification;
+extern NSString *PCEditorDeletedNotification;
+extern NSString *PCEditorRenamedNotification;*/
 
 #endif 
 

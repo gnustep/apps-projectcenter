@@ -38,10 +38,10 @@
   PCProjectManager *projectManager;
   PCAppController  *appController;
   
-  NSBox	*projectTypeAccessaryView;
-  id    projectTypePopup;
+  NSBox	           *projectTypeAccessaryView;
+  id               projectTypePopup;
 
-  BOOL  editorIsKey;
+  BOOL             editorIsActive;
 }
 
 //============================================================================
@@ -110,8 +110,8 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem;
 
-- (void)editorDidResignKey:(NSNotification *)aNotification;
-- (void)editorDidBecomeKey:(NSNotification *)aNotification;
+- (void)editorDidBecomeActive:(NSNotification *)aNotif;
+- (void)editorDidResignActive:(NSNotification *)aNotif;
 
 @end
 

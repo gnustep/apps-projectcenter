@@ -1,4 +1,3 @@
-
 /* 
  * PCEditor.m created by probert on 2002-01-29 20:37:27 +0000
  *
@@ -9,16 +8,124 @@
  * $Id$
  */
 
-#include "PCEditor.h"
 #include "PCDefines.h"
+#include "PCProjectEditor.h"
+#include "PCEditor.h"
 #include "PCEditorView.h"
 #include "ProjectComponent.h"
-#include "PCProjectEditor.h"
 
-#include "PCEditor+UInterface.h"
+@implementation PCEditor (UInterface)
 
-NSString *PCEditorDidBecomeKeyNotification=@"PCEditorDidBecomeKeyNotification";
-NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
+- (void)_createWindow
+{
+  unsigned int style;
+  NSRect       rect;
+  float        windowWidth;
+
+  NSLog(@"PCEditor: _createWindow");
+
+  style = NSTitledWindowMask
+        | NSClosableWindowMask
+        | NSMiniaturizableWindowMask
+        | NSResizableWindowMask;
+	
+  windowWidth = [[NSFont userFixedPitchFontOfSize:0.0] widthOfString:@"A"];
+  windowWidth *= 80;
+  windowWidth += 35+80;
+  rect = NSMakeRect(100,100,windowWidth,320);
+
+  _window = [[NSWindow alloc] initWithContentRect:rect
+                                        styleMask:style
+                                          backing:NSBackingStoreBuffered
+                                            defer:YES];
+  [_window setReleasedWhenClosed:NO];
+  [_window setMinSize:NSMakeSize(512,320)];
+  [_window setDelegate:self];
+  rect = [[_window contentView] frame];
+  
+  // Scroll view
+  _extScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  [_extScrollView setHasHorizontalScroller:NO];
+  [_extScrollView setHasVerticalScroller:YES];
+  [_extScrollView setAutoresizingMask:
+    (NSViewWidthSizable|NSViewHeightSizable)];
+  rect = [[_extScrollView contentView] frame];
+
+  // Editor view
+  _extEditorView = [self _createEditorViewWithFrame:rect];
+
+  // Include editor view
+  [_extScrollView setDocumentView:_extEditorView];
+  [_extEditorView setNeedsDisplay:YES];
+  RELEASE(_extEditorView);
+
+  // Include scroll view
+  [_window setContentView:_extScrollView];
+  [_window makeFirstResponder:_extEditorView];
+  RELEASE(_extScrollView);
+}
+
+- (void)_createInternalView
+{
+  NSRect rect = NSMakeRect(0,0,512,320);
+
+  // Scroll view
+  _intScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  [_intScrollView setHasHorizontalScroller:NO];
+  [_intScrollView setHasVerticalScroller:YES];
+  [_intScrollView setBorderType:NSBezelBorder];
+  [_intScrollView setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];
+  rect = [[_intScrollView contentView] frame];
+
+  // Text view
+  _intEditorView = [self _createEditorViewWithFrame:rect];
+
+  /*
+   * Setting up ext view / scroll view / window
+   */
+  [_intScrollView setDocumentView:_intEditorView];
+  [_intEditorView setNeedsDisplay:YES];
+  RELEASE(_intEditorView);
+}
+
+- (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
+{
+  PCEditorView    *ev;
+  NSTextContainer *tc;
+  NSLayoutManager *lm;
+
+  /*
+   * setting up the objects needed to manage the view but using the
+   * shared textStorage.
+   */
+
+  lm = [[NSLayoutManager alloc] init];
+  tc = [[NSTextContainer alloc] initWithContainerSize:fr.size];
+  [lm addTextContainer:tc];
+  RELEASE(tc);
+
+  [_storage addLayoutManager:lm];
+  RELEASE(lm);
+
+  ev = [[PCEditorView alloc] initWithFrame:fr textContainer:tc];
+  [ev setEditor:self];
+
+  [ev setMinSize:NSMakeSize(  0,   0)];
+  [ev setMaxSize:NSMakeSize(1e7, 1e7)];
+  [ev setRichText:YES];
+  [ev setEditable:YES];
+  [ev setVerticallyResizable:YES];
+  [ev setHorizontallyResizable:NO];
+  [ev setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+  [ev setTextContainerInset:NSMakeSize( 5, 5)];
+  [[ev textContainer] setWidthTracksTextView:YES];
+
+  [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
+
+  return AUTORELEASE(ev);
+}
+
+@end
 
 @implementation PCEditor
 
@@ -26,67 +133,102 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 // ==== Initialisation
 // ===========================================================================
 
-- (id)initWithPath:(NSString*)file
+- (id)initWithPath:(NSString *)file
+          category:(NSString *)category
 {
-  if((self = [super init]))
-  {
-    NSString            *t;
-    NSAttributedString *as;
-    NSDictionary       *at;
-    NSFont             *ft;
+  if ((self = [super init]))
+    {
+      NSString            *t;
+      NSAttributedString *as;
+      NSDictionary       *at;
+      NSFont             *ft;
 
-    ft = [NSFont userFixedPitchFontOfSize:0.0];
-    at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
-    t  = [NSString stringWithContentsOfFile:file];
-    as = [[NSAttributedString alloc] initWithString:t attributes:at];
+      _isEdited = NO;
+      _isWindowed = NO;
+      _window = nil;
+      _path = [file copy];
+      _category = [category copy];
 
-    _isEdited = NO;
-    _path = [file copy];
+      ft = [NSFont userFixedPitchFontOfSize:0.0];
+      at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
+      t  = [NSString stringWithContentsOfFile:file];
+      as = [[NSAttributedString alloc] initWithString:t attributes:at];
 
-    [self _initUI];
+      _storage = [[NSTextStorage alloc] init];
+      [_storage setAttributedString:as];
+      RELEASE(as);
 
-    [_window setTitle:file];
-    [_storage setAttributedString:as];
-    RELEASE(as);
+      if (category) // category == nil if we're non project editor
+	{
+	  [self _createInternalView];
 
-    [_iView setNeedsDisplay:YES];
-    [_eView setNeedsDisplay:YES];
+	  [[NSNotificationCenter defaultCenter]
+	    addObserver:self 
+	       selector:@selector(textDidChange:)
+	           name:NSTextDidChangeNotification
+	         object:_intEditorView];
+	}
 
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                          selector:@selector(textDidChange:)
-                                          name:NSTextDidChangeNotification
-                                          object:_eView];
-    [[NSNotificationCenter defaultCenter] addObserver:self 
-                                          selector:@selector(textDidChange:)
-                                          name:NSTextDidChangeNotification
-                                          object:_iView];
-  }
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(textDidChange:)
+	       name:NSTextDidChangeNotification
+	     object:_extEditorView];
+
+      // Inform about file opening
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:PCEditorDidOpenNotification
+	              object:self];
+    }
+
   return self;
 }
 
 - (void)dealloc
 {
+  NSLog(@"PCEditor: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-  RELEASE(_window);
   RELEASE(_path);
-
-  RELEASE(_iView);
-  RELEASE(_storage);
+  RELEASE(_category);
+  RELEASE(_intScrollView);
+  RELEASE(_window);
 
   [super dealloc];
 }
 
-- (void)setDelegate:(id)aDelegate
+- (void)show
 {
-  _delegate = aDelegate;
-  [_iView setDelegate: aDelegate];
-  [_eView setDelegate: aDelegate];
+  if (_isWindowed)
+    {
+      [_window makeKeyAndOrderFront:nil];
+    }
 }
 
-- (id)delegate
+- (void)setWindowed:(BOOL)yn
 {
-  return _delegate;
+  if ( (yn && _isWindowed) || (!yn && !_isWindowed) )
+    {
+      return;
+    }
+
+  if (yn && !_isWindowed)
+    {
+      [self _createWindow];
+      [_window setTitle:[NSString stringWithFormat: @"%@",
+      [_path stringByAbbreviatingWithTildeInPath]]];
+    }
+  else if (!yn && _isWindowed)
+    {
+      [_window close];
+    }
+
+  _isWindowed = yn;
+}
+
+- (BOOL)isWindowed
+{
+  return _isWindowed;
 }
 
 // ===========================================================================
@@ -98,14 +240,14 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return _window;
 }
 
-- (PCEditorView *)internalView
+- (PCEditorView *)editorView 
 {
-  return _iView;
+  return _intEditorView;
 }
 
-- (PCEditorView *)externalView
+- (NSView *)componentView
 {
-  return _eView;
+  return _intScrollView;
 }
 
 - (NSString *)path
@@ -124,11 +266,6 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   return _category;
 }
 
-- (void)setCategory:(NSString *)category
-{
-  _category = [category copy];
-}
-
 - (BOOL)isEdited
 {
   return _isEdited;
@@ -136,23 +273,16 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (void)setIsEdited:(BOOL)yn
 {
-  [_window setDocumentEdited:yn];
+  if (_window)
+    {
+      [_window setDocumentEdited:yn];
+    }
   _isEdited = yn;
 }
 
 // ===========================================================================
 // ==== Object managment
 // ===========================================================================
-
-- (void)showInProjectEditor:(PCProjectEditor *)pe
-{
-  [pe setEditorView:_iView];
-}
-
-- (void)show
-{
-  [_window makeKeyAndOrderFront:self];
-}
 
 - (BOOL)saveFileIfNeeded
 {
@@ -196,8 +326,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [_storage setAttributedString:as];
   RELEASE(as);
 
-  [_iView setNeedsDisplay:YES];
-  [_eView setNeedsDisplay:YES];
+  [_intEditorView setNeedsDisplay:YES];
+  [_extEditorView setNeedsDisplay:YES];
   
   return YES;
 }
@@ -207,23 +337,15 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   if ([self editorShouldClose])
     {
       // Close window first if visible
-      if ([_window isVisible] && (sender != _window))
+      if (_isWindowed && [_window isVisible] && (sender != _window))
 	{
 	  [_window close];
 	}
 
-      // Remove internal editor view
-      if ([_iView superview])
-	{
-	  [_iView removeFromSuperview];
-	}
-
-      // Inform delegate
-      if (_delegate 
-	  && [_delegate respondsToSelector:@selector(editorDidClose:)])
-	{
-	  [_delegate editorDidClose:self];
-	}
+      // Inform about closing
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCEditorDidCloseNotification
+	              object:self];
 
       return YES;
     }
@@ -236,7 +358,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
     {
       BOOL ret;
 
-      if ([_window isVisible])
+      if (_isWindowed && [_window isVisible])
 	{
 	  [_window makeKeyAndOrderFront:self];
 	}
@@ -282,9 +404,10 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 {
   if ([sender isEqual:_window])
     {
-      if ([_iView superview] != nil) 
+      if (_intScrollView) 
 	{
-	  // Just close if this file also displayed in internal view
+	  // Just close if this file also displayed in int view
+	  _isWindowed = NO;
 	  return YES;
 	}
       else
@@ -298,24 +421,22 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-  if( [[aNotification object] isEqual:_window] )
-  {
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName:PCEditorDidBecomeKeyNotification object:self];
-  }
+  if ([[aNotification object] isEqual:_window])
+    {
+      [_window makeFirstResponder:_extEditorView];
+    }
 }
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-  if( [[aNotification object] isEqual:_window] )
-  {
-    [[NSNotificationCenter defaultCenter] 
-      postNotificationName:PCEditorDidResignKeyNotification object:self];
-  }
+  if ([[aNotification object] isEqual:_window])
+    {
+      [_window makeFirstResponder:_window];
+    }
 }
 
 // ===========================================================================
-// ==== TextView (_iView, _eView) delegate
+// ==== TextView (_intEditorView, _extEditorView) delegate
 // ===========================================================================
 
 - (void)textDidChange:(NSNotification *)aNotification
@@ -325,12 +446,19 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (BOOL)becomeFirstResponder
 {
-  if (_delegate 
-      && [_delegate respondsToSelector:@selector(setBrowserPath:category:)])
-    {
-      [_delegate setBrowserPath:[_path lastPathComponent] category:_category];
-    }
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidBecomeActiveNotification
+                  object:self];
   
+  return YES;
+}
+
+- (BOOL)resignFirstResponder
+{
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidResignActiveNotification
+                  object:self];
+
   return YES;
 }
 

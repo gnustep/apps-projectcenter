@@ -12,13 +12,7 @@
 
 @interface PCProject (ComponentHandling)
 
-- (void)showEditorView:(id)sender;
-
 - (void)runSelectedTarget:(id)sender;
-
-- (NSDictionary *)buildOptions;
-
-- (BOOL)isEditorActive;
 
 @end
 

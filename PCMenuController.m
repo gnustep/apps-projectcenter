@@ -37,17 +37,19 @@
   {
       NSRect fr = NSMakeRect(20,30,160,20);
 
-      [[NSNotificationCenter defaultCenter] addObserver:self 
-	selector:@selector(editorDidBecomeKey:)
-	name:PCEditorDidBecomeKeyNotification 
-	object:nil];
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidBecomeActive:)
+	       name:PCEditorDidBecomeActiveNotification 
+	     object:nil];
 
-      [[NSNotificationCenter defaultCenter] addObserver:self 
-	selector:@selector(editorDidResignKey:)
-	name:PCEditorDidResignKeyNotification 
-	object:nil];
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidResignActive:)
+	       name:PCEditorDidResignActiveNotification 
+	     object:nil];
 
-      editorIsKey = NO;
+      editorIsActive = NO;
 
       projectTypeAccessaryView = [[NSBox alloc] init];
       projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
@@ -121,7 +123,7 @@
 
 - (void)showEditorPanel:(id)sender
 {
-  [[projectManager activeProject] showEditorView:self];
+  [[[projectManager activeProject] projectWindow] showProjectEditor:self];
 }
 
 // Project
@@ -305,7 +307,7 @@
       }
       else
       {
-	  [PCProjectEditor openFileInEditor:filePath];
+	  [projectManager openFileWithEditor:filePath];
       }
   }
 }
@@ -363,8 +365,9 @@
 	  [projectManager closeFile];
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
 	             forKey:PCNonProject];
-	  [project browserDidClickFile:[newFilePath lastPathComponent]
-	                      category:category];
+	  [[project projectEditor] editorForFile:newFilePath
+	                                category:category
+				        windowed:NO];
 	}
     }
 }
@@ -482,7 +485,6 @@
 {
   NSString    *menuTitle = [[menuItem menu] title];
   PCProject   *aProject = [projectManager activeProject];
-  NSResponder *firstResponder = [[NSApp keyWindow] firstResponder];
 
   if ([[projectManager loadedProjects] count] == 0) 
     {
@@ -571,7 +573,7 @@
   // File related menu items
   if (([menuTitle isEqualToString: @"File"]))
     {
-      if (![[firstResponder className] isEqualToString: @"PCEditorView"])
+      if (!editorIsActive)
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
@@ -583,7 +585,7 @@
     }
 
   // Find menu items
-  if (editorIsKey == NO && [menuTitle isEqualToString: @"Find"])
+  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
     {
       if (![[[PCTextFinder sharedFinder] findPanel] isVisible])
 	{
@@ -599,14 +601,14 @@
   return YES;
 }
 
-- (void)editorDidResignKey:(NSNotification *)aNotification
+- (void)editorDidResignActive:(NSNotification *)aNotif
 {
-    editorIsKey = NO;
+  editorIsActive = NO;
 }
 
-- (void)editorDidBecomeKey:(NSNotification *)aNotification
+- (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
-  editorIsKey = YES;
+  editorIsActive = YES;
 }
 
 @end

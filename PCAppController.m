@@ -213,14 +213,18 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
-  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == NO
-      && [[fileName pathExtension] isEqualToString:@"project"] == NO) 
+  [NSApp activateIgnoringOtherApps:YES];
+
+  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
+      && [[fileName pathExtension] isEqualToString:@"project"] == YES) 
   {
-    return NO;
+    [projectManager openProjectAt:fileName];
+    return YES;
   }
 
-  [NSApp activateIgnoringOtherApps:YES];
-  return [projectManager openProjectAt:fileName];
+  [projectManager openFileWithEditor:fileName];
+
+  return YES;
 }
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification

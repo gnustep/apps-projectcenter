@@ -60,7 +60,6 @@ libProjectCenter_HEADER_FILES = \
   PCProjectHistory.h \
   \
   PCEditor.h \
-  PCEditor+UInterface.h \
   PCEditorView.h \
   PCEditorView+Highlighting.h \
   PCTextFinder.h \
@@ -105,7 +104,6 @@ libProjectCenter_OBJC_FILES = \
   PCProjectHistory.m \
   \
   PCEditor.m \
-  PCEditor+UInterface.m \
   PCEditorView.m \
   PCEditorView+Highlighting.m \
   PCTextFinder.m \

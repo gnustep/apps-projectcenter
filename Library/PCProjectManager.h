@@ -63,8 +63,9 @@ extern NSString *ActiveProjectDidChangeNotification;
   PCProject           *activeProject;
   
   NSString            *rootBuildPath;
-
   NSTimer             *saveTimer;
+
+  NSMutableDictionary *nonProjectEditors;
 
   @private
     BOOL _needsReleasing;
@@ -171,6 +172,13 @@ extern NSString *ActiveProjectDidChangeNotification;
 - (BOOL)addProjectFiles;
 - (BOOL)saveProjectFiles;
 - (BOOL)removeProjectFiles;
+
+// ============================================================================
+// ==== Non project editors
+// ============================================================================
+
+- (void)openFileWithEditor:(NSString *)path;
+- (void)editorDidClose:(NSNotification *)aNotif;
 
 @end
 
