@@ -30,7 +30,8 @@
 
 #import <ProjectCenter/ProjectCenter.h>
 
-#define BUNDLE_INSTALL @"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles/"
+//#define BUNDLE_INSTALL @"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles/"
+#define BUNDLE_INSTALL @"$(GNUSTEP_INSTALLATION_DIR)/Library/Bundles/"
 
 @interface PCBundleProject (CreateUI)
 

@@ -18,7 +18,7 @@
     LIBRARIES = ("gnustep-base"); 
     MAININTERFACE = ""; 
     MAKEFILEDIR = "$(GNUSTEP_SYSTEM_ROOT)/Makefiles"; 
-    INSTALLDIR = "$(GNUSTEP_LOCAL_ROOT)/Library/Bundles";
+    INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)/Library/Bundles";
     OTHER_FILES = (); 
     OTHER_RESOURCES = (); 
     OTHER_SOURCES = (); 
