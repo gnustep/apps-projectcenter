@@ -222,7 +222,8 @@
    *
    */
 
-  if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")]) {
+  if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")] ||
+      [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) {
     NSString *tname;
 
     openPath = [NSString stringWithString:@"openapp"];

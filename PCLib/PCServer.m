@@ -78,9 +78,11 @@
   NSUserDefaults *udef = [NSUserDefaults standardUserDefaults];
   NSString *editor = [udef objectForKey:Editor];
 
-  editorTask = [[[NSTask alloc] init] autorelease];
-  [editorTask setLaunchPath:editor];  
+  args = [editor componentsSeparatedByString: @" "];
 
+  editorTask = [[[NSTask alloc] init] autorelease];
+  [editorTask setLaunchPath:[args objectAtIndex: 0]];
+  [args removeObjectAtIndex: 0];
   [args addObject:file];
   [editorTask setArguments:args];
 
