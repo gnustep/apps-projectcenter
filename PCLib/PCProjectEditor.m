@@ -25,11 +25,12 @@
     NSRect frame;
     NSTextView *etv;
 
-    componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];
-    [componentView setTitlePosition:NSNoTitle];
-    [componentView setBorderType:NSNoBorder];
-    [componentView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-    [componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
+    frame = NSMakeRect(0,0,562,248);
+    _componentView = [[NSBox alloc] initWithFrame:frame];
+    [_componentView setTitlePosition: NSNoTitle];
+    [_componentView setBorderType: NSNoBorder];
+    [_componentView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
+    [_componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
 
     frame = NSMakeRect(20,16,240,16);
     methods = [[NSPopUpButton alloc] initWithFrame:frame];
@@ -37,38 +38,38 @@
     [methods setPullsDown:YES];
     [methods setTarget:self];
     [methods setAction:@selector(pullDownSelected:)];
-    [componentView addSubview:methods];
+    [_componentView addSubview:methods];
     RELEASE(methods);
 
-    frame = NSMakeRect (-1,32,562,40);
-    scrollView = [[NSScrollView alloc] initWithFrame:frame];
-    [scrollView setHasHorizontalScroller: YES];
-    [scrollView setHasVerticalScroller: YES];
-    [scrollView setBorderType: NSBezelBorder];
-    [scrollView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+    frame = NSMakeRect (0,32,562,40);
+    _scrollView = [[NSScrollView alloc] initWithFrame:frame];
+    [_scrollView setHasHorizontalScroller: YES];
+    [_scrollView setHasVerticalScroller: YES];
+    [_scrollView setBorderType: NSBezelBorder];
+    [_scrollView setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];
 
     // This is a placeholder!
-    frame = [[scrollView contentView] frame];
-    etv = [[NSTextView alloc] initWithFrame:frame];
+    frame = [[_scrollView contentView] frame];
+    etv =   [[NSTextView alloc] initWithFrame:frame];
     [etv setMinSize: NSMakeSize (0, 0)];
-    [etv setMaxSize:NSMakeSize(1e7, 1e7)];
-    [etv setRichText:NO];
-    [etv setEditable:NO];
-    [etv setSelectable:YES];
-    [etv setVerticallyResizable:YES];
-    [etv setHorizontallyResizable:NO];
-    [etv setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-    [[etv textContainer] setWidthTracksTextView:YES];
-    [scrollView setDocumentView:etv];
+    [etv setMaxSize: NSMakeSize(1e7, 1e7)];
+    [etv setRichText: NO];
+    [etv setEditable: NO];
+    [etv setSelectable: YES];
+    [etv setVerticallyResizable: YES];
+    [etv setHorizontallyResizable: NO];
+    [etv setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];
+    [[etv textContainer] setWidthTracksTextView: YES];
+    [_scrollView setDocumentView: etv];
     RELEASE(etv);
 
-    frame.size = NSMakeSize([scrollView contentSize].width,1e7);
+    frame.size = NSMakeSize([_scrollView contentSize].width,1e7);
     [[etv textContainer] setContainerSize:frame.size];
 
-    [componentView addSubview:scrollView];
-    RELEASE(scrollView);
+    [_componentView addSubview:_scrollView];
+    RELEASE(_scrollView);
 
-    [componentView sizeToFit];
+    [_componentView sizeToFit];
 }
 
 @end
@@ -81,46 +82,47 @@
 
     if((self = [super init]))
     {
-        currentProject = aProject;
-	componentView  = nil;
+        _currentProject = aProject;
+	_componentView  = nil;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if( componentView ) RELEASE(componentView);
+    if( _componentView ) RELEASE(_componentView);
 
     [super dealloc];
 }
 
 - (NSView *)componentView
 {
-    if (componentView == nil) 
+    if (_componentView == nil) 
     {
 	[self _createComponentView];
     }
 
-    return componentView;
+    return _componentView;
 }
 
 - (void)setEditorView:(PCEditorView *)ev
 {
     NSRect frame;
 
-    editor = ev;
-    [scrollView setDocumentView:editor];
+    _editorView = ev;
 
-    frame = [[scrollView contentView] frame];
-    frame.size = NSMakeSize([scrollView contentSize].width,1e7);
-    [[editor textContainer] setContainerSize:frame.size];
+    [_scrollView setDocumentView:_editorView];
 
-    [editor setNeedsDisplay:YES];
+    frame = [[_scrollView contentView] frame];
+    frame.size = NSMakeSize([_scrollView contentSize].width,1e7);
+    [_editorView setFrame:frame];
+    [_editorView sizeToFit];
 }
 
 - (PCEditorView *)editorView
 {
-    return editor;
+    return _editorView;
 }
 
 @end
+

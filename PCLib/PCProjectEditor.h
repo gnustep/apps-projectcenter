@@ -20,10 +20,10 @@
 
 @interface PCProjectEditor : NSObject <ProjectComponent>
 {
-    NSBox     *componentView;
-    PCProject *currentProject;
-    PCEditorView *editor;
-    NSScrollView *scrollView;
+    NSBox        *_componentView;
+    PCProject    *_currentProject;
+    PCEditorView *_editorView;
+    NSScrollView *_scrollView;
 }
 
 - (id)initWithProject:(PCProject *)aProject;

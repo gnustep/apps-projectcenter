@@ -61,18 +61,21 @@ static int  _tabFlags       = PCTab4Sp;
 
     _keywords = [[NSArray alloc] initWithObjects:@"@class",
                                                  @"@selector",
-						 @"#import",
-						 @"#include",
-						 @"#ifndef",
-						 @"#if defined",
-						 @"#define",
-						 @"#endif",
-						 @"#pragma",
-						 @"#warning",
 						 @"@interface",
 						 @"@implementation",
 						 @"@end",
 						 @"@protocol",
+						 @"#import",
+						 @"#include",
+						 @"#define",
+				                 @"#ifdef",
+						 @"#ifndef",
+						 @"#if defined",
+						 @"#else",
+						 @"#elif",
+						 @"#endif",
+						 @"#pragma",
+						 @"#warning",
 						 nil];
   }
   return self;
@@ -208,3 +211,17 @@ static int  _tabFlags       = PCTab4Sp;
 }
 
 @end
+
+
+
+
+
+
+
+
+
+
+
+
+
+

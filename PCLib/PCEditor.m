@@ -1,3 +1,4 @@
+
 /* 
  * PCEditor.m created by probert on 2002-01-29 20:37:27 +0000
  *
@@ -18,6 +19,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 @interface PCEditor (InitUI)
 
 - (void)_initUI;
+- (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr;
 
 @end
 
@@ -26,104 +28,110 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 - (void)_initUI
 {
   NSScrollView *scrollView;
-  NSLayoutManager *lm;
-  NSTextContainer *tc;
-  unsigned int style = NSTitledWindowMask
-                       | NSClosableWindowMask
-                       | NSMiniaturizableWindowMask
-                       | NSResizableWindowMask;
+  unsigned int style;
+  NSRect       rect;
 
-  NSRect rect = NSMakeRect(100,100,512,320);
+  /*
+   * Creating shared text storage
+   */
 
-  window = [[NSWindow alloc] initWithContentRect:rect
-                                       styleMask:style
-                                       backing:NSBackingStoreBuffered
-                                       defer:YES];
+  _storage = [[NSTextStorage alloc] init];
 
-  [window setReleasedWhenClosed:NO];
-  [window setMinSize:NSMakeSize(512,320)];
+  /*
+   * Creating external view's window
+   *
+   * FIXME: this still is untested as I <d.ayers@inode.at>
+   * haven't found the way to display the external window yet. :-(
+   */
 
-  rect = [[window contentView] frame];
-  rect.origin.x = -1;
-  rect.origin.y = -1;
-  rect.size.width += 2;
+  style = NSTitledWindowMask
+        | NSClosableWindowMask
+        | NSMiniaturizableWindowMask
+        | NSResizableWindowMask;
+  rect = NSMakeRect(100,100,512,320);
+
+  _window = [[NSWindow alloc] initWithContentRect:rect
+                                        styleMask:style
+                                        backing:NSBackingStoreBuffered
+                                        defer:YES];
+  [_window setReleasedWhenClosed:NO];
+  [_window setMinSize:NSMakeSize(512,320)];
+  rect = [[_window contentView] frame];
+
+  /*
+   * Creating external view's scroll view
+   */
 
   scrollView = [[NSScrollView alloc] initWithFrame:rect];
+  [scrollView setHasHorizontalScroller:  NO];
+  [scrollView setHasVerticalScroller:   YES];
+  [scrollView setBorderType:  NSBezelBorder];
+  [scrollView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
+  rect = [[scrollView contentView] frame];
 
-  // Now the text editing stuff
-  storage = [[NSTextStorage alloc] init];
-  
-  lm = [[NSLayoutManager alloc] init];
+  /*
+   * Creating external view
+   */
 
-  rect.origin.x = 0;
-  rect.origin.y = 0;
-  rect.size.height -= 24;
-  rect.size.width -= 4;
+  _eView = [self _createEditorViewWithFrame:rect];
 
-  tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
-  [lm addTextContainer:tc];
-  RELEASE(tc);
+  /*
+   * Setting up external view / scroll view / window
+   */
 
-  [storage addLayoutManager:lm];
-  RELEASE(lm);
-
-  iView = [[PCEditorView alloc] initWithFrame:rect
-                                textContainer:tc];
-  [iView setEditor:self];
-
-  [iView setMinSize:NSMakeSize (0, 0)];
-  [iView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [iView setRichText:YES];
-  [iView setUsesFontPanel:YES];
-  [iView setEditable:YES];
-  [iView setSelectable:YES];
-  [iView setVerticallyResizable:YES];
-  [iView setHorizontallyResizable:NO];
-  [iView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [iView setBackgroundColor:[NSColor whiteColor]];
-  [[iView textContainer] setWidthTracksTextView:YES];
-
-  lm = [[NSLayoutManager alloc] init];
-
-  tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
-  [lm addTextContainer:tc];
-  RELEASE(tc);
-
-  [storage addLayoutManager:lm];
-  RELEASE(lm);
-
-  eView = [[PCEditorView alloc] initWithFrame:rect
-                                textContainer:tc];
-  [eView setEditor:self];
-
-  [eView setMinSize: NSMakeSize (0, 0)];
-  [eView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [eView setRichText:YES];
-  [eView setUsesFontPanel:YES];
-  [eView setEditable:YES];
-  [eView setSelectable:YES];
-  [eView setVerticallyResizable:YES];
-  [eView setHorizontallyResizable:NO];
-  [eView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [eView setBackgroundColor:[NSColor whiteColor]];
-  [[eView textContainer] setWidthTracksTextView:YES];
-
-  [scrollView setDocumentView:eView];
-  RELEASE(eView);
-
-  rect.size = NSMakeSize([scrollView contentSize].width,1e7);
-  [[eView textContainer] setContainerSize:rect.size];
-
-  [scrollView setHasHorizontalScroller: YES];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
-  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-
-  [window setContentView:scrollView];
-  [window setDelegate:self];
-  [window makeFirstResponder:eView];
-
+  [scrollView setDocumentView:_eView];
+  [_window setContentView:scrollView];
+  [_window setDelegate:self];
+  [_window makeFirstResponder:_eView];
   RELEASE(scrollView);
+
+  /*
+   * Creating internal view
+   *
+   * The width is actually irrelavent here as the the PCProjectEditor
+   * will reset it to the width of the content view if its scroll view.
+   * The height should be large as this will be the height it will be
+   * will be visible.
+   */
+
+  rect = NSMakeRect( 0, 0, 1e7, 1e7);
+  _iView = [self _createEditorViewWithFrame:rect];
+  RETAIN(_iView);
+}
+
+- (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
+{
+  PCEditorView    *ev;
+  NSTextContainer *tc;
+  NSLayoutManager *lm;
+
+  /*
+   * setting up the objects needed to manage the view but using the
+   * shared textStorage.
+   */
+
+  lm = [[NSLayoutManager alloc] init];
+  tc = [[NSTextContainer alloc] initWithContainerSize:fr.size];
+  [lm addTextContainer:tc];
+  RELEASE(tc);
+
+  [_storage addLayoutManager:lm];
+  RELEASE(lm);
+
+  ev = [[PCEditorView alloc] initWithFrame:fr
+                             textContainer:tc];
+  [ev setEditor:self];
+
+  [ev setMinSize: NSMakeSize(  0,   0)];
+  [ev setMaxSize: NSMakeSize(1e7, 1e7)];
+  [ev setRichText:                 YES];
+  [ev setAutoresizingMask: NSViewWidthSizable|NSViewHeightSizable];
+  [ev setVerticallyResizable:      YES];
+  [ev setHorizontallyResizable:     NO];
+  [ev setTextContainerInset:   NSMakeSize( 5, 5)];
+  [[ev textContainer] setWidthTracksTextView:YES];
+
+  return AUTORELEASE(ev);
 }
 
 @end
@@ -132,181 +140,187 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (id)initWithPath:(NSString*)file
 {
-    if((self = [super init]))
-    {
-        NSString *t = [NSString stringWithContentsOfFile:file];
-	NSAttributedString *as = [[NSAttributedString alloc] initWithString:t];
+  if((self = [super init]))
+  {
+    NSString            *t;
+    NSAttributedString *as;
+    NSDictionary       *at;
+    NSFont             *ft;
 
-	isEdited = NO;
-	path = [file copy];
+    ft = [NSFont userFixedPitchFontOfSize:0.0];
+    at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
+    t  = [NSString stringWithContentsOfFile:file];
+    as = [[NSAttributedString alloc] initWithString:t attributes:at];
 
-        [self _initUI];
+    _isEdited = NO;
+    _path = [file copy];
 
-	[window setTitle:file];
-	[storage setAttributedString:as];
-	RELEASE(as);
+    [self _initUI];
 
-	[iView setNeedsDisplay:YES];
-	[eView setNeedsDisplay:YES];
+    [_window setTitle:file];
+    [_storage setAttributedString:as];
+    RELEASE(as);
 
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-	                                      selector:@selector(textDidChange:)
-				              name:NSTextDidChangeNotification
-				              object:eView];
+    [_iView setNeedsDisplay:YES];
+    [_eView setNeedsDisplay:YES];
 
-	[[NSNotificationCenter defaultCenter] addObserver:self 
-	                                      selector:@selector(textDidChange:)
-				              name:NSTextDidChangeNotification
-				              object:iView];
-    }
-    return self;
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                          selector:@selector(textDidChange:)
+                                          name:NSTextDidChangeNotification
+                                          object:_eView];
+    [[NSNotificationCenter defaultCenter] addObserver:self 
+                                          selector:@selector(textDidChange:)
+                                          name:NSTextDidChangeNotification
+                                          object:_iView];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    RELEASE(window);
-    RELEASE(path);
+  RELEASE(_window);
+  RELEASE(_path);
 
-    RELEASE(iView);
-    RELEASE(storage);
+  RELEASE(_iView);
+  RELEASE(_storage);
 
-    [super dealloc];
+  [super dealloc];
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  _delegate = aDelegate;
 }
 
 - (id)delegate
 {
-    return delegate;
+  return _delegate;
 }
 
 - (NSWindow *)editorWindow
 {
-    return window;
+  return _window;
 }
 
 - (NSString *)path
 {
-    return path;
+  return _path;
 }
 
 - (void)setIsEdited:(BOOL)yn
 {
-    [window setDocumentEdited:yn];
-    isEdited = yn;
+  [_window setDocumentEdited:yn];
+  _isEdited = yn;
 }
 
 - (void)showInProjectEditor:(PCProjectEditor *)pe
 {
-    [pe setEditorView:iView];
+  [pe setEditorView:_iView];
 }
 
 - (void)show
 {
-    [window makeKeyAndOrderFront:self];
+  [_window makeKeyAndOrderFront:self];
 }
 
 - (void)close
 {
-    if( isEdited )
+  if( _isEdited )
+  {
+    BOOL ret;
+
+    if( [_window isVisible] )
     {
-        BOOL ret;
-
-        if( [window isVisible] )
-	{
-	    [window makeKeyAndOrderFront:self];
-	}
-
-	ret = NSRunAlertPanel(@"Edited File!",
-	                      @"Should '%@' be saved before closing?",
-			      @"Yes",@"No",nil,path);
-
-	if( ret == YES )
-	{
-	    ret = [self saveFile];
-
-	    if( ret == NO )
-	    {
-	        NSRunAlertPanel(@"Save Failed!",
-		                @"Could not save file '%@'!",
-				@"OK",nil,nil,path);
-	    }
-	}
-
-        [self setIsEdited:NO];
+      [_window makeKeyAndOrderFront:self];
     }
 
-    if( delegate && [delegate respondsToSelector:@selector(editorDidClose:)] )
+    ret = NSRunAlertPanel(@"Edited File!",
+                          @"Should '%@' be saved before closing?",
+                          @"Yes",@"No",nil,_path);
+
+    if( ret == YES )
     {
-        [delegate editorDidClose:self];
+      ret = [self saveFile];
+
+      if((ret == NO))
+      {
+        NSRunAlertPanel(@"Save Failed!",
+                        @"Could not save file '%@'!",
+                        @"OK",nil,nil,_path);
+      }
     }
+
+    [self setIsEdited:NO];
+  }
+
+  if( _delegate && [_delegate respondsToSelector:@selector(editorDidClose:)] )
+  {
+    [_delegate editorDidClose:self];
+  }
 }
 
 - (BOOL)saveFileIfNeeded
 {
-    if( isEdited )
-    {
-        return [self saveFile];
-    }
+  if((_isEdited))
+  {
+    return [self saveFile];
+  }
 
-    return YES;
+  return YES;
 }
 
 - (BOOL)saveFile
 {
-    [self setIsEdited:NO];
+  [self setIsEdited:NO];
 
-    // Operate on the text storage!
-    return [[storage string] writeToFile:path atomically:YES];
+  // Operate on the text storage!
+  return [[_storage string] writeToFile:_path atomically:YES];
 }
 
 - (BOOL)revertFile
 {
-    NSString *text = [NSString stringWithContentsOfFile:path];
-    NSAttributedString *as = [[NSAttributedString alloc] initWithString:text];
+  NSString *text = [NSString stringWithContentsOfFile:_path];
+  NSAttributedString *as = [[NSAttributedString alloc] initWithString:text];
 
-    [self setIsEdited:NO];
+  [self setIsEdited:NO];
 
-    // Operate on the text storage!
-    [storage setAttributedString:as];
-    RELEASE(as);
+  // Operate on the text storage!
+  [_storage setAttributedString:as];
+  RELEASE(as);
 
-    [iView setNeedsDisplay:YES];
-    [eView setNeedsDisplay:YES];
+  [_iView setNeedsDisplay:YES];
+  [_eView setNeedsDisplay:YES];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
-    if( [[aNotification object] isEqual:window] )
-    {
-        [self close];
-    }
+  if( [[aNotification object] isEqual:_window] )
+  {
+    [self close];
+  }
 }
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-    if( [[aNotification object] isEqual:window] )
-    {
-	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
-    }
+  if( [[aNotification object] isEqual:_window] )
+  {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
+  }
 }
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-    if( [[aNotification object] isEqual:window] )
-    {
-	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
-    }
+  if( [[aNotification object] isEqual:_window] )
+  {
+    [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
+  }
 }
 
 - (void)textDidChange:(NSNotification *)aNotification
 {
-    [self setIsEdited:YES];
+  [self setIsEdited:YES];
 }
 
 @end

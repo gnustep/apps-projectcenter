@@ -18,15 +18,15 @@
 
 @interface PCEditor : NSObject
 {
-    PCEditorView    *iView;
-    PCEditorView    *eView;
-    NSTextStorage   *storage;
-    NSWindow        *window;
-    NSMutableString *path;
+    PCEditorView    *_iView; // internal (embedded) view
+    PCEditorView    *_eView; // external (window) view
+    NSTextStorage   *_storage;
+    NSWindow        *_window;
+    NSMutableString *_path;
 
-    id delegate;
+    id   _delegate;
 
-    BOOL isEdited;
+    BOOL _isEdited;
 }
 
 - (id)initWithPath:(NSString*)file;
