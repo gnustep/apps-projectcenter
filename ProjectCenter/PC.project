@@ -1,6 +1,6 @@
 {
     APPCLASS = NSApplication;
-    APPKIT = "GNUSTEP-GUI";
+    APPKIT = GNUSTEP-GUI;
     APPLICATIONICON = ProjectCenter.app.tiff;
     BUILDTOOL = gnumake;
     CLASS_FILES = (
@@ -11,13 +11,13 @@
 	PCMenuController.m,
 	PCPrefController.m,
 	ProjectCenter_main.m,
-	"PCAppController+MenuHandling.m"
+	PCAppController+MenuHandling.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
     DOCU_FILES = (
     );
-    FOUNDATION = "GNUSTEP-BASE";
+    FOUNDATION = GNUSTEP-BASE;
     FRAMEWORKS = (
     );
     HEADER_FILES = (
@@ -27,7 +27,7 @@
 	PCLogController.h,
 	PCMenuController.h,
 	PCPrefController.h,
-	"PCAppController+MenuHandling.h"
+	PCAppController+MenuHandling.h
     );
     IMAGES = (
 	FileIcon_.c.tiff,
@@ -55,18 +55,19 @@
 	ProjectCentre_uml.tiff,
 	ProjectCenter_dist.tiff
     );
-    INSTALLDIR = "$(HOME)/Apps";
+    INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
     INTERFACES = (
     );
     LANGUAGE = English;
     LAST_EDITING = "";
     LIBRARIES = (
-	"gnustep-base",
-	"gnustep-gui",
+	gnustep-base,
+	gnustep-gui,
 	ProjectCenter
     );
+    LINKEROPTIONS = "";
     MAININTERFACE = main.gmodel;
-    MAKEFILEDIR = /usr/GNUstep/Makefiles;
+    MAKEFILEDIR = "/usr/GNUstep/Makefiles";
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (

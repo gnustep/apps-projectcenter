@@ -46,7 +46,13 @@ static PCBundleMakefileFactory *_factory = nil;
     NSString *tmp;
     NSEnumerator *enumerator;
     int i;
-    NSString *installDir = [NSString stringWithString:@"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles"];
+    NSString *installDir;
+    
+    installDir = [prDict objectForKey:PCInstallDir];
+    if( [installDir isEqualToString:@""] )
+    {
+        installDir = [NSString stringWithString:@"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles"];
+    }
 
     // Header information
     [string appendString:@"#\n"];

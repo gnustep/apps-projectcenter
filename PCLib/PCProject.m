@@ -259,6 +259,8 @@
   [installPathField setBezeled: YES];
   [installPathField setDrawsBackground: YES];
   [installPathField setStringValue:@""];
+  [installPathField setAction:@selector(changeCommonProjectEntry:)];
+  [installPathField setTarget:self];
   [projectAttributeInspectorView addSubview:installPathField];
 
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
@@ -274,10 +276,12 @@
   toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
   [toolField setAlignment: NSLeftTextAlignment];
   [toolField setBordered: YES];
-  [toolField setEditable: YES];
+  [toolField setEditable: NO];
   [toolField setBezeled: YES];
   [toolField setDrawsBackground: YES];
   [toolField setStringValue:@""];
+  [toolField setAction:@selector(changeCommonProjectEntry:)];
+  [toolField setTarget:self];
   [projectAttributeInspectorView addSubview:toolField];
 
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,232,64,21)];
@@ -297,6 +301,8 @@
   [ccOptField setBezeled: YES];
   [ccOptField setDrawsBackground: YES];
   [ccOptField setStringValue:@""];
+  [ccOptField setAction:@selector(changeCommonProjectEntry:)];
+  [ccOptField setTarget:self];
   [projectAttributeInspectorView addSubview:ccOptField];
 
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
@@ -312,10 +318,12 @@
   ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
   [ldOptField setBordered: YES];
-  [ldOptField setEditable: YES];
+  [ldOptField setEditable: NO];
   [ldOptField setBezeled: YES];
   [ldOptField setDrawsBackground: YES];
   [ldOptField setStringValue:@""];
+  [ldOptField setAction:@selector(changeCommonProjectEntry:)];
+  [ldOptField setTarget:self];
   [projectAttributeInspectorView addSubview:ldOptField];
 
   /*
@@ -489,7 +497,7 @@
     return [NSArray arrayWithObjects:@"h",nil];
   }
   else if ([key isEqualToString:PCOtherSources]) {
-    return [NSArray arrayWithObjects:@"c",@"C",nil];
+    return [NSArray arrayWithObjects:@"c",@"C",@"M",nil];
   }
   else if ([key isEqualToString:PCLibraries]) {
     return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
@@ -499,7 +507,6 @@
   }
   else if ([key isEqualToString:PCImages]) {
     return [NSImage imageFileTypes];
-    //return [NSArray arrayWithObjects:@"tiff",@"TIFF",@"jpg",@"JPG",@"jpeg",@"JPEG",@"bmp",@"BMP",nil];
   }
 
   return nil;
@@ -507,7 +514,7 @@
 
 - (void)setProjectName:(NSString *)aName
 {
-    [projectName autorelease];
+    AUTORELEASE(projectName);
     projectName = [aName copy];
 }
 
@@ -518,9 +525,7 @@
 
 - (NSWindow *)projectWindow
 {
-  if (!projectWindow) NSLog(@"No window??????");
-  
-  return projectWindow;
+    return projectWindow;
 }
 
 - (Class)principalClass
@@ -534,23 +539,23 @@
 
 - (id)delegate
 {
-  return delegate;
+    return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-  delegate = aDelegate;
+    delegate = aDelegate;
 }
 
 - (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder
 {
-  [projectManager autorelease];
-  projectManager = [aBuilder retain];
+    AUTORELEASE(projectManager);
+    projectManager = RETAIN(aBuilder);
 }
 
 - (id<ProjectBuilder>)projectBuilder
 {
-  return projectManager;
+    return projectManager;
 }
 
 //===========================================================================================
@@ -580,7 +585,7 @@
         }
     }
 
-    return [self save];
+    return YES;
 }
 
 - (NSArray *)sourceFileKeys
@@ -619,7 +624,7 @@
 
 - (void)browserDidSelectFileNamed:(NSString *)fileName
 {
-  [fileNameField setStringValue:fileName];
+    [fileNameField setStringValue:fileName];
 }
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
@@ -637,7 +642,7 @@
 
 - (void)addFile:(NSString *)file forKey:(NSString *)type
 {
-  [self addFile:file forKey:type copy:NO];
+    [self addFile:file forKey:type copy:NO];
 }
 
 - (void)addFile:(NSString *)file forKey:(NSString *)type copy:(BOOL)yn
@@ -666,9 +671,8 @@
     // Add the new file
     [files addObject:newFile];
     [projectDict setObject:files forKey:type];
-  
-    // Synchronise the makefile!
-    [self writeMakefile];
+
+    [projectWindow setDocumentEdited:YES];
   
     if (yn) {
         NSFileManager *manager = [NSFileManager defaultManager];
@@ -693,7 +697,8 @@
     array = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
     [array removeObject:file];
     [projectDict setObject:array forKey:key];
-    [self writeMakefile];
+
+    [projectWindow setDocumentEdited:YES];
 }
 
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn
@@ -769,8 +774,7 @@
     [self setProjectName:[projectDict objectForKey:PCProjectName]];
     [projectWindow setTitle:[NSString stringWithFormat:@"%@ - %@",projectName,projectPath]];
 
-    // Update the GNUmakefile and the interface
-    [self writeMakefile];
+    // Update the interface
     [self updateValuesFromProjectDict];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
@@ -830,6 +834,13 @@
     }
 
     ret = [projectDict writeToFile:file atomically:YES];
+
+    if( ret == YES )
+    {
+	[projectWindow setDocumentEdited:NO];
+    }
+
+    [self writeMakefile];
 
     return ret;
 }
@@ -924,7 +935,7 @@
 
 - (BOOL)isSubProject
 {
-  return NO;
+    return NO;
 }
 
 //=============================================================================
@@ -933,7 +944,35 @@
 
 - (void)updateValuesFromProjectDict
 {
-  [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
+    [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
+    [installPathField setStringValue:[projectDict objectForKey:PCInstallDir]];
+    [toolField setStringValue:[projectDict objectForKey:PCBuildTool]];
+    [ccOptField setStringValue:[projectDict objectForKey:PCCompilerOptions]];
+    [ldOptField setStringValue:[projectDict objectForKey:PCLinkerOptions]];
+}
+
+- (void)changeCommonProjectEntry:(id)sender
+{
+    NSString *newEntry = [sender stringValue];
+
+    if( sender == installPathField )
+    {
+        [projectDict setObject:newEntry forKey:PCInstallDir];
+    }
+    else if ( sender == toolField )
+    {
+        [projectDict setObject:newEntry forKey:PCBuildTool];
+    }
+    else if ( sender == ccOptField )
+    {
+        [projectDict setObject:newEntry forKey:PCCompilerOptions];
+    }
+    else if ( sender == ldOptField )
+    {
+        [projectDict setObject:newEntry forKey:PCLinkerOptions];
+    }
+
+    [projectWindow setDocumentEdited:YES];
 }
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
@@ -971,6 +1010,7 @@
     NSDictionary *origin;
     NSArray *keys;
     NSEnumerator *enumerator;
+    BOOL projectHasChanged = NO;
 
     _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
                                                           ofType:@"proj"];
@@ -984,11 +1024,17 @@
         if( [projectDict objectForKey:key] == nil )
         {
             [projectDict setObject:[origin objectForKey:key] forKey:key];
+	    projectHasChanged = YES;
 
             NSRunAlertPanel(@"New Project Key!",
                             @"The key '%@' has been added.",
                             @"OK",nil,nil,key);
         }
+    }
+
+    if( projectHasChanged == YES )
+    {
+	[projectWindow setDocumentEdited:YES];
     }
 }
 
@@ -1029,7 +1075,9 @@
       [self showRunView:self];
     }
     else {
-      NSRunAlertPanel(@"Attention!",@"This project type cannot be executed by itself!",@"OK",nil,nil);
+      NSRunAlertPanel(@"Attention!",
+                      @"This project type is not executable!",
+		      @"OK",nil,nil);
     }
     break;
   case 4:
@@ -1072,47 +1120,49 @@
 
 - (void)showInspector:(id)sender
 {
-  [projectManager showInspectorForProject:self];
+    [projectManager showInspectorForProject:self];
 }
 
 - (id)updatedAttributeView
 {
-  return projectAttributeInspectorView;
+    return projectAttributeInspectorView;
 }
 
 - (id)updatedProjectView
 {
-  return projectProjectInspectorView;
+    return projectProjectInspectorView;
 }
 
 - (id)updatedFilesView
 {
-  return projectFileInspectorView;
+    return projectFileInspectorView;
 }
 
 - (void)showBuildTargetPanel:(id)sender
 {
-  if (![buildTargetPanel isVisible]) {
-    [buildTargetPanel center];
-  }
-  [buildTargetPanel makeKeyAndOrderFront:self];
+    if (![buildTargetPanel isVisible]) 
+    {
+	[buildTargetPanel center];
+    }
+
+    [buildTargetPanel makeKeyAndOrderFront:self];
 }
 
 - (void)setHost:(id)sender
 {
-  NSString *host = [buildTargetHostField stringValue];
-  [buildOptions setObject:host forKey:BUILD_HOST_KEY];
+    NSString *host = [buildTargetHostField stringValue];
+    [buildOptions setObject:host forKey:BUILD_HOST_KEY];
 }
 
 - (void)setArguments:(id)sender
 {
-  NSString *args = [buildTargetArgsField stringValue];
-  [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
+    NSString *args = [buildTargetArgsField stringValue];
+    [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
 }
 
 - (NSDictionary *)buildOptions
 {
-  return (NSDictionary *)buildOptions;
+    return (NSDictionary *)buildOptions;
 }
 
 @end
@@ -1183,9 +1233,8 @@
     if ([[self projectWindow] isDocumentEdited]) {
       if (NSRunAlertPanel(@"Project changed!",
 			  @"The project %@ has unsaved files! Should they be saved before closing?",
-			  @"Yes",
-			  @"No",
-			  nil,[self projectName])) {
+			  @"Yes", @"No", nil,[self projectName])) 
+      {
 	[self save];
       }
     }

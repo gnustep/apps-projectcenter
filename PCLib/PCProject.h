@@ -83,6 +83,7 @@ static NSString * const PCGModels             = @"INTERFACES";
 static NSString * const PCImages              = @"IMAGES";
 static NSString * const PCLibraries           = @"LIBRARIES";
 static NSString * const PCCompilerOptions     = @"COMPILEROPTIONS";
+static NSString * const PCLinkerOptions       = @"LINKEROPTIONS";
 static NSString * const PCProjectName         = @"PROJECT_NAME";
 static NSString * const PCProjType            = @"PROJECT_TYPE";
 static NSString * const PCPrincipalClass      = @"PRINCIPAL_CLASS";
@@ -100,6 +101,8 @@ static NSString * const PCRelease             = @"PROJECT_RELEASE";
 static NSString * const PCCopyright           = @"PROJECT_COPYRIGHT";
 static NSString * const PCGroup               = @"PROJECT_GROUP";
 static NSString * const PCSource              = @"PROJECT_SOURCE";
+static NSString * const PCInstallDir          = @"INSTALLDIR";
+static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 @class PCProjectBuilder;
 @class PCProjectDebugger;
@@ -246,6 +249,10 @@ static NSString * const PCSource              = @"PROJECT_SOURCE";
 //=============================================================================
 
 - (void)updateValuesFromProjectDict;
+    // Updates all values in the inspector based on the current project dict
+
+- (void)changeCommonProjectEntry:(id)sender;
+    // Gets invoked upon UI interaction in the inspector
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict;
 - (void)updateProjectDict;

@@ -172,7 +172,7 @@
   [projectDict setObject:[principalClassField stringValue] 
 	       forKey:PCPrincipalClass];
 
-  [self writeMakefile];
+  [projectWindow setDocumentEdited:YES];
 }
 
 @end

@@ -238,12 +238,12 @@
 
 - (void)clearAppIcon:(id)sender
 {
-  [projectDict setObject:@"" forKey:PCAppIcon];
-  [appImageField setStringValue:@"No Icon!"];
-  [appIconView setImage:nil];
-  [appIconView display];
+    [projectDict setObject:@"" forKey:PCAppIcon];
+    [appImageField setStringValue:@"No Icon!"];
+    [appIconView setImage:nil];
+    [appIconView display];
 
-  [self writeMakefile];
+    [projectWindow setDocumentEdited:YES];
 }
 
 - (void)setAppIcon:(id)sender
@@ -270,33 +270,34 @@
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path
 {
-  NSRect frame = {{0,0}, {64, 64}};
-  NSImage *image;
+    NSRect frame = {{0,0}, {64, 64}};
+    NSImage *image;
 
-  if (!(image = [[NSImage alloc] initWithContentsOfFile:path])) {
-    return NO;
-  }
+    if (!(image = [[NSImage alloc] initWithContentsOfFile:path])) {
+	return NO;
+    }
 
-  [self addFile:path forKey:PCImages copy:YES];
-  [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
+    [self addFile:path forKey:PCImages copy:YES];
+    [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
 
-  [appImageField setStringValue:[path lastPathComponent]];
+    [appImageField setStringValue:[path lastPathComponent]];
 
-  frame.size = [image size];
-  [appIconView setFrame:frame];
-  [appIconView setImage:image];
-  [appIconView display];
-  RELEASE(image);
+    frame.size = [image size];
+    [appIconView setFrame:frame];
+    [appIconView setImage:image];
+    [appIconView display];
+    RELEASE(image);
 
-  [self writeMakefile];
+    [projectWindow setDocumentEdited:YES];
 
-  return YES;
+    return YES;
 }
 
 - (void)setAppClass:(id)sender
 {
-  [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
-  [self writeMakefile];
+    [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
+
+    [projectWindow setDocumentEdited:YES];
 }
 
 @end

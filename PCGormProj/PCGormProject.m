@@ -241,7 +241,7 @@
   [appIconView setImage:nil];
   [appIconView display];
 
-  [self writeMakefile];
+  [projectWindow setDocumentEdited:YES];
 }
 
 - (void)setAppIcon:(id)sender
@@ -286,7 +286,7 @@
   [appIconView display];
   RELEASE(image);
 
-  [self writeMakefile];
+  [projectWindow setDocumentEdited:YES];
 
   return YES;
 }
@@ -294,7 +294,7 @@
 - (void)setAppClass:(id)sender
 {
   [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
-  [self writeMakefile];
+  [projectWindow setDocumentEdited:YES];
 }
 
 @end

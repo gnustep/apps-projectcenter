@@ -308,16 +308,26 @@
 
 - (void)build:(id)sender
 {
-  NSString *tg = nil;
-  NSTask *makeTask;
-  NSMutableArray *args;
-  NSPipe *logPipe;
-  NSPipe *errorPipe;
-  NSDictionary *optionDict;
-  NSString *status;
-  NSString *target;
-  SEL postProcess = NULL;
-  NSDictionary *env = [[NSProcessInfo processInfo] environment];
+    NSString *tg = nil;
+    NSTask *makeTask;
+    NSMutableArray *args;
+    NSPipe *logPipe;
+    NSPipe *errorPipe;
+    NSDictionary *optionDict;
+    NSString *status;
+    NSString *target;
+    SEL postProcess = NULL;
+    NSDictionary *env = [[NSProcessInfo processInfo] environment];
+
+    if( [[currentProject projectWindow] isDocumentEdited] )
+    {
+	if (NSRunAlertPanel(@"Project Changed!",
+	                    @"Should it be saved first?",
+			    @"Yes",@"No",nil) == NSAlertDefaultReturn) 
+	{
+	    [currentProject save];
+	}
+    }
 
   logPipe = [NSPipe pipe];
   readHandle = [[logPipe fileHandleForReading] retain];

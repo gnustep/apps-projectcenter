@@ -20,6 +20,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME=ProjectCenter
 APP_NAME=ProjectCenter
+GNUSTEP_INSTALLATION_DIR=$(GNUSTEP_SYSTEM_ROOT)
 ProjectCenter_APPLICATION_ICON=ProjectCenter.app.tiff
 #
 

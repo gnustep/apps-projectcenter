@@ -300,31 +300,35 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
     BOOL isDir = NO;
 
-    if ([loadedProjects objectForKey:aPath]) {
-#ifdef DEBUG
-      NSLog([NSString stringWithFormat:@"Project %@ is already loaded!",aPath]);
-#endif // DEBUG
-      return NO;
+    if ([loadedProjects objectForKey:aPath]) 
+    {
+        NSRunAlertPanel(@"Attention!",
+	                @"Project '%@' has already been opened!", 
+			@"OK",nil,nil,aPath);
+	return NO;
     }
     
-    if ([[NSFileManager defaultManager] fileExistsAtPath:aPath isDirectory:&isDir] && !isDir) {
-      PCProject *project = [self loadProjectAt:aPath];
+    if ([[NSFileManager defaultManager] fileExistsAtPath:aPath 
+                                             isDirectory:&isDir] && !isDir) 
+    {
+	PCProject *project = [self loadProjectAt:aPath];
       
-      if (!project) {
+	if (!project) 
+	{
 #ifdef DEBUG
-	NSLog(@"Couldn't instantiate the project...");
+	    NSLog(@"Couldn't instantiate the project...");
 #endif // DEBUG
-	return NO;
-      }
+	    return NO;
+	}
       
-      [project setProjectBuilder:self];
-      [loadedProjects setObject:project forKey:aPath];
-      [self setActiveProject:project];
-      [project setDelegate:self];
+	[project setProjectBuilder:self];
+	[loadedProjects setObject:project forKey:aPath];
+	[self setActiveProject:project];
+	[project setDelegate:self];
 
-      [project validateProjectDict];
+	[project validateProjectDict];
 
-      return YES;
+	return YES;
     }
     return NO;
 }
@@ -334,12 +338,15 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     Class	creatorClass = NSClassFromString(projectType);
     PCProject * project;
 
-    if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) {
-        [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION format:@"%@ does not conform to ProjectType!",projectType];
+    if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
+    {
+        [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
+	            format:@"%@ does not conform to ProjectType!",projectType];
         return NO;
     }
 
-    if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) {
+    if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) 
+    {
         return NO;
     }
 
@@ -387,44 +394,49 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)inspectorPopupDidChange:(id)sender
 {
-  NSView *view = nil;
+    NSView *view = nil;
   
-  if (![self activeProject]) {
-    return;
-  }
+    if (![self activeProject]) 
+    {
+	return;
+    }
   
-  switch([sender indexOfSelectedItem]) {
-  case 0:
-    view = [[[self activeProject] updatedAttributeView] retain];
-    break;
-  case 1:
-    view = [[[self activeProject] updatedProjectView] retain];
-    break;
-  case 2:
-    view = [[[self activeProject] updatedFilesView] retain];
-    break;
-  }
-  [(NSBox *)inspectorView setContentView:view];
-  [inspectorView display];
+    switch([sender indexOfSelectedItem]) 
+    {
+	case 0:
+	    view = [[[self activeProject] updatedAttributeView] retain];
+	    break;
+	case 1:
+	    view = [[[self activeProject] updatedProjectView] retain];
+	    break;
+	case 2:
+	    view = [[[self activeProject] updatedFilesView] retain];
+	    break;
+    }
+
+    [(NSBox *)inspectorView setContentView:view];
+    [inspectorView display];
 }
 
 - (void)showInspectorForProject:(PCProject *)aProject
 {
-  if (!inspectorPopup) {
-    [self _initUI];
-    
-    [inspectorPopup removeAllItems];
-    [inspectorPopup addItemWithTitle:@"Build Attributes"];
-    [inspectorPopup addItemWithTitle:@"Project Attributes"];
-    [inspectorPopup addItemWithTitle:@"File Attributes"];
-  }
-  
-  [self inspectorPopupDidChange:inspectorPopup];  
+    if (!inspectorPopup) 
+    {
+	[self _initUI];
 
-  if (![inspector isVisible]) {
-    [inspector setFrameUsingName:@"Inspector"];
-  }
-  [inspector makeKeyAndOrderFront:self];
+	[inspectorPopup removeAllItems];
+	[inspectorPopup addItemWithTitle:@"Build Attributes"];
+	[inspectorPopup addItemWithTitle:@"Project Attributes"];
+	[inspectorPopup addItemWithTitle:@"File Attributes"];
+    }
+  
+    [self inspectorPopupDidChange:inspectorPopup];  
+
+    if (![inspector isVisible]) 
+    {
+	[inspector setFrameUsingName:@"Inspector"];
+    }
+    [inspector makeKeyAndOrderFront:self];
 }
 
 - (void)saveFiles
@@ -449,25 +461,26 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject:(PCProject *)aProject
 {
-  PCProject	*currentProject;
-  NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
+    PCProject	*currentProject;
+    NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
   
-  currentProject = [[loadedProjects objectForKey:key] retain];
+    currentProject = [[loadedProjects objectForKey:key] retain];
     
-  // Remove it from the loaded projects!
-  [loadedProjects removeObjectForKey:key];
-  [self setActiveProject:[[loadedProjects allValues] lastObject]];
+    // Remove it from the loaded projects!
+    [loadedProjects removeObjectForKey:key];
+    [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-  if ([loadedProjects count] == 0) {
-    [inspector performClose:self];
-  }
+    if ([loadedProjects count] == 0) 
+    {
+	[inspector performClose:self];
+    }
 
-  AUTORELEASE(currentProject);
+    AUTORELEASE(currentProject);
 }
 
 - (void)closeProject
 {
-  [[[self activeProject] projectWindow] performClose:self];
+    [[[self activeProject] projectWindow] performClose:self];
 }
 
 // ===========================================================================
@@ -476,18 +489,17 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)openFile:(NSString *)path
 {
-  BOOL isDir;
-  NSFileManager *fm = [NSFileManager defaultManager];
-  NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:
-				    path,@"FilePathKey",
-				  nil];
+    BOOL isDir;
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:path,@"FilePathKey", nil];
 
-  if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
-    return YES;
-  }
+    if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir) 
+    {
+	[[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
+	return YES;
+    }
 
-  return NO;
+    return NO;
 }
 
 - (BOOL)saveFile
@@ -521,23 +533,24 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (NSString *)fileManager:(id)sender willCreateFile:(NSString *)aFile withKey:(NSString *)key
 {
-  NSString *path = nil;
+    NSString *path = nil;
   
 #ifdef DEBUG
-  NSLog(@"%@ %x: will create file %@ for key %@.",[self class],self,aFile,key);
-  #endif // DEBUG
+    NSLog(@"%@ %x: will create file %@ for key %@",[self class],self,aFile,key);
+#endif // DEBUG
 
-  if ([activeProject doesAcceptFile:aFile forKey:key] ) {
-    path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
-  }
-  
-  return path;
+    if ([activeProject doesAcceptFile:aFile forKey:key] ) 
+    {
+	path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
+    }
+
+    return path;
 }
 
 - (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key
 {
 #ifdef DEBUG
-    NSLog(@"<%@ %x>: did create file %@ for key %@",[self class],self,aFile,key);
+    NSLog(@"%@ %x: did create file %@ for key %@",[self class],self,aFile,key);
 #endif // DEBUG
 
     [activeProject addFile:aFile forKey:key];
@@ -550,31 +563,35 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)fileManager:(id)sender shouldAddFile:(NSString *)file forKey:(NSString *)key
 {
-  NSMutableString *fn = [NSMutableString stringWithString:[file lastPathComponent]];
+    NSMutableString *fn = [NSMutableString stringWithString:[file lastPathComponent]];
 
 #ifdef DEBUG
-  NSLog(@"<%@ %x>: should add file %@ for key %@",[self class],self,file,key);
+    NSLog(@"%@ %x: should add file %@ for key %@",[self class],self,file,key);
 #endif // DEBUG
   
-  if ([key isEqualToString:PCLibraries]) {
-    [fn deleteCharactersInRange:NSMakeRange(1,3)];
-    fn = [fn stringByDeletingPathExtension];
-  }
+    if ([key isEqualToString:PCLibraries]) 
+    {
+	[fn deleteCharactersInRange:NSMakeRange(1,3)];
+	fn = [fn stringByDeletingPathExtension];
+    }
   
-  if ([[[activeProject projectDict] objectForKey:key] containsObject:fn]) {
-    NSRunAlertPanel(@"Attention!",@"The file %@ is already part of project %@!",@"OK",nil,nil,fn,[activeProject projectName]);
-    return NO;
-  }
-  return YES;
+    if ([[[activeProject projectDict] objectForKey:key] containsObject:fn]) 
+    {
+	NSRunAlertPanel(@"Attention!",
+	                @"The file %@ is already part of project %@!",
+			@"OK",nil,nil,fn,[activeProject projectName]);
+	return NO;
+    }
+    return YES;
 }
 
 - (void)fileManager:(id)sender didAddFile:(NSString *)file forKey:(NSString *)key
 {
 #ifdef DEBUG
-  NSLog(@"<%@ %x>: did add file %@ for key %@",[self class],self,file,key);
+    NSLog(@"%@ %x: did add file %@ for key %@",[self class],self,file,key);
 #endif // DEBUG
 
-  [activeProject addFile:file forKey:key];
+    [activeProject addFile:file forKey:key];
 }
 
 
