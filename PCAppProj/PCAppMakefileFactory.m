@@ -86,8 +86,8 @@ static PCAppMakefileFactory *_factory = nil;
     [string appendString:@"# Additional libraries\n"];
     [string appendString:@"#\n\n"];
 
-    // [string appendString:[NSString stringWithFormat:@"%@_ADDITIONAL_GUI_LIBS += ",prName]];
-    [string appendString:[NSString stringWithFormat:@"%@_LDFLAGS = ",prName]];
+    [string appendString:[NSString stringWithFormat:@"ADDITIONAL_GUI_LIBS += "]];
+    //[string appendString:[NSString stringWithFormat:@"%@_LDFLAGS = ",prName]];
 
     if ([[prDict objectForKey:PCLibraries] count]) {
         enumerator = [[prDict objectForKey:PCLibraries] objectEnumerator];
