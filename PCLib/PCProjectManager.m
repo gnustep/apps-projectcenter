@@ -240,8 +240,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       
       if ((project = [concretBuilder openProjectAt:aPath])) 
       {
-	[[project projectWindow] center];
-
 	return project;
       }
     }

@@ -30,6 +30,9 @@
 #define FailureSound                    @"FailureSound"
 #define ExternalEditor                  @"ExternalEditor"
 #define TabBehaviour                    @"TabBehaviour"
+#define SeparateBuilder			@"SeparateBuilder"
+#define SeparateLauncher		@"SeparateLauncher"
+#define SeparateEditor			@"SeparateEditor"
 
 #define PCAppDidInitNotification        @"PCAppDidInit"
 #define PCAppWillTerminateNotification  @"PCAppWillTerminate"

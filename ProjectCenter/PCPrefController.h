@@ -39,6 +39,7 @@
   id prefMiscView;
   id prefEditingView;
   id prefSavingView;
+  id prefInterfaceView;
   
   id tabMatrix;
 
@@ -58,6 +59,10 @@
   id debuggerField;
   id compilerField;
   id bundlePathField;
+  
+  id separateBuilder;
+  id separateLauncher;
+  id separateEditor;
   
   NSMutableDictionary *preferencesDict;
 }

@@ -836,28 +836,25 @@
 - (void)windowWillClose:(NSNotification *)aNotification
 {
   id object = [aNotification object];
-  
+
   if (object == [self projectWindow]) 
-  {
-    if ([[self projectWindow] isDocumentEdited]) 
     {
-      if (NSRunAlertPanel(@"Project changed!",
-			  @"The project %@ has been edited! Should it be saved before closing?",
-			  @"Yes", @"No", nil,[self projectName])) 
-      {
-	[self save];
-      }
+      if ([[self projectWindow] isDocumentEdited]) 
+	{
+	  if (NSRunAlertPanel(@"Project changed!",
+			      @"The project %@ has been edited! Should it be saved before closing?",
+			      @"Yes", @"No", nil,[self projectName])) 
+	    {
+	      [self save];
+	    }
+	}
+
+      [editorController closeAllEditors];
+
+      // The PCProjectController is our delegate!
+      [[NSNotificationCenter defaultCenter] removeObserver:browserController];
+      [projectManager closeProject:self];
     }
-
-    [editorController closeAllEditors];
-
-    // HACK to avoid crash upon close...
-    [self showBuildView:self];
-
-    // The PCProjectController is our delegate!
-    [[NSNotificationCenter defaultCenter] removeObserver:browserController];
-    [projectManager closeProject:self];
-  }
 }
 
 @end

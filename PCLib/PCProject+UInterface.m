@@ -31,7 +31,7 @@
 #include "PCBrowserController.h"
 #include "PCDefines.h"
 
-#define ENABLE_HISTORY
+#undef ENABLE_HISTORY
 
 @implementation PCProject (UInterface)
 
@@ -49,10 +49,10 @@
   id           textField;
   id           button;
   PCSplitView  *split;
-  PCSplitView  *v_split;
 
 #ifdef ENABLE_HISTORY
-  NSBrowser *history;
+  PCSplitView  *v_split;
+  NSBrowser    *history;
 #endif
 
   browserController = [[PCBrowserController alloc] init];
@@ -61,93 +61,20 @@
    * Project Window
    */
 
-  rect = NSMakeRect (100,100,560,440);
-  projectWindow = [[NSWindow alloc] 
-    initWithContentRect: rect
-              styleMask: style
-                backing: NSBackingStoreBuffered
-                  defer: YES];
+  rect = NSMakeRect (100,100,560,448);
+  projectWindow = [[NSWindow alloc] initWithContentRect: rect
+                                              styleMask: style
+                                                backing: NSBackingStoreBuffered
+                                                  defer: YES];
   [projectWindow setDelegate: self];
   [projectWindow setMinSize: NSMakeSize (560,448)];
-
-  /*
-   * File Browser
-   */
-
-  browser = [[NSBrowser alloc] initWithFrame: NSMakeRect (-1,251,562,128)];
-  [browser setDelegate: browserController];
-  [browser setMaxVisibleColumns: 4];
-  [browser setAllowsMultipleSelection: NO];
-  [browser setSeparatesColumns: NO];
-  [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
-
-  [browserController setBrowser: browser];
-  [browserController setProject: self];
-
-#ifdef ENABLE_HISTORY
-  historyController = [[PCHistoryController alloc] initWithProject:self];
-
-//  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,232,60)];
-  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,0,60)];
-
-  [history setDelegate:historyController];
-  [history setMaxVisibleColumns:1];
-  [history setAllowsMultipleSelection:NO];
-  [history setHasHorizontalScroller:NO];
-  [history setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
-
-  [historyController setBrowser:history];
-
-//  [_c_view addSubview:history];
-//  RELEASE(history);
-#endif
-
-  rect = [[projectWindow contentView] frame];
-  rect.size.width -= 16;
-  rect.size.height /= 2;
-  v_split = [[PCSplitView alloc] initWithFrame: rect];
-  [v_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [v_split setVertical: YES];
-
-  [v_split addSubview: browser];
-  [v_split addSubview: history];
-  [v_split adjustSubviews];
-
-//--------------------------------------------------------------------------
-  // Box
-  box = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
-  [box setTitlePosition: NSNoTitle];
-  [box setBorderType: NSNoBorder];
-  [box setContentViewMargins: NSMakeSize(0.0,0.0)];
-  [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-
-  // Editor in the Box
-  [self showEditorView: self];
-
-  rect = [[projectWindow contentView] frame];
-  rect.size.height -= 76;
-  rect.size.width -= 16;
-  rect.origin.x += 8;
-  split = [[PCSplitView alloc] initWithFrame:rect];
-  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
- 
-
+  [projectWindow setFrameAutosaveName: @"ProjectWindow"];
   _c_view = [projectWindow contentView];
-
-//  [split addSubview: browser];
-  [split addSubview: v_split];
-  [split addSubview: box];
-  [split adjustSubviews];
-  [_c_view addSubview:split];
-
-  RELEASE(split);
-  RELEASE(browser);
 
   /*
    * Left button matrix
    */
-
-  rect = NSMakeRect(8,372,300,60);
+  rect = NSMakeRect(8,380,300,60);
   matrix = [[NSMatrix alloc] initWithFrame: rect
                                       mode: NSHighlightModeMatrix
                                  prototype: buttonCell
@@ -202,11 +129,93 @@
 
   [matrix sizeToCells];
 
+
+  /*
+   * File Browser
+   */
+  browser = [[NSBrowser alloc] initWithFrame: NSMakeRect (-1,251,562,128)];
+  [browser setDelegate: browserController];
+  [browser setMaxVisibleColumns: 4];
+  [browser setAllowsMultipleSelection: NO];
+  [browser setSeparatesColumns: NO];
+  [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
+
+  [browserController setBrowser: browser];
+  [browserController setProject: self];
+
+#ifdef ENABLE_HISTORY
+  historyController = [[PCHistoryController alloc] initWithProject:self];
+
+  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,100,60)];
+  [history setDelegate: historyController];
+  [history setMaxVisibleColumns: 1];
+  [history setAllowsMultipleSelection: NO];
+  [history setHasHorizontalScroller: NO];
+  [history setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
+
+  [historyController setBrowser: history];
+  
+  rect = [[projectWindow contentView] frame];
+  rect.size.width -= 16;
+  rect.size.height /= 2;
+  v_split = [[PCSplitView alloc] initWithFrame: rect];
+  [v_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  [v_split setVertical: YES];
+
+  [v_split addSubview: browser];
+  [v_split addSubview: history];
+  [v_split adjustSubviews];
+
+  RELEASE (history);
+#endif
+
+  // Box
+  box = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
+  [box setTitlePosition: NSNoTitle];
+  [box setBorderType: NSNoBorder];
+  [box setContentViewMargins: NSMakeSize(0.0,0.0)];
+  [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+
+  // Editor in the Box
+  [self showEditorView: self];
+
+  rect = [[projectWindow contentView] frame];
+  rect.size.height -= 76;
+  rect.size.width -= 16;
+  rect.origin.x += 8;
+  rect.origin.y = -2;
+  split = [[PCSplitView alloc] initWithFrame:rect];
+  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+
+#ifdef ENABLE_HISTORY
+  [split addSubview: v_split];
+#else
+  [split addSubview: browser];
+#endif
+
+  [split addSubview: box];
+  [split adjustSubviews];
+  [_c_view addSubview: split];
+
+  RELEASE(split);
+  RELEASE(browser);
+
+  [browser loadColumnZero];
+
+#ifdef ENABLE_HISTORY
+  [history loadColumnZero];
+#endif
+
+  if (![projectWindow setFrameUsingName: @"ProjectWindow"])
+    {
+      [projectWindow center];
+    }
+
+//--------------------------------------------------------------------------
   /*
    * Model the standard inspector UI
    *
    */
-
   projectAttributeInspectorView = [[NSBox alloc] init];
   [projectAttributeInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
   [projectAttributeInspectorView setTitlePosition:NSNoTitle];
@@ -357,16 +366,6 @@
   [changeFileNameButton setTarget:self];
   [changeFileNameButton setAction:@selector(renameFile:)];
   [projectFileInspectorView addSubview:changeFileNameButton];
-
-  /*
-   *
-   */
-
-  [browser loadColumnZero];
-
-#ifdef ENABLE_HISTORY
-  //  [history loadColumnZero];
-#endif
 }
 
 @end

@@ -64,8 +64,8 @@
 
 - (id) initWithProject:(PCProject *)aProject;
 - (void) dealloc;
-- (void) orderFront;
 
+- (NSPanel *) buildPanelCreate: (BOOL)create;
 - (NSView *) componentView;
 
 - (void) build: (id)sender;

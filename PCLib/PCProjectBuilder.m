@@ -44,12 +44,33 @@
 
 @interface PCProjectBuilder (CreateUI)
 
-- (void)_createComponentView;
+- (void) _createBuildPanel;
+- (void) _createComponentView;
 - (void) _createOptionsPanel;
 
 @end
 
 @implementation PCProjectBuilder (CreateUI)
+
+- (void) _createBuildPanel
+{
+  buildPanel = [[NSPanel alloc]
+    initWithContentRect: NSMakeRect (0, 300, 480, 322)
+    styleMask: (NSTitledWindowMask 
+		| NSClosableWindowMask
+		| NSResizableWindowMask)
+    backing: NSBackingStoreRetained
+    defer: YES];
+  [buildPanel setMinSize: NSMakeSize(400, 322)];
+  [buildPanel setFrameAutosaveName: @"ProjectBuilder"];
+  [buildPanel setTitle: [NSString 
+    stringWithFormat: @"%@ - Project Build", [currentProject projectName]]];
+
+  if (![buildPanel setFrameUsingName: @"ProjectBuilder"])
+    {
+      [buildPanel center];
+    }
+}
 
 - (void) _createComponentView
 {
@@ -62,17 +83,8 @@
   NSBox        *box;
   id           button;
   id           textField;
+  BOOL         separateView;
 
-  buildPanel = [[NSPanel alloc]
-    initWithContentRect: NSMakeRect (0, 300, 480, 322)
-              styleMask: (NSTitledWindowMask 
-	                | NSClosableWindowMask
-			| NSResizableWindowMask)
-	        backing: NSBackingStoreRetained
-		  defer: YES];
-  [buildPanel setMinSize: NSMakeSize(400, 300)];
-  [buildPanel setTitle: [NSString 
-    stringWithFormat: @"%@ - Project Build", [currentProject projectName]]];
 
   componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8, -1, 464, 322)];
   [componentView setTitlePosition: NSNoTitle];
@@ -80,11 +92,59 @@
   [componentView setAutoresizingMask: NSViewWidthSizable 
                                     | NSViewHeightSizable];
   [componentView setContentViewMargins: NSMakeSize (0.0, 0.0)];
-  [[buildPanel contentView] addSubview: componentView];
-  RELEASE (componentView);
 
   /*
-   *
+   * 4 build Buttons
+   */
+  _w_frame = NSMakeRect(0, 270, 176, 44);
+  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+                                      mode: NSHighlightModeMatrix
+				 prototype: buttonCell
+			      numberOfRows: 1
+			   numberOfColumns: 4];
+  [matrix sizeToCells];
+  [matrix setSelectionByRect: YES];
+  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [matrix setTarget: self];
+  [matrix setAction: @selector (build:)];
+  [componentView addSubview: matrix];
+
+  RELEASE (matrix);
+
+  button = [matrix cellAtRow: 0 column: 0];
+  [button setTag: 0];
+  [button setImagePosition: NSImageOnly];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_make")];
+  [button setButtonType: NSMomentaryPushButton];
+  [button setTitle: @"Build"];
+
+  button = [matrix cellAtRow: 0 column: 1];
+  [button setTag: 1];
+  [button setImagePosition: NSImageOnly];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_clean")];
+  [button setButtonType: NSMomentaryPushButton];
+  [button setTitle: @"Clean"];
+
+  button = [matrix cellAtRow: 0 column: 2];
+  [button setTag: 2];
+  [button setImagePosition: NSImageOnly];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_install")];
+  [button setButtonType: NSMomentaryPushButton];
+  [button setTitle: @"Install"];
+  
+  button = [matrix cellAtRow: 0 column: 3];
+  [button setTag: 3];
+  [button setImagePosition: NSImageOnly];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_prefs")];
+  [button setButtonType: NSMomentaryPushButton];
+  [button setTitle: @"Options"];
+
+  /*
+   *  Error and Log output
    */
   scrollView1 = [[NSScrollView alloc] 
     initWithFrame:NSMakeRect (0, 0, 464, 120)];
@@ -159,56 +219,6 @@
   RELEASE (split);
 
   /*
-   * 4 build Buttons
-   */
-  _w_frame = NSMakeRect(0, 270, 176, 44);
-  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
-                                      mode: NSHighlightModeMatrix
-				 prototype: buttonCell
-			      numberOfRows: 1
-			   numberOfColumns: 4];
-  [matrix sizeToCells];
-  [matrix setSelectionByRect: YES];
-  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [matrix setTarget: self];
-  [matrix setAction: @selector (build:)];
-  [componentView addSubview: matrix];
-
-  RELEASE (matrix);
-
-  button = [matrix cellAtRow: 0 column: 0];
-  [button setTag: 0];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_make")];
-  [button setButtonType: NSMomentaryPushButton];
-  [button setTitle: @"Build"];
-
-  button = [matrix cellAtRow: 0 column: 1];
-  [button setTag: 1];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_clean")];
-  [button setButtonType: NSMomentaryPushButton];
-  [button setTitle: @"Clean"];
-
-  button = [matrix cellAtRow: 0 column: 2];
-  [button setTag: 2];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_install")];
-  [button setButtonType: NSMomentaryPushButton];
-  [button setTitle: @"Install"];
-  
-  button = [matrix cellAtRow: 0 column: 3];
-  [button setTag: 3];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_prefs")];
-  [button setButtonType: NSMomentaryPushButton];
-  [button setTitle: @"Options"];
-
-  /*
    * Target
    */
   textField = [[NSTextField alloc]
@@ -281,7 +291,6 @@
 
   RELEASE(buildStatusField);
 
-  [componentView sizeToFit];
 }
 
 - (void) _createOptionsPanel
@@ -418,20 +427,22 @@
   [super dealloc];
 }
 
-- (void) orderFront
+- (NSPanel *) buildPanelCreate: (BOOL)create
 {
-  if (!buildPanel)
+  if (!buildPanel && create)
+    {
+      [self _createBuildPanel];
+    }
+
+  return buildPanel;
+}
+
+- (NSView *) componentView
+{
+  if (!componentView)
     {
       [self _createComponentView];
     }
-  [buildPanel orderFront: nil];
-}
-
-- (NSView *) componentView;
-{
-  if (!componentView) {
-    [self _createComponentView];
-  }
 
   return componentView;
 }

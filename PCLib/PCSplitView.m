@@ -12,14 +12,14 @@
 
 @implementation PCSplitView
 
-- (float)dividerThickness
+- (float) dividerThickness
 {
-    return 8.0f;
+  return 8.0f;
 }
 
-- (void)drawDividerInRect:(NSRect)aRect
+- (void)drawDividerInRect: (NSRect)aRect
 {
-    [super drawDividerInRect:aRect];
+  [super drawDividerInRect: aRect];
 }
 
 @end

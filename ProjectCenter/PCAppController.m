@@ -40,74 +40,78 @@
 
 + (void)initialize
 {
-    NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
-    NSDictionary *env = [[NSProcessInfo processInfo] environment];
-    NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
-    NSString *_bundlePath;
+  NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
+  NSDictionary *env = [[NSProcessInfo processInfo] environment];
+  NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
+  NSString *_bundlePath;
 
-    if (prefix && ![prefix isEqualToString:@""]) {
+  if (prefix && ![prefix isEqualToString:@""])
+    {
       _bundlePath = [prefix stringByAppendingPathComponent:REL_LIB_PC];
     }
-    else {
+  else
+    {
       _bundlePath = [NSString stringWithString:ABS_LIB_PC];
     }
 
-    [defaults setObject:_bundlePath forKey:BundlePaths];
+  [defaults setObject:_bundlePath forKey:BundlePaths];
 
-    [defaults setObject:@"/usr/bin/vim" forKey:Editor];
-    [defaults setObject:@"/usr/bin/gdb" forKey:PDebugger];
-    [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
+  [defaults setObject:@"/usr/bin/vim" forKey:Editor];
+  [defaults setObject:@"/usr/bin/gdb" forKey:PDebugger];
+  [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
 
-    [defaults setObject:@"YES" forKey:ExternalEditor];
+  [defaults setObject:@"YES" forKey:ExternalEditor];
 
-    [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
+  [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
-    [defaults setObject:@"YES" forKey:SaveOnQuit];
-    [defaults setObject:@"YES" forKey:PromptOnClean];
-    [defaults setObject:@"YES" forKey:PromptOnQuit];
-    [defaults setObject:@"YES" forKey:AutoSave];
-    [defaults setObject:@"YES" forKey:KeepBackup];
-    [defaults setObject:@"120" forKey:AutoSavePeriod];
-    [defaults setObject:@"NO" forKey:DeleteCacheWhenQuitting];
-    
-    [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-    [[NSUserDefaults standardUserDefaults] synchronize];
+  [defaults setObject:@"YES" forKey:SaveOnQuit];
+  [defaults setObject:@"YES" forKey:PromptOnClean];
+  [defaults setObject:@"YES" forKey:PromptOnQuit];
+  [defaults setObject:@"YES" forKey:AutoSave];
+  [defaults setObject:@"YES" forKey:KeepBackup];
+  [defaults setObject:@"120" forKey:AutoSavePeriod];
+  [defaults setObject:@"NO" forKey:DeleteCacheWhenQuitting];
+
+  [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (id)init
 {
-    if ((self = [super init])) {
-        // The bundle loader
-        bundleLoader = [[PCBundleLoader alloc] init];
-        [bundleLoader setDelegate:self];
+  if ((self = [super init]))
+    {
+      // The bundle loader
+      bundleLoader = [[PCBundleLoader alloc] init];
+      [bundleLoader setDelegate:self];
 
-        // They are registered by the bundleLoader
-        projectTypes = [[NSMutableDictionary alloc] init];
+      // They are registered by the bundleLoader
+      projectTypes = [[NSMutableDictionary alloc] init];
 
- 	prefController = [[PCPrefController alloc] init];
-	finder = [[PCFindController alloc] init];
-	infoController = [[PCInfoController alloc] init];
-	logger = [[PCLogController alloc] init];
-	projectManager = [[PCProjectManager alloc] init];
-	fileManager = [PCFileManager fileManager];
-	menuController = [[PCMenuController alloc] init];
+      prefController = [[PCPrefController alloc] init];
+      finder = [[PCFindController alloc] init];
+      infoController = [[PCInfoController alloc] init];
+      logger = [[PCLogController alloc] init];
+      projectManager = [[PCProjectManager alloc] init];
+      fileManager = [PCFileManager fileManager];
+      menuController = [[PCMenuController alloc] init];
 
-	[projectManager setDelegate:self];
-	[fileManager setDelegate:projectManager];
+      [projectManager setDelegate:self];
+      [fileManager setDelegate:projectManager];
 
-	[menuController setAppController:self];
-	[menuController setFileManager:fileManager];
-	[menuController setProjectManager:projectManager];
+      [menuController setAppController:self];
+      [menuController setFileManager:fileManager];
+      [menuController setProjectManager:projectManager];
     }
-    return self;
+  return self;
 }
 
 - (void)dealloc
 {
-  if (doConnection) {
-    [doConnection invalidate];
-    [doConnection release];
-  }
+  if (doConnection)
+    {
+      [doConnection invalidate];
+      [doConnection release];
+    }
   
   [prefController release];
   [finder release];

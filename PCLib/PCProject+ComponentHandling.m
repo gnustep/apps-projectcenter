@@ -56,6 +56,13 @@
 - (void)showBuildView:(id)sender
 {
   NSView *view = nil;
+  BOOL   separate = NO;
+  
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey: SeparateBuilder] isEqualToString: @"YES"])
+    {
+      separate = YES;
+    }
 
   [[NSNotificationCenter defaultCenter] 
     postNotificationName: PCEditorDidResignKeyNotification
@@ -68,13 +75,39 @@
       projectBuilder = [[PCProjectBuilder alloc] initWithProject: self];
     }
 
-//  view = [[projectBuilder componentView] retain];
+  view = [[projectBuilder componentView] retain];
 
-  [projectBuilder orderFront];
+  if (separate)
+    {
+      NSPanel *panel;
+      NSRect  panelFrame;
 
-/*  [box setContentView:view];
-  [box sizeToFit];
-  [box display];*/
+      panel = [projectBuilder buildPanelCreate: YES];
+      panelFrame = [NSPanel contentRectForFrameRect: [panel frame]
+                                          styleMask: [panel styleMask]];
+      panelFrame.origin.x = 8;
+      panelFrame.origin.y = -2;
+      panelFrame.size.width -= 16;
+      [view setFrame: panelFrame];
+     
+      if ([box contentView] == view)
+	{
+	  [self showEditorView: self];
+	}
+      [[panel contentView] addSubview: view];
+      [panel orderFront: nil];
+    }
+  else
+    {
+      NSPanel *panel = [projectBuilder buildPanelCreate: NO];
+
+      if (panel)
+	{
+	  [panel close];
+	}
+      [box setContentView: view];
+      [box display];
+    }
 }
 
 - (void)showRunView:(id)sender
