@@ -76,8 +76,6 @@
   [browserController setBrowser:browser];
   [browserController setProject:self];
  
-  RELEASE(browser);
-
   box = [[NSBox alloc] initWithFrame:NSMakeRect (0,-1,560,252)];
   [box setTitlePosition:NSNoTitle];
   [box setBorderType:NSNoBorder];
@@ -90,7 +88,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Welcome to the GNUstep ProjectCenter!"];
-  [box addSubview:[textField autorelease]];
+  [box addSubview:textField];
+  RELEASE(textField);
 
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,178,500,21)];
   [textField setAlignment: NSLeftTextAlignment];
@@ -99,28 +98,32 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"\tPlease report all bugs or other issues you don't like to phr@projectcenter.ch!"];
-  [box addSubview:[textField autorelease]];
+  [box addSubview:textField];
+  RELEASE(textField);
 
   _c_view = [projectWindow contentView];
   [_c_view addSubview:browser];
   [_c_view addSubview:box];
+
+  RELEASE(browser);
 
   /*
    * Left button matrix
    */
 
   _w_frame = NSMakeRect(8,388,330,48);
-  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
-                                       mode: NSHighlightModeMatrix
-                                  prototype: buttonCell
-                               numberOfRows: 1
-                            numberOfColumns: 7] autorelease];
+  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+			     mode: NSHighlightModeMatrix
+			     prototype: buttonCell
+			     numberOfRows: 1
+			     numberOfColumns: 7];
   [matrix sizeToCells];
   [matrix setTarget:self];
   [matrix setAction:@selector(topButtonsPressed:)];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
+  RELEASE(matrix);
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
@@ -188,7 +191,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Host:"];
-  [_c_view addSubview:[textField autorelease]];
+  [_c_view addSubview:textField];
+  RELEASE(textField);
 
   // Host message
   buildTargetHostField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,184,21)];
@@ -201,7 +205,7 @@
   [buildTargetHostField setDelegate:self];
   [buildTargetHostField setTarget:self];
   [buildTargetHostField setAction:@selector(setHost:)];
-  [_c_view addSubview:[buildTargetHostField autorelease]];
+  [_c_view addSubview:buildTargetHostField];
 
   // Args
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,44,60,21)];
@@ -211,7 +215,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Arguments:"];
-  [_c_view addSubview:[textField autorelease]];
+  [_c_view addSubview:textField];
+  RELEASE(textField);
 
   // Args message
   buildTargetArgsField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,44,184,21)];
@@ -224,7 +229,7 @@
   [buildTargetArgsField setDelegate:self];
   [buildTargetArgsField setTarget:self];
   [buildTargetArgsField setAction:@selector(setArguments:)];
-  [_c_view addSubview:[buildTargetArgsField autorelease]];
+  [_c_view addSubview:buildTargetArgsField];
 
   /*
    * Model the standard inspector UI
@@ -244,7 +249,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Install in:"];
-  [projectAttributeInspectorView addSubview:[textField autorelease]];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
 
   installPathField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
   [installPathField setAlignment: NSLeftTextAlignment];
@@ -262,7 +268,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Build tool:"];
-  [projectAttributeInspectorView addSubview:[textField autorelease]];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
 
   toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
   [toolField setAlignment: NSLeftTextAlignment];
@@ -280,7 +287,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"CC options:"];
-  [projectAttributeInspectorView addSubview:[textField autorelease]];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
 
   ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,232,176,21)];
   [ccOptField setAlignment: NSLeftTextAlignment];
@@ -298,7 +306,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"LD options:"];
-  [projectAttributeInspectorView addSubview:[textField autorelease]];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
 
   ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
@@ -327,7 +336,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Type:"];
-  [projectProjectInspectorView addSubview:[textField autorelease]];
+  [projectProjectInspectorView addSubview:textField];
+  RELEASE(textField);
 
   projectTypeField = [[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
   [projectTypeField setAlignment: NSLeftTextAlignment];
@@ -351,7 +361,8 @@
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Filename:"];
-  [projectFileInspectorView addSubview:[textField autorelease]];
+  [projectFileInspectorView addSubview:textField];
+  RELEASE(textField);
 
   fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
   [fileNameField setAlignment: NSLeftTextAlignment];
@@ -415,29 +426,37 @@
 
 - (void)dealloc
 {
-  [projectName release];
-  [projectPath release];
-  [projectDict release];
-  
-  [browserController release];
-  [projectWindow release];
-  [buildTargetPanel release];
-  
-  [buildOptions release];
- 
-  [projectAttributeInspectorView release];
-  [installPathField release];
-  [toolField release];
-  [ccOptField release];
-  [ldOptField release];
-  [projectTypeField release];
+  RELEASE(projectName);
+  RELEASE(projectPath);
+  RELEASE(projectDict);
+  RELEASE(projectManager);
 
-  [projectProjectInspectorView release];
-  [projectFileInspectorView release];
-  [fileNameField release];
-  [changeFileNameButton release];
+  RELEASE(projectBuilder);
+  RELEASE(projectDebugger);
+  
+  RELEASE(browserController);
+  RELEASE(projectWindow);
+
+  RELEASE(buildTargetPanel);
+  RELEASE(buildTargetHostField);
+  RELEASE(buildTargetArgsField);
+  
+  RELEASE(buildOptions);
  
-  [box release];
+  RELEASE(projectAttributeInspectorView);
+  RELEASE(installPathField);
+  RELEASE(toolField);
+  RELEASE(ccOptField);
+  RELEASE(ldOptField);
+
+  RELEASE(projectProjectInspectorView);
+  RELEASE(projectTypeField);
+
+  RELEASE(projectFileInspectorView);
+  RELEASE(fileNameField);
+  RELEASE(changeFileNameButton);
+ 
+  RELEASE(box);
 
   [super dealloc];
 }
