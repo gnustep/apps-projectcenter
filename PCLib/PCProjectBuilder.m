@@ -34,7 +34,7 @@
 #include <AppKit/AppKit.h>
 
 #ifndef IMAGE
-#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#define IMAGE(X) [NSImage imageNamed: X]
 #endif
 
 #ifndef NOTIFICATION_CENTER
@@ -57,15 +57,16 @@
 {
   buildPanel = [[NSPanel alloc]
     initWithContentRect: NSMakeRect (0, 300, 480, 322)
-    styleMask: (NSTitledWindowMask 
-		| NSClosableWindowMask
-		| NSResizableWindowMask)
-    backing: NSBackingStoreRetained
-    defer: YES];
-  [buildPanel setMinSize: NSMakeSize(400, 322)];
+              styleMask: (NSTitledWindowMask 
+		          | NSClosableWindowMask
+		          | NSResizableWindowMask)
+                backing: NSBackingStoreRetained
+                  defer: YES];
+  [buildPanel setMinSize: NSMakeSize(440, 322)];
   [buildPanel setFrameAutosaveName: @"ProjectBuilder"];
-  [buildPanel setTitle: [NSString 
-    stringWithFormat: @"%@ - Project Build", [currentProject projectName]]];
+  [buildPanel setReleasedWhenClosed: NO];
+  [buildPanel setTitle: [NSString stringWithFormat: 
+                         @"%@ - Project Build", [currentProject projectName]]];
 
   if (![buildPanel setFrameUsingName: @"ProjectBuilder"])
     {
@@ -78,7 +79,6 @@
   NSSplitView  *split;
   NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
-  NSMatrix     *matrix;
   NSRect       _w_frame;
   NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
   NSBox        *box;
@@ -107,17 +107,16 @@
   [matrix setSelectionByRect: YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget: self];
-  [matrix setAction: @selector (build:)];
+  [matrix setAction: @selector (topButtonPressed:)];
   [componentView addSubview: matrix];
-
-  RELEASE (matrix);
 
   button = [matrix cellAtRow: 0 column: 0];
   [button setTag: 0];
   [button setImagePosition: NSImageOnly];
   [button setFont: [NSFont systemFontOfSize: 10.0]];
   [button setImage: IMAGE(@"ProjectCenter_make")];
-  [button setButtonType: NSMomentaryPushButton];
+  [button setAlternateImage: IMAGE(@"Stop")];
+  [button setButtonType: NSToggleButton];
   [button setTitle: @"Build"];
 
   button = [matrix cellAtRow: 0 column: 1];
@@ -125,7 +124,8 @@
   [button setImagePosition: NSImageOnly];
   [button setFont: [NSFont systemFontOfSize: 10.0]];
   [button setImage: IMAGE(@"ProjectCenter_clean")];
-  [button setButtonType: NSMomentaryPushButton];
+  [button setAlternateImage: IMAGE(@"Stop")];
+  [button setButtonType: NSToggleButton];
   [button setTitle: @"Clean"];
 
   button = [matrix cellAtRow: 0 column: 2];
@@ -133,7 +133,8 @@
   [button setImagePosition: NSImageOnly];
   [button setFont: [NSFont systemFontOfSize: 10.0]];
   [button setImage: IMAGE(@"ProjectCenter_install")];
-  [button setButtonType: NSMomentaryPushButton];
+  [button setAlternateImage: IMAGE(@"Stop")];
+  [button setButtonType: NSToggleButton];
   [button setTitle: @"Install"];
   
   button = [matrix cellAtRow: 0 column: 3];
@@ -141,7 +142,8 @@
   [button setImagePosition: NSImageOnly];
   [button setFont: [NSFont systemFontOfSize: 10.0]];
   [button setImage: IMAGE(@"ProjectCenter_prefs")];
-  [button setButtonType: NSMomentaryPushButton];
+  [button setAlternateImage: IMAGE(@"Stop")];
+  [button setButtonType: NSToggleButton];
   [button setTitle: @"Options"];
 
   /*
@@ -162,9 +164,9 @@
   [errorOutput setEditable: NO];
   [errorOutput setSelectable: YES];
   [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [errorOutput setBackgroundColor: [NSColor colorWithDeviceRed: 0.85
-                                                         green: 0.73 
-                                                          blue: 0.57 
+  [errorOutput setBackgroundColor: [NSColor colorWithDeviceRed: 0.88
+                                                         green: 0.76 
+                                                          blue: 0.60 
                                                          alpha: 1.0]];
   [errorOutput setHorizontallyResizable: NO]; 
   [errorOutput setVerticallyResizable: YES];
@@ -412,9 +414,13 @@
 	{
 	  makePath = [NSString stringWithString: @"/usr/bin/make"];
 	}
-
       RETAIN(makePath);
+
+      buildTarget = [[NSMutableString alloc] initWithString: @"Default"];
+      buildArgs = [[NSMutableArray array] retain];
+      postProcess = NULL;
       currentProject = aProject;
+      makeTask = nil;
     }
 
   return self;
@@ -422,7 +428,9 @@
 
 - (void) dealloc
 {
-  [buildPanel release];
+  [matrix release];
+  [buildTarget release];
+  [buildArgs release];
   [makePath release];
 
   [super dealloc];
@@ -448,19 +456,100 @@
   return componentView;
 }
 
-// TODO: make it a separate thread
+- (void) topButtonPressed: (id)sender
+{
+  NSString *tFString = [targetField stringValue];
+  NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
+
+  if (makeTask)
+    {
+      [makeTask terminate];
+      return;
+    }
+
+  [buildTarget setString: [tFArray objectAtIndex: 0]];
+
+  switch ([[sender selectedCell] tag]) 
+    {
+    case 0:
+      // Set build arguments
+      if ([buildTarget isEqualToString: @"Default"])
+	{
+	  ;
+	}
+      else if ([buildTarget isEqualToString: @"Debug"])
+	{
+	  [buildArgs addObject: @"debug=yes"];
+	}
+      else if ([buildTarget isEqualToString: @"Profile"])
+	{
+	  [buildArgs addObject: @"profile=yes"];
+	  [buildArgs addObject: @"static=yes"];
+	}
+      else if ([buildTarget isEqualToString: @"Tarball"])
+	{
+	  [buildArgs addObject: @"dist"];
+	}
+      else if ([buildTarget isEqualToString: @"RPM"])
+	{
+	  [buildArgs addObject: @"rpm"];
+	  postProcess = @selector (copyPackageTo:);
+	}
+
+      statusString = [NSString stringWithString: @"Building..."];
+      [buildTarget setString: @"Build"];
+      [self build: self];
+      break;
+      
+    case 1:
+      if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+	  objectForKey: PromptOnClean] isEqualToString: @"YES"])
+	{
+	  if (NSRunAlertPanel(@"Clean Project?",
+			      @"Do you really want to clean project '%@'?",
+			      @"Yes",
+			      @"No",
+			      nil,
+			      [currentProject projectName])
+	      == NSAlertAlternateReturn)
+	    {
+	      return;
+	    }
+	}
+      [buildTarget setString: @"Clean"];
+      statusString = [NSString stringWithString: @"Cleaning..."];
+      [buildArgs addObject: @"distclean"];
+      [self build: self];
+      break;
+      
+    case 2:
+      [buildTarget setString: @"Install"];
+      statusString = [NSString stringWithString: @"Installing..."];
+      [buildArgs addObject: @"install"];
+      [self build: self];
+      break;
+
+    case 3:
+      if (!optionsPanel)
+	{
+	  [self _createOptionsPanel];
+	}
+      [optionsPanel orderFront: nil];
+      return;
+    }
+}
+
 - (void) build: (id)sender
 {
-  NSTask         *makeTask;
-  NSMutableArray *args;
-  NSPipe         *logPipe;
-  NSPipe         *errorPipe;
-  NSDictionary   *optionDict;
-  NSString       *status;
-  SEL            postProcess = NULL;
-  NSDictionary   *env = [[NSProcessInfo processInfo] environment];
+  NSPipe              *logPipe;
+  NSPipe              *errorPipe;
+  NSDictionary        *optionDict = [currentProject buildOptions];
+  NSString            *status;
+  NSDictionary        *env = [[NSProcessInfo processInfo] environment];
+  NSMutableDictionary *data = [NSMutableDictionary dictionary];
 
-  if( [[currentProject projectWindow] isDocumentEdited] )
+  // Checking prerequisites
+  if ([[currentProject projectWindow] isDocumentEdited])
     {
       if (NSRunAlertPanel(@"Project Changed!",
 			  @"Should it be saved first?",
@@ -470,89 +559,26 @@
 	}
     }
 
+  if( [buildTarget isEqualToString: @"RPM"] 
+      && [env objectForKey:@"RPM_TOPDIR"] == nil )
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"First set the environment variable 'RPM_TOPDIR'!",
+		      @"OK",nil,nil);     
+      return;
+    }
+
+  NSLog (@"Status: %@ BuildTarget: %@", statusString, buildTarget);
+
+  // Prepearing to building
   logPipe = [NSPipe pipe];
   readHandle = [[logPipe fileHandleForReading] retain];
 
   errorPipe = [NSPipe pipe];
   errorReadHandle = [[errorPipe fileHandleForReading] retain];
 
-  makeTask = [[NSTask alloc] init];
-
-  optionDict = [currentProject buildOptions];
-  args = [NSMutableArray array];
-
-  switch ([[sender selectedCell] tag]) 
-    {
-    case 0:
-      status = [NSString stringWithString:@"Building..."];
-      switch( [popup indexOfSelectedItem] )
-	{
-	case 0:
-	  break;
-
-	case 1:
-	  [args addObject: @"debug=yes"];
-	  break;
-
-	case 2:
-	  [args addObject: @"profile=yes"];
-	  [args addObject: @"static=yes"];
-	  break;
-
-	case 3:
-	  [args addObject:@"dist"];
-	  break;
-
-	case 4:
-	  [args addObject:@"rpm"];
-	  postProcess = @selector(copyPackageTo:);
-
-	  if ( [currentProject writeSpecFile] == NO )
-	    {
-	      return;
-	    }
-
-	  if( [env objectForKey:@"RPM_TOPDIR"] == nil )
-	    {
-	      NSRunAlertPanel(@"Attention!",
-			      @"First set the environment variable 'RPM_TOPDIR'!",
-			      @"OK",nil,nil);     
-	      return;
-	    }
-	  break;
-
-	default:
-	  break;
-	}
-      break;
-    case 1:
-      if (NSRunAlertPanel(@"Clean Project?",
-			  @"Do you really want to clean project '%@'?",
-			  @"Yes",
-			  @"No",
-			  nil,
-			  [currentProject projectName])
-			  == NSAlertAlternateReturn)
-	{
-	  return;
-	}
-      status = [NSString stringWithString:@"Cleaning..."];
-      [args addObject:@"distclean"];
-      break;
-    case 2:
-      status = [NSString stringWithString:@"Installing..."];
-      [args addObject:@"install"];
-      break;
-    case 3:
-      if (!optionsPanel)
-	{
-	  [self _createOptionsPanel];
-	}
-      [optionsPanel orderFront: nil];
-      return;
-    }
-
-  [buildStatusField setStringValue:status];  
+  [readHandle waitForDataInBackgroundAndNotify];
+  [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
                           selector: @selector (logStdOut:)
@@ -564,34 +590,33 @@
 			      name: NSFileHandleDataAvailableNotification
 			    object: errorReadHandle];
 
+  [buildStatusField setStringValue: statusString];
+
+  // Run build thread
+  [data setObject: buildArgs forKey: @"args"];
+  [data setObject: [currentProject projectPath] forKey: @"currentDirectory"];
+  [data setObject: makePath forKey: @"makePath"];
+  [data setObject: logPipe forKey: @"logPipe"];
+  [data setObject: errorPipe forKey: @"errorPipe"];
+
+  [logOutput setString: @""];
+  [errorOutput setString: @""];
+
+  [NSThread detachNewThreadSelector: @selector (make:)
+                           toTarget: self
+                         withObject: data];
+
   [NOTIFICATION_CENTER addObserver: self
                           selector: @selector (buildDidTerminate:)
 			      name: NSTaskDidTerminateNotification
-			    object: makeTask];  
+			    object: makeTask];
 
-  [makeTask setArguments: args];  
-  [makeTask setCurrentDirectoryPath: [currentProject projectPath]];
-  [makeTask setLaunchPath: makePath];
+  return;
+}
 
-  [makeTask setStandardOutput: logPipe];
-  [makeTask setStandardError: errorPipe];
-
-  [logOutput setString: @""];
-  [readHandle waitForDataInBackgroundAndNotify];
-
-  [errorOutput setString: @""];
-  [errorReadHandle waitForDataInBackgroundAndNotify];
-
-  [makeTask launch];
-  [makeTask waitUntilExit];
-
-  if (postProcess)
-    {
-      [self performSelector: postProcess];
-      postProcess = NULL;
-    }
-
-  [buildStatusField setStringValue:@"Waiting..."];
+- (void)buildDidTerminate: (NSNotification *)aNotif
+{
+  int status = [[aNotif object] terminationStatus];
 
   [NOTIFICATION_CENTER removeObserver: self 
                                  name: NSFileHandleDataAvailableNotification
@@ -604,13 +629,30 @@
   [NOTIFICATION_CENTER removeObserver: self 
                                  name: NSTaskDidTerminateNotification 
 			       object: makeTask];
-
   RELEASE (readHandle);
-  RELEASE (errorReadHandle);  
-  AUTORELEASE (makeTask);
+  RELEASE (errorReadHandle);
+
+  if (status == 0)
+    {
+      [self logString: [NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] error: NO newLine: NO];
+      [buildStatusField setStringValue: [NSString stringWithFormat: 
+	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
+      [[matrix selectedCell] setState: NSOffState];
+      [matrix setNeedsDisplay: YES];
+    } 
+  else
+    {
+      [self logString: [NSString stringWithFormat: @"=== %@ terminated!", buildTarget] error: NO newLine: NO];
+      [buildStatusField setStringValue: [NSString stringWithFormat: 
+	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
+    }
+
+  [buildArgs removeAllObjects];
+  [buildTarget setString: @"Default"];
+  makeTask = nil;
 }
 
-- (void)popupChanged:(id)sender
+- (void)popupChanged: (id)sender
 {
   NSString *target = [targetField stringValue];
 
@@ -619,7 +661,8 @@
             [popup titleOfSelectedItem], 
             [buildTargetArgsField stringValue]];
 
-  [targetField setStringValue: target];  
+  [targetField setStringValue: target];
+
 }
 
 - (void)logStdOut: (NSNotification *)aNotif
@@ -646,19 +689,6 @@
   [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
 }
 
-- (void)buildDidTerminate:(NSNotification *)aNotif
-{
-  int status = [[aNotif object] terminationStatus];
-
-  if (status == 0) {
-    [self logString:@"*** Build Succeeded!\n" error:NO newLine:YES];
-  } 
-  else {
-    [self logString:@"*** Build Failed!" error:YES newLine:YES];
-    [[logOutput window] orderFront:self];
-  }
-}
-
 - (void)copyPackageTo:(NSString *)path
 {
   NSString *source = nil;
@@ -678,12 +708,15 @@
 
 @implementation PCProjectBuilder (BuildLogging)
 
-- (void)logString: (NSString *)string error: (BOOL)yn
+- (void)logString: (NSString *)string
+            error: (BOOL)yn
 {
-  [self logString: string error: yn newLine: YES];
+  [self logString: string error: yn newLine: NO];
 }
 
-- (void)logString:(NSString *)str error:(BOOL)yn newLine:(BOOL)newLine
+- (void)logString: (NSString *)str
+            error: (BOOL)yn
+	  newLine: (BOOL)newLine
 {
   NSTextView *out = (yn) ? errorOutput : logOutput;
 
@@ -702,9 +735,11 @@
     }
 
   [out scrollRangeToVisible: NSMakeRange([[out string] length], 0)];
+  [out setNeedsDisplay: YES];
 }
 
-- (void)logData: (NSData *)data error: (BOOL)yn
+- (void)logData: (NSData *)data
+          error: (BOOL)yn
 {
   NSString *s = [[NSString alloc] initWithData: data 
 				  encoding: [NSString defaultCStringEncoding]];
@@ -715,6 +750,30 @@
 
 @end
 
+@implementation PCProjectBuilder (BuildThread)
 
+- (void) make: (NSDictionary *)data
+{
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  
+  makeTask = [[NSTask alloc] init];
+  [makeTask setArguments: [data objectForKey: @"args"]];
+  [makeTask setCurrentDirectoryPath: [data objectForKey: @"currentDirectory"]];
+  [makeTask setLaunchPath: [data objectForKey: @"makePath"]];
 
+  [makeTask setStandardOutput: [data objectForKey: @"logPipe"]];
+  [makeTask setStandardError: [data objectForKey: @"errorPipe"]];
 
+  [makeTask launch];
+  [makeTask waitUntilExit];
+
+  if ([makeTask terminationStatus] && postProcess)
+    {
+      [self performSelector: postProcess];
+      postProcess = NULL;
+    }
+
+  [pool release];
+}
+
+@end

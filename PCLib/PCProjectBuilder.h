@@ -39,30 +39,37 @@
 
 @interface PCProjectBuilder : NSObject <ProjectComponent>
 {
-  NSPanel       *buildPanel;
-  NSBox         *componentView;
-  NSPopUpButton *popup;
+  NSPanel         *buildPanel;
+  NSBox           *componentView;
+  NSMatrix        *matrix;
+  NSPopUpButton   *popup;
   
-  NSPanel       *optionsPanel;
-  NSTextField   *buildTargetHostField;
-  NSTextField   *buildTargetArgsField;
+  NSPanel         *optionsPanel;
+  NSTextField     *buildTargetHostField;
+  NSTextField     *buildTargetArgsField;
 
-  NSTextView    *logOutput;
-  NSTextView    *errorOutput;
+  NSTextView      *logOutput;
+  NSTextView      *errorOutput;
 
-  NSString      *makePath;
+  NSString        *makePath;
 
-  id            buildStatusField;
-  id            targetField;
+  id              buildStatusField;
+  id              targetField;
 
-  PCProject     *currentProject;
-  NSDictionary  *currentOptions;
+  PCProject       *currentProject;
+  NSDictionary    *currentOptions;
 
-  NSFileHandle  *readHandle;
-  NSFileHandle  *errorReadHandle;
+  NSString        *statusString;
+  NSMutableString *buildTarget;
+  NSMutableArray  *buildArgs;
+  SEL             postProcess;
+  NSTask          *makeTask;
+
+  NSFileHandle    *readHandle;
+  NSFileHandle    *errorReadHandle;
 }
 
-- (id) initWithProject:(PCProject *)aProject;
+- (id) initWithProject: (PCProject *)aProject;
 - (void) dealloc;
 
 - (NSPanel *) buildPanelCreate: (BOOL)create;
@@ -75,6 +82,7 @@
 - (void) logErrOut: (NSNotification *)aNotif;
 
 - (void) buildDidTerminate: (NSNotification *)aNotif;
+//- (void) buildDidTerminate: (int)status;
 
 - (void) copyPackageTo: (NSString *)path;
 
@@ -85,6 +93,12 @@
 - (void)logString:(NSString *)string error:(BOOL)yn;
 - (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
+
+@end
+
+@interface PCProjectBuilder (BuildThread)
+
+- (void) make: (NSDictionary *)data;
 
 @end
 
