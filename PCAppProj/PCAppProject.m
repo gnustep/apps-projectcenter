@@ -79,27 +79,37 @@
   appImageField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [appImageField setAlignment: NSLeftTextAlignment];
   [appImageField setBordered: YES];
-  [appImageField setEditable: YES];
+  [appImageField setEditable: NO];
   [appImageField setBezeled: YES];
   [appImageField setDrawsBackground: YES];
   [appImageField setStringValue:@""];
   [projectProjectInspectorView addSubview:appImageField];
 
-  setAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(180,180,80,21)];
-  [setAppIconButton setTitle:@"Set..."];
+  setAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(220,180,40,21)];
+  [setAppIconButton setTitle:@"Set"];
   [setAppIconButton setTarget:self];
   [setAppIconButton setAction:@selector(setAppIcon:)];
   [projectProjectInspectorView addSubview:setAppIconButton];
 
+  clearAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(180,180,40,21)];
+  [clearAppIconButton setTitle:@"Clear"];
+  [clearAppIconButton setTarget:self];
+  [clearAppIconButton setAction:@selector(clearAppIcon:)];
+  [projectProjectInspectorView addSubview:clearAppIconButton];
+
   _box = [[NSBox alloc] init];
   [_box setFrame:frame];
   [_box setTitlePosition:NSNoTitle];
-  //[_box setBorderType:NSNoBorder];
+  [_box setBorderType:NSBezelBorder];
   [projectProjectInspectorView addSubview:_box];
-  AUTORELEASE(_box);
-
+  
   appIconView = [[NSImageView alloc] initWithFrame:frame];
   [_box addSubview:appIconView];
+
+  RELEASE(_box);
+  RELEASE(setAppIconButton);
+  RELEASE(clearAppIconButton);
+  RELEASE(appIconView);
 }
 
 @end
@@ -135,8 +145,6 @@
   [rootCategories release];
   [appClassField release];
   [appImageField release];
-  [setAppIconButton release];
-  [appIconView release];
 
   [super dealloc];
 }
@@ -163,6 +171,7 @@
         NSLog([NSString stringWithFormat:@"Couldn't build the GNUmakefile %@!",makefile]);
         return NO;
     }
+
     if (![content writeToFile:makefile atomically:YES]) {
         NSLog([NSString stringWithFormat:@"Couldn't write the GNUmakefile %@!",makefile]);
         return NO;
@@ -211,6 +220,60 @@
 
   [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
+}
+
+- (void)clearAppIcon:(id)sender
+{
+  [projectDict setObject:@"" forKey:PCAppIcon];
+  [appImageField setStringValue:@"No Icon!"];
+  [appIconView setImage:nil];
+  [appIconView display];
+  [self writeMakefile];
+}
+
+- (void)setAppIcon:(id)sender
+{
+  int result;  
+  NSArray *fileTypes = [NSImage imageFileTypes];
+  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+
+  [openPanel setAllowsMultipleSelection:NO];
+  result = [openPanel runModalForDirectory:NSHomeDirectory()
+		      file:nil 
+		      types:fileTypes];
+  
+  if (result == NSOKButton) {
+    NSArray *files = [openPanel filenames];
+    NSString *imageFilePath = [files objectAtIndex:0];      
+
+    if (![self setAppIconWithImageAtPath:imageFilePath]) {
+      NSRunAlertPanel(@"Error while opening file!", 
+		      @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
+    }
+  }  
+}
+
+- (BOOL)setAppIconWithImageAtPath:(NSString *)path
+{
+  NSRect frame = {{0,0}, {64, 64}};
+  NSImage *image;
+
+  if (!(image = [[NSImage alloc] initWithContentsOfFile:path])) {
+    return NO;
+  }
+
+  [self addFile:path forKey:PCImages copy:YES];
+  [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
+
+  [appImageField setStringValue:[path lastPathComponent]];
+
+  frame.size = [image size];
+  [appIconView setFrame:frame];
+  [appIconView setImage:image];
+  [appIconView display];
+  RELEASE(image);
+
+  return YES;
 }
 
 @end
