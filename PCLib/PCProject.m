@@ -65,7 +65,7 @@
   projectWindow = [[NSWindow alloc] initWithContentRect:_w_frame
                                               styleMask:style
                                                 backing:NSBackingStoreBuffered
-                                                  defer:NO];
+                                                  defer:YES];
   [projectWindow setDelegate:self];
   [projectWindow setMinSize:NSMakeSize(512,320)];
 
@@ -161,22 +161,6 @@
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
-
-  /*
-   * Navigation popups
-   */
-
-  filePopup = [[[NSPopUpButton alloc] initWithFrame:NSMakeRect(348,334,200,20)
-					  pullsDown:YES] autorelease];
-  [filePopup addItemWithTitle:@"Visited files..."];
-  [filePopup setAutoresizingMask: (NSViewWidthSizable | NSViewMinYMargin)];
-  [_c_view addSubview:filePopup];
-
-  methodPopup = [[[NSPopUpButton alloc] initWithFrame:NSMakeRect(348,310,200,20)
-					  pullsDown:YES] autorelease];
-  [methodPopup addItemWithTitle:@"All methods"];
-  [methodPopup setAutoresizingMask: (NSViewWidthSizable | NSViewMinYMargin)];
-  [_c_view addSubview:methodPopup];
 
   /*
    * Build Options Panel
@@ -424,9 +408,6 @@
   [projectName release];
   [projectPath release];
   [projectDict release];
-  
-  [filePopup release];
-  [methodPopup release];
   
   [browserController release];
   [projectWindow release];

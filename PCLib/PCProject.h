@@ -93,9 +93,6 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
     id textView;
 
-    id filePopup;
-    id methodPopup;
-
     id projectAttributeInspectorView;
     NSTextField *installPathField;
     NSTextField *toolField;
