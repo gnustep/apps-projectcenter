@@ -62,12 +62,14 @@
 - (void)windowDidResignKey:(NSNotification *)aNotification;
 
 - (void)textDidChange:(NSNotification *)aNotification;
+- (BOOL)becomeFirstResponder;
 
 @end
 
 @interface NSObject (PCEditorDelegate)
 
 - (void)editorDidClose:(id)sender;
+- (void)setBrowserPath:(NSString *)file category:(NSString *)category;
 
 @end
 

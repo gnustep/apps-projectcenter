@@ -153,7 +153,6 @@
 
       if (([window isVisible] && [window isKeyWindow])
 	  || ([[editor internalView] superview]
-	      && [project isEditorActive]
 	      && [[project projectWindow] isKeyWindow]))
 	{
 	  return editor;
@@ -297,10 +296,9 @@
     }
 }
 
-- (void)setBrowserPath:(NSString *)file
+- (void)setBrowserPath:(NSString *)file category:(NSString *)category
 {
-  [[project browserController] setPathForFile:file
-                                     category:[[self activeEditor] category]];
+  [[project browserController] setPathForFile:file category:category];
 }
 
 @end

@@ -41,17 +41,19 @@
 - (void)click:(id)sender
 {
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
-  {
-    NSString *ltitle   = [[sender selectedCell] stringValue];
-    NSString *category = [[sender selectedCellInColumn:0] stringValue];
-
-    if ([self isEditableCategory:category file: ltitle])
     {
-	[[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:ltitle];
-	
-	[project browserDidClickFile:ltitle category:category];
+      NSString *ltitle   = [[sender selectedCell] stringValue];
+      NSString *category = [[sender selectedCellInColumn:0] stringValue];
+
+      if ([self isEditableCategory:category file: ltitle])
+	{
+	  [[NSNotificationCenter defaultCenter] 
+	    postNotificationName:@"FileBecomesEditedNotification" 
+	    object:ltitle];
+
+	  [project browserDidClickFile:ltitle category:category];
+	}
     }
-  }
 }
 
 - (void)doubleClick:(id)sender

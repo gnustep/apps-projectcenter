@@ -65,8 +65,7 @@
 // ===========================================================================
 
 - (void)editorDidClose:(id)sender;
-
-- (void)setBrowserPath:(NSString *)file;
+- (void)setBrowserPath:(NSString *)file category:(NSString *)category;
 
 @end
 

@@ -323,5 +323,16 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [self setIsEdited:YES];
 }
 
+- (BOOL)becomeFirstResponder
+{
+  if (_delegate 
+      && [_delegate respondsToSelector:@selector(setBrowserPath:category:)])
+    {
+      [_delegate setBrowserPath:[_path lastPathComponent] category:_category];
+    }
+  
+  return YES;
+}
+
 @end
 

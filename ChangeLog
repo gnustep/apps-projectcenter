@@ -1,3 +1,13 @@
+2003-05-30 Serg Stoyan <stoyan@hologr.com>
+
+	* PCLib/PCEditor.[hm]: Added becomeFirstResponder.
+	* PCLib/PCEditorController.[hm]: Rename setBrowser: to 
+	setBrowserPath:category:.
+	* PCLib/PCEditorController.m:
+	(activeEditor): Don't count on	[project isEditorActive].
+	* PCLib/PCEditorView.m:
+	(becomeFirstResponder): Call editor's becomeFirstResponder.
+
 2003-05-29 Serg Stoyan <stoyan@hologr.com>
 
 	* PCMenuController.m:
