@@ -257,10 +257,8 @@ NSString *PCEditorDidResignActiveNotification =
     }
 
   [editor setWindowed:yn];
-  if (yn)
-    {
-      [editor show];
-    }
+
+  [self orderFrontEditorForFile:path];
 
   return editor;
 }
@@ -486,10 +484,10 @@ NSString *PCEditorDidResignActiveNotification =
     }
   else
     {
-      [[project projectBrowser] reloadLastColumnAndNotify:YES];
-
-      [[project projectWindow] makeFirstResponder:scrollView];
       [componentView setContentView:scrollView];
+      [[project projectWindow] makeFirstResponder:scrollView];
+
+      [[project projectBrowser] reloadLastColumnAndNotify:YES];
     }
 }
 

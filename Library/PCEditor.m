@@ -138,7 +138,7 @@
 
   [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
 
-  return AUTORELEASE(ev);
+  return ev;
 }
 
 @end
@@ -283,7 +283,7 @@
 - (void)dealloc
 {
 #ifdef DEVELOPMENT
-  NSLog(@"PCEditor: dealloc");
+  NSLog(@"PCEditor: %@ dealloc", _path);
 #endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
