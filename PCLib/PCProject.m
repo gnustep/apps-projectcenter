@@ -409,8 +409,6 @@
 {
     if ((self = [super init])) 
     {
-        editorIsActive = NO;
-
 	buildOptions = [[NSMutableDictionary alloc] init];
         [self _initUI];
 
@@ -449,8 +447,9 @@
   RELEASE(projectDict);
   RELEASE(projectManager);
 
-  RELEASE(projectBuilder);
-  RELEASE(projectDebugger);
+  if( projectBuilder) RELEASE(projectBuilder);
+  if( projectDebugger) RELEASE(projectDebugger);
+  if( projectEditor) RELEASE(projectEditor);
   
   RELEASE(browserController);
   RELEASE(projectWindow);
@@ -648,8 +647,16 @@
 
     // Show the file in the internal editor!
     e = [editorController editorForFile:p];
-    [e showInProjectEditor:projectEditor];
+
+    if( e == nil )
+    {
+        NSLog(@"No editor for file '%@'...",p);
+        return;
+    }
+
     [self showEditorView:self];
+    [e showInProjectEditor:projectEditor];
+
     [projectWindow makeFirstResponder:[projectEditor editorView]];
 }
 
