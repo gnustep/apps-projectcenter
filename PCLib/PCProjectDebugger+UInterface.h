@@ -24,39 +24,15 @@
    $Id$
 */
 
-#ifndef __PCDATASOURCE_H
-#define __PCDATASOURCE_H
+#ifndef __PCPROJECTDEBUGGER_UINTERFACE_H
+#define __PCPROJECTDEBUGGER_UINTERFACE_H
 
-#include <AppKit/AppKit.h>
+#include "PCProjectDebugger.h"
 
-/*
- Description:
+@interface PCProjectDebugger (UInterface)
 
- PCDataSource is used as a data source for a NSTableView.
-
-*/
-
-@interface PCDataSource : NSObject
-{
-    NSMutableArray	*data;
-}
-
-- (id)init;
-- (void)dealloc;
-
-- (void)insertObject:(id)object;
-
-- (void)removeObject:(id)object;
-- (void)removeObjectAtIndex:(unsigned int)index;
-- (void)removeAllObjects;
-
-- (NSArray *)allObjects;
-
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
-
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
-
-- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
+- (void)_createLaunchPanel;
+- (void)_createComponentView;
 
 @end
 

@@ -10,7 +10,6 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include Version
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
 
 #
@@ -45,7 +44,6 @@ libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 #
 
 libProjectCenter_HEADER_FILES= \
-PCButton.h \
 PCBrowserController.h \
 PCBundleLoader.h \
 PCDataSource.h \
@@ -79,14 +77,15 @@ PCEditor+UInterface.h \
 PCFileManager+UInterface.h \
 PCProjectManager+UInterface.h \
 PCProject+UInterface.h \
-PCTextFinder+UInterface.h 
+PCTextFinder+UInterface.h \
+PCProjectDebugger+UInterface.h \
+PCButton.h 
 
 #
 # Class files
 #
 
 libProjectCenter_OBJC_FILES= \
-PCButton.m \
 PCBrowserController.m \
 PCBundleLoader.m \
 PCDataSource.m \
@@ -110,7 +109,9 @@ PCEditor+UInterface.m \
 PCFileManager+UInterface.m \
 PCProjectManager+UInterface.m \
 PCProject+UInterface.m \
-PCTextFinder+UInterface.m 
+PCTextFinder+UInterface.m \
+PCProjectDebugger+UInterface.m \
+PCButton.m 
 
 #
 # C files

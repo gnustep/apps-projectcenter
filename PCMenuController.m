@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -29,16 +29,12 @@
 #include <ProjectCenter/ProjectCenter.h>
 #include "PCAppController.h"
 
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
-
 @implementation PCMenuController
 
 - (id)init
 {
   if ((self = [super init])) 
-    {
+  {
       NSRect fr = NSMakeRect(20,30,160,20);
 
       [[NSNotificationCenter defaultCenter] addObserver:self 
@@ -67,7 +63,7 @@
 	NSViewMinXMargin | NSViewMaxXMargin];
 
       RELEASE(projectTypePopup);
-    }
+  }
 
   return self;
 }
@@ -99,19 +95,22 @@
 - (void)setAppController:(id)anObject
 {
   [appController autorelease];
-  appController = [anObject retain];
+  appController = anObject;
+  RETAIN(appController);
 }
 
 - (void)setFileManager:(id)anObject
 {
   [fileManager autorelease];
-  fileManager = [anObject retain];
+  fileManager = anObject;
+  RETAIN(fileManager);
 }
 
 - (void)setProjectManager:(id)anObject
 {
   [projectManager autorelease];
-  projectManager = [anObject retain];
+  projectManager = anObject;
+  RETAIN(projectManager);
 }
 
 //============================================================================
@@ -241,7 +240,7 @@
   NSArray   *files = [[proj browserController] selectedFiles];
 
   if ((fileName = [[proj browserController] nameOfSelectedFile]))
-    {
+  {
       int ret;
 
       ret = NSRunAlertPanel(@"Remove File!",
@@ -252,12 +251,12 @@
 			    files, [proj projectName]);
 
       if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
-	{
+      {
 	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
 
 	  [projectManager removeFilesPermanently:flag];
-	}
-    }
+       }
+  }
 }
 
 - (void)projectRevertToSaved:(id)sender
@@ -318,16 +317,16 @@
       filePath = [[openPanel filenames] objectAtIndex:0];
 
       if (![fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
-	{
+      {
 	  NSRunAlertPanel(@"Attention!",
 			  @"Couldn't open %@!",
 			  @"OK",nil,nil,filePath);
-	}
+      }
       else
-	{
+      {
 	  [PCEditorController openFileInEditor:filePath];
-	}
-    }
+      }
+  }
 }
 
 - (void)fileNew:(id)sender
@@ -427,7 +426,7 @@
 - (void)fileOpenQuickly:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
@@ -440,14 +439,14 @@
   [projectManager renameFileTo:proj];*/
 
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
 - (void)fileNewUntitled:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
@@ -624,3 +623,4 @@
 }
 
 @end
+

@@ -1,7 +1,31 @@
 
+2003-07-10 Philippe C.D. Robert <probert@siggraph.org>
+
+        * Added missing includes: PCLib/PCDataSource.m, PCLib/PCButton.m
+        * Added note in README about using ProjectCenter with Cocoa
+        * Disabled unused menu entries: ProjectCenter_main.m
+        * Some spelling corrections: PCMenuController.m
+
 2003-07-05 Philippe C.D. Robert <probert@siggraph.org>
 
         * Uppercase key for interface category lookup: PCFileManager.m
+        * Adjusting UI elements: PCGormProject.m
+        * Adding proper header: PCLib/PCButton.h, PCLib/PCButton.m
+        * Code cleanup and corrected contact address: PCInfoController.m,
+          PCInfoController.h, PCLogController.m, PCLogController.h, 
+          PCAppController.h, PCAppController.m, PCFindController.h,
+          PCFindController.m, PCMenuController.h, PCMenuController.m,
+          PCPrefController.m, PCPrefController.h PCLib/PCBundleLoader.m,
+          PCLib/PCDataSource.h, PCLib/PCDataSource.m
+        * Extracting UI creation into category: PCPrefController+UInterface.h,
+          PCPrefController+UInterface.m, PCPrefController.m, PCPrefController.h,
+          PCLib/PCProjectDebugger+UInterface.h, PCLib/PCProjectDebugger.h,
+          PCLib/PCProjectDebugger+UInterface.m, PCLib/PCProjectDebugger.m
+        * Disabling unused menu entries using defines: ProjectCenter_main.m
+        * Added missing files to project: PCLib/PCButton.h, PCLib/PCButton.m
+        * Updated version for PCLib: PCLib/Version
+        * Changed menu title to ProjectCenter: ProjectCenter_main.m
+        * Adjusting UI elements and cleaned up code: PCRenaissanceProject.m
 
 2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
 

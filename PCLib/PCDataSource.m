@@ -25,6 +25,7 @@
 */
 
 #include "PCDataSource.h"
+#include "PCDefines.h"
 
 @implementation PCDataSource
 
@@ -38,7 +39,7 @@
 
 - (void)dealloc
 {
-    [data release];
+    RELEASE(data);
     [super dealloc];
 }
 
@@ -105,3 +106,4 @@
 }
 
 @end
+

@@ -88,7 +88,8 @@ PCFindController.h \
 PCInfoController.h \
 PCLogController.h \
 PCMenuController.h \
-PCPrefController.h
+PCPrefController.h \
+PCPrefController+UInterface.h
 
 #
 # Class files
@@ -101,6 +102,7 @@ PCInfoController.m \
 PCLogController.m \
 PCMenuController.m \
 PCPrefController.m \
+PCPrefController+UInterface.m \
 ProjectCenter_main.m
 
 #
@@ -115,3 +117,4 @@ include $(GNUSTEP_MAKEFILES)/aggregate.make
 include $(GNUSTEP_MAKEFILES)/application.make
 
 -include GNUmakefile.postamble
+

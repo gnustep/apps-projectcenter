@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2003 Free Software Foundation
 
    Author: Philippe C.D. Robert <probert@siggraph.org>
 
@@ -24,39 +24,14 @@
    $Id$
 */
 
-#ifndef __PCDATASOURCE_H
-#define __PCDATASOURCE_H
+#ifndef __PCPREFCONTROLLER_UINTERFACE_H
+#define __PCPREFCONTROLLER_UINTERFACE_H
 
-#include <AppKit/AppKit.h>
+#include "PCPrefController.h"
 
-/*
- Description:
+@interface PCPrefController (UInterface)
 
- PCDataSource is used as a data source for a NSTableView.
-
-*/
-
-@interface PCDataSource : NSObject
-{
-    NSMutableArray	*data;
-}
-
-- (id)init;
-- (void)dealloc;
-
-- (void)insertObject:(id)object;
-
-- (void)removeObject:(id)object;
-- (void)removeObjectAtIndex:(unsigned int)index;
-- (void)removeAllObjects;
-
-- (NSArray *)allObjects;
-
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
-
-- (id)tableView:(NSTableView *)aTableView objectValueForTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
-
-- (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
+- (void)_initUI;
 
 @end
 

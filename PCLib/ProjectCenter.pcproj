@@ -25,7 +25,9 @@
 	"PCFileManager+UInterface.m",
 	"PCProjectManager+UInterface.m",
 	"PCProject+UInterface.m",
-	"PCTextFinder+UInterface.m"
+	"PCTextFinder+UInterface.m",
+	"PCProjectDebugger+UInterface.m",
+	PCButton.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -68,7 +70,9 @@
 	"PCFileManager+UInterface.h",
 	"PCProjectManager+UInterface.h",
 	"PCProject+UInterface.h",
-	"PCTextFinder+UInterface.h"
+	"PCTextFinder+UInterface.h",
+	"PCProjectDebugger+UInterface.h",
+	PCButton.h
     );
     INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)";
     LANGUAGE = English;

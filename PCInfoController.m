@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -27,10 +27,6 @@
 #include "PCInfoController.h"
 #include <ProjectCenter/ProjectCenter.h>
 
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
-
 @implementation PCInfoController
 
 - (id)init
@@ -38,21 +34,22 @@
   if ((self = [super init])) {
     NSString *file;
     
-    file = [[NSBundle mainBundle] 
-      pathForResource:@"Info-gnustep" 
-               ofType:@"plist"];
+    file = [[NSBundle mainBundle] pathForResource:@"Info-gnustep" 
+                                           ofType:@"plist"];
+
     infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
-    [infoDict retain];
+    RETAIN(infoDict);
   }
   return self;
 }
 
 - (void)dealloc
 {
-  [infoDict release];
+  RELEASE(infoDict);
 
-  if (infoWindow) {
-    [infoWindow release];
+  if (infoWindow) 
+  {
+    RELEASE(infoWindow);
   }
 
   [super dealloc];

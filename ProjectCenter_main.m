@@ -31,8 +31,7 @@
 
 void createMenu();
 
-int
-main(int argc, const char **argv)
+int main(int argc, const char **argv)
 {
 #ifdef GNUSTEP_BASE_VERSION
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -58,10 +57,14 @@ createMenu()
   NSMenu *info;
   
   NSMenu *project;
+#ifdef ENABLE_SUBPROJECTS
   NSMenu *subprojects;
+#endif
   
   NSMenu *file;
+#ifdef ENABLE_ALL_FILE_OPERATIONS
   NSMenu *file_view;
+#endif
   
   NSMenu *edit;
   NSMenu *edit_find;
@@ -73,17 +76,23 @@ createMenu()
   
   NSMenu *tools;
   NSMenu *tools_build;
+#ifdef ENABLE_PROJECTFIND
   NSMenu *tools_find;
+#endif
+#ifdef ENABLE_LOADEDFILES
   NSMenu *tools_files;
+#endif
   NSMenu *tools_launcher;
+#ifdef ENABLE_INDEXER
   NSMenu *tools_indexer;
+#endif
 
   NSMenu *windows;
   NSMenu *services;
 
   SEL action = @selector(method:);
 
-  menu = [[NSMenu alloc] initWithTitle: @"PC"];
+  menu = [[NSMenu alloc] initWithTitle: @"ProjectCenter"];
 
   /*
    * The main menu
@@ -145,12 +154,16 @@ createMenu()
   [project addItemWithTitle:@"Remove Files..."
 	             action:@selector(projectRemoveFiles:)
 	      keyEquivalent:@"r"];
+#ifdef ENABLE_SUBPROJECTS
   [project addItemWithTitle:@"Subprojects"
 	             action:action
 	      keyEquivalent:@""];
+#endif
   [project addItemWithTitle:@"Close"
 	             action:@selector(projectClose:)
 	      keyEquivalent:@""];
+
+#ifdef ENABLE_SUBPROJECTS
 
   subprojects = [[[NSMenu alloc] init] autorelease];
   [project setSubmenu:subprojects
@@ -164,6 +177,8 @@ createMenu()
   [subprojects addItemWithTitle:@"Remove..."
 	                 action:@selector(removeSubproject:)
                   keyEquivalent:@""];
+
+#endif
 
   /*
    * File submenu
@@ -191,6 +206,7 @@ createMenu()
   [file addItemWithTitle:@"Close"
                   action:@selector(fileClose:)
 	   keyEquivalent:@"W"];
+#ifdef ENABLE_ALL_FILE_OPERATIONS
   [file addItemWithTitle:@"View"
                   action:action
 	   keyEquivalent:@""];
@@ -216,6 +232,7 @@ createMenu()
   [file_view addItemWithTitle:@"Tear Off"
                        action:action
 		keyEquivalent:@"T"];
+#endif
 
   /*
    * Edit submenu
@@ -368,30 +385,41 @@ createMenu()
 
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
+  // probert: either use a NSToolbar or remove that!
+#ifdef ENABLE_TOOLBAR
   [tools addItemWithTitle:@"Hide Tool Bar"
 	           action:action
 	    keyEquivalent:@""];
+#endif
   [tools addItemWithTitle:@"Inspector..."
 	           action:@selector(showInspector:)
 	    keyEquivalent:@""];
+#ifdef ENABLE_LOADEDPROJECTS
   [tools addItemWithTitle:@"Loaded Projects..."
 	           action:action
 	    keyEquivalent:@""];
+#endif
   [tools addItemWithTitle:@"Project Build"
 	           action:action
 	    keyEquivalent:@""];
+#ifdef ENABLE_PROJECTFIND
   [tools addItemWithTitle:@"Project Find"
 	           action:action
 	    keyEquivalent:@""];
+#endif
+#ifdef ENABLE_LOADEDFILES
   [tools addItemWithTitle:@"Loaded Files"
 	           action:action
 	    keyEquivalent:@""];
+#endif
   [tools addItemWithTitle:@"Launcher"
 	           action:action
 	    keyEquivalent:@""];
+#ifdef ENABLE_INDEXER
   [tools addItemWithTitle:@"Indexer"
 	           action:action
 	    keyEquivalent:@""];
+#endif
 
   // Project Build
   tools_build = [[[NSMenu alloc] init] autorelease];
@@ -417,6 +445,7 @@ createMenu()
 		  keyEquivalent:@"<"];
 
   // Project Find
+#ifdef ENABLE_PROJECTFIND
   tools_find = [[[NSMenu alloc] init] autorelease];
   [tools setSubmenu:tools_find
             forItem:[tools itemWithTitle:@"Project Find"]];
@@ -441,8 +470,10 @@ createMenu()
   [tools_find addItemWithTitle:@"Previuos match" 
                         action:action
 		 keyEquivalent:@""];
+#endif
 
   // Loaded Files
+#ifdef ENABLE_LOADEDFILES
   tools_files = [[[NSMenu alloc] init] autorelease];
   [tools setSubmenu:tools_files
             forItem:[tools itemWithTitle:@"Loaded Files"]];
@@ -461,6 +492,8 @@ createMenu()
   [tools_files addItemWithTitle:@"Previuos File" 
                          action:action
 	 	  keyEquivalent:@"_"];
+#endif
+
   // Launcher
   tools_launcher = [[[NSMenu alloc] init] autorelease];
   [tools setSubmenu:tools_launcher
@@ -474,6 +507,8 @@ createMenu()
   [tools_launcher addItemWithTitle:@"Debug" 
                            action:action
 	 	    keyEquivalent:@""];
+
+#ifdef ENABLE_INDEXER
   // Indexer
   tools_indexer = [[[NSMenu alloc] init] autorelease];
   [tools setSubmenu:tools_indexer
@@ -490,6 +525,7 @@ createMenu()
   [tools_indexer addItemWithTitle:@"Index File" 
                            action:action
 	 	    keyEquivalent:@"*"];
+#endif
 
   /*
    * Windows submenu
