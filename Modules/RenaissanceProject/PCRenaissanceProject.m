@@ -192,11 +192,11 @@
     
     [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
 
-    [mf appendApplication];
-    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
-    [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
+//    [mf appendApplication];
+//    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
+//    [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
 
-    [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
+//    [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
     [mf appendResources];
     for (i=0;i<[[self resourceFileKeys] count];i++)
     {
@@ -208,7 +208,7 @@
     [mf appendClasses:[dict objectForKey:PCClasses]];
     [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
 
-    [mf appendTailForApp];
+//    [mf appendTailForApp];
 
     // Write the new file to disc!
     if ((mfd = [mf encodedMakefile]))
@@ -261,7 +261,7 @@
 
   [super updateValuesFromProjectDict];
 
-  [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
+  [appClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
 
   if ((_icon = [projectDict objectForKey:PCAppIcon])) {
@@ -285,7 +285,7 @@
   [appIconView display];
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 }
 
@@ -332,7 +332,7 @@
   RELEASE(image);
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 
   return YES;
@@ -340,9 +340,9 @@
 
 - (void)setAppClass:(id)sender
 {
-  [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
+  [projectDict setObject:[appClassField stringValue] forKey:PCPrincipalClass];
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 }
 

@@ -37,18 +37,18 @@
 
   projectHistory = [[aManager activeProject] projectHistory];
 
-  self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
+  self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
                          styleMask: (NSTitledWindowMask 
 		                    | NSClosableWindowMask
 				    | NSResizableWindowMask)
 			   backing: NSBackingStoreRetained
 			     defer: YES];
   [self setMinSize: NSMakeSize(120, 23)];
-  [self setFrameAutosaveName: @"ProjectHistory"];
+  [self setFrameAutosaveName: @"LoadedFiles"];
   [self setReleasedWhenClosed: NO];
   [self setHidesOnDeactivate: YES];
   [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Project History", [[projectManager activeProject] projectName]]];
+    @"%@ - Loaded Files", [[projectManager activeProject] projectName]]];
 
   contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
@@ -65,7 +65,7 @@
            name:ActiveProjectDidChangeNotification
          object:nil];
 
-  if (![self setFrameUsingName: @"ProjectHistory"])
+  if (![self setFrameUsingName: @"LoadedFiles"])
     {
       [self center];
     }
@@ -79,6 +79,13 @@
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
+}
+
+- (BOOL)canBecomeKeyWindow
+{
+  // Panels controls doesn't receive mouse click if return NO
+
+  return YES;
 }
 
 - (void)setContentView:(NSView *)view
@@ -103,7 +110,7 @@
     }
 
   [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Project History", [activeProject projectName]]];
+    @"%@ - Loaded Files", [activeProject projectName]]];
 
   if (!activeProject)
     {

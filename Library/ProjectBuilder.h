@@ -34,7 +34,7 @@
 @protocol ProjectBuilder
 
 - (void)setActiveProject:(PCProject *)aProject;
-- (void)closeProject:(PCProject *)aProject;
+//- (void)closeProject:(PCProject *)aProject;
 
 @end
 

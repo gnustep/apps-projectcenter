@@ -24,24 +24,31 @@
    $Id$
 */
 
-#ifndef _PCFILEMANAGER_H
-#define _PCFILEMANAGER_H
+#ifndef _PCFileManager_h
+#define _PCFileManager_h
 
 #include <Foundation/Foundation.h>
+#include <AppKit/AppKit.h>
 
 @class PCProject;
+@class PCProjectManager;
 
 @interface PCFileManager : NSObject
 {
-    id newFileWindow;
-    id fileTypePopup;
-    id newFileName;
-    id descrView;
+  PCProjectManager *projectManager;
+  id               newFileWindow;
+//  id               fileTypePopup;
+  id               newFileName;
+  id               descrView;
 
-    id delegate;                    // PCProjectManager
+  id delegate;                    // PCProjectManager
 
-    NSMutableDictionary	*creators;
-    NSMutableDictionary	*typeDescr;
+  NSMutableDictionary *creators;
+  NSMutableDictionary *typeDescr;
+
+  NSOpenPanel      *addFilesPanel;
+  NSBox	           *fileTypeAccessaryView;
+  NSPopUpButton    *fileTypePopup;
 }
 
 //==============================================================================
@@ -54,7 +61,7 @@
 // ==== Init and free
 //==============================================================================
 
-- (id)init;
+- (id)initWithProjectManager:(PCProjectManager *)aProjectManager;
 - (void)dealloc;
 
 - (void)awakeFromNib;
@@ -71,7 +78,14 @@
 // ===========================================================================
 
 // Shows NSOpenPanel and return selected files if any
-- (NSMutableArray *)selectFilesOfType:(NSArray *)types multiple:(BOOL)yn;
+- (NSMutableArray *)filesForOpenOfType:(NSArray *)types
+                              multiple:(BOOL)yn
+			         title:(NSString *)title
+			       accView:(NSView *)accessoryView;
+				
+- (NSString *)fileForSaveOfType:(NSArray *)types
+		          title:(NSString *)title
+		        accView:(NSView *)accessoryView;
 
 // Return NO if coping of any file failed
 - (BOOL)copyFiles:(NSArray *)files intoDirectory:(NSString *)directory;

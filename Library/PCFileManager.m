@@ -24,9 +24,10 @@
    $Id$
 */
 
+#include "PCDefines.h"
 #include "PCFileManager.h"
 #include "PCFileCreator.h"
-#include "PCDefines.h"
+#include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCServer.h"
 
@@ -34,9 +35,9 @@
 
 @implementation PCFileManager
 
-//==============================================================================
+//============================================================================
 // ==== Class methods
-//==============================================================================
+//============================================================================
 
 static PCFileManager *_mgr = nil;
 
@@ -50,20 +51,21 @@ static PCFileManager *_mgr = nil;
   return _mgr;
 }
 
-//==============================================================================
+//============================================================================
 // ==== Init and free
-//==============================================================================
+//============================================================================
 
-- (id)init
+- (id)initWithProjectManager:(PCProjectManager *)aProjectManager
 {
-    if ((self = [super init])) 
+  if ((self = [super init])) 
     {
-       	creators = [[NSMutableDictionary alloc] init];
-       	typeDescr = [[NSMutableDictionary alloc] init];
-	[self _initUI];
-  	[self registerCreators];
+      projectManager = aProjectManager;
+      creators = [[NSMutableDictionary alloc] init];
+      typeDescr = [[NSMutableDictionary alloc] init];
+      [self _initUI];
+      [self registerCreators];
     }
-    return self;
+  return self;
 }
 
 - (void)dealloc
@@ -98,9 +100,13 @@ static PCFileManager *_mgr = nil;
 // ==== File stuff
 // ===========================================================================
 
-- (NSMutableArray *)selectFilesOfType:(NSArray *)types multiple:(BOOL)yn
+- (NSMutableArray *)filesForOpenOfType:(NSArray *)types
+                              multiple:(BOOL)yn
+			         title:(NSString *)title
+			       accView:(NSView *)accessoryView
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
   NSOpenPanel    *openPanel = nil;
   int            retval;
 
@@ -108,16 +114,50 @@ static PCFileManager *_mgr = nil;
   [openPanel setAllowsMultipleSelection:yn];
   [openPanel setCanChooseFiles:YES];
   [openPanel setCanChooseDirectories:NO];
-  [openPanel setTitle:@"Add Files"];
+  [openPanel setDelegate:self];
+  [openPanel setTitle:title];
+  [openPanel setAccessoryView:accessoryView];
 
-  retval = [openPanel 
-    runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
-                    file:nil
-		   types:types];
+  if (!lastOpenDir)
+    {
+      lastOpenDir = NSHomeDirectory();
+    }
+
+  retval = [openPanel runModalForDirectory:lastOpenDir file:nil types:types];
   if (retval == NSOKButton) 
     {
       [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
       return [[[openPanel filenames] mutableCopy] autorelease];
+    }
+
+  return nil;
+}
+
+- (NSString *)fileForSaveOfType:(NSArray *)types
+		          title:(NSString *)title
+		        accView:(NSView *)accessoryView
+{
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
+  NSSavePanel    *savePanel = nil;
+  int            retval;
+
+  savePanel = [NSSavePanel savePanel];
+  [savePanel setDelegate:self];
+  [savePanel setTitle:title];
+//  [savePanel setAccessoryView:nil];
+  [savePanel setAccessoryView:accessoryView];
+
+  if (!lastOpenDir)
+    {
+      lastOpenDir = NSHomeDirectory();
+    }
+
+  retval = [savePanel runModalForDirectory:lastOpenDir file:nil];
+  if (retval == NSOKButton) 
+    {
+      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
+      return [[[savePanel filename] mutableCopy] autorelease];
     }
 
   return nil;
@@ -303,6 +343,4 @@ static PCFileManager *_mgr = nil;
 }
 
 @end
-
-
 

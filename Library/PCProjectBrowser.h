@@ -37,21 +37,35 @@ extern NSString *PCBrowserDidSetPathNotification;
   NSBrowser *browser;
 }
 
+// ============================================================================
+// ==== Intialization & deallocation
+// ============================================================================
+
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
+// ============================================================================
+// ==== Accessor methods
+// ============================================================================
 - (NSView *)view;
 
+- (BOOL)isEditableCategory:(NSString *)category file: (NSString *)title;
+- (NSString *)nameOfSelectedFile;
+- (NSString *)pathOfSelectedFile;
+- (NSArray *)selectedFiles;
+
+- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category;
+
+// ============================================================================
+// ==== Actions
+// ============================================================================
 - (void)click:(id)sender;
 - (void)doubleClick:(id)sender;
 
+// ============================================================================
+// ==== Notifications
+// ============================================================================
 - (void)projectDictDidChange:(NSNotification *)aNotif;
-
-- (NSArray *)selectedFiles;
-- (NSString *)nameOfSelectedFile;
-- (NSString *)pathOfSelectedFile;
-- (BOOL)isEditableCategory:(NSString *)category file: (NSString *)title;
-- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category;
 
 @end
 

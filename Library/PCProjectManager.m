@@ -27,6 +27,7 @@
 #include "PCDefines.h"
 
 #include "PCFileManager.h"
+#include "PCFileManager+UInterface.h"
 #include "PCProjectManager.h"
 #include "PCHistoryPanel.h"
 #include "PCBuildPanel.h"
@@ -94,9 +95,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	   selector:@selector(editorDidClose:)
 	       name:PCEditorDidCloseNotification
 	     object:nil];
+	     
+      fileManager = [[PCFileManager alloc] initWithProjectManager:self];
+//      [fileManager setDelegate:self];
 
-      fileManager = [PCFileManager fileManager];
-      [fileManager setDelegate:self];
+      [self _initUI];
       
       _needsReleasing = NO;
     }
@@ -114,6 +117,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       [saveTimer invalidate];
     }
 
+  RELEASE(projectTypeAccessaryView);
+  RELEASE(fileTypeAccessaryView);
   RELEASE(rootBuildPath);
   RELEASE(loadedProjects);
 
@@ -122,6 +127,51 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   if (launchPanel)  RELEASE(launchPanel);
 
   [super dealloc];
+}
+
+- (void)setDelegate:(id)aDelegate 
+{
+  delegate = aDelegate;
+}
+
+// ============================================================================
+// ==== Intialization & deallocation
+// ============================================================================
+
+- (void)_initUI
+{
+  NSRect fr = NSMakeRect(20,30,160,20);
+
+  // For "Open Project" and "New Project" panels
+  projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
+  [projectTypePopup setAutoenablesItems:NO];
+  [projectTypePopup addItemWithTitle:@"No type available!"];
+
+  projectTypeAccessaryView = [[NSBox alloc] init];
+  [projectTypeAccessaryView setTitle:@"Project Types"];
+  [projectTypeAccessaryView setTitlePosition:NSAtTop];
+  [projectTypeAccessaryView setBorderType:NSGrooveBorder];
+  [projectTypeAccessaryView addSubview:projectTypePopup];
+  [projectTypeAccessaryView sizeToFit];
+  [projectTypeAccessaryView setAutoresizingMask:NSViewMinXMargin 
+                                                | NSViewMaxXMargin];
+  RELEASE(projectTypePopup);
+}
+
+- (void)addProjectTypeNamed:(NSString *)name
+{
+  static BOOL _firstItem = YES;
+
+  if (_firstItem) 
+    {
+      _firstItem = NO;
+      [projectTypePopup removeItemWithTitle:@"No type available!"];
+    }
+
+  [projectTypePopup addItemWithTitle:name];
+  [projectTypePopup sizeToFit];
+  [projectTypeAccessaryView sizeToFit];
+  [projectTypePopup selectItemAtIndex:0];
 }
 
 // ============================================================================
@@ -164,9 +214,14 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return projectInspector;
 }
 
+- (NSPanel *)inspectorPanel
+{
+  return [[self projectInspector] panel];
+}
+
 - (void)showProjectInspector:(id)sender
 {
-  [[[self projectInspector] panel] makeKeyAndOrderFront:self];
+  [[[self projectInspector] panel] orderFront:self];
 }
 
 - (NSPanel *)historyPanel
@@ -213,73 +268,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return findPanel;
 }
 
-// ============================================================================
-// ==== Project management
-// ============================================================================
-
-- (NSMutableDictionary *)loadedProjects
-{
-    return loadedProjects;
-}
-
-- (PCProject *)activeProject
-{
-  return activeProject;
-}
-
-- (void)setActiveProject:(PCProject *)aProject
-{
-  if (aProject != activeProject)
-    {
-      activeProject = aProject;
-
-      [[NSNotificationCenter defaultCenter]
-	postNotificationName:ActiveProjectDidChangeNotification
-	              object:activeProject];
-    }
-}
-
-- (void)saveAllProjectsIfNeeded
-{
-    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-
-    if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) 
-    {
-        [self saveAllProjects];
-    }
-    else 
-    {
-        if( [saveTimer isValid] ) 
-	{
-	    [saveTimer invalidate];
-	}
-    }
-}
-
-- (void)saveAllProjects
-{
-    NSEnumerator *enumerator = [loadedProjects keyEnumerator];
-    NSString *key;
-    BOOL ret;
-    PCProject *project;
-
-    while ( (key = [enumerator nextObject]) )
-    {
-        project = [loadedProjects objectForKey:key];
-	ret = [project save];
-
-        if( ret == NO ) 
-	{
-            NSRunAlertPanel(@"Attention!",
-                            @"Couldn't save project %@!", 
-                            @"OK",nil,nil,[project projectName]);
-        }
-    }
-}
-
 - (NSString *)rootBuildPath
 {
-    return rootBuildPath;
+  return rootBuildPath;
 }
 
 - (NSString *)projectPath
@@ -293,23 +284,90 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 }
 
 // ============================================================================
+// ==== Project management
+// ============================================================================
+
+- (NSMutableDictionary *)loadedProjects
+{
+  return loadedProjects;
+}
+
+- (PCProject *)activeProject
+{
+  return activeProject;
+}
+
+- (void)setActiveProject:(PCProject *)aProject
+{
+  if (aProject != activeProject)
+    {
+      activeProject = aProject;
+
+      NSLog(@"PCProjectManager: setActiveProject: %@", 
+	    [activeProject projectName]);
+
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:ActiveProjectDidChangeNotification
+	              object:activeProject];
+    }
+}
+
+- (void)saveAllProjectsIfNeeded
+{
+  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+
+  if ([[defs objectForKey:AutoSave] isEqualToString:@"YES"])
+    {
+      [self saveAllProjects];
+    }
+  else 
+    {
+      if ([saveTimer isValid])
+	{
+	  [saveTimer invalidate];
+	}
+    }
+}
+
+- (BOOL)saveAllProjects
+{
+  NSEnumerator *enumerator = [loadedProjects keyEnumerator];
+  NSString     *key;
+  PCProject    *project;
+
+  while ((key = [enumerator nextObject]))
+    {
+      project = [loadedProjects objectForKey:key];
+
+      if ([project save] == NO)
+	{
+	  return NO;
+	}
+    }
+
+  return YES;
+}
+
+// ============================================================================
 // ==== Project actions
 // ============================================================================
 
-- (NSString *)projectNameAtPath:(NSString *)aPath
-{
-  return [[aPath stringByDeletingLastPathComponent] lastPathComponent];
-}
-
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {
-  NSDictionary    *projectFile;
-  NSString        *projectClassName;
+  NSDictionary    *projectFile = nil;
+  NSString        *projectTypeName = nil;
+  NSString        *projectClassName = nil;
   id<ProjectType> projectCreator;
-  PCProject       *project;
+  PCProject       *project = nil;
 
   projectFile = [NSDictionary dictionaryWithContentsOfFile:aPath];
+  // For compatibility with 0.3.x projects
   projectClassName = [projectFile objectForKey:PCProjectBuilderClass];
+  if (projectClassName == nil)
+    {
+      projectTypeName = [projectFile objectForKey:PCProjectType];
+      projectClassName = [[delegate projectTypes]objectForKey:projectTypeName];
+    }
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
 
   if ((project = [projectCreator openProjectAt:aPath])) 
@@ -330,7 +388,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   BOOL     isDir = NO;
   NSString *projectName = nil;
 
-  projectName = [self projectNameAtPath:aPath];
+  projectName = [[aPath stringByDeletingLastPathComponent] lastPathComponent];
 
   if ([loadedProjects objectForKey:projectName]) 
     {
@@ -351,10 +409,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	}
 
       [project setProjectManager:self];
+      [project validateProjectDict];
       [loadedProjects setObject:project forKey:projectName];
       [self setActiveProject:project];
-
-      [project validateProjectDict];
+      [[project projectWindow] orderFront:self];
 
       return YES;
     }
@@ -366,6 +424,15 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
   Class	    creatorClass = NSClassFromString(projectType);
   PCProject *project;
+  NSString  *projectName = [aPath lastPathComponent];
+
+  if ([loadedProjects objectForKey:projectName]) 
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Project '%@' has already been opened!", 
+		      @"OK",nil,nil,projectName);
+      return NO;
+    }
 
   if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
     {
@@ -380,12 +447,56 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     }
 
   [project setProjectManager:self];
-
-  [loadedProjects setObject:project forKey:[self projectNameAtPath:aPath]];
-
+  [loadedProjects setObject:project forKey:projectName];
   [self setActiveProject:project];
+  [[project projectWindow] orderFront:self];
 
   return YES;
+}
+
+- (void)openProject
+{
+  NSArray  *files = nil;
+  NSString *filePath = nil;
+  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+
+  files = [fileManager filesForOpenOfType:fileTypes
+                                 multiple:NO
+			            title:@"Open Project"
+				  accView:nil];
+  filePath = [files objectAtIndex:0];
+
+  if (filePath != nil && [self openProjectAt:filePath] == NO)
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Couldn't open project %@!",
+		      @"OK",nil,nil,
+		      [filePath stringByDeletingLastPathComponent]);
+    }
+}
+
+- (void)newProject
+{
+  NSString *filePath = nil;
+  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+  NSString *projectType = nil;
+  NSString *className = nil;
+
+  filePath = [fileManager fileForSaveOfType:fileTypes
+	  		              title:@"New Project"
+				    accView:projectTypeAccessaryView];
+  if (filePath != nil) 
+    {
+      projectType = [projectTypePopup titleOfSelectedItem];
+      className = [[delegate projectTypes] objectForKey:projectType];
+
+      if (![self createProjectOfType:className path:filePath])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Failed to create %@!",
+			  @"OK",nil,nil,filePath);
+	}
+    }
 }
 
 - (BOOL)saveProject
@@ -401,125 +512,29 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       NSRunAlertPanel(@"Attention!",
 		      @"Couldn't save project %@!", 
 		      @"OK",nil,nil,[activeProject projectName]);
+      return NO;
     }
 
   return YES;
 }
 
-- (BOOL)saveProjectAs:(NSString *)projName
-{
-  return NO;
-}
-
-- (void)revertToSaved
-{
-}
-
-// subprojects
-- (BOOL)newSubproject
-{
-    return NO;
-}
-
-- (BOOL)addSubprojectAt:(NSString *)path
-{
-    return NO;
-}
-
-- (void)removeSubproject
-{
-}
-//
-
-- (void)closeProject:(PCProject *)aProject
-{
-  PCProject *currentProject = nil;
-  NSString  *projectName = [aProject projectName];
-
-  currentProject = RETAIN([loadedProjects objectForKey:projectName]);
-  if (!currentProject)
-    {
-      return;
-    }
-
-  // Remove it from the loaded projects! This is the only place it
-  // is retained, so it should dealloc after this.
-  [loadedProjects removeObjectForKey:projectName];
-
-  if ([loadedProjects count] == 0)
-    {
-      [projectInspector close];
-      [historyPanel close];
-      [buildPanel close];
-      [launchPanel close];
-      [self setActiveProject: nil];
-    }
-  else if (currentProject == [self activeProject])
-    {
-      [self setActiveProject:[[loadedProjects allValues] lastObject]];
-    }
-
-  RELEASE(currentProject);
-}
-
-- (void)closeProject
-{
-  [[activeProject projectWindow] performClose:self];
-}
-
-// ============================================================================
-// ==== File actions
-// ============================================================================
-
-- (void)newFile
-{
-  [fileManager showNewFileWindow];
-}
-
-- (BOOL)saveFile
-{
-  return [[activeProject projectEditor] saveFile];
-}
-
-- (BOOL)saveFileAs:(NSString *)path
-{
-  return [[activeProject projectEditor] saveFileAs:path];
-}
-
-- (BOOL)saveFileTo:(NSString *)path
-{
-  return [[activeProject projectEditor] saveFileTo:path];
-}
-
-- (BOOL)revertFileToSaved
-{
-  return [[activeProject projectEditor] revertFileToSaved];
-}
-
-- (void)closeFile
-{
-  return [[activeProject projectEditor] closeActiveEditor:self];
-}
-
-- (BOOL)renameFileTo:(NSString *)path
-{
-  return YES;
-}
-
-// Project menu
 - (BOOL)addProjectFiles
 {
   NSString       *category = nil;
-  NSString       *directory = nil;
   NSArray        *fileTypes = nil;
   NSMutableArray *files = nil;
 
   category = [activeProject selectedRootCategory];
-  directory = [activeProject dirForCategory:category];
   fileTypes = [activeProject fileTypesForCategory:category];
 
+/*  [fileTypePopup removeAllItems];
+  [fileTypePopup addItemsWithTitles:[activeProject rootKeys]];
   // Order Open panel and return selected files
-  files = [fileManager selectFilesOfType:fileTypes multiple:YES];
+  files = [fileManager filesForOpenOfType:fileTypes
+                                 multiple:YES
+				    title:@"Add files"
+				  accView:fileTypeAccessaryView];*/
+  files = [fileManager filesForAdd];
 
   // No files was selected 
   if (!files)
@@ -559,13 +574,13 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
       ret = NSRunAlertPanel(@"Remove",
 			    @"Remove files...",
-			    @"Cancel",
+			    @"...from Project and Disk",
 			    @"...from Project only",
-			    @"...from Project and Disk");
+			    @"Cancel");
 
-      if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
+      if (ret == NSAlertDefaultReturn || ret == NSAlertAlternateReturn)
 	{
-	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
+	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
 	  ret = [activeProject removeFiles:files forKey:category];
 	  if (flag && ret)
@@ -586,6 +601,140 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return YES;
 }
 
+// subprojects
+- (BOOL)newSubproject
+{
+    return NO;
+}
+
+- (BOOL)addSubprojectAt:(NSString *)path
+{
+    return NO;
+}
+
+- (void)removeSubproject
+{
+}
+//
+
+- (void)closeProject:(PCProject *)aProject
+{
+  PCProject *currentProject = nil;
+  NSString  *projectName = [aProject projectName];
+
+  currentProject = RETAIN([loadedProjects objectForKey:projectName]);
+  if (!currentProject)
+    {
+      return;
+    }
+
+  // Remove it from the loaded projects!
+  [loadedProjects removeObjectForKey:projectName];
+
+  if ([loadedProjects count] == 0)
+    {
+      if (projectInspector) [projectInspector close];
+      if (historyPanel) [historyPanel close];
+      if (buildPanel) [buildPanel close];
+      if (launchPanel) [launchPanel close];
+      [self setActiveProject: nil];
+    }
+  else if (currentProject == [self activeProject])
+    {
+      [self setActiveProject:[[loadedProjects allValues] lastObject]];
+    }
+
+  RELEASE(currentProject);
+}
+
+- (void)closeProject
+{
+  [activeProject close:self];
+}
+
+- (BOOL)closeAllProjects
+{
+  while ([loadedProjects count] > 0)
+    {
+      if ([activeProject close:self] == NO)
+	{
+	  return NO;
+	}
+    }
+   
+  return YES;
+}
+
+// ============================================================================
+// ==== File actions
+// ============================================================================
+
+- (void)openFile
+{
+  NSArray  *files = nil;
+  NSString *filePath = nil;
+
+  files = [fileManager filesForOpenOfType:nil
+                                 multiple:NO
+			            title:@"Open File"
+				  accView:nil];
+  filePath = [files objectAtIndex:0];
+
+  if (filePath != nil)
+    {
+      [self openFileWithEditor:filePath];
+    }
+}
+
+- (void)newFile
+{
+  [fileManager showNewFileWindow];
+}
+
+- (BOOL)saveFile
+{
+  return [[activeProject projectEditor] saveFile];
+}
+
+- (BOOL)saveFileAs:(NSString *)path
+{
+  return [[activeProject projectEditor] saveFileAs:path];
+}
+
+- (BOOL)saveFileTo
+{
+  NSString *filePath = nil;
+
+  filePath = [fileManager fileForSaveOfType:nil
+			              title:@"Save To..."
+				    accView:nil];
+
+  if (filePath != nil && ![[activeProject projectEditor] saveFileTo:filePath]) 
+    {
+      NSRunAlertPanel(@"Alert", @"Couldn't save file to\n%@!",
+		      @"OK", nil, nil, filePath);
+      return NO;
+    }
+
+  return YES;
+}
+
+- (BOOL)revertFileToSaved
+{
+  return [[activeProject projectEditor] revertFileToSaved];
+}
+
+- (void)closeFile
+{
+  return [[activeProject projectEditor] closeActiveEditor:self];
+}
+
+- (BOOL)renameFileTo:(NSString *)path
+{
+  return YES;
+}
+
+// Project menu
 // ============================================================================
 // ==== Non project editors
 // ============================================================================
@@ -593,7 +742,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (void)openFileWithEditor:(NSString *)path
 {
   PCEditor *editor;
-  
+
   editor = [PCProjectEditor openFileInEditor:path];
   
   [nonProjectEditors setObject:editor forKey:path];

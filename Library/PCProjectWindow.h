@@ -69,7 +69,9 @@
 - (NSView *)customContentView;
 - (void)setCustomContentView:(NSView *)subview;
 
+- (NSImage *)fileIconImage;
 - (void)setFileIconImage:(NSImage *)image;
+- (NSString *)fileIconTitle;
 - (void)setFileIconTitle:(NSString *)title;
 
 // ============================================================================
@@ -89,8 +91,12 @@
 // ============================================================================
 // ==== Window delegate
 // ============================================================================
+- (NSString *)stringWithSavedFrame;
 - (void)makeKeyAndOrderFront:(id)sender;
+- (void)makeKeyWindow;
+- (void)orderFront:(id)sender;
 - (void)center;
+- (void)close;
 - (void)performClose:(id)sender;
 - (BOOL)isDocumentEdited;
 - (BOOL)isKeyWindow;

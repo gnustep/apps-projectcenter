@@ -36,7 +36,6 @@
 
 @implementation PCBundleProj
 
-static NSString *_projTypeName = @"Bundle";
 static PCBundleProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -58,7 +57,7 @@ static PCBundleProj *_creator = nil;
 
 - (NSString *)projectTypeName
 {
-    return _projTypeName;
+  return @"Bundle";
 }
 
 - (NSDictionary *)typeTable
@@ -91,7 +90,7 @@ static PCBundleProj *_creator = nil;
                 
         // Customise the project
         [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[[project principalClass] description] forKey:PCProjType];
+        [dict setObject:[self projectTypeName] forKey:PCProjectType];
 
         // Save the project to disc
 	projectFile = [NSString stringWithString:[path lastPathComponent]];

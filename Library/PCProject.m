@@ -41,9 +41,10 @@
 #include "PCProjectLauncher.h"
 #include "PCEditor.h"
 
-NSString *ProjectDictDidSetNotification = @"ProjectDictDidSetNotification";
-NSString *ProjectDictDidChangeNotification = @"ProjectDictDidChangeNotification";
-NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
+NSString 
+*PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";
+NSString 
+*PCProjectDictDidSaveNotification = @"PCProjectDictDidSaveNotification";
 
 @implementation PCProject
 
@@ -84,12 +85,13 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
       NSLog (@"PCProject initWithProjectDictionary");
 
-      if(![self assignProjectDict:dict])
+      if (![self assignProjectDict:dict])
 	{
 	  NSLog(@"<%@ %x>: could not load the project...",[self class],self);
 	  [self autorelease];
 	  return nil;
 	}
+      [self save];
     }
 
   return self;
@@ -100,15 +102,122 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   projectManager = aManager;
 }
 
-- (PCProjectManager *)projectManager
+- (BOOL)close:(id)sender
 {
-  return projectManager;
+  int ret;
+
+  // Project files (GNUmakefile, PC.project etc.)
+  if ([self isProjectChanged] == YES)
+    {
+      ret = NSRunAlertPanel(@"Alert",
+			    @"Project is modified",
+			    @"Save and Close",@"Don't save",@"Cancel");
+      switch (ret)
+	{
+	case NSAlertDefaultReturn:
+	  if ([self save] == NO)
+	    {
+	      return NO;
+	    }
+	  break;
+	  
+	case NSAlertAlternateReturn:
+	  break;
+
+	case NSAlertOtherReturn:
+	  return NO;
+	  break;
+	}
+    }
+
+  // Save visible windows and panels positions to project dictionary
+/*  if ([self saveProjectWindowsAndPanels] == NO)
+    {
+      return NO;
+    }*/
+    
+  // Editors
+  // "Cancel" button on "Save Edited Files" panel selected
+  if ([projectEditor closeAllEditors] == NO)
+    {
+      return NO;
+    }
+
+  // Project window
+  if (sender != projectWindow)
+    {
+      [projectWindow close];
+    }
+
+  // Remove self from loaded projects
+  [projectManager closeProject:self];
+
+  return YES;
 }
 
-- (void)close
+// For future use. Doesn't save now. Should omit saving project dict when
+// it's changed and option "Save Project On Quit" doesn't set.
+- (BOOL)saveProjectWindowsAndPanels
 {
-  [projectEditor closeAllEditors];
-  [projectManager closeProject:self];
+  NSMutableDictionary *windows = [projectDict objectForKey:@"PC_WINDOWS"];
+
+  if (windows == nil)
+    {
+      windows = [[NSMutableDictionary alloc] init];
+    }
+  
+  // Project Window
+  [windows setObject:[projectWindow stringWithSavedFrame]
+              forKey:@"ProjectWindow"];
+
+  // Project Build
+  if (projectBuilder && [[projectManager buildPanel] isVisible])
+    {
+      [windows setObject:[[projectManager buildPanel] stringWithSavedFrame]
+	          forKey:@"ProjectBuild"];
+    }
+  else
+    {
+      [windows removeObjectForKey:@"ProjectBuild"];
+    }
+
+  // Project Launch
+  if (projectLauncher && [[projectManager launchPanel] isVisible])
+    {
+      [windows setObject:[[projectManager launchPanel] stringWithSavedFrame]
+                  forKey:@"ProjectLaunch"];
+    }
+  else
+    {
+      [windows removeObjectForKey:@"ProjectLaunch"];
+    }
+
+  // Project Inspector
+/*  if ([[projectManager inspectorPanel] isVisible])
+    {
+      [windows setObject:[[projectManager inspectorPanel] stringWithSavedFrame]
+                  forKey:@"ProjectInspector"];
+    }
+  else
+    {
+      [windows removeObjectForKey:@"ProjectInspector"];
+    }*/
+
+  // Loaded Files
+  if (projectHistory && [[projectManager historyPanel] isVisible])
+    {
+      [windows setObject:[[projectManager historyPanel] stringWithSavedFrame]
+                  forKey:@"LoadedFiles"];
+    }
+  else
+    {
+      [windows removeObjectForKey:@"LoadedFiles"];
+    }
+    
+  [projectDict setObject:windows forKey:@"PC_WINDOWS"];
+  NSLog(@"Windows saved");
+
+  return YES;
 }
 
 - (void)dealloc
@@ -137,6 +246,11 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 // ============================================================================
 // ==== Accessor methods
 // ============================================================================
+
+- (PCProjectManager *)projectManager
+{
+  return projectManager;
+}
 
 - (PCProjectBrowser *)projectBrowser
 {
@@ -245,6 +359,62 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   return nil;
 }
 
+- (NSString *)projectDescription
+{
+  return @"Abstract PCProject class!";
+}
+
+- (BOOL)isExecutable
+{
+  return NO;
+}
+
+- (NSArray *)fileTypesForCategory:(NSString *)category
+{
+  return nil;
+}
+
+- (NSString *)dirForCategory:(NSString *)category
+{
+  return projectPath;
+}
+
+- (NSArray *)buildTargets
+{
+  return nil;
+}
+
+- (NSArray *)sourceFileKeys
+{
+  return nil;
+}
+
+- (NSArray *)resourceFileKeys
+{
+  return nil;
+}
+
+- (NSArray *)otherKeys
+{
+  return nil;
+}
+
+- (NSArray *)allowableSubprojectTypes
+{
+  return nil;
+}
+
+- (NSArray *)defaultLocalizableKeys
+{
+  return nil;
+}
+
+- (NSArray *)localizableKeys
+{
+  return nil;
+}
+
+// Saves backup file
 - (BOOL)writeMakefile
 {
   NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
@@ -267,46 +437,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
     }
 
   return YES;
-}
-
-- (NSArray *)fileTypesForCategory:(NSString *)category
-{
-  return nil;
-}
-
-- (NSString *)dirForCategory:(NSString *)category
-{
-  return projectPath;
-}
-
-- (NSArray *)sourceFileKeys
-{
-  return nil;
-}
-
-- (NSArray *)resourceFileKeys
-{
-  return nil;
-}
-
-- (NSArray *)otherKeys
-{
-  return nil;
-}
-
-- (NSArray *)buildTargets
-{
-  return nil;
-}
-
-- (NSString *)projectDescription
-{
-  return @"Abstract PCProject class!";
-}
-
-- (BOOL)isExecutable
-{
-  return NO;
 }
 
 // ============================================================================
@@ -395,7 +525,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   [projectDict setObject:projectFiles forKey:type];
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 }
 
@@ -421,7 +551,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   [projectDict setObject:projectFiles forKey:key];
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 
   return YES;
@@ -449,7 +579,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
   // Notify on dictionary changes. Update the interface and so on.
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification 
+    postNotificationName:PCProjectDictDidChangeNotification 
                   object:self];
 
   return YES;
@@ -457,7 +587,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (NSDictionary *)projectDict
 {
-    return (NSDictionary *)projectDict;
+  return (NSDictionary *)projectDict;
 }
 
 - (void)setProjectPath:(NSString *)aPath
@@ -471,9 +601,14 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
     return projectPath;
 }
 
+- (NSArray *)rootKeys
+{
+  return rootKeys;
+}
+
 - (NSDictionary *)rootCategories
 {
-    return rootCategories;
+  return rootCategories;
 }
 
 - (BOOL)save
@@ -484,40 +619,51 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
   NSString       *keepBackup = [defs objectForKey:KeepBackup];
   BOOL           shouldKeep = [keepBackup isEqualToString:@"YES"];
-  BOOL           ret = NO;
 
-  if ( shouldKeep == YES && [fm isWritableFileAtPath:backup] )
+  if (shouldKeep == YES && [fm isWritableFileAtPath:backup])
     {
-      ret = [fm removeFileAtPath:backup handler:nil];
-      if( ret == NO ) {
-	  NSRunAlertPanel(@"Attention!",
-			  @"Could not remove the old project backup '%@'!",
-			  @"OK",nil,nil,backup);
-      }
-    }
-
-  if (shouldKeep && [fm isReadableFileAtPath:file]) 
-    {
-      ret = [fm copyPath:file toPath:backup handler:nil];
-      if( ret == NO ) 
+      if (![fm removeFileAtPath:backup handler:nil])
 	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Could not save the project backup file '%@'!",
-			  @"OK",nil,nil,file);
+	  NSRunAlertPanel(@"Save project",
+			  @"Error removing the old project backup!",
+			  @"OK",nil,nil);
+	  return NO;
 	}
     }
 
-  ret = [projectDict writeToFile:file atomically:YES];
-  if( ret == YES )
+  // Save backup
+  if (shouldKeep && [fm isReadableFileAtPath:file]) 
     {
-      [[NSNotificationCenter defaultCenter] 
-	postNotificationName:ProjectDictDidSaveNotification 
-                      object:self];
+      if ([fm copyPath:file toPath:backup handler:nil] == NO)
+	{
+	  NSRunAlertPanel(@"Save project",
+			  @"Error when saving project backup file!",
+			  @"OK",nil,nil);
+	  return NO;
+	}
     }
 
-  [self writeMakefile];
+  // Save project file
+  [projectDict setObject:[[NSCalendarDate date] description]
+                  forKey:PCLastEditing];
+  if ([projectDict writeToFile:file atomically:YES] == NO)
+    {
+      return NO;
+    }
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCProjectDictDidSaveNotification 
+                  object:self];
 
-  return ret;
+  // Save GNUmakefile
+  if ([self writeMakefile] == NO)
+    {
+      NSRunAlertPanel(@"Save project",
+		      @"Error when writing makefile for project %@",
+		      @"OK",nil,nil,projectName);
+      return NO;
+    }
+
+  return YES;
 }
 
 - (BOOL)saveAt:(NSString *)projPath
@@ -567,9 +713,8 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   NSArray      *keys;
   NSEnumerator *enumerator;
 
-  _file = [[NSBundle bundleForClass:projClass] 
-    pathForResource:@"PC"
-             ofType:@"project"];
+  _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
+                                                        ofType:@"project"];
 
   origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
   keys   = [origin allKeys];
@@ -588,51 +733,51 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (void)updateProjectDict
 {
-    NSString *_file;
-    NSString *key;
-    Class projClass = [self builderClass];
-    NSDictionary *origin;
-    NSArray *keys;
-    NSEnumerator *enumerator;
-    BOOL projectHasChanged = NO;
+  Class        projClass = [self builderClass];
+  NSString     *_file;
+  NSString     *key;
+  NSDictionary *origin;
+  NSArray      *keys;
+  NSEnumerator *enumerator;
+  BOOL         projectHasChanged = NO;
 
-    _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
-                                                          ofType:@"proj"];
+  _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
+                                                        ofType:@"project"];
 
-    origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-    keys   = [origin allKeys];
+  origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+  keys   = [origin allKeys];
 
-    enumerator = [keys objectEnumerator];
-    while( (key = [enumerator nextObject]) )
+  enumerator = [keys objectEnumerator];
+  while ((key = [enumerator nextObject]))
     {
-        if( [projectDict objectForKey:key] == nil )
-        {
-            [projectDict setObject:[origin objectForKey:key] forKey:key];
-	    projectHasChanged = YES;
+      if ([projectDict objectForKey:key] == nil)
+	{
+	  [projectDict setObject:[origin objectForKey:key] forKey:key];
+	  projectHasChanged = YES;
 
-            NSRunAlertPanel(@"New Project Key!",
-                            @"The key '%@' has been added.",
-                            @"OK",nil,nil,key);
-        }
+/*	  NSRunAlertPanel(@"New Project Key!",
+			  @"The key '%@' has been added.",
+			  @"OK",nil,nil,key);*/
+	}
     }
 
-    if (projectHasChanged == YES)
-      {
-    	[[NSNotificationCenter defaultCenter] 
-  	  postNotificationName:ProjectDictDidChangeNotification 
-	                object:self];
-      }
+  if (projectHasChanged == YES)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCProjectDictDidChangeNotification 
+	              object:self];
+    }
 }
 
 - (void)validateProjectDict
 {
-  if( [self isValidDictionary:projectDict] == NO )
+  if ([self isValidDictionary:projectDict] == NO)
     {
       int ret = NSRunAlertPanel(@"Attention!", 
-				@"The project is not up to date, should it be updated automatically?", 
+				@"The project file lacks some entries\nUpdate it automatically?", 
 				@"Update",@"Leave",nil);
 
-      if( ret == NSAlertDefaultReturn )
+      if (ret == NSAlertDefaultReturn)
 	{
 	  [self updateProjectDict];
 	  [self save];
@@ -650,7 +795,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (NSArray *)subprojects
 {
-    return [projectDict objectForKey:PCSubprojects];
+  return [projectDict objectForKey:PCSubprojects];
 }
 
 - (void)addSubproject:(PCProject *)aSubproject

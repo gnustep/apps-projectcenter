@@ -22,6 +22,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#include "PCDefines.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCProjectInspector.h"
@@ -79,12 +80,12 @@
 - (void)_initUI
 {
   // Panel
-  inspectorPanel = [[NSWindow alloc] 
-    initWithContentRect:NSMakeRect(200,300,280,404)
+  inspectorPanel = [[NSPanel alloc] 
+    initWithContentRect:NSMakeRect(200,300,300,404)
               styleMask:NSTitledWindowMask | NSClosableWindowMask
                 backing:NSBackingStoreBuffered
                   defer:YES];
-  [inspectorPanel setMinSize:NSMakeSize(280,404)];
+  [inspectorPanel setMinSize:NSMakeSize(300,404)];
   [inspectorPanel setTitle:@"Project Inspector"];
   [inspectorPanel setTitle: [NSString stringWithFormat:
     @"%@ - Project Inspector", [[projectManager activeProject] projectName]]];
@@ -97,13 +98,13 @@
   // Content
   contentView = [[NSBox alloc] init];
   [contentView setTitlePosition:NSNoTitle];
-  [contentView setFrame:NSMakeRect(0,0,280,384)];
+  [contentView setFrame:NSMakeRect(0,0,300,384)];
   [contentView setBorderType:NSNoBorder];
   [contentView setContentViewMargins:NSMakeSize(0.0, 0.0)];
   [inspectorPanel setContentView:contentView];
 
   inspectorPopup = [[NSPopUpButton alloc] 
-    initWithFrame:NSMakeRect(80,378,128,20)];
+    initWithFrame:NSMakeRect(90,378,128,20)];
   [inspectorPopup setTarget:self];
   [inspectorPopup setAction:@selector(inspectorPopupDidChange:)];
   [contentView addSubview:inspectorPopup];
@@ -121,7 +122,7 @@
   // Holder of PC*Proj inspectors
   inspectorView = [[NSBox alloc] init];
   [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrame:NSMakeRect(-8,-8,295,384)];
+  [inspectorView setFrame:NSMakeRect(-8,-8,315,384)];
   [inspectorView setBorderType:NSNoBorder];
   [contentView addSubview:inspectorView];
 

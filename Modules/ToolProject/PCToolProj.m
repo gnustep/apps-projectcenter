@@ -58,7 +58,7 @@ static PCToolProj *_creator = nil;
 
 - (NSString *)projectTypeName
 {
-    return _projTypeName;
+  return _projTypeName;
 }
 
 - (NSDictionary *)typeTable
@@ -88,7 +88,7 @@ static PCToolProj *_creator = nil;
 
         // Customise the project
         [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[[project principalClass] description] forKey:PCProjType];
+        [dict setObject:[self projectTypeName] forKey:PCProjectType];
 
         // Save the project to disc
 	projectFile = [NSString stringWithString:[path lastPathComponent]];

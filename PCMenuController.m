@@ -24,19 +24,16 @@
    $Id$
 */
 
-#include "PCMenuController.h"
-
-#include <ProjectCenter/ProjectCenter.h>
 #include "PCAppController.h"
+#include "PCMenuController.h"
+#include <ProjectCenter/ProjectCenter.h>
 
 @implementation PCMenuController
 
 - (id)init
 {
   if ((self = [super init])) 
-  {
-      NSRect fr = NSMakeRect(20,30,160,20);
-
+    {
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
 	   selector:@selector(editorDidBecomeActive:)
@@ -50,22 +47,7 @@
 	     object:nil];
 
       editorIsActive = NO;
-
-      projectTypeAccessaryView = [[NSBox alloc] init];
-      projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
-      [projectTypePopup setAutoenablesItems: NO];
-      [projectTypePopup addItemWithTitle:@"No type available!"];
-
-      [projectTypeAccessaryView setTitle:@"Project Types"];
-      [projectTypeAccessaryView setTitlePosition:NSAtTop];
-      [projectTypeAccessaryView setBorderType:NSGrooveBorder];
-      [projectTypeAccessaryView addSubview:projectTypePopup];
-      [projectTypeAccessaryView sizeToFit];
-      [projectTypeAccessaryView setAutoresizingMask:
-	NSViewMinXMargin | NSViewMaxXMargin];
-
-      RELEASE(projectTypePopup);
-  }
+    }
 
   return self;
 }
@@ -74,31 +56,12 @@
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-  RELEASE(projectTypeAccessaryView);
-
   [super dealloc];
-}
-
-- (void)addProjectTypeNamed:(NSString *)name
-{
-    static BOOL _firstItem = YES;
-
-    if (_firstItem) 
-    {
-        _firstItem = NO;
-        [projectTypePopup removeItemWithTitle:@"No type available!"];
-    }
-
-    [projectTypePopup addItemWithTitle:name];
-    [projectTypePopup sizeToFit];
-    [projectTypeAccessaryView sizeToFit];
 }
 
 - (void)setAppController:(id)anObject
 {
-  [appController autorelease];
   appController = anObject;
-  RETAIN(appController);
 }
 
 - (void)setProjectManager:(id)anObject
@@ -129,102 +92,17 @@
 // Project
 - (void)projectOpen:(id)sender
 {
-  NSString 	*projPath = nil;
-  NSString      *lastOpenDir = nil;
-  NSArray       *fileTypes = nil;
-  NSOpenPanel	*openPanel = nil;
-  int		retval;
-
-  openPanel = [NSOpenPanel openPanel];
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setCanChooseDirectories:NO];
-  [openPanel setCanChooseFiles:YES];
-
-  lastOpenDir = [[NSUserDefaults standardUserDefaults] 
-    objectForKey:@"LastOpenDirectory"];
-  fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
-
-  retval = [openPanel runModalForDirectory:lastOpenDir
-                                      file:nil 
-				     types:fileTypes];
-
-  if (retval == NSOKButton) 
-    {
-      BOOL isDir;
-
-      [[NSUserDefaults standardUserDefaults]
-	setObject:[openPanel directory] 
-	   forKey:@"LastOpenDirectory"];
-
-      projPath = [[openPanel filenames] objectAtIndex:0];
-
-      if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
-	  isDirectory:&isDir] && !isDir)
-	{
-	  if (![projectManager openProjectAt:projPath]) 
-	    {
-	      NSRunAlertPanel(@"Attention!",
-			      @"Couldn't open %@!",
-			      @"OK",nil,nil,
-			      [projPath stringByDeletingLastPathComponent]);
-	    }
-	}
-    }
+  [projectManager openProject];
 }
 
 - (void)projectNew:(id)sender
 {
-  NSSavePanel *savePanel = nil;
-  NSString    *lastOpenDir = nil;
-  int 	      runResult;
-
-  savePanel = [NSSavePanel savePanel];
-
-  [savePanel setTitle:@"Create new project..."];
-  [savePanel setAccessoryView:nil];
-  [savePanel setAccessoryView:projectTypeAccessaryView];
-
-  lastOpenDir = [[NSUserDefaults standardUserDefaults] 
-    objectForKey:@"LastNewDirectory"];
-  if (!lastOpenDir)
-    {
-      lastOpenDir = NSHomeDirectory();
-    }
-
-  runResult = [savePanel runModalForDirectory:lastOpenDir file:@""];
-  if (runResult == NSOKButton) 
-    {
-      NSString *projectType = [projectTypePopup titleOfSelectedItem];
-      NSString *className = [[appController projectTypes] objectForKey:projectType];
-
-      [[NSUserDefaults standardUserDefaults] 
-	setObject:[savePanel directory] 
-	   forKey:@"LastNewDirectory"];
-
-      if (![projectManager createProjectOfType:className path:[savePanel filename]])
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Failed to create %@!",
-			  @"OK",nil,nil,[savePanel filename]);
-	}
-    }
+  [projectManager newProject];
 }
 
 - (void)projectSave:(id)sender
 {
   [projectManager saveProject];
-}
-
-- (void)projectSaveAs:(id)sender
-{
-  NSString    *proj = nil;
-
-  // Show save panel
-  NSRunAlertPanel(@"Attention!",
-		  @"This feature is not yet implemented!", 
-		  @"OK",nil,nil);
-
-  [projectManager saveProjectAs:proj];
 }
 
 - (void)projectAddFiles:(id)sender
@@ -240,11 +118,6 @@
 - (void)projectRemoveFiles:(id)sender
 {
   [projectManager removeProjectFiles];
-}
-
-- (void)projectRevertToSaved:(id)sender
-{
-  [projectManager revertToSaved];
 }
 
 - (void)projectClose:(id)sender
@@ -275,41 +148,7 @@
 // File
 - (void)fileOpen:(id)sender
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString 	 *filePath;
-  NSOpenPanel	 *openPanel;
-  int		 retval;
-
-  openPanel = [NSOpenPanel openPanel];
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setCanChooseDirectories:NO];
-  [openPanel setCanChooseFiles:YES];
-
-  retval = [openPanel 
-    runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
-                    file:nil
-                   types:nil];
-
-  if (retval == NSOKButton)
-    {
-      BOOL isDir;
-      NSFileManager *fm = [NSFileManager defaultManager];
-
-      [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-
-      filePath = [[openPanel filenames] objectAtIndex:0];
-
-      if (![fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
-      {
-	  NSRunAlertPanel(@"Attention!",
-			  @"Couldn't open %@!",
-			  @"OK",nil,nil,filePath);
-      }
-      else
-      {
-	  [projectManager openFileWithEditor:filePath];
-      }
-  }
+  [projectManager openFile];
 }
 
 - (void)fileNew:(id)sender
@@ -322,7 +161,6 @@
   [projectManager saveFile];
 }
 
-// Not finished
 - (void)fileSaveAs:(id)sender
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -374,28 +212,7 @@
 
 - (void)fileSaveTo:(id)sender
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString 	 *filePath = [projectManager selectedFileName];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
-  int		 retval;
-
-  [savePanel setTitle: @"Save To..."];
-  retval = [savePanel runModalForDirectory:[projectManager projectPath]
-                                      file:filePath];
-
-  if (retval == NSOKButton)
-    {
-      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
-
-      filePath = [savePanel filename];
-		  
-      if (![projectManager saveFileTo:filePath]) 
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Couldn't save file to\n%@!",
-			  @"OK",nil,nil,filePath);
-	}
-    }
+  [projectManager saveFileTo];
 }
 
 - (void)fileRevertToSaved:(id)sender

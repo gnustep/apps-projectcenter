@@ -241,7 +241,7 @@
 	       forKey:PCPrincipalClass];
 
   [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
+    postNotificationName:PCProjectDictDidChangeNotification
                   object:self];
 }
 

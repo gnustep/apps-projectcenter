@@ -22,6 +22,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#include "PCDefines.h"
 #include "PCFileManager.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
@@ -35,6 +36,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // ============================================================================
 // ==== Intialization & deallocation
 // ============================================================================
+
 - (id)initWithProject:(PCProject *)aProject
 {
   if ((self = [super init]))
@@ -56,7 +58,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
 	   selector:@selector(projectDictDidChange:)
-	       name:@"ProjectDictDidChangeNotification" 
+	       name:PCProjectDictDidChangeNotification 
 	     object:project];
 
     }
@@ -77,6 +79,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // ============================================================================
 // ==== Accessor methods
 // ============================================================================
+
 - (NSView *)view
 {
   return browser;
@@ -120,6 +123,11 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return name;
 }
 
+- (NSString *)pathOfSelectedFile
+{
+  return [browser path];
+}
+
 - (NSArray *)selectedFiles
 {
   NSArray        *cells = [browser selectedCells];
@@ -133,11 +141,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
 
   return (NSArray *)files;
-}
-
-- (NSString *)pathOfSelectedFile
-{
-  return [browser path];
 }
 
 - (BOOL)setPathForFile:(NSString *)file category:(NSString *)category
@@ -174,6 +177,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // ============================================================================
 // ==== Actions
 // ============================================================================
+
 - (void)click:(id)sender
 {
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)

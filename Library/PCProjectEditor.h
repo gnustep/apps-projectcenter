@@ -64,12 +64,13 @@
 - (NSArray *)allEditors;
 - (void)closeActiveEditor:(id)sender;
 - (void)closeEditorForFile:(NSString *)file;
-- (void)closeAllEditors;
+- (BOOL)closeAllEditors;
 
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
+- (BOOL)saveEditedFiles:(NSArray *)files;
 - (BOOL)saveAllFiles;
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)file;

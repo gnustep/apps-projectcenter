@@ -25,10 +25,16 @@
 */
 
 #include "PCFileManager.h"
+#include "PCProjectManager.h"
+#include "PCProject.h"
 
 @interface PCFileManager (UInterface)
 
 - (void)_initUI;
+
+- (void)_createAddFilesPanel;
+- (NSMutableArray *)filesForAdd;
+- (void)filesForAddPopupClicked:(id)sender;
 
 @end
 

@@ -128,7 +128,9 @@ NSString *PCEditorDidResignActiveNotification =
     {
       PCEditor *editor;
 
-      editor = [[PCEditor alloc] initWithPath:path category:nil];
+      editor = [[PCEditor alloc] initWithPath:path 
+	                             category:nil
+				projectEditor:self];
       [editor setWindowed:YES];
       [editor show];
 
@@ -148,6 +150,7 @@ NSString *PCEditorDidResignActiveNotification =
 
   if ((self = [super init]))
     {
+      NSLog(@"PCProjectEditor: init");
       project = aProject;
       componentView  = nil;
       editorsDict = [[NSMutableDictionary alloc] init];
@@ -170,12 +173,15 @@ NSString *PCEditorDidResignActiveNotification =
 	       name:PCEditorDidResignActiveNotification
 	     object:nil];
     }
+
   return self;
 }
 
 - (void)dealloc
 {
   NSLog (@"PCProjectEditor: dealloc");
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   if (componentView)
     {
@@ -211,7 +217,9 @@ NSString *PCEditorDidResignActiveNotification =
 
   if (!(editor = [editorsDict objectForKey:path]))
     {
-      editor = [[PCEditor alloc] initWithPath:path category:category];
+      editor = [[PCEditor alloc] initWithPath:path 
+	                             category:category
+				projectEditor:self];
 
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
@@ -255,26 +263,6 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (PCEditor *)activeEditor
 {
-/*  NSEnumerator *enumerator = [editorsDict keyEnumerator];
-  PCEditor     *editor;
-  NSString     *key;
-  NSWindow     *window;
-
-  while (( key = [enumerator nextObject] ))
-    {
-      editor = [editorsDict objectForKey:key];
-      window = [editor editorWindow];
-
-      if (([window isVisible] && [window isKeyWindow])
-	  || ([[editor componentView] superview]
-	      && [[project projectWindow] isKeyWindow]))
-	{
-	  return editor;
-	}
-    }
-
-  return nil;*/
-
   return activeEditor;
 }
 
@@ -285,7 +273,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)closeActiveEditor:(id)sender
 {
-  [[self activeEditor] closeFile:self];
+  [[self activeEditor] closeFile:self save:YES];
 }
 
 - (void)closeEditorForFile:(NSString *)file
@@ -293,46 +281,95 @@ NSString *PCEditorDidResignActiveNotification =
   PCEditor *editor;
 
   editor = [editorsDict objectForKey:file];
-  [editor closeFile:self];
+  [editor closeFile:self save:YES];
   [editorsDict removeObjectForKey:file];
 }
 
-- (void)closeAllEditors
+- (BOOL)closeAllEditors
 {
-  NSEnumerator *enumerator = [editorsDict keyEnumerator];
-  PCEditor     *editor;
-  NSString     *key;
+  NSEnumerator   *enumerator = [editorsDict keyEnumerator];
+  PCEditor       *editor;
+  NSString       *key;
+  NSMutableArray *editedFiles = [[NSMutableArray alloc] init];
 
   while ((key = [enumerator nextObject]))
     {
       editor = [editorsDict objectForKey:key];
-      [editor closeFile:self];
+      if ([editor isEdited])
+	{
+	  [editedFiles addObject:[key lastPathComponent]];
+	}
+      else
+	{
+	  [editor closeFile:self save:YES];
+	}
     }
+
+  // Order panel with list of changed files
+  if ([editedFiles count])
+    {
+      if ([self saveEditedFiles:(NSArray *)editedFiles] == NO)
+	{
+	  return NO;
+	}
+    }
+
   [editorsDict removeAllObjects];
+
+  return YES;
 }
 
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
+- (BOOL)saveEditedFiles:(NSArray *)files
+{
+  int ret;
+
+  ret = NSRunAlertPanel(@"Alert",
+			@"Project has modified files\n%@",
+			@"Save and Close",@"Close",@"Don't close",
+			files);
+  switch (ret)
+    {
+    case NSAlertDefaultReturn:
+      if ([self saveAllFiles] == NO)
+	{
+	  return NO;
+	}
+      break;
+
+    case NSAlertAlternateReturn:
+      // Close files without saving
+      break;
+
+    case NSAlertOtherReturn:
+      return NO;
+      break;
+    }
+    
+  return YES;
+}
+
 - (BOOL)saveAllFiles
 {
-    NSEnumerator *enumerator = [editorsDict keyEnumerator];
-    PCEditor     *editor;
-    NSString     *key;
-    BOOL          ret = YES;
+  NSEnumerator *enumerator = [editorsDict keyEnumerator];
+  PCEditor     *editor;
+  NSString     *key;
+  BOOL          ret = YES;
 
-    while(( key = [enumerator nextObject] ))
+  while ((key = [enumerator nextObject]))
     {
-        editor = [editorsDict objectForKey:key];
+      editor = [editorsDict objectForKey:key];
 
-	if( [editor saveFileIfNeeded] == NO )
+      if ([editor saveFileIfNeeded] == NO)
 	{
-	    ret = NO;
+	  ret = NO;
 	}
     }
 
-    return ret;
+  return ret;
 }
 
 - (BOOL)saveFile
@@ -358,7 +395,7 @@ NSString *PCEditorDidResignActiveNotification =
       NSString *c = [editor category];
       
       res = [editor saveFileTo:file];
-      [editor closeFile:self];
+      [editor closeFile:self save:NO];
 
       [self editorForFile:file category:c windowed:iw];
 
@@ -399,8 +436,14 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)editorDidClose:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
+
+  NSLog(@"PCPE: editorDidClose");
+  // It is not our editor
+  if ([editorsDict objectForKey:[editor path]] != editor)
+    {
+      return;
+    }
  
-  NSLog(@"PCProjectEditor: editorDidClose");
   [editorsDict removeObjectForKey:[editor path]];
 
   if ([editorsDict count])
@@ -415,6 +458,7 @@ NSString *PCEditorDidResignActiveNotification =
     }
   else
     {
+      [[project projectWindow] makeFirstResponder:scrollView];
       [componentView setContentView:scrollView];
       [self setActiveEditor:nil];
     }
@@ -424,6 +468,11 @@ NSString *PCEditorDidResignActiveNotification =
 {
   PCEditor *editor = [aNotif object];
   
+  if ([editorsDict objectForKey:[editor path]] != editor)
+    {
+      return;
+    }
+
   [self setActiveEditor:editor];
 
   if ([editor category])

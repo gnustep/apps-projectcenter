@@ -86,13 +86,15 @@
 
       projectTypes = [[NSMutableDictionary alloc] init];
 
+      infoController = [[PCInfoController alloc] init];
       prefController = [[PCPrefController alloc] init];
       finder         = [[PCFindController alloc] init];
-      infoController = [[PCInfoController alloc] init];
       logger         = [[PCLogController alloc] init];
+      
       projectManager = [[PCProjectManager alloc] init];
-      menuController = [[PCMenuController alloc] init];
+      [projectManager setDelegate:self];
 
+      menuController = [[PCMenuController alloc] init];
       [menuController setAppController:self];
       [menuController setProjectManager:projectManager];
     }
@@ -216,13 +218,14 @@
   [NSApp activateIgnoringOtherApps:YES];
 
   if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
-      && [[fileName pathExtension] isEqualToString:@"project"] == YES) 
-  {
-    [projectManager openProjectAt:fileName];
-    return YES;
-  }
-
-  [projectManager openFileWithEditor:fileName];
+      || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
+    {
+      [projectManager openProjectAt:fileName];
+    }
+  else
+    {
+      [projectManager openFileWithEditor:fileName];
+    }
 
   return YES;
 }
@@ -264,31 +267,47 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
-    NSString *poq = [[NSUserDefaults standardUserDefaults] objectForKey:PromptOnQuit];
-    NSString *soq = [[NSUserDefaults standardUserDefaults] objectForKey:SaveOnQuit];
+  NSString *poq;
+  NSString *soq;
+  BOOL     quit;
 
-    if( [poq isEqualToString:@"YES"] )
+  poq = [[NSUserDefaults standardUserDefaults] objectForKey:PromptOnQuit];
+  soq = [[NSUserDefaults standardUserDefaults] objectForKey:SaveOnQuit];
+  if ([poq isEqualToString:@"YES"])
     {
-        if (NSRunAlertPanel(@"Quit!",
-                            @"Do you really want to quit ProjectCenter?",
-                            @"No", @"Yes", nil)) {
-            return NO;
-        }
+      if (NSRunAlertPanel(@"Quit!",
+			  @"Do you really want to quit ProjectCenter?",
+			  @"No", @"Yes", nil))
+	{
+	  return NO;
+	}
 
     }
 
-    if ( [soq isEqualToString:@"YES"] ) {
-        [projectManager saveAllProjects];
+  // Save projects if preferences tells that
+  if ([soq isEqualToString:@"YES"])
+    {
+      quit = [projectManager saveAllProjects];
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:PCAppWillTerminateNotification object:nil];
+  // Close all loaded projects
+  quit = [projectManager closeAllProjects];
 
-    return YES;
+  if (quit == NO)
+    {
+      return NO;
+    }
+
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCAppWillTerminateNotification
+                  object:nil];
+
+  return YES;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-  NSLog (@"Applictaion will terminate");
+  NSLog (@"Applictaion WILL terminate");
   if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
@@ -301,23 +320,23 @@
 
   //--- Cleanup
   if (doConnection)
-  {
-    [doConnection invalidate];
-    RELEASE(doConnection);
-  }
+    {
+      [doConnection invalidate];
+      RELEASE(doConnection);
+    }
 
-  NSLog (@"AppController close: PM RC: %i", [projectManager retainCount]);
-  
   RELEASE(prefController);
   RELEASE(finder);
   RELEASE(infoController);
   RELEASE(logger);
   RELEASE(projectManager);
   RELEASE(menuController);
-  
+
   RELEASE(bundleLoader);
   RELEASE(doServer);
   RELEASE(projectTypes);
+
+  NSLog (@"Applictaion WILL terminate.END");
 }
 
 //============================================================================
@@ -326,21 +345,26 @@
 
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
 {
-  Class principalClass;
+  Class    principalClass;
+  NSString *projectTypeName = nil;
+  BOOL     ret = NO;
 
   NSAssert(aBundle,@"No valid bundle!");
 
   principalClass = [aBundle principalClass];
-  NSString	*name = [[principalClass sharedCreator] projectTypeName];
+  projectTypeName = [[principalClass sharedCreator] projectTypeName];
 
   [logger logMessage: [NSString stringWithFormat:
-    @"Project type %@ successfully loaded!",name] tag:INFORMATION];
+    @"Project type %@ successfully loaded!",projectTypeName] tag:INFORMATION];
 
-  if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) 
+  ret = [self registerProjectCreator:NSStringFromClass(principalClass) 
+                              forKey:projectTypeName];
+  if (ret)
     {
-      [menuController addProjectTypeNamed:name];
+      [projectManager addProjectTypeNamed:projectTypeName];
       [logger logMessage:[NSString stringWithFormat:
-	@"Project type %@ successfully registered!",name] tag:INFORMATION];
+	@"Project type %@ successfully registered!",projectTypeName]
+	             tag:INFORMATION];
     }
 }
 
@@ -350,14 +374,14 @@
 
 - (BOOL)registerProjectCreator:(NSString *)className forKey:(NSString *)aKey
 {
-    if ([projectTypes objectForKey:aKey]) 
+  if ([projectTypes objectForKey:aKey]) 
     {
-        return NO;
+      return NO;
     }
 
-    [projectTypes setObject:className forKey:aKey];
+  [projectTypes setObject:className forKey:aKey];
 
-    return YES;
+  return YES;
 }
 
 @end

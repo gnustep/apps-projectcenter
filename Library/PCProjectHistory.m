@@ -122,9 +122,19 @@
 - (void)fileDidOpen:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
-  NSString *path = [editor path];
-  NSString *file = [path lastPathComponent];
+  NSString *path = nil;
+  NSString *file = nil;
 
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+
+  NSLog(@"PCProjectHistory: project %@", [project projectName]);
+
+  path = [editor path];
+  file = [path lastPathComponent];
+  
   if ([editedFiles containsObject:file] == YES)
     {
       [editedFiles removeObject:file];
@@ -133,12 +143,19 @@
   [editedFiles insertObject:file atIndex:0];
   [filesPath insertObject:path atIndex:0];
   [filesList reloadData];
+  
+  NSLog(@"PCProjectHistory: fileDidOpen.END");
 }
 
 - (void)fileDidClose:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
   NSString *file = [[editor path] lastPathComponent];
+
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
 
   if ([editedFiles containsObject:file] == YES)
     {
@@ -153,9 +170,16 @@
 - (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
-  NSString *file = [[editor path] lastPathComponent];
-  unsigned index = [editedFiles indexOfObject:file];
+  NSString *file = nil;
+  unsigned index;
   
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+
+  file = [[editor path] lastPathComponent];
+  index = [editedFiles indexOfObject:file];
   [filesList selectRow:index byExtendingSelection:NO];
 }
 

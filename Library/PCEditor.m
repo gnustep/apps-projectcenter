@@ -38,7 +38,7 @@
                                         styleMask:style
                                           backing:NSBackingStoreBuffered
                                             defer:YES];
-  [_window setReleasedWhenClosed:NO];
+  [_window setReleasedWhenClosed:YES];
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];
   rect = [[_window contentView] frame];
@@ -130,11 +130,12 @@
 @implementation PCEditor
 
 // ===========================================================================
-// ==== Initialisation
+// ==== Initialization
 // ===========================================================================
 
 - (id)initWithPath:(NSString *)file
           category:(NSString *)category
+     projectEditor:(PCProjectEditor *)aProjectEditor
 {
   if ((self = [super init]))
     {
@@ -143,6 +144,7 @@
       NSDictionary       *at;
       NSFont             *ft;
 
+      projectEditor = aProjectEditor;
       _isEdited = NO;
       _isWindowed = NO;
       _window = nil;
@@ -187,12 +189,13 @@
 - (void)dealloc
 {
   NSLog(@"PCEditor: dealloc");
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+// _window is setReleasedWhenClosed:YES
   RELEASE(_path);
   RELEASE(_category);
   RELEASE(_intScrollView);
-  RELEASE(_window);
 
   [super dealloc];
 }
@@ -234,6 +237,11 @@
 // ===========================================================================
 // ==== Accessor methods
 // ===========================================================================
+
+- (PCProjectEditor *)projectEditor
+{
+  return projectEditor;
+}
 
 - (NSWindow *)editorWindow
 {
@@ -332,9 +340,9 @@
   return YES;
 }
 
-- (BOOL)closeFile:(id)sender
+- (BOOL)closeFile:(id)sender save:(BOOL)save
 {
-  if ([self editorShouldClose])
+  if ((save == NO) || [self editorShouldClose])
     {
       // Close window first if visible
       if (_isWindowed && [_window isVisible] && (sender != _window))
@@ -345,10 +353,11 @@
       // Inform about closing
       [[NSNotificationCenter defaultCenter] 
 	postNotificationName:PCEditorDidCloseNotification
-	              object:self];
+	object:self];
 
       return YES;
     }
+
   return NO;
 }
 
@@ -364,16 +373,17 @@
 	}
 
       ret = NSRunAlertPanel(@"Close File",
-			    @"Save changes to\n%@?",
-			    @"Save", @"Don't save", @"Cancel", _path);
+			    @"File %@ has been modified",
+			    @"Save and Close", @"Don't save", @"Cancel", 
+			    [_path lastPathComponent]);
 
       if (ret == YES)
 	{
 	  if ([self saveFile] == NO)
 	    {
-	      NSRunAlertPanel(@"Close File",
-		    	      @"Save failed!\nCould not save file '%@'!",
-		    	      @"OK", nil, nil, _path);
+	      NSRunAlertPanel(@"Alert",
+		    	      @"Error when saving file '%@'!",
+		    	      @"OK", nil, nil, [_path lastPathComponent]);
 	      return NO;
 	    }
 	  else
@@ -412,7 +422,7 @@
 	}
       else
 	{
-	  return [self closeFile:_window];
+	  return [self closeFile:_window save:YES];
 	}
     }
 
@@ -421,7 +431,7 @@
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-  if ([[aNotification object] isEqual:_window])
+  if ([[aNotification object] isEqual:_window] && [_window isVisible])
     {
       [_window makeFirstResponder:_extEditorView];
     }
@@ -429,7 +439,7 @@
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-  if ([[aNotification object] isEqual:_window])
+  if ([[aNotification object] isEqual:_window] && [_window isVisible])
     {
       [_window makeFirstResponder:_window];
     }

@@ -37,9 +37,6 @@
 {
   PCProjectManager *projectManager;
   PCAppController  *appController;
-  
-  NSBox	           *projectTypeAccessaryView;
-  id               projectTypePopup;
 
   BOOL             editorIsActive;
 }
@@ -58,8 +55,6 @@
 //==== Menu stuff
 //============================================================================
 
-- (void)addProjectTypeNamed:(NSString *)name;
-
 // Info
 - (void)showInfoPanel:(id)sender;
 - (void)showPrefWindow:(id)sender;
@@ -68,11 +63,9 @@
 - (void)projectOpen:(id)sender;
 - (void)projectNew:(id)sender;
 - (void)projectSave:(id)sender;
-- (void)projectSaveAs:(id)sender;
 - (void)projectAddFiles:(id)sender;
 - (void)projectSaveFiles:(id)sender;
 - (void)projectRemoveFiles:(id)sender;
-- (void)projectRevertToSaved:(id)sender;
 - (void)projectClose:(id)sender;
 
 // Subproject

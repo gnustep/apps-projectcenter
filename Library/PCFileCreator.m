@@ -24,6 +24,7 @@
    $Id$
 */
 
+#include "PCDefines.h"
 #include "PCFileCreator.h"
 #include "PCProject.h"
 

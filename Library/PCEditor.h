@@ -8,16 +8,18 @@
  * $Id$
  */
 
-#ifndef _PCEDITOR_H_
-#define _PCEDITOR_H_
+#ifndef _PCEditor_h_
+#define _PCEditor_h_
 
 #include <AppKit/AppKit.h>
 
-@class PCEditorView;
 @class PCProjectEditor;
+@class PCEditorView;
 
 @interface PCEditor : NSObject
 {
+  PCProjectEditor *projectEditor;
+
   NSScrollView    *_extScrollView;
   PCEditorView    *_extEditorView;
   NSScrollView    *_intScrollView;
@@ -31,36 +33,52 @@
   BOOL            _isWindowed;
 }
 
+// ===========================================================================
+// ==== Initialization
+// ===========================================================================
 - (id)initWithPath:(NSString *)file
-          category:(NSString *)category;
+          category:(NSString *)category
+     projectEditor:(PCProjectEditor *)projectEditor;
 - (void)dealloc;
 - (void)show;
 
 - (void)setWindowed:(BOOL)yn;
 - (BOOL)isWindowed;
 
+// ===========================================================================
+// ==== Accessor methods
+// ===========================================================================
+- (PCProjectEditor *)projectEditor;
 - (NSWindow *)editorWindow;
 - (PCEditorView *)editorView;
 - (NSView *)componentView;
-- (NSString *)category;
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
+- (NSString *)category;
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 
+// ===========================================================================
+// ==== Object managment
+// ===========================================================================
 - (BOOL)saveFileIfNeeded;
 - (BOOL)saveFile;
 - (BOOL)saveFileTo:(NSString *)path;
 - (BOOL)revertFileToSaved;
-- (BOOL)closeFile:(id)sender;
+- (BOOL)closeFile:(id)sender save:(BOOL)save;
 
-// Delegates
 - (BOOL)editorShouldClose;
 
+// ===========================================================================
+// ==== Window delegate
+// ===========================================================================
 - (BOOL)windowShouldClose:(id)sender;
-/*- (void)windowDidBecomeKey:(NSNotification *)aNotification;
-- (void)windowDidResignKey:(NSNotification *)aNotification;*/
+- (void)windowDidBecomeKey:(NSNotification *)aNotification;
+- (void)windowDidResignKey:(NSNotification *)aNotification;
 
+// ===========================================================================
+// ==== TextView (_intEditorView, _extEditorView) delegate
+// ===========================================================================
 - (void)textDidChange:(NSNotification *)aNotification;
 - (BOOL)becomeFirstResponder;
 - (BOOL)resignFirstResponder;
@@ -75,12 +93,12 @@
 
 @end
 
-@interface NSObject (PCEditorDelegate)
+/*@interface NSObject (PCEditorDelegate)
 
 - (void)editorDidClose:(id)sender;
 - (void)setBrowserPath:(NSString *)file category:(NSString *)category;
 
-@end
+@end*/
 
 #endif // _PCEDITOR_H_
 

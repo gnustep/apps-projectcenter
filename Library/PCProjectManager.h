@@ -66,6 +66,12 @@ extern NSString *ActiveProjectDidChangeNotification;
   NSTimer             *saveTimer;
 
   NSMutableDictionary *nonProjectEditors;
+  
+  NSBox	              *projectTypeAccessaryView;
+  id                  projectTypePopup;
+
+  NSBox	              *fileTypeAccessaryView;
+  id                  fileTypePopup;
 
   @private
     BOOL _needsReleasing;
@@ -77,6 +83,9 @@ extern NSString *ActiveProjectDidChangeNotification;
 
 - (id)init;
 - (void)dealloc;
+- (void)_initUI;
+- (void)addProjectTypeNamed:(NSString *)name;
+- (void)setDelegate:(id)aDelegate;
 
 // ============================================================================
 // ==== Timer handling
@@ -89,6 +98,7 @@ extern NSString *ActiveProjectDidChangeNotification;
 // ============================================================================
 - (PCFileManager *)fileManager;
 - (PCProjectInspector *)projectInspector;
+- (NSPanel *)inspectorPanel;
 - (void)showProjectInspector:(id)sender;
 - (NSPanel *)historyPanel;
 - (void)showProjectHistory:(id)sender;
@@ -123,10 +133,6 @@ extern NSString *ActiveProjectDidChangeNotification;
 // ==== Project actions
 // ============================================================================
 
-// Before project is loaded fetch project's name from project path
-// Change this to remove dependency from project path
-- (NSString *)projectNameAtPath:(NSString *)aPath;
-
 // Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
 
@@ -137,18 +143,19 @@ extern NSString *ActiveProjectDidChangeNotification;
 // project!
 - (BOOL)createProjectOfType:(NSString *)projectType path:(NSString *)aPath;
 
-// Saves the current project
+- (void)openProject;
+- (void)newProject;
 - (BOOL)saveProject;
 
 // Calls saveAllProjects if the preferences are setup accordingly.
 - (void)saveAllProjectsIfNeeded;
 
 // Saves all projects if needed.
-- (void)saveAllProjects;
+- (BOOL)saveAllProjects;
+- (BOOL)addProjectFiles;
+- (BOOL)saveProjectFiles;
+- (BOOL)removeProjectFiles;
 
-- (BOOL)saveProjectAs:(NSString *)projName;
-
-- (void)revertToSaved;
 
 - (BOOL)newSubproject;
 - (BOOL)addSubprojectAt:(NSString *)path;
@@ -156,22 +163,20 @@ extern NSString *ActiveProjectDidChangeNotification;
 
 - (void)closeProject:(PCProject *)aProject;
 - (void)closeProject;
+- (BOOL)closeAllProjects;
 
 // ============================================================================
 // ==== File actions
 // ============================================================================
 
+- (void)openFile;
 - (void)newFile;
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)path;
-- (BOOL)saveFileTo:(NSString *)path;
+- (BOOL)saveFileTo;
 - (BOOL)revertFileToSaved;
 - (BOOL)renameFileTo:(NSString *)path;
 - (void)closeFile;
-
-- (BOOL)addProjectFiles;
-- (BOOL)saveProjectFiles;
-- (BOOL)removeProjectFiles;
 
 // ============================================================================
 // ==== Non project editors

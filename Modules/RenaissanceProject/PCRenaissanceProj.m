@@ -92,7 +92,7 @@ static PCRenaissanceProj *_creator = nil;
                 
         // Customise the project
         [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[[project principalClass] description] forKey:PCProjType];
+        [dict setObject:[self projectTypeName] forKey:PCProjectType];
 
 	// Create the AppNameInfo.plist
 	infoDict = [NSDictionary dictionaryWithObjectsAndKeys:

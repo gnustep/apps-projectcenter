@@ -121,7 +121,7 @@
     [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
 
     [mf appendTool];
-    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
+//    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
     [mf appendToolIcon:[dict objectForKey:PCToolIcon]];
 
     [mf appendToolLibraries:[dict objectForKey:PCLibraries]];

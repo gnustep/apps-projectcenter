@@ -5,6 +5,12 @@
 include $(GNUSTEP_MAKEFILES)/common.make
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
+#
+# Main application
+#
+PACKAGE_NAME = ProjectCenter
+APP_NAME = ProjectCenter
+ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 
 #
 # Subprojects
@@ -14,24 +20,8 @@ SUBPROJECTS = \
 	Modules \
 
 #
-# Main application
-#
-
-PACKAGE_NAME = ProjectCenter
-APP_NAME = ProjectCenter
-ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
-
-
-#
-# Additional libraries
-#
-
-ADDITIONAL_GUI_LIBS += -lProjectCenter 
-
-#
 # Resource files
 #
-
 ProjectCenter_RESOURCE_FILES = \
 ProjectCenterInfo.plist \
 Images/ProjectCenter.tiff \
@@ -94,7 +84,6 @@ Modules/ToolProject/ToolProject.bundle
 #
 # Header files
 #
-
 ProjectCenter_HEADERS = \
 PCAppController.h \
 PCFindController.h \
@@ -107,7 +96,6 @@ PCPrefController+UInterface.h
 #
 # Class files
 #
-
 ProjectCenter_OBJC_FILES = \
 PCAppController.m \
 PCFindController.m \
@@ -121,14 +109,9 @@ ProjectCenter_main.m
 #
 # C files
 #
-
 ProjectCenter_C_FILES = 
 
-ADDITIONAL_OBJCFLAGS += -Wall -Werror
-ADDITIONAL_INCLUDE_DIRS += -I./Library
-ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR)
-
-
+-include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 include $(GNUSTEP_MAKEFILES)/application.make
-
+-include GNUmakefile.postamble

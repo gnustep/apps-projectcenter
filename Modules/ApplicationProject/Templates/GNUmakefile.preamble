@@ -12,16 +12,17 @@ ADDITIONAL_OBJCFLAGS +=
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS += 
 
-# Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += 
-
 # Additional LDFLAGS to pass to the linker
+# (-l) will go here, I think
 ADDITIONAL_LDFLAGS += 
 
+# Additional include directories the compiler should search
+# (-I)
+ADDITIONAL_INCLUDE_DIRS += 
+
 # Additional library directories the linker should search
+# (-L)
 ADDITIONAL_LIB_DIRS += 
-                      
-ADDITIONAL_TOOL_LIBS +=
 
 #
 # Flags dealing with installing and uninstalling

@@ -26,31 +26,21 @@
 - (void)appendString:(NSString *)aString;
 
 - (void)appendHeaders:(NSArray *)array;
+- (void)appendHeaders:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendClasses:(NSArray *)array;
+- (void)appendClasses:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendOtherSources:(NSArray *)array;
-
-- (void)appendInstallDir:(NSString*)dir;
-
+- (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendResources;
 - (void)appendResourceItems:(NSArray *)array;
 
 - (void)appendSubprojects:(NSArray*)array;
 
-- (void)appendTailForApp;
-- (void)appendTailForLibrary;
-- (void)appendTailForTool;
-- (void)appendTailForBundle;
-- (void)appendTailForGormApp;
-
 - (NSData *)encodedMakefile;
 
-@end
-
-@interface PCMakefileFactory (ApplicationProject)
-
-- (void)appendApplication;
-- (void)appendAppIcon:(NSString*)icn;
-- (void)appendGuiLibraries:(NSArray*)array;
+- (void)appendTailForBundle;
+- (void)appendTailForLibrary;
+- (void)appendTailForTool;
 
 @end
 

@@ -62,6 +62,7 @@
                                                   defer: YES];
   [projectWindow setDelegate: self];
   [projectWindow setMinSize: NSMakeSize (560,448)];
+  [projectWindow setMiniwindowImage: IMAGE(@"FileProject")];
   _c_view = [projectWindow contentView];
 
   /*
@@ -202,15 +203,26 @@
 {
   if ((self = [super init]))
     {
+      NSDictionary *pcWindows;
+      NSString     *windowFrame;
+
       project = owner;
 
       [self _initUI];
       [projectWindow setFrameAutosaveName: @"ProjectWindow"];
-      if (![projectWindow setFrameUsingName: @"ProjectWindow"])
+
+      pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
+      windowFrame = [pcWindows objectForKey:@"ProjectWindow"];
+      NSLog(@"PCProjectWindow: window frame %@", windowFrame);
+      if (windowFrame != nil)
+	{
+	  NSLog(@"PCProjectWindow: set frame from project");
+	  [projectWindow setFrameFromString:windowFrame];
+	}
+      else if (![projectWindow setFrameUsingName: @"ProjectWindow"])
 	{
 	  [projectWindow center];
 	}
-
 
       // Browser
       [[NSNotificationCenter defaultCenter] 
@@ -223,13 +235,13 @@
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self
 	   selector:@selector(projectDictDidChange:)
-	       name:ProjectDictDidChangeNotification
+	       name:PCProjectDictDidChangeNotification
 	     object:project];
 
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self
 	   selector:@selector(projectDictDidSave:)
-	       name:ProjectDictDidSaveNotification
+	       name:PCProjectDictDidSaveNotification
 	     object:project];
 
       // Active project changing
@@ -255,6 +267,16 @@
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
+
+- (NSImage *)fileIconImage
+{
+  return [fileIcon image];
+}
+
+- (void)setFileIconImage:(NSImage *)image 
+{
+  [fileIcon setImage:image];
+}
 
 - (void)setFileIcon:(NSNotification *)notification
 {
@@ -361,9 +383,9 @@
     }
 }
 
-- (void)setFileIconImage:(NSImage *)image 
+- (NSString *)fileIconTitle
 {
-  [fileIcon setImage:image];
+  return [fileIconTitle stringValue];
 }
 
 - (void)setFileIconTitle:(NSString *)title 
@@ -386,7 +408,6 @@
   [customView setContentView:subview];
   [customView display];
 }
-
 
 // ============================================================================
 // ==== Actions
@@ -479,11 +500,7 @@
 
 - (void)showProjectEditor:(id)sender
 {
-  NSView *view = nil;
-
-  view = [[[project projectEditor] componentView] retain];
-
-  [self setCustomContentView:view];
+  [self setCustomContentView:[[project projectEditor] componentView]];
   [self makeFirstResponder:firstResponder];
 }
 
@@ -493,15 +510,19 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
+  if ([aNotif object] != project)
+    {
+      return;
+    }
+
   [projectWindow setTitle: [NSString stringWithFormat: @"%@ - %@", 
   [project projectName],
   [[project projectPath] stringByAbbreviatingWithTildeInPath]]];
 
-  // Not sure if this correct. Check it!  
-  if ([projectWindow isVisible])
-    {
-      [projectWindow setDocumentEdited:YES];
-    }
+  // TODO: if window isn't visible and "edited" attribute set, after ordering
+  // out window doesn't show broken close button. Fix it in GNUstep.
+  // Workaround is in windowDidBecomeKey.
+  [projectWindow setDocumentEdited:YES];
 }
 
 - (void)projectDictDidSave:(NSNotification *)aNotif
@@ -511,22 +532,50 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif 
 {
-  [projectWindow makeKeyAndOrderFront:self];
+//  [projectWindow makeKeyAndOrderFront:nil];
+  if ([aNotif object] == project)
+    {
+      [self makeKeyWindow];
+    }
 }
 
 // ============================================================================
 // ==== Window delegate
 // ============================================================================
 
+- (NSString *)stringWithSavedFrame
+{
+  return [projectWindow stringWithSavedFrame];
+}
 
 - (void)makeKeyAndOrderFront:(id)sender
 {
-  [projectWindow makeKeyAndOrderFront:sender];
+  NSLog(@"PCPW: makeKeyAndOrderFront sender: %@", [sender className]);
+  [projectWindow makeKeyAndOrderFront:nil];
+}
+
+- (void)makeKeyWindow
+{
+  [projectWindow makeKeyWindow];
+}
+
+- (void)orderFront:(id)sender
+{
+  if (projectWindow)
+    {
+      [projectWindow orderFront:sender];
+    }
 }
 
 - (void)center
 {
   [projectWindow center];
+}
+
+// [NSWindow close] doesn't send windowShouldClose
+- (void)close
+{
+  [projectWindow close];
 }
 
 - (void)performClose:(id)sender
@@ -550,7 +599,7 @@
   [projectWindow makeFirstResponder:firstResponder];
   if (![projectWindow isKeyWindow])
     {
-      [projectWindow makeKeyAndOrderFront:nil];
+      [self makeKeyWindow];
     }
 
   return YES;
@@ -558,22 +607,35 @@
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
+  [projectWindow makeMainWindow];
   [[project projectManager] setActiveProject:project];
   [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
+
+  // Workaround
+  if ([projectWindow isDocumentEdited])
+    {
+      [projectWindow setDocumentEdited:NO];
+      [projectWindow setDocumentEdited:YES];
+    }
 }
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-  [projectWindow makeFirstResponder:projectWindow];
+  [projectWindow makeFirstResponder:nil];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)aNotification
 {
-  [[project projectManager] setActiveProject:project];
+}
+
+- (BOOL)windowShouldClose:(id)sender
+{
+  return [project close:self];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
+/*  [project close];
   if ([aNotification object] == projectWindow) 
     {
       if ([projectWindow isDocumentEdited]) 
@@ -586,7 +648,7 @@
 	    }
 	}
       [project close];
-    }
+    }*/
 }
 
 @end

@@ -25,11 +25,11 @@
 */
 
 /*
- Description:
+   Description:
 
- This is the project type 'Application' for GNUstep. You never should create 
- it yourself but use PCAppProj for doing this. Otherwise needed files don't 
- get copied to the right place.
+   This is the project type 'Application' for GNUstep. You never should create 
+   it yourself but use PCAppProj for doing this. Otherwise needed files don't 
+   get copied to the right place.
  */
  
 #ifndef _PCAppProj_PCAppProject_h_
@@ -41,32 +41,42 @@
 
 @interface PCAppProject : PCProject
 {
-  NSBox       *buildAttributesView;
-  NSTextField *ccOptField;
-  NSTextField *ldOptField;
-  NSTextField *installPathField;
-  NSTextField *toolField;
-  NSTextField *headersField;
-  NSTextField *libsField;
-
-  NSBox       *projectAttributesView;
-  NSTextField *projectTypeField;
-  NSTextField *projectNameField;
-  NSTextField *projectLanguageField;
-  NSTextField *appClassField;
-  NSTextField *appImageField;
-  NSButton    *setAppIconButton;
-  NSButton    *clearAppIconButton;
-  NSImageView *appIconView;
-  NSImage     *icon;
-  NSBox       *mainNibBox;
-  NSTextField *mainNibFileField;
-  NSButton    *setMainNibButton;
-  NSButton    *clearMainNibButton;
-
-  NSBox       *fileAttributesView;
-  NSImageView *fileIconView;
-  NSTextField *fileNameField;
+  NSBox          *buildAttributesView;
+  NSTextField    *projectNameLabel;
+  NSPopUpButton  *searchOrderPopup;
+  NSTableView    *searchOrderList;
+  NSTableColumn  *searchOrderColumn;
+  NSScrollView   *searchOrderScroll;
+  NSMutableArray *searchItems;
+  NSArray        *searchHeaders;
+  NSArray        *searchLibs;
+  NSTextField    *searchOrderTF;
+  NSButton       *searchOrderSet;
+  NSButton       *searchOrderRemove;
+  NSButton       *searchOrderAdd;
+  NSTextField    *cppOptField;
+  NSTextField    *objcOptField;
+  NSTextField    *cOptField;
+  NSTextField    *ldOptField;
+  NSTextField    *installPathField;
+  NSTextField    *toolField;
+               
+  NSBox          *projectAttributesView;
+  NSTextField    *projectTypeField;
+  NSTextField    *projectNameField;
+  NSTextField    *projectLanguageField;
+  NSTextField    *appClassField;
+  NSTextField    *appImageField;
+  NSTextField    *helpFileField;
+  NSTextField    *mainNIBField;
+  NSButton       *setAppIconButton;
+  NSButton       *clearAppIconButton;
+  NSImageView    *iconView;
+  NSImage        *icon;
+               
+  NSBox          *fileAttributesView;
+  NSImageView    *fileIconView;
+  NSTextField    *fileNameField;
 
   NSMutableDictionary *infoDict;
 }
@@ -80,41 +90,16 @@
 - (void)loadInfoFileAtPath:(NSString *)path;
 - (void)dealloc;
 
-// ----------------------------------------------------------------------------
-// --- User Interface
-// ----------------------------------------------------------------------------
+@end
 
-- (void)createInspectors;
-- (NSView *)buildAttributesView;
-- (NSView *)projectAttributesView;
-- (NSView *)fileAttributesView;
-- (void)setAppClass:(id)sender;
-- (void)setAppIcon:(id)sender;
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-- (void)clearAppIcon:(id)sender;
-- (void)setMainNib:(id)sender;
-- (BOOL)setMainNibWithFileAtPath:(NSString *)path;
-- (void)clearMainNib:(id)sender;
+@interface PCAppProject (GeneratedFiles)
 
-- (void)updateInspectorValues:(NSNotification *)aNotif;
-
-// ----------------------------------------------------------------------------
-// --- Project
-// ----------------------------------------------------------------------------
-
-- (Class)builderClass;
-
+- (BOOL)writeInfoFile;
 - (BOOL)writeMakefile;
-
-- (NSArray *)sourceFileKeys;
-- (NSArray *)resourceFileKeys;
-- (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
-- (NSString *)projectDescription;
-
-- (BOOL)isExecutable;
-
-- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
+- (void)appendHead:(PCMakefileFactory *)mff;
+- (void)appendApplication:(PCMakefileFactory *)mff;
+- (void)appendTail:(PCMakefileFactory *)mff;
+- (BOOL)writeMakefilePreamble;
 
 @end
 

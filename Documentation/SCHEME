@@ -50,13 +50,13 @@ PCServer (don't used)
 TODO plan:
 ----------
 Part I:
-- think about relations between PCMenuController and other PCProject
++ think about relations between PCMenuController and other PCProject
   descendants;
 + implement PCLaunchPanel;
 + implement PCHistoryPanel (also make PCProjectHistory be a separate);
 + implement PCInspectorPanel and move common inspectors to its suitable
   position;
-- refactor PC*Editor* family;
++ refactor PC*Editor* family;
 - implement PCProjectFinder and PCFindPanel GUI;
 - make PC prefernces changes applying immediately after changing;
 
