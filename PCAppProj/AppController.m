@@ -66,4 +66,9 @@ static NSDictionary *infoDict = nil;
 {
 }
 
+- (void)showInfoPanel:(id)sender
+{
+  [[NSApplication sharedApplication] orderFrontStandardInfoPanel:sender];
+}
+
 @end
