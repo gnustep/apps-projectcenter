@@ -50,6 +50,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   NSBox *v;
   NSButton *b;
   NSTextField *textField;
+  NSButtonCell *cell;
 
   /*
    * Pref Window
@@ -256,8 +257,59 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [useExternalEditor sizeToFit];
 
   /*
+   * Editing view
+   */
+
+  prefEditingView = [[NSBox alloc] init];
+  [prefEditingView setTitlePosition:NSNoTitle];
+  [prefEditingView setFrameFromContentFrame:NSMakeRect(1,1,260,308)];
+  [prefEditingView setBorderType:NSNoBorder];
+
+  v = [[NSBox alloc] init];
+  [v setTitle:@"Tab Control"];
+  [v setFrameFromContentFrame:NSMakeRect(16,208,228,72)];
+  [prefEditingView addSubview:v];
+  RELEASE(v);
+
+  cell = [[NSButtonCell alloc] init];
+  [cell setButtonType: NSRadioButton];
+  [cell setBordered: NO];
+  [cell setImagePosition: NSImageLeft]; 
+
+  tabMatrix = [[NSMatrix alloc] initWithFrame: NSMakeRect(32,16,164,40)
+                                      mode: NSRadioModeMatrix
+                                 prototype: cell
+                              numberOfRows: 2
+                           numberOfColumns: 2];   
+
+  [tabMatrix setIntercellSpacing: NSMakeSize (8, 8) ];
+  [tabMatrix setTarget: self];
+  [tabMatrix setAction: @selector (setTabBehaviour:)];
+  [tabMatrix setAutosizesCells: NO];
+
+  cell = [tabMatrix cellAtRow: 0 column: 0];
+  [cell setTitle: @"Tabulator"];
+  [cell setTag: 0];
+
+  cell = [tabMatrix cellAtRow: 1 column: 0];
+  [cell setTitle: @"2 Spaces"];
+  [cell setTag: 1];
+
+  cell = [tabMatrix cellAtRow: 0 column: 1];
+  [cell setTitle: @"4 Spaces"];
+  [cell setTag: 2];
+
+  cell = [tabMatrix cellAtRow: 1 column: 1];
+  [cell setTitle: @"8 Spaces"];
+  [cell setTag: 3];
+
+  [v addSubview:tabMatrix];
+  RELEASE(tabMatrix);
+
+  [tabMatrix selectCellAtRow: 0 column: 1];
+
+  /*
    * Saving view
-   *
    */
 
   prefSavingView = [[NSBox alloc] init];
@@ -354,6 +406,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   RELEASE(prefEmptyView);
   RELEASE(prefBuildingView);
   RELEASE(prefMiscView);
+  RELEASE(prefEditingView);
   RELEASE(prefSavingView);
 
   RELEASE(useExternalEditor);
@@ -389,6 +442,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     [prefPopup removeAllItems];
     [prefPopup addItemWithTitle:@"Building"];
     [prefPopup addItemWithTitle:@"Saving"];
+    [prefPopup addItemWithTitle:@"Editing"];
     [prefPopup addItemWithTitle:@"Miscellaneous"];
     
     [prefPopup selectItemWithTitle:@"Building"];
@@ -421,6 +475,23 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 
   [autoSaveField setStringValue:(val=[preferencesDict objectForKey:AutoSavePeriod]) ? val : @"120"];
 
+  if( [[preferencesDict objectForKey:TabBehaviour] isEqualToString:@"Tab"] )
+  {
+    [tabMatrix selectCellAtRow: 0 column: 0];
+  }
+  else if([[preferencesDict objectForKey:TabBehaviour] isEqualToString:@"Sp2"])
+  {
+    [tabMatrix selectCellAtRow: 1 column: 0];
+  }
+  else if([[preferencesDict objectForKey:TabBehaviour] isEqualToString:@"Sp4"])
+  {
+    [tabMatrix selectCellAtRow: 0 column: 1];
+  }
+  else if([[preferencesDict objectForKey:TabBehaviour] isEqualToString:@"Sp8"])
+  {
+    [tabMatrix selectCellAtRow: 1 column: 1];
+  }
+
   if (![prefWindow isVisible]) { 
     [prefWindow setFrameUsingName:@"Preferences"];
   }
@@ -431,7 +502,8 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 {
   NSView *view = nil;
   
-  switch([sender indexOfSelectedItem]) {
+  switch([sender indexOfSelectedItem]) 
+  {
   case 0:
     view = [prefBuildingView retain];
     break;
@@ -439,6 +511,9 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     view = [prefSavingView retain];
     break;
   case 2:
+    view = [prefEditingView retain];
+    break;
+  case 3:
     view = [prefMiscView retain];
     break;
   }
@@ -634,6 +709,35 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
                       forKey:PromptOnQuit];
 }
 
+- (void)setTabBehaviour:(id)sender
+{
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+    switch ([[sender selectedCell] tag]) 
+    {
+        case 0:
+            [PCEditorView setTabBehaviour:PCTabTab];
+	    [def setObject:@"Tab" forKey:TabBehaviour];
+            break;
+        case 1:
+            [PCEditorView setTabBehaviour:PCTab2Sp];
+	    [def setObject:@"Sp2" forKey:TabBehaviour];
+            break;
+        case 2:
+            [PCEditorView setTabBehaviour:PCTab4Sp];
+	    [def setObject:@"Sp4" forKey:TabBehaviour];
+            break;
+        case 3:
+            [PCEditorView setTabBehaviour:PCTab8Sp];
+	    [def setObject:@"Sp8" forKey:TabBehaviour];
+            break;
+    }
+    [def synchronize];
+
+    [preferencesDict setObject:[def objectForKey:TabBehaviour] 
+                        forKey:TabBehaviour];
+}
+
 - (NSDictionary *)preferencesDict
 {
     return preferencesDict;
@@ -641,24 +745,25 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 
 - (NSString *)selectFileWithTypes:(NSArray *)types
 {
-  NSString 	*file = nil;
-  NSOpenPanel	*openPanel;
-  int		retval;
+    NSString 	   *file = nil;
+    NSOpenPanel	   *openPanel;
+    int		    retval;
+    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 
-  openPanel = [NSOpenPanel openPanel];
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setCanChooseDirectories:YES];
-  [openPanel setCanChooseFiles:YES];
+    openPanel = [NSOpenPanel openPanel];
+    [openPanel setAllowsMultipleSelection:NO];
+    [openPanel setCanChooseDirectories:YES];
+    [openPanel setCanChooseFiles:YES];
 
-  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:types];
-  
-  if (retval == NSOKButton) {
-    [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
-					   forKey:@"LastOpenDirectory"];
-    file = [[openPanel filenames] objectAtIndex:0];
-    
-  }
-  return file;
+    retval = [openPanel runModalForDirectory:[def objectForKey:@"LastOpenDirectory"] file:nil types:types];
+
+    if (retval == NSOKButton) 
+    {
+	[def setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+	file = [[openPanel filenames] objectAtIndex:0];
+	
+    }
+    return file;
 }
 
 @end

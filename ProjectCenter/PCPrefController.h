@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCPREFCONTROLLER_H
+#define _PCPREFCONTROLLER_H
+
 #import <AppKit/AppKit.h>
 
 @interface PCPrefController : NSObject
@@ -34,8 +37,11 @@
   id prefEmptyView;
   id prefBuildingView;
   id prefMiscView;
+  id prefEditingView;
   id prefSavingView;
   
+  id tabMatrix;
+
   id successField;
   id failureField;
   
@@ -79,6 +85,8 @@
 - (void)setBundlePath:(id)sender;
 - (void)promptWhenQuitting:(id)sender;
 
+- (void)setTabBehaviour:(id)sender;
+
 - (NSDictionary *)preferencesDict;
 
 - (NSString *)selectFileWithTypes:(NSArray *)types;
@@ -87,3 +95,4 @@
 
 extern NSString *SavePeriodDidChangeNotification;
 
+#endif
