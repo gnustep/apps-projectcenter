@@ -75,16 +75,19 @@ static PCAppProj *_creator = nil;
 
     NSAssert(path,@"No valid project path provided!");
 
-    if ([fm createDirectoryAtPath:path attributes:nil]) {
+    if ([fm createDirectoryAtPath:path attributes:nil]) 
+    {
         NSString *_file;
         NSString *_resourcePath;
         NSMutableDictionary *dict;
         NSDictionary *infoDict;
 	NSString *plistFileName;
+	NSString *projectFile;
 
         project = [[[PCAppProject alloc] init] autorelease];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
+        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" 
+	                                                        ofType:@"proj"];
         dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
                 
         // Customise the project
@@ -102,16 +105,20 @@ static PCAppProj *_creator = nil;
 				   @"",@"Authors",
 				   @"",@"URL",
 				   @"Copyright (C) 200x by ...",@"Copyright",
-				   @"Released under ...",@"CopyrightDescription", nil];
+				   @"Released under...",@"CopyrightDescription",
+				   nil];
 	plistFileName = [NSString stringWithFormat:@"%@Info.plist",
 	                                           [path lastPathComponent]];
 	[infoDict writeToFile:[path stringByAppendingPathComponent:plistFileName] atomically:YES];
 
         [dict setObject:[NSArray arrayWithObjects:plistFileName,nil] 
-	      forKey:PCOtherResources];
+	         forKey:PCOtherResources];
 
         // Save the project to disc
-        [dict writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
+	//projectFile = [NSString stringWithString:@"PC.project"];
+	projectFile = [NSString stringWithString:[path lastPathComponent]];
+	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
+        [dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
 	       atomically:YES];
 
 	/*

@@ -7,6 +7,10 @@
       NSIcon = "ProjectCenter.tiff";
     },
     {
+      NSUnixExtensions = ( "pcproj" );
+      NSIcon = "ProjectCenter.tiff";
+    },
+    {
       NSUnixExtensions = ( "m" );
       NSIcon = "FileIcon_.m.tiff";
     },

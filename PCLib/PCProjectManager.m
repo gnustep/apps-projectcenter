@@ -315,9 +315,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       
 	if (!project) 
 	{
-#ifdef DEBUG
-	    NSLog(@"Couldn't instantiate the project...");
-#endif // DEBUG
 	    return NO;
 	}
       

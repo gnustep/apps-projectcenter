@@ -4,9 +4,9 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCToolMakefileFactory.m,
-	PCToolProj.m,
-	PCToolProject.m
+	PCLibMakefileFactory.m,
+	PCLibProj.m,
+	PCLibProject.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -16,9 +16,9 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCToolMakefileFactory.h,
-	PCToolProj.h,
-	PCToolProject.h
+	PCLibMakefileFactory.h,
+	PCLibProj.h,
+	PCLibProject.h
     );
     IMAGES = (
     );
@@ -36,20 +36,19 @@
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (
-	Info-project.plist,
 	PC.proj,
-	main.m
+	Version
     );
     OTHER_SOURCES = (
     );
-    PRINCIPAL_CLASS = PCToolProj;
+    PRINCIPAL_CLASS = PCLibProj;
     PROJECT_BUILDER = PCBundleProj;
     PROJECT_COPYRIGHT = "No license specified!";
     PROJECT_CREATOR = "";
     PROJECT_DESCRIPTION = "No description avaliable!";
     PROJECT_GROUP = "No description avaliable!";
     PROJECT_MAINTAINER = "";
-    PROJECT_NAME = PCToolProj;
+    PROJECT_NAME = PCLibProj;
     PROJECT_RELEASE = 1;
     PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";
     PROJECT_SUMMARY = "No summary avaliable!";

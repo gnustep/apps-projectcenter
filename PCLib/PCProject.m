@@ -806,7 +806,8 @@
 - (BOOL)save
 {
     BOOL ret = NO;
-    NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
+//NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
+    NSString *file = [[projectPath stringByAppendingPathComponent:projectName] stringByAppendingPathExtension:@"pcproj"];
     NSString *backup = [file stringByAppendingPathExtension:@"backup"];
     NSFileManager *fm = [NSFileManager defaultManager];
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];

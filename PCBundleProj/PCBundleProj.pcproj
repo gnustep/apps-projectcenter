@@ -4,7 +4,9 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCBaseFileType.m
+	PCBundleProject.m,
+	PCBundleProj.m,
+	PCBundleMakefileFactory.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -14,7 +16,9 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCBaseFileType.h
+	PCBundleProject.h,
+	PCBundleProj.h,
+	PCBundleMakefileFactory.h
     );
     IMAGES = (
     );
@@ -32,22 +36,18 @@
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (
-	cfile.template,
-	cheader.template,
-	class.template,
-	header.template,
-	protocol.template
+	PC.proj
     );
     OTHER_SOURCES = (
     );
-    PRINCIPAL_CLASS = PCBaseFileType;
+    PRINCIPAL_CLASS = PCBundleProj;
     PROJECT_BUILDER = PCBundleProj;
     PROJECT_COPYRIGHT = "No license specified!";
     PROJECT_CREATOR = "";
     PROJECT_DESCRIPTION = "No description avaliable!";
     PROJECT_GROUP = "No description avaliable!";
     PROJECT_MAINTAINER = "";
-    PROJECT_NAME = PCBaseFileTypes;
+    PROJECT_NAME = PCBundleProj;
     PROJECT_RELEASE = 1;
     PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";
     PROJECT_SUMMARY = "No summary avaliable!";

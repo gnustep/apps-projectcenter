@@ -79,7 +79,8 @@ static PCToolProj *_creator = nil;
         NSString *_file;
         NSString *_resourcePath;
         NSMutableDictionary *dict;
-        
+        NSString *projectFile;
+
         project = [[[PCToolProject alloc] init] autorelease];
 
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
@@ -90,7 +91,10 @@ static PCToolProj *_creator = nil;
         [dict setObject:[project principalClass] forKey:PCProjType];
 
         // Save the project to disc
-        [dict writeToFile:[path stringByAppendingPathComponent:@"PC.project"] atomically:YES];
+	projectFile = [NSString stringWithString:[path lastPathComponent]];
+	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
+	[dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
+				               atomically:YES];
         
         // Copy the project files to the provided path
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];

@@ -4,9 +4,9 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCAppMakefileFactory.m,
-	PCAppProj.m,
-	PCAppProject.m
+	PCGormMakefileFactory.m,
+	PCGormProj.m,
+	PCGormProject.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -16,9 +16,9 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCAppMakefileFactory.h,
-	PCAppProj.h,
-	PCAppProject.h
+	PCGormMakefileFactory.h,
+	PCGormProj.h,
+	PCGormProject.h
     );
     IMAGES = (
     );
@@ -36,22 +36,22 @@
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (
-	AppController.h,
-	AppController.m,
-	Info-project.plist,
+	PC.proj,
 	main.m,
-	PC.proj
+	baseInterface.classes,
+	baseInterface.gorm,
+	Info-project.plist
     );
     OTHER_SOURCES = (
     );
-    PRINCIPAL_CLASS = PCAppProj;
+    PRINCIPAL_CLASS = PCGormProj;
     PROJECT_BUILDER = PCBundleProj;
     PROJECT_COPYRIGHT = "No license specified!";
     PROJECT_CREATOR = "";
     PROJECT_DESCRIPTION = "No description avaliable!";
     PROJECT_GROUP = "No description avaliable!";
     PROJECT_MAINTAINER = "";
-    PROJECT_NAME = PCAppProj;
+    PROJECT_NAME = PCGormProj;
     PROJECT_RELEASE = 1;
     PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";
     PROJECT_SUMMARY = "No summary avaliable!";

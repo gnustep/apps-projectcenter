@@ -80,6 +80,8 @@ static PCBundleProj *_creator = nil;
         NSString *_file;
         NSString *_resourcePath;
         NSMutableDictionary *dict;
+	NSString *projectFile;
+
 
         project = [[[PCBundleProject alloc] init] autorelease];
 
@@ -92,7 +94,9 @@ static PCBundleProj *_creator = nil;
         [dict setObject:[project principalClass] forKey:PCProjType];
 
         // Save the project to disc
-        [dict writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
+	projectFile = [NSString stringWithString:[path lastPathComponent]];
+	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
+        [dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
 	      atomically:YES];
 
 	/*

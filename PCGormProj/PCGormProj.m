@@ -81,6 +81,7 @@ static PCGormProj *_creator = nil;
         NSMutableDictionary *dict;
         NSDictionary *infoDict;
 	NSString *plistFileName;
+        NSString *projectFile;
 
         project = [[[PCGormProject alloc] init] autorelease];
 
@@ -114,7 +115,10 @@ static PCGormProj *_creator = nil;
 	      forKey:PCMainGModelFile];
 
         // Save the project to disc
-        [dict writeToFile:[path stringByAppendingPathComponent:@"PC.project"] atomically:YES];
+	projectFile = [NSString stringWithString:[path lastPathComponent]];
+	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
+	[dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
+				               atomically:YES];
 
 	/*
 	 * Copy the project files to the provided path

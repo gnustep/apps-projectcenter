@@ -95,7 +95,7 @@
 
 - (void)openProject:(id)sender
 {
-    NSString 	*projectPath;
+    NSString 	*projPath;
     NSOpenPanel	*openPanel;
     int		retval;
 
@@ -104,17 +104,23 @@
     [openPanel setCanChooseDirectories:NO];
     [openPanel setCanChooseFiles:YES];
 
-    retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",nil]];
+    retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
 
     if (retval == NSOKButton) {
         BOOL isDir;
 
-        [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-        projectPath = [[openPanel filenames] objectAtIndex:0];
+        [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
+	                                          forKey:@"LastOpenDirectory"];
+        projPath = [[openPanel filenames] objectAtIndex:0];
 
-        if ([[NSFileManager defaultManager] fileExistsAtPath:projectPath isDirectory:&isDir] && !isDir) {
-            if (![projectManager openProjectAt:projectPath]) {
-                NSRunAlertPanel(@"Attention!",@"Couldn't open %@!",@"OK",nil,nil,[projectPath stringByDeletingLastPathComponent]);
+        if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
+	                                         isDirectory:&isDir] && !isDir){
+            if (![projectManager openProjectAt:projPath]) 
+	    {
+                NSRunAlertPanel(@"Attention!",
+		                @"Couldn't open %@!",
+				@"OK",nil,nil,
+				[projPath stringByDeletingLastPathComponent]);
             }
         }
     }
@@ -131,12 +137,16 @@
     [sp setAccessoryView:projectTypeAccessaryView];
 
     runResult = [sp runModalForDirectory:NSHomeDirectory() file:@""];
-    if (runResult == NSOKButton) {
+    if (runResult == NSOKButton) 
+    {
         NSString *projectType = [projectTypePopup titleOfSelectedItem];
         NSString *className = [[appController projectTypes] objectForKey:projectType];
 
-        if (![projectManager createProjectOfType:className path:[sp filename]]) {
-            NSRunAlertPanel(@"Attention!",@"Failed to create %@!",@"OK",nil,nil,[sp filename]);
+        if (![projectManager createProjectOfType:className path:[sp filename]])
+	{
+            NSRunAlertPanel(@"Attention!",
+	                    @"Failed to create %@!",
+			    @"OK",nil,nil,[sp filename]);
         }
     }
 }
@@ -150,7 +160,7 @@
 {
     NSString *proj;
 
-// Show save panel
+    // Show save panel
 
     [projectManager saveProjectAs:proj];
 }
