@@ -1,5 +1,5 @@
 {
-    APPKIT = GNUSTEP-GUI;
+    APPKIT = "GNUSTEP-GUI";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
 	PCBrowserController.m,
@@ -17,16 +17,21 @@
 	PCEditorController.m,
 	PCTextFinder.m,
 	PCProjectEditor.m,
-	PCProject+ComponentHandling.m,
-	PCEditorView+Highlighting.m,
+	"PCProject+ComponentHandling.m",
+	"PCEditorView+Highlighting.m",
 	PCHistoryController.m,
-	PCMakefileFactory.m
+	PCMakefileFactory.m,
+	"PCEditor+UInterface.m",
+	"PCFileManager+UInterface.m",
+	"PCProjectManager+UInterface.m",
+	"PCProject+UInterface.m",
+	"PCTextFinder+UInterface.m"
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
     DOCU_FILES = (
     );
-    FOUNDATION = GNUSTEP-BASE;
+    FOUNDATION = "GNUSTEP-BASE";
     FRAMEWORKS = (
     );
     HEADER_FILES = (
@@ -55,17 +60,22 @@
 	PCTextFinder.h,
 	PCProjectEditor.h,
 	ProjectComponent.h,
-	PCProject+ComponentHandling.h,
-	PCEditorView+Highlighting.h,
+	"PCProject+ComponentHandling.h",
+	"PCEditorView+Highlighting.h",
 	PCHistoryController.h,
-	PCMakefileFactory.h
+	PCMakefileFactory.h,
+	"PCEditor+UInterface.h",
+	"PCFileManager+UInterface.h",
+	"PCProjectManager+UInterface.h",
+	"PCProject+UInterface.h",
+	"PCTextFinder+UInterface.h"
     );
     INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)";
     LANGUAGE = English;
     LAST_EDITING = "";
     LIBRARIES = (
-	gnustep-gui,
-	gnustep-base
+	"gnustep-gui",
+	"gnustep-base"
     );
     LINKEROPTIONS = "";
     MAKEFILEDIR = "$(GNUSTEP_SYSTEM_ROOT)/Makefiles";
