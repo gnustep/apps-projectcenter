@@ -9,7 +9,6 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-include ../pcproj_bundle.make
 
 #
 # Subprojects
@@ -40,8 +39,8 @@ PCGormProj_RESOURCE_FILES= \
 PC.proj \
 main.m \
 baseInterface.classes \
-baseInterface.gorm \
-Info-project.plist 
+baseInterface.gorm
+
 
 #
 # Header files
@@ -65,7 +64,5 @@ PCGormProject.m
 
 PCGormProj_C_FILES= 
 
--include GNUmakefile.preamble
--include GNUmakefile.local
+include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
--include GNUmakefile.postamble

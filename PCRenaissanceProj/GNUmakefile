@@ -9,7 +9,6 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-include ../pcproj_bundle.make
 
 
 #
@@ -44,8 +43,8 @@ AppController.m \
 AppController.h \
 Main.gsmarkup \
 MainMenu-GNUstep.gsmarkup \
-MainMenu-OSX.gsmarkup \
-Info-project.plist 
+MainMenu-OSX.gsmarkup
+
 
 #
 # Header files
@@ -69,7 +68,5 @@ PCRenaissanceProject.m
 
 PCRenaissanceProj_C_FILES= 
 
--include GNUmakefile.preamble
--include GNUmakefile.local
+include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
--include GNUmakefile.postamble
