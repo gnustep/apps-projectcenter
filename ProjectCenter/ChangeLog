@@ -1,3 +1,39 @@
+2001-12-29 16:28  probert
+
+	* PCPrefController.h, PCPrefController.m: Automatic, periodic
+	saving of all open projectfiles is now supported.
+
+2001-12-29 15:10  probert
+
+	* PCAppController+MenuHandling.h, PCAppController+MenuHandling.m,
+	PCAppController.m, PCMenuController.h, PCMenuController.m,
+	PCPrefController.h, PCPrefController.m, ProjectCenter_main.m:
+	Implemented more preference handling and cleaned up some ugly parts
+	of the code. Removed the loadedProjectsWindow feature, it just does
+	not make any sense.
+
+2001-12-28 15:11  probert
+
+	* GNUmakefile, PC.project: Added the missing rpm icon
+
+2001-08-03 16:31  probert
+
+	* ProjectCenterInfo.plist: Minor changes
+
+2001-08-03 16:23  probert
+
+	* PCAppController+MenuHandling.h, PCAppController+MenuHandling.m,
+	PCAppController.h, PCAppController.m, PCFindController.h,
+	PCFindController.m, PCInfoController.h, PCInfoController.m,
+	PCLogController.h, PCLogController.m, PCMenuController.h,
+	PCMenuController.m, PCPrefController.h, PCPrefController.m,
+	ProjectCenter_main.m: New version - now copyrighted by the FSF
+
+2001-08-01 14:43  probert
+
+	* ChangeLog, ProjectCenterInfo.plist: Some updated information
+	regarding the version
+
 2001-08-01 14:35  probert
 
 	* GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble: New

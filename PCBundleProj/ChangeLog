@@ -1,3 +1,27 @@
+2001-12-29 15:06  probert
+
+	* PCBundleProject.m: Cleaned up the writeMakefile method
+
+2001-08-03 16:23  probert
+
+	* PCBundleMakefileFactory.h, PCBundleMakefileFactory.m,
+	PCBundleProj.h, PCBundleProj.m, PCBundleProject.h,
+	PCBundleProject.m: New version - now copyrighted by the FSF
+
+2001-08-01 14:35  probert
+
+	* GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCBundleMakefileFactory.m: New copyright information and minor
+	template additions
+
+2001-07-01 21:01  probert
+
+	* GNUmakefile, GNUmakefile.preamble: Applied patch from Adam Fedor
+
+2001-01-14 18:54  robert
+
+	* ChangeLog: Updated the ChangeLogs
+
 2001-01-14 17:08  robert
 
 	* PCBundleProject.m: Added the supporting files category
