@@ -19,105 +19,84 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
 
 #
-# Library
+# Main application
 #
 
-PACKAGE_NAME=ProjectCenter
-LIBRARY_VAR=PROJECTCENTER
-LIBRARY_NAME=libProjectCenter
-libProjectCenter_HEADER_FILES_DIR=.
-libProjectCenter_HEADER_FILES_INSTALL_DIR=/ProjectCenter
-ADDITIONAL_INCLUDE_DIRS = -I..
-srcdir = .
-PROJECTCENTER_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)
-PROJECTCENTER_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)
+PACKAGE_NAME = ProjectCenter
+APP_NAME = ProjectCenter
+ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 
 
 #
 # Additional libraries
 #
 
-libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui 
+ADDITIONAL_GUI_LIBS += -lProjectCenter 
+
+#
+# Resource files
+#
+
+ProjectCenter_RESOURCE_FILES = \
+ProjectCenterInfo.plist \
+Images/FileIcon_.c.tiff \
+Images/FileIcon_.h.tiff \
+Images/FileIcon_.m.tiff \
+Images/FileIcon_rtf.tiff \
+Images/ProjectCenter.tiff \
+Images/ProjectCenter_add.tiff \
+Images/ProjectCenter_build.tiff \
+Images/ProjectCenter_clean.tiff \
+Images/ProjectCenter_cvs.tiff \
+Images/ProjectCenter_debug.tiff \
+Images/ProjectCenter_dist.tiff \
+Images/ProjectCenter_documentation.tiff \
+Images/ProjectCenter_files.tiff \
+Images/ProjectCenter_find.tiff \
+Images/ProjectCenter_install.tiff \
+Images/ProjectCenter_make.tiff \
+Images/ProjectCenter_prefs.tiff \
+Images/ProjectCenter_profile.tiff \
+Images/ProjectCenter_rpm.tiff \
+Images/ProjectCenter_run.tiff \
+Images/ProjectCenter_settings.tiff \
+Images/ProjectCenter_uml.tiff
 
 #
 # Header files
 #
 
-libProjectCenter_HEADER_FILES= \
-PCBrowserController.h \
-PCBundleLoader.h \
-PCDataSource.h \
-PCEditorView.h \
-PCFileManager.h \
-PCProject.h \
-PCProjectBuilder.h \
-PCProjectDebugger.h \
-PCProjectManager.h \
-PCServer.h \
-FileCreator.h \
-PreferenceController.h \
-ProjectBuilder.h \
-ProjectCenter.h \
-ProjectDebugger.h \
-ProjectEditor.h \
-ProjectType.h \
-Server.h \
-PCSplitView.h \
-PCEditor.h \
-PCEditorController.h \
-PCDefines.h \
-PCTextFinder.h \
-PCProjectEditor.h \
-ProjectComponent.h \
-PCProject+ComponentHandling.h \
-PCEditorView+Highlighting.h \
-PCHistoryController.h \
-PCMakefileFactory.h \
-PCEditor+UInterface.h \
-PCFileManager+UInterface.h \
-PCProjectManager+UInterface.h \
-PCProject+UInterface.h \
-PCTextFinder+UInterface.h 
+ProjectCenter_HEADERS = \
+PCAppController.h \
+PCFindController.h \
+PCInfoController.h \
+PCLogController.h \
+PCMenuController.h \
+PCPrefController.h \
+PCAppController+MenuHandling.h 
 
 #
 # Class files
 #
 
-libProjectCenter_OBJC_FILES= \
-PCBrowserController.m \
-PCBundleLoader.m \
-PCDataSource.m \
-PCEditorView.m \
-PCFileManager.m \
-PCProject.m \
-PCProjectBuilder.m \
-PCProjectDebugger.m \
-PCProjectManager.m \
-PCServer.m \
-PCSplitView.m \
-PCEditor.m \
-PCEditorController.m \
-PCTextFinder.m \
-PCProjectEditor.m \
-PCProject+ComponentHandling.m \
-PCEditorView+Highlighting.m \
-PCHistoryController.m \
-PCMakefileFactory.m \
-PCEditor+UInterface.m \
-PCFileManager+UInterface.m \
-PCProjectManager+UInterface.m \
-PCProject+UInterface.m \
-PCTextFinder+UInterface.m 
+ProjectCenter_OBJC_FILES = \
+PCAppController.m \
+PCFindController.m \
+PCInfoController.m \
+PCLogController.m \
+PCMenuController.m \
+PCPrefController.m \
+ProjectCenter_main.m \
+PCAppController+MenuHandling.m 
 
 #
 # C files
 #
 
-libProjectCenter_C_FILES= 
-
-HEADERS_INSTALL = $(libProjectCenter_HEADER_FILES)
+ProjectCenter_C_FILES = 
 
 -include GNUmakefile.preamble
 -include GNUmakefile.local
-include $(GNUSTEP_MAKEFILES)/library.make
+include $(GNUSTEP_MAKEFILES)/aggregate.make
+include $(GNUSTEP_MAKEFILES)/application.make
 -include GNUmakefile.postamble
