@@ -40,6 +40,11 @@ ProjectCenter_RESOURCE_FILES= 			\
 	FileIcon_.h.tiff 			\
 	FileIcon_.m.tiff 			\
 	FileIcon_rtf.tiff 			\
+	ProjectCenter_make.tiff 		\
+	ProjectCenter_clean.tiff 		\
+	ProjectCenter_debug.tiff 		\
+	ProjectCenter_profile.tiff 		\
+	ProjectCenter_install.tiff 		\
 	Info-project.plist
 
 # Header files
