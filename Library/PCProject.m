@@ -1138,13 +1138,27 @@ NSString
 
 - (NSString *)categoryForCategoryPath:(NSString *)categoryPath
 {
+  NSString *key = [self keyForCategoryPath:categoryPath];
   NSString *category = nil;
+  NSArray  *pathComponents = [categoryPath componentsSeparatedByString:@"/"];
+  
+  if ([key isEqualToString:PCSubprojects] && [pathComponents count] > 3)
+    { // /Subprojects/Name/Classes/Class.m
+      int i = [pathComponents count] - 1;
+      for (; i >= 0; i--)
+	{
+	  category = [pathComponents objectAtIndex:i];
+	  if ([[activeSubproject rootCategories] containsObject:category])
+	    {
+	      return category;
+	    }
+	}
+    }
   
   if (![categoryPath isEqualToString:@"/"] 
       && ![categoryPath isEqualToString:@""])
     {
-      category = [[categoryPath componentsSeparatedByString:@"/"] 
-	objectAtIndex:1];
+      category = [pathComponents objectAtIndex:1];
     }
 
   return category;

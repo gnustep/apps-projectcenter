@@ -129,7 +129,7 @@ NSString *PCEditorDidResignActiveNotification =
       PCEditor *editor;
 
       editor = [[PCEditor alloc] initWithPath:path 
-	                             category:nil
+	                         categoryPath:nil
 				projectEditor:self];
       [editor setWindowed:YES];
       [editor show];
@@ -210,7 +210,7 @@ NSString *PCEditorDidResignActiveNotification =
 // ===========================================================================
 
 - (PCEditor *)editorForFile:(NSString *)path
-                   category:(NSString *)category
+               categoryPath:(NSString *)categoryPath
 	           windowed:(BOOL)yn
 {
   PCEditor *editor;
@@ -218,7 +218,7 @@ NSString *PCEditorDidResignActiveNotification =
   if (!(editor = [editorsDict objectForKey:path]))
     {
       editor = [[PCEditor alloc] initWithPath:path 
-	                             category:category
+	                         categoryPath:categoryPath
 				projectEditor:self];
 
       [editorsDict setObject:editor forKey:path];
@@ -392,12 +392,12 @@ NSString *PCEditorDidResignActiveNotification =
     {
       BOOL     res;
       BOOL     iw = [editor isWindowed];
-      NSString *c = [editor category];
+      NSString *categoryPath = [editor categoryPath];
       
       res = [editor saveFileTo:file];
       [editor closeFile:self save:NO];
 
-      [self editorForFile:file category:c windowed:iw];
+      [self editorForFile:file categoryPath:categoryPath windowed:iw];
 
       return res;
     }
@@ -466,19 +466,21 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
+  NSString *categoryPath = nil;
   
   if ([editorsDict objectForKey:[editor path]] != editor)
     {
       return;
     }
 
+  categoryPath = [editor categoryPath];
+
   [self setActiveEditor:editor];
 
-  if ([editor category])
+  if (categoryPath)
     {
-      [[project projectBrowser] 
-	setPathForFile:[[editor path] lastPathComponent]
-	      category:[editor category]];
+      NSLog(@"PCPE: set browser path: %@", categoryPath);
+      [[project projectBrowser] setPath:categoryPath];
     }
 }
 

@@ -298,7 +298,7 @@
   path = [object pathOfSelectedFile];
   pathComponents = [path pathComponents];
   lastComponent = [path lastPathComponent];
-  fileExtension = [[lastComponent componentsSeparatedByString:@"."] lastObject];
+  fileExtension = [lastComponent pathExtension];
   
   // Should be provided by PC*Proj bundles
   if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
@@ -611,7 +611,7 @@
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
   firstResponder = aResponder;
-  [projectWindow makeFirstResponder:firstResponder];
+//  [projectWindow makeFirstResponder:firstResponder];
   if (![projectWindow isKeyWindow])
     {
       [self makeKeyWindow];

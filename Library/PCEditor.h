@@ -26,7 +26,7 @@
   PCEditorView    *_intEditorView;
   NSTextStorage   *_storage;
   NSMutableString *_path;
-  NSString        *_category;
+  NSString        *_categoryPath;
   NSWindow        *_window;
 
   BOOL            _isEdited;
@@ -37,7 +37,7 @@
 // ==== Initialization
 // ===========================================================================
 - (id)initWithPath:(NSString *)file
-          category:(NSString *)category
+      categoryPath:(NSString *)categoryPath
      projectEditor:(PCProjectEditor *)projectEditor;
 - (void)dealloc;
 - (void)show;
@@ -54,7 +54,7 @@
 - (NSView *)componentView;
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
-- (NSString *)category;
+- (NSString *)categoryPath;
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 

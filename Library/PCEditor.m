@@ -134,7 +134,7 @@
 // ===========================================================================
 
 - (id)initWithPath:(NSString *)file
-          category:(NSString *)category
+      categoryPath:(NSString *)categoryPath
      projectEditor:(PCProjectEditor *)aProjectEditor
 {
   if ((self = [super init]))
@@ -149,7 +149,7 @@
       _isWindowed = NO;
       _window = nil;
       _path = [file copy];
-      _category = [category copy];
+      _categoryPath = [categoryPath copy];
 
       ft = [NSFont userFixedPitchFontOfSize:0.0];
       at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
@@ -160,7 +160,7 @@
       [_storage setAttributedString:as];
       RELEASE(as);
 
-      if (category) // category == nil if we're non project editor
+      if (categoryPath) // category == nil if we're non project editor
 	{
 	  [self _createInternalView];
 
@@ -194,7 +194,7 @@
 
 // _window is setReleasedWhenClosed:YES
   RELEASE(_path);
-  RELEASE(_category);
+  RELEASE(_categoryPath);
   RELEASE(_intScrollView);
 
   [super dealloc];
@@ -269,9 +269,9 @@
   _path = [path copy];
 }
 
-- (NSString *)category
+- (NSString *)categoryPath
 {
-  return _category;
+  return _categoryPath;
 }
 
 - (BOOL)isEdited

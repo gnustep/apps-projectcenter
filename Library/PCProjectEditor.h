@@ -56,7 +56,7 @@
 // ===========================================================================
 
 - (PCEditor *)editorForFile:(NSString *)path
-                   category:(NSString *)category
+               categoryPath:(NSString *)categoryPath
 	           windowed:(BOOL)yn;
 - (void)orderFrontEditorForFile:(NSString *)path;
 - (PCEditor *)activeEditor;

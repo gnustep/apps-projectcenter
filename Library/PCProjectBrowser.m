@@ -119,6 +119,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return (NSArray *)files;
 }
 
+- (BOOL)setPath:(NSString *)path
+{
+  int      selectedColumn;
+  NSMatrix *columnMatrix = nil;
+
+  while ((selectedColumn = [browser selectedColumn]) >= 0)
+    {
+      columnMatrix = [browser matrixInColumn:selectedColumn];
+      [columnMatrix deselectAllCells];
+    }
+
+  return [browser setPath:path];
+}
+
 - (BOOL)setPathForFile:(NSString *)file category:(NSString *)category
 {
   NSArray  *comp = [NSArray arrayWithObjects: @"/",category,@"/",file,nil];
@@ -165,23 +179,28 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
+      NSString  *category = [project categoryForCategoryPath:[browser path]];
+      NSString  *fileName = [[sender selectedCell] stringValue];
       PCProject *sp = nil;
-      NSString  *category = [[sender selectedCellInColumn:0] stringValue];
-      NSString  *fn = [[sender selectedCell] stringValue];
-      NSString  *fp = [[project projectPath] stringByAppendingPathComponent:fn];
+      NSString  *filePath = nil;
 
       if ((sp = [project activeSubproject]) != nil)
 	{
-	  fp = [[sp projectPath] stringByAppendingPathComponent:fn];
+	  filePath = [[sp projectPath] 
+	    stringByAppendingPathComponent:fileName];
+	}
+      else
+	{
+	  filePath = [[project projectPath] 
+	    stringByAppendingPathComponent:fileName];
 	}
 
-      NSLog(@"Open file %@ in editor", fp);
 
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])
 	{
-	  [[project projectEditor] editorForFile:fp
-	                                category:category
+	  [[project projectEditor] editorForFile:filePath
+	                            categoryPath:[browser path]
 					windowed:NO];
 	}
     }
@@ -200,21 +219,35 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
   if ([[sender selectedCell] isLeaf]) 
     {
-      NSString *category = [[sender selectedCellInColumn:0] stringValue];
-      NSString *fn = [[sender selectedCell] stringValue];
-      NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
+      NSString  *category = [project categoryForCategoryPath:[browser path]];
+      NSString  *fileName = [[sender selectedCell] stringValue];
+      PCProject *sp = nil;
+      NSString  *filePath = nil;
 
-      if ([project isEditableCategory:category])
+      if ((sp = [project activeSubproject]) != nil)
 	{
-	  [[project projectEditor] editorForFile:fp
-	                                category:category
+	  filePath = [[sp projectPath] 
+	    stringByAppendingPathComponent:fileName];
+	}
+      else
+	{
+	  filePath = [[project projectPath] 
+	    stringByAppendingPathComponent:fileName];
+	}
+
+
+      if ([project isEditableCategory:category] 
+	  || [sp isEditableCategory:category])
+	{
+	  [[project projectEditor] editorForFile:filePath
+	                            categoryPath:[browser path]
 					windowed:YES];
 	}
-      else if([[NSWorkspace sharedWorkspace] openFile:fp] == NO) 
+      else if([[NSWorkspace sharedWorkspace] openFile:filePath] == NO) 
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Could not open %@.",
-			  @"OK",nil,nil,fp);
+			  @"OK",nil,nil,filePath);
 	}
     }
   else 
@@ -260,7 +293,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   int      i = 0;
   int      count = 0;
 
-  if (sender != browser)
+  if (sender != browser || !matrix ||![matrix isKindOfClass:[NSMatrix class]])
     {
       return;
     }

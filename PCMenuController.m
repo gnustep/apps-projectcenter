@@ -196,15 +196,17 @@
       else
 	{
 	  PCProject *project = [projectManager activeProject];
-	  NSString  *category =  nil;
-	  
-	  category = [[project rootEntries] objectForKey:PCNonProject];
+	  NSString  *categoryPath =  nil;
+
+	  categoryPath = [NSString stringWithString:@"/"];
+	  categoryPath = [categoryPath stringByAppendingPathComponent:
+	    [[project rootEntries] objectForKey:PCNonProject]];
 
 	  [projectManager closeFile];
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
 	             forKey:PCNonProject];
 	  [[project projectEditor] editorForFile:newFilePath
-	                                category:category
+	                            categoryPath:categoryPath
 				        windowed:NO];
 	}
     }

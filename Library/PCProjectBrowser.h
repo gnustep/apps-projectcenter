@@ -53,6 +53,7 @@ extern NSString *PCBrowserDidSetPathNotification;
 - (NSString *)pathOfSelectedFile;
 - (NSArray *)selectedFiles;
 
+- (BOOL)setPath:(NSString *)path;
 - (BOOL)setPathForFile:(NSString *)file category:(NSString *)category;
 
 // ============================================================================
