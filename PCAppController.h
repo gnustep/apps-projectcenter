@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 

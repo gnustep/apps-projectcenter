@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 
@@ -27,9 +28,6 @@
 
 #include <ProjectCenter/ProjectCenter.h>
 
-#define REL_LIB_PC @"Library/ApplicationSupport/ProjectCenter"
-#define ABS_LIB_PC @"/usr/GNUstep/System/Library/ApplicationSupport/ProjectCenter"
-
 @implementation PCAppController
 
 //============================================================================
@@ -38,42 +36,6 @@
 
 + (void)initialize
 {
-  NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
-  NSDictionary        *env = [[NSProcessInfo processInfo] environment];
-  NSString            *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
-  NSString            *_bundlePath;
-
-  if (prefix && ![prefix isEqualToString:@""])
-    {
-      _bundlePath = [prefix stringByAppendingPathComponent:REL_LIB_PC];
-    }
-  else
-    {
-      _bundlePath = [NSString stringWithString:ABS_LIB_PC];
-    }
-
-  [defaults setObject:_bundlePath forKey:BundlePaths];
-
-  [defaults setObject:@"/usr/bin/vim" forKey:Editor];
-  [defaults setObject:@"/usr/bin/gdb" forKey:PDebugger];
-  [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
-
-  [defaults setObject:@"YES" forKey:ExternalEditor];
-  [defaults setObject:@"YES" forKey:ExternalDebugger];
-
-  [defaults setObject:[NSString stringWithFormat:@"%@/PCBuildDir",NSTemporaryDirectory()]
-               forKey:RootBuildDirectory];
-
-  [defaults setObject:@"YES" forKey:SaveOnQuit];
-  [defaults setObject:@"YES" forKey:PromptOnClean];
-  [defaults setObject:@"YES" forKey:PromptOnQuit];
-  [defaults setObject:@"YES" forKey:AutoSave];
-  [defaults setObject:@"YES" forKey:KeepBackup];
-  [defaults setObject:@"120" forKey:AutoSavePeriod];
-  [defaults setObject:@"NO" forKey:DeleteCacheWhenQuitting];
-
-  [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
-  [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
 - (id)init

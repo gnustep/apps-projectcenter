@@ -27,6 +27,7 @@ SUBPROJECTS = \
 ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
 Resources/LogPanel.gorm \
+Resources/Preferences.gorm \
 ProjectCenterInfo.plist \
 Images/ProjectCenter.tiff \
 Images/ButtonTile.tiff \
@@ -94,8 +95,7 @@ PCAppController.h \
 PCInfoController.h \
 PCLogController.h \
 PCMenuController.h \
-PCPrefController.h \
-PCPrefController+UInterface.h
+PCPrefController.h
 
 #
 # Class files
@@ -106,7 +106,6 @@ PCInfoController.m \
 PCLogController.m \
 PCMenuController.m \
 PCPrefController.m \
-PCPrefController+UInterface.m \
 ProjectCenter_main.m
 
 #

@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 
@@ -29,48 +30,49 @@
 
 @interface PCPrefController : NSObject
 {
-  id prefWindow;
-  id prefPopup;
-  
-  id prefEmptyView;
-  id prefBuildingView;
-  id prefMiscView;
-  id prefEditingView;
-  id prefSavingView;
-  id prefInterfaceView;
-  
-  id tabMatrix;
+  IBOutlet NSPanel       *panel;
+  IBOutlet NSPopUpButton *popupButton;
+  IBOutlet NSBox         *sectionsView;
 
-  id successField;
-  id failureField;
-  
-  id autoSaveField;
-  id saveAutomatically;
-  id keepBackup;
-  id saveOnQuit;
+  IBOutlet NSBox         *buildingView;
+  IBOutlet NSTextField   *successField;
+  IBOutlet NSButton      *setSuccessButton;
+  IBOutlet NSTextField   *failureField;
+  IBOutlet NSButton      *setFailureButton;
+  IBOutlet NSButton      *promptOnClean;
 
-  id useExternalEditor;
-  id useExternalDebugger;
-  id promptWhenQuit;
-  id promptOnClean;
+  IBOutlet NSBox         *savingView;
+  IBOutlet NSButton      *saveOnQuit;
+  IBOutlet NSButton      *saveAutomatically;
+  IBOutlet NSButton      *keepBackup;
+  IBOutlet NSSlider      *autosaveSlider;
+  IBOutlet NSTextField   *autosaveField;
   
-  id editorField;
-  id debuggerField;
-  id compilerField;
-  id bundlePathField;
+  IBOutlet NSBox         *keyBindingsView;
   
-  id separateBuilder;
-  id separateLauncher;
-  id separateEditor;
-  id separateLoadedFiles;
+  IBOutlet NSBox         *miscView;
+  IBOutlet NSButton      *separateBuilder;
+  IBOutlet NSButton      *separateLauncher;
+  IBOutlet NSButton      *separateEditor;
+  IBOutlet NSButton      *separateLoadedFiles;
+  IBOutlet NSButton      *promptWhenQuit;
+  IBOutlet NSTextField   *debuggerField;
+  IBOutlet NSTextField   *editorField;
+  
+  IBOutlet NSBox         *bundlesView;
+  IBOutlet NSTextField   *bundlePathField;
   
   NSMutableDictionary *preferencesDict;
 }
 
++ (PCPrefController *)sharedPCPreferences;
+
 - (id)init;
 - (void)dealloc;
 
-- (void)showPrefWindow:(id)sender;
+- (void)showPanel:(id)sender;
+- (void)loadPrefernces;
+
 - (void)popupChanged:(id)sender;
 
 - (void)setSuccessSound:(id)sender;
@@ -79,19 +81,13 @@
 
 - (void)setSaveAutomatically:(id)sender;
 - (void)setKeepBackup:(id)sender;
-- (void)setSavePeriod:(id)sender;
 - (void)setSaveOnQuit:(id)sender;
+- (void)setSavePeriod:(id)sender;
 
-- (void)setUseExternalEditor:(id)sender;
-- (void)setUseExternalDebugger:(id)sender;
-
-- (void)setEditor:(id)sender;
-- (void)setCompiler:(id)sender;
-- (void)setDebugger:(id)sender;
-- (void)setBundlePath:(id)sender;
 - (void)promptWhenQuitting:(id)sender;
-
-- (void)setTabBehaviour:(id)sender;
+- (void)setDebugger:(id)sender;
+- (void)setEditor:(id)sender;
+- (void)setBundlePath:(id)sender;
 
 - (NSDictionary *)preferencesDict;
 

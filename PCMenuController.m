@@ -74,7 +74,7 @@
 // Info
 - (void)showPrefWindow:(id)sender
 {
-  [[[NSApp delegate] prefController] showPrefWindow:sender];
+  [[[NSApp delegate] prefController] showPanel:sender];
 }
 
 - (void)showInfoPanel:(id)sender

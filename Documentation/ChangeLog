@@ -1,3 +1,32 @@
+2004-05-10 Serg Stoyan <stoyan@on.com.ua>
+
+	* Preferences interface created using GORM.
+	* Resources/Prefernces.gorm: added.
+	* PCPrefController+UInterface.[hm]: removed.
+
 2004-05-08 Serg Stoyan <stoyan@on.com.ua>
 
-	* Start new ChangeLog
+	* Start new ChangeLog. Old ChangeLog resides in 
+	  Documentation/ChangeLog-1 new in Documentation/ChangeLog.
+
+	* Summary of changes:
+	  - massive overall refactoring and cleanup. Directory layout
+	    of PC changed;
+	  - ProjectWindow: implemented toolbar(hide/show); menu entry
+	    implemented;
+	  - ProjectInspector: PC*Project's parts moved into PC*Projects;
+	    more or less finished;
+	  - ProjectBuilder: switch from NSThread to NSTask method of
+	    executing tasks; "Build", "Stop Build", "Clean" menu entries
+	    implemented;
+	  - ProjectLauncher: ditto; finished all related menu entries;
+	  - LoadedFiles: Fully implemented;
+	  - LogController: implemented; made use it;
+	  - initial subprojects support added;
+	  - more stability around the whole ProjectCenter;
+	  - GORMified parts of PC now is: PC main menu, ProjectInspector,
+	    "File->New in Project" panel, "Project-> New Subproject" 
+	    panel.
+	  - "File->Rename" implemented;
+	  - ProjectCenter library now framework.
+	    

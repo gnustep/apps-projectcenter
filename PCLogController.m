@@ -110,6 +110,12 @@ static PCLogController *_logCtrllr = nil;
       return nil;
     }
 
+  [panel setFrameAutosaveName:@"LogPanel"];
+  if (![panel setFrameUsingName: @"LogPanel"])
+    {
+      [panel center];
+    }
+
   font = [NSFont userFixedPitchFontOfSize: 10.0];
   textAttributes =
     [NSMutableDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
