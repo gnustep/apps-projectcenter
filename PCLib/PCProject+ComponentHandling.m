@@ -35,7 +35,7 @@
     }
     else {
       NSRunAlertPanel(@"Attention!",
-                      @"This project type is not executable!",
+                      @"This project is not executable!",
                       @"OK",nil,nil);
     }
     break;

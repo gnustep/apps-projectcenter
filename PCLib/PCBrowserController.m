@@ -41,7 +41,8 @@
 
 - (void)click:(id)sender
 {
-  if ([[sender selectedCell] isLeaf]) {
+  if ([[sender selectedCell] isLeaf]) 
+  {
     NSString *ltitle = [[sender selectedCell] stringValue];
     NSString *ctitle = [[sender selectedCellInColumn:0] stringValue];
     NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
@@ -124,7 +125,10 @@
   [browser setMaxVisibleColumns:3];
   [browser setAllowsMultipleSelection:NO];
   
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDictDidChange:) name:@"ProjectDictDidChangeNotification" object:project];
+  [[NSNotificationCenter defaultCenter] addObserver:self 
+                                       selector:@selector(projectDictDidChange:)
+				       name:@"ProjectDictDidChangeNotification" 
+				       object:project];
 }
 
 - (void)setProject:(PCProject *)aProj

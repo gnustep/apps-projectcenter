@@ -67,6 +67,7 @@
 
     [componentView addSubview:scrollView];
     RELEASE(scrollView);
+
     [componentView sizeToFit];
 }
 
@@ -81,6 +82,7 @@
     if((self = [super init]))
     {
         currentProject = aProject;
+	componentView  = nil;
     }
     return self;
 }
@@ -94,7 +96,7 @@
 
 - (NSView *)componentView
 {
-    if (!componentView) 
+    if (componentView == nil) 
     {
 	[self _createComponentView];
     }
@@ -111,10 +113,11 @@
     frame = [[scrollView contentView] frame];
 
     [scrollView setDocumentView:editor];
-    [editor setNeedsDisplay:YES];
 
     frame.size = NSMakeSize([scrollView contentSize].width,1e7);
     [[editor textContainer] setContainerSize:frame.size];
+
+    [editor setNeedsDisplay:YES];
 }
 
 - (PCEditorView *)editorView
