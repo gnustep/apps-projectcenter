@@ -12,7 +12,8 @@
 	PCProjectDebugger.m,
 	PCProjectManager.m,
 	PCServer.m,
-	PCSplitView.m
+	PCSplitView.m,
+	PCEditor.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -40,7 +41,8 @@
 	ProjectEditor.h,
 	ProjectType.h,
 	Server.h,
-	PCSplitView.h
+	PCSplitView.h,
+	PCEditor.h
     );
     INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
     LANGUAGE = English;

@@ -27,6 +27,7 @@
 #import "PCServer.h"
 #import "ProjectCenter.h"
 #import "PCBrowserController.h"
+#import "PCEditor.h"
 
 @implementation PCServer
 
@@ -36,9 +37,10 @@
 
 - (id)init
 {
-  if ((self = [super init])) {
+  if ((self = [super init])) 
+  {
     clients = [[NSMutableArray alloc] init];
-    openDocuments = [[NSMutableDictionary alloc] init];
+    editors = [[NSMutableDictionary alloc] init];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileShouldBeOpened:) name:FileShouldOpenNotification object:nil];
   }
@@ -49,8 +51,8 @@
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-  [openDocuments release];
-  [clients release];
+  RELEASE(editors);
+  RELEASE(clients);
 
   [super dealloc];
 }
@@ -74,11 +76,12 @@
 - (void)openFileInExternalEditor:(NSString *)file
 {
   NSTask *editorTask;
-  NSMutableArray *args = [NSMutableArray array];
+  NSMutableArray *args;
   NSUserDefaults *udef = [NSUserDefaults standardUserDefaults];
   NSString *editor = [udef objectForKey:Editor];
 
-  args = [editor componentsSeparatedByString: @" "];
+  args = [NSMutableArray arrayWithArray:
+                                    [editor componentsSeparatedByString: @" "]];
 
   editorTask = [[[NSTask alloc] init] autorelease];
   [editorTask setLaunchPath:[args objectAtIndex: 0]];
@@ -91,82 +94,46 @@
 
 - (void)openFileInInternalEditor:(NSString *)file
 {
-  NSWindow *editorWindow = nil;
+  PCEditor *editor = nil;
 
-  if ((editorWindow = [openDocuments objectForKey:file])) {
-    [editorWindow makeKeyAndOrderFront:self];
+  if((editor = [editors objectForKey:file]))
+  {
+    [editor show];
   }
-  else {
-    editorWindow = [self editorForFile:file];
-    
-    [editorWindow setDelegate:self];
-    [editorWindow center];
-    [editorWindow makeKeyAndOrderFront:self];
-    
-    [openDocuments setObject:editorWindow forKey:file];
+  else
+  {
+    editor = [[PCEditor alloc] initWithPath:file];
+
+    [editor setDelegate:self];
+    [editors setObject:editor forKey:file];
+    [editor show];
+
+    RELEASE(editor);
   }
 }
 
-- (NSWindow *)editorForFile:(NSString *)aFile
+- (void)closeEditorForFile:(NSString *)file
 {
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
-  NSRect rect = NSMakeRect(100,100,512,320);
-  NSWindow *window = [[NSWindow alloc] initWithContentRect:rect
-				       styleMask:style
-				       backing:NSBackingStoreBuffered
-				       defer:YES];
-  PCEditorView *textView;
-  NSScrollView *scrollView;
+  PCEditor *editor;
 
-  NSString *text = [NSString stringWithContentsOfFile:aFile];
-
-  [window setMinSize:NSMakeSize(512,320)];
-  [window setTitle:aFile];
-
-  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
-  [textView setMinSize: NSMakeSize (0, 0)];
-  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [textView setRichText:NO];
-  [textView setEditable:NO];
-  [textView setSelectable:YES];
-  [textView setVerticallyResizable:YES];
-  [textView setHorizontallyResizable:NO];
-  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [textView setBackgroundColor:[NSColor whiteColor]];
-  [[textView textContainer] setContainerSize: 
-			      NSMakeSize ([textView frame].size.width,1e7)];
-  [[textView textContainer] setWidthTracksTextView:YES];
-
-  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];
-  [scrollView setDocumentView:textView];
-  [textView release];
-  //[textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
-  [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
-  [scrollView setHasHorizontalScroller: YES];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
-  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-
-  [[window contentView] addSubview:scrollView];
-  [scrollView release];
-
-  /*
-   * Will be replaced when a real editor is available...
-   */
-
-  [textView setText:text];
-
-  return [window autorelease];
+  if((editor = [editors objectForKey:file]))
+  {
+      [editor close];
+      [editors removeObjectForKey:file];
+  }
 }
 
-- (void)windowWillClose:(NSNotification *)aNotif
+- (void)closeAllEditors
 {
-  // Otherwise it crashes when reopening the same file?...
-  NSWindow *window = [[aNotif object] retain];
+    NSEnumerator *enumerator = [editors keyEnumerator];
+    PCEditor *editor;
 
-  /*
-  [openDocuments removeObjectForKey:[window title]];
-  */
+    while((editor = [enumerator nextObject]))
+    {
+        [editor close];
+    }
+
+    [editors removeAllObjects];
 }
 
 //----------------------------------------------------------------------------

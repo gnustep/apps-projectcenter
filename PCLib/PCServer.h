@@ -64,7 +64,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 @interface PCServer : NSObject <Server>
 {
     NSMutableArray *clients;
-    NSMutableDictionary *openDocuments;
+    NSMutableDictionary *editors;
 }
 
 //----------------------------------------------------------------------------
@@ -83,8 +83,8 @@ extern NSString *PCProjectBuildDidStopNotification;
 - (void)openFileInExternalEditor:(NSString *)file;
 - (void)openFileInInternalEditor:(NSString *)file;
 
-- (NSWindow *)editorForFile:(NSString *)aFile;
-- (void)windowWillClose:(NSNotification *)aNotif;
+- (void)closeEditorForFile:(NSString *)file;
+- (void)closeAllEditors;
 
 //----------------------------------------------------------------------------
 // Server
