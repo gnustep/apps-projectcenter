@@ -38,9 +38,6 @@
 @interface PCToolProject : PCProject
 {
   IBOutlet NSBox       *projectAttributesView;
-  IBOutlet NSTextField *projectTypeField;
-  IBOutlet NSTextField *projectNameField;
-  IBOutlet NSTextField *projectLanguageField;
 
   NSMutableDictionary  *infoDict;
 }

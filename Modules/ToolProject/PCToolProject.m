@@ -341,9 +341,6 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif 
 {
-  [projectTypeField setStringValue:@"Tool"];
-  [projectNameField setStringValue:projectName];
-  [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
 }
 
 @end

@@ -60,14 +60,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)createProjectAttributes
 {
-  // Languages
-  [projectLanguagePB removeAllItems];
-  [projectLanguagePB 
-    addItemsWithTitles:[NSUserDefaults userLanguages]];
-//    addItemsWithTitles:[projectDict objectForKey:PCUserLanguages]];
-  [projectLanguagePB 
-    selectItemWithTitle:[projectDict objectForKey:PCLanguage]];
-  
   // TFs Buttons
   [setFieldButton setRefusesFirstResponder:YES];
   [clearFieldButton setRefusesFirstResponder:YES];
@@ -106,14 +98,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // ----------------------------------------------------------------------------
 // --- Actions
 // ----------------------------------------------------------------------------
-
-- (void)setCurrentLanguage:(id)sender
-{
-  NSLog(@"set current language to %@", [sender titleOfSelectedItem]);
-  [self setProjectDictObject:[sender titleOfSelectedItem]
-                      forKey:PCLanguage
-		      notify:NO];
-}
 
 - (void)setAppClass:(id)sender
 {
@@ -600,9 +584,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 //  NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
-  [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];
-  [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
-//  [projectLanguageField setStringValue:[projectDict objectForKey:PCLanguage]];
   [appClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
 
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];

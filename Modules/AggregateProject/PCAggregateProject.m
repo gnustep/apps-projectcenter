@@ -182,8 +182,6 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif 
 {
-  [projectTypeField setStringValue:@"Aggregate"];
-  [projectNameField setStringValue:projectName];
 }
 
 @end

@@ -347,9 +347,6 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif 
 {
-  [projectTypeField setStringValue:@"Library"];
-  [projectNameField setStringValue:projectName];
-  [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
 }
 
 @end

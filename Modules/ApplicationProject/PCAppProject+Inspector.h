@@ -38,7 +38,6 @@
 // ----------------------------------------------------------------------------
 // --- Actions
 // ----------------------------------------------------------------------------
-- (void)setCurrentLanguage:(id)sender;
 - (void)setAppClass:(id)sender;
 - (void)setFile:(id)sender;
 - (void)clearFile:(id)sender;

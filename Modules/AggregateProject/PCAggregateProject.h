@@ -33,8 +33,6 @@
 @interface PCAggregateProject : PCProject
 {
   IBOutlet NSBox       *projectAttributesView;
-  IBOutlet NSTextField *projectTypeField;
-  IBOutlet NSTextField *projectNameField;
 
   NSMutableDictionary  *infoDict;
 }

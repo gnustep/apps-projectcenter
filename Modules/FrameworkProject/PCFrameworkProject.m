@@ -342,10 +342,17 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif 
 {
-  [projectTypeField setStringValue:@"Framework"];
-  [projectNameField setStringValue:projectName];
-  [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
+  [principalClassField 
+    setStringValue:[projectDict objectForKey:PCPrincipalClass]];
 }
+
+- (void)setPrincipalClass:(id)sender
+{
+  [self setProjectDictObject:[principalClassField stringValue]
+                      forKey:PCPrincipalClass
+		      notify:YES];
+}
+
 
 @end
 

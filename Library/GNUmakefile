@@ -101,6 +101,7 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/NewFile.gorm \
   Resources/ProjectInspector.gorm \
   Resources/BuildAttributes.gorm \
+  Resources/ProjectAttributes.gorm \
   Resources/ProjectDescription.gorm \
   Resources/FileAttributes.gorm \
   Resources/cfile.template \

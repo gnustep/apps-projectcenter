@@ -276,10 +276,6 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif 
 {
-  [projectTypeField setStringValue:@"Bundle"];
-  [projectNameField setStringValue:projectName];
-  [projectLanguageField
-    setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
   [principalClassField 
     setStringValue:[projectDict objectForKey:PCPrincipalClass]];
   [bundleExtensionField 

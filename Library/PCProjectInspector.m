@@ -140,6 +140,7 @@
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(buildAttributesView);
+  RELEASE(projectAttributesSubview);
   RELEASE(projectAttributesView);
   RELEASE(projectDescriptionView);
   RELEASE(fileAttributesView);
@@ -171,6 +172,9 @@
   
   // Build Attributes
   [self createBuildAttributes];
+
+  // Project Attributes
+  [self createProjectAttributes];
 
   // Project Description
   [self createProjectDescription];
@@ -311,6 +315,7 @@
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
   PCProject *rootProject = [projectManager rootActiveProject];
+  NSView    *newProjAttrSubview = nil;
   
   if (rootProject != project)
     {
@@ -325,7 +330,17 @@
 	      [[project projectDict] objectForKey:PCProjectName]);
 
   // 1. Get custom project attributes view
-  projectAttributesView = [project projectAttributesView];
+  newProjAttrSubview = [project projectAttributesView];
+  if (projectAttributesSubview == nil)
+    {
+      [projectAttributesView addSubview:newProjAttrSubview];
+    }
+  else
+    {
+      [projectAttributesView replaceSubview:projectAttributesSubview 
+	                               with:newProjAttrSubview];
+    }
+  projectAttributesSubview = newProjAttrSubview;
 
   // 2. Update values in UI elements
   [self updateValues:nil];
@@ -354,6 +369,11 @@
   [installPathField setStringValue:
     [projectDict objectForKey:PCInstallDir]];
     
+  // Project Attributes
+  [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];
+  [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
+  [projectLanguagePB selectItemWithTitle:[projectDict objectForKey:PCLanguage]];
+
   // Project Description view
   [descriptionField setStringValue:
     [projectDict objectForKey:PCDescription]];
@@ -506,6 +526,40 @@
       return;
     }
 }
+
+// ============================================================================
+// ==== Project Attributes
+// ============================================================================
+
+- (void)createProjectAttributes
+{
+  if (projectAttributesView)
+    {
+      return;
+    }
+
+  if ([NSBundle loadNibNamed:@"ProjectAttributes" owner:self] == NO)
+    {
+      PCLogError(self, @"error loading ProjectAttributes NIB file!");
+      return;
+    }
+
+  // Languages
+  [projectLanguagePB removeAllItems];
+  [projectLanguagePB addItemsWithTitles:[NSUserDefaults userLanguages]];
+  
+  // Retain view
+  [projectAttributesView retain];
+}
+
+- (void)setCurrentLanguage:(id)sender
+{
+  NSLog(@"set current language to %@", [sender titleOfSelectedItem]);
+  [project setProjectDictObject:[sender titleOfSelectedItem]
+                         forKey:PCLanguage
+	  	         notify:NO];
+}
+
 
 // ============================================================================
 // ==== Project Description

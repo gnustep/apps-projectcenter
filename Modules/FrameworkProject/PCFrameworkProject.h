@@ -38,9 +38,8 @@
 @interface PCFrameworkProject : PCProject
 {
   IBOutlet NSBox       *projectAttributesView;
-  IBOutlet NSTextField *projectTypeField;
-  IBOutlet NSTextField *projectNameField;
-  IBOutlet NSTextField *projectLanguageField;
+  IBOutlet NSTextField *principalClassField;
+  IBOutlet NSTextField *currentVersionNameField;
 }
 
 //----------------------------------------------------------------------------

@@ -3,25 +3,20 @@
     FirstResponder = {
 	Actions = (
 	    "changeFont:",
-	    "deleteWordBackward:",
 	    "moveDown:",
-	    "moveWordForward:",
 	    "orderFrontFontPanel:",
-	    "raiseBaseline:",
 	    "selectParagraph:",
-	    "takeObjectValueFrom:",
 	    "unscript:"
 	);
 	Super = NSObject;
     };
-    PCLibraryProject = {
+    PCFrameworkProject = {
 	Actions = (
 	);
 	Outlets = (
 	    projectAttributesView,
-	    projectTypeField,
-	    projectNameField,
-	    projectLanguageField
+	    currentVersionNameField,
+	    principalClassField
 	);
 	Super = NSObject;
     };

@@ -1,3 +1,11 @@
+2005-01-25 Serg Stoyan <stoyan255@ukr.net>
+
+	* Move "Project Name", "Project Type" and "Language" fields into 
+	Project Inspector's "Project Attributes section"
+
+	* Library/PCProject.m: Add "Project Attributes" view. Modules' 
+	inspectors now subview of this view.
+	
 2005-01-23 Serg Stoyan <stoyan255@ukr.net>
 
 	* Move appendLibraries: from project modules into PCMakefileFactory.m

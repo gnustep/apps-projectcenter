@@ -72,7 +72,11 @@
 
   // Project Attributes
   // Suplied by concrete project
-  NSView                  *projectAttributesView;
+  IBOutlet NSView         *projectAttributesView;
+  NSView                  *projectAttributesSubview;
+  IBOutlet NSTextField    *projectTypeField;
+  IBOutlet NSTextField    *projectNameField;
+  IBOutlet NSPopUpButton  *projectLanguagePB;
 
   // Project Description
   IBOutlet NSBox          *projectDescriptionView;
@@ -143,6 +147,12 @@
 - (void)removeSearchOrder:(id)sender;
 - (void)addSearchOrder:(id)sender;
 - (void)syncSearchOrder;
+
+// ============================================================================
+// ==== Project Attributes
+// ============================================================================
+- (void)createProjectAttributes;
+- (void)setCurrentLanguage:(id)sender;
 
 // ============================================================================
 // ==== Project Description
