@@ -26,13 +26,8 @@
 
 #import "PCAppProject.h"
 #import "PCAppProj.h"
-#import "PCAppMakefileFactory.h"
 
 #import <ProjectCenter/ProjectCenter.h>
-
-#if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
-#endif
 
 @interface PCAppProject (CreateUI)
 
