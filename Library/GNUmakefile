@@ -27,6 +27,7 @@ ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 ProjectCenter_HEADER_FILES = \
   PCBundleLoader.h \
   PCFileManager.h \
+  PCAddFilesPanel.h \
   PCFileCreator.h \
   PCServer.h \
   PCMakefileFactory.h \
@@ -65,6 +66,7 @@ ProjectCenter_HEADER_FILES = \
 ProjectCenter_OBJC_FILES = \
   PCBundleLoader.m \
   PCFileManager.m \
+  PCAddFilesPanel.m \
   PCFileCreator.m \
   PCServer.m \
   PCMakefileFactory.m \

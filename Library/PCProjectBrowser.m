@@ -383,7 +383,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	                            categoryPath:[browser path]
 					windowed:YES];
 	}
-      else if ([[NSWorkspace sharedWorkspace] openFile:filePath] == NO) 
+      else if (![[self nameOfSelectedCategory] isEqualToString:@"Libraries"]
+	       && [[NSWorkspace sharedWorkspace] openFile:filePath] == NO) 
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Could not open %@.",
@@ -396,7 +397,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	{
 	  [[project projectManager] addSubproject];
 	}
-      else
+      else 
 	{
 	  [[project projectManager] addProjectFiles];
 	}

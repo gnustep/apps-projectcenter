@@ -115,6 +115,13 @@
            name:PCActiveProjectDidChangeNotification
          object:nil];
 
+  // Track project dictionary changing
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:self
+       selector:@selector(updateValues:)
+           name:PCProjectDictDidChangeNotification
+         object:nil];
+
   [self inspectorPopupDidChange:inspectorPopup];
 
   return self;

@@ -620,40 +620,69 @@ NSString
 
 - (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type
 {
-  NSMutableString *projectFile = nil;
-  NSString        *path = nil;
+  NSString        *projectFile = nil;
+  NSString        *_path = nil;
+  NSMutableArray  *_pathComponents = nil;
+  NSString        *_file = nil;
+  NSArray         *subprojects = [projectDict objectForKey:PCSubprojects];
   NSRange         pathRange;
-  NSRange         slashRange;
+  NSString        *spDir = nil;
 
-  path = [file stringByDeletingLastPathComponent];
-  pathRange = [path rangeOfString:projectPath];
+  _path = [file stringByDeletingLastPathComponent];
+  _pathComponents = [[_path pathComponents] mutableCopy];
+  _file = [file lastPathComponent];
 
-  if (pathRange.length)
+  // Remove "lib" prefix from library name
+  if ([type isEqualToString:PCLibraries])
     {
-      slashRange.location = pathRange.length;
-      slashRange.length = 1;
+      _file = [_file stringByDeletingPathExtension];
+      _file = [_file substringFromIndex:3];
     }
-  
-  if (pathRange.length 
-      && slashRange.location != [path length]
-      && [[path substringWithRange:slashRange] isEqualToString:@"/"])
+
+  pathRange = [_path rangeOfString:projectPath];
+
+  // File is located in project's directory tree
+  if (pathRange.length && ![type isEqualToString:PCLibraries])
     {
-      pathRange.length++;
-      projectFile = [NSMutableString stringWithString:file];
-      [projectFile deleteCharactersInRange:pathRange];
+      int      i;
+
+      for (i = 0; i < [subprojects count]; i++)
+	{
+	  spDir = [[subprojects objectAtIndex:i] 
+	    stringByAppendingPathExtension:@"subproj"];
+	  if ([_pathComponents containsObject:spDir])
+	    {
+	      break;
+	    }
+	  spDir = nil;
+	}
+    }
+
+  if (spDir != nil)
+    {
+      while (![[_pathComponents objectAtIndex:0] isEqualToString:spDir])
+	{
+	  [_pathComponents removeObjectAtIndex:0];
+	}
     }
   else
     {
-      projectFile = [NSMutableString stringWithString:[file lastPathComponent]];
+      [_pathComponents removeAllObjects];
     }
-
-  if ([type isEqualToString:PCLibraries])
+  
+  // Construct project file name
+  if ([_pathComponents count])
     {
-      [projectFile deleteCharactersInRange:NSMakeRange(0,3)];
-      projectFile = 
-	(NSMutableString*)[projectFile stringByDeletingPathExtension];
+      projectFile = [NSString pathWithComponents:_pathComponents];
+      projectFile = [projectFile stringByAppendingPathComponent:_file];
+    }
+  else
+    {
+      projectFile = [NSString stringWithString:_file];
     }
 
+  RELEASE(_pathComponents);
+    
   return projectFile;
 }
 
@@ -682,7 +711,6 @@ NSString
   while ((key = [keyEnum nextObject]))
     {
       projectFiles = [projectDict objectForKey:key];
-      NSLog(@"KEY: %@ Files: %@ file: %@", key, projectFiles, pFile);
       if ([projectFiles containsObject:pFile])
 	{
 	  return NO;
@@ -777,6 +805,17 @@ NSString
   NSString       *pFile = nil;
   NSArray        *types = [projectDict objectForKey:type];
   NSMutableArray *projectFiles = [NSMutableArray arrayWithArray:types];
+
+  if ([type isEqualToString:PCLibraries])
+    {
+      NSMutableArray *searchLibs = [NSMutableArray arrayWithCapacity:1];
+      NSString       *path = nil;
+
+      path = [[files objectAtIndex:0] stringByDeletingLastPathComponent];
+      [searchLibs setArray:[projectDict objectForKey:PCSearchLibs]];
+      [searchLibs addObject:path];
+      [self setProjectDictObject:searchLibs forKey:PCSearchLibs notify:yn];
+    }
 
   enumerator = [files objectEnumerator];
   while ((file = [enumerator nextObject]))
@@ -1336,10 +1375,11 @@ NSString
       return YES;
     }
     
-  if ([[projectDict objectForKey:PCSubprojects] containsObject:listEntry])
-      {
-	return YES;
-      }
+  if ([[projectDict objectForKey:PCSubprojects] containsObject:listEntry]
+      && [[projectBrowser nameOfSelectedCategory] isEqualToString:@"Subprojects"])
+    {
+      return YES;
+    }
   
   return NO;
 }

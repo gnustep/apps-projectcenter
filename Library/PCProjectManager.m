@@ -724,12 +724,17 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSMutableArray *files = nil;
   NSString       *file = nil;
   NSString       *projectFile = nil;
+  NSArray        *fileTypes = [project fileTypesForCategoryKey:categoryKey];
 
-  files = [fileManager filesForAdd];
+  files = [fileManager filesForAddOfTypes:fileTypes];
 
 /*  PCLogInfo(self, @"[addProjectFiles] %@ to category: %@ of project %@",
 	    files, categoryKey, [activeProject projectName]);*/
 
+  // Category may be changed
+  category = [[project projectBrowser] nameOfSelectedCategory];
+  categoryKey = [activeProject keyForCategory:category];
+  
   // No files was selected 
   if (!files)
     {
@@ -1239,7 +1244,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *spName = nil;
   int            i;
 
-  files = [fileManager filesForAdd];
+  files = [fileManager 
+    filesForAddOfTypes:[NSArray arrayWithObjects:@"subproj",nil]];
 
   // Validate if it real projects
   for (i = 0; i < [files count]; i++)

@@ -30,6 +30,7 @@
 #include "PCProject.h"
 #include "PCProjectBrowser.h"
 #include "PCServer.h"
+#include "PCAddFilesPanel.h"
 
 #include "PCLogController.h"
 
@@ -78,8 +79,6 @@ static PCFileManager *_mgr = nil;
   if (addFilesPanel)
     {
       RELEASE(addFilesPanel);
-      RELEASE(fileTypePopup);
-      RELEASE(fileTypeAccessaryView);
     }
   
   [super dealloc];
@@ -337,38 +336,7 @@ static PCFileManager *_mgr = nil;
 }
 
 // --- "Add Files..." panel
-- (void)_createAddFilesPanel
-{
-  if (addFilesPanel == nil)
-    {
-      NSRect    fr = NSMakeRect(20,30,160,21);
-      PCProject *project = [projectManager activeProject];
-
-      // File type popup
-      fileTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
-      [fileTypePopup setRefusesFirstResponder:YES];
-      [fileTypePopup setAutoenablesItems:NO];
-      [fileTypePopup setTarget:self];
-      [fileTypePopup setAction:@selector(filesForAddPopupClicked:)];
-      [fileTypePopup addItemsWithTitles:[project rootCategories]];
-      [fileTypePopup selectItemAtIndex:0];
-
-      fileTypeAccessaryView = [[NSBox alloc] init];
-      [fileTypeAccessaryView setTitle:@"File Types"];
-      [fileTypeAccessaryView setTitlePosition:NSAtTop];
-      [fileTypeAccessaryView setBorderType:NSGrooveBorder];
-      [fileTypeAccessaryView addSubview:fileTypePopup];
-      [fileTypeAccessaryView sizeToFit];
-      [fileTypeAccessaryView setAutoresizingMask:NSViewMinXMargin 
-	                                         | NSViewMaxXMargin];
-      // Panel
-      addFilesPanel = [NSOpenPanel openPanel];
-      [addFilesPanel setAllowsMultipleSelection:YES];
-      [addFilesPanel setDelegate:self];
-    }
-}
-
-- (NSMutableArray *)filesForAdd
+- (NSMutableArray *)filesForAddOfTypes:(NSArray*)fileTypes
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
@@ -376,28 +344,14 @@ static PCFileManager *_mgr = nil;
   NSString       *selectedCategory = nil;
   int            retval;
 
-  [self _createAddFilesPanel];
-  [addFilesPanel setAccessoryView:fileTypeAccessaryView];
-
+  if (addFilesPanel == nil)
+    {
+      addFilesPanel = [PCAddFilesPanel addFilesPanel];
+      [addFilesPanel setDelegate:self];
+    }
+  [addFilesPanel setCategories:[project rootCategories]];
   selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
-  if ([selectedCategory isEqualToString:@"Subprojects"])
-    {
-      [addFilesPanel setCanChooseFiles:NO];
-      [addFilesPanel setCanChooseDirectories:YES];
-    }
-  else if ([selectedCategory isEqualToString:@"Other Resources"])
-    {
-      [addFilesPanel setCanChooseFiles:YES];
-      [addFilesPanel setCanChooseDirectories:YES];
-    }
-  else
-    {
-      [addFilesPanel setCanChooseFiles:YES];
-      [addFilesPanel setCanChooseDirectories:NO];
-    }
-  [fileTypePopup selectItemWithTitle:selectedCategory];
-
-  [self filesForAddPopupClicked:self];
+  [addFilesPanel selectCategory:selectedCategory];
 
   if (!lastOpenDir)
     {
@@ -406,7 +360,7 @@ static PCFileManager *_mgr = nil;
 
   retval = [addFilesPanel runModalForDirectory:lastOpenDir
                                           file:nil
-					 types:nil];
+					 types:fileTypes];
   if (retval == NSOKButton) 
     {
       [ud setObject:[addFilesPanel directory] forKey:@"LastOpenDirectory"];
@@ -416,18 +370,27 @@ static PCFileManager *_mgr = nil;
   return nil;
 }
 
-- (void)filesForAddPopupClicked:(id)sender
+// ============================================================================
+// ==== PCAddFilesPanel delegate
+// ============================================================================
+
+- (void)categoryChangedTo:(NSString *)category
 {
-  NSString  *fileType = [fileTypePopup titleOfSelectedItem];
+  PCProject        *project = [projectManager activeProject];
+  NSArray          *fileTypes = nil;
+  PCProjectBrowser *browser = [project projectBrowser];
+  NSString         *path = [browser path];
 
-  [addFilesPanel setTitle:[NSString stringWithFormat:@"Add %@",fileType]];
+  [addFilesPanel setTitle:[NSString stringWithFormat:@"Add %@",category]];
 
-  if ([fileType isEqualToString:@"Interfaces"])
-    {
-      [addFilesPanel setCanChooseDirectories:YES];
-    }
-  
-  [addFilesPanel display];
+  fileTypes = [project 
+    fileTypesForCategoryKey:[project keyForCategory:category]];
+  [addFilesPanel setFileTypes:fileTypes];
+
+  // Set project browser path
+  path = [path stringByDeletingLastPathComponent];
+  path = [path stringByAppendingPathComponent:category];
+  [browser setPath:path];
 }
 
 // ============================================================================
@@ -441,22 +404,21 @@ static PCFileManager *_mgr = nil;
   BOOL          isDir;
   PCProject     *project = nil;
   NSArray       *fileTypes = nil;
-  NSString      *fileType = nil;
+  NSString      *category = nil;
   NSString      *categoryKey = nil;
 
   [fileManager fileExistsAtPath:filename isDirectory:&isDir];
   
   if ([[filename pathExtension] isEqualToString:@"gorm"])
     {
-      NSLog(@"GORM file: %@", filename);
       isDir = NO;
     }
     
   if (sender == addFilesPanel && !isDir)
     {
       project = [projectManager activeProject];
-      fileType = [fileTypePopup titleOfSelectedItem];
-      categoryKey = [project keyForCategory:fileType];
+      category = [addFilesPanel selectedCategory];
+      categoryKey = [project keyForCategory:category];
       fileTypes = [project fileTypesForCategoryKey:categoryKey];
       // Wrong file extension
       if (fileTypes 
@@ -465,10 +427,8 @@ static PCFileManager *_mgr = nil;
 	  return NO;
 	}
       // File is already in project
-      NSLog(@"file: %@ type: %@ fileTypes: %@", filename, fileType, fileTypes);
       if (![project doesAcceptFile:filename forKey:categoryKey])
 	{
-	  NSLog(@"Don't show: %@", filename);
 	  return NO;
 	}
     }

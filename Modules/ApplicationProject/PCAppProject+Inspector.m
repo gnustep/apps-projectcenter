@@ -352,6 +352,11 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       [docClassField setBackgroundColor:[NSColor lightGrayColor]];
       [docClassField setTextColor:[NSColor darkGrayColor]];
       [docClassField setEditable:NO];
+
+      // Columns
+      [docTypesList removeTableColumn:nameColumn];
+      [docTypesList removeTableColumn:roleColumn];
+      [docTypesList removeTableColumn:classColumn];
       
       if (![docBased isEqualToString:@"NO"])
 	{
@@ -375,7 +380,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [entry setObject:@"Editor" forKey:@"NSRole"];
   [entry setObject:@"NSDocument" forKey:@"NSDocumentClass"];
 
-  if (selectedRow >= 0)
+  if (selectedRow >= 0 && [docTypesItems count] > 0)
     {
       [docTypesItems insertObject:entry atIndex:selectedRow + 1];
       row = selectedRow + 1;

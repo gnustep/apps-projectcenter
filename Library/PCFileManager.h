@@ -31,6 +31,7 @@
 
 @class PCProject;
 @class PCProjectManager;
+@class PCAddFilesPanel;
 
 @interface PCFileManager : NSObject
 {
@@ -48,9 +49,7 @@
   IBOutlet NSButton      *nfCancleButton;
   IBOutlet NSButton      *nfCreateButton;
 
-  NSOpenPanel            *addFilesPanel;
-  NSBox	                 *fileTypeAccessaryView;
-  NSPopUpButton          *fileTypePopup;
+  PCAddFilesPanel        *addFilesPanel;
 }
 
 //==============================================================================
@@ -97,9 +96,7 @@
 - (void)createFile:(id)sender;
 - (void)newFilePopupChanged:(id)sender;
 
-- (void)_createAddFilesPanel;
-- (NSMutableArray *)filesForAdd;
-- (void)filesForAddPopupClicked:(id)sender;
+- (NSMutableArray *)filesForAddOfTypes:(NSArray*)fileTypes;
 
 @end
 

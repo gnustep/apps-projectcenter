@@ -1,3 +1,22 @@
+2005-01-03 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCAddFilesPanel.[hm]: New implementation. Derived from 
+	NSOpenPanel.
+
+	* Library/PCFileManager.m: Use PCAddFilesPanel instead of NSOpenPanel.
+
+	* Library/PCProject.m:
+	(projectFileFromFile:forKey:): Rewritten to correctly support 
+	subprojects' files and libraries.
+	(addFiles:forKey:notify:): Add path to PCSearchLibs when adding 
+	libraries.
+
+	* Library/PCProjectInspector.m: Observe project dictionary changes and
+	reread it.
+
+	* Library/PCProjectBrowser.m:
+	(doubleClick:): Don't try to open libraries.
+
 2004-12-24 Serg Stoyan <stoyan255@ukr.net>
 
 	* "Build Tool" setting from Project Inspector was moved to PC 
