@@ -70,6 +70,7 @@
   [browser setDelegate:browserController];
   [browser setMaxVisibleColumns:3];
   [browser setAllowsMultipleSelection:NO];
+  [browser setHasHorizontalScroller:YES];
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser:browser];
@@ -333,7 +334,7 @@
   ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
   [ldOptField setBordered: YES];
-  [ldOptField setEditable: NO];
+  [ldOptField setEditable: YES];
   [ldOptField setBezeled: YES];
   [ldOptField setDrawsBackground: YES];
   [ldOptField setStringValue:@""];
