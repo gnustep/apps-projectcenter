@@ -46,7 +46,6 @@
   NSSplitView *split;
   NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
-  NSTextView *textView2;
   NSMatrix* matrix;
   NSRect _w_frame;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
@@ -66,6 +65,7 @@
   [buildWindow setDelegate:self];
   [buildWindow setReleasedWhenClosed:NO];
   [buildWindow setMinSize:NSMakeSize(512,320)];
+  [buildWindow setFrameAutosaveName:@"Builder"];
 
   logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
@@ -89,18 +89,18 @@
    *
    */
 
-  textView2 = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
-  [textView2 setMaxSize:NSMakeSize(1e7, 1e7)];
-  [textView2 setVerticallyResizable:YES];
-  [textView2 setHorizontallyResizable:NO];
-  [textView2 setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [textView2 setBackgroundColor:[NSColor whiteColor]];
-  [[textView2 textContainer] setWidthTracksTextView:YES];
+  errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  [errorOutput setMaxSize:NSMakeSize(1e7, 1e7)];
+  [errorOutput setVerticallyResizable:YES];
+  [errorOutput setHorizontallyResizable:NO];
+  [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [errorOutput setBackgroundColor:[NSColor whiteColor]];
+  [[errorOutput textContainer] setWidthTracksTextView:YES];
 
   scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
-  [scrollView2 setDocumentView:textView2];
-  [textView2 setMinSize:NSMakeSize(0.0,[scrollView2 contentSize].height)];
-  [[textView2 textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
+  [scrollView2 setDocumentView:errorOutput];
+  [errorOutput setMinSize:NSMakeSize(0.0,[scrollView2 contentSize].height)];
+  [[errorOutput textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
   [scrollView2 setHasHorizontalScroller:NO];
   [scrollView2 setHasVerticalScroller:YES];
   [scrollView2 setBorderType: NSBezelBorder];
@@ -265,7 +265,7 @@ static PCProjectBuilder *_builder;
 - (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
 {
   if (![buildWindow isVisible]) {
-    [buildWindow center];
+    [buildWindow setFrameUsingName:@"Builder"];
   }
   [buildWindow makeKeyAndOrderFront:self];
 
@@ -282,16 +282,24 @@ static PCProjectBuilder *_builder;
   NSMutableArray *args;
   NSString *output = nil;
   NSPipe *logPipe;
+  NSPipe *errorPipe;
   NSFileHandle *readHandle;
+  NSFileHandle *errorReadHandle;
   NSData  *inData = nil;
   NSDictionary *optionDict;
+  NSString *status;
+  NSString *target;
 
   if (!currentProject) {
     return;
   }
 
   logPipe = [NSPipe pipe];
+  errorPipe = [NSPipe pipe];
+
   readHandle = [logPipe fileHandleForReading];
+  errorReadHandle = [errorPipe fileHandleForReading];
+
   makeTask = [[NSTask alloc] init];
 
   optionDict = [currentProject buildOptions];
@@ -299,35 +307,62 @@ static PCProjectBuilder *_builder;
 
   switch ([[sender selectedCell] tag]) {
   case 0:
+    status = [NSString stringWithString:@"Building..."];
+    target = [NSString stringWithString:@"Default"];
     break;
   case 1:
+    if (NSRunAlertPanel(@"Clean Project?",@"Really clean %@?",@"Yes",@"No",nil,[currentProject projectName]) == NSAlertAlternateReturn) {
+      return;
+    }
+    status = [NSString stringWithString:@"Cleaning..."];
+    target = [NSString stringWithString:@"Clean"];
     [args addObject:@"clean"];
     break;
   case 2:
+    status = [NSString stringWithString:@"Building..."];
+    target = [NSString stringWithString:@"Debug"];
     [args addObject:@"debug=yes"];
     break;
   case 3:
+    status = [NSString stringWithString:@"Building..."];
+    target = [NSString stringWithString:@"Profile"];
     [args addObject:@"profile=yes"];
     [args addObject:@"static=yes"];
     break;
   case 4:
+    status = [NSString stringWithString:@"Installing..."];
+    target = [NSString stringWithString:@"Install"];
     [args addObject:@"install"];
     break;
   }
 
-  [makeTask setArguments:args];
+  [buildStatusField setStringValue:status];  
+  [targetField setStringValue:target];  
 
+  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logData:) name:NSFileHandleReadCompletionNotification object:nil];
+  
+  [makeTask setArguments:args];
+  
   [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
   [makeTask setLaunchPath:makePath];
   
   [makeTask setStandardOutput:logPipe];
-  [makeTask setStandardError:logPipe];
+  [makeTask setStandardError:errorPipe];
   
   [makeTask launch];
   
   /*
    * This is just a quick hack for now...
    */
+
+  /*
+  [logOutput setString:@""];
+  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
+  [errorOutput setString:@""];
+  [errorOutput scrollRangeToVisible:NSMakeRange([[errorOutput textStorage] length], 0)];
+
+  [readHandle readInBackgroundAndNotify];
+  */
   
   while ((inData = [readHandle availableData]) && [inData length]) {
     output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
@@ -335,17 +370,25 @@ static PCProjectBuilder *_builder;
     [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
     [output release];
   }
-  
+
   [makeTask waitUntilExit];
+
+  [buildStatusField setStringValue:@"Waiting..."];  
+  [targetField setStringValue:@""];  
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object:nil];
+
   [makeTask autorelease];
 }
 
-- (void)clean:(id)sender
+- (void)logData:(NSNotification *)aNotif
 {
-}
+  NSData *data = [[aNotif userInfo] objectForKey:NSFileHandleNotificationDataItem];
+  NSString *output = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];      
 
-- (void)install:(id)sender
-{
+  [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
+  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
+  [output release];
 }
 
 - (void)projectDidChange:(NSNotification *)aNotif

@@ -36,6 +36,7 @@
   NSWindow *buildWindow;
 
   NSTextView *logOutput;
+  NSTextView *errorOutput;
 
   NSMutableDictionary *buildTasks;
   NSString *makePath;
@@ -55,8 +56,8 @@
 - (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
 
 - (void)build:(id)sender;
-- (void)clean:(id)sender;
-- (void)install:(id)sender;
+
+- (void)logData:(NSNotification *)aNotif;
 
 - (void)projectDidChange:(NSNotification *)aNotif;
 

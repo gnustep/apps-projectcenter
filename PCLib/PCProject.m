@@ -782,7 +782,7 @@
 - (void)windowWillClose:(NSNotification *)aNotification
 {
   id object = [aNotification object];
-
+  
   if (object == buildTargetPanel) {
   }
   else if (object == [self projectWindow]) {

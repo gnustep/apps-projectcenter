@@ -61,6 +61,11 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 
       [project editSelectedFile:f];
     }
+    else if ([ctitle isEqualToString:@"Other Resources"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [project editSelectedFile:f];
+    }
   }
 }
 

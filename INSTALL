@@ -10,8 +10,10 @@ notice and permission notice.
 Installing `ProjectCenter'
 ====================
 
-ProjectCenter requires GNUstep to be installed. MAke sure that you have an
-up to date version on your system installed!
+ProjectCenter requires GNUstep to be installed. Make sure that you have an
+up to date version on your system installed! In order to use apps built with
+ProjectCenter, you will need at least a version not older than from October 
+2000.
 
 Here is a quick-and-dirty example of installation commands:
 

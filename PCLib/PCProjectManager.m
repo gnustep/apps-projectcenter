@@ -61,6 +61,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
                                               defer:NO];
   [inspector setMinSize:NSMakeSize(280,384)];
   [inspector setTitle:@"Inspector"];
+  [inspector setReleasedWhenClosed:NO];
+  [inspector setFrameAutosaveName:@"Inspector"];
   _c_view = [inspector contentView];
 
   inspectorPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(80,352,128,20)];
@@ -71,12 +73,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
   line = [[[NSBox alloc] init] autorelease];
   [line setTitlePosition:NSNoTitle];
-  [line setFrameFromContentFrame:NSMakeRect(0,336,280,2)];
+  [line setFrame:NSMakeRect(0,336,280,2)];
   [_c_view addSubview:line];
 
   inspectorView = [[NSBox alloc] init];
   [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrameFromContentFrame:NSMakeRect(2,2,276,330)];
+  [inspectorView setFrame:NSMakeRect(-2,-2,284,334)];
   [inspectorView setBorderType:NSNoBorder];
   [_c_view addSubview:inspectorView];
 	
@@ -312,6 +314,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   }
   
   [self inspectorPopupDidChange:inspectorPopup];  
+
+  if (![inspector isVisible]) {
+    [inspector setFrameUsingName:@"Inspector"];
+  }
   [inspector makeKeyAndOrderFront:self];
 }
 
@@ -341,23 +347,23 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject:(PCProject *)aProject
 {
-    PCProject	*currentProject;
-    NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
-
-    currentProject = [[loadedProjects objectForKey:key] retain];
+  PCProject	*currentProject;
+  NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
+  
+  currentProject = [[loadedProjects objectForKey:key] retain];
     
-    // Remove it from the loaded projects!
-    [loadedProjects removeObjectForKey:key];
-    [self setActiveProject:[[loadedProjects allValues] lastObject]];
+  // Remove it from the loaded projects!
+  [loadedProjects removeObjectForKey:key];
+  [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-    [currentProject autorelease];
-    
-    //~ Should I activate another project here?!
+  [currentProject autorelease];
+  
+  //~ Should I activate another project here?!
 }
 
 - (void)closeProject
 {
-    [[[self activeProject] projectWindow] performClose:self];
+  [[[self activeProject] projectWindow] performClose:self];
 }
 
 // ===========================================================================
