@@ -42,7 +42,7 @@
   NSBox       *toolbarView;
   PCButton    *buildButton;
   PCButton    *launchButton;
-  PCButton    *editorButton;
+  PCButton    *loadedFilesButton;
   PCButton    *findButton;
   PCButton    *inspectorButton;
 

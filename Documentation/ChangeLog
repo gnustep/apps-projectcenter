@@ -6,9 +6,13 @@
 	* Library/PCProjectBuilder.m: Use new tooltip code and remove old
 	style code.
 	* Library/PCProjectLauncher.m: ditto.
-	* Library/PCProjectWindow.m: ditto.
+	* Library/PCProjectWindow.m: ditto. Editor button replaced with
+	Loaded Files button.
+	* Library/PCProjectInspector.m: Remove textfields linking programmatically 
+	and make it using GORM. Fix applying changes to textfields.
 	
-	*Images/ButtonTile.tiff: removed.
+	* Images/ButtonTile.tiff: removed.
+	* Images/Editor.tiff: removed.
 	
 2004-07-15 Serg Stoyan <stoyan255@ukr.net>
 

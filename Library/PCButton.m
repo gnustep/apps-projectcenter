@@ -207,11 +207,10 @@
 
 - (void)mouseEntered:(NSEvent *)theEvent
 {
-  NSLog (@"mouseEntered");
+//  NSLog (@"mouseEntered");
 
   if (ttTimer == nil)
     {
-//      NSLog (@"mouseEntered: setTimer: %@", data);
       ttTimer = [NSTimer scheduledTimerWithTimeInterval:0.5
 	                                         target:self
 			                       selector:@selector(_showTooltip:)

@@ -125,16 +125,27 @@
   [toolbarView addSubview: launchButton];
   RELEASE (launchButton);
   
-  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
-  [editorButton setRefusesFirstResponder:YES];
-  [editorButton setToolTip: @"Editor"];
-  [editorButton setImage: IMAGE(@"Editor")];
-  [editorButton setTarget: self];
-  [editorButton setAction: @selector(showProjectEditor:)];
-  [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [editorButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: editorButton];
-  RELEASE (editorButton);
+  if (![project isExecutable])
+    {
+      [launchButton setEnabled:NO];
+    }
+  
+  loadedFilesButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
+  [loadedFilesButton setRefusesFirstResponder:YES];
+  [loadedFilesButton setToolTip: @"Loaded Files"];
+  [loadedFilesButton setImage: IMAGE(@"Files")];
+  [loadedFilesButton setTarget: self];
+  [loadedFilesButton setAction: @selector(showProjectLoadedFiles:)];
+  [loadedFilesButton 
+    setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [loadedFilesButton setButtonType: NSMomentaryPushButton];
+  [toolbarView addSubview: loadedFilesButton];
+  RELEASE (loadedFilesButton);
+  
+  if ([self hasLoadedFilesView])
+    {
+      [loadedFilesButton setEnabled:NO];
+    }
 
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
   [findButton setRefusesFirstResponder:YES];
@@ -810,13 +821,21 @@
     }
 
   // Loaded Files view
-  if ([self hasLoadedFilesView] && [[v_split subviews] count] == 1)
+  if ([self hasLoadedFilesView])
     {
-      [self showProjectLoadedFiles:self];
+      if ([[v_split subviews] count] == 1)
+	{
+	  [self showProjectLoadedFiles:self];
+	}
+      [loadedFilesButton setEnabled:NO];
     }
-  else if (![self hasLoadedFilesView] && [[v_split subviews] count] == 2)
+  else 
     {
-      [self showProjectLoadedFiles:self];
+      if ([[v_split subviews] count] == 2)
+	{
+	  [self showProjectLoadedFiles:self];
+	}
+      [loadedFilesButton setEnabled:YES];
     }
 }
 
