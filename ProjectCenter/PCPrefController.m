@@ -269,6 +269,16 @@
   [prefSavingView addSubview:v];
   RELEASE(v);
 
+  saveOnQuit=[[NSButton alloc] initWithFrame:NSMakeRect(24,52,124,15)];
+  [saveOnQuit setTitle:@"Save Projects Upon Quit"];
+  [saveOnQuit setButtonType:NSSwitchButton];
+  [saveOnQuit setBordered:NO];
+  [saveOnQuit setTarget:self];
+  [saveOnQuit setAction:@selector(setSaveOnQuit:)];
+  [saveOnQuit setContinuous:NO];
+  [v addSubview:saveOnQuit];
+  [saveOnQuit sizeToFit];
+
   saveAutomatically=[[NSButton alloc] initWithFrame:NSMakeRect(24,32,124,15)];
   [saveAutomatically setTitle:@"Save Project Automatically"];
   [saveAutomatically setButtonType:NSSwitchButton];
@@ -279,15 +289,15 @@
   [v addSubview:saveAutomatically];
   [saveAutomatically sizeToFit];
 
-  removeBackup = [[NSButton alloc] initWithFrame:NSMakeRect(24,12,124,15)];
-  [removeBackup setTitle:@"Remove Backup Project"];
-  [removeBackup setButtonType:NSSwitchButton];
-  [removeBackup setBordered:NO];
-  [removeBackup setTarget:self];
-  [removeBackup setAction:@selector(setRemoveBackup:)];
-  [removeBackup setContinuous:NO];
-  [v addSubview:removeBackup];
-  [removeBackup sizeToFit];
+  keepBackup = [[NSButton alloc] initWithFrame:NSMakeRect(24,12,124,15)];
+  [keepBackup setTitle:@"Keep Project Backup"];
+  [keepBackup setButtonType:NSSwitchButton];
+  [keepBackup setBordered:NO];
+  [keepBackup setTarget:self];
+  [keepBackup setAction:@selector(setKeepBackup:)];
+  [keepBackup setContinuous:NO];
+  [v addSubview:keepBackup];
+  [keepBackup sizeToFit];
 
   v = [[NSBox alloc] init];
   [v setTitle:@"Auto-Save"];
@@ -347,8 +357,9 @@
   RELEASE(useExternalEditor);
   RELEASE(promptWhenQuit);
   RELEASE(promptOnClean);
+  RELEASE(saveOnQuit);
   RELEASE(saveAutomatically);
-  RELEASE(removeBackup);
+  RELEASE(keepBackup);
 
   RELEASE(editorField);
   RELEASE(debuggerField);
@@ -396,6 +407,18 @@
   
   [useExternalEditor setState:([[preferencesDict objectForKey:ExternalEditor] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
 
+  [saveAutomatically setState:([[preferencesDict objectForKey:AutoSave] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [promptOnClean setState:([[preferencesDict objectForKey:PromptOnClean] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [keepBackup setState:([[preferencesDict objectForKey:KeepBackup] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [promptWhenQuit setState:([[preferencesDict objectForKey:PromptOnQuit] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [saveOnQuit setState:([[preferencesDict objectForKey:SaveOnQuit] isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [autoSaveField setStringValue:(val=[preferencesDict objectForKey:AutoSavePeriod]) ? val : @"120"];
+
   if (![prefWindow isVisible]) { 
     [prefWindow setFrameUsingName:@"Preferences"];
   }
@@ -424,7 +447,8 @@
 
 - (void)setSuccessSound:(id)sender
 {
-  NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
+  NSArray *types = [NSArray arrayWithObjects:@"snd",@"au",nil];
+  NSString *path = [self selectFileWithTypes:types];
   
   if (path) {
     [successField setStringValue:path];
@@ -448,18 +472,86 @@
 
 - (void)setPromptOnClean:(id)sender
 {
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:PromptOnClean];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:PromptOnClean];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:PromptOnClean] 
+                      forKey:PromptOnClean];
 }
 
 - (void)setSaveAutomatically:(id)sender
 {
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:AutoSave];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:AutoSave];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:AutoSave] forKey:AutoSave];
 }
 
-- (void)setRemoveBackup:(id)sender
+- (void)setKeepBackup:(id)sender
 {
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:KeepBackup];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:KeepBackup];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:KeepBackup] 
+                      forKey:KeepBackup];
 }
 
 - (void)setSavePeriod:(id)sender
 {
+  NSString *periodString = [autoSaveField stringValue];
+  
+  if (periodString == nil || [periodString isEqualToString:@""]) {
+      periodString = [NSString stringWithString:@"120"];
+  }
+
+  [[NSUserDefaults standardUserDefaults] setObject:periodString 
+                                            forKey:AutoSavePeriod];
+  [preferencesDict setObject:periodString forKey:AutoSavePeriod];
+}
+
+- (void)setSaveOnQuit:(id)sender
+{
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:SaveOnQuit];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:SaveOnQuit];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:SaveOnQuit] 
+                      forKey:SaveOnQuit];
 }
 
 - (void)setUseExternalEditor:(id)sender
@@ -475,6 +567,9 @@
     break;
   }
   [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:ExternalEditor] 
+                      forKey:ExternalEditor];
 }
 
 - (void)setEditor:(id)sender
@@ -519,6 +614,20 @@
 
 - (void)promptWhenQuitting:(id)sender
 {
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:PromptOnQuit];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:PromptOnQuit];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:PromptOnQuit] 
+                      forKey:PromptOnQuit];
 }
 
 - (NSDictionary *)preferencesDict

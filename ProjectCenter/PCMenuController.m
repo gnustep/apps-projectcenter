@@ -155,11 +155,6 @@
     [projectManager saveProjectAs:proj];
 }
 
-- (void)showLoadedProjects:(id)sender
-{
-    [projectManager showLoadedProjects];
-}
-
 - (void)saveFiles:(id)sender
 {
     [projectManager saveFiles];

@@ -41,7 +41,8 @@
   
   id autoSaveField;
   id saveAutomatically;
-  id removeBackup;
+  id keepBackup;
+  id saveOnQuit;
 
   id useExternalEditor;
   id promptWhenQuit;
@@ -66,8 +67,9 @@
 - (void)setPromptOnClean:(id)sender;
 
 - (void)setSaveAutomatically:(id)sender;
-- (void)setRemoveBackup:(id)sender;
+- (void)setKeepBackup:(id)sender;
 - (void)setSavePeriod:(id)sender;
+- (void)setSaveOnQuit:(id)sender;
 
 - (void)setUseExternalEditor:(id)sender;
 

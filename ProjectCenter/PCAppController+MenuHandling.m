@@ -72,11 +72,6 @@
   [menuController saveProjectAs:sender];
 }
 
-- (void)showLoadedProjects:(id)sender
-{
-  [menuController showLoadedProjects:sender];
-}
-
 - (void)saveFiles:(id)sender
 {
   [menuController saveFiles:sender];

@@ -99,7 +99,7 @@ void createMenu()
   [project addItemWithTitle:@"Open" action:@selector(openProject:) keyEquivalent:@"o"];
   [project addItemWithTitle:@"New" action:@selector(newProject:) keyEquivalent:@"n"];
   [project addItemWithTitle:@"Save" action:@selector(saveProject:) keyEquivalent:@"s"];
-  [project addItemWithTitle:@"Save As" action:@selector(saveProjectAs:) keyEquivalent:@""];
+  [project addItemWithTitle:@"Save As" action:@selector(saveProjectAs:) keyEquivalent:@"S"];
   [project addItemWithTitle:@"Subprojects" action:action keyEquivalent:@""];
   [project addItemWithTitle:@"Close" action:@selector(closeProject:) keyEquivalent:@""];
 
@@ -163,7 +163,6 @@ void createMenu()
 
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
-  [tools addItemWithTitle:@"Loaded Projects..." action:@selector(showLoadedProjects:) keyEquivalent:@""];
   [tools addItemWithTitle:@"Build Panel" action:@selector(showBuildPanel:) keyEquivalent:@""];
   [tools addItemWithTitle:@"Find Panel" action:@selector(showFindPanel:) keyEquivalent:@"F"];
   [tools addItemWithTitle:@"Inspector Panel" action:@selector(showInspector:) keyEquivalent:@""];

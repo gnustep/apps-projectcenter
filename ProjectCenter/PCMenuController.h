@@ -61,7 +61,6 @@
 - (void)newProject:(id)sender;
 - (void)saveProject:(id)sender;
 - (void)saveProjectAs:(id)sender;
-- (void)showLoadedProjects:(id)sender;
 - (void)saveFiles:(id)sender;
 - (void)revertToSaved:(id)sender;
 

@@ -29,6 +29,9 @@
 
 #import <ProjectCenter/ProjectCenter.h>
 
+#define REL_LIB_PC @"Library/ProjectCenter"
+#define ABS_LIB_PC @"/usr/GNUstep/Local/Library/ProjectCenter"
+
 @implementation PCAppController
 
 //============================================================================
@@ -43,10 +46,10 @@
     NSString *_bundlePath;
 
     if (prefix && ![prefix isEqualToString:@""]) {
-      _bundlePath = [prefix stringByAppendingPathComponent:@"Library/ProjectCenter"];
+      _bundlePath = [prefix stringByAppendingPathComponent:REL_LIB_PC];
     }
     else {
-      _bundlePath = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+      _bundlePath = [NSString stringWithString:ABS_LIB_PC];
     }
 
     [defaults setObject:_bundlePath forKey:BundlePaths];
@@ -59,14 +62,13 @@
 
     [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
-    /*
-    [defaults setBool:YES forKey:PromtOnClean];
-    [defaults setBool:YES forKey:PromtOnQuit];
-    [defaults setBool:YES forKey:AutoSave];
-    [defaults setBool:NO forKey:RemoveBackup];
-    [defaults setInteger:60 forKey:AutoSavePeriod];
-    [defaults setBool:NO forKey:DeleteCacheWhenQuitting];
-     */
+    [defaults setObject:@"YES" forKey:SaveOnQuit];
+    [defaults setObject:@"YES" forKey:PromptOnClean];
+    [defaults setObject:@"YES" forKey:PromptOnQuit];
+    [defaults setObject:@"YES" forKey:AutoSave];
+    [defaults setObject:@"YES" forKey:KeepBackup];
+    [defaults setObject:@"120" forKey:AutoSavePeriod];
+    [defaults setObject:@"NO" forKey:DeleteCacheWhenQuitting];
     
     [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
     [[NSUserDefaults standardUserDefaults] synchronize];
@@ -223,14 +225,23 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
-// This should be queried per project!
-/*
-    if ([projectManager hasEditedDocuments]) {
-        if (NSRunAlertPanel(@"Unsaved projects!", @"Do you want to save them?", @"Yes", @"No", nil)) {
-            [projectManager saveAllProjects];
+    NSString *poq = [[NSUserDefaults standardUserDefaults] objectForKey:PromptOnQuit];
+    NSString *soq = [[NSUserDefaults standardUserDefaults] objectForKey:SaveOnQuit];
+
+    if( [poq isEqualToString:@"YES"] )
+    {
+        if (NSRunAlertPanel(@"Quit!",
+                            @"Do you really want to quit?",
+                            @"No", @"Yes", nil)) {
+            return NO;
         }
+
     }
-*/
+
+    if ( [soq isEqualToString:@"YES"] ) {
+        [projectManager saveAllProjects];
+    }
+
     [[NSNotificationCenter defaultCenter] postNotificationName:PCAppWillTerminateNotification object:nil];
 
     return YES;
@@ -243,6 +254,7 @@
     if ([[[NSUserDefaults standardUserDefaults] stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) {
         [[NSFileManager defaultManager] removeFileAtPath:[projectManager rootBuildPath] handler:nil];
     }
+
     [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
