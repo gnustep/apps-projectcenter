@@ -40,6 +40,7 @@ PACKAGE_NAME = ProjectCenter
 SUBPROJECTS = 			\
 	PCLib			\
 	PCAppProj		\
+	PCGormProj		\
 	PCBundleProj		\
 	PCToolProj		\
 	PCLibProj		\
