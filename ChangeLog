@@ -3,6 +3,7 @@
 
         * Removed -Werror: GNUMakefile.preamble, GNUMakefile.bundles
         * Added -methodSignatureForSelector: PCAppController.[hm]
+        * Code cleanup: PCLib/PCFileManager.m, PCLib/PCProjectManager.m
 
 2003-07-10 Philippe C.D. Robert <probert@siggraph.org>
 

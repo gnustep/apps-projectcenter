@@ -37,10 +37,6 @@
 
 #include "PCProjectManager+UInterface.h"
 
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
-
 #define SavePeriodDCN @"SavePeriodDidChangeNotification"
 
 NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";

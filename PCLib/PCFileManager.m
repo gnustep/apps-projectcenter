@@ -32,10 +32,6 @@
 
 #include "PCFileManager+UInterface.h"
 
-#if defined(GNUSTEP)
-#include <AppKit/IMLoading.h>
-#endif
-
 @implementation PCFileManager
 
 //==============================================================================
