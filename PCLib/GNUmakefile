@@ -78,7 +78,8 @@ PCFileManager+UInterface.h \
 PCProjectManager+UInterface.h \
 PCProject+UInterface.h \
 PCTextFinder+UInterface.h \
-PCProjectDebugger+UInterface.h 
+PCProjectDebugger+UInterface.h \
+PCButton.h 
 
 #
 # Class files
@@ -109,7 +110,8 @@ PCFileManager+UInterface.m \
 PCProjectManager+UInterface.m \
 PCProject+UInterface.m \
 PCTextFinder+UInterface.m \
-PCProjectDebugger+UInterface.m 
+PCProjectDebugger+UInterface.m \
+PCButton.m 
 
 #
 # C files
