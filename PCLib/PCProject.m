@@ -48,10 +48,12 @@
   unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
                        NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSBrowser *browser;
-  NSRect _w_frame;
+  NSRect rect;
   NSMatrix* matrix;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id textField;
+  id textView;
+  id scrollView;
   id button;
   PCSplitView *split;
 
@@ -62,8 +64,8 @@
    *
    */
 
-  _w_frame = NSMakeRect(100,100,560,440);
-  projectWindow = [[NSWindow alloc] initWithContentRect:_w_frame
+  rect = NSMakeRect(100,100,560,440);
+  projectWindow = [[NSWindow alloc] initWithContentRect:rect
                                               styleMask:style
                                                 backing:NSBackingStoreBuffered
                                                   defer:YES];
@@ -77,7 +79,7 @@
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser:browser];
-  _w_frame.size.height -= 64;
+  rect.size.height -= 64;
   [browserController setProject:self];
  
   box = [[NSBox alloc] initWithFrame:NSMakeRect (-1,-1,562,252)];
@@ -86,31 +88,64 @@
   [box setContentViewMargins: NSMakeSize(0.0,0.0)];
   [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
+/*
+  rect = [box frame];
+  rect.origin.x = -1;
+  rect.origin.y = -1;
+  rect.size.width += 2;
+	  
+  scrollView = [[NSScrollView alloc] initWithFrame:rect];
+	      
+  rect.origin.x = 0;
+  rect.origin.y = 0;
+  rect.size.height -= 24;
+  rect.size.width -= 4;
+
+  textView = [[NSTextView alloc] initWithFrame:rect];
+  [textView setText:@"This is a test"];
+  [textView setDrawsBackground:YES];
+
+  [textView setMinSize: NSMakeSize (0, 0)];
+  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [textView setRichText:NO];
+  [textView setEditable:YES];
+  [textView setSelectable:YES];
+  [textView setVerticallyResizable:YES];
+  [textView setHorizontallyResizable:NO];
+  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [textView setBackgroundColor:[NSColor whiteColor]];
+  [[textView textContainer] setWidthTracksTextView:YES];
+
+  [scrollView setDocumentView:textView];
+  [box addSubview:scrollView];
+
+  rect.size = NSMakeSize([scrollView contentSize].width,1e7);
+  [[textView textContainer] setContainerSize:rect.size];
+  
+  [scrollView setHasHorizontalScroller: YES];
+  [scrollView setHasVerticalScroller: YES];
+  [scrollView setBorderType: NSBezelBorder];
+  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+
+  RELEASE(textView);
+  RELEASE(scrollView);
+*/
+
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,200,500,21)];
   [textField setAlignment: NSLeftTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Welcome to the GNUstep ProjectCenter!"];
+  [textField setStringValue:@"Welcome to ProjectCenter.app"];
   [box addSubview:textField];
   RELEASE(textField);
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,178,500,21)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"\tPlease send your feedback to phr@3dkit.org!"];
-  [box addSubview:textField];
-  RELEASE(textField);
-
-  _w_frame = [[projectWindow contentView] frame];
-  _w_frame.size.height -= 76;
-  _w_frame.size.width -= 16;
-  _w_frame.origin.x += 8;
-  split = [[PCSplitView alloc] initWithFrame:_w_frame];
+  rect = [[projectWindow contentView] frame];
+  rect.size.height -= 76;
+  rect.size.width -= 16;
+  rect.origin.x += 8;
+  split = [[PCSplitView alloc] initWithFrame:rect];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   _c_view = [projectWindow contentView];
@@ -127,8 +162,8 @@
    * Left button matrix
    */
 
-  _w_frame = NSMakeRect(8,372,240,60);
-  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+  rect = NSMakeRect(8,372,240,60);
+  matrix = [[NSMatrix alloc] initWithFrame: rect
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
 			     numberOfRows: 1
@@ -174,9 +209,9 @@
    *
    */
 
-  _w_frame = NSMakeRect(100,100,272,80);
+  rect = NSMakeRect(100,100,272,80);
   style = NSTitledWindowMask | NSClosableWindowMask;
-  buildTargetPanel = [[NSWindow alloc] initWithContentRect:_w_frame 
+  buildTargetPanel = [[NSWindow alloc] initWithContentRect:rect 
 				       styleMask:style 
 				       backing:NSBackingStoreBuffered 
 				       defer:YES];

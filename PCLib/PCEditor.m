@@ -79,6 +79,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   [window setContentView:scrollView];
   [window setDelegate:self];
+  [window makeFirstResponder:view];
 
   RELEASE(scrollView);
 }
@@ -102,12 +103,19 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
         [view setText:text];
 
 	path = [file copy];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+	                                      selector:@selector(textDidChange:)
+				              name:NSTextDidChangeNotification
+				              object:view];
     }
     return self;
 }
 
 - (void)dealloc
 {
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
+
     RELEASE(window);
     RELEASE(path);
 
@@ -205,12 +213,12 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 {
     NSString *text = [NSString stringWithContentsOfFile:path];
 
+    [view setText:text];
+
     if( isEmbedded == NO )
     {
 	[window setDocumentEdited:NO];
     }
-
-    [view setText:text];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
@@ -235,6 +243,11 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
     {
 	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
     }
+}
+
+- (void)textDidChange:(NSNotification *)aNotification
+{
+    [window setDocumentEdited:YES];
 }
 
 @end

@@ -149,6 +149,8 @@
     [[panel contentView] addSubview:replaceTextField];
     RELEASE(replaceTextField);
 
+    [findTextField setNextResponder:replaceTextField];
+
     // Options
     rect = NSMakeRect(104,40,144 ,80);
     box = [[NSBox alloc] initWithFrame:rect];
@@ -236,6 +238,7 @@
     [borderMatrix setTarget: self];
     [borderMatrix setAction: @selector(buttonPressed:)];
     [borderMatrix setAutosizesCells: NO];
+    [replaceTextField setNextResponder:borderMatrix];
 
     cell = [borderMatrix cellAtRow:0 column:0];
     [cell setTitle: @"Replace All"];
@@ -328,7 +331,7 @@ static PCTextFinder *_finder = nil;
         [self _initUI];
     }
 
-    [panel makeKeyAndOrderFront:self];
+    [panel orderFront:self];
 }
 
 - (void)buttonPressed:(id)sender

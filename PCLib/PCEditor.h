@@ -48,6 +48,8 @@
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidResignKey:(NSNotification *)aNotification;
 
+- (void)textDidChange:(NSNotification *)aNotification;
+
 @end
 
 @interface NSObject (PCEditorDelegate )
