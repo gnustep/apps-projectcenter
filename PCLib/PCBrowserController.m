@@ -41,15 +41,32 @@
   NSTextView *pTextView;
 
   if ([[sender selectedCell] isLeaf]) {
+    NSString *ltitle = [[sender selectedCell] stringValue];
     NSString *ctitle = [[sender selectedCellInColumn:0] stringValue];
-    NSString *text = [NSString stringWithFormat:@"Display File %@",[[sender selectedCell] stringValue]
-];
+    NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
+
     pTextView = [project textView];
 
+    NSLog(@"****** %@",ctitlef);
+
     if ([ctitle isEqualToString:@"Classes"]) {
-      [pTextView setString:text];
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [pTextView setString:f];
+    }
+    else if ([ctitle isEqualToString:@"Headers"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [pTextView setString:f];
+    }
+    else if ([ctitle isEqualToString:@"Other Sources"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [pTextView setString:f];
     }
 
+    // This should not be needed!
+    [pTextView display];
   }
 }
 
