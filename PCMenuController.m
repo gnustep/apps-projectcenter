@@ -571,6 +571,7 @@
 	  if ([[menuItem title] isEqualToString:@"Index Subproject"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Index File"]) return NO;
 	}
+      return YES;
     }
 
   // Project related menu items

@@ -17,20 +17,25 @@
 	(showAddFileWindow): Handling of image, docs, models and non project
 	files added. Now images go into Images subdir, docs into Documentation,
 	.gorm files into $LANGUAGE.lproj subdir.
-
 	* PCLib/PCProject+UInterface.m:
 	(_initUI): Files' history list enabled back. Adjust size of history 
 	list. Added some fileds, controls rearranged in Project Inspector.
-
+	Release of box added after adding to split.
 	* PCLib/PCProject.h: Added definition of new Inspector fields.
-	* PCLib/PCProject.m: (updateValuesFromProjectDict): Set project's 
-	language.
+	* PCLib/PCProject.m:
+	(updateValuesFromProjectDict): Set project's language.
+	(dealloc): Extra releases removed.
 	* PCLib/PCProjectBuilder.m: Stability improved via cleanup in build
 	task handling.
 	(topButtonPressed:): Removed.
-
 	* PCLib/PCProjectManager+UInterface.m: ProjectInspector content view
 	resized. Changed title from "Inspector" to "Project Inspector".
+
+	* PCMenuController.m:
+	(validateMenuItem:): Return by default YES if no project loaded.
+
+	* PCAppProj/PCAppProject.m:
+	(dealloc): Release of appClassField and appImageField removed.
 
 2003-06-20 Serg Stoyan <stoyan@hologr.com>
 

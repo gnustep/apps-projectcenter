@@ -243,22 +243,25 @@
 
 #ifdef ENABLE_HISTORY
   [split addSubview: v_split];
+  RELEASE(v_split);
 #else
   [split addSubview: browser];
 #endif
 
   [split addSubview: box];
+  RELEASE(box);
+
   [split adjustSubviews];
   [_c_view addSubview: split];
-
-  RELEASE(split);
-  RELEASE(browser);
 
   [browser loadColumnZero];
 
 #ifdef ENABLE_HISTORY
   [history loadColumnZero];
 #endif
+
+  RELEASE(browser);
+  RELEASE(split);
 
   if (![projectWindow setFrameUsingName: @"ProjectWindow"])
     {
@@ -529,6 +532,7 @@
   hLine = [[NSBox alloc] initWithFrame:NSMakeRect(0,278,295,2)];
   [hLine setTitlePosition:NSNoTitle];
   [projectFileInspectorView addSubview:hLine];
+  RELEASE(hLine);
 
   changeFileNameButton = [[NSButton alloc] initWithFrame:
     NSMakeRect(84,240,104,21)];

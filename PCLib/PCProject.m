@@ -85,34 +85,21 @@
   RELEASE(projectPath);
   RELEASE(projectDict);
 
-  if( projectBuilder)  RELEASE(projectBuilder);
-  if( projectDebugger) RELEASE(projectDebugger);
-  if( projectEditor)   RELEASE(projectEditor);
+  if (projectBuilder)  RELEASE(projectBuilder);
+  if (projectDebugger) RELEASE(projectDebugger);
+  if (projectEditor)   RELEASE(projectEditor);
   
   RELEASE(historyController);
   RELEASE(browserController);
+  RELEASE(editorController);
 
-  RELEASE(buildTargetPanel);
-  RELEASE(buildTargetHostField);
-  RELEASE(buildTargetArgsField);
+  RELEASE(buildTargetPanel); // ?
   
   RELEASE(buildOptions);
- 
+
   RELEASE(projectAttributeInspectorView);
-  RELEASE(installPathField);
-  RELEASE(toolField);
-  RELEASE(ccOptField);
-  RELEASE(ldOptField);
-
   RELEASE(projectProjectInspectorView);
-  RELEASE(projectTypeField);
-
   RELEASE(projectFileInspectorView);
-  RELEASE(fileNameField);
-  RELEASE(changeFileNameButton);
- 
-  RELEASE(box);
-  RELEASE(editorController);
 
   [super dealloc];
 }

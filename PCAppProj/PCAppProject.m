@@ -58,7 +58,8 @@
   [projectProjectInspectorView addSubview:textField];
   RELEASE(textField);
 
-  appClassField = [[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
+  appClassField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,248,165,21)];
   [appClassField setAlignment: NSLeftTextAlignment];
   [appClassField setBordered: YES];
   [appClassField setEditable: YES];
@@ -167,8 +168,6 @@
   [rootCategories release];
   [rootObjects release];
   [rootKeys release];
-  [appClassField release];
-  [appImageField release];
 
   [super dealloc];
 }
