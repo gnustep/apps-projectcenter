@@ -46,8 +46,6 @@
   unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
                        NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSBrowser *browser;
-  NSSplitView *split;
-  NSScrollView * scrollView; 
   NSRect _w_frame;
   NSMatrix* matrix;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
@@ -61,103 +59,88 @@
    *
    */
 
-  _w_frame = NSMakeRect(100,100,560,360);
+  _w_frame = NSMakeRect(100,100,560,440);
   projectWindow = [[NSWindow alloc] initWithContentRect:_w_frame
                                               styleMask:style
                                                 backing:NSBackingStoreBuffered
                                                   defer:YES];
   [projectWindow setDelegate:self];
-  [projectWindow setMinSize:NSMakeSize(512,320)];
+  [projectWindow setMinSize:NSMakeSize(560,448)];
 
-  browser = [[[NSBrowser alloc] initWithFrame:NSMakeRect(30,30,288,128)] autorelease];
+  browser = [[NSBrowser alloc] initWithFrame:NSMakeRect(8,251,544,128)];
   [browser setDelegate:browserController];
   [browser setMaxVisibleColumns:3];
   [browser setAllowsMultipleSelection:NO];
+  [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser:browser];
   [browserController setProject:self];
+  [browser autorelease];
 
-  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,520,168)];
-  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [textView setRichText:NO];
-  [textView setEditable:NO];
-  [textView setSelectable:YES];
-  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [textView setVerticallyResizable:YES];
-  [textView setHorizontallyResizable:YES];
-  [textView setBackgroundColor:[NSColor whiteColor]];
-  [[textView textContainer] setWidthTracksTextView:YES];
-
-  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,544,172)];
-  [scrollView setDocumentView:textView];
-  [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
-  [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
-  [scrollView setHasHorizontalScroller: NO];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
-  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [scrollView autorelease];
-
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,544,304)] autorelease];  
-  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [split addSubview: browser];
-  [split addSubview: scrollView];
+  box = [[NSBox alloc] initWithFrame:NSMakeRect (0,-1,560,252)];
+  [box setTitlePosition:NSNoTitle];
+  [box setBorderType:NSNoBorder];
+  [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
   _c_view = [projectWindow contentView];
-  [_c_view addSubview:split];
+  [_c_view addSubview:browser];
+  [_c_view addSubview:box];
 
   /*
    * Left button matrix
    */
 
-  _w_frame = NSMakeRect(8,308,330,48);
+  _w_frame = NSMakeRect(8,388,330,48);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 7] autorelease];
   [matrix sizeToCells];
+  [matrix setTarget:self];
+  [matrix setAction:@selector(topButtonsPressed:)];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
 
   button = [matrix cellAtRow:0 column:0];
+  [button setTag:0];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_build")];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(build:)];
 
   button = [matrix cellAtRow:0 column:1];
+  [button setTag:1];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(showInspector:)];
 
   button = [matrix cellAtRow:0 column:2];
+  [button setTag:2];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(showBuildTargetPanel:)];
 
   button = [matrix cellAtRow:0 column:3];
+  [button setTag:3];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:4];
+  [button setTag:4];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_uml.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:5];
+  [button setTag:5];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_documentation.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:6];
+  [button setTag:6];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
@@ -168,7 +151,11 @@
    */
 
   _w_frame = NSMakeRect(100,100,272,80);
-  buildTargetPanel = [[NSWindow alloc] initWithContentRect:_w_frame styleMask:style backing:NSBackingStoreBuffered defer:NO];
+  style = NSTitledWindowMask | NSClosableWindowMask;
+  buildTargetPanel = [[NSWindow alloc] initWithContentRect:_w_frame 
+				       styleMask:style 
+				       backing:NSBackingStoreBuffered 
+				       defer:YES];
   [buildTargetPanel setDelegate:self];
   [buildTargetPanel setReleasedWhenClosed:NO];
   [buildTargetPanel setTitle:@"Build Options"];
@@ -427,6 +414,8 @@
   [fileNameField release];
   [changeFileNameButton release];
  
+  [box release];
+
   [super dealloc];
 }
 
@@ -559,11 +548,6 @@
     return @"Abstract PCProject class!";
 }
 
-- (id)textView
-{
-  return textView;
-}
-
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
@@ -571,34 +555,6 @@
 - (void)browserDidSelectFileNamed:(NSString *)fileName
 {
   [fileNameField setStringValue:fileName];
-}
-
-- (void)editSelectedFile:(NSString *)file
-{
-  //  NSLayoutManager *_lm = [textView layoutManager];
-  //  NSTextStorage *_ts = [[NSTextStorage alloc] initWithString:file];
-
-  /*
-  [_ts beginEditing];
-  [[_ts mutableString] setString:file];
-  [_ts endEditing];
-  */
-
-  /*
-  if (_lm) {
-    [_lm replaceTextStorage:_ts];
-  }
-  */
-
-  [textView setString:file];
-  // [textView structure:self];
-  [textView display];
-  //  [_ts autorelease];
-}
-
-- (void)structureEditedFile:(id)sender
-{
-  //  [textView structure:self];
 }
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
@@ -815,6 +771,59 @@
 
 @implementation PCProject (ProjectBuilding)
 
+- (void)topButtonsPressed:(id)sender
+{
+  switch ([[sender selectedCell] tag]) {
+  case 0:
+    [self showBuildView:self];
+    break;
+  case 1:
+    [self showInspector:self];
+    break;
+  case 2:
+    [self showBuildTargetPanel:self];
+    break;
+  case 3:
+    [self showRunView:self];
+    break;
+  case 4:
+  case 5:
+  case 6:
+    NSRunAlertPanel(@"Help!",@"This feature is not yet implemented! Please contact me if you are interested in volunteering.",@"Of course!",nil,nil);
+    break;
+  default:
+    break;
+  }
+}
+
+- (void)showBuildView:(id)sender
+{
+  NSView *view = nil;
+
+  if (!projectBuilder) {
+    projectBuilder = [[PCProjectBuilder alloc] initWithProject:self];
+  }
+
+  view = [[projectBuilder componentView] retain];
+  
+  [box setContentView:view];
+  [box display];
+}
+
+- (void)showRunView:(id)sender
+{
+  NSView *view = nil;
+
+  if (!projectDebugger) {
+    projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
+  }
+
+  view = [[projectDebugger componentView] retain];
+  
+  [box setContentView:view];
+  [box display];
+}
+
 - (void)showInspector:(id)sender
 {
   [projectManager showInspectorForProject:self];
@@ -847,19 +856,12 @@
 {
   NSString *host = [buildTargetHostField stringValue];
   [buildOptions setObject:host forKey:BUILD_HOST_KEY];
-
-  NSLog(@"New host %@",host);
 }
 
 - (void)setArguments:(id)sender
 {
   NSString *args = [buildTargetArgsField stringValue];
   [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
-}
-
-- (void)build:(id)sender
-{
-  [[PCProjectBuilder sharedBuilder] showPanelWithProject:self options:buildOptions];
 }
 
 - (NSDictionary *)buildOptions
@@ -942,13 +944,3 @@
 }
 
 @end
-
-@implementation PCProject (TextDelegate)
-
-- (void)textDidEndEditing:(NSNotification *)aNotification
-{
-}
-
-@end
-
-

@@ -54,6 +54,7 @@ libProjectCenter_MFILES = 	\
 	PCFileManager.m 	\
 	PCProject.m 		\
 	PCProjectBuilder.m 	\
+	PCProjectDebugger.m	\
 	PCProjectManager.m 	\
 	PCServer.m
 
@@ -68,6 +69,7 @@ libProjectCenter_HFILES = 	\
 	PCFileManager.h 	\
 	PCProject.h 		\
 	PCProjectBuilder.h 	\
+	PCProjectDebugger.h	\
 	PCProjectManager.h 	\
 	PCServer.h 		\
 	PreferenceController.h 	\

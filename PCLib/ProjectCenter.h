@@ -60,6 +60,8 @@
 #import "PCProjectManager.h"
 #import "PCServer.h"
 #import "PCProject.h"
+#import "PCProjectBuilder.h"
+#import "PCProjectDebugger.h"
 #import "PCFileManager.h"
 #import "PCBrowserController.h"
 #import "ProjectDebugger.h"
@@ -69,7 +71,6 @@
 #import "PreferenceController.h"
 #import "ProjectBuilder.h"
 #import "FileCreator.h"
-#import "PCProjectBuilder.h"
 #import "PCEditorView.h"
 
 

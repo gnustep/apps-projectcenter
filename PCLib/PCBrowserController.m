@@ -47,27 +47,6 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
     NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
 
     [project browserDidSelectFileNamed:ltitle];
-
-    if ([ctitle isEqualToString:@"Classes"]) {
-      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
-
-      [project editSelectedFile:f];
-    }
-    else if ([ctitle isEqualToString:@"Headers"]) {
-      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
-
-      [project editSelectedFile:f];
-    }
-    else if ([ctitle isEqualToString:@"Other Sources"]) {
-      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
-
-      [project editSelectedFile:f];
-    }
-    else if ([ctitle isEqualToString:@"Other Resources"]) {
-      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
-
-      [project editSelectedFile:f];
-    }
   }
 }
 

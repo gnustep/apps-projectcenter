@@ -24,21 +24,17 @@
    $Id$
 */
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @class PCProject;
 
-@class NSWindow;
-@class NSTextView;
-
 @interface PCProjectBuilder : NSObject
 {
-  NSWindow *buildWindow;
+  NSBox *componentView;
 
   NSTextView *logOutput;
   NSTextView *errorOutput;
 
-  NSMutableDictionary *buildTasks;
   NSString *makePath;
 
   id buildStatusField;
@@ -51,12 +47,10 @@
   NSFileHandle *errorReadHandle;
 }
 
-+ (id)sharedBuilder;
-
-- (id)init;
+- (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
-- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
+- (NSView *)componentView;
 
 - (void)build:(id)sender;
 
@@ -64,8 +58,6 @@
 - (void)logErrOut:(NSNotification *)aNotif;
 
 - (void)buildDidTerminate:(NSNotification *)aNotif;
-
-- (void)projectDidChange:(NSNotification *)aNotif;
 
 @end
 

@@ -84,6 +84,9 @@ static NSString * const PCMainGModelFile = @"MAININTERFACE";
 static NSString * const PCPackageName = @"PACKAGE_NAME";
 static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
+@class PCProjectBuilder;
+@class PCProjectDebugger;
+
 @interface PCProject : NSObject
 {
     id projectWindow;
@@ -91,7 +94,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id projectManager;
     id browserController;
 
-    id textView;
+    PCProjectBuilder *projectBuilder;
+    PCProjectDebugger *projectDebugger;
+    NSBox *box;
 
     id projectAttributeInspectorView;
     NSTextField *installPathField;
@@ -169,16 +174,11 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (NSString *)projectDescription;
     // Returns a string describing the project type
 
-- (id)textView;
-
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
 
 - (void)browserDidSelectFileNamed:(NSString *)fileName;
-
-- (void)editSelectedFile:(NSString *)file;
-- (void)structureEditedFile:(id)sender;
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
     // Returns YES if type is a valid key and file is not contained in the project already
@@ -217,6 +217,10 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
 @interface PCProject (ProjectBuilding)
 
+- (void)topButtonsPressed:(id)sender;
+- (void)showBuildView:(id)sender;
+- (void)showRunView:(id)sender;
+
 - (void)showInspector:(id)sender;
 
 - (id)updatedAttributeView;
@@ -226,8 +230,6 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)showBuildTargetPanel:(id)sender;
 - (void)setHost:(id)sender;
 - (void)setArguments:(id)sender;
-
-- (void)build:(id)sender;
 
 - (NSDictionary *)buildOptions;
 
@@ -246,11 +248,5 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeMain:(NSNotification *)aNotification;
 - (void)windowWillClose:(NSNotification *)aNotification;
-
-@end
-
-@interface PCProject (TextDelegate)
-
-- (void)textDidEndEditing:(NSNotification *)aNotification;
 
 @end

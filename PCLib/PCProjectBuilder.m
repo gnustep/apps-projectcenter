@@ -40,17 +40,14 @@
 
 @interface PCProjectBuilder (CreateUI)
 
-- (void)_initUI;
+- (void)_createComponentView;
 
 @end
 
 @implementation PCProjectBuilder (CreateUI)
 
-- (void)_initUI
+- (void)_createComponentView
 {
-  NSView *_c_view;
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
-                       NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSSplitView *split;
   NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
@@ -60,35 +57,26 @@
   id button;
   id textField;
 
+  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(0,0,544,248)];
+  [componentView setTitlePosition:NSNoTitle];
+  [componentView setBorderType:NSNoBorder];
+  [componentView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
+
   /*
-   * Build Window
-   *
    */
 
-  _w_frame = NSMakeRect(100,100,512,320);
-  buildWindow = [[NSWindow alloc] initWithContentRect:_w_frame
-				  styleMask:style
-				  backing:NSBackingStoreBuffered
-				  defer:NO];
-  [buildWindow setDelegate:self];
-  [buildWindow setReleasedWhenClosed:NO];
-  [buildWindow setMinSize:NSMakeSize(512,320)];
-  [buildWindow setFrameAutosaveName:@"Builder"];
-
-  logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,80)];
+  logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,32)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
+  [logOutput setMinSize:NSMakeSize(516, 48)];
   [logOutput setRichText:NO];
   [logOutput setEditable:NO];
   [logOutput setSelectable:YES];
-  [logOutput setVerticallyResizable:YES];
-  [logOutput setHorizontallyResizable:NO];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [logOutput setBackgroundColor:[NSColor lightGrayColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,46)];
   [scrollView1 setDocumentView:logOutput];
-  [logOutput setMinSize:NSMakeSize(0.0,[scrollView1 contentSize].height)];
   [[logOutput textContainer] setContainerSize:NSMakeSize([scrollView1 contentSize].width,1e7)];
   [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
@@ -100,20 +88,18 @@
    *
    */
 
-  errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,80)];
+  errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,80)];
   [errorOutput setMaxSize:NSMakeSize(1e7, 1e7)];
+  [errorOutput setMinSize:NSMakeSize(516, 48)];
   [errorOutput setRichText:NO];
   [errorOutput setEditable:NO];
   [errorOutput setSelectable:YES];
-  [errorOutput setVerticallyResizable:YES];
-  [errorOutput setHorizontallyResizable:NO];
   [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [errorOutput setBackgroundColor:[NSColor whiteColor]];
   [[errorOutput textContainer] setWidthTracksTextView:YES];
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
   [scrollView2 setDocumentView:errorOutput];
-  [errorOutput setMinSize:NSMakeSize(0.0,[scrollView2 contentSize].height)];
   [[errorOutput textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
   [scrollView2 setHasHorizontalScroller:NO];
   [scrollView2 setHasVerticalScroller:YES];
@@ -121,19 +107,20 @@
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView2 autorelease];
 
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,264)] autorelease];  
+  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
-
-  _c_view = [buildWindow contentView];
-  [_c_view addSubview:split];
+  [split adjustSubviews];
+  
+  [componentView addSubview:split];
+  [split autorelease];
 
   /*
    * 5 build Buttons
    */
 
-  _w_frame = NSMakeRect(8,272,244,44);
+  _w_frame = NSMakeRect(0,194,244,44);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell
@@ -144,11 +131,10 @@
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget:self];
   [matrix setAction:@selector(build:)];
-  [_c_view addSubview:matrix];
+  [componentView addSubview:matrix];
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
-  //[button setImagePosition:NSNoImage];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_make")];
   [button setButtonType:NSMomentaryPushButton];
@@ -156,7 +142,6 @@
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
-  //[button setImagePosition:NSNoImage];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_clean")];
   [button setButtonType:NSMomentaryPushButton];
@@ -164,7 +149,6 @@
 
   button = [matrix cellAtRow:0 column:2];
   [button setTag:2];
-  //[button setImagePosition:NSNoImage];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_debug")];
   [button setButtonType:NSMomentaryPushButton];
@@ -172,7 +156,6 @@
 
   button = [matrix cellAtRow:0 column:3];
   [button setTag:3];
-  //[button setImagePosition:NSNoImage];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_profile")];
   [button setButtonType:NSMomentaryPushButton];
@@ -180,7 +163,6 @@
 
   button = [matrix cellAtRow:0 column:4];
   [button setTag:4];
-  //[button setImagePosition:NSNoImage];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_install")];
   [button setButtonType:NSMomentaryPushButton];
@@ -190,7 +172,7 @@
    * Status
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,296,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,220,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -199,13 +181,13 @@
   [textField setStringValue:@"Status:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | 
 				   NSViewMinYMargin)];
-  [_c_view addSubview:[textField autorelease]];
+  [componentView addSubview:[textField autorelease]];
 
   /*
    * Status message
    */
 
-  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,296,104,15)];
+  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,220,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
   [buildStatusField setEditable: NO];
@@ -215,13 +197,13 @@
   [buildStatusField setAutoresizingMask: (NSViewMaxXMargin | 
 					  NSViewWidthSizable | 
 					  NSViewMinYMargin)];
-  [_c_view addSubview:[buildStatusField autorelease]];
+  [componentView addSubview:[buildStatusField autorelease]];
 
   /*
    * Target
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,272,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,196,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setBezeled: NO];
@@ -230,13 +212,13 @@
   [textField setStringValue:@"Target:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | 
 				   NSViewMinYMargin)];
-  [_c_view addSubview:[textField autorelease]];
+  [componentView addSubview:[textField autorelease]];
 
   /*
    * Target message
    */
 
-  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,272,104,15)];
+  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,196,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -246,57 +228,39 @@
   [targetField setAutoresizingMask: (NSViewMaxXMargin | 
 				     NSViewWidthSizable | 
 				     NSViewMinYMargin)];
-  [_c_view addSubview:[targetField autorelease]];
+  [componentView addSubview:[targetField autorelease]];
 }
 
 @end
 
 @implementation PCProjectBuilder
 
-static PCProjectBuilder *_builder;
-
-+ (id)sharedBuilder
+- (id)initWithProject:(PCProject *)aProject
 {
-  if (!_builder) {
-    _builder = [[PCProjectBuilder alloc] init];
-  }
-  return _builder;
-}
+  NSAssert(aProject,@"No project specified!");
 
-- (id)init
-{
   if ((self = [super init])) {
-    [self _initUI];
     makePath = [[NSString stringWithString:@"/usr/bin/make"] retain];
-    buildTasks = [[NSMutableDictionary dictionary] retain];
-
-    [NOTIFICATION_CENTER addObserver:self selector:@selector(projectDidChange:) name:ActiveProjectDidChangeNotification object:nil];
+    currentProject = aProject;
   }
   return self;
 }
 
 - (void)dealloc
 {
-  [NOTIFICATION_CENTER removeObserver:self];
-
-  [buildWindow release];
+  [componentView release];
   [makePath release];
-  [buildTasks release];
 
   [super dealloc];
 }
 
-- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
+- (NSView *)componentView;
 {
-  if (![buildWindow isVisible]) {
-    [buildWindow setFrameUsingName:@"Builder"];
+  if (!componentView) {
+    [self _createComponentView];
   }
-  [buildWindow makeKeyAndOrderFront:self];
 
-  currentProject = proj;
-  currentOptions = options;
-
-  [buildWindow setTitle:[proj projectName]];
+  return componentView;
 }
 
 - (void)build:(id)sender
@@ -309,10 +273,6 @@ static PCProjectBuilder *_builder;
   NSDictionary *optionDict;
   NSString *status;
   NSString *target;
-
-  if (!currentProject) {
-    return;
-  }
 
   logPipe = [NSPipe pipe];
   readHandle = [[logPipe fileHandleForReading] retain];
@@ -445,20 +405,6 @@ static PCProjectBuilder *_builder;
   }
 }
 
-- (void)projectDidChange:(NSNotification *)aNotif
-{
-  PCProject *project = [aNotif object];
-
-  if (project) {
-    currentProject = project;
-    [buildWindow setTitle:[project projectName]];
-  }
-  else {
-    currentProject = nil;
-    [buildWindow orderOut:self];
-  }
-}
-
 @end
 
 @implementation PCProjectBuilder (BuildLogging)
@@ -494,6 +440,7 @@ static PCProjectBuilder *_builder;
 }
 
 @end
+
 
 
 
