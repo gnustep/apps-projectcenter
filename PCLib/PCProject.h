@@ -93,6 +93,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
     id textView;
 
+    id filePopup;
+    id methodPopup;
+
     id projectAttributeInspectorView;
     id projectProjectInspectorView;
     id projectFileInspectorView;
