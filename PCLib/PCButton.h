@@ -8,7 +8,7 @@
 /*
  * Button
  */
-@interface PCButton : NSButton
+@interface PCButton : NSButton 
 {
   NSTrackingRectTag tRectTag;
   NSTimer           *ttTimer;

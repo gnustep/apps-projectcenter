@@ -38,7 +38,9 @@
   if ((self = [super init])) {
     NSString *file;
     
-    file = [[NSBundle mainBundle] pathForResource:@"Info-project" ofType:@"plist"];
+    file = [[NSBundle mainBundle] 
+      pathForResource:@"Info-gnustep" 
+               ofType:@"plist"];
     infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
     [infoDict retain];
   }
@@ -59,14 +61,18 @@
 - (void)showInfoWindow:(id)sender
 {
 #if defined(GNUSTEP)
-  if (!infoWindow) {
-    infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
-  }
+  if (!infoWindow)
+    {
+      infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
+    }
 
+  [infoWindow setTitle:@"Info"];
   [infoWindow center];
   [infoWindow makeKeyAndOrderFront:self];
 #else
-  NSRunAlertPanel(@"Info",@"OPENSTEP has no support for GSInfoPanel",@"OK",nil,nil,nil);
+  NSRunAlertPanel(@"Info",
+		  @"OPENSTEP has no support for GSInfoPanel",
+		  @"OK",nil,nil,nil);
 #endif
 }
 

@@ -29,8 +29,8 @@
 
 #include <ProjectCenter/ProjectCenter.h>
 
-#define REL_LIB_PC @"Library/ProjectCenter"
-#define ABS_LIB_PC @"/usr/GNUstep/Local/Library/ProjectCenter"
+#define REL_LIB_PC @"Library/ApplicationSupport/ProjectCenter"
+#define ABS_LIB_PC @"/usr/GNUstep/System/Library/ApplicationSupport/ProjectCenter"
 
 @implementation PCAppController
 
@@ -40,10 +40,10 @@
 
 + (void)initialize
 {
-  NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
-  NSDictionary *env = [[NSProcessInfo processInfo] environment];
-  NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
-  NSString *_bundlePath;
+  NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
+  NSDictionary        *env = [[NSProcessInfo processInfo] environment];
+  NSString            *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
+  NSString            *_bundlePath;
 
   if (prefix && ![prefix isEqualToString:@""])
     {
@@ -102,6 +102,7 @@
       [menuController setFileManager:fileManager];
       [menuController setProjectManager:projectManager];
     }
+
   return self;
 }
 

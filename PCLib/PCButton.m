@@ -24,7 +24,15 @@
       [[self superview] removeTrackingRect:tRectTag];
       [ttTimer invalidate];
       ttTimer = nil;
+      RELEASE(ttTimer);
     }
+
+  if (ttWindow != nil)
+    {
+      RELEASE(ttWindow);
+    }
+
+  [super dealloc];
 }
 
 - (void)setFrame:(NSRect)frameRect
@@ -175,6 +183,13 @@
     pathForImageResource:@"ButtonTile"]];
 
   return self;
+}
+
+- (void)dealloc 
+{
+  RELEASE(tile);
+
+  [super dealloc];
 }
 
 - (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView*)controlView

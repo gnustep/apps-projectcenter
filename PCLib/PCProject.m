@@ -63,18 +63,21 @@
     
     if ((self = [self init])) 
     {
-        if ([[path lastPathComponent] isEqualToString:@"PC.project"]) {
-            projectPath = [[path stringByDeletingLastPathComponent] copy];
-        }
-        else {
-            projectPath = [path copy];
-        }
+        if ([[path lastPathComponent] isEqualToString:@"PC.project"])
+	  {
+	    projectPath = [[path stringByDeletingLastPathComponent] copy];
+	  }
+        else
+	  {
+	    projectPath = [path copy];
+	  }
 
-        if(![self assignProjectDict:dict]) {
-            NSLog(@"<%@ %x>: could not load the project...",[self class],self);
-            [self autorelease];
-            return nil;
-        }
+        if(![self assignProjectDict:dict])
+	  {
+	    NSLog(@"<%@ %x>: could not load the project...",[self class],self);
+	    [self autorelease];
+	    return nil;
+	  }
     }
     return self;
 }
@@ -100,6 +103,8 @@
   RELEASE(projectAttributeInspectorView);
   RELEASE(projectProjectInspectorView);
   RELEASE(projectFileInspectorView);
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [super dealloc];
 }
@@ -492,7 +497,9 @@
     // Update the interface
     [self updateValuesFromProjectDict];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
+    [[NSNotificationCenter defaultCenter] 
+      postNotificationName:@"ProjectDictDidChangeNotification" 
+                    object:self];
 
     return YES;
 }

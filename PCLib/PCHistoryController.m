@@ -65,7 +65,11 @@
     [browser setMaxVisibleColumns:1];
     [browser setAllowsMultipleSelection:NO];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(historyDidChange:) name:@"FileBecomesEditedNotification" object:nil];
+    [[NSNotificationCenter defaultCenter]
+      addObserver:self 
+         selector:@selector(historyDidChange:) 
+	     name:@"FileBecomesEditedNotification" 
+	   object:nil];
 }
 
 - (void)historyDidChange:(NSNotification *)notif

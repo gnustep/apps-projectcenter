@@ -1,3 +1,25 @@
+2003-07-04 Serg Stoyan <stoyan@hologr.com>
+
+	* PCAppController.m: Change REL_LIB_PC and ABS_LIB_PC to 	ApplicationSupport dir.
+	* PCInfoController.m:
+	(init): Load Info-gnustep.plist instead of Info-project.plist.
+	(showInfoWindow:): Set title of info window to "Info".
+	* PCPrefController.m:
+	(_initUI): Move releasing of controls here from -dealloc.
+	(popupChnaged:): Don't retain views.
+	
+	* PCAppProj/PCAppProject.m:
+	(updateValuesFromProjectDict): Change size of appicon frame to 48x48.
+	Check PCAppIcon field value is not equal to @"".
+	
+	* PCLib/PCButton.m
+	(PCButton dealloc): Release tooltip window.
+	(PCButtonCell dealloc): Added.
+
+	* PCLib/PCProject+UInterface.m:
+	(_initUI): Cleanup. fileIcon now NSImageView.
+	(setFileIcon:): Check for source of notification. Cleanup.
+	
 2003-07-02 Serg Stoyan <stoyan@hologr.com>
 
 	* PCAppProj/PCAppProj.m:

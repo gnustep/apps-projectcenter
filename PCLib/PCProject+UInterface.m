@@ -44,17 +44,19 @@
                      | NSClosableWindowMask
 		     | NSMiniaturizableWindowMask
 		     | NSResizableWindowMask;
-  NSBrowser    *browser;
-  NSRect       rect;
-  PCButton     *buildButton;
-  PCButton     *launchButton;
-  PCButton     *editorButton;
-  PCButton     *loadedFilesButton;
-  PCButton     *findButton;
-  PCButton     *inspectorButton;
-  id           textField;
-  NSBox        *hLine;
-  PCSplitView  *split;
+
+  PCButton    *buildButton;
+  PCButton    *launchButton;
+  PCButton    *editorButton;
+  PCButton    *loadedFilesButton;
+  PCButton    *findButton;
+  PCButton    *inspectorButton;
+  
+  NSBrowser   *browser;
+  NSRect      rect;
+  id          textField;
+  NSBox       *hLine;
+  PCSplitView *split;
 
 #ifdef ENABLE_HISTORY
   PCSplitView  *v_split;
@@ -80,7 +82,6 @@
    */
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,390,50,50)];
   [buildButton setTitle: @"Build"];
-//  [buildButton setImage: IMAGE(@"Build")];
   [buildButton setImage: IMAGE(@"ProjectCenter_make")];
   [buildButton setTarget: self];
   [buildButton setAction: @selector(showBuildView:)];
@@ -92,7 +93,6 @@
   
   launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(58,390,50,50)];
   [launchButton setTitle: @"Launch"];
-//  [launchButton setImage: IMAGE(@"Run")];
   [launchButton setImage: IMAGE(@"ProjectCenter_run")];
   [launchButton setTarget: self];
   [launchButton setAction: @selector(showRunView:)];
@@ -104,7 +104,6 @@
   
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(108,390,50,50)];
   [editorButton setTitle: @"Editor"];
-//  [editorButton setImage: IMAGE(@"Editor")];
   [editorButton setImage: IMAGE(@"ProjectCenter_files")];
   [editorButton setTarget: self];
   [editorButton setAction: @selector(showEditorView:)];
@@ -116,34 +115,29 @@
 
   loadedFilesButton = [[PCButton alloc] initWithFrame: NSMakeRect(158,390,50,50)];
   [loadedFilesButton setTitle: @"Loaded Files"];
-//  [loadedFilesButton setImage: IMAGE(@"Files")];
   [loadedFilesButton setImage: IMAGE(@"ProjectCenter_files")];
   [loadedFilesButton setTarget: self];
   [loadedFilesButton setAction: @selector(showLoadedFilesView:)];
   [loadedFilesButton setAutoresizingMask: (NSViewMaxXMargin 
 					   | NSViewMinYMargin)];
   [loadedFilesButton setButtonType: NSMomentaryPushButton];
-//  [loadedFilesButton setEnabled:NO];
   [_c_view addSubview: loadedFilesButton];
   [loadedFilesButton setShowTooltip:YES];
   RELEASE (loadedFilesButton);
 
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(208,390,50,50)];
   [findButton setTitle: @"Project Find"];
-//  [findButton setImage: IMAGE(@"Find")];
   [findButton setImage: IMAGE(@"ProjectCenter_find")];
   [findButton setTarget: self];
   [findButton setAction: @selector(showFindView:)];
   [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [findButton setButtonType: NSMomentaryPushButton];
-//  [findButton setEnabled:NO];
   [_c_view addSubview: findButton];
   [findButton setShowTooltip:YES];
   RELEASE (findButton);
   
   inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(258,390,50,50)];
   [inspectorButton setTitle: @"Inspector"];
-//  [inspectorButton setImage: IMAGE(@"Inspector")];
   [inspectorButton setImage: IMAGE(@"ProjectCenter_settings")];
   [inspectorButton setTarget: self];
   [inspectorButton setAction: @selector(showInspector:)];
@@ -157,12 +151,10 @@
   /*
    * File icon and title
    */
-  fileIcon = [[NSButton alloc] initWithFrame: NSMakeRect (504,391,48,48)];
-  [fileIcon setBordered:NO];
-  [fileIcon setEnabled:NO];
+  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (504,391,48,48)];
   [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
-  [fileIcon setImagePosition: NSImageOnly];
-  [fileIcon setImage: IMAGE (@"projectSuitcase")];
+//  [fileIcon setImage: IMAGE (@"projectSuitcase")];
+  [fileIcon setImage: IMAGE (@"ProjectCenter")];
   [_c_view addSubview: fileIcon];
   RELEASE (fileIcon);
 
@@ -546,91 +538,111 @@
 - (void)setFileIcon:(NSNotification *)notification
 {
   id       object = [notification object];
-  NSString *path = [object pathOfSelectedFile];
-  NSArray  *pathComps = [path pathComponents];
-  NSString *lastComp = [path lastPathComponent];
-  NSString *extension = [[lastComp componentsSeparatedByString:@"."] lastObject];
- 
+  NSString *path = nil;
+  NSArray  *pathComponents = nil;
+  NSString *lastComponent = nil;
+  NSString *fileExtension = nil;
+  NSString *iconName = nil;
+  NSImage  *icon = nil;
+
+  // Notification from other project
+  if (object != [self browserController])
+    {
+      return;
+    }
+
+  path = [object pathOfSelectedFile];
+  pathComponents = [path pathComponents];
+  lastComponent = [path lastPathComponent];
+  fileExtension = [[lastComponent componentsSeparatedByString:@"."] lastObject];
+  
   // Should be provided by PC*Proj bundles
-  if ([[object selectedFiles] count] > 1
-      && [pathComps count] > 2)
+  if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
     {
-      [fileIcon setImage: IMAGE (@"MultipleSelection")];
+      iconName = [[NSString alloc] initWithString:@"MultipleSelection"];
     }
-  else if ([lastComp isEqualToString: @"/"])
+  else if ([lastComponent isEqualToString: @"/"])
     {
-      [fileIcon setImage: IMAGE (@"projectSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Classes"])
+  else if ([lastComponent isEqualToString: @"Classes"])
     {
-      [fileIcon setImage: IMAGE (@"classSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"classSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Headers"])
+  else if ([lastComponent isEqualToString: @"Headers"])
     {
-      [fileIcon setImage: IMAGE (@"headerSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"headerSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Other Sources"])
+  else if ([lastComponent isEqualToString: @"Other Sources"])
     {
-      [fileIcon setImage: IMAGE (@"genericSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Interfaces"])
+  else if ([lastComponent isEqualToString: @"Interfaces"])
     {
-      [fileIcon setImage: IMAGE (@"nibSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"nibSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Images"])
+  else if ([lastComponent isEqualToString: @"Images"])
     {
-      [fileIcon setImage: IMAGE (@"iconSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"iconSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Other Resources"])
+  else if ([lastComponent isEqualToString: @"Other Resources"])
     {
-      [fileIcon setImage: IMAGE (@"otherSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"otherSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Subprojects"])
+  else if ([lastComponent isEqualToString: @"Subprojects"])
     {
-      [fileIcon setImage: IMAGE (@"subprojectSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"subprojectSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Documentation"])
+  else if ([lastComponent isEqualToString: @"Documentation"])
     {
-      [fileIcon setImage: IMAGE (@"helpSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"helpSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Supporting Files"])
+  else if ([lastComponent isEqualToString: @"Supporting Files"])
     {
-      [fileIcon setImage: IMAGE (@"genericSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Libraries"])
+  else if ([lastComponent isEqualToString: @"Libraries"])
     {
-      [fileIcon setImage: IMAGE (@"librarySuitcase")];
+      iconName = [[NSString alloc] initWithString:@"librarySuitcase"];
     }
-  else if ([lastComp isEqualToString: @"Non Project Files"])
+  else if ([lastComponent isEqualToString: @"Non Project Files"])
     {
-      [fileIcon setImage: IMAGE (@"projectSuitcase")];
+      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
+    }
+    
+  if (iconName != nil)
+    {
+      icon = IMAGE(iconName);
+      RELEASE(iconName);
+    }
+  else if (fileExtension != nil && ![fileExtension isEqualToString:@""])
+    {
+      icon = [[NSWorkspace sharedWorkspace] iconForFile:lastComponent];
+    }
+
+  // Set icon to Project Window and Project Inspector
+  if (icon != nil)
+    {
+      [fileIcon setImage:icon];
+      // Set icon in Inspector "File Attributes". Should not be here!
+      [fileIconView setImage:icon];
     }
   else
     {
-      [fileIcon 
-	setImage: [[NSWorkspace sharedWorkspace] iconForFileType:extension]];
     }
-    
-  if ([fileIcon image] == nil)
-    {
-      [fileIcon 
-	setImage: [[NSWorkspace sharedWorkspace] iconForFileType:extension]];
-    }
-
-  // Set icon in Inspector "File Attributes". Should not be here!
-  [fileIconView setImage:[fileIcon image]];
 
   // Set title
-  if ([[object selectedFiles] count] > 1
-      && [pathComps count] > 2)
+  if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
     {
       [fileIconTitle setStringValue:
 	[NSString stringWithFormat: 
 	@"%i files", [[object selectedFiles] count]]];
+      [fileNameField setStringValue:@"Multiple files selected"];
     }
   else
     {
-      [fileIconTitle setStringValue:lastComp];
+      [fileIconTitle setStringValue:lastComponent];
+      [fileNameField setStringValue:lastComponent];
     }
 }
 

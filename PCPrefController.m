@@ -74,6 +74,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [prefPopup setTarget: self];
   [prefPopup setAction: @selector (popupChanged:)];
   [_c_view addSubview: prefPopup];
+  RELEASE(prefPopup);
 
   line = [[NSBox alloc] init];
   [line setTitlePosition: NSNoTitle];
@@ -86,6 +87,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [prefEmptyView setFrameFromContentFrame: NSMakeRect(0,0,270,312)];
   [prefEmptyView setBorderType: NSNoBorder];
   [_c_view addSubview: prefEmptyView];
+  RELEASE(prefEmptyView);
 
   /*
    * Building view
@@ -119,6 +121,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [successField setTarget: self];
   [successField setAction: @selector (setSuccessSound:)];
   [v addSubview: successField];
+  RELEASE(successField);
 
   textField = [[NSTextField alloc] initWithFrame: NSMakeRect(0,16,54,21)];
   [textField setAlignment: NSRightTextAlignment];
@@ -139,8 +142,9 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [failureField setTarget: self];
   [failureField setAction: @selector (setFailureSound:)];
   [v addSubview: failureField];
+  RELEASE(failureField);
 
-  promptOnClean = [[NSButton alloc] initWithFrame: NSMakeRect(72,176,108,15)];
+  promptOnClean = [[NSButton alloc] initWithFrame: NSMakeRect(72,170,108,21)];
   [promptOnClean setTitle: @"Prompt on clean"];
   [promptOnClean setButtonType: NSSwitchButton];
   [promptOnClean setBordered: NO];
@@ -150,6 +154,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [promptOnClean setContinuous: NO];
   [prefBuildingView addSubview: promptOnClean];
   [promptOnClean sizeToFit];
+  RELEASE(promptOnClean);
 
   /*
    * Saving view
@@ -172,6 +177,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [saveOnQuit setContinuous: NO];
   [v addSubview: saveOnQuit];
   [saveOnQuit sizeToFit];
+  RELEASE(saveOnQuit);
 
   saveAutomatically=[[NSButton alloc] initWithFrame: NSMakeRect (24,32,124,15)];
   [saveAutomatically setTitle: @"Save Project Automatically"];
@@ -182,6 +188,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [saveAutomatically setContinuous: NO];
   [v addSubview: saveAutomatically];
   [saveAutomatically sizeToFit];
+  RELEASE(saveAutomatically);
 
   keepBackup = [[NSButton alloc] initWithFrame: NSMakeRect (24,12,124,15)];
   [keepBackup setTitle: @"Keep Project Backup"];
@@ -192,6 +199,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [keepBackup setContinuous: NO];
   [v addSubview: keepBackup];
   [keepBackup sizeToFit];
+  RELEASE(keepBackup);
 
   v = [[NSBox alloc] initWithFrame: NSMakeRect(5,149,254,49)];
   [v setTitle: @"Auto-Save"];
@@ -217,6 +225,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [autoSaveField setTarget:self];
   [autoSaveField setAction:@selector(setSavePeriod:)];
   [v addSubview:autoSaveField];
+  RELEASE(autoSaveField);
 
   /*
    * Editing view
@@ -302,6 +311,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [editorField setTarget:self];
   [editorField setAction:@selector(setEditor:)];
   [v addSubview:editorField];
+  RELEASE(editorField);
 
   // Compiler
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,40,60,21)];
@@ -323,6 +333,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [compilerField setTarget:self];
   [compilerField setAction:@selector(setCompiler:)];
   [v addSubview:compilerField];
+  RELEASE(compilerField);
 
   // Debugger
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,64,60,21)];
@@ -344,6 +355,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [debuggerField setTarget:self];
   [debuggerField setAction:@selector(setDebugger:)];
   [v addSubview:debuggerField];
+  RELEASE(debuggerField);
 
   // Bundles Box
   v = [[NSBox alloc] initWithFrame: NSMakeRect(5,131,254,48)];
@@ -361,6 +373,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [bundlePathField setTarget:self];
   [bundlePathField setAction:@selector(setBundlePath:)];
   [v addSubview:bundlePathField];
+  RELEASE(bundlePathField);
 
   /*
    * Interface view
@@ -384,6 +397,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [separateBuilder setAction: @selector (setDisplayPanels:)];
   [separateBuilder setContinuous: NO];
   [v addSubview: separateBuilder];
+  RELEASE(separateBuilder);
 
   separateLauncher = [[NSButton alloc] initWithFrame: NSMakeRect(48,27,124,21)];
   [separateLauncher setTitle: @"Project Launcher"];
@@ -394,6 +408,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [separateLauncher setAction: @selector (setDisplayPanels:)];
   [separateLauncher setContinuous: NO];
   [v addSubview: separateLauncher];
+  RELEASE(separateLauncher);
 
   separateEditor = [[NSButton alloc] initWithFrame: NSMakeRect(48,6,124,21)];
   [separateEditor setTitle: @"Project Editor"];
@@ -404,6 +419,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [separateEditor setAction: @selector (setDisplayPanels:)];
   [separateEditor setContinuous: NO];
   [v addSubview: separateEditor];
+  RELEASE(separateEditor);
 
   // Some buttons
   v = [[NSBox alloc] initWithFrame: NSMakeRect(5,121,254,77)];
@@ -421,6 +437,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [promptWhenQuit setContinuous: NO];
   [v addSubview: promptWhenQuit];
   [promptWhenQuit sizeToFit];
+  RELEASE(promptWhenQuit);
 
   useExternalEditor = [[NSButton alloc] initWithFrame:NSMakeRect(48,28,204,21)];
   [useExternalEditor setTitle: @"Use external Editor"];
@@ -432,6 +449,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [useExternalEditor setContinuous: NO];
   [v addSubview: useExternalEditor];
   [useExternalEditor sizeToFit];
+  RELEASE(useExternalEditor);
 }
 
 @end
@@ -455,27 +473,11 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   RELEASE(preferencesDict);
   
   RELEASE(prefWindow);
-  RELEASE(prefPopup);
-  
-  RELEASE(prefEmptyView);
+
   RELEASE(prefBuildingView);
   RELEASE(prefMiscView);
   RELEASE(prefEditingView);
   RELEASE(prefSavingView);
-
-  RELEASE(useExternalEditor);
-  RELEASE(promptWhenQuit);
-  RELEASE(promptOnClean);
-  RELEASE(saveOnQuit);
-  RELEASE(saveAutomatically);
-  RELEASE(keepBackup);
-
-  RELEASE(editorField);
-  RELEASE(debuggerField);
-  RELEASE(compilerField);
-  RELEASE(bundlePathField);
-
-  RELEASE(autoSaveField);
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 
@@ -595,25 +597,25 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 - (void)popupChanged:(id)sender
 {
   NSView *view = nil;
-  
-  switch([sender indexOfSelectedItem]) 
-  {
-  case 0:
-    view = [prefBuildingView retain];
-    break;
-  case 1:
-    view = [prefSavingView retain];
-    break;
-  case 2:
-    view = [prefEditingView retain];
-    break;
-  case 3:
-    view = [prefMiscView retain];
-    break;
-  case 4:
-    view = [prefInterfaceView retain];
-    break;
-  }
+
+  switch ([sender indexOfSelectedItem]) 
+    {
+    case 0:
+      view = prefBuildingView;
+      break;
+    case 1:
+      view = prefSavingView;
+      break;
+    case 2:
+      view = prefEditingView;
+      break;
+    case 3:
+      view = prefMiscView;
+      break;
+    case 4:
+      view = prefInterfaceView;
+      break;
+    }
 
   [(NSBox *)prefEmptyView setContentView:view];
   [prefEmptyView display];

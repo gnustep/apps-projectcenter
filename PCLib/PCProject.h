@@ -119,6 +119,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 @class PCProjectDebugger;
 @class PCProjectEditor;
 @class PCEditorController;
+@class PCButton;
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
@@ -140,16 +141,16 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     PCEditorController *editorController;
     NSBox *box;
 
-    NSButton           *fileIcon;
+    NSImageView        *fileIcon;
     NSTextField        *fileIconTitle;
 
-    id          projectAttributeInspectorView;
-    NSTextField *ccOptField;
-    NSTextField *ldOptField;
-    NSTextField *installPathField;
-    NSTextField *toolField;
-    NSTextField *headersField;
-    NSTextField *libsField;
+    id                 projectAttributeInspectorView;
+    NSTextField        *ccOptField;
+    NSTextField        *ldOptField;
+    NSTextField        *installPathField;
+    NSTextField        *toolField;
+    NSTextField        *headersField;
+    NSTextField        *libsField;
 
     id          projectProjectInspectorView;
     NSTextField *projectTypeField;

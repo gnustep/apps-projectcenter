@@ -178,16 +178,17 @@ static PCAppProj *_creator = nil;
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    id obj;
+  NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  id obj;
 
-    NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
+  NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
 
-    obj = [dict objectForKey:PCProjectBuilderClass];    
-    if ([obj isEqualToString:@"PCAppProj"]) {
+  obj = [dict objectForKey:PCProjectBuilderClass];    
+  if ([obj isEqualToString:@"PCAppProj"])
+    {
       return [[[PCAppProject alloc] initWithProjectDictionary:dict path:[path stringByDeletingLastPathComponent]] autorelease];
     }
-    return nil;
+  return nil;
 }
 
 @end
