@@ -27,8 +27,8 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "ProjectCenter 0.2.7";
-  FullVersionID = "0.2.7";
+  ApplicationRelease = "ProjectCenter 0.3.0pre1";
+  FullVersionID = "0.3.0pre1";
   Authors = ("Philippe C.D. Robert <phr@3dkit.org>");
   URL = "http://www.projectcenter.ch";
   Copyright = "Copyright (C) 2001 - 2002 Free Software Foundation";

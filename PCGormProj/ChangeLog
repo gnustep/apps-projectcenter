@@ -1,3 +1,13 @@
+2002-03-01 15:38  probert
+
+	* GNUmakefile, PCGormMakefileFactory.h, PCGormMakefileFactory.m,
+	PCGormProj.pcproj, PCGormProject.m: This project now uses the
+	makefile factory too.
+
+2002-02-17 21:10  probert
+
+	* ChangeLog: Updated the ChangeLog files
+
 2002-02-16 22:21  probert
 
 	* baseInterface.gorm: Enhanced the default menu entries by adding

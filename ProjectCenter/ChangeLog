@@ -1,3 +1,38 @@
+2002-03-04 11:19  CaS
+
+	* PCMenuController.m: Tidy save panel a bit.
+
+2002-03-03 14:45  probert
+
+	* ProjectCenter_main.m: Removed conflicting keybindings ( font and
+	find panel )
+
+2002-03-02 14:58  probert
+
+	* ProjectCenter_main.m: The font menu is back ( needed by the file
+	editors )
+
+2002-02-21 13:25  probert
+
+	* PCAppController.m: Fixed a bug which prevented the app to load a
+	project when being told via application:openfile:
+
+2002-02-21 12:41  probert
+
+	* PCMenuController.m: The path for creating new projects is now
+	maintained by a separate defaults entry.
+
+2002-02-21 11:45  probert
+
+	* PCAppController+MenuHandling.h, PCAppController+MenuHandling.m,
+	PCMenuController.m, ProjectCenter_main.m: All project components
+	are now accessible via menu entry. Furthermore it is also possible
+	to launch the selected target via menu entry.
+
+2002-02-17 21:10  probert
+
+	* ChangeLog: Updated the ChangeLog files
+
 2002-02-17 21:03  probert
 
 	* PCPrefController.h, PCPrefController.m: Added a new preference

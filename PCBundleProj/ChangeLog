@@ -1,3 +1,17 @@
+2002-03-01 15:22  probert
+
+	* PCBundleProj.m: Fix to avoid warning
+
+2002-03-01 15:18  probert
+
+	* GNUmakefile, PCBundleMakefileFactory.h,
+	PCBundleMakefileFactory.m, PCBundleProj.pcproj, PCBundleProject.m:
+	The project now uses the shared makefile factory too.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 16:01  probert
 
 	* GNUmakefile, PCBundleProj.pcproj: Added libProjectCenter to the

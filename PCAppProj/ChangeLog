@@ -1,3 +1,22 @@
+2002-03-01 14:30  probert
+
+	* PCAppProject.m: Removed old include statements.
+
+2002-03-01 14:28  probert
+
+	* GNUmakefile, PCAppMakefileFactory.h, PCAppMakefileFactory.m,
+	PCAppProj.pcproj, PCAppProject.m: The project now uses the makefile
+	factory to create makefiles.
+
+2002-01-07 16:37  probert
+
+	* PC.proj: Somehow $(GNUSTEP_LOCAL_ROOT) is enough for the install
+	path to be correct.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 16:01  probert
 
 	* GNUmakefile, PCAppProj.pcproj: Added libProjectCenter to the

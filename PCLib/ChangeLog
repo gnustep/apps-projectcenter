@@ -1,3 +1,101 @@
+2002-03-03 14:47  probert
+
+	* PCHistoryController.m, PCProject.m: Fixed mem leak in the history
+	controller.
+
+2002-03-02 14:58  probert
+
+	* PCEditor.m, PCEditorView.m: Editors should now use the font
+	panel.
+
+2002-03-02 14:15  probert
+
+	* PCEditor.h, PCEditor.m, PCEditorController.m: Using
+	saveFileIfNeeded instead of saveFile.
+
+2002-03-02 14:11  probert
+
+	* PCEditorController.h, PCEditorController.m, PCProject.m,
+	PCProjectManager.m: The timed safe mechanism now also saves all
+	project files, if needed.
+
+2002-03-01 16:19  probert
+
+	* PCMakefileFactory.h, PCMakefileFactory.m: Added support for tool
+	projects.
+
+2002-03-01 15:58  probert
+
+	* PCMakefileFactory.h, PCMakefileFactory.m: Support for libraries
+	added.
+
+2002-03-01 15:18  probert
+
+	* PCMakefileFactory.h, PCMakefileFactory.m: Support for bundles
+
+2002-03-01 11:39  probert
+
+	* GNUmakefile, PCMakefileFactory.h, PCMakefileFactory.m,
+	ProjectCenter.h, ProjectCenter.pcproj: Began to clean up the
+	makefile creation code. Introduced a shared factory for that
+	purpose which implements basic stuff used by all projects.
+
+2002-02-22 19:48  probert
+
+	* PCEditorController.m: Fixed a bug which caused PC to crash when
+	an external GS editor was used, thx to Richard for pointing me to
+	the right place!
+
+2002-02-21 22:26  probert
+
+	* PCProjectManager.m: Removed annoying alert panel raised upon
+	saving all projects
+
+2002-02-21 22:17  probert
+
+	* GNUmakefile, PCBrowserController.m, PCHistoryController.h,
+	PCHistoryController.m, PCProject.h, PCProject.m, ProjectCenter.h,
+	ProjectCenter.pcproj: First attempt of integrating a history
+	browser for better file navigation.  There are still bugs though...
+
+2002-02-21 13:50  probert
+
+	* PCEditorController.m: When a GNUstep app is used as external
+	editor, NSWorkspace is used to open the file using the repsective
+	app.
+
+2002-02-21 12:29  probert
+
+	* PCProject.m: Removing a file causes the browser to be updated
+
+2002-02-21 12:25  probert
+
+	* PCBrowserController.m, PCProject.m: If the project changes the
+	browser reloads the correct column.
+
+2002-02-21 11:45  probert
+
+	* PCProject+ComponentHandling.h, PCProject+ComponentHandling.m,
+	PCProject.h, PCProject.m: All project components are now accessible
+	via menu entry. Furthermore it is also possible to launch the
+	selected target via menu entry.
+
+2002-02-21 11:15  probert
+
+	* PCEditorController.h, PCEditorController.m, PCProject.m: Single
+	click always invokes the internal editor now.
+
+2002-02-21 11:05  probert
+
+	* PCBrowserController.h, PCBrowserController.m, PCProject.h,
+	PCProject.m: Cleaned up the code which is called upon seleting a
+	file in the project browser. Now libraries etc. do not show up in
+	the internal editor anymore.
+
+2002-02-17 21:10  probert
+
+	* ChangeLog: Updated the ChangeLog files
+
 2002-02-17 21:02  probert
 
 	* PCDefines.h: Added the TabBehaviour define required by the

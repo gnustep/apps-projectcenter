@@ -1,3 +1,13 @@
+2002-03-01 16:32  probert
+
+	* GNUmakefile, PCToolMakefileFactory.h, PCToolMakefileFactory.m,
+	PCToolProj.pcproj, PCToolProject.m: This project now uses the
+	makefile factory too.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
 2002-01-07 16:01  probert
 
 	* GNUmakefile, PCToolProj.pcproj: Added libProjectCenter to the
