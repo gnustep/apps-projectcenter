@@ -181,7 +181,7 @@ static int  _tabFlags       = PCTab4Sp;
     }
     */
 
-    if( ![[anEvent characters] compare: @"\t"] )
+    if( [[anEvent characters] isEqualToString:@"\t"] )
     {
         switch( _tabFlags )
 	{

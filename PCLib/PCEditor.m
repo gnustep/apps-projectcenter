@@ -72,7 +72,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   [iView setMinSize:NSMakeSize (0, 0)];
   [iView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [iView setRichText:NO];
+  [iView setRichText:YES];
+  [iView setUsesFontPanel:YES];
   [iView setEditable:YES];
   [iView setSelectable:YES];
   [iView setVerticallyResizable:YES];
@@ -95,7 +96,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   [eView setMinSize: NSMakeSize (0, 0)];
   [eView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [eView setRichText:NO];
+  [eView setRichText:YES];
+  [eView setUsesFontPanel:YES];
   [eView setEditable:YES];
   [eView setSelectable:YES];
   [eView setVerticallyResizable:YES];
