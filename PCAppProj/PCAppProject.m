@@ -216,10 +216,27 @@
 
 - (void)updateValuesFromProjectDict
 {
+  NSRect frame = {{0,0}, {64, 64}};
+  NSImage *image;
+  NSString *path = nil;
+  NSString *_icon;
+
   [super updateValuesFromProjectDict];
 
   [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
+
+  if ((_icon = [projectDict objectForKey:PCAppIcon])) {
+    path = [projectPath stringByAppendingPathComponent:_icon];
+  }
+
+  if (path && (image = [[NSImage alloc] initWithContentsOfFile:path])) {
+    frame.size = [image size];
+    [appIconView setFrame:frame];
+    [appIconView setImage:image];
+    [appIconView display];
+    RELEASE(image);
+  }
 }
 
 - (void)clearAppIcon:(id)sender
@@ -272,6 +289,8 @@
   [appIconView setImage:image];
   [appIconView display];
   RELEASE(image);
+
+  [self writeMakefile];
 
   return YES;
 }
