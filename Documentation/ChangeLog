@@ -1,3 +1,13 @@
+2004-07-03 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectManager.m:
+	(addProjectFiles:): Don't copy files that already in project 
+	directory structure. This allows adding of subproject's files to
+	project resources.
+
+	* Across the ProjectCenter: Comment out calls for PCLog*. This is
+	speedup PC.
+	
 2004-06-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFileManager.m:
@@ -15,6 +25,8 @@
 	* Library/PCFileManager.m: 
 	(panel:shouldShowFilename:): Fix filtering out files already 
 	included in project. Optimized.
+
+	* GNUmakefile: Change VERSION var to 0.4.1pre.
 	
 2004-06-20 Serg Stoyan <stoyan255@ukr.net>
 

@@ -1377,6 +1377,11 @@ NSString
   return category;
 }*/
 
+/*- (NSString *)keyForCategoryPath:(NSString *)categoryPath
+{
+  return [self keyForCategory:[self categoryForCategoryPath:categoryPath]];
+}*/
+
 - (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath
 {
   NSString *category = nil;
@@ -1397,11 +1402,6 @@ NSString
 
   return key;
 }
-
-/*- (NSString *)keyForCategoryPath:(NSString *)categoryPath
-{
-  return [self keyForCategory:[self categoryForCategoryPath:categoryPath]];
-}*/
 
 @end
 
