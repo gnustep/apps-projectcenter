@@ -128,7 +128,9 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
     int		count = [files count];
     
     if (count == 0) {
+#ifdef DEBUG
       NSLog(@"<%@ %x>: create rows for column in %@ (%x) aborted - 0 files!",[self class],self,[project class],project);
+#endif
       return;
     }
 

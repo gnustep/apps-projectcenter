@@ -877,7 +877,9 @@
 {
     NSString *key;
 
+#ifdef DEBUG
     NSLog(@"<%@ %x>: content at path %@",[self class],self,keyPath);
+#endif
 
     if ([keyPath isEqualToString:@""] || [keyPath isEqualToString:@"/"]) {
         return [rootCategories allKeys];
