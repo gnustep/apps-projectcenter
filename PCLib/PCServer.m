@@ -122,6 +122,7 @@
   [window setTitle:aFile];
 
   textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
+  [textView setMinSize: NSMakeSize (0, 0)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setRichText:NO];
   [textView setEditable:NO];
@@ -130,6 +131,8 @@
   [textView setHorizontallyResizable:NO];
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setBackgroundColor:[NSColor whiteColor]];
+  [[textView textContainer] setContainerSize: 
+			      NSMakeSize ([textView frame].size.width,1e7)];
   [[textView textContainer] setWidthTracksTextView:YES];
 
   scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];

@@ -26,6 +26,7 @@
 
 #import "PCEditorView.h"
 
+#define COLOURISE 0
 #define SCANLOC [scanner scanLocation]
 
 @implementation PCEditorView
@@ -77,7 +78,9 @@ static BOOL isInitialised = NO;
   scanner = [[NSScanner alloc] initWithString:aString];
 
   [super setString:aString];
+#ifdef COLOURISE
   [self colourise:self];
+#endif COLOURISE
 }
 
 - (void)colourise:(id)sender

@@ -83,6 +83,13 @@
   [logOutput setBackgroundColor:[NSColor lightGrayColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
   [[logOutput textContainer] setHeightTracksTextView:YES];
+  [logOutput setHorizontallyResizable: NO];
+  [logOutput setVerticallyResizable: YES];
+  [logOutput setMinSize: NSMakeSize (0, 0)];
+  [logOutput setMaxSize: NSMakeSize (1E7, 1E7)];
+  [[logOutput textContainer] setContainerSize: 
+                               NSMakeSize ([logOutput frame].size.width,1e7)];
+  [[logOutput textContainer] setWidthTracksTextView:YES];
 
   [scrollView1 setDocumentView:logOutput];
 
@@ -104,8 +111,15 @@
   [errorOutput setSelectable:YES];
   [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [errorOutput setBackgroundColor:[NSColor whiteColor]];
+  [errorOutput setHorizontallyResizable: NO];  
+  [errorOutput setVerticallyResizable: YES];
+  [errorOutput setMinSize: NSMakeSize (0, 0)];
+  [errorOutput setMaxSize: NSMakeSize (1E7, 1E7)];
+  [[errorOutput textContainer] setContainerSize: 
+				 NSMakeSize ([errorOutput frame].size.width, 1e7)];
+
   [[errorOutput textContainer] setWidthTracksTextView:YES];
-  [[errorOutput textContainer] setHeightTracksTextView:YES];
+  //[[errorOutput textContainer] setHeightTracksTextView:YES];
 
   [scrollView2 setDocumentView:errorOutput];
 
