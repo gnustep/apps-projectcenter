@@ -62,7 +62,8 @@
       [projectTypeAccessaryView setBorderType:NSGrooveBorder];
       [projectTypeAccessaryView addSubview:projectTypePopup];
       [projectTypeAccessaryView sizeToFit];
-      [projectTypeAccessaryView setAutoresizingMask: NSViewWidthSizable];
+      [projectTypeAccessaryView setAutoresizingMask:
+	NSViewMinXMargin | NSViewMaxXMargin];
 
       RELEASE(projectTypePopup);
     }
@@ -89,6 +90,8 @@
     }
 
     [projectTypePopup addItemWithTitle:name];
+    [projectTypePopup sizeToFit];
+    [projectTypeAccessaryView sizeToFit];
 }
 
 - (void)setAppController:(id)anObject
@@ -158,6 +161,7 @@
     sp = [NSSavePanel savePanel];
 
     [sp setTitle:@"Create new project..."];
+    [sp setAccessoryView:nil];
     [sp setAccessoryView:projectTypeAccessaryView];
 
     dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];

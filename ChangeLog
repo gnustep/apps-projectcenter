@@ -1,3 +1,9 @@
+Mon Mar 04 10:15:00 2002  Richard Frith-Macdonald <rfm@gnu.org>
+
+	* ProjectCenter/PCMenuController.m: Fix resizing of save panel
+	acessory view so that the view is the correct size for the
+	popup menu in it.
+
 Sat Jan 19 09:46:17 2002  Nicola Pero  <n.pero@mi.flashnet.it>
 
 	* ChangeLog: Added again, to record changes in top level files.
