@@ -512,6 +512,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveFile
 {
+    if (!activeProject) 
+    {
+        return NO;
+    }
+
+    return [activeProject saveFile];
 }
 
 - (BOOL)saveFileAs:(NSString *)path
@@ -520,6 +526,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)revertFile
 {
+    if (!activeProject) 
+    {
+        return NO;
+    }
+
+    return [activeProject revertFile];
 }
 
 - (BOOL)renameFileTo:(NSString *)path

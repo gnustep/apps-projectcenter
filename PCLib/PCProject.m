@@ -863,9 +863,9 @@
     return NO;
 }
 
-- (BOOL)saveFileNamed:(NSString *)file
+- (BOOL)saveFile
 {
-    return NO;
+    return [editorController saveFile];
 }
 
 - (BOOL)saveAllFiles
@@ -880,6 +880,11 @@
     BOOL ret = YES;
 
     return ret;
+}
+
+- (BOOL)revertFile
+{
+    return [editorController revertFile];
 }
 
 - (BOOL)writeSpecFile

@@ -26,6 +26,8 @@
 
 #import <AppKit/AppKit.h>
 
+@class PCEditor;
+
 @interface PCEditorView : NSTextView
 {
   NSScanner *scanner;
@@ -33,11 +35,13 @@
   @private
   NSRange range;
   NSArray *_keywords;
+  PCEditor *editor;
 }
 
 - (id)initWithFrame:(NSRect)frameRect;
 - (void)dealloc;
 
+- (void)setEditor:(PCEditor *)anEditor;
 - (void)setString:(NSString *)aString;
 
 - (void)colourise:(id)sender;

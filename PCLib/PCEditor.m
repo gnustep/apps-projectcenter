@@ -38,6 +38,7 @@
   [window setMinSize:NSMakeSize(512,320)];
 
   view = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
+  [view setEditor:self];
 
   [view setMinSize: NSMakeSize (0, 0)];
   [view setMaxSize:NSMakeSize(1e7, 1e7)];
@@ -155,7 +156,14 @@
 
 	if( ret == YES )
 	{
-	    // SAVE
+	    ret = [self saveFile];
+
+	    if( ret == NO )
+	    {
+	        NSRunAlertPanel(@"Save Failed!",
+		                @"Could not save file '%@'!",
+				@"OK",nil,nil,path);
+	    }
 	}
 
         [window setDocumentEdited:NO];
@@ -164,12 +172,32 @@
     {
     }
 
-    [window performClose:self];
-	
     if( delegate && [delegate respondsToSelector:@selector(editorDidClose:)] )
     {
         [delegate editorDidClose:self];
     }
+}
+
+- (BOOL)saveFile
+{
+    if( isEmbedded == NO )
+    {
+	[window setDocumentEdited:NO];
+    }
+
+    return [[view text] writeToFile:path atomically:YES];
+}
+
+- (BOOL)revertFile
+{
+    NSString *text = [NSString stringWithContentsOfFile:path];
+
+    if( isEmbedded == NO )
+    {
+	[window setDocumentEdited:NO];
+    }
+
+    [view setText:text];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotif

@@ -228,10 +228,12 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (BOOL)save;
 - (BOOL)saveAt:(NSString *)projPath;
 
-- (BOOL)saveFileNamed:(NSString *)file;
+- (BOOL)saveFile;
 - (BOOL)saveAllFiles;
 - (BOOL)saveAllFilesIfNeeded;
     // Saves all the files that need to be saved.
+
+- (BOOL)revertFile;
 
 - (BOOL)writeSpecFile;
 

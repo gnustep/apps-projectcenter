@@ -49,6 +49,13 @@
 
 - (void)editorDidClose:(id)sender;
 
+// ===========================================================================
+// ==== File handling
+// ===========================================================================
+
+- (BOOL)saveFile;
+- (BOOL)revertFile;
+
 @end
 
 #endif // _PCEDITORCONTROLLER_H_

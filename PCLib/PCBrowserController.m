@@ -25,6 +25,8 @@
 */
 
 #import "PCBrowserController.h"
+#import "PCEditorController.h"
+#import "PCEditor.h"
 #import "PCProject.h"
 #import "PCFileManager.h"
 

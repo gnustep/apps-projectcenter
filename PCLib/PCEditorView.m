@@ -25,6 +25,7 @@
 */
 
 #import "PCEditorView.h"
+#import "PCEditor.h"
 
 #define COLOURISE 0
 #define SCANLOC [scanner scanLocation]
@@ -79,12 +80,18 @@ static BOOL isInitialised = NO;
 
 - (void)dealloc
 {
-  if (scanner) {
+  if (scanner) 
+  {
     [scanner release];
   }
   [_keywords release];
 
   [super dealloc];
+}
+
+- (void)setEditor:(PCEditor *)anEditor
+{
+    editor = anEditor;
 }
 
 - (void)setString:(NSString *)aString
@@ -358,8 +365,19 @@ static BOOL isInitialised = NO;
   }
 }
 
-- (void)keyDown: (NSEvent *)anEvent
+- (void)keyDown:(NSEvent *)anEvent
 {
+    NSString *chars = [anEvent charactersIgnoringModifiers];
+    int modifiers = [anEvent modifierFlags];
+
+    if(([chars lossyCString][0] == 's') && (modifiers & NSAlternateKeyMask))
+    {
+	[editor saveFile];
+
+	return;
+    }
+
+    // Only if not embedded - FIXME!
     if( [[self window] isDocumentEdited] == NO )
     {
 	[[self window] setDocumentEdited:YES];

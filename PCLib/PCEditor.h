@@ -41,6 +41,9 @@
 - (void)show;
 - (void)close;
 
+- (BOOL)saveFile;
+- (BOOL)revertFile;
+
 - (void)windowWillClose:(NSNotification *)aNotif;
 
 @end

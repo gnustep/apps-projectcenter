@@ -124,6 +124,11 @@
         editor = [editorDict objectForKey:key];
 
 	[editor close];
+
+	if( [editor isEmbedded] == NO )
+	{
+	    [[editor editorWindow] performClose:self];
+	}
     }
     [editorDict removeAllObjects];
 }
@@ -133,6 +138,52 @@
     PCEditor *editor = (PCEditor*)sender;
 
     [editorDict removeObjectForKey:[editor path]];
+}
+
+// ===========================================================================
+// ==== File handling
+// ===========================================================================
+
+- (BOOL)saveFile
+{
+    NSEnumerator *enumerator = [editorDict keyEnumerator];
+    PCEditor *editor;
+    NSString *key;
+    NSWindow *window;
+
+    while(( key = [enumerator nextObject] ))
+    {
+        editor = [editorDict objectForKey:key];
+	window = [editor editorWindow];
+
+	if( [window isKeyWindow] && [window isMainWindow] )
+	{
+	    return [editor saveFile];
+	}
+    }
+
+    return NO;
+}
+
+- (BOOL)revertFile
+{
+    NSEnumerator *enumerator = [editorDict keyEnumerator];
+    PCEditor *editor;
+    NSString *key;
+    NSWindow *window;
+
+    while(( key = [enumerator nextObject] ))
+    {
+        editor = [editorDict objectForKey:key];
+	window = [editor editorWindow];
+
+	if( [window isKeyWindow] && [window isMainWindow] )
+	{
+	    return [editor revertFile];
+	}
+    }
+
+    return NO;
 }
 
 @end
