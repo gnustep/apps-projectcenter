@@ -101,7 +101,13 @@
     NSArray		*dir;
     NSString 		*path = [[NSUserDefaults standardUserDefaults] objectForKey:BundlePaths];
 
-    if (!path || path == @"" || ![[NSFileManager defaultManager] fileExistsAtPath:path]) {
+    if (!path || [path isEqualToString:@""]) {
+      path = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+      [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
+      [[NSUserDefaults standardUserDefaults] synchronize];
+    }
+
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
       [NSException raise:@"PCBundleLoaderPathException" format:@"No valid bundle path specified!"];
       return;
     }
