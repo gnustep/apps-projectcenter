@@ -212,19 +212,31 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
+  NSString *installDir = [projectDict objectForKey:PCInstallDir];
+
   [mff appendString:@"\n#\n# Bundle\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
-    [projectDict objectForKey:PCRelease]]];
+  [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"BUNDLE_NAME = %@\n",
     projectName]];
-  [mff appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION = %@\n",
-   [projectDict objectForKey:PCBundleExtension]]];
-  [mff appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR = %@\n",
-    [projectDict objectForKey:PCInstallDir]]];
   [mff appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS = %@\n",
     projectName, [projectDict objectForKey:PCPrincipalClass]]];
+  [mff appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION = %@\n",
+    [projectDict objectForKey:PCBundleExtension]]];
+
+  if ([installDir isEqualToString:@""])
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
+        projectName]];
+    }
+  else
+    {
+      [mff appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR = %@\n",
+        installDir]];
+    }
 }
 
 - (void)appendLibraries:(PCMakefileFactory *)mff

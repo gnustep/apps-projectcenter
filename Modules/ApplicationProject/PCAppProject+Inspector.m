@@ -66,7 +66,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   //
   docExtColumn = [(NSTableColumn *)[NSTableColumn alloc] 
     initWithIdentifier: @"extension"];
-  [[docExtColumn headerCell] setStringValue:@"Extenstion"];
+  [[docExtColumn headerCell] setStringValue:@"Extension"];
   [docExtColumn setWidth:75];
   docIconColumn = [(NSTableColumn *)[NSTableColumn alloc] 
     initWithIdentifier: @"icon"];
@@ -311,9 +311,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // Document Icons
 - (void)addDocIcon:(id)sender
 {
-  int row;
+  int                 row;
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:2];
-  int selectedRow = [docIconsList selectedRow];
+  int                 selectedRow = [docIconsList selectedRow];
 
   [entry setObject:@"" forKey:@"Extension"];
   [entry setObject:@"" forKey:@"Icon"];

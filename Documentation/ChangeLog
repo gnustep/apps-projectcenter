@@ -1,5 +1,37 @@
 2004-06-20 Serg Stoyan <stoyan255@ukr.net>
 
+	* Library/PCProjectWindow.m: 
+	(activeProjectDidChange:): Take into account subprojects of 
+	subprojects.
+	(showProjectLaunch:): Remove attention panel if project is not
+	executable.
+	
+	* Library/PCProjectBrowser.m: (activeProjectDidChange:): ditto.
+	Take into account subprojects of subprojects.
+	
+	* Library/PCProjectLauncher.m:
+	(debug:): Check if project is executable and order attention panel
+	if not.
+
+	* Modules/ApplicationProject/Resources/Inspector.gorm:
+	Fix connection between "Add" button and addDocIcon: method.
+	
+	* Modules/ApplicationProject/PCAppProject.m: 
+	(appendApplication:): Removed.
+	(appndHead:): Move appendApplication's code here. Write into 
+	GNUmakefile <projectName>_STANDARD_INSTALL = no if install dir 
+	attribute was not set.
+	* Modules/BundleProject/PCBundleProject.m: 
+	(appendHead:): Write into GNUmakefile 
+	<projectName>_STANDARD_INSTALL = no if install dir attribute was 
+	not set.
+	* Modules/RenaissanceProject/PCRenaissanceProject.m: 
+	(appendApplication:): ditto.
+	* Modules/ToolProject/PCToolProject.m:
+	(appendHead:): ditto
+	
+2004-06-19 Serg Stoyan <stoyan255@ukr.net>
+
 	* Library/PCProjectManager.m:
 	(convertLegacyProject:atPath:): Get files list from .pcproj file not
 	from directories.
@@ -39,7 +71,7 @@
 	(filesForAdd): Fix setting panel attributes.
 	
 	* Modules/AggregateProject/PCAggregateProject.m: 
-	(appendApplication:): (appendHead:) Added generating of VERSION var.
+	(appendHead:) Added generating of VERSION var.
 	* Modules/ApplicationProject/PCAppProject.m: 
 	(appendApplication:): ditto.
 	* Modules/BundleProject/PCBundleProject.m: 

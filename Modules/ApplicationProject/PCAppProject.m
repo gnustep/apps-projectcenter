@@ -412,11 +412,8 @@
   // Create the new file
   [mf createMakefileForProject:projectName];
 
-  // Head
+  // Head (Application)
   [self appendHead:mf];
-
-  // Application part
-  [self appendApplication:mf];
 
   // Subprojects
   if ([[projectDict objectForKey:PCSubprojects] count] > 0)
@@ -472,13 +469,8 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
-  [mff appendString:
-    [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
-     [projectDict objectForKey:PCInstallDir]]];
-}
+  NSString *installDir = [projectDict objectForKey:PCInstallDir];
 
-- (void)appendApplication:(PCMakefileFactory *)mff
-{
   [mff appendString:@"\n#\n# Application\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
     [projectDict objectForKey:PCRelease]]];
@@ -489,6 +481,19 @@
     
   [mff appendString:[NSString stringWithFormat:@"%@_APPLICATION_ICON = %@\n",
                      projectName, [projectDict objectForKey:PCAppIcon]]];
+
+  if ([installDir isEqualToString:@""])
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
+        projectName]];
+    }
+  else
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
+        installDir]];
+    }
 }
 
 - (void)appendTail:(PCMakefileFactory *)mff

@@ -150,7 +150,7 @@
 	    "setAppClass:",
 	    "setFile:",
 	    "clearFile:",
-	    "setDocIcon:",
+	    "addDocIcon:",
 	    "removeDocIcon:",
 	    "setCurrentLanguage:"
 	);

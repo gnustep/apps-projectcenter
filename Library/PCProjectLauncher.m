@@ -217,20 +217,29 @@ enum {
   NSDistantObject <Terminal> *terminal;
   NSFileManager              *fm = [NSFileManager defaultManager];
 
-  /* Get the Terminal application */
+  // Check if project type is executable
+  if (![project isExecutable])
+    {
+      NSRunAlertPanel(@"Debug",
+		      @"The project is not executable",
+		      @"Close", nil, nil, nil);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+  // Get the Terminal application
   terminal = (NSDistantObject<Terminal> *)[NSConnection 
     rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
 
   if (terminal == nil)
     {
-      NSRunAlertPanel(@"Attention!",
+      NSRunAlertPanel(@"Debug",
 		      @"Run Terminal application first",
 		      @"Close",nil,nil);
       [debugButton setState:NSOffState];
       return;
     }
 
-  // Executable
   pn = [dp stringByAppendingPathExtension:@"debug"];
   fp = [project projectPath];
   fp = [fp stringByAppendingPathComponent:pn];
@@ -240,7 +249,7 @@ enum {
   
   if ([fm isExecutableFileAtPath:fp] == NO)
     {
-      NSRunAlertPanel(@"Attention!",
+      NSRunAlertPanel(@"Debug",
 		      @"Can't execute %@!",
 		      @"Abort",nil,nil,pn);
       [debugButton setState:NSOffState];
@@ -273,9 +282,7 @@ enum {
 
   [debugButton setState:NSOffState];
 
-/*  RELEASE(args);
-  [runButton setEnabled:NO];
-  _isDebugging = YES;*/
+  AUTORELEASE(args);
 }
 
 - (void)run:(id)sender
@@ -293,9 +300,10 @@ enum {
     }
   else 
     {
-      NSRunAlertPanel(@"Attention!",
+      NSRunAlertPanel(@"Run",
 		      @"The project is not executable",
 		      @"Close", nil, nil, nil);
+      [runButton setState:NSOffState];
       return;
     }
 

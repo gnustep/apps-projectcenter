@@ -599,14 +599,6 @@
   NSView  *view = nil;
   NSPanel *launchPanel = nil;
 
-  if ([project isExecutable] == NO)
-    {
-      NSRunAlertPanel(@"Attention!",
-		      @"This project is not executable!",
-		      @"OK",nil,nil);
-      return;
-    }
-  
   view = [[project projectLauncher] componentView];
   launchPanel = [[project projectManager] launchPanel];
 
@@ -727,8 +719,9 @@
   NSDictionary *notifObject = [aNotif object];
   PCProject    *changedProject = [notifObject objectForKey:@"Project"];
 
-  if (changedProject != project
-      && changedProject != [project activeSubproject])
+  if (changedProject != project 
+      && changedProject != [project activeSubproject]
+      && [changedProject superProject] != [project activeSubproject])
     {
       return;
     }
@@ -743,8 +736,11 @@
 
 - (void)projectDictDidSave:(NSNotification *)aNotif
 {
-  if ([aNotif object] != project
-      && ![[project loadedSubprojects] containsObject:[aNotif object]])
+  PCProject *savedProject = [aNotif object];
+  
+  if (savedProject != project 
+      && savedProject != [project activeSubproject]
+      && [savedProject superProject] != [project activeSubproject])
     {
       return;
     }
@@ -754,13 +750,16 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif 
 {
-  if ([aNotif object] != project
-      && ![[project loadedSubprojects] containsObject:[aNotif object]])
+/*  PCProject *activeProject = [aNotif object];
+  
+  if (activeProject != project 
+      && activeProject != [project activeSubproject]
+      && [activeProject superProject] != [project activeSubproject])
     {
       return;
     }
 
-  [self makeKeyWindow];
+  [self makeKeyWindow];*/
 }
 
 - (void)preferencesDidChange:(NSNotification *)aNotif

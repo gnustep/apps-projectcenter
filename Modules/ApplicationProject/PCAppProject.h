@@ -88,7 +88,6 @@
 - (NSArray *)convertExtensions;
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;
-- (void)appendApplication:(PCMakefileFactory *)mff;
 - (void)appendTail:(PCMakefileFactory *)mff;
 
 @end

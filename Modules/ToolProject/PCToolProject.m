@@ -280,6 +280,8 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
+  NSString *installDir = [projectDict objectForKey:PCInstallDir];
+
   [mff appendString:@"\n#\n# Tool\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
     [projectDict objectForKey:PCRelease]]];
@@ -289,6 +291,19 @@
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"%@_TOOL_ICON = %@\n",
     projectName, [projectDict objectForKey:PCToolIcon]]];
+
+  if ([installDir isEqualToString:@""])
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
+        projectName]];
+    }
+  else
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
+        installDir]];
+    }
 }
 
 - (void)appendLibraries:(PCMakefileFactory *)mff
