@@ -13,15 +13,19 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 RESOURCE_SET_NAME = PCLR
 PCLR_RESOURCE_FILES_INSTALL_DIR = Library/Libraries/Resources/ProjectCenter
 #PCLR_LANGUAGES = English German French Italian TraditionalChinese
-#PCLR_LOCALIZED_RESOURCE_FILES = Localizable.strings
-#PCLR_RESOURCE_DIRS = Languages
+#PCLR_LOCALIZED_RESOURCE_FILES = \
+
+PCLR_RESOURCE_COMPONENTS = \
+  NewSubproject.gorm \
+  ProjectInspector.gorm
+  
 PCLR_RESOURCE_FILES = \
   cfile.template \
   cheader.template \
   class.template \
   gsmarkup.template \
   header.template \
-  protocol.template 
+  protocol.template
 
 
 -include GNUmakefile.preamble

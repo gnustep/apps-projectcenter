@@ -34,64 +34,61 @@
   PCProject        *project;
   NSDictionary     *projectDict;
 
-  NSPanel          *inspectorPanel;
-  NSBox            *contentView;
-  NSPopUpButton    *inspectorPopup;
-  NSBox            *hLine;
-  NSBox            *inspectorView;
+  IBOutlet NSPanel       *inspectorPanel;
+  IBOutlet NSBox         *contentView;
+  IBOutlet NSPopUpButton *inspectorPopup;
+  IBOutlet NSBox         *inspectorView;
 
   // Build Attributes
-  NSBox          *buildAttributesView;
-  NSTextField    *projectNameLabel;
-  NSPopUpButton  *searchOrderPopup;
-  NSTableView    *searchOrderList;
-  NSTableColumn  *searchOrderColumn;
-  NSScrollView   *searchOrderScroll;
-  NSMutableArray *searchItems;
-  NSArray        *searchHeaders;
-  NSArray        *searchLibs;
-  NSTextField    *searchOrderTF;
-  NSButton       *searchOrderSet;
-  NSButton       *searchOrderRemove;
-  NSButton       *searchOrderAdd;
-  NSTextField    *cppOptField;
-  NSTextField    *objcOptField;
-  NSTextField    *cOptField;
-  NSTextField    *ldOptField;
-  NSTextField    *installPathField;
-  NSTextField    *toolField;
+  IBOutlet NSBox          *buildAttributesView;
+  IBOutlet NSTextField    *projectNameLabel;
+  IBOutlet NSPopUpButton  *searchOrderPopup;
+  IBOutlet NSScrollView   *searchOrderScroll;
+  NSTableView             *searchOrderList;
+  NSTableColumn           *searchOrderColumn;
+  NSMutableArray          *searchItems;
+  NSArray                 *searchHeaders;
+  NSArray                 *searchLibs;
+  IBOutlet NSTextField    *searchOrderTF;
+  IBOutlet NSButton       *searchOrderSet;
+  IBOutlet NSButton       *searchOrderRemove;
+  IBOutlet NSButton       *searchOrderAdd;
+  IBOutlet NSTextField    *cppOptField;
+  IBOutlet NSTextField    *objcOptField;
+  IBOutlet NSTextField    *cOptField;
+  IBOutlet NSTextField    *ldOptField;
+  IBOutlet NSTextField    *installPathField;
+  IBOutlet NSTextField    *toolField;
 
   // Project Attributes
   // Suuplied by concrete project
   NSView           *projectAttributesView;
 
   // Project Description
-  NSBox          *projectDescriptionView;
-  NSTextField    *descriptionField;
-  NSTextField    *releaseField;
-  NSTextField    *licenseField;
-  NSTextField    *licDescriptionField;
-  NSTextField    *urlField;
-  NSBox          *authorsBox;
+  IBOutlet NSBox          *projectDescriptionView;
+  IBOutlet NSTextField    *descriptionField;
+  IBOutlet NSTextField    *releaseField;
+  IBOutlet NSTextField    *licenseField;
+  IBOutlet NSTextField    *licDescriptionField;
+  IBOutlet NSTextField    *urlField;
   NSTableView    *authorsList;
   NSTableColumn  *authorsColumn;
-  NSScrollView   *authorsScroll;
+  IBOutlet NSScrollView   *authorsScroll;
   NSMutableArray *authorsItems;
-  NSButton       *authorAdd;
-  NSButton       *authorRemove;
-  NSButton       *authorUp;
-  NSButton       *authorDown;
+  IBOutlet NSButton       *authorAdd;
+  IBOutlet NSButton       *authorRemove;
+  IBOutlet NSButton       *authorUp;
+  IBOutlet NSButton       *authorDown;
 
   // File Attributes
-  NSBox          *fileAttributesView;
-  NSImageView    *fileIconView;
-  NSTextField    *fileNameField;
+  IBOutlet NSBox          *fileAttributesView;
+  IBOutlet NSImageView    *fileIconView;
+  IBOutlet NSTextField    *fileNameField;
 }
 
 // ============================================================================
 // ==== Intialization & deallocation
 // ============================================================================
-- (void)_initUI;
 - (id)initWithProjectManager:(PCProjectManager *)manager;
 - (void)close;
 - (void)dealloc;
@@ -99,6 +96,7 @@
 // ============================================================================
 // ==== Panel and contents
 // ============================================================================
+- (BOOL)loadPanel;
 - (NSPanel *)panel;
 - (NSView *)contentView;
 

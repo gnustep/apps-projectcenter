@@ -12,24 +12,26 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #LIBRARY_VAR = PROJECTCENTER
 #PACKAGE_NAME = ProjectCenter
 
-VERSION = 0.4.0
-LIBRARY_NAME = libProjectCenter
-libProjectCenter_HEADER_FILES_INSTALL_DIR = ProjectCenter
+#VERSION = 0.4.0
+FRAMEWORK_NAME = ProjectCenter
+ProjectCenter_CURRENT_VERSION_NAME = 0.4.0
+ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
+
+#libProjectCenter_HEADER_FILES_INSTALL_DIR = ProjectCenter
 #HEADERS_INSTALL = $(libProjectCenter_HEADER_FILES)
 
-libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
+ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 
 #
 # Subprojects
 #
-SUBPROJECTS = Resources
-
+#SUBPROJECTS = Resources
 
 #
 # Header files
 #
 
-libProjectCenter_HEADER_FILES = \
+ProjectCenter_HEADER_FILES = \
   PCBundleLoader.h \
   PCFileManager.h \
   PCFileCreator.h \
@@ -72,7 +74,7 @@ libProjectCenter_HEADER_FILES = \
 # Class files
 #
 
-libProjectCenter_OBJC_FILES = \
+ProjectCenter_OBJC_FILES = \
   PCBundleLoader.m \
   PCFileManager.m \
   PCFileManager+UInterface.m \
@@ -103,9 +105,25 @@ libProjectCenter_OBJC_FILES = \
   PCTextFinder.m \
   PCTextFinder+UInterface.m 
 
+#
+# Resources
+#
+ProjectCenter_RESOURCE_FILES = \
+  Resources/NewSubproject.gorm \
+  Resources/ProjectInspector.gorm \
+  Resources/BuildAttributes.gorm \
+  Resources/ProjectDescription.gorm \
+  Resources/FileAttributes.gorm \
+  Resources/cfile.template \
+  Resources/cheader.template \
+  Resources/class.template \
+  Resources/gsmarkup.template \
+  Resources/header.template \
+  Resources/protocol.template
+
 -include GNUmakefile.preamble
 
-include $(GNUSTEP_MAKEFILES)/library.make
+include $(GNUSTEP_MAKEFILES)/framework.make
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 
 -include GNUmakefile.postamble

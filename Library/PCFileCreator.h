@@ -29,6 +29,13 @@
 
 #include <AppKit/AppKit.h>
 
+#define ProtocolFile	@"Objective-C Protocol"
+#define ObjCClass	@"Objective-C Class"
+#define ObjCHeader	@"Objective-C Header"
+#define CFile		@"C File"
+#define CHeader	        @"C Header"
+#define GSMarkupFile	@"GNUstep Markup"
+
 @class PCProject;
 
 @interface PCFileCreator : NSObject
@@ -47,8 +54,7 @@
 			   project:(PCProject *)aProject;
 
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
-                    withProject:(PCProject *)aProject
-		           type:(NSString *)aType;
+                    withProject:(PCProject *)aProject;
 
 @end
 

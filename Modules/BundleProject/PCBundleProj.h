@@ -41,9 +41,7 @@
 + (id)sharedCreator;
 
 - (Class)projectClass;
-
 - (NSString *)projectTypeName;
-- (NSDictionary *)typeTable;
 
 - (PCProject *)createProjectAt:(NSString *)path;
 - (PCProject *)openProjectAt:(NSString *)path;

@@ -37,6 +37,8 @@
 @class PCProjectHistory;
 @class PCProjectFinder;
 
+@class NewSubprojectController;
+
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
 @protocol ProjectDelegate;
@@ -72,6 +74,8 @@ extern NSString *ActiveProjectDidChangeNotification;
 
   NSBox	              *fileTypeAccessaryView;
   id                  fileTypePopup;
+
+  NewSubprojectController *newSubprojectController;
 
   @private
     BOOL _needsReleasing;
@@ -207,6 +211,17 @@ extern NSString *ActiveProjectDidChangeNotification;
 - (void)projectManager:(id)sender didCloseProject:(PCProject *)aProject;
 - (void)projectManager:(id)sender didOpenProject:(PCProject *)aProject;
 - (BOOL)projectManager:(id)sender shouldOpenProject:(PCProject *)aProject;
+
+@end
+
+@interface NewSubprojectController : NSWindowController
+{
+  id image;
+  id nameTextField;
+  id typePopup;
+  id createButton;
+  id cancelButton;
+}
 
 @end
 

@@ -35,7 +35,6 @@
 
 @implementation PCAppProj
 
-//static NSString  *_projTypeName = @"Application";
 static PCAppProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -60,16 +59,6 @@ static PCAppProj *_creator = nil;
 - (NSString *)projectTypeName
 {
   return @"Application";
-}
-
-- (NSDictionary *)typeTable
-{
-  NSString *_path;
-  
-  _path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info"
-                                                           ofType:@"table"];
-
-  return [NSDictionary dictionaryWithContentsOfFile:_path];
 }
 
 - (PCProject *)createProjectAt:(NSString *)path

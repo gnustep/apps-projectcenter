@@ -43,12 +43,10 @@
 
 + (id)sharedCreator;
 
-- (Class)projectClass;
 // Returns the real project class
+- (Class)projectClass;
 
 - (NSString *)projectTypeName;
-- (NSDictionary *)typeTable;
-// Type Attributes live in the ProjType.table in the wrapper
 
 - (PCProject *)createProjectAt:(NSString *)path;
 - (PCProject *)openProjectAt:(NSString *)path;

@@ -92,7 +92,6 @@
 - (void)appendHead:(PCMakefileFactory *)mff;
 - (void)appendApplication:(PCMakefileFactory *)mff;
 - (void)appendTail:(PCMakefileFactory *)mff;
-- (BOOL)writeMakefilePreamble;
 
 @end
 

@@ -27,7 +27,7 @@
 /*
  Description:
 
- This is the project type 'Application' for GNUstep. You never should create 
+ This is the project type 'Bundle' for GNUstep. You never should create 
  it yourself but use PCBundleProj for doing this. Otherwise needed files don't 
  get copied to the right place.
 
@@ -39,9 +39,16 @@
 #include <AppKit/AppKit.h>
 #include <ProjectCenter/PCProject.h>
 
+@class PCMakefileFactory;
+
 @interface PCBundleProject : PCProject
 {
-  NSTextField *principalClassField;
+  IBOutlet NSBox       *projectAttributesView;
+  IBOutlet NSTextField *projectTypeField;
+  IBOutlet NSTextField *projectNameField;
+  IBOutlet NSTextField *projectLanguageField;
+  IBOutlet NSTextField *principalClassField;
+  IBOutlet NSTextField *bundleExtensionField;
 }
 
 //----------------------------------------------------------------------------
@@ -51,23 +58,23 @@
 - (id)init;
 - (void)dealloc;
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+@end
 
-- (Class)builderClass;
+@interface PCBundleProject (GeneratedFiles)
 
 - (BOOL)writeMakefile;
+- (void)appendHead:(PCMakefileFactory *)mff;
+- (void)appendLibraries:(PCMakefileFactory*)mff;
+- (void)appendTail:(PCMakefileFactory *)mff;
 
-- (NSArray *)sourceFileKeys;
-- (NSArray *)resourceFileKeys;
-- (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
-- (NSString *)projectDescription;
+@end
 
-- (void)updateValuesFromProjectDict;
+@interface PCBundleProject (Inspector)
 
+- (NSView *)projectAttributesView;
+- (void)updateInspectorValues:(NSNotification *)aNotif;
 - (void)setPrincipalClass:(id)sender;
+- (void)setBundleExtension:(id)sender;
 
 @end
 

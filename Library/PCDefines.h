@@ -165,8 +165,6 @@ static NSString * const PCCreationDate         = @"CREATION_DATE";
 static NSString * const PCInstallDir           = @"INSTALLDIR";
 static NSString * const PCLinkerOptions        = @"LINKEROPTIONS";
 static NSString * const PCLastEditing          = @"LAST_EDITING";
-static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
-static NSString * const PCHelpFile             = @"HELP_FILE";
 static NSString * const PCObjCCompilerOptions  = @"OBJC_COMPILEROPTIONS";
 static NSString * const PCPrincipalClass       = @"PRINCIPAL_CLASS";
 static NSString * const PCAuthors              = @"PROJECT_AUTHORS";
@@ -187,6 +185,14 @@ static NSString * const PCURL                  = @"PROJECT_URL";
 static NSString * const PCSearchHeaders        = @"SEARCH_HEADER_DIRS";
 static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
 
+// Application specific
+static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
+static NSString * const PCHelpFile             = @"HELP_FILE";
+
+// Bundle specific
+static NSString * const PCBundleExtension      = @"BUNDLE_EXTENSION";
+
+// Uncategorized
 static NSString * const PCToolIcon             = @"TOOLICON";
 static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; // Will be removed
 static NSString * const PCPackageName          = @"PACKAGE_NAME";

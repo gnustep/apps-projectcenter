@@ -152,31 +152,15 @@ createMenu()
   [project addItemWithTitle:@"Remove Files..."
 	             action:@selector(projectRemoveFiles:)
 	      keyEquivalent:@"r"];
-#ifdef ENABLE_SUBPROJECTS
-  [project addItemWithTitle:@"Subprojects"
-	             action:action
-	      keyEquivalent:@""];
-#endif
+  [project addItemWithTitle:@"New Subproject..."
+	             action:@selector(subprojectNew:)
+              keyEquivalent:@""];
+  [project addItemWithTitle:@"Add Subproject..."
+	             action:@selector(subprojectAdd:)
+              keyEquivalent:@""];
   [project addItemWithTitle:@"Close"
 	             action:@selector(projectClose:)
 	      keyEquivalent:@""];
-
-#ifdef ENABLE_SUBPROJECTS
-
-  subprojects = [[[NSMenu alloc] init] autorelease];
-  [project setSubmenu:subprojects
-              forItem:[project itemWithTitle:@"Subprojects"]];
-  [subprojects addItemWithTitle:@"New..."
-	                 action:@selector(newSubproject:)
-                  keyEquivalent:@""];
-  [subprojects addItemWithTitle:@"Add..."
-	                 action:@selector(addSubproject:)
-                  keyEquivalent:@""];
-  [subprojects addItemWithTitle:@"Remove..."
-	                 action:@selector(removeSubproject:)
-                  keyEquivalent:@""];
-
-#endif
 
   /*
    * File submenu

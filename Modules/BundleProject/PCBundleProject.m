@@ -24,53 +24,11 @@
    $Id$
 */
 
-#include "PCBundleProject.h"
 #include "PCBundleProj.h"
+#include "PCBundleProject.h"
 
 #include <ProjectCenter/PCMakefileFactory.h>
-
 #include <ProjectCenter/ProjectCenter.h>
-
-//#define BUNDLE_INSTALL @"$(GNUSTEP_LOCAL_ROOT)/Library/Bundles/"
-#define BUNDLE_INSTALL @"$(GNUSTEP_INSTALLATION_DIR)/Library/Bundles/"
-
-@interface PCBundleProject (CreateUI)
-
-- (void)_initUI;
-
-@end
-
-@implementation PCBundleProject (CreateUI)
-
-- (void)_initUI
-{
-  NSTextField *textField;
-  NSRect frame = {{84,120}, {80, 80}};
-
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,240,88,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Principal class:"];
-  [projectProjectInspectorView addSubview:textField];
-  RELEASE(textField);
-
-  frame = NSMakeRect(106,240,144,21);
-  principalClassField =[[NSTextField alloc] initWithFrame:frame];
-  [principalClassField setAlignment: NSLeftTextAlignment];
-  [principalClassField setBordered: YES];
-  [principalClassField setEditable: YES];
-  [principalClassField setBezeled: YES];
-  [principalClassField setDrawsBackground: YES];
-  [principalClassField setStringValue:@""];
-  [principalClassField setTarget:self];
-  [principalClassField setAction:@selector(setPrincipalClass:)];
-  [projectProjectInspectorView addSubview:principalClassField];
-}
-
-@end
 
 @implementation PCBundleProject
 
@@ -121,7 +79,7 @@
   [rootCategories release];
   [rootObjects release];
   [rootKeys release];
-  [principalClassField release];
+  [projectAttributesView release];
 
   [super dealloc];
 }
@@ -132,72 +90,76 @@
 
 - (Class)builderClass
 {
-    return [PCBundleProj class];
+  return [PCBundleProj class];
 }
 
-- (BOOL)writeMakefile
+- (NSString *)projectDescription
 {
-    NSString *tmp;
-    NSData   *mfd;
-    NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-    int i; 
-    PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
-    NSDictionary      *dict = [self projectDict];
-    NSArray           *classes = [dict objectForKey:PCClasses];
-    NSString          *iDir = [dict objectForKey:PCInstallDir];
+  return @"GNUstep Objective-C bundle project";
+}
 
-    // Save the project file
-    [super writeMakefile];
-   
-    if( [iDir isEqualToString:@""] )
+- (BOOL)isExecutable
+{
+  return NO;
+}
+
+- (NSString *)execToolName
+{
+  return nil;
+}
+
+- (NSArray *)fileTypesForCategory:(NSString *)category
+{
+  if ([category isEqualToString:PCClasses])
     {
-        iDir = [NSString stringWithString:BUNDLE_INSTALL];
+      return [NSArray arrayWithObjects:@"m",nil];
+    }
+  else if ([category isEqualToString:PCHeaders])
+    {
+      return [NSArray arrayWithObjects:@"h",nil];
+    }
+  else if ([category isEqualToString:PCOtherSources])
+    {
+      return [NSArray arrayWithObjects:@"c",@"C",nil];
+    }
+  else if ([category isEqualToString:PCInterfaces])
+    {
+      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
+    }
+  else if ([category isEqualToString:PCImages])
+    {
+      return [NSImage imageFileTypes];
+    }
+  else if ([category isEqualToString:PCSubprojects])
+    {
+      return [NSArray arrayWithObjects:@"subproj",nil];
+    }
+  else if ([category isEqualToString:PCLibraries])
+    {
+      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
     }
 
-    if ((tmp = [dict objectForKey:PCPrincipalClass]) &&
-        [tmp isEqualToString:@""] == NO)
+  return nil;
+}
+
+- (NSString *)dirForCategory:(NSString *)category
+{
+  if ([category isEqualToString:PCImages])
     {
+      return [projectPath stringByAppendingPathComponent:@"Images"];
     }
-    else if ([classes count]) 
+  else if ([category isEqualToString:PCDocuFiles])
     {
-        tmp = [[classes objectAtIndex:0] stringByDeletingPathExtension];
-    }
-    else tmp = [NSString string];
-
-    [mf createMakefileForProject:[self projectName]];
-
-    [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
-
-    [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
-
-    [mf appendBundle];
-    [mf appendBundleInstallDir:iDir];
-    [mf appendPrincipalClass:tmp];
-    [mf appendLibraries:[dict objectForKey:PCLibraries]];
-
-    [mf appendResources];
-    for (i=0;i<[[self resourceFileKeys] count];i++)
-    {
-        NSString *k = [[self resourceFileKeys] objectAtIndex:i];
-        [mf appendResourceItems:[dict objectForKey:k]];
+      return [projectPath stringByAppendingPathComponent:@"Documentation"];
     }
 
-    [mf appendHeaders:[dict objectForKey:PCHeaders]];
-    [mf appendClasses:[dict objectForKey:PCClasses]];
-    [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
+  return projectPath;
+}
 
-    [mf appendTailForBundle];
-
-    // Write the new file to disc!
-    if ((mfd = [mf encodedMakefile]))
-    {
-        if ([mfd writeToFile:mfl atomically:YES])
-        {
-            return YES;
-        }
-    }
-
-    return NO;
+- (NSArray *)buildTargets
+{
+  return [NSArray arrayWithObjects:
+    @"bundle", @"debug", @"profile", @"dist", nil];
 }
 
 - (NSArray *)sourceFileKeys
@@ -215,37 +177,188 @@
   return [NSArray arrayWithObjects:PCDocuFiles,PCSupportingFiles,nil];
 }
 
-- (NSArray *)buildTargets
+- (NSArray *)allowableSubprojectTypes
 {
-  return nil;
+  return [NSArray arrayWithObjects:
+    @"Bundle", @"Tool", @"Framework", @"Library", @"Palette", nil];
 }
 
-- (NSString *)projectDescription
+- (NSArray *)defaultLocalizableKeys
 {
-  return @"GNUstep Objective-C bundle project";
+  return [NSArray arrayWithObjects:PCInterfaces, nil];
 }
 
-- (void)updateValuesFromProjectDict
+- (NSArray *)localizableKeys
 {
-  NSString *pc;
-
-  [super updateValuesFromProjectDict];
-
-  pc = [projectDict objectForKey:PCPrincipalClass];
-  [principalClassField setStringValue:pc];
-}
-
-- (void)setPrincipalClass:(id)sender
-{
-  [projectDict setObject:[principalClassField stringValue] 
-	       forKey:PCPrincipalClass];
-
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCProjectDictDidChangeNotification
-                  object:self];
+  return [NSArray arrayWithObjects: 
+    PCInterfaces, PCImages, PCOtherResources, PCDocuFiles, nil];
 }
 
 @end
 
+@implementation PCBundleProject (GeneratedFiles)
 
+- (BOOL)writeMakefile
+{
+  PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
+  int               i,j; 
+  NSString          *mfl = nil;
+  NSData            *mfd = nil;
+
+  // Save the GNUmakefile backup
+  [super writeMakefile];
+
+  // Save GNUmakefile.preamble
+  [mf createPreambleForProject:self];
+
+  // Create the new file
+  [mf createMakefileForProject:projectName];
+
+  // Head
+  [self appendHead:mf];
+
+  // Libraries
+  [self appendLibraries:mf];
+
+  // Subprojects
+  if ([[projectDict objectForKey:PCSubprojects] count] > 0)
+    {
+      [mf appendSubprojects:[projectDict objectForKey:PCSubprojects]];
+    }
+
+  // Resources
+  [mf appendResources];
+  for (i = 0; i < [[self resourceFileKeys] count]; i++)
+    {
+      NSString       *k = [[self resourceFileKeys] objectAtIndex:i];
+      NSMutableArray *resources = [[projectDict objectForKey:k] mutableCopy];
+
+      if ([k isEqualToString:PCImages])
+	{
+	  for (j=0; j<[resources count]; j++)
+	    {
+	      [resources replaceObjectAtIndex:j 
+		withObject:[NSString stringWithFormat:@"Images/%@", 
+		[resources objectAtIndex:j]]];
+	    }
+	}
+
+      [mf appendResourceItems:resources];
+      [resources release];
+    }
+
+  [mf appendHeaders:[projectDict objectForKey:PCHeaders]];
+  [mf appendClasses:[projectDict objectForKey:PCClasses]];
+  [mf appendOtherSources:[projectDict objectForKey:PCOtherSources]];
+
+  // Tail
+  [self appendTail:mf];
+
+  // Write the new file to disc!
+  mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+  if ((mfd = [mf encodedMakefile])) 
+    {
+      if ([mfd writeToFile:mfl atomically:YES]) 
+	{
+	  return YES;
+	}
+    }
+
+  return NO;
+}
+
+- (void)appendHead:(PCMakefileFactory *)mff
+{
+  [mff appendString:@"\n#\n# Bundle\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
+    projectName]];
+  [mff appendString:[NSString stringWithFormat:@"BUNDLE_NAME = %@\n",
+    projectName]];
+  [mff appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION = %@\n",
+   [projectDict objectForKey:PCBundleExtension]]];
+  [mff appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR = %@\n",
+    [projectDict objectForKey:PCInstallDir]]];
+  [mff appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS = %@\n",
+    projectName, [projectDict objectForKey:PCPrincipalClass]]];
+}
+
+- (void)appendLibraries:(PCMakefileFactory *)mff
+{
+  NSArray *libs = [projectDict objectForKey:PCLibraries];
+
+  [mff appendString:@"\n#\n# Libraries\n#\n"];
+
+  [mff appendString:
+    [NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",projectName]];
+
+  if (libs && [libs count])
+    {
+      NSString     *tmp;
+      NSEnumerator *enumerator = [libs objectEnumerator];
+
+      while ((tmp = [enumerator nextObject])) 
+	{
+	  if (![tmp isEqualToString:@"gnustep-base"] &&
+	      ![tmp isEqualToString:@"gnustep-gui"]) 
+	    {
+	      [mff appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+	    }
+	}
+    }
+}
+
+- (void)appendTail:(PCMakefileFactory *)mff
+{
+  [mff appendString:@"\n\n#\n# Makefiles\n#\n"];
+  [mff appendString:@"-include GNUmakefile.preamble\n"];
+  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
+  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/bundle.make\n"];
+  [mff appendString:@"-include GNUmakefile.postamble\n"];
+}
+
+@end
+
+@implementation PCBundleProject (Inspector)
+
+- (NSView *)projectAttributesView
+{
+  if (projectAttributesView == nil)
+    {
+      if ([NSBundle loadNibNamed:@"Inspector" owner:self] == NO)
+	{
+	  NSLog(@"PCBundleProject: error loading Inspector NIB!");
+	  return nil;
+	}
+      [projectAttributesView retain];
+      [self updateInspectorValues:nil];
+    }
+
+  return projectAttributesView;
+}
+
+- (void)updateInspectorValues:(NSNotification *)aNotif 
+{
+  [projectTypeField setStringValue:@"Bundle"];
+  [projectNameField setStringValue:projectName];
+  [projectLanguageField
+    setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
+  [principalClassField 
+    setStringValue:[projectDict objectForKey:PCPrincipalClass]];
+  [bundleExtensionField 
+    setStringValue:[projectDict objectForKey:PCBundleExtension]];
+}
+
+- (void)setPrincipalClass:(id)sender
+{
+  [self setProjectDictObject:[principalClassField stringValue]
+                      forKey:PCPrincipalClass];
+}
+
+- (void)setBundleExtension:(id)sender
+{
+  [self setProjectDictObject:[bundleExtensionField stringValue]
+                      forKey:PCBundleExtension];
+}
+
+@end
 

@@ -610,12 +610,23 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 // subprojects
 - (BOOL)newSubproject
 {
-    return NO;
+  NSLog (@"newSubproject");
+  
+  newSubprojectController = [[NewSubprojectController alloc] 
+    initWithWindowNibName:@"NewSubproject" owner:self];
+
+  NSLog(@"window title is: %@", [[newSubprojectController window] title]);
+  if (newSubprojectController == nil)
+    {
+      NSLog(@"newSubprojectController is nil!");
+    }
+
+  return NO;
 }
 
 - (BOOL)addSubprojectAt:(NSString *)path
 {
-    return NO;
+  return NO;
 }
 
 - (void)removeSubproject
@@ -787,6 +798,15 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
             withKey:(NSString *)key
 {
   [activeProject addFiles:[NSArray arrayWithObject:aFile] forKey:key];
+}
+
+@end
+
+@implementation NewSubprojectController
+
+- (void)awakeFromNib
+{
+  NSLog(@"NewSubproject awake from nib");
 }
 
 @end

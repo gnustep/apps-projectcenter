@@ -13,6 +13,8 @@
 
 #include <Foundation/Foundation.h>
 
+@class PCProject;
+
 @interface PCMakefileFactory : NSObject
 {
     NSMutableString *mfile;
@@ -22,6 +24,7 @@
 + (PCMakefileFactory *)sharedFactory;
 
 - (void)createMakefileForProject:(NSString *)prName;
+- (BOOL)createPreambleForProject:(PCProject *)project;
 
 - (void)appendString:(NSString *)aString;
 
@@ -38,18 +41,8 @@
 
 - (NSData *)encodedMakefile;
 
-- (void)appendTailForBundle;
 - (void)appendTailForLibrary;
 - (void)appendTailForTool;
-
-@end
-
-@interface PCMakefileFactory (BundleProject)
-
-- (void)appendBundle;
-- (void)appendPrincipalClass:(NSString *)cname;
-- (void)appendBundleInstallDir:(NSString*)dir;
-- (void)appendLibraries:(NSArray*)array;
 
 @end
 

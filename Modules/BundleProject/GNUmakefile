@@ -10,17 +10,9 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 
-
-#
-# Subprojects
-#
-
-
-
 #
 # Bundle
 #
-
 PACKAGE_NAME = BundleProject
 BUNDLE_NAME = BundleProject
 BundleProject_PRINCIPAL_CLASS = PCBundleProj
@@ -29,21 +21,21 @@ BundleProject_PRINCIPAL_CLASS = PCBundleProj
 #
 # Additional libraries
 #
-
 BundleProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 # Resource files
 #
-
-BundleProject_RESOURCE_FILES= \
-PC.proj 
+BundleProject_RESOURCE_FILES = \
+Resources/PC.project \
+Resources/Inspector.gorm
+#Resources/class.template \
+#Resources/header.template 
 
 #
 # Header files
 #
-
-BundleProject_HEADERS= \
+BundleProject_HEADERS = \
 PCBundleProject.h \
 PCBundleProj.h 
 
@@ -58,8 +50,7 @@ PCBundleProj.m
 #
 # C files
 #
-
-BundleProject_C_FILES= 
+BundleProject_C_FILES = 
 
 include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make

@@ -28,13 +28,6 @@
 #include "PCFileCreator.h"
 #include "PCProject.h"
 
-#define ProtocolFile	@"Objective-C Protocol"
-#define ObjCClass	@"Objective-C Class"
-#define ObjCHeader	@"Objective-C Header"
-#define CFile		@"C File"
-#define CHeader	        @"C Header"
-#define GSMarkupFile	@"GNUstep Markup"
-
 @implementation PCFileCreator
 
 static PCFileCreator *_creator = nil;
@@ -135,9 +128,9 @@ static NSDictionary  *dict = nil;
   // A class and possibly a header
   files = [NSMutableDictionary dictionaryWithCapacity:2];
 
-  NSLog(@"<%@ %x>: create %@ at %@",[self class],self,type,path);
+//  NSLog(@"<%@ %x>: create %@ at %@",[self class],self,type,path);
 
-  bundle = [NSBundle bundleForLibrary:@"ProjectCenter"];
+  bundle = [NSBundle bundleForClass:[self class]];
   newFile = [path copy];
 
   /*
@@ -153,22 +146,29 @@ static NSDictionary  *dict = nil;
       [fm copyPath:_file toPath:newFile handler:nil];
       [files setObject:ObjCClass forKey:newFile];
 
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
 
-      // Should a header be created as well?
+      // Header must be created as well!
       newFile = [path stringByAppendingPathExtension:@"h"];
-      if (NSRunAlertPanel(@"Attention!",
-			  @"Should %@ be created and inserted into the project?",
-			  @"Yes",@"No",nil,[newFile lastPathComponent])) 
+      _file = [bundle pathForResource:@"header" ofType:@"template"];
+      [fm copyPath:_file toPath:newFile handler:nil];
+      
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
+      [files setObject:ObjCHeader forKey:newFile];
+    }
+  /*
+   * Objective-C Header
+   */
+  else if ([type isEqualToString:ObjCHeader]) 
+    {
+      _file = [bundle pathForResource:@"header" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"h"] == NO)
 	{
-	  _file = [bundle pathForResource:@"header" ofType:@"template"];
-	  [fm copyPath:_file toPath:newFile handler:nil];
-
-	  [self replaceTagsInFileAtPath:newFile 
-	                    withProject:aProject
-			           type:ObjCHeader];
-	  [files setObject:ObjCHeader forKey:newFile];
+	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
+      [files setObject:ObjCHeader forKey:newFile];
     }
 
   /*
@@ -184,38 +184,30 @@ static NSDictionary  *dict = nil;
       [fm copyPath:_file toPath:newFile handler:nil];
       [files setObject:CFile forKey:newFile];
 
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
 
-      // Should a header be created as well?
+      // Header should be created as well.
       newFile = [path stringByAppendingPathExtension:@"h"];
-      if (NSRunAlertPanel(@"Attention!",
-			  @"Should %@ be created and inserted in the project as well?",
-			  @"Yes",@"No",nil,[newFile lastPathComponent])) {
-	  _file = [bundle pathForResource:@"cheader" ofType:@"template"];
-	  [fm copyPath:_file toPath:newFile handler:nil];
-
-	  [self replaceTagsInFileAtPath:newFile
-	                    withProject:aProject
-			           type:CHeader];
-	  [files setObject:CHeader forKey:newFile];
-      }
+      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
+      [fm copyPath:_file toPath:newFile handler:nil];
+      
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
+      [files setObject:CHeader forKey:newFile];
     }
-
   /*
-   * Objective-C Header
+   * C Header
    */
-  else if ([type isEqualToString:ObjCHeader]) 
+  else if ([type isEqualToString:CHeader]) 
     {
-      _file = [bundle pathForResource:@"header" ofType:@"template"];
+      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
       if ([[path pathExtension] isEqual: @"h"] == NO)
 	{
 	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
       [fm copyPath:_file toPath:newFile handler:nil];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-      [files setObject:ObjCHeader forKey:newFile];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
+      [files setObject:CHeader forKey:newFile];
     }
-
   /*
    * GSMarkup
    */
@@ -229,22 +221,6 @@ static NSDictionary  *dict = nil;
       [fm copyPath:_file toPath:newFile handler:nil];
       [files setObject:GSMarkupFile forKey:newFile];
     }
-
-  /*
-   * C Header
-   */
-  else if ([type isEqualToString:CHeader]) 
-    {
-      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"h"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"h"];
-	}
-      [fm copyPath:_file toPath:newFile handler:nil];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-      [files setObject:CHeader forKey:newFile];
-    }
-
   /*
    * Objective-C Protocol
    */
@@ -256,10 +232,9 @@ static NSDictionary  *dict = nil;
 	  newFile = [path stringByAppendingPathExtension:@"h"];
 	}
       [fm copyPath:_file toPath:newFile handler:nil];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ProtocolFile forKey:newFile];
     }
-
   /*
    * Notify the browser!
    */
@@ -272,54 +247,49 @@ static NSDictionary  *dict = nil;
 
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
                     withProject:(PCProject *)aProject
-		           type:(NSString *)aType
 {
-  NSString *user = NSUserName();
-  NSString *pname = [aProject projectName];
+  NSString *projectName = [aProject projectName];
   NSString *date = [[NSCalendarDate calendarDate] description];
   NSString *aFile = [newFile lastPathComponent];
+  NSString *UCfn = [[aFile stringByDeletingPathExtension] uppercaseString];
+  NSString *fn = [aFile stringByDeletingPathExtension];
+  NSRange  subRange;
 
   file = [[NSMutableString stringWithContentsOfFile:newFile] retain];
 
-  [file replaceCharactersInRange:
-    [file rangeOfString:@"$FILENAME$"] withString:aFile];
-
-  [file replaceCharactersInRange:
-    [file rangeOfString:@"$USERNAME$"] withString:user];
-
-  [file replaceCharactersInRange:
-    [file rangeOfString:@"$PROJECTNAME$"] withString:pname];
-
-  [file replaceCharactersInRange:
-    [file rangeOfString:@"$DATE$"] withString:date];
-
-  if ([aType isEqualToString:ObjCHeader] || [aType isEqualToString:CHeader]) 
+  while ((subRange = [file rangeOfString:@"$FULLFILENAME$"]).length)
     {
-      NSString *nm = [[aFile stringByDeletingPathExtension] uppercaseString];
-
-      [file replaceCharactersInRange:
-	[file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
-      [file replaceCharactersInRange:
-	[file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
-      [file replaceCharactersInRange:
-	[file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
+      [file replaceCharactersInRange:subRange withString:aFile];
+    }
+    
+  while ((subRange = [file rangeOfString:@"$FILENAME$"]).length)
+    {
+      [file replaceCharactersInRange:subRange withString:fn];
     }
 
-  if ([aType isEqualToString:ObjCClass] || 
-      [aType isEqualToString:CFile] ||
-      [aType isEqualToString:ProtocolFile] ||
-      [aType isEqualToString:ObjCHeader])
+  while ((subRange = [file rangeOfString:@"$UCFILENAME$"]).length)
     {
-      NSString *name = [aFile stringByDeletingPathExtension];
+      [file replaceCharactersInRange:subRange withString:UCfn];
+    }
 
-      [file replaceCharactersInRange:
-	[file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
+  while ((subRange = [file rangeOfString:@"$USERNAME$"]).length)
+    {
+      [file replaceCharactersInRange:subRange withString:NSUserName()];
+    }
+    
+  while ((subRange = [file rangeOfString:@"$FULLUSERNAME$"]).length)
+    {
+      [file replaceCharactersInRange:subRange withString:NSFullUserName()];
+    }
 
-      if ([aType isEqualToString:ObjCClass])
-	{
-	  [file replaceCharactersInRange:
-	    [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
-	}
+  while ((subRange = [file rangeOfString:@"$PROJECTNAME$"]).length)
+    {
+      [file replaceCharactersInRange:subRange withString:projectName];
+    }
+
+  while ((subRange = [file rangeOfString:@"$DATE$"]).length)
+    {
+      [file replaceCharactersInRange:subRange withString:date];
     }
 
   [file writeToFile:newFile atomically:YES];

@@ -39,7 +39,7 @@
 {
   projectManager = manager;
 
-  [self _initUI];
+  [self loadPanel];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -69,6 +69,7 @@
 
   RELEASE(buildAttributesView);
   RELEASE(projectAttributesView);
+  RELEASE(projectDescriptionView);
   RELEASE(fileAttributesView);
 
   [super dealloc];
@@ -78,57 +79,26 @@
 // ==== Panel & contents
 // ============================================================================
 
-// Should be GORM file in the future
-- (void)_initUI
+- (BOOL)loadPanel
 {
+  if ([NSBundle loadNibNamed:@"ProjectInspector" owner:self] == NO)
+    {
+      NSLog(@"PCProjectInspector: error loading NIB file!");
+      return NO;
+    }
+
   // Panel
-  inspectorPanel = [[NSPanel alloc] 
-    initWithContentRect:NSMakeRect(200,300,300,404)
-              styleMask:NSTitledWindowMask | NSClosableWindowMask
-                backing:NSBackingStoreBuffered
-                  defer:YES];
-  [inspectorPanel setMinSize:NSMakeSize(300,404)];
-  [inspectorPanel setTitle:@"Project Inspector"];
-  [inspectorPanel setTitle: [NSString stringWithFormat:
-    @"%@ - Project Inspector", [[projectManager activeProject] projectName]]];
-  [inspectorPanel setReleasedWhenClosed:NO];
-  [inspectorPanel setHidesOnDeactivate:YES];
-  [inspectorPanel setFrameAutosaveName:@"Inspector"];
-
-  [inspectorPanel setFrameUsingName:@"Inspector"];
-
-  // Content
-  contentView = [[NSBox alloc] init];
-  [contentView setTitlePosition:NSNoTitle];
-  [contentView setFrame:NSMakeRect(0,0,300,384)];
-  [contentView setBorderType:NSNoBorder];
-  [contentView setContentViewMargins:NSMakeSize(0.0, 0.0)];
-  [inspectorPanel setContentView:contentView];
-
-  inspectorPopup = [[NSPopUpButton alloc] 
-    initWithFrame:NSMakeRect(81,378,138,20)];
-  [inspectorPopup setTarget:self];
-  [inspectorPopup setAction:@selector(inspectorPopupDidChange:)];
-  [contentView addSubview:inspectorPopup];
+  [inspectorPanel setFrameAutosaveName:@"ProjectInspector"];
+  [inspectorPanel setFrameUsingName:@"ProjectInspector"];
   
+  // PopUp
+  [inspectorPopup removeAllItems];
   [inspectorPopup addItemWithTitle:@"Build Attributes"];
   [inspectorPopup addItemWithTitle:@"Project Attributes"];
   [inspectorPopup addItemWithTitle:@"Project Description"];
   [inspectorPopup addItemWithTitle:@"File Attributes"];
   [inspectorPopup selectItemAtIndex:0];
-
-  hLine = [[[NSBox alloc] init] autorelease];
-  [hLine setTitlePosition:NSNoTitle];
-  [hLine setFrame:NSMakeRect(0,356,280,2)];
-  [contentView addSubview:hLine];
-
-  // Holder of PC*Proj inspectors
-  inspectorView = [[NSBox alloc] init];
-  [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrame:NSMakeRect(-8,-8,315,384)];
-  [inspectorView setBorderType:NSNoBorder];
-  [contentView addSubview:inspectorView];
-
+  
   // Build Attributes
   [self createBuildAttributes];
 
@@ -139,13 +109,15 @@
   [self createFileAttributes];
 
   [self activeProjectDidChange:nil];
+
+  return YES;
 }
 
 - (NSPanel *)panel
 {
-  if (!inspectorPanel)
+  if (!inspectorPanel && ([self loadPanel] == NO))
     {
-      [self _initUI];
+      return nil;
     }
 
   return inspectorPanel;
@@ -153,9 +125,9 @@
 
 - (NSView *)contentView
 {
-  if (!contentView)
+  if (!contentView && ([self loadPanel] == NO))
     {
-      [self _initUI];
+      return nil;
     }
     
   return contentView;
@@ -311,62 +283,36 @@
   [self setFANameAndIcon:[project projectBrowser]];
 }
 
-
 // ============================================================================
 // ==== Build Attributes
 // ============================================================================
 
 - (void)createBuildAttributes
 {
-  NSTextField *textField = nil;
-  NSBox       *line = nil;
-
   if (buildAttributesView)
     {
       return;
     }
 
-  buildAttributesView = [[NSBox alloc] init];
-  [buildAttributesView setFrame:NSMakeRect(0,0,315,384)];
-  [buildAttributesView setTitlePosition:NSNoTitle];
-  [buildAttributesView 
-    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [buildAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
-
-  // Project or subproject name
-  projectNameLabel = [[NSTextField alloc] 
-    initWithFrame:NSMakeRect(6,347,290,20)];
-  [projectNameLabel setAlignment:NSCenterTextAlignment];
-  [projectNameLabel setBordered:NO];
-  [projectNameLabel setEditable:NO];
-  [projectNameLabel setSelectable:NO];
-  [projectNameLabel setBezeled:NO];
-  [projectNameLabel setDrawsBackground:NO];
-  [buildAttributesView addSubview:projectNameLabel];
-  RELEASE(projectNameLabel);
-
-  //
-  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,344,315,2)];
-  [line setTitlePosition:NSNoTitle];
-  [buildAttributesView addSubview:line];
-  RELEASE(line);
+  if ([NSBundle loadNibNamed:@"BuildAttributes" owner:self] == NO)
+    {
+      NSLog(@"PCProjectInspector: error loading BuildAttributes NIB file!");
+      return;
+    }
 
   // Search Order
-  searchOrderPopup = [[NSPopUpButton alloc] 
-    initWithFrame:NSMakeRect(6,317,290,21)];
-  [searchOrderPopup setTarget:self];
-  [searchOrderPopup setAction:@selector(searchOrderPopupDidChange:)];
-  [buildAttributesView addSubview:searchOrderPopup];
+  // Popup
+  [searchOrderPopup removeAllItems];
   [searchOrderPopup addItemWithTitle:@"Header Directories Search Order"];
   [searchOrderPopup addItemWithTitle:@"Library Directories Search Order"];
   [searchOrderPopup addItemWithTitle:@"Framework Directories Search Order"];
   [searchOrderPopup selectItemAtIndex:0];
-  RELEASE(searchOrderPopup);
 
-  //
+  // Table column
   searchOrderColumn = [[NSTableColumn alloc] initWithIdentifier: @"SO List"];
   [searchOrderColumn setEditable:NO];
 
+  // Table
   searchOrderList = [[NSTableView alloc]
     initWithFrame:NSMakeRect(0,0,290,99)];
   [searchOrderList setAllowsMultipleSelection:NO];
@@ -378,223 +324,36 @@
   [searchOrderList setHeaderView:nil];
   [searchOrderList addTableColumn:searchOrderColumn];
   [searchOrderList setDataSource:self];
-
-  // Hack! Should be [searchOrderList setDrawsGrid:NO]
-  [searchOrderList setGridColor:[NSColor lightGrayColor]];
+  [searchOrderList setDrawsGrid:NO];
   [searchOrderList setTarget:self];
   [searchOrderList setDoubleAction:@selector(searchOrderDoubleClick:)];
   [searchOrderList setAction:@selector(searchOrderClick:)];
 
-  //
-  searchOrderScroll = [[NSScrollView alloc] initWithFrame:
-    NSMakeRect (6,212,290,99)];
+  // ScrollView
   [searchOrderScroll setDocumentView:searchOrderList];
   [searchOrderScroll setHasHorizontalScroller:NO];
   [searchOrderScroll setHasVerticalScroller:YES];
   [searchOrderScroll setBorderType:NSBezelBorder];
   RELEASE(searchOrderList);
-  [buildAttributesView addSubview:searchOrderScroll];
-  RELEASE(searchOrderScroll);
 
-  //
-  searchOrderTF = [[NSTextField alloc] initWithFrame:
-    NSMakeRect (6,187,290,21)];
-  [buildAttributesView addSubview:searchOrderTF];
-  RELEASE(searchOrderTF);
-
-  //
-  searchOrderSet = [[NSButton alloc] initWithFrame:
-    NSMakeRect (6,159,94,24)];
-  [searchOrderSet setTitle: @"Set..."];
-  [searchOrderSet setTarget: self];
-  [searchOrderSet setAction: @selector(setSearchOrder:)];
-  [searchOrderSet setButtonType: NSMomentaryPushButton];
-  [buildAttributesView addSubview:searchOrderSet];
-  RELEASE(searchOrderSet);
-
-  searchOrderRemove = [[NSButton alloc] initWithFrame:
-    NSMakeRect (104,159,94,24)];
-  [searchOrderRemove setTitle: @"Remove"];
-  [searchOrderRemove setTarget: self];
-  [searchOrderRemove setAction: @selector(removeSearchOrder:)];
-  [searchOrderRemove setButtonType: NSMomentaryPushButton];
-  [buildAttributesView addSubview:searchOrderRemove];
-  RELEASE(searchOrderRemove);
-  
-  searchOrderAdd = [[NSButton alloc] initWithFrame:
-    NSMakeRect (202,159,94,24)];
-  [searchOrderAdd setTitle: @"Add"];
-  [searchOrderAdd setTarget: self];
-  [searchOrderAdd setAction: @selector(addSearchOrder:)];
-  [searchOrderAdd setButtonType: NSMomentaryPushButton];
-  [buildAttributesView addSubview:searchOrderAdd];
-  RELEASE(searchOrderAdd);
-
+  // Buttons
   [self setSearchOrderButtonsState];
 
-  //
-  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,153,315,2)];
-  [line setTitlePosition:NSNoTitle];
-  [buildAttributesView addSubview:line];
-  RELEASE(line);
-  
-  // Preprocessor flags -- ADDITIONAL_CPPFLAGS
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,126,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Preprocessor Flags:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  cppOptField = [[NSTextField alloc] initWithFrame:NSMakeRect(132,126,164,21)];
-  [cppOptField setAlignment: NSLeftTextAlignment];
-  [cppOptField setBordered: YES];
-  [cppOptField setEditable: YES];
-  [cppOptField setBezeled: YES];
-  [cppOptField setDrawsBackground: YES];
-  [cppOptField setStringValue:@""];
-  [cppOptField setAction:@selector(changeCommonProjectEntry:)];
-  [cppOptField setTarget:self];
-  [buildAttributesView addSubview:cppOptField];
-  RELEASE(cppOptField);
-  
-  // ObjC compiler flags -- ADDITIONAL_OBJCFLAGS
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,102,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"ObjC Compiler Flags:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  objcOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(132,102,164,21)];
-  [objcOptField setAlignment: NSLeftTextAlignment];
-  [objcOptField setBordered: YES];
-  [objcOptField setEditable: YES];
-  [objcOptField setBezeled: YES];
-  [objcOptField setDrawsBackground: YES];
-  [objcOptField setStringValue:@""];
-  [objcOptField setAction:@selector(changeCommonProjectEntry:)];
-  [objcOptField setTarget:self];
-  [buildAttributesView addSubview:objcOptField];
-  RELEASE(objcOptField);
-
-  // Compiler Flags -- ADDITIONAL_OBJCFLAGS(?), ADDITIONAL_CFLAGS
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,78,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"C Compiler Flags:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  cOptField = [[NSTextField alloc] initWithFrame:NSMakeRect(132,78,164,21)];
-  [cOptField setAlignment: NSLeftTextAlignment];
-  [cOptField setBordered: YES];
-  [cOptField setEditable: YES];
-  [cOptField setBezeled: YES];
-  [cOptField setDrawsBackground: YES];
-  [cOptField setStringValue:@""];
-  [cOptField setAction:@selector(changeCommonProjectEntry:)];
-  [cOptField setTarget:self];
-  [buildAttributesView addSubview:cOptField];
-  RELEASE(cOptField);
-
-  // Linker Flags -- ADDITIONAL_LDFLAGS
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,54,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Linker Flags:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  ldOptField = [[NSTextField alloc] initWithFrame:NSMakeRect(132,54,164,21)];
-  [ldOptField setAlignment: NSLeftTextAlignment];
-  [ldOptField setBordered: YES];
-  [ldOptField setEditable: YES];
-  [ldOptField setBezeled: YES];
-  [ldOptField setDrawsBackground: YES];
-  [ldOptField setStringValue:@""];
-  [ldOptField setAction:@selector(changeCommonProjectEntry:)];
-  [ldOptField setTarget:self];
-  [buildAttributesView addSubview:ldOptField];
-  RELEASE(ldOptField);
-
-  // Install In
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,30,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Install In:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  installPathField = [[NSTextField alloc] 
-    initWithFrame:NSMakeRect(132,30,164,21)];
-  [installPathField setAlignment: NSLeftTextAlignment];
-  [installPathField setBordered: YES];
-  [installPathField setEditable: YES];
-  [installPathField setBezeled: YES];
-  [installPathField setDrawsBackground: YES];
-  [installPathField setStringValue:@""];
-  [installPathField setAction:@selector(changeCommonProjectEntry:)];
-  [installPathField setTarget:self];
-  [buildAttributesView addSubview:installPathField];
-  RELEASE(installPathField);
-
-  // Build Tool
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(6,6,124,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Build Tool:"];
-  [buildAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(132,6,164,21)];
-  [toolField setAlignment: NSLeftTextAlignment];
-  [toolField setBordered: YES];
-  [toolField setEditable: YES];
-  [toolField setBezeled: YES];
-  [toolField setDrawsBackground: YES];
-  [toolField setStringValue:@""];
-  [toolField setAction:@selector(changeCommonProjectEntry:)];
-  [toolField setTarget:self];
-  [buildAttributesView addSubview:toolField];
-  RELEASE(toolField);
-
-  // Link textfields
   [cppOptField setNextText:objcOptField];
   [objcOptField setNextText:cOptField];
   [cOptField setNextText:ldOptField];
   [ldOptField setNextText:installPathField];
   [installPathField setNextText:toolField];
   [toolField setNextText:cppOptField];
+  
+  // Retain view
+  [buildAttributesView retain];
 }
 
 // ----------------------------------------------------------------------------
 // --- Search Order
 // ----------------------------------------------------------------------------
+
 - (void)searchOrderPopupDidChange:(id)sender
 {
   NSString *selectedTitle = [sender titleOfSelectedItem];
@@ -667,6 +426,8 @@
 {
   NSString *value = [searchOrderTF stringValue];
 
+  NSLog(@"OTF:%@", value);
+
   [searchItems addObject:value];
   [searchOrderTF setStringValue:@""];
   [self syncSearchOrder];
@@ -695,149 +456,21 @@
 // ============================================================================
 // ==== Project Description
 // ============================================================================
+
 - (void)createProjectDescription
 {
-  NSTextField *textField = nil;
-
   if (projectDescriptionView)
     {
       return;
     }
+    
+  if ([NSBundle loadNibNamed:@"ProjectDescription" owner:self] == NO)
+    {
+      NSLog(@"PCProjectInspector: error loading ProjectDescription NIB file!");
+      return;
+    }
 
-  projectDescriptionView = [[NSBox alloc] init];
-  [projectDescriptionView setFrame:NSMakeRect(0,0,315,384)];
-  [projectDescriptionView setTitlePosition:NSNoTitle];
-  [projectDescriptionView 
-    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [projectDescriptionView setContentViewMargins:NSMakeSize(0.0, 0.0)];
-
-  // Description
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,343,114,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Description:"];
-  [projectDescriptionView addSubview:textField];
-  RELEASE(textField);
-
-  descriptionField = [[NSTextField alloc]
-    initWithFrame:NSMakeRect(125,343,171,21)];
-  [descriptionField setAlignment: NSLeftTextAlignment];
-  [descriptionField setBordered: YES];
-  [descriptionField setEditable: YES];
-  [descriptionField setBezeled: YES];
-  [descriptionField setDrawsBackground: YES];
-  [descriptionField setStringValue:@""];
-  [descriptionField setAction:@selector(changeCommonProjectEntry:)];
-  [descriptionField setTarget:self];
-  [projectDescriptionView addSubview:descriptionField];
-  RELEASE(descriptionField);
-
-  // Release
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,317,114,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Release:"];
-  [projectDescriptionView addSubview:textField];
-  RELEASE(textField);
-
-  releaseField = [[NSTextField alloc] initWithFrame:NSMakeRect(125,317,171,21)];
-  [releaseField setAlignment: NSLeftTextAlignment];
-  [releaseField setBordered: YES];
-  [releaseField setEditable: YES];
-  [releaseField setBezeled: YES];
-  [releaseField setDrawsBackground: YES];
-  [releaseField setStringValue:@""];
-  [releaseField setAction:@selector(changeCommonProjectEntry:)];
-  [releaseField setTarget:self];
-  [projectDescriptionView addSubview:releaseField];
-  RELEASE(releaseField);
-
-  // License
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,291,114,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"License:"];
-  [projectDescriptionView addSubview:textField];
-  RELEASE(textField);
-
-  licenseField = [[NSTextField alloc] initWithFrame:NSMakeRect(125,291,171,21)];
-  [licenseField setAlignment: NSLeftTextAlignment];
-  [licenseField setBordered: YES];
-  [licenseField setEditable: YES];
-  [licenseField setBezeled: YES];
-  [licenseField setDrawsBackground: YES];
-  [licenseField setStringValue:@""];
-  [licenseField setAction:@selector(changeCommonProjectEntry:)];
-  [licenseField setTarget:self];
-  [projectDescriptionView addSubview:licenseField];
-  RELEASE(licenseField);
-
-  // License Description
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,265,114,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"License Description:"];
-  [projectDescriptionView addSubview:textField];
-  RELEASE(textField);
-
-  licDescriptionField = [[NSTextField alloc]
-    initWithFrame:NSMakeRect(125,265,171,21)];
-  [licDescriptionField setAlignment: NSLeftTextAlignment];
-  [licDescriptionField setBordered: YES];
-  [licDescriptionField setEditable: YES];
-  [licDescriptionField setBezeled: YES];
-  [licDescriptionField setDrawsBackground: YES];
-  [licDescriptionField setStringValue:@""];
-  [licDescriptionField setAction:@selector(changeCommonProjectEntry:)];
-  [licDescriptionField setTarget:self];
-  [projectDescriptionView addSubview:licDescriptionField];
-  RELEASE(licDescriptionField);
-
-  // URL
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(6,239,114,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setSelectable:NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"URL:"];
-  [projectDescriptionView addSubview:textField];
-  RELEASE(textField);
-
-  urlField = [[NSTextField alloc] initWithFrame:NSMakeRect(125,239,171,21)];
-  [urlField setAlignment: NSLeftTextAlignment];
-  [urlField setBordered: YES];
-  [urlField setEditable: YES];
-  [urlField setBezeled: YES];
-  [urlField setDrawsBackground: YES];
-  [urlField setStringValue:@""];
-  [urlField setAction:@selector(changeCommonProjectEntry:)];
-  [urlField setTarget:self];
-  [projectDescriptionView addSubview:urlField];
-  RELEASE(urlField);
-
-  // Authors
-  authorsBox = [[NSBox alloc] initWithFrame:NSMakeRect(6,97,290,138)];
-  [authorsBox setTitle:@"Authors"];
-  [authorsBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
-  
+  // Authors table
   authorsColumn = [[NSTableColumn alloc] initWithIdentifier: @"Authors List"];
   [authorsColumn setEditable:YES];
 
@@ -855,56 +488,20 @@
   [authorsList setDataSource:self];
 
   //
-  authorsScroll = [[NSScrollView alloc] initWithFrame:
-    NSMakeRect (6,6,209,111)];
   [authorsScroll setDocumentView:authorsList];
   [authorsScroll setHasHorizontalScroller:NO];
   [authorsScroll setHasVerticalScroller:YES];
   [authorsScroll setBorderType:NSBezelBorder];
-  RELEASE(authorsList);
-  [authorsBox addSubview:authorsScroll];
-  RELEASE(authorsScroll);
 
-  //
-  authorAdd = [[NSButton alloc] initWithFrame:NSMakeRect(220,93,60,24)];
+  // Authors' buttons
   [authorAdd setRefusesFirstResponder:YES];
-  [authorAdd setTitle: @"Add"];
-  [authorAdd setTarget: self];
-  [authorAdd setAction: @selector(addAuthor:)];
-  [authorAdd setButtonType: NSMomentaryPushButton];
-  [authorsBox addSubview:authorAdd];
-  RELEASE(authorAdd);
-  
-  authorRemove = [[NSButton alloc] initWithFrame:NSMakeRect(220,64,60,24)];
   [authorRemove setRefusesFirstResponder:YES];
-  [authorRemove setTitle:@"Remove"];
-  [authorRemove setTarget:self];
-  [authorRemove setAction:@selector(removeAuthor:)];
-  [authorRemove setButtonType:NSMomentaryPushButton];
-  [authorsBox addSubview:authorRemove];
-  RELEASE(authorRemove);
   
-  authorUp = [[NSButton alloc] initWithFrame:NSMakeRect(220,35,60,24)];
   [authorUp setRefusesFirstResponder:YES];
   [authorUp setImage: [NSImage imageNamed:@"common_ArrowUp"]];
-  [authorUp setImagePosition:NSImageOnly];
-  [authorUp setTarget:self];
-  [authorUp setAction:@selector(upAuthor:)];
-  [authorUp setButtonType:NSMomentaryPushButton];
-  [authorsBox addSubview:authorUp];
-  RELEASE(authorUp);
   
-  authorDown = [[NSButton alloc] initWithFrame: NSMakeRect(220,6,60,24)];
   [authorDown setRefusesFirstResponder:YES];
   [authorDown setImage: [NSImage imageNamed:@"common_ArrowDown"]];
-  [authorDown setImagePosition: NSImageOnly];
-  [authorDown setTarget: self];
-  [authorDown setAction: @selector(downAuthor:)];
-  [authorDown setButtonType: NSMomentaryPushButton];
-  [authorsBox addSubview:authorDown];
-  RELEASE(authorDown);
-
-  [projectDescriptionView addSubview:authorsBox];
 
   // Link textfields
   [descriptionField setNextText:releaseField];
@@ -912,6 +509,8 @@
   [licenseField setNextText:licDescriptionField];
   [licDescriptionField setNextText:urlField];
   [urlField setNextText:descriptionField];
+
+  [projectDescriptionView retain];
 }
 
 // --- Actions
@@ -995,52 +594,29 @@
 
 - (void)createFileAttributes
 {
-  NSBox *line = nil;
-
   if (fileAttributesView)
     {
       return;
     }
 
-  fileAttributesView = [[NSBox alloc] init];
-  [fileAttributesView setFrame:NSMakeRect(0,0,295,384)];
-  [fileAttributesView setTitlePosition:NSNoTitle];
-  [fileAttributesView setAutoresizingMask:
-    (NSViewWidthSizable | NSViewHeightSizable)];
-  [fileAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
+  if ([NSBundle loadNibNamed:@"FileAttributes" owner:self] == NO)
+    {
+      NSLog(@"PCProjectInspector: error loading ProjectDescription NIB file!");
+      return;
+    }
 
-  fileIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(8,310,48,48)];
-  [fileIconView setImage:nil];
-  [fileAttributesView addSubview:fileIconView];
-  RELEASE(fileIconView);
+  [fileAttributesView retain];
 
-  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(60,310,236,48)];
-  [fileNameField setAlignment: NSLeftTextAlignment];
-  [fileNameField setBordered: NO];
-  [fileNameField setEditable: NO];
-  [fileNameField setSelectable: NO];
-  [fileNameField setBezeled: NO];
-  [fileNameField setDrawsBackground: NO];
-  [fileNameField setFont:[NSFont systemFontOfSize:20.0]];
-  [fileNameField setStringValue:@"No files selected"];
-  [fileAttributesView addSubview:fileNameField];
-  RELEASE(fileNameField);
-
-  line = [[NSBox alloc] initWithFrame:NSMakeRect(0,298,315,2)];
-  [line setTitlePosition:NSNoTitle];
-  [fileAttributesView addSubview:line];
-  RELEASE(line);
-
-  [[NSNotificationCenter defaultCenter] 
+/*  [[NSNotificationCenter defaultCenter] 
     addObserver:self
        selector:@selector(browserDidSetPath:)
            name:PCBrowserDidSetPathNotification
-         object:[project projectBrowser]];
+         object:[project projectBrowser]];*/
 }
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
 {
-//  [self setFANameAndIcon:[aNotif object]];
+  [self setFANameAndIcon:[aNotif object]];
 }
 
 - (void)setFANameAndIcon:(PCProjectBrowser *)browser
@@ -1070,6 +646,7 @@
 
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
 {
+  NSLog(@"Number in rows in the table");
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
       return [searchItems count];
