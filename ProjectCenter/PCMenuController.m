@@ -37,10 +37,24 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-      // The accessory view
+    if ((self = [super init])) 
+    {
+      NSRect fr = NSMakeRect(20,30,160,20);
+
+      [[NSNotificationCenter defaultCenter] addObserver:self 
+                                         selector:@selector(editorDidBecomeKey:)
+					 name:PCEditorDidBecomeKeyNotification 
+					 object:nil];
+
+      [[NSNotificationCenter defaultCenter] addObserver:self 
+                                         selector:@selector(editorDidResignKey:)
+					 name:PCEditorDidResignKeyNotification 
+					 object:nil];
+
+      editorIsKey = NO;
+    
       projectTypeAccessaryView = [[NSBox alloc] init];
-      projectTypePopup = [[[NSPopUpButton alloc] initWithFrame:NSMakeRect(20,30,160,20) pullsDown:NO] autorelease];
+      projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
       [projectTypePopup addItemWithTitle:@"No type available!"];
       
       [projectTypeAccessaryView setTitle:@"Project Types"];
@@ -49,13 +63,18 @@
       [projectTypeAccessaryView addSubview:projectTypePopup];
       [projectTypeAccessaryView sizeToFit];
       [projectTypeAccessaryView setAutoresizingMask: NSViewWidthSizable];
+
+      RELEASE(projectTypePopup);
     }
     return self;
 }
 
 - (void)dealloc
 {
-  [projectTypeAccessaryView release];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  RELEASE(projectTypeAccessaryView);
+
   [super dealloc];
 }
 
@@ -63,7 +82,8 @@
 {
     static BOOL _firstItem = YES;
 
-    if (_firstItem) {
+    if (_firstItem) 
+    {
         _firstItem = NO;
         [projectTypePopup removeItemWithTitle:@"No type available!"];
     }
@@ -106,15 +126,18 @@
 
     retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
 
-    if (retval == NSOKButton) {
+    if (retval == NSOKButton) 
+    {
         BOOL isDir;
 
         [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
 	                                          forKey:@"LastOpenDirectory"];
+
         projPath = [[openPanel filenames] objectAtIndex:0];
 
         if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
-	                                         isDirectory:&isDir] && !isDir){
+	                                         isDirectory:&isDir] && !isDir)
+        {
             if (![projectManager openProjectAt:projPath]) 
 	    {
                 NSRunAlertPanel(@"Attention!",
@@ -221,11 +244,16 @@
         BOOL isDir;
 
         [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+
         filePath = [[openPanel filenames] objectAtIndex:0];
 
-        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && !isDir) {
-            if (![projectManager openFile:filePath]) {
-                NSRunAlertPanel(@"Attention!",@"Couldn't open %@!",@"OK",nil,nil,filePath);
+        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && !isDir) 
+	{
+            if (![projectManager openFile:filePath]) 
+	    {
+                NSRunAlertPanel(@"Attention!",
+		                @"Couldn't open %@!",
+				@"OK",nil,nil,filePath);
             }
         }
     }
@@ -239,15 +267,6 @@
 - (void)saveFile:(id)sender
 {
     [projectManager saveFile];
-}
-
-- (void)saveFileAs:(id)sender
-{
-    NSString *proj;
-
-// Show open panel
-
-    [projectManager saveFileAs:proj];
 }
 
 - (void)revertFile:(id)sender
@@ -274,7 +293,8 @@
     
     ret = NSRunAlertPanel(@"Remove File!",@"Really remove %@ in project %@?",@"Cancel",@"...from Project only",@"...from Project and Disk",file,[proj projectName]);
     
-    if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) {
+    if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
+    {
       BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
       
       [projectManager removeFilePermanently:flag];
@@ -288,13 +308,40 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-    if (![[projectManager loadedProjects] count]) {
-        if ([menuItem title] == @"New in Project") return NO;
-        if ([menuItem title] == @"Add File") return NO;
-        if ([menuItem title] == @"Remove File") return NO;
+    if ([[projectManager loadedProjects] count] == 0) 
+    {
+        // File related menu items
+	if ([[menuItem title] isEqualToString:@"New in Project"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Add File"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Remove File"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Save File"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Revert"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
+
+        // Project related menu items
+        if ([[menuItem title] isEqualToString:@"Close"]) return NO;
+        if ([[menuItem title] isEqualToString:@"Save..."]) return NO;
+        if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
+    }
+
+    // File related menu items
+    if( editorIsKey == NO )
+    {
+	if ([[menuItem title] isEqualToString:@"Save File"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Revert"]) return NO;
+	if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }
 
     return YES;
+}
+
+- (void)editorDidResignKey:(NSNotification *)aNotification
+{
+    editorIsKey = NO;
+}
+- (void)editorDidBecomeKey:(NSNotification *)aNotification
+{
+    editorIsKey = YES;
 }
 
 @end

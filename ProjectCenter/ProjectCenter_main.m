@@ -98,8 +98,8 @@ void createMenu()
   [menu setSubmenu:project forItem:[menu itemWithTitle:@"Project"]];
   [project addItemWithTitle:@"Open" action:@selector(openProject:) keyEquivalent:@"o"];
   [project addItemWithTitle:@"New" action:@selector(newProject:) keyEquivalent:@"n"];
-  [project addItemWithTitle:@"Save" action:@selector(saveProject:) keyEquivalent:@"s"];
-  [project addItemWithTitle:@"Save As" action:@selector(saveProjectAs:) keyEquivalent:@"S"];
+  [project addItemWithTitle:@"Save..." action:@selector(saveProject:) keyEquivalent:@"s"];
+  [project addItemWithTitle:@"Save As..." action:@selector(saveProjectAs:) keyEquivalent:@"S"];
   [project addItemWithTitle:@"Subprojects" action:action keyEquivalent:@""];
   [project addItemWithTitle:@"Close" action:@selector(closeProject:) keyEquivalent:@""];
 
@@ -115,12 +115,11 @@ void createMenu()
 
   file = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:file forItem:[menu itemWithTitle:@"File"]];
-  [file addItemWithTitle:@"Open..." action:@selector(openFile:) keyEquivalent:@"O"];
-  [file addItemWithTitle:@"Add..." action:@selector(addFile:) keyEquivalent:@"A"];
+  [file addItemWithTitle:@"Open File" action:@selector(openFile:) keyEquivalent:@"O"];
+  [file addItemWithTitle:@"Add File" action:@selector(addFile:) keyEquivalent:@"A"];
   [file addItemWithTitle:@"New in Project" action:@selector(newFile:) keyEquivalent:@"N"];
   [file addItemWithTitle:@"Remove File" action:@selector(removeFile:) keyEquivalent:@""];
-  [file addItemWithTitle:@"Save..." action:@selector(saveFile:) keyEquivalent:@""];
-  [file addItemWithTitle:@"Save as..." action:@selector(saveFileAs:) keyEquivalent:@""];
+  [file addItemWithTitle:@"Save File" action:@selector(saveFile:) keyEquivalent:@""];
   [file addItemWithTitle:@"Revert" action:@selector(revertFile:) keyEquivalent:@""];
   [file addItemWithTitle:@"Rename" action:@selector(renameFile:) keyEquivalent:@""];
 

@@ -122,11 +122,6 @@
   [menuController saveFile:sender];
 }
 
-- (void)saveFileAs:(id)sender
-{
-  [menuController saveFileAs:sender];
-}
-
 - (void)revertFile:(id)sender
 {
   [menuController revertFile:sender];
@@ -140,6 +135,11 @@
 - (void)removeFile:(id)sender
 {
   [menuController removeFile:sender];
+}
+
+- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
+{
+    return [menuController validateMenuItem:menuItem];
 }
 
 @end

@@ -52,10 +52,11 @@
 - (void)addFile:(id)sender;
 - (void)openFile:(id)sender;
 - (void)saveFile:(id)sender;
-- (void)saveFileAs:(id)sender;
 - (void)revertFile:(id)sender;
 - (void)renameFile:(id)sender;
 - (void)removeFile:(id)sender;
+
+- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem;
 
 @end
 
