@@ -50,6 +50,7 @@
 #import <ProjectCenter/PCEditor.h>
 #import <ProjectCenter/PCEditorController.h>
 #import <ProjectCenter/PCEditorView.h>
+#import <ProjectCenter/PCEditorView+Highlighting.h>
 #import <ProjectCenter/PCTextFinder.h>
 
 #endif

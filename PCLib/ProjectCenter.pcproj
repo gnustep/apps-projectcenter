@@ -17,7 +17,8 @@
 	PCEditorController.m,
 	PCTextFinder.m,
 	PCProjectEditor.m,
-	PCProject+ComponentHandling.m
+	PCProject+ComponentHandling.m,
+	PCEditorView+Highlighting.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -52,7 +53,8 @@
 	PCTextFinder.h,
 	PCProjectEditor.h,
 	ProjectComponent.h,
-	PCProject+ComponentHandling.h
+	PCProject+ComponentHandling.h,
+	PCEditorView+Highlighting.h
     );
     INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
     LANGUAGE = English;

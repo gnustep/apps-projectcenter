@@ -24,9 +24,19 @@
    $Id$
 */
 
+#ifndef _PCEDITORVIEW_H
+#define _PCEDITORVIEW_H
+
 #import <AppKit/AppKit.h>
 
 @class PCEditor;
+
+typedef enum _PCTabFlags {
+    PCTabTab = 1,
+    PCTab2Sp,
+    PCTab4Sp,
+    PCTab8Sp
+} PCTabFlags;
 
 @interface PCEditorView : NSTextView
 {
@@ -36,33 +46,45 @@
   NSRange range;
   NSArray *_keywords;
   PCEditor *editor;
-  BOOL shouldHighlight;
 }
+
+//=============================================================================
+// ==== Class methods
+//=============================================================================
+
++ (void)setTabBehaviour:(int)tabFlags;
++ (int)tabBehaviour;
+
++ (void)setShouldHighlight:(BOOL)yn;
++ (BOOL)shouldHighlight;
+
+//=============================================================================
+// ==== Init
+//=============================================================================
 
 - (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer*)tc;
 - (void)dealloc;
 
+//=============================================================================
+// ==== Accessor methods
+//=============================================================================
+
 - (void)setEditor:(PCEditor *)anEditor;
 - (void)setString:(NSString *)aString;
 
-- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
+//=============================================================================
+// ==== Text handling
+//=============================================================================
 
-- (void)setShouldHighlight:(BOOL)yn;
-- (BOOL)shouldHighlight;
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 
 - (void)insertText:(id)aString;
 
 - (void)highlightText;
 - (void)highlightTextInRange:(NSRange)range;
 
-- (void)colouriseKeyword:(NSString *)keyword;
-- (void)colouriseKeywords:(NSArray *)keywords;
-
-- (void)colouriseStrings;
-- (void)colouriseCharStrings;
-- (void)colouriseComments;
-- (void)colouriseCPPComments;
-
 - (void)keyDown: (NSEvent *)anEvent;
 
 @end
+
+#endif

@@ -67,7 +67,8 @@ PCDefines.h \
 PCTextFinder.h \
 PCProjectEditor.h \
 ProjectComponent.h \
-PCProject+ComponentHandling.h 
+PCProject+ComponentHandling.h \
+PCEditorView+Highlighting.h 
 
 #
 
@@ -90,7 +91,8 @@ PCEditor.m \
 PCEditorController.m \
 PCTextFinder.m \
 PCProjectEditor.m \
-PCProject+ComponentHandling.m 
+PCProject+ComponentHandling.m \
+PCEditorView+Highlighting.m 
 
 #
 
