@@ -110,6 +110,7 @@ ProjectCenter_OBJC_FILES = \
 #
 ProjectCenter_RESOURCE_FILES = \
   Resources/NewSubproject.gorm \
+  Resources/NewFile.gorm \
   Resources/ProjectInspector.gorm \
   Resources/BuildAttributes.gorm \
   Resources/ProjectDescription.gorm \

@@ -79,11 +79,6 @@
 {
   if ((self = [super init]))
     {
-      bundleLoader = [[PCBundleLoader alloc] init];
-      [bundleLoader setDelegate:self];
-
-      projectTypes = [[NSMutableDictionary alloc] init];
-
       infoController = [[PCInfoController alloc] init];
       prefController = [[PCPrefController alloc] init];
       finder         = [[PCFindController alloc] init];
@@ -122,26 +117,26 @@
 - (BOOL)respondsToSelector:(SEL)aSelector
 {
   if (![super respondsToSelector:aSelector])
-  {
-    return [menuController respondsToSelector:aSelector];
-  }
+    {
+      return [menuController respondsToSelector:aSelector];
+    }
   else
-  {
-    return YES;
-  }
+    {
+      return YES;
+    }
 }
                             
 - (void)forwardInvocation:(NSInvocation *)anInvocation
 {
   SEL aSelector = [anInvocation selector];
 
-  if ([menuController respondsToSelector: aSelector])
+  if ([menuController respondsToSelector:aSelector])
     {   
-      [anInvocation invokeWithTarget:  menuController];
+      [anInvocation invokeWithTarget:menuController];
     }
   else
     {
-      [super forwardInvocation: anInvocation];
+      [super forwardInvocation:anInvocation];
     }
 }
 
@@ -151,9 +146,9 @@
 
   sig = [super methodSignatureForSelector:aSelector];
   if (sig == nil)
-  {
-    sig = [menuController methodSignatureForSelector:aSelector];
-  }
+    {
+      sig = [menuController methodSignatureForSelector:aSelector];
+    }
 
   return sig;
 }
@@ -161,16 +156,6 @@
 //============================================================================
 //==== Bundle Management
 //============================================================================
-
-- (PCBundleLoader *)bundleLoader
-{
-  return bundleLoader;
-}
-
-- (PCProjectManager *)projectManager
-{
-  return projectManager;
-}
 
 - (PCInfoController *)infoController
 {
@@ -180,11 +165,6 @@
 - (PCPrefController *)prefController
 {
   return prefController;
-}
-
-- (PCMenuController *)menuController
-{
-  return menuController;
 }
 
 - (PCServer *)doServer
@@ -202,9 +182,14 @@
   return logger;
 }
 
-- (NSDictionary *)projectTypes
+- (PCProjectManager *)projectManager
 {
-  return projectTypes;
+  return projectManager;
+}
+
+- (PCMenuController *)menuController
+{
+  return menuController;
 }
 
 //============================================================================
@@ -230,7 +215,7 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
-  [bundleLoader loadBundles];
+//  [bundleLoader loadBundles];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
@@ -330,56 +315,10 @@
   RELEASE(projectManager);
   RELEASE(menuController);
 
-  RELEASE(bundleLoader);
   RELEASE(doServer);
-  RELEASE(projectTypes);
 
   NSLog (@"--- Application WILL terminate.END");
 }
 
-//============================================================================
-//==== Delegate stuff
-//============================================================================
-
-- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
-{
-  Class    principalClass;
-  NSString *projectTypeName = nil;
-  BOOL     ret = NO;
-
-  NSAssert(aBundle,@"No valid bundle!");
-
-  principalClass = [aBundle principalClass];
-  projectTypeName = [[principalClass sharedCreator] projectTypeName];
-
-  [logger logMessage: [NSString stringWithFormat:
-    @"Project type %@ successfully loaded!",projectTypeName] tag:INFORMATION];
-
-  ret = [self registerProjectCreator:NSStringFromClass(principalClass) 
-                              forKey:projectTypeName];
-  if (ret)
-    {
-      [projectManager addProjectTypeNamed:projectTypeName];
-      [logger logMessage:[NSString stringWithFormat:
-	@"Project type %@ successfully registered!",projectTypeName]
-	             tag:INFORMATION];
-    }
-}
-
 @end
 
-@implementation PCAppController (ProjectRegistration)
-
-- (BOOL)registerProjectCreator:(NSString *)className forKey:(NSString *)aKey
-{
-  if ([projectTypes objectForKey:aKey]) 
-    {
-      return NO;
-    }
-
-  [projectTypes setObject:className forKey:aKey];
-
-  return YES;
-}
-
-@end

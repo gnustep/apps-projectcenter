@@ -69,6 +69,11 @@ extern NSString *PCProjectDictDidSaveNotification;
   NSMutableDictionary *buildOptions;
 
   BOOL                editorIsActive;
+
+  // Subproject
+  BOOL                isSubproject;
+  PCProject           *rootProject;
+  PCProject           *superProject;
 }
 
 // ============================================================================
@@ -184,12 +189,16 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 - (NSArray *)subprojects;
 - (void)addSubproject:(PCProject *)aSubproject;
-- (PCProject *)superProject;
-- (PCProject *)rootProject;
-- (void)newSubprojectNamed:(NSString *)aName;
-- (void)removeSubproject:(PCProject *)aSubproject;
 
 - (BOOL)isSubProject;
+- (void)setIsSubproject:(BOOL)yn;
+- (PCProject *)superProject;
+- (void)setSuperProject:(PCProject *)project;
+- (PCProject *)rootProject;
+- (void)setRootProject:(PCProject *)project;
+
+- (void)newSubprojectNamed:(NSString *)aName;
+- (void)removeSubproject:(PCProject *)aSubproject;
 
 @end
 

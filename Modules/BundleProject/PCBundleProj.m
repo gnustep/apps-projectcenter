@@ -86,10 +86,6 @@ static PCBundleProj *_creator = nil;
       [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
       [projectDict setObject:[path lastPathComponent] forKey:PCPrincipalClass];
-      [projectDict setObject:[[NSCalendarDate date] description]
-	              forKey:PCCreationDate];
-      [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
-      [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
       // The path cannot be in the PC.project file!
       [project setProjectPath:path];
       [project setProjectName:[path lastPathComponent]];

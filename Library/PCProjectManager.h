@@ -27,6 +27,7 @@
 
 #include <AppKit/AppKit.h>
 
+@class PCBundleLoader;
 @class PCFileManager;
 @class PCProject;
 @class PCProjectInspector;
@@ -51,6 +52,9 @@ extern NSString *PCActiveProjectDidChangeNotification;
 {
   id                  delegate;
 
+  PCBundleLoader      *bundleLoader;
+  NSMutableDictionary *projectTypes;
+
   PCFileManager       *fileManager;
   PCProjectInspector  *projectInspector;
   
@@ -73,7 +77,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
   NSBox	              *fileTypeAccessaryView;
   id                  fileTypePopup;
 
-  NewSubprojectController *newSubprojectController;
+  IBOutlet NSPanel       *nsPanel;
+  IBOutlet NSImageView   *nsImage;
+  IBOutlet NSTextField   *nsTitle;
+  IBOutlet NSTextField   *nsNameField;
+  IBOutlet NSPopUpButton *nsTypePB;
+  IBOutlet NSButton      *nsCancelButton;
+  IBOutlet NSButton      *nsCreateButton;
 
   @private
     BOOL _needsReleasing;
@@ -82,17 +92,14 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ============================================================================
 // ==== Intialization & deallocation
 // ============================================================================
-
 - (id)init;
 - (void)dealloc;
-- (void)_initUI;
-- (void)addProjectTypeNamed:(NSString *)name;
+- (void)createProjectTypeAccessaryView;
 - (void)setDelegate:(id)aDelegate;
 
 // ============================================================================
 // ==== Timer handling
 // ============================================================================
-
 - (void)resetSaveTimer:(NSNotification *)notif;
 
 // ============================================================================
@@ -141,9 +148,8 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // Invokes loadProjectAt to load the project properly.
 - (BOOL)openProjectAt:(NSString *)aPath;
 
-// projectType is exactly the name of the class to be invoked to create the
-// project!
-- (BOOL)createProjectOfType:(NSString *)projectType path:(NSString *)aPath;
+- (PCProject *)createProjectOfType:(NSString *)projectType 
+                              path:(NSString *)aPath;
 
 - (void)openProject;
 - (void)newProject;
@@ -157,11 +163,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (BOOL)addProjectFiles;
 - (BOOL)saveProjectFiles;
 - (BOOL)removeProjectFiles;
-
-
-- (BOOL)newSubproject;
-- (BOOL)addSubprojectAt:(NSString *)path;
-- (void)removeSubproject;
 
 - (void)closeProject:(PCProject *)aProject;
 - (void)closeProject;
@@ -220,6 +221,31 @@ extern NSString *PCActiveProjectDidChangeNotification;
   id createButton;
   id cancelButton;
 }
+
+@end
+
+@interface PCProjectManager (ProjectRegistration)
+
+- (void)loadProjectTypeBunldes;
+- (PCBundleLoader *)bundleLoader;
+- (NSDictionary *)projectTypes;
+- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle;
+
+@end
+
+@interface PCProjectManager (Subprojects)
+
+// --- New
+- (BOOL)newSubproject;
+- (void)closeNewSubprojectPanel:(id)sender;
+- (BOOL)createSubproject:(id)sender;
+- (BOOL)createSubproject;
+
+// --- Add
+- (BOOL)addSubprojectAt:(NSString *)path;
+
+// --- Remove
+- (void)removeSubproject;
 
 @end
 

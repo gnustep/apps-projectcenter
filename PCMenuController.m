@@ -307,10 +307,13 @@
       if ([menuTitle isEqualToString: @"Project"])
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
-	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save Files..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+	  if ([[menuItem title] isEqualToString:@"New Subproject..."]) 
+	    return NO;
+	  if ([[menuItem title] isEqualToString:@"Add Subproject..."]) 
+	    return NO;
 	  if ([[menuItem title] isEqualToString:@"Close"]) return NO;
 	}
 

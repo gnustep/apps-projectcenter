@@ -33,20 +33,23 @@
 
 @interface PCFileManager : NSObject
 {
-  PCProjectManager *projectManager;
-  id               newFileWindow;
-//  id               fileTypePopup;
-  id               newFileName;
-  id               descrView;
+  PCProjectManager       *projectManager;
+  id                     delegate;        // PCProjectManager
 
-  id delegate;                    // PCProjectManager
+  NSDictionary           *creators;
 
-  NSMutableDictionary *creators;
-  NSMutableDictionary *typeDescr;
+  // New File in Project panel
+  IBOutlet NSPanel       *newFilePanel;
+  IBOutlet NSImageView   *nfImage;
+  IBOutlet NSPopUpButton *nfTypePB;
+  IBOutlet NSTextView    *nfDescriptionTV;
+  IBOutlet NSTextField   *nfNameField;
+  IBOutlet NSButton      *nfCancleButton;
+  IBOutlet NSButton      *nfCreateButton;
 
-  NSOpenPanel      *addFilesPanel;
-  NSBox	           *fileTypeAccessaryView;
-  NSPopUpButton    *fileTypePopup;
+  NSOpenPanel            *addFilesPanel;
+  NSBox	                 *fileTypeAccessaryView;
+  NSPopUpButton          *fileTypePopup;
 }
 
 //==============================================================================
@@ -61,15 +64,6 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aProjectManager;
 - (void)dealloc;
-
-- (void)awakeFromNib;
-
-// ===========================================================================
-// ==== Delegate
-// ===========================================================================
-
-- (id)delegate;
-- (void)setDelegate:(id)aDelegate;
 
 // ===========================================================================
 // ==== File stuff
@@ -91,26 +85,8 @@
 // Return NO if removing of any file failed
 - (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory;
 
-- (void)showNewFileWindow;
-- (void)buttonsPressed:(id)sender;
-- (void)popupChanged:(id)sender;
-
 - (void)createFile;
 
-- (void)registerCreators;
-
-@end
-
-@interface  NSObject (FileManagerDelegates)
-
-// Returns the correct, full path - or nil!
-- (NSString *)fileManager:(id)sender
-           willCreateFile:(NSString *)aFile
-	          withKey:(NSString *)key;
-
-- (void)fileManager:(id)sender
-      didCreateFile:(NSString *)aFile
-            withKey:(NSString *)key;
 @end
 
 #endif

@@ -33,9 +33,9 @@
 
 @implementation PCFileManager
 
-//============================================================================
+// ===========================================================================
 // ==== Class methods
-//============================================================================
+// ===========================================================================
 
 static PCFileManager *_mgr = nil;
 
@@ -49,19 +49,17 @@ static PCFileManager *_mgr = nil;
   return _mgr;
 }
 
-//============================================================================
+// ===========================================================================
 // ==== Init and free
-//============================================================================
+// ===========================================================================
 
 - (id)initWithProjectManager:(PCProjectManager *)aProjectManager
 {
   if ((self = [super init])) 
     {
       projectManager = aProjectManager;
-      creators = [[NSMutableDictionary alloc] init];
-      typeDescr = [[NSMutableDictionary alloc] init];
-      [self _initUI];
-      [self registerCreators];
+      creators = [[PCFileCreator sharedCreator] creatorDictionary];
+      RETAIN(creators);
     }
   return self;
 }
@@ -69,29 +67,9 @@ static PCFileManager *_mgr = nil;
 - (void)dealloc
 {
   RELEASE(creators);
-  RELEASE(newFileWindow);
-  RELEASE(typeDescr);
+  RELEASE(newFilePanel);
   
   [super dealloc];
-}
-
-- (void)awakeFromNib
-{
-  [fileTypePopup removeAllItems];
-}
-
-// ===========================================================================
-// ==== Delegate
-// ===========================================================================
-
-- (id)delegate
-{
-  return delegate;
-}
-
-- (void)setDelegate:(id)aDelegate
-{
-  delegate = aDelegate;
 }
 
 // ===========================================================================
@@ -217,65 +195,31 @@ static PCFileManager *_mgr = nil;
   return YES;
 }
 
-- (void)showNewFileWindow
-{
-  [self popupChanged:fileTypePopup];
-
-  [newFileWindow center];
-  [newFileWindow makeKeyAndOrderFront:self];
-}
-
-- (void)buttonsPressed:(id)sender
-{
-  switch ([[sender selectedCell] tag]) 
-    {
-    case 0:
-      break;
-    case 1:
-      [self createFile];
-      break;
-    }
-  [newFileWindow orderOut:self];
-  [newFileName setStringValue:@""];
-}
-
-- (void)popupChanged:(id)sender
-{
-  NSString *k = [sender titleOfSelectedItem];
-
-  if( k ) 
-    {
-#ifdef GNUSTEP_BASE_VERSION
-      [descrView setText:[typeDescr objectForKey:k]];
-#else
-      [descrView setString:[typeDescr objectForKey:k]];
-#endif
-    }
-}
-
 - (void)createFile
 {
   NSString *path = nil;
-  NSString *fileName = [newFileName stringValue];
-  NSString *fileType = [fileTypePopup titleOfSelectedItem];
+  NSString *fileName = [nfNameField stringValue];
+  NSString *fileType = [nfTypePB titleOfSelectedItem];
   NSString *key = [[creators objectForKey:fileType] objectForKey:@"ProjectKey"];
 
-  if (delegate) 
-    {
-      path = [delegate fileManager:self willCreateFile:fileName withKey:key];
-    }
+  NSLog(@"FileManager: createFile %@", fileName);
 
-#ifdef DEBUG  
+  path = [projectManager fileManager:self 
+                      willCreateFile:fileName
+		             withKey:key];
+
   NSLog(@"<%@ %x>: creating file at %@", [self class], self, path);
-#endif //DEBUG
 
   // Create file
   if (path) 
     {
-      NSDictionary  *newFiles;
-      PCFileCreator *creator = [[creators objectForKey:fileType] objectForKey:@"Creator"];
-      PCProject *p = [delegate activeProject];
+      NSDictionary  *newFiles = nil;;
+      PCFileCreator *creator = nil;
+      PCProject     *project = [projectManager activeProject];
+      NSEnumerator  *enumerator;
+      NSString      *aFile;
 
+      creator = [[creators objectForKey:fileType] objectForKey:@"Creator"];
       if (!creator) 
 	{
 	  NSRunAlertPanel(@"Attention!",
@@ -285,59 +229,19 @@ static PCFileManager *_mgr = nil;
 	}
 
       // Do it finally...
-      newFiles = [creator createFileOfType:fileType path:path project:p];
-      if (delegate 
-	  && [delegate respondsToSelector:@selector(fileManager:didCreateFile:withKey:)]) 
+      newFiles = [creator createFileOfType:fileType path:path project:project];
+
+      // Key: name of file
+      enumerator = [[newFiles allKeys] objectEnumerator]; 
+      while ((aFile = [enumerator nextObject])) 
 	{
-	  NSEnumerator *enumerator;
-	  NSString *aFile;
-
-	  enumerator = [[newFiles allKeys] objectEnumerator]; // Key: name of file
-	  while ((aFile = [enumerator nextObject])) 
-	    {
-	      NSString *theType = [newFiles objectForKey:aFile];
-	      NSString *theKey = [[creators objectForKey:theType] objectForKey:@"ProjectKey"];
-
-	      [delegate fileManager:self didCreateFile:aFile withKey:theKey];
-	    }
+	  NSString *theType = [newFiles objectForKey:aFile];
+	  NSString *theKey = [[creators objectForKey:theType] 
+	                       objectForKey:@"ProjectKey"];
+	    
+	  [projectManager fileManager:self didCreateFile:aFile withKey:theKey];
 	}
     }
-}
-
-- (void)registerCreators
-{
-  NSDictionary *dict = [[PCFileCreator sharedCreator] creatorDictionary];
-  NSEnumerator *enumerator = [dict keyEnumerator];
-  id           type;
-
-  while ((type = [enumerator nextObject])) 
-    {
-      NSDictionary *cd = [dict objectForKey:type];
-      id           creator = [cd objectForKey:@"Creator"];
-
-      if (!creator) 
-	{
-	  [NSException raise:@"FileManagerGenericException" 
-	    format:@"The target does not conform to the FileCreator protocol!"];
-	  return;
-	}
-
-      if ([creators objectForKey:type]) 
-	{
-	  [NSException raise:@"FileManagerGenericException" 
-	    format:@"There is already a creator registered for this type!"];
-	  return;
-	}
-
-      // Register the creator!
-      [creators setObject:[dict objectForKey:type] forKey:type];
-      [fileTypePopup addItemWithTitle:type];
-
-      if ([cd objectForKey:@"TypeDescription"])
-	{
-	  [typeDescr setObject:[cd objectForKey:@"TypeDescription"] forKey:type];
-	}
-  }
 }
 
 @end

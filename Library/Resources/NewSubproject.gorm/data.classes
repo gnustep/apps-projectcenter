@@ -138,20 +138,26 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "closeNewSubprojectPanel:",
+	    "createSubproject:"
 	);
 	Super = NSObject;
     };
-    NewSubproject = {
+    PCProjectManager = {
 	Actions = (
+	    "closeNewSubprojectPanel:",
+	    "createSubproject:"
 	);
 	Outlets = (
-	    image,
-	    nameTextField,
-	    typePopup,
-	    createButton,
-	    cancelButton
+	    nsPanel,
+	    nsImage,
+	    nsTitle,
+	    nsNameField,
+	    nsTypePB,
+	    nsCancelButton,
+	    nsCreateButton
 	);
-	Super = NSPanel;
+	Super = NSObject;
     };
 }

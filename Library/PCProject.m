@@ -908,17 +908,45 @@ NSString
 
 - (void)addSubproject:(PCProject *)aSubproject
 {
+  NSMutableArray *subprojects;
+
+  subprojects = [NSMutableArray 
+    arrayWithArray:[projectDict objectForKey:PCSubprojects]];
+
+  [subprojects addObject:aSubproject];
+  [self setProjectDictObject:subprojects forKey:PCSubprojects];
+}
+
+- (BOOL)isSubProject
+{
+  return isSubproject;
+}
+
+- (void)setIsSubproject:(BOOL)yn
+{
+  isSubproject = yn;
 }
 
 - (PCProject *)superProject
 {
-  return nil;
+  return superProject;
+}
+
+- (void)setSuperProject:(PCProject *)project
+{
+  superProject = project;
 }
 
 - (PCProject *)rootProject
 {
-  return self;
+  return rootProject;
 }
+
+- (void)setRootProject:(PCProject *)project
+{
+  rootProject = project;
+}
+
 
 - (void)newSubprojectNamed:(NSString *)aName
 {
@@ -926,11 +954,6 @@ NSString
 
 - (void)removeSubproject:(PCProject *)aSubproject
 {
-}
-
-- (BOOL)isSubProject
-{
-  return NO;
 }
 
 @end

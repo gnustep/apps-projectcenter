@@ -98,16 +98,16 @@
 
 - (void)click:(id)sender
 {
-  // NSTableView doesn't call setAction: action
-  NSLog(@"ProjectHistory click received");
-}
-
-- (void)doubleClick:(id)sender
-{
   int      row = [filesList selectedRow];
   NSString *path = [filesPath objectAtIndex:row];
 
   [[project projectEditor] orderFrontEditorForFile:path];
+}
+
+- (void)doubleClick:(id)sender
+{
+  // TODO: Open separate editor window for file
+  NSLog(@"ProjectHistory doubleClick received");
 }
 
 - (NSView *)componentView

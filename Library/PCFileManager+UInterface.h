@@ -28,7 +28,10 @@
 
 @interface PCFileManager (UInterface)
 
-- (void)_initUI;
+- (void)showNewFilePanel;
+- (void)closeNewFilePanel:(id)sender;
+- (void)createFile:(id)sender;
+- (void)newFilePopupChanged:(id)sender;
 
 - (void)_createAddFilesPanel;
 - (NSMutableArray *)filesForAdd;

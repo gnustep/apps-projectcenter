@@ -52,9 +52,9 @@
   [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
   [contentBox setTitlePosition:NSNoTitle];
   [contentBox setBorderType:NSNoBorder];
-  [self setContentView:contentBox];
+  [super setContentView:contentBox];
 
-  [self setContentView:[projectBuilder componentView]];
+  [contentBox setContentView:[projectBuilder componentView]];
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -73,58 +73,28 @@
 
 - (void)dealloc
 {
-  NSLog (@"PCBuildPanel: dealloc (CV RC:%i)", 
-	 [[contentBox contentView] retainCount]);
+/*  NSLog (@"PCBuildPanel: dealloc (CV RC:%i)", 
+	 [[contentBox contentView] retainCount]);*/
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
   [super dealloc];
-}
-
-- (NSView *)contentView
-{
-  if (contentBox)
-    {
-      return [contentBox contentView];
-    }
-
-  return [super contentView];
-}
-
-- (void)setContentView:(NSView *)view
-{
-  if (view == contentBox)
-    {
-      NSLog(@"");
-      [super setContentView:view];
-    }
-  else
-    {
-      [contentBox setContentView:view];
-    }
 }
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
   PCProject *activeProject = [aNotif object];
 
-/*  if (![self isVisible])
-    {
-      return;
-    }*/
-
-  NSLog (@"PCBuildPanel: activeProjectDidChange");
-
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
   if (!activeProject)
     {
-//      [[contentBox contentView] removeFromSuperview];
       [contentBox setContentView:nil];
     }
   else
     {
-      [self setContentView:[[activeProject projectBuilder] componentView]];
+      [contentBox 
+	setContentView:[[activeProject projectBuilder] componentView]];
     }
 }
 

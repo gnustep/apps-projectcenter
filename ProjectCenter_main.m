@@ -138,9 +138,6 @@ createMenu()
   [project addItemWithTitle:@"Save"
 	             action:@selector(projectSave:) 
 	      keyEquivalent:@"S"];
-  [project addItemWithTitle:@"Save As..."
-	             action:@selector(projectSaveAs:)
-	      keyEquivalent:@""];
   [project addItemWithTitle:@"Add Files..."
 	             action:@selector(projectAddFiles:)
 	      keyEquivalent:@"A"];

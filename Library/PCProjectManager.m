@@ -24,6 +24,7 @@
 
 #include "PCDefines.h"
 
+#include "PCBundleLoader.h"
 #include "PCFileManager.h"
 #include "PCFileManager+UInterface.h"
 #include "PCProjectManager.h"
@@ -63,6 +64,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       SEL            spdc = @selector(resetSaveTimer:);
       NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
 
+      [self loadProjectTypeBunldes];
+
       loadedProjects = [[NSMutableDictionary alloc] init];
 
       rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
@@ -95,10 +98,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	     object:nil];
 	     
       fileManager = [[PCFileManager alloc] initWithProjectManager:self];
-//      [fileManager setDelegate:self];
 
-      [self _initUI];
-      
       _needsReleasing = NO;
     }
 
@@ -115,6 +115,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [saveTimer invalidate];
     }
 
+  RELEASE(bundleLoader);
+  RELEASE(projectTypes);
   RELEASE(projectTypeAccessaryView);
   RELEASE(fileTypeAccessaryView);
   RELEASE(rootBuildPath);
@@ -133,18 +135,24 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   delegate = aDelegate;
 }
 
-// ============================================================================
-// ==== Intialization & deallocation
-// ============================================================================
-
-- (void)_initUI
+- (void)createProjectTypeAccessaryView
 {
   NSRect fr = NSMakeRect(20,30,160,20);
+
+  if (projectTypeAccessaryView != nil)
+    {
+      return;
+    }
 
   // For "Open Project" and "New Project" panels
   projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
   [projectTypePopup setAutoenablesItems:NO];
-  [projectTypePopup addItemWithTitle:@"No type available!"];
+  [projectTypePopup addItemsWithTitles:
+    [[projectTypes allKeys] 
+    sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+  [projectTypePopup sizeToFit];
+  [projectTypeAccessaryView sizeToFit];
+  [projectTypePopup selectItemAtIndex:0];
 
   projectTypeAccessaryView = [[NSBox alloc] init];
   [projectTypeAccessaryView setTitle:@"Project Types"];
@@ -155,22 +163,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [projectTypeAccessaryView setAutoresizingMask:NSViewMinXMargin 
                                                 | NSViewMaxXMargin];
   RELEASE(projectTypePopup);
-}
-
-- (void)addProjectTypeNamed:(NSString *)name
-{
-  static BOOL _firstItem = YES;
-
-  if (_firstItem) 
-    {
-      _firstItem = NO;
-      [projectTypePopup removeItemWithTitle:@"No type available!"];
-    }
-
-  [projectTypePopup addItemWithTitle:name];
-  [projectTypePopup sizeToFit];
-  [projectTypeAccessaryView sizeToFit];
-  [projectTypePopup selectItemAtIndex:0];
 }
 
 // ============================================================================
@@ -195,8 +187,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 }
 
 // ============================================================================
-// ==== Accessory methods
+// ==== Accessary methods
 // ============================================================================
+
 - (PCFileManager *)fileManager
 {
   return fileManager;
@@ -367,7 +360,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (projectClassName == nil)
     {
       projectTypeName = [projectFile objectForKey:PCProjectType];
-      projectClassName = [[delegate projectTypes]objectForKey:projectTypeName];
+      projectClassName = [projectTypes objectForKey:projectTypeName];
     }
 
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
@@ -439,7 +432,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return NO;
 }
 
-- (BOOL)createProjectOfType:(NSString *)projectType path:(NSString *)aPath
+- (PCProject *)createProjectOfType:(NSString *)projectType 
+                              path:(NSString *)aPath
 {
   Class	    creatorClass = NSClassFromString(projectType);
   PCProject *project;
@@ -450,27 +444,24 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       NSRunAlertPanel(@"Attention!",
 		      @"Project '%@' has already been opened!", 
 		      @"OK",nil,nil,projectName);
-      return NO;
+      return nil;
     }
 
   if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
     {
       [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
 	          format:@"%@ does not conform to ProjectType!",projectType];
-      return NO;
+      return nil;
     }
 
   if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) 
     {
-      return NO;
+      return nil;
     }
 
   [project setProjectManager:self];
-  [loadedProjects setObject:project forKey:projectName];
-  [self setActiveProject:project];
-  [[project projectWindow] orderFront:self];
 
-  return YES;
+  return project;
 }
 
 - (void)openProject
@@ -496,25 +487,32 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)newProject
 {
-  NSString *filePath = nil;
-  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
-  NSString *projectType = nil;
-  NSString *className = nil;
+  NSString  *filePath = nil;
+  NSArray   *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+  NSString  *projectType = nil;
+  NSString  *className = nil;
+  PCProject *project = nil;
 
+  [self createProjectTypeAccessaryView];
+  
   filePath = [fileManager fileForSaveOfType:fileTypes
 	  		              title:@"New Project"
 				    accView:projectTypeAccessaryView];
   if (filePath != nil) 
     {
       projectType = [projectTypePopup titleOfSelectedItem];
-      className = [[delegate projectTypes] objectForKey:projectType];
+      className = [projectTypes objectForKey:projectType];
 
-      if (![self createProjectOfType:className path:filePath])
+      if (!(project = [self createProjectOfType:className path:filePath]))
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Failed to create %@!",
 			  @"OK",nil,nil,filePath);
 	}
+
+      [loadedProjects setObject:project forKey:[project projectName]];
+      [self setActiveProject:project];
+      [[project projectWindow] orderFront:self];
     }
 }
 
@@ -629,33 +627,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return YES;
 }
 
-// subprojects
-- (BOOL)newSubproject
-{
-  NSLog (@"newSubproject");
-  
-  newSubprojectController = [[NewSubprojectController alloc] 
-    initWithWindowNibName:@"NewSubproject" owner:self];
-
-  NSLog(@"window title is: %@", [[newSubprojectController window] title]);
-  if (newSubprojectController == nil)
-    {
-      NSLog(@"newSubprojectController is nil!");
-    }
-
-  return NO;
-}
-
-- (BOOL)addSubprojectAt:(NSString *)path
-{
-  return NO;
-}
-
-- (void)removeSubproject
-{
-}
-//
-
 - (void)closeProject:(PCProject *)aProject
 {
   PCProject *currentProject = nil;
@@ -727,7 +698,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)newFile
 {
-  [fileManager showNewFileWindow];
+  [fileManager showNewFilePanel];
 }
 
 - (BOOL)saveFile
@@ -802,7 +773,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 @end
 
-@implementation  PCProjectManager (FileManagerDelegates)
+@implementation PCProjectManager (FileManagerDelegates)
 
 // willCreateFile
 - (NSString *)fileManager:(id)sender
@@ -829,11 +800,140 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 @end
 
-@implementation NewSubprojectController
+@implementation PCProjectManager (ProjectRegistration)
 
-- (void)awakeFromNib
+- (void)loadProjectTypeBunldes
 {
-  NSLog(@"NewSubproject awake from nib");
+  projectTypes = [[NSMutableDictionary alloc] init];
+
+  bundleLoader = [[PCBundleLoader alloc] init];
+  [bundleLoader setDelegate:self];
+  [bundleLoader loadBundles];
+}
+
+- (PCBundleLoader *)bundleLoader
+{
+  return bundleLoader;
+}
+
+- (NSDictionary *)projectTypes
+{
+  return projectTypes;
+}
+
+- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
+{
+  Class    principalClass;
+  NSString *projectTypeName = nil;
+
+  NSAssert(aBundle,@"No valid bundle!");
+
+  principalClass = [aBundle principalClass];
+  projectTypeName = [[principalClass sharedCreator] projectTypeName];
+
+  if (![projectTypes objectForKey:projectTypeName]) 
+    {
+      [projectTypes setObject:NSStringFromClass(principalClass)
+	               forKey:projectTypeName];
+    }
+}
+
+@end
+
+@implementation PCProjectManager (Subprojects)
+
+// --- New
+- (BOOL)newSubproject
+{
+  NSLog (@"newSubproject");
+
+  if (!nsPanel)
+    {
+      if ([NSBundle loadNibNamed:@"NewSubproject" owner:self] == NO)
+	{
+	  NSLog(@"PCProjectManager: error loading NewSubproject NIB!");
+	  return NO;
+	}
+      [nsPanel center];
+      [nsImage setImage:[NSApp applicationIconImage]];
+      [nsTypePB removeAllItems];
+      [nsTypePB addItemsWithTitles:
+	[[projectTypes allKeys] 
+	sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+      [nsTypePB setRefusesFirstResponder:YES];
+      [nsCancelButton setRefusesFirstResponder:YES];
+      [nsCreateButton setRefusesFirstResponder:YES];
+    }
+  [nsPanel makeKeyAndOrderFront:nil];
+  [nsNameField setStringValue:@""];
+  [nsPanel makeFirstResponder:nsNameField];
+
+  return YES;
+}
+
+- (void)closeNewSubprojectPanel:(id)sender
+{
+  [nsPanel orderOut:self];
+}
+
+- (BOOL)createSubproject:(id)sender
+{
+  [nsPanel orderOut:self];
+
+  return [self createSubproject];
+}
+
+- (BOOL)createSubproject
+{
+  PCProject *rootProject = [activeProject copy];
+  PCProject *subproject = nil;
+  NSString  *spName = [nsNameField stringValue];
+  NSString  *spPath = nil;
+  NSString  *spType = [nsTypePB titleOfSelectedItem];
+
+  spPath = [[activeProject projectPath] 
+    stringByAppendingPathComponent:spName];
+
+  // Create subproject
+  subproject = [self createProjectOfType:spType path:spPath];
+
+  // For now root project can contain subproject but suboproject can't.
+  [subproject setIsSubproject:YES];
+  [subproject setRootProject:rootProject];
+  [subproject setSuperProject:rootProject];
+
+  [rootProject addSubproject:subproject];
+
+  return YES;
+}
+
+- (void)controlTextDidChange:(NSNotification *)aNotif
+{
+  if ([aNotif object] != nsNameField)
+    {
+      return;
+    }
+    
+  // TODO: Add check for valid subproject named
+  if ([[nsNameField stringValue] length] > 0)
+    {
+      [nsCreateButton setEnabled:YES];
+    }
+  else
+    {
+      [nsCreateButton setEnabled:NO];
+    }
+}
+
+// --- Add
+- (BOOL)addSubprojectAt:(NSString *)path
+{
+  return NO;
+}
+
+// --- Remove
+- (void)removeSubproject
+{
 }
 
 @end

@@ -36,16 +36,16 @@ Resources/Inspector.gorm
 # Header files
 #
 BundleProject_HEADERS = \
-PCBundleProject.h \
-PCBundleProj.h 
+PCBundleProj.h \
+PCBundleProject.h
 
 #
 # Class files
 #
 
 BundleProject_OBJC_FILES= \
-PCBundleProject.m \
-PCBundleProj.m 
+PCBundleProj.m \
+PCBundleProject.m
 
 #
 # C files

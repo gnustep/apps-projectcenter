@@ -32,7 +32,6 @@
 #include "PCInfoController.h"
 #include "PCLogController.h"
 
-@class PCBundleLoader;
 @class PCServer;
 @class PCProjectManager;
 @class PCFileManager;
@@ -40,20 +39,18 @@
 
 @interface PCAppController : NSObject
 {
+  PCInfoController *infoController;
   PCPrefController *prefController;
   PCFindController *finder;
-  PCInfoController *infoController;
   PCLogController  *logger;
+
   PCProjectManager *projectManager;
   PCMenuController *menuController;
   
-  PCBundleLoader   *bundleLoader;
   PCServer         *doServer;
   NSConnection     *doConnection;
   
   id		   delegate;
-  
-  NSMutableDictionary *projectTypes;
 }
 
 //============================================================================
@@ -77,10 +74,9 @@
 - (void)setDelegate:(id)aDelegate;
 
 //============================================================================
-//==== Bundle Management
+//==== Accessory methods
 //============================================================================
 
-- (PCBundleLoader *)bundleLoader;
 - (PCProjectManager *)projectManager;
 - (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
@@ -89,10 +85,8 @@
 - (PCFindController *)finder;
 - (PCLogController *)logger;
 
-- (NSDictionary *)projectTypes;
-
 //============================================================================
-//==== Misc...
+//==== Application
 //============================================================================
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
@@ -102,19 +96,6 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender;
 - (void)applicationWillTerminate:(NSNotification *)notification;
-
-//============================================================================
-//==== Delegate stuff
-//============================================================================
-
-- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle;
-
-@end
-
-@interface PCAppController (ProjectRegistration)
-
-- (BOOL)registerProjectCreator:(NSString *)className forKey:(NSString *)aKey;
-// Returns YES upon successfully registering a new projecttype.
 
 @end
 
