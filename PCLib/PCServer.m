@@ -38,7 +38,7 @@
 {
   if ((self = [super init])) {
     clients = [[NSMutableArray alloc] init];
-    openDocuments = [[NSMutableArray alloc] init];
+    openDocuments = [[NSMutableDictionary alloc] init];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileShouldBeOpened:) name:FileShouldOpenNotification object:nil];
   }
@@ -89,13 +89,18 @@
 
 - (void)openFileInInternalEditor:(NSString *)file
 {
-  NSWindow *editorWindow = [self editorForFile:file];
-
-  [editorWindow setDelegate:self];
-  [editorWindow center];
-  [editorWindow makeKeyAndOrderFront:self];
-
-  [openDocuments addObject:editorWindow];
+  if ([openDocuments objectForKey:file]) {
+    [[openDocuments objectForKey:file] makeKeyAndOrderFront:self];
+  }
+  else {
+    NSWindow *editorWindow = [self editorForFile:file];
+    
+    [editorWindow setDelegate:self];
+    [editorWindow center];
+    [editorWindow makeKeyAndOrderFront:self];
+    
+    [openDocuments setObject:editorWindow forKey:file];
+  }
 }
 
 - (NSWindow *)editorForFile:(NSString *)aFile
@@ -105,17 +110,20 @@
   NSWindow *window = [[NSWindow alloc] initWithContentRect:rect
 				       styleMask:style
 				       backing:NSBackingStoreBuffered
-				       defer:NO];
+				       defer:YES];
   PCEditorView *textView;
   NSScrollView *scrollView;
 
   NSString *text = [NSString stringWithContentsOfFile:aFile];
 
   [window setMinSize:NSMakeSize(512,320)];
-  [window setTitle:[aFile lastPathComponent]];
+  [window setTitle:aFile];
 
   textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [textView setRichText:NO];
+  [textView setEditable:NO];
+  [textView setSelectable:YES];
   [textView setVerticallyResizable:YES];
   [textView setHorizontallyResizable:NO];
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -148,7 +156,7 @@
 {
   NSWindow *window = [aNotif object];
 
-  [openDocuments removeObject:window];
+  [openDocuments removeObjectForKey:[window title]];
 }
 
 //----------------------------------------------------------------------------

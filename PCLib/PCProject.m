@@ -80,7 +80,7 @@
   textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,520,168)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setRichText:NO];
-  [textView setEditable:YES];
+  [textView setEditable:NO];
   [textView setSelectable:YES];
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setVerticallyResizable:YES];

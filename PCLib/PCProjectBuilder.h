@@ -46,6 +46,9 @@
 
   PCProject *currentProject;
   NSDictionary *currentOptions;
+
+  NSFileHandle *readHandle;
+  NSFileHandle *errorReadHandle;
 }
 
 + (id)sharedBuilder;
@@ -57,9 +60,20 @@
 
 - (void)build:(id)sender;
 
-- (void)logData:(NSNotification *)aNotif;
+- (void)logStdOut:(NSNotification *)aNotif;
+- (void)logErrOut:(NSNotification *)aNotif;
+
+- (void)buildDidTerminate:(NSNotification *)aNotif;
 
 - (void)projectDidChange:(NSNotification *)aNotif;
+
+@end
+
+@interface PCProjectBuilder (BuildLogging)
+
+- (void)logString:(NSString *)string error:(BOOL)yn;
+- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
+- (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end
 

@@ -64,7 +64,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 @interface PCServer : NSObject <Server>
 {
     NSMutableArray *clients;
-    NSMutableArray *openDocuments;
+    NSMutableDictionary *openDocuments;
 }
 
 //----------------------------------------------------------------------------

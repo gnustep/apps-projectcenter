@@ -34,6 +34,10 @@
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
 #endif
 
+#ifndef NOTIFICATION_CENTER
+#define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
+#endif
+
 @interface PCProjectBuilder (CreateUI)
 
 - (void)_initUI;
@@ -71,8 +75,11 @@
   [buildWindow setMinSize:NSMakeSize(512,320)];
   [buildWindow setFrameAutosaveName:@"Builder"];
 
-  logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,80)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
+  [logOutput setRichText:NO];
+  [logOutput setEditable:NO];
+  [logOutput setSelectable:YES];
   [logOutput setVerticallyResizable:YES];
   [logOutput setHorizontallyResizable:NO];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -93,8 +100,11 @@
    *
    */
 
-  errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,80)];
   [errorOutput setMaxSize:NSMakeSize(1e7, 1e7)];
+  [errorOutput setRichText:NO];
+  [errorOutput setEditable:NO];
+  [errorOutput setSelectable:YES];
   [errorOutput setVerticallyResizable:YES];
   [errorOutput setHorizontallyResizable:NO];
   [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
@@ -260,14 +270,14 @@ static PCProjectBuilder *_builder;
     makePath = [[NSString stringWithString:@"/usr/bin/make"] retain];
     buildTasks = [[NSMutableDictionary dictionary] retain];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDidChange:) name:ActiveProjectDidChangeNotification object:nil];
+    [NOTIFICATION_CENTER addObserver:self selector:@selector(projectDidChange:) name:ActiveProjectDidChangeNotification object:nil];
   }
   return self;
 }
 
 - (void)dealloc
 {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [NOTIFICATION_CENTER removeObserver:self];
 
   [buildWindow release];
   [makePath release];
@@ -294,12 +304,8 @@ static PCProjectBuilder *_builder;
   NSString *tg = nil;
   NSTask *makeTask;
   NSMutableArray *args;
-  NSString *output = nil;
   NSPipe *logPipe;
   NSPipe *errorPipe;
-  NSFileHandle *readHandle;
-  NSFileHandle *errorReadHandle;
-  NSData  *inData = nil;
   NSDictionary *optionDict;
   NSString *status;
   NSString *target;
@@ -309,10 +315,10 @@ static PCProjectBuilder *_builder;
   }
 
   logPipe = [NSPipe pipe];
-  errorPipe = [NSPipe pipe];
+  readHandle = [[logPipe fileHandleForReading] retain];
 
-  readHandle = [logPipe fileHandleForReading];
-  errorReadHandle = [errorPipe fileHandleForReading];
+  errorPipe = [NSPipe pipe];
+  errorReadHandle = [[errorPipe fileHandleForReading] retain];
 
   makeTask = [[NSTask alloc] init];
 
@@ -353,58 +359,90 @@ static PCProjectBuilder *_builder;
   [buildStatusField setStringValue:status];  
   [targetField setStringValue:target];  
 
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(logData:) name:NSFileHandleReadCompletionNotification object:nil];
+  [NOTIFICATION_CENTER addObserver:self 
+		       selector:@selector(logStdOut:) 
+		       name:NSFileHandleDataAvailableNotification
+		       object:readHandle];
   
-  [makeTask setArguments:args];
+  [NOTIFICATION_CENTER addObserver:self 
+		       selector:@selector(logErrOut:) 
+		       name:NSFileHandleDataAvailableNotification
+		       object:errorReadHandle];
   
+  [NOTIFICATION_CENTER addObserver: self
+		       selector: @selector(buildDidTerminate:)
+		       name: NSTaskDidTerminateNotification
+		       object: makeTask];  
+  
+  [makeTask setArguments:args];  
   [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
   [makeTask setLaunchPath:makePath];
   
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
-  
-  [makeTask launch];
-  
-  /*
-   * This is just a quick hack for now...
-   */
-
 
   [logOutput setString:@""];
+  [readHandle waitForDataInBackgroundAndNotify];
 
-  /*
-  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
   [errorOutput setString:@""];
-  [errorOutput scrollRangeToVisible:NSMakeRange([[errorOutput textStorage] length], 0)];
-
-  [readHandle readInBackgroundAndNotify];
-  */
+  [errorReadHandle waitForDataInBackgroundAndNotify];
   
-  while ((inData = [readHandle availableData]) && [inData length]) {
-    output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
-    [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
-    [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
-    [output release];
-  }
-
+  [makeTask launch];
   [makeTask waitUntilExit];
 
   [buildStatusField setStringValue:@"Waiting..."];  
   [targetField setStringValue:@""];  
 
-  [[NSNotificationCenter defaultCenter] removeObserver:self name:NSFileHandleReadCompletionNotification object:nil];
+  [NOTIFICATION_CENTER removeObserver:self 
+		       name:NSFileHandleDataAvailableNotification
+		       object:readHandle];
+  
+  [NOTIFICATION_CENTER removeObserver:self 
+		       name:NSFileHandleDataAvailableNotification
+		       object:errorReadHandle];
+  
+  [NOTIFICATION_CENTER removeObserver:self 
+		       name:NSTaskDidTerminateNotification 
+		       object:makeTask];
 
+  [readHandle release];
+  [errorReadHandle release];  
   [makeTask autorelease];
 }
 
-- (void)logData:(NSNotification *)aNotif
+- (void)logStdOut:(NSNotification *)aNotif
 {
-  NSData *data = [[aNotif userInfo] objectForKey:NSFileHandleNotificationDataItem];
-  NSString *output = [[NSString alloc] initWithData:data encoding:NSASCIIStringEncoding];      
+  NSData *data;
 
-  [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
-  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
-  [output release];
+  if ((data = [readHandle availableData])) {
+    [self logData:data error:NO];
+  }
+
+  [readHandle waitForDataInBackgroundAndNotifyForModes:nil];
+}
+
+- (void)logErrOut:(NSNotification *)aNotif
+{
+  NSData *data;
+
+  if ((data = [errorReadHandle availableData])) {
+    [self logData:data error:YES];
+  }
+
+  [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
+}
+
+- (void)buildDidTerminate:(NSNotification *)aNotif
+{
+  int status = [[aNotif object] terminationStatus];
+
+  if (status == 0) {
+    [self logString:@"*** Build Succeeded!\n" error:NO newLine:YES];
+  } 
+  else {
+    [self logString:@"*** Build Failed!" error:YES newLine:YES];
+    [[logOutput window] orderFront:self];
+  }
 }
 
 - (void)projectDidChange:(NSNotification *)aNotif
@@ -422,3 +460,40 @@ static PCProjectBuilder *_builder;
 }
 
 @end
+
+@implementation PCProjectBuilder (BuildLogging)
+
+- (void)logString:(NSString *)string error:(BOOL)yn
+{
+  [self logString:string error:yn newLine:YES];
+}
+
+- (void)logString:(NSString *)str error:(BOOL)yn newLine:(BOOL)newLine
+{
+  NSTextView *out = (yn)?errorOutput:logOutput;
+
+  [out replaceCharactersInRange:NSMakeRange([[out string] length],0) withString:str];
+
+  if (newLine) {
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@"\n"];
+  }
+  else {
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@" "];
+  }
+  
+  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
+}
+
+- (void)logData:(NSData *)data error:(BOOL)yn
+{
+  NSString *s = [[NSString alloc] initWithData:data 
+				  encoding:[NSString defaultCStringEncoding]];
+
+  [self logString:s error:yn newLine:YES];
+  [s autorelease];
+}
+
+@end
+
+
+

@@ -111,9 +111,11 @@
       [NSException raise:@"PCBundleLoaderPathException" format:@"No valid bundle path specified!"];
       return;
     }
+#ifdef DEBUG
     else {
       NSLog([NSString stringWithFormat:@"Loading bundles at %@",path]);
     }
+#endif DEBUG
 
     dir = [[NSFileManager defaultManager] directoryContentsAtPath:path];
     enumerator = [dir objectEnumerator];
