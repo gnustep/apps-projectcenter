@@ -174,6 +174,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (NSString *)projectDescription;
     // Returns a string describing the project type
 
+- (BOOL)isExecutable;
+    // Returns NO by default.
+
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================

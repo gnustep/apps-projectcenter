@@ -566,6 +566,11 @@
     return @"Abstract PCProject class!";
 }
 
+- (BOOL)isExecutable
+{
+  return NO;
+}
+
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
@@ -802,7 +807,12 @@
     [self showBuildTargetPanel:self];
     break;
   case 3:
-    [self showRunView:self];
+    if ([self isExecutable]) {
+      [self showRunView:self];
+    }
+    else {
+      NSRunAlertPanel(@"Attention!",@"This project type cannot be executed by itself!",@"OK",nil,nil);
+    }
     break;
   case 4:
   case 5:
