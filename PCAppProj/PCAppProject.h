@@ -76,6 +76,8 @@
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path;
 
+- (void)setAppClass:(id)sender;
+
 @end
 
 

@@ -66,6 +66,8 @@
   [appClassField setBezeled: YES];
   [appClassField setDrawsBackground: YES];
   [appClassField setStringValue:@""];
+  [appClassField setTarget:self];
+  [appClassField setAction:@selector(setAppClass:)];
   [projectProjectInspectorView addSubview:appClassField];
 
   textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
@@ -296,6 +298,12 @@
   [self writeMakefile];
 
   return YES;
+}
+
+- (void)setAppClass:(id)sender
+{
+  [projectDict setObject:[appClassField stringValue] forKey:PCAppClass];
+  [self writeMakefile];
 }
 
 @end
