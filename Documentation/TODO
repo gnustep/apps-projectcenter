@@ -19,12 +19,12 @@ ProjectCenter 0.4                                               Owner
 ProjectCenter 0.5
 -----------------
 
-- Add more project types (Framework,Resource Bundle,Pallette)   stoyan
+- Add more project types (Framework,Resource Set,Palette)       stoyan
 - Localization support for projects                             stoyan
-- Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
 - Editor enhancements (syntax highlighting, indentation)        stoyan
 - ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
-- Add pending add/removal of files                              stoyan
+- Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
+- Add pending adding/removal of files                           stoyan
 
 ProjectCenter 0.6
 -----------------

@@ -1,4 +1,8 @@
-2005-01-25 Serg Stoyan <stoyan255@ukr.net>
+2005-01-27 Serg Stoyan <stoyan255@ukr.net>
+
+	* Renaissance project type removed.
+	
+2005-01-26 Serg Stoyan <stoyan255@ukr.net>
 
 	* Renaissance project type code and templates moved into Applicaton
 	project type.
