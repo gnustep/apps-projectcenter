@@ -484,7 +484,8 @@
     return [NSArray arrayWithObjects:@"subproj",nil];
   }
   else if ([key isEqualToString:PCImages]) {
-    return [NSArray arrayWithObjects:@"tiff",@"TIFF",@"jpg",@"JPG",@"jpeg",@"JPEG",@"bmp",@"BMP",nil];
+    return [NSImage imageFileTypes];
+    //return [NSArray arrayWithObjects:@"tiff",@"TIFF",@"jpg",@"JPG",@"jpeg",@"JPEG",@"bmp",@"BMP",nil];
   }
 
   return nil;
