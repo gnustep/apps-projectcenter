@@ -82,6 +82,7 @@ static PCGormProj *_creator = nil;
         NSDictionary *infoDict;
 	NSString *plistFileName;
         NSString *projectFile;
+        NSString *gormTemplatePath;
 
         project = [[[PCGormProject alloc] init] autorelease];
 
@@ -138,13 +139,14 @@ static PCGormProj *_creator = nil;
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
         [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
 
+        gormTemplatePath = [path stringByAppendingPathComponent: [[path lastPathComponent] stringByAppendingString: @".gorm"]];
+        [fm createDirectoryAtPath:gormTemplatePath attributes:nil];
+
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"baseInterface" ofType:@"gorm"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:
-					  [[path lastPathComponent] stringByAppendingString: @".gorm"]] handler:nil];
+        [fm copyPath:_file toPath:[gormTemplatePath stringByAppendingPathComponent:@"objects.gorm"] handler:nil];
 
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"baseInterface" ofType:@"classes"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:
-					  [[path lastPathComponent] stringByAppendingString: @".classes"]] handler:nil];
+        [fm copyPath:_file toPath:[gormTemplatePath stringByAppendingPathComponent:@"data.classes"] handler:nil];
 
         // Resources
         _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];

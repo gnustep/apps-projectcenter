@@ -44,6 +44,7 @@
 				014CEA420018CDE011CA2923,
 				014CEA430018CDE011CA2923,
 			);
+			hasScannedForEncodings = 1;
 			isa = PBXProject;
 			mainGroup = 089C166AFE841209C02AAC07;
 			projectDirPath = "";
@@ -130,7 +131,6 @@
 </dict>
 </plist>
 ";
-			shouldUseHeadermap = 1;
 		};
 		089C1674FE841209C02AAC07 = {
 			buildActionMask = 2147483647;
@@ -309,21 +309,25 @@
 			};
 		};
 		F56C97AE03939C8F01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PCGormProj.h;
 			refType = 4;
 		};
 		F56C97AF03939C8F01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PCGormProj.m;
 			refType = 4;
 		};
 		F56C97B003939C8F01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PCGormProject.h;
 			refType = 4;
 		};
 		F56C97B103939C8F01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PCGormProject.m;
 			refType = 4;
@@ -353,6 +357,7 @@
 			};
 		};
 		F56C97B603939CAB01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = baseInterface.classes;
 			refType = 4;
@@ -363,11 +368,13 @@
 			refType = 4;
 		};
 		F56C97B803939CAB01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = main.m;
 			refType = 4;
 		};
 		F56C97B903939CAB01000102 = {
+			fileEncoding = 30;
 			isa = PBXFileReference;
 			path = PC.proj;
 			refType = 4;
