@@ -1,3 +1,16 @@
+2003-05-07 Serg Stoyan <stoyan@hologr.com>
+
+	* ProjectCenter: Files moved to root directory.
+	* ProjectCenterInfo.plist: List of authors updated.
+	* GNUmakefile: Don't create ProjectCenter link to . dir.
+	* GNUmakefile.postamble: Add removing headers after uninstall.
+	* GNUmakefile.bundles: Added. This file is included by bundle's
+	GNUmakefile.
+	
+	* Removed all unused GNUmakefile.preamble, GNUmakefile.postamble, 
+	.pcproj and plist files.
+	* Add include ../GNUmakefile.bundles to all bundles' GNUmakefiles.
+	
 2003-05-06 Serg Stoyan <stoyan@hologr.com>
 
 	* PCAppProj/Templates: Created. AppController.h, AppController.m, 
