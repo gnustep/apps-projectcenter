@@ -851,6 +851,17 @@
 
       [editorController closeAllEditors];
 
+      if (projectBuilder && [projectBuilder buildPanel])
+	{
+	  [[projectBuilder buildPanel] performClose: self];
+	  [[projectBuilder buildPanel] release];
+	}
+      if (projectDebugger && [projectDebugger launchPanel])
+	{
+	  [[projectDebugger launchPanel] performClose: self];
+	  [[projectDebugger launchPanel] release];
+	}
+
       // The PCProjectController is our delegate!
       [[NSNotificationCenter defaultCenter] removeObserver:browserController];
       [projectManager closeProject:self];
