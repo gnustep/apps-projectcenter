@@ -24,37 +24,51 @@
    $Id$
 */
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @class PCProject;
 
-#define BUILD_KEY           @"BuildKey"
-#define BUILD_OPTIONS_KEY   @"BuildOptionsKey"
-
-#define TARGET_MAKE         @"Make"
-#define TARGET_MAKE_DEBUG   @"MakeDebug"
-#define TARGET_MAKE_PROFILE @"MakeProfile"
-#define TARGET_MAKE_INSTALL @"MakeInstall"
-#define TARGET_MAKE_CLEAN   @"MakeClean"
-
-@class NSWindow;
-@class NSTextView;
-
 @interface PCProjectBuilder : NSObject
 {
-  NSWindow *buildWindow;
+  NSBox *componentView;
 
   NSTextView *logOutput;
+  NSTextView *errorOutput;
 
-  NSMutableDictionary *buildTasks;
   NSString *makePath;
+
+  id buildStatusField;
+  id targetField;
+
+  PCProject *currentProject;
+  NSDictionary *currentOptions;
+
+  NSFileHandle *readHandle;
+  NSFileHandle *errorReadHandle;
 }
 
-+ (id)sharedBuilder;
-
-- (id)init;
+- (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
-- (BOOL)buildProject:(PCProject *)aProject options:(NSDictionary *)optionDict;
+- (NSView *)componentView;
+
+- (void)build:(id)sender;
+
+- (void)logStdOut:(NSNotification *)aNotif;
+- (void)logErrOut:(NSNotification *)aNotif;
+
+- (void)buildDidTerminate:(NSNotification *)aNotif;
 
 @end
+
+@interface PCProjectBuilder (BuildLogging)
+
+- (void)logString:(NSString *)string error:(BOOL)yn;
+- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
+- (void)logData:(NSData *)data error:(BOOL)yn;
+
+@end
+
+
+
+

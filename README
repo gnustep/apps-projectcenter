@@ -1,9 +1,10 @@
 README
 ******
-
-	THIS IS A DEVELOPER 'PRE RELEASE RELEASE' ONLY! It is meant to give a
-	sneak peak for those who want to help, it is not meant as a usable
-	application right now!
+	
+	This is an early release of ProjectCenter, the GNUstep IDE. Some
+	features are already implemented while a lot are not yet even
+	designed. The application is already usable for simple makefile 
+	management and project building, though.
 
 	If you want to volunteer, please contact me!
 
@@ -19,5 +20,5 @@ TODOs
 	Overall code improvements
 	... and a lot more!
 
-Philippe C.D. Robert, 21.3.2000
+Philippe C.D. Robert, 27.10.2000
 <phr@projectcenter.ch>

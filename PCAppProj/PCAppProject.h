@@ -38,8 +38,12 @@
 
 @interface PCAppProject : PCProject
 {
-    @private
-    BOOL _needsAdditionalReleasing;
+  NSTextField *appClassField;
+  NSTextField *appImageField;
+  NSButton *setAppIconButton;
+  NSButton *clearAppIconButton;
+  NSImageView *appIconView;
+  NSImage *icon;
 }
 
 //----------------------------------------------------------------------------
@@ -63,4 +67,15 @@
 - (NSArray *)buildTargets;
 - (NSString *)projectDescription;
 
+- (BOOL)isExecutable;
+
+- (void)updateValuesFromProjectDict;
+
+- (void)clearAppIcon:(id)sender;
+- (void)setAppIcon:(id)sender;
+
+- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
+
 @end
+
+

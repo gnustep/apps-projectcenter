@@ -32,16 +32,24 @@
 
 @interface PCMenuController : NSObject
 {
-    IBOutlet PCProjectManager 	*projectManager;
-    IBOutlet PCFileManager	*fileManager;
-    IBOutlet PCAppController	*appController;
-
-    NSBox		        *projectTypeAccessaryView;
-    id				projectTypePopup;
+  PCProjectManager *projectManager;
+  PCFileManager	   *fileManager;
+  PCAppController  *appController;
+  
+  NSBox		        *projectTypeAccessaryView;
+  id			projectTypePopup;
 }
+
+//============================================================================
+//==== Init and free
+//============================================================================
 
 - (id)init;
 - (void)dealloc;
+
+- (void)setAppController:(id)anObject;
+- (void)setFileManager:(id)anObject;
+- (void)setProjectManager:(id)anObject;
 
 //============================================================================
 //==== Menu stuff

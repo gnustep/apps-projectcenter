@@ -38,8 +38,6 @@
 
 @interface PCToolProject : PCProject
 {
-    @private
-    BOOL _needsAdditionalReleasing;
 }
 
 //----------------------------------------------------------------------------
@@ -62,6 +60,10 @@
 - (NSArray *)otherKeys;
 - (NSArray *)buildTargets;
 - (NSString *)projectDescription;
+
+- (BOOL)isExecutable;
+
+- (void)updateValuesFromProjectDict;
 
 @end
 

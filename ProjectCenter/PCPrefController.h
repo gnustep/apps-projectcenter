@@ -40,6 +40,8 @@
   id failureField;
   
   id autoSaveField;;
+
+  id useExternalEditor;
   
   id editorField;
   id debuggerField;
@@ -47,9 +49,6 @@
   id bundlePathField;
   
   NSMutableDictionary *preferencesDict;
-  
-  @private 
-  BOOL _needsReleasing;
 }
 
 - (id)init;
@@ -65,6 +64,8 @@
 - (void)setSaveAutomatically:(id)sender;
 - (void)setRemoveBackup:(id)sender;
 - (void)setSavePeriod:(id)sender;
+
+- (void)setUseExternalEditor:(id)sender;
 
 - (void)setEditor:(id)sender;
 - (void)setCompiler:(id)sender;

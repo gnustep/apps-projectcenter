@@ -38,11 +38,13 @@ PCBaseFileTypes_RESOURCE_FILES = 	\
 	cfile.template 			\
 	cheader.template 		\
 	class.template 			\
-	header.template
+	header.template			\
+	protocol.template
 
 -include GNUmakefile.preamble
 
 include $(GNUSTEP_MAKEFILES)/bundle.make
 
 -include GNUmakefile.postamble
+
 

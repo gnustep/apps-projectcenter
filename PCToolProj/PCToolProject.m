@@ -43,31 +43,7 @@
 
 - (void)_initUI
 {
-  // Always call super!!!
   [super _initUI];
-
-  projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setTitlePosition:NSAtTop];
-  [projectAttributeInspectorView setBorderType:NSGrooveBorder];
-  //    [projectAttributeInspectorView addSubview:projectTypePopup];
-  [projectAttributeInspectorView sizeToFit];
-  [projectAttributeInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setTitlePosition:NSAtTop];
-  [projectProjectInspectorView setBorderType:NSGrooveBorder];
-  //    [projectProjectInspectorView addSubview:projectTypePopup];
-  [projectProjectInspectorView sizeToFit];
-  [projectProjectInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setTitlePosition:NSAtTop];
-  [projectFileInspectorView setBorderType:NSGrooveBorder];
-  //    [projectFileInspectorView addSubview:projectTypePopup];
-  [projectFileInspectorView sizeToFit];
-  [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  _needsAdditionalReleasing = YES;
 }
 
 @end
@@ -80,41 +56,28 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-      rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+  if ((self = [super init])) {
+    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
 				      PCImages,@"Images",
-				      PCOtherResources,@"Other Resources",
-				      PCSubprojects,@"Subprojects",
-				      PCLibraries,@"Libraries",
-				      PCDocuFiles,@"Documentation",
-				      PCOtherSources,@"Other Sources",
-				      PCHeaders,@"Headers",
-				      PCClasses,@"Classes",
-				      nil] retain];
-
-#if defined(GNUSTEP)
-        [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"ToolProject.nib" owner:self]) {
-            [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load ToolProject.gmodel" userInfo:nil] raise];
-            return nil;
-        }
-#endif
-    }
-    return self;
+				    PCOtherResources,@"Other Resources",
+				    PCSubprojects,@"Subprojects",
+				    PCLibraries,@"Libraries",
+				    PCDocuFiles,@"Documentation",
+				    PCOtherSources,@"Other Sources",
+				    PCHeaders,@"Headers",
+				    PCClasses,@"Classes",
+				    nil] retain];
+    
+    [self _initUI];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [rootCategories release];
-
-    if (_needsAdditionalReleasing) {
-        [projectAttributeInspectorView release];
-        [projectProjectInspectorView release];
-        [projectFileInspectorView release];
-    }
-    
-    [super dealloc];
+  [rootCategories release];
+  
+  [super dealloc];
 }
 
 //----------------------------------------------------------------------------
@@ -174,6 +137,18 @@
 - (NSString *)projectDescription
 {
     return @"Project that handles GNUstep/ObjC based tools.";
+}
+
+- (BOOL)isExecutable
+{
+  return YES;
+}
+
+- (void)updateValuesFromProjectDict
+{
+  [super updateValuesFromProjectDict];
+
+  //[appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
 }
 
 @end

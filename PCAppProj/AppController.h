@@ -8,15 +8,27 @@
  * $Id$
  */
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @interface AppController : NSObject
 {
 }
 
++ (void)initialize;
+
 - (id)init;
 - (void)dealloc;
 
 - (void)awakeFromNib;
+
+- (void)applicationDidFinishLaunching:(NSNotification *)notif;
+
+- (BOOL)applicationShouldTerminate:(id)sender;
+- (void)applicationWillTerminate:(NSNotification *)notification;
+
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
+
+- (void)showPrefPanel:(id)sender;
+- (void)showInfoPanel:(id)sender;
 
 @end
