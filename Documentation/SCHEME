@@ -1,0 +1,76 @@
++- PCProjectInspector
+|
++- PCHistoryPanel (PCProjectHistory, ...)
+|
++- PCBuildPanel (PCProjectBuilder, ...)
+|
++- PCLaunchPanel (PCProjectLauncher, ...)
+|
++- [SI]PCFindPanel (PCProjectFinder, ...)
+|                                                   
+PCProjectManager
+||
+++- PCProject -- PC*Project (PCAppProject, PCBundleProject and so on)
+|   |
+|   +- PCProjectWindow (PCButton, PCSplitView)
+|   |
+|   +- PCProjectBrowser (PCButton, PCSplitView)
+|   |
+|   +- PCProjectHistory
+|   |
+|   +- PCProjectBuilder (PCButton, PCSplitView, PCOutputView)
+|   |
+|   +- PCProjectLauncher (PCButton, PCSplitView)
+|   |
+|   +- [SI]PCProjectFinder (PCButton, PCSplitView, PCStructuredView)
+|   |
+|   +- PCProjectEditor
+|
++- PCEditorController
+   ||
+   ++- PCEditor
+   |   |
+   |   +- PCEditorView 
+   |
+   +- PCTextFinder
+
+------------------------------
+Other (controls, tools, etc.):
+------------------------------
+PCButton
+PCSplitView
+PCOutputView
+PCBundleLoader (Used in ProjectCenter application)
+PCFileManager (Used in PCLib)
+PCMakefileFactory (Used in PC*Project bundles)
+PCServer (don't used)
+
+----------
+TODO plan:
+----------
+Part I:
+- think about relations between PCMenuController and other PCProject
+  descendants;
++ implement PCLaunchPanel;
++ implement PCHistoryPanel (also make PCProjectHistory be a separate);
+- implement PCInspectorPanel and move common inspectors to its suitable
+  position;
+- implement PCProjectFinder and PCFindPanel GUI;
+- refactor PC*Editor* family;
+- make PC prefernces changes applying immediately after changing;
+
+Part II:
+- finish PCProjectBrowser;
+- finish fileIcon/fileTitle;
+- finish Project Inspector (interaction with PC*Project bundles);
+- finish Project Builder
+- finish Project Debugger (launching part, later debugging part)
+- try to incorporate CodeEditor approach
+- 
+
+
+------
+NOTES:
+------
+- "Edit" menu should be completely provided by Editor part.
+
