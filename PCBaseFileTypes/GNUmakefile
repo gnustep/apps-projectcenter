@@ -9,7 +9,6 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-include ../pcproj_bundle.make
 
 #
 # Subprojects
@@ -66,7 +65,5 @@ PCBaseFileType.m
 
 PCBaseFileTypes_C_FILES= 
 
--include GNUmakefile.preamble
--include GNUmakefile.local
+include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
--include GNUmakefile.postamble
