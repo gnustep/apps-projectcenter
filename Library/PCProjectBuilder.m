@@ -366,7 +366,7 @@
       currentProject = aProject;
       makePath = [[aProject projectDict] objectForKey: PCBuildTool];
 
-      if( [makePath isEqualToString: @""] )
+      if ([makePath isEqualToString: @""])
 	{
 	  makePath = [NSString stringWithString: @"/usr/bin/make"];
 	}
@@ -403,10 +403,10 @@
 
 - (void)setTooltips
 {
-  [buildButton setShowTooltip:YES];
-  [cleanButton setShowTooltip:YES];
-  [installButton setShowTooltip:YES];
-  [optionsButton setShowTooltip:YES];
+  [buildButton setShowTooltip:NO];
+  [cleanButton setShowTooltip:NO];
+  [installButton setShowTooltip:NO];
+  [optionsButton setShowTooltip:NO];
 }
 
 
@@ -419,6 +419,7 @@
   // "waitpid 7045, result -1, error No child processes" is printed.
   if (makeTask)
     {
+      NSLog(@"task will terminate");
       [makeTask terminate];
       return;
     }
@@ -499,10 +500,9 @@
 
 - (void)build:(id)sender
 {
-  NSPipe              *logPipe;
-  NSPipe              *errorPipe;
-  NSDictionary        *env = [[NSProcessInfo processInfo] environment];
-  NSMutableDictionary *data = [NSMutableDictionary dictionary];
+  NSPipe       *logPipe;
+  NSPipe       *errorPipe;
+  NSDictionary *env = [[NSProcessInfo processInfo] environment];
 
   // Support build options!!!
   //NSDictionary        *optionDict = [currentProject buildOptions];
@@ -529,7 +529,7 @@
 
   // Prepearing to building
   logPipe = [NSPipe pipe];
-  readHandle = [[logPipe fileHandleForReading] retain];
+  readHandle = [logPipe fileHandleForReading];
   [readHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
@@ -538,7 +538,7 @@
 			    object: readHandle];
 
   errorPipe = [NSPipe pipe];
-  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+  errorReadHandle = [errorPipe fileHandleForReading];
   [errorReadHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver: self 
@@ -548,36 +548,38 @@
 
   [buildStatusField setStringValue: statusString];
 
-  // Run build thread
-  [data setObject: buildArgs forKey: @"args"];
-  [data setObject: [currentProject projectPath] forKey: @"currentDirectory"];
-  [data setObject: makePath forKey: @"makePath"];
-  [data setObject: logPipe forKey: @"logPipe"];
-  [data setObject: errorPipe forKey: @"errorPipe"];
-
+  // Run make task
   [logOutput setString: @""];
   [errorOutput setString: @""];
 
-  [NSThread detachNewThreadSelector: @selector(make:)
-                           toTarget: self
-                         withObject: data];
+  [NOTIFICATION_CENTER addObserver: self 
+                          selector: @selector (buildDidTerminate:) 
+			      name: NSTaskDidTerminateNotification
+			    object: nil];
+
+  makeTask = [[NSTask alloc] init];
+  [makeTask setArguments: buildArgs];
+  [makeTask setCurrentDirectoryPath: [currentProject projectPath]];
+  [makeTask setLaunchPath: makePath];
+
+  [makeTask setStandardOutput: logPipe];
+  [makeTask setStandardError: errorPipe];
+
+  [makeTask launch];
 }
 
-- (void)buildDidTerminate
+- (void)buildDidTerminate:(NSNotification *)aNotif
 {
-  int status = [makeTask terminationStatus];
+  int status;
 
-  [NOTIFICATION_CENTER removeObserver: self 
-                                 name: NSFileHandleDataAvailableNotification
-                               object: readHandle];
+  if ([aNotif object] != makeTask)
+    {
+      return;
+    }
 
-  [NOTIFICATION_CENTER removeObserver: self 
-                                 name: NSFileHandleDataAvailableNotification
-                               object: errorReadHandle];
+  [NOTIFICATION_CENTER removeObserver:self];
 
-  AUTORELEASE(readHandle);
-  AUTORELEASE(errorReadHandle);
-
+  status = [makeTask terminationStatus];
   if (status == 0)
     {
       [self logString: 
@@ -619,6 +621,16 @@
 
   [buildArgs removeAllObjects];
   [buildTarget setString: @"Default"];
+
+  RELEASE(makeTask);
+  makeTask = nil;
+
+  // Run post process if configured
+  if (status && postProcess)
+    {
+      [self performSelector: postProcess];
+      postProcess = NULL;
+    }
 }
 
 - (void)popupChanged:(id)sender
@@ -645,6 +657,7 @@
 
   [readHandle waitForDataInBackgroundAndNotifyForModes: nil];
 }
+
 
 - (void)logErrOut:(NSNotification *)aNotif
 {
@@ -714,43 +727,8 @@
 				  encoding: [NSString defaultCStringEncoding]];
 
   [self logString: s error: yn newLine: NO];
-  [s autorelease];
+  RELEASE(s);
 }
 
 @end
 
-@implementation PCProjectBuilder (BuildThread)
-
-- (void)make:(NSDictionary *)data
-{
-  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-
-  RETAIN(data);
-
-  makeTask = [[NSTask alloc] init];
-  [makeTask setArguments: [data objectForKey: @"args"]];
-  [makeTask setCurrentDirectoryPath: [data objectForKey: @"currentDirectory"]];
-  [makeTask setLaunchPath: [data objectForKey: @"makePath"]];
-
-  [makeTask setStandardOutput: [data objectForKey: @"logPipe"]];
-  [makeTask setStandardError: [data objectForKey: @"errorPipe"]];
-
-  [makeTask launch];
-  [makeTask waitUntilExit];
-
-  if ([makeTask terminationStatus] && postProcess)
-    {
-      [self performSelector: postProcess];
-      postProcess = NULL;
-    }
-
-  [self buildDidTerminate];
-
-  RELEASE(data);
-  RELEASE(makeTask);
-  makeTask = nil;
-
-  RELEASE(pool);
-}
-
-@end

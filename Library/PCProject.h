@@ -101,6 +101,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (PCProjectLauncher *)projectLauncher;
 - (PCProjectEditor *)projectEditor;
 
+- (void)setProjectDictObject:(id)object forKey:(NSString *)key;
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
 - (BOOL)isProjectChanged;
@@ -115,10 +116,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 // TEMP! For compatibility with old PC*Project subclasses
 - (void)updateValuesFromProjectDict;
 
-- (void)createInspectors;
-- (NSView *)buildAttributesView;
 - (NSView *)projectAttributesView;
-- (NSView *)fileAttributesView;
 
 - (Class)builderClass;
 
@@ -138,6 +136,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 // Returns NO by default.
 - (BOOL)isExecutable;
+- (NSString *)execToolName;
 
 // ============================================================================
 // ==== File Handling

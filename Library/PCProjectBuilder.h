@@ -79,7 +79,7 @@
 - (void)setTooltips;
 
 - (void)build:(id)sender;
-- (void)buildDidTerminate;
+//- (void)buildDidTerminate;
 
 - (void)popupChanged:(id)sender;
 
@@ -102,12 +102,6 @@
 - (void)logString:(NSString *)string error:(BOOL)yn;
 - (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
-
-@end
-
-@interface PCProjectBuilder (BuildThread)
-
-- (void)make:(NSDictionary *)data;
 
 @end
 

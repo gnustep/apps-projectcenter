@@ -32,46 +32,21 @@
 // ----------------------------------------------------------------------------
 // --- User Interface
 // ----------------------------------------------------------------------------
-
-- (void)createBuildAttributes;
 - (void)createProjectAttributes;
-- (void)createFileAttributes;
-- (NSView *)buildAttributesView;
 - (NSView *)projectAttributesView;
-- (NSView *)fileAttributesView;
-- (void)setAppClass:(id)sender;
-- (void)setAppIcon:(id)sender;
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-- (void)clearAppIcon:(id)sender;
-- (void)setMainNib:(id)sender;
-- (BOOL)setMainNibWithFileAtPath:(NSString *)path;
-- (void)clearMainNib:(id)sender;
 
 // ----------------------------------------------------------------------------
 // --- Actions
 // ----------------------------------------------------------------------------
-
-- (void)changeCommonProjectEntry:(id)sender;
 - (void)setAppClass:(id)sender;
 - (void)setFile:(id)sender;
 - (void)clearFile:(id)sender;
+- (void)setAppIcon:(id)sender;
+- (void)clearAppIcon:(id)sender;
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path;
 - (void)setMainNib:(id)sender;
 - (BOOL)setMainNibWithFileAtPath:(NSString *)path;
 - (void)clearMainNib:(id)sender;
-
-// ----------------------------------------------------------------------------
-// --- Search Order
-// ----------------------------------------------------------------------------
-
-- (void)searchOrderPopupDidChange:(id)sender;
-- (void)searchOrderDoubleClick:(id)sender;
-- (void)searchOrderClick:(id)sender;
-- (void)setSearchOrderButtonsState;
-- (void)setSearchOrder:(id)sender;
-- (void)removeSearchOrder:(id)sender;
-- (void)addSearchOrder:(id)sender;
-- (void)syncSearchOrder;
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView;
 - (id)            tableView: (NSTableView *)aTableView
@@ -85,9 +60,7 @@
 // ----------------------------------------------------------------------------
 // --- Notifications
 // ----------------------------------------------------------------------------
-
 - (void)updateInspectorValues:(NSNotification *)aNotif;
-- (void)browserDidSetPath:(NSNotification *)aNotif;
 
 @end
 

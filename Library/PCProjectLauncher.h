@@ -68,7 +68,7 @@
 - (void)debug:(id)sender;
 - (void)run:(id)sender;
 
-- (void)buildDidTerminate:(NSNotification *)aNotif;
+- (void)runDidTerminate:(NSNotification *)aNotif;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;

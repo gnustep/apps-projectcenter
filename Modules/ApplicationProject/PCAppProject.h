@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
@@ -41,26 +39,6 @@
 
 @interface PCAppProject : PCProject
 {
-  NSBox          *buildAttributesView;
-  NSTextField    *projectNameLabel;
-  NSPopUpButton  *searchOrderPopup;
-  NSTableView    *searchOrderList;
-  NSTableColumn  *searchOrderColumn;
-  NSScrollView   *searchOrderScroll;
-  NSMutableArray *searchItems;
-  NSArray        *searchHeaders;
-  NSArray        *searchLibs;
-  NSTextField    *searchOrderTF;
-  NSButton       *searchOrderSet;
-  NSButton       *searchOrderRemove;
-  NSButton       *searchOrderAdd;
-  NSTextField    *cppOptField;
-  NSTextField    *objcOptField;
-  NSTextField    *cOptField;
-  NSTextField    *ldOptField;
-  NSTextField    *installPathField;
-  NSTextField    *toolField;
-               
   NSBox          *projectAttributesView;
   NSTextField    *projectTypeField;
   NSTextField    *projectNameField;
@@ -69,15 +47,24 @@
   NSTextField    *appImageField;
   NSTextField    *helpFileField;
   NSTextField    *mainNIBField;
-  NSButton       *setAppIconButton;
-  NSButton       *clearAppIconButton;
+
   NSImageView    *iconView;
   NSImage        *icon;
-               
-  NSBox          *fileAttributesView;
-  NSImageView    *fileIconView;
-  NSTextField    *fileNameField;
+  NSButton       *setAppIconButton;
+  NSButton       *clearAppIconButton;
 
+  NSTableView    *docIconsList;
+  NSTableColumn  *docExtColumn;
+  NSTableColumn  *docIconColumn;
+  NSMutableArray *docIconsItems;
+  NSScrollView   *docIconsScroll;
+
+  NSBrowser      *docIconsBrowser;
+  NSPopUpButton  *iconNamePopup;
+  NSPopUpButton  *extensionPopup;
+  NSButton       *addDocIcon;
+  NSButton       *removeDocIcon;
+               
   NSMutableDictionary *infoDict;
 }
 
@@ -94,6 +81,7 @@
 
 @interface PCAppProject (GeneratedFiles)
 
+- (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key;
 - (BOOL)writeInfoFile;
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;

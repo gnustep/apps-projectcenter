@@ -44,6 +44,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       project = aProject;
 
       browser = [[NSBrowser alloc] initWithFrame:NSMakeRect(-1,251,562,128)];
+      [browser setRefusesFirstResponder:YES];
       [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
       [browser setTitled:NO];
       [browser setMaxVisibleColumns:4];

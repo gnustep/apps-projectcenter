@@ -20,9 +20,8 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
+
 #ifndef _PCProjectInspector_h_
 #define _PCProjectInspector_h_
 
@@ -31,16 +30,61 @@
 @interface PCProjectInspector : NSObject
 {
   PCProjectManager *projectManager;
+  PCProject        *project;
+  NSDictionary     *projectDict;
 
   NSPanel          *inspectorPanel;
   NSBox            *contentView;
   NSPopUpButton    *inspectorPopup;
   NSBox            *hLine;
   NSBox            *inspectorView;
-  
-  NSView           *buildAttributesView;
+
+  // Build Attributes
+  NSBox          *buildAttributesView;
+  NSTextField    *projectNameLabel;
+  NSPopUpButton  *searchOrderPopup;
+  NSTableView    *searchOrderList;
+  NSTableColumn  *searchOrderColumn;
+  NSScrollView   *searchOrderScroll;
+  NSMutableArray *searchItems;
+  NSArray        *searchHeaders;
+  NSArray        *searchLibs;
+  NSTextField    *searchOrderTF;
+  NSButton       *searchOrderSet;
+  NSButton       *searchOrderRemove;
+  NSButton       *searchOrderAdd;
+  NSTextField    *cppOptField;
+  NSTextField    *objcOptField;
+  NSTextField    *cOptField;
+  NSTextField    *ldOptField;
+  NSTextField    *installPathField;
+  NSTextField    *toolField;
+
+  // Project Attributes
+  // Suuplied by concrete project
   NSView           *projectAttributesView;
-  NSView           *fileAttributesView;
+
+  // Project Description
+  NSBox          *projectDescriptionView;
+  NSTextField    *descriptionField;
+  NSTextField    *releaseField;
+  NSTextField    *licenseField;
+  NSTextField    *licDescriptionField;
+  NSTextField    *urlField;
+  NSBox          *authorsBox;
+  NSTableView    *authorsList;
+  NSTableColumn  *authorsColumn;
+  NSScrollView   *authorsScroll;
+  NSMutableArray *authorsItems;
+  NSButton       *authorAdd;
+  NSButton       *authorRemove;
+  NSButton       *authorUp;
+  NSButton       *authorDown;
+
+  // File Attributes
+  NSBox          *fileAttributesView;
+  NSImageView    *fileIconView;
+  NSTextField    *fileNameField;
 }
 
 // ============================================================================
@@ -58,10 +102,45 @@
 - (NSView *)contentView;
 
 // ============================================================================
-// ==== Notifications
+// ==== Actions
 // ============================================================================
 - (void)inspectorPopupDidChange:(id)sender;
+- (void)changeCommonProjectEntry:(id)sender;
+
+// ============================================================================
+// ==== Notifications
+// ============================================================================
 - (void)activeProjectDidChange:(NSNotification *)aNotif;
+- (void)updateValues:(NSNotification *)aNotif;
+
+// ============================================================================
+// ==== Build Attributes
+// ============================================================================
+- (void)createBuildAttributes;
+
+// ----------------------------------------------------------------------------
+// --- Search Order
+// ----------------------------------------------------------------------------
+- (void)searchOrderPopupDidChange:(id)sender;
+- (void)searchOrderDoubleClick:(id)sender;
+- (void)searchOrderClick:(id)sender;
+- (void)setSearchOrderButtonsState;
+- (void)setSearchOrder:(id)sender;
+- (void)removeSearchOrder:(id)sender;
+- (void)addSearchOrder:(id)sender;
+- (void)syncSearchOrder;
+
+// ============================================================================
+// ==== Project Description
+// ============================================================================
+- (void)createProjectDescription;
+
+// ============================================================================
+// ==== File Attributes
+// ============================================================================
+- (void)createFileAttributes;
+
+- (void)browserDidSetPath:(NSNotification *)aNotif;
 
 @end
 

@@ -244,7 +244,7 @@ NSString
 }
 
 // ============================================================================
-// ==== Accessor methods
+// ==== Accessory methods
 // ============================================================================
 
 - (PCProjectManager *)projectManager
@@ -299,6 +299,15 @@ NSString
   return [self projectKeyForKeyPath:_path];
 }
 
+- (void)setProjectDictObject:(id)object forKey:(NSString *)key
+{
+  [projectDict setObject:object forKey:key];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCProjectDictDidChangeNotification
+                  object:self];
+}
+
 - (void)setProjectName:(NSString *)aName
 {
   AUTORELEASE(projectName);
@@ -335,21 +344,7 @@ NSString
 {
 }
 
-- (void)createInspectors
-{
-}
-
-- (NSView *)buildAttributesView
-{
-  return nil;
-}
-
 - (NSView *)projectAttributesView
-{
-  return nil;
-}
-
-- (NSView *)fileAttributesView
 {
   return nil;
 }
@@ -367,6 +362,11 @@ NSString
 - (BOOL)isExecutable
 {
   return NO;
+}
+
+- (NSString *)execToolName
+{
+  return nil;
 }
 
 - (NSArray *)fileTypesForCategory:(NSString *)category

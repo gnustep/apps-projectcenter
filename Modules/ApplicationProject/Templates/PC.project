@@ -2,7 +2,7 @@
     APPKIT = "GNUSTEP-GUI"; 
     APPLICATIONICON = ""; 
     BUILDTOOL = "/usr/bin/make"; 
-    CLASS_FILES = ("main.m","AppController.m");
+    CLASS_FILES = ("AppController.m");
     COMPILEROPTIONS = ""; 
     CPPOPTIONS = "";
     LINKEROPTIONS = ""; 
@@ -18,11 +18,11 @@
     LIBRARIES = ("gnustep-base","gnustep-gui"); 
     MAININTERFACE = ""; 
     MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)"; 
-    INSTALLDIR = "$(GNUSTEP_LOCAL_ROOT)/";
+    INSTALLDIR = "$(HOME)/GNUstep";
     OBJC_COMPILEROPTIONS = "";
     OTHER_FILES = (); 
     OTHER_RESOURCES = (); 
-    OTHER_SOURCES = (); 
+    OTHER_SOURCES = ("main.m"); 
     PRINCIPAL_CLASS = "NSApplication";
     PROJECT_AUTHORS = ();
     PROJECT_CREATOR = ""; 
@@ -30,7 +30,7 @@
     PROJECT_DOCUMENTEXTENSIONS = ();
     PROJECT_GROUP = "No group avaliable!";
     PROJECT_SUMMARY = "No summary avaliable!";
-    PROJECT_RELEASE = "1";
+    PROJECT_RELEASE = "0.1";
     PROJECT_COPYRIGHT = "Copyright (C) 200x";
     PROJECT_COPYRIGHT_DESC = "Released under ...";
     PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";

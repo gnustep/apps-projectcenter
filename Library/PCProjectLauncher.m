@@ -156,12 +156,9 @@ enum {
 
 - (void)dealloc
 {
-  NSLog (@"PCLauncherBuilder: dealloc");
+  NSLog (@"PCLauncher: dealloc");
   RELEASE (componentView);
   RELEASE (textAttributes);
-
-  if (readHandle) RELEASE (readHandle);
-  if (errorReadHandle) RELEASE (errorReadHandle);
 
   [super dealloc];
 }
@@ -185,241 +182,206 @@ enum {
 - (void)popupChanged:(id)sender
 {
   switch ([sender indexOfSelectedItem])
-  {
-      case 0:
-          debugTarget = DEBUG_DEFAULT_TARGET;
-          break;
-      case 1:
-          debugTarget = DEBUG_DEBUG_TARGET;
-          break;
-      default:
-          break;
-  }
+    {
+    case 0:
+      debugTarget = DEBUG_DEFAULT_TARGET;
+      break;
+    case 1:
+      debugTarget = DEBUG_DEBUG_TARGET;
+      break;
+    default:
+      break;
+    }
 }
 
 - (void)debug:(id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey:ExternalDebugger] isEqualToString: @"YES"])
-  {
-    NSString *dp = [currentProject projectName];
-    NSString *fp = nil;
-    NSString *pn = nil;
-    NSString *gdbPath;
-    NSArray  *args;
-    NSTask   *task;
-    NSDistantObject <Terminal>*terminal;
-    
-    /* Get the Terminal application */
-    terminal = (NSDistantObject<Terminal> *)[NSConnection rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
-
-    /* Prepare tasks */
-    switch( debugTarget )
+      objectForKey:ExternalDebugger] isEqualToString: @"YES"])
     {
-        case DEBUG_DEFAULT_TARGET:
-	    pn = [dp stringByAppendingPathExtension:@"app"];
-            break;
-        case DEBUG_DEBUG_TARGET:
-	    pn = [dp stringByAppendingPathExtension:@"debug"];
-            break;
-        default:
-	    [NSException raise:@"PCInternalDevException" 
-                        format:@"Unknown build target!"];
-            break;
-    }
+      NSString *dp = [currentProject projectName];
+      NSString *fp = nil;
+      NSString *pn = nil;
+      NSString *gdbPath;
+      NSArray  *args;
+      NSTask   *task;
+      NSDistantObject <Terminal>*terminal;
 
-    if( terminal == nil ) 
-    {
-      NSRunAlertPanel(@"Attention!", @"Terminal.app is not running! Please\nlaunch it before debugging %@", @"Abort",nil,nil,pn);
-      [debugButton setState:NSOffState];
-      return;
-    }
+      /* Get the Terminal application */
+      terminal = (NSDistantObject<Terminal> *)[NSConnection 
+	rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
 
-    fp = [[NSFileManager defaultManager] currentDirectoryPath];
-    dp = [fp stringByAppendingPathComponent:dp];
-    fp = [dp stringByAppendingPathComponent:pn];
+      /* Prepare tasks */
+      switch (debugTarget)
+	{
+	case DEBUG_DEFAULT_TARGET:
+	  pn = [dp stringByAppendingPathExtension:@"app"];
+	  break;
+	case DEBUG_DEBUG_TARGET:
+	  pn = [dp stringByAppendingPathExtension:@"debug"];
+	  break;
+	default:
+	  [NSException raise:@"PCInternalDevException" 
+	    format:@"Unknown build target!"];
+	  break;
+	}
 
-    task = [[NSTask alloc] init];
-    [task setLaunchPath:fp];
-    fp = [task validatedLaunchPath];
-    RELEASE(task);
+      if (terminal == nil)
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Terminal.app is not running! Please\nlaunch it before debugging %@",
+			  @"Abort",nil,nil,pn);
+	  [debugButton setState:NSOffState];
+	  return;
+	}
 
-    if( fp == nil )
-    {
-      NSRunAlertPanel(@"Attention!", @"No executable found in %@!", @"Abort",nil,nil,dp);
-      [debugButton setState:NSOffState];
-      return;
-    }
+      fp = [[NSFileManager defaultManager] currentDirectoryPath];
+      dp = [fp stringByAppendingPathComponent:dp];
+      fp = [dp stringByAppendingPathComponent:pn];
 
-    task = [[NSTask alloc] init];
-
-    dp = [[NSUserDefaults standardUserDefaults] objectForKey:PDebugger];
-    if(dp == nil)
-    {
-      dp = [NSString stringWithString:@"/usr/bin/gdb"];
-    }
-
-    if([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
-    {
-      NSRunAlertPanel(@"Attention!", @"Invalid debugger specified: %@!", @"Abort",nil,nil,dp);
+      task = [[NSTask alloc] init];
+      [task setLaunchPath:fp];
+      fp = [task validatedLaunchPath];
       RELEASE(task);
-      [debugButton setState:NSOffState];
-      return;
+
+      if (fp == nil)
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"No executable found in %@!",
+			  @"Abort",nil,nil,dp);
+	  [debugButton setState:NSOffState];
+	  return;
+	}
+
+      task = [[NSTask alloc] init];
+
+      dp = [[NSUserDefaults standardUserDefaults] objectForKey:PDebugger];
+      if (dp == nil)
+	{
+	  dp = [NSString stringWithString:@"/usr/bin/gdb"];
+	}
+
+      if ([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Invalid debugger specified: %@!",
+			  @"Abort",nil,nil,dp);
+	  RELEASE(task);
+	  [debugButton setState:NSOffState];
+	  return;
+	}
+
+      [task setLaunchPath:dp];
+      gdbPath = [task validatedLaunchPath];
+      RELEASE(task);
+
+      args = [NSArray arrayWithObjects:
+	gdbPath,
+      @"--args",
+      AUTORELEASE(fp),
+      nil];
+
+      [terminal terminalRunProgram: AUTORELEASE(gdbPath)
+	withArguments: args
+	inDirectory: nil
+	properties: nil];
     }
-
-    [task setLaunchPath:dp];
-    gdbPath = [task validatedLaunchPath];
-    RELEASE(task);
-
-    args = [NSArray arrayWithObjects:
-                        gdbPath,
-                        @"--args",
-                        AUTORELEASE(fp),
-                        nil];
-
-    [terminal terminalRunProgram: AUTORELEASE(gdbPath)
-                       withArguments: args
-                         inDirectory: nil
-                          properties: nil];
-  }
   else
-  {
-    NSRunAlertPanel(@"Attention!",
-                    @"Integrated debugging is not yet available...",
-                    @"OK",nil,nil);
-  }
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Integrated debugging is not yet available...",
+		      @"OK",nil,nil);
+    }
   [debugButton setState:NSOffState];
 }
 
 - (void)run:(id)sender
 {
-  NSMutableArray *args;
-  NSPipe *logPipe;
-  NSPipe *errorPipe;
-  NSString *openPath;
+  NSMutableArray *args = [[NSMutableArray alloc] init];
+  NSPipe         *logPipe;
+  NSPipe         *errorPipe;
+  NSString       *openPath;
 
+  // Check if project type is executable
+  if ([currentProject isExecutable])
+    {
+      openPath = [currentProject execToolName];
+      [args addObject:[currentProject projectName]];
+    }
+  else 
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"The project is not executable",
+		      @"Close", nil, nil, nil);
+      return;
+    }
+
+  // [makeTask isRunning] doesn't work here.
+  // "waitpid 7045, result -1, error No child processes" is printed.
+  if (launchTask)
+    {
+      NSLog(@"task will terminate");
+      [launchTask terminate];
+      return;
+    }
+
+  // Setting I/O
   logPipe = [NSPipe pipe];
   RELEASE(readHandle);
   readHandle = [[logPipe fileHandleForReading] retain];
+  [stdOut setString:@""];
+  [readHandle waitForDataInBackgroundAndNotify];
+
+  [NOTIFICATION_CENTER addObserver:self 
+                          selector:@selector(logStdOut:) 
+                              name:NSFileHandleDataAvailableNotification
+                            object:readHandle];
 
   errorPipe = [NSPipe pipe];
   RELEASE(errorReadHandle);
   errorReadHandle = [[errorPipe fileHandleForReading] retain];
-
-  RELEASE(launchTask);
-  launchTask = [[NSTask alloc] init];
-
-  args = [[NSMutableArray alloc] init];
-
-  /*
-   * Ugly hack! We should ask the porject itself about the req. information!
-   *
-   */
-
-  if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")] ||
-      [currentProject isKindOfClass:NSClassFromString(@"PCRenaissanceProject")] ||
-      [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) 
-  {
-    NSString *tn = nil;
-    NSString *pn = [currentProject projectName];
-
-    openPath = [NSString stringWithString:@"openapp"];
-
-    switch( debugTarget )
-    {
-        case DEBUG_DEFAULT_TARGET:
-	    tn = [pn stringByAppendingPathExtension:@"app"];
-            break;
-        case DEBUG_DEBUG_TARGET:
-	    tn = [pn stringByAppendingPathExtension:@"debug"];
-            break;
-        default:
-	    [NSException raise:@"PCInternalDevException" 
-                        format:@"Unknown build target!"];
-            break;
-    }
-    [args addObject:tn];
-  }
-  else if ([currentProject isKindOfClass:NSClassFromString(@"PCToolProject")]) 
-  {
-    openPath = [NSString stringWithString:@"opentool"];
-    [args addObject:[currentProject projectName]];
-  }
-  else 
-  {
-    [NSException raise:@"PCInternalDevException" 
-                format:@"Unknown executable project type!"];
-    return;
-  }
-
-  /*
-   * Setting everything up
-   */
-
-  [NOTIFICATION_CENTER addObserver:self 
-		       selector:@selector(logStdOut:) 
-		       name:NSFileHandleDataAvailableNotification
-		       object:readHandle];
-  
-  [NOTIFICATION_CENTER addObserver:self 
-		       selector:@selector(logErrOut:) 
-		       name:NSFileHandleDataAvailableNotification
-		       object:errorReadHandle];
-
-  [NOTIFICATION_CENTER addObserver:self
-		       selector: @selector(buildDidTerminate:)
-		       name: NSTaskDidTerminateNotification
-		       object:launchTask];  
-  
-  [launchTask setArguments:args];  
-  RELEASE(args);
-
-  [launchTask setCurrentDirectoryPath:[currentProject projectPath]];
-  [launchTask setLaunchPath:openPath];
-  
-  [launchTask setStandardOutput:logPipe];
-  [launchTask setStandardError:errorPipe];
-
-  [stdOut setString:@""];
-  [readHandle waitForDataInBackgroundAndNotify];
-
   [stdOut setString:@""];
   [errorReadHandle waitForDataInBackgroundAndNotify];
 
-  /*
-   * Go! Later on this will be handled much more optimised!
-   *
-   */
+  [NOTIFICATION_CENTER addObserver:self 
+                          selector:@selector(logErrOut:) 
+                              name:NSFileHandleDataAvailableNotification
+                            object:errorReadHandle];
 
+  // Launch task
+  RELEASE(launchTask);
+  launchTask = [[NSTask alloc] init];
+
+  [NOTIFICATION_CENTER addObserver:self
+                          selector:@selector(runDidTerminate:)
+                              name:NSTaskDidTerminateNotification
+                            object:launchTask];  
+
+  [launchTask setArguments:args];  
+  [launchTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [launchTask setLaunchPath:openPath];
+  [launchTask setStandardOutput:logPipe];
+  [launchTask setStandardError:errorPipe];
   [launchTask launch];
+
+  RELEASE(args);
 }
 
-- (void)buildDidTerminate:(NSNotification *)aNotif
+- (void)runDidTerminate:(NSNotification *)aNotif
 {
-  if ([aNotif object] == launchTask) {
+  if ([aNotif object] != launchTask)
+    {
+      return;
+    }
 
-    /*
-     * Clean up...
-     *
-     */
-    [NOTIFICATION_CENTER removeObserver:self 
-			 name:NSFileHandleDataAvailableNotification
-			 object:readHandle];
-    
-    [NOTIFICATION_CENTER removeObserver:self 
-			 name:NSFileHandleDataAvailableNotification
-			 object:errorReadHandle];
+  [NOTIFICATION_CENTER removeObserver:self];
 
-    [NOTIFICATION_CENTER removeObserver:self 
-			 name:NSTaskDidTerminateNotification 
-			 object:launchTask];
+  [runButton setState:NSOffState];
+  [componentView display];
 
-    RELEASE(launchTask);
-    launchTask = nil;
+  RELEASE(launchTask);
+  launchTask = nil;
 
-    [runButton setState:NSOffState];
-    [componentView display];
-  }
 }
 
 - (void)logStdOut:(NSNotification *)aNotif

@@ -69,6 +69,7 @@
    * Toolbar
    */
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,397,43,43)];
+  [buildButton setRefusesFirstResponder:YES];
   [buildButton setTitle: @"Build"];
   [buildButton setImage: IMAGE(@"Build")];
   [buildButton setTarget: self];
@@ -80,6 +81,7 @@
   RELEASE (buildButton);
   
   launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(52,397,43,43)];
+  [launchButton setRefusesFirstResponder:YES];
   [launchButton setTitle: @"Launch/Debug"];
   [launchButton setImage: IMAGE(@"Run")];
   [launchButton setTarget: self];
@@ -91,6 +93,7 @@
   RELEASE (launchButton);
   
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(96,397,43,43)];
+  [editorButton setRefusesFirstResponder:YES];
   [editorButton setTitle: @"Editor"];
   [editorButton setImage: IMAGE(@"Editor")];
   [editorButton setTarget: self];
@@ -102,6 +105,7 @@
   RELEASE (editorButton);
 
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(140,397,43,43)];
+  [findButton setRefusesFirstResponder:YES];
   [findButton setTitle: @"Find"];
   [findButton setImage: IMAGE(@"Find")];
   [findButton setTarget: project];
@@ -113,6 +117,7 @@
   RELEASE (findButton);
   
   inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(184,397,43,43)];
+  [inspectorButton setRefusesFirstResponder:YES];
   [inspectorButton setTitle: @"Inspector"];
   [inspectorButton setImage: IMAGE(@"Inspector")];
   [inspectorButton setTarget: project];
@@ -128,6 +133,7 @@
    * File icon and title
    */
   fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (504,391,48,48)];
+  [fileIcon setRefusesFirstResponder:YES];
   [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [fileIcon setImage: IMAGE (@"projectSuitcase")];
   [_c_view addSubview: fileIcon];

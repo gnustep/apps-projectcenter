@@ -95,9 +95,7 @@
   NSLog (@"PCAppProject: dealloc");
 
   RELEASE(infoDict);
-  RELEASE(buildAttributesView);
   RELEASE(projectAttributesView);
-  RELEASE(fileAttributesView);
 
   RELEASE(rootCategories);
   RELEASE(rootObjects);
@@ -123,6 +121,11 @@
 - (BOOL)isExecutable
 {
   return YES;
+}
+
+- (NSString *)execToolName
+{
+  return [NSString stringWithString:@"openapp"];
 }
 
 - (NSArray *)fileTypesForCategory:(NSString *)category
@@ -273,38 +276,54 @@
 
 @implementation PCAppProject (GeneratedFiles)
 
+- (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key
+{
+  id entry = [projectDict objectForKey:key];
+
+  if (entry == nil)
+    {
+      NSLog(@"%@ is nil", name);
+      return;
+    }
+
+  if ([entry isKindOfClass:[NSString class]] && [entry isEqualToString:@""])
+    {
+      NSLog(@"%@ is empty string", name);
+      [infoDict removeObjectForKey:name];
+      return;
+    }
+
+  if ([entry isKindOfClass:[NSArray class]] && [entry count] <= 0)
+    {
+      NSLog(@"%@ is empty array", name);
+      [infoDict removeObjectForKey:name];
+      return;
+    }
+
+  [infoDict setObject:entry forKey:name];
+}
+
 - (BOOL)writeInfoFile
 {
   NSString *infoFile = nil;
 
-  [infoDict setObject:[projectDict objectForKey:PCDescription]
-               forKey:@"ApplicationDescription"];
-  [infoDict setObject:[projectDict objectForKey:PCAppIcon]
-               forKey:@"ApplicationIcon"];
-  [infoDict setObject:[projectDict objectForKey:PCProjectName]
-               forKey:@"ApplicationName"];
-  [infoDict setObject:[projectDict objectForKey:PCRelease]
-               forKey:@"ApplicationRelease"];
-  [infoDict setObject:[projectDict objectForKey:PCAuthors]
-               forKey:@"Authors"];
-  [infoDict setObject:[projectDict objectForKey:PCCopyright]
-               forKey:@"Copyright"];
-  [infoDict setObject:[projectDict objectForKey:PCCopyrightDescription]
-               forKey:@"CopyrightDescription"];
-  [infoDict setObject:[projectDict objectForKey:PCVersion]
-               forKey:@"FullVersionID"];
-  [infoDict setObject:[projectDict objectForKey:PCProjectName]
-               forKey:@"NSExecutable"];
-  [infoDict setObject:[projectDict objectForKey:PCAppIcon]
-               forKey:@"NSIcon"];
-  [infoDict setObject:[projectDict objectForKey:PCMainInterfaceFile]
-               forKey:@"NSMainNibFile"];
-  [infoDict setObject:[projectDict objectForKey:PCPrincipalClass]
-               forKey:@"NSPrincipalClass"];
-  [infoDict setObject:@"Application"
-               forKey:@"NSRole"];
-  [infoDict setObject:[projectDict objectForKey:PCURL]
-              forKey:@"URL"];
+  [self writeInfoEntry:@"ApplicationDescription" forKey:PCDescription];
+  [self writeInfoEntry:@"ApplicationIcon" forKey:PCAppIcon];
+  [self writeInfoEntry:@"ApplicationName" forKey:PCProjectName];
+  [self writeInfoEntry:@"ApplicationRelease" forKey:PCRelease];
+  [self writeInfoEntry:@"Authors" forKey:PCAuthors];
+  [self writeInfoEntry:@"Copyright" forKey:PCCopyright];
+  [self writeInfoEntry:@"CopyrightDescription" forKey:PCCopyrightDescription];
+  [self writeInfoEntry:@"FullVersionID" forKey:PCVersion];
+  [self writeInfoEntry:@"NSExecutable" forKey:PCProjectName];
+  [self writeInfoEntry:@"NSIcon" forKey:PCAppIcon];
+  [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
+  [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
+  [infoDict setObject:@"Application" forKey:@"NSRole"];
+  [self writeInfoEntry:@"URL" forKey:PCURL];
+
+  // Document icons
+  [self writeInfoEntry:@"NSTypes" forKey:PCDocumentExtensions];
 
   infoFile = [projectPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
 
