@@ -55,9 +55,9 @@
 // Project
 //----------------------------------------------------------------------------
 
-- (BOOL)writeMakefile;
+- (Class)builderClass;
 
-- (BOOL)isValidDictionary:(NSDictionary *)aDict;
+- (BOOL)writeMakefile;
 
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;

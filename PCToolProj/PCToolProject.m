@@ -25,6 +25,7 @@
 */
 
 #import "PCToolProject.h"
+#import "PCToolProj.h"
 #import "PCToolMakefileFactory.h"
 
 #import <ProjectCenter/ProjectCenter.h>
@@ -85,6 +86,11 @@
 // Project
 //----------------------------------------------------------------------------
 
+- (Class)builderClass
+{
+    return [PCToolProj class];
+}
+
 - (BOOL)writeMakefile
 {
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -101,12 +107,6 @@
     }   
     
     return NO;
-}
-
-- (BOOL)isValidDictionary:(NSDictionary *)aDict
-{
-#warning No project check implemented, yet!
-    return YES;
 }
 
 - (NSArray *)sourceFileKeys

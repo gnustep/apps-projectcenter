@@ -32,6 +32,10 @@
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
 #endif
 
+//=============================================================================
+// ==== DEFINES
+//=============================================================================
+
 #define BUILD_ARGS_KEY      @"BuildArgsKey"
 #define BUILD_HOST_KEY      @"BuildHostKey"
 
@@ -40,6 +44,11 @@
 #define TARGET_MAKE_PROFILE @"MakeProfile"
 #define TARGET_MAKE_INSTALL @"MakeInstall"
 #define TARGET_MAKE_CLEAN   @"MakeClean"
+#define TARGET_MAKE_RPM     @"MakeRPM"
+
+//=============================================================================
+// ==== Not used yet
+//=============================================================================
 
 #define TOUCHED_NOTHING		(0)
 #define TOUCHED_EVERYTHING	(1 << 0)
@@ -63,27 +72,34 @@ typedef int PCProjInfoBits;
 // ==== Project keys
 //=============================================================================
 
-static NSString * const PCClasses = @"CLASS_FILES";
-static NSString * const PCHeaders = @"HEADER_FILES";
-static NSString * const PCOtherSources = @"OTHER_SOURCES";
-static NSString * const PCOtherResources = @"OTHER_RESOURCES";
-static NSString * const PCSupportingFiles = @"SUPPORTING_FILES";
-static NSString * const PCDocuFiles = @"DOCU_FILES";
-static NSString * const PCSubprojects = @"SUBPROJECTS";
-static NSString * const PCGModels = @"INTERFACES";
-static NSString * const PCImages = @"IMAGES";
-static NSString * const PCLibraries = @"LIBRARIES";
-static NSString * const PCCompilerOptions = @"COMPILEROPTIONS";
-static NSString * const PCProjectName = @"PROJECT_NAME";
-static NSString * const PCProjType = @"PROJECT_TYPE";
-static NSString * const PCPrincipalClass = @"PRINCIPAL_CLASS";
-static NSString * const PCAppIcon = @"APPLICATIONICON";
-static NSString * const PCAppClass = @"APPCLASS";
-static NSString * const PCToolIcon = @"TOOLICON";
+static NSString * const PCClasses             = @"CLASS_FILES";
+static NSString * const PCHeaders             = @"HEADER_FILES";
+static NSString * const PCOtherSources        = @"OTHER_SOURCES";
+static NSString * const PCOtherResources      = @"OTHER_RESOURCES";
+static NSString * const PCSupportingFiles     = @"SUPPORTING_FILES";
+static NSString * const PCDocuFiles           = @"DOCU_FILES";
+static NSString * const PCSubprojects         = @"SUBPROJECTS";
+static NSString * const PCGModels             = @"INTERFACES";
+static NSString * const PCImages              = @"IMAGES";
+static NSString * const PCLibraries           = @"LIBRARIES";
+static NSString * const PCCompilerOptions     = @"COMPILEROPTIONS";
+static NSString * const PCProjectName         = @"PROJECT_NAME";
+static NSString * const PCProjType            = @"PROJECT_TYPE";
+static NSString * const PCPrincipalClass      = @"PRINCIPAL_CLASS";
+static NSString * const PCAppIcon             = @"APPLICATIONICON";
+static NSString * const PCAppClass            = @"APPCLASS";
+static NSString * const PCToolIcon            = @"TOOLICON";
 static NSString * const PCProjectBuilderClass = @"PROJECT_BUILDER";
-static NSString * const PCMainGModelFile = @"MAININTERFACE";
-static NSString * const PCPackageName = @"PACKAGE_NAME";
-static NSString * const PCLibraryVar = @"LIBRARY_VAR";
+static NSString * const PCMainGModelFile      = @"MAININTERFACE";
+static NSString * const PCPackageName         = @"PACKAGE_NAME";
+static NSString * const PCLibraryVar          = @"LIBRARY_VAR";
+static NSString * const PCVersion             = @"PROJECT_VERSION";
+static NSString * const PCSummary             = @"PROJECT_SUMMARY";
+static NSString * const PCDescription         = @"PROJECT_DESCRIPTION";
+static NSString * const PCRelease             = @"PROJECT_RELEASE";
+static NSString * const PCCopyright           = @"PROJECT_COPYRIGHT";
+static NSString * const PCGroup               = @"PROJECT_GROUP";
+static NSString * const PCSource              = @"PROJECT_SOURCE";
 
 @class PCProjectBuilder;
 @class PCProjectDebugger;
@@ -162,10 +178,10 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 // ==== To be overriden!
 //=============================================================================
 
-- (BOOL)writeMakefile;
-    // Writes the PC.project file to disc. Subclasses need to call this before doing sth else!
+- (Class)builderClass;
 
-- (BOOL)isValidDictionary:(NSDictionary *)aDict;
+- (BOOL)writeMakefile;
+    // Subclasses need to call this before their customised implementation!
 
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
@@ -210,6 +226,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (BOOL)saveAllFilesIfNeeded;
     // Saves all the files that need to be saved.
 
+- (BOOL)writeSpecFile;
+
 //=============================================================================
 // ==== Subprojects
 //=============================================================================
@@ -228,6 +246,13 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 //=============================================================================
 
 - (void)updateValuesFromProjectDict;
+
+- (BOOL)isValidDictionary:(NSDictionary *)aDict;
+- (void)updateProjectDict;
+
+- (void)validateProjectDict;
+    // Validates the project dictionary and inserts missing keys if needed. It
+    // calls isValidDictionary to validate.
 
 @end
 

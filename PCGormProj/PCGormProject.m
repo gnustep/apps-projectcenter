@@ -23,6 +23,7 @@
 */
 
 #import "PCGormProject.h"
+#import "PCGormProj.h"
 #import "PCGormMakefileFactory.h"
 
 #import <ProjectCenter/ProjectCenter.h>
@@ -156,6 +157,11 @@
 // Project
 //----------------------------------------------------------------------------
 
+- (Class)builderClass
+{
+    return [PCGormProj class];
+}
+
 - (BOOL)writeMakefile
 {
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -172,12 +178,6 @@
     }   
     
     return NO;
-}
-
-- (BOOL)isValidDictionary:(NSDictionary *)aDict
-{
-#warning No project check implemented, yet!
-    return YES;
 }
 
 - (NSArray *)sourceFileKeys

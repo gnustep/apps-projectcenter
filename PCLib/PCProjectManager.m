@@ -321,7 +321,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       [loadedProjects setObject:project forKey:aPath];
       [self setActiveProject:project];
       [project setDelegate:self];
-      
+
+      [project validateProjectDict];
+
       return YES;
     }
     return NO;

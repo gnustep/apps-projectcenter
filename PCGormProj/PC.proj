@@ -24,6 +24,11 @@
     PRINCIPAL_CLASS = "main.m"; 
     PROJECT_CREATOR = ""; 
     PROJECT_DESCRIPTION = "No description avaliable!";
+    PROJECT_GROUP = "No description avaliable!";
+    PROJECT_SUMMARY = "No summary avaliable!";
+    PROJECT_RELEASE = "No release specified!";
+    PROJECT_COPYRIGHT = "No license specified!";
+    PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";
     PROJECT_MAINTAINER = ""; 
     PROJECT_NAME = ""; 
     PROJECT_TYPE = "GormApplication"; 

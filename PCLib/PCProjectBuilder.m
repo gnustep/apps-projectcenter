@@ -310,6 +310,7 @@
   NSString *status;
   NSString *target;
   SEL postProcess = NULL;
+  NSDictionary *env = [[NSProcessInfo processInfo] environment];
 
   logPipe = [NSPipe pipe];
   readHandle = [[logPipe fileHandleForReading] retain];
@@ -357,7 +358,18 @@
     [args addObject:@"specfile"];
     postProcess = @selector(copyPackageTo:);
 
-    NSRunAlertPanel(@"Creating RPM SPEC",@"After creating the RPM SPEC file you have to invoke \"rpm -ba %@.spec\" in the project directory.\nThis only works if you made a \"make install\" before!",@"OK",nil,nil,[currentProject projectName]);     
+    if( [env objectForKey:@"RPM_TOPDIR"] == nil )
+    {
+	NSRunAlertPanel(@"Attention!",
+	                @"First set the environment variable 'RPM_TOPDIR'!",
+			@"OK",nil,nil);     
+	//return;
+    }
+
+    if ( [currentProject writeSpecFile] == NO )
+    {
+	return;
+    }
     break;
   }
 
