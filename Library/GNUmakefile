@@ -45,7 +45,6 @@ ProjectCenter_HEADER_FILES = \
   PCLaunchPanel.h \
   PCLoadedFilesPanel.h \
   PCProject.h \
-  PCProject+ComponentHandling.h \
   PCProjectWindow.h \
   PCProjectInspector.h \
   PCProjectBuilder.h \
@@ -88,7 +87,6 @@ ProjectCenter_OBJC_FILES = \
   PCLaunchPanel.m \
   PCLoadedFilesPanel.m \
   PCProject.m \
-  PCProject+ComponentHandling.m \
   PCProjectWindow.m \
   PCProjectInspector.m \
   PCProjectBuilder.m \

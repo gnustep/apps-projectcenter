@@ -38,7 +38,6 @@
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 #include "ProjectComponent.h"
-#include "PCProject+ComponentHandling.h"
 #include "PCServer.h"
 
 #include "ProjectType.h"

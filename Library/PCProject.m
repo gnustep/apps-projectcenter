@@ -26,7 +26,6 @@
 #include "PCProject.h"
 #include "PCDefines.h"
 #include "ProjectBuilder.h"
-#include "PCProject+ComponentHandling.h"
 
 #include "PCProjectWindow.h"
 #include "PCProjectBrowser.h"

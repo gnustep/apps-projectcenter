@@ -28,7 +28,6 @@
 #include "PCProjectEditor.h"
 #include "PCProjectBuilder.h"
 #include "PCProjectLauncher.h"
-#include "PCProject+ComponentHandling.h"
 #include "PCSplitView.h"
 #include "PCButton.h"
 

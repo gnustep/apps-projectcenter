@@ -25,7 +25,6 @@
 #include "PCProjectBuilder.h"
 #include "PCDefines.h"
 #include "PCProject.h"
-#include "PCProject+ComponentHandling.h"
 #include "PCProjectManager.h"
 #include "PCSplitView.h"
 #include "PCButton.h"
