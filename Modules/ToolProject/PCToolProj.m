@@ -1,9 +1,12 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
+	    
+   Description: Creates new project of the type Tool!
 
    This file is part of GNUstep.
 
@@ -20,12 +23,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-*/
-
-/*
-   Description:
-
-   PCToolProj creates new project of the type Tool!
 */
 
 #include "ProjectCenter/PCFileCreator.h"
@@ -73,7 +70,8 @@ static PCToolProj *_creator = nil;
     {
       NSString            *_file = nil;
       NSString            *_2file = nil;
-//      NSString            *_resourcePath;
+//      NSString            *_lresourcePath;
+      NSString            *_resourcePath;
       NSMutableDictionary *projectDict = nil;
       NSBundle            *projectBundle = nil;
       NSString            *projectName = nil;
@@ -108,12 +106,10 @@ static PCToolProj *_creator = nil;
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
       // Resources
-/*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+/*      _lresourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
       [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
-      _2file = [path stringByAppendingPathComponent:@"Images"];
-      [fm createDirectoryAtPath:_2file attributes:nil];
-      _2file = [path stringByAppendingPathComponent:@"Documentation"];
-      [fm createDirectoryAtPath:_2file attributes:nil];
+      _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];
 
       // Create the Info-gnustep.plist
       infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
@@ -129,9 +125,9 @@ static PCToolProj *_creator = nil;
         @"Released under...", @"CopyrightDescription",
         nil];
 
-      [infoDict
-        writeToFile:[path stringByAppendingPathComponent:@"Info-gnustep.plist"]
-         atomically:YES];
+      _2file = [_resourcePath 
+	stringByAppendingPathComponent:@"Info-gnustep.plist"];
+      [infoDict writeToFile:_2file atomically:YES];
 
       [projectDict
         setObject:[NSArray arrayWithObjects:@"Info-gnustep.plist",nil]

@@ -1,7 +1,7 @@
 Announcement
 ************
 
-This is version 0.3.5 of ProjectCenter.
+This is version 0.4.0 of ProjectCenter.
 
 What is ProjectCenter?
 ======================
@@ -14,11 +14,28 @@ What is ProjectCenter?
    distribution fees, for others to use the program. You should read the
    COPYING file for more information.
 
-Noteworthy changes in version `0.3.5'.
+Noteworthy changes in version `0.4.0'.
 ======================================
 
-   Many features have been polished and stabilised, see ChangeLog for the
-   complete list of changes. 
+   * A lot of refactoring and cleanup made
+   
+   * Some parts of interface were recreated using GORM
+   
+   * Most part of Project Inspector is completed
+   
+   * Finished Loaded Files 
+   
+   * Stability issues fixed in Project Builder
+   
+   * Interaces fixes were made in Project Launcher
+   
+   * Added subprojects support
+   
+   * Preferences recreated and cleaned up
+   
+   * Many browser fixes were made in Project Window
+   
+   * Much time was spent to fix stability problems
 
 How can I get support for this software?
 ========================================

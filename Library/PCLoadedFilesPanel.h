@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2003 Free Software Foundation
+   Copyright (C) 2003-2004 Free Software Foundation
 
    Authors: Serg Stoyan
 

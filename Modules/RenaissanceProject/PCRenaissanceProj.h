@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2003 Free Software Foundation
+   Copyright (C) 2003-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
-   Modified by Daniel Luederwald <das_flip@gmx.de>
+   Authors: Philippe C.D. Robert
+            Daniel Luederwald
+	    Serg Stoyan
 
    This file is part of GNUstep.
 

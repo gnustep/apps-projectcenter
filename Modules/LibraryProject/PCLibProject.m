@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -91,64 +92,6 @@
   return @"GNUstep Objective-C library project";
 }
 
-- (BOOL)isExecutable
-{
-  return NO;
-}
-
-- (NSString *)execToolName
-{
-  return nil;
-}
-
-- (NSArray *)fileTypesForCategoryKey:(NSString *)category
-{
-  if ([category isEqualToString:PCClasses])
-    {
-      return [NSArray arrayWithObjects:@"m",nil];
-    }
-  else if ([category isEqualToString:PCHeaders])
-    {
-      return [NSArray arrayWithObjects:@"h",nil];
-    }
-  else if ([category isEqualToString:PCOtherSources])
-    {
-      return [NSArray arrayWithObjects:@"c",@"C",@"m",nil];
-    }
-  else if ([category isEqualToString:PCInterfaces])
-    {
-      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
-    }
-  else if ([category isEqualToString:PCImages])
-    {
-      return [NSImage imageFileTypes];
-    }
-  else if ([category isEqualToString:PCSubprojects])
-    {
-      return [NSArray arrayWithObjects:@"subproj",nil];
-    }
-  else if ([category isEqualToString:PCLibraries])
-    {
-      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
-    }
-
-  return nil;
-}
-
-- (NSString *)dirForCategory:(NSString *)category
-{
-  if ([category isEqualToString:PCImages])
-    {
-      return [projectPath stringByAppendingPathComponent:@"Images"];
-    }
-  else if ([category isEqualToString:PCDocuFiles])
-    {
-      return [projectPath stringByAppendingPathComponent:@"Documentation"];
-    }
-
-  return projectPath;
-}
-
 - (NSArray *)buildTargets
 {
   return [NSArray arrayWithObjects:
@@ -174,11 +117,6 @@
 {
   return [NSArray arrayWithObjects:
     @"Bundle", @"Tool", nil];
-}
-
-- (NSArray *)defaultLocalizableKeys
-{
-  return [NSArray arrayWithObjects:PCInterfaces, nil];
 }
 
 - (NSArray *)localizableKeys
@@ -225,15 +163,14 @@
     {
       NSString       *k = [[self resourceFileKeys] objectAtIndex:i];
       NSMutableArray *resources = [[projectDict objectForKey:k] mutableCopy];
+      NSString       *resourceItem = nil;
 
-      if ([k isEqualToString:PCImages])
+      for (j = 0; j < [resources count]; j++)
 	{
-	  for (j=0; j<[resources count]; j++)
-	    {
-	      [resources replaceObjectAtIndex:j 
-		withObject:[NSString stringWithFormat:@"Images/%@", 
-		[resources objectAtIndex:j]]];
-	    }
+	  resourceItem = [NSString stringWithFormat:@"Resources/%@",
+	                  [resources objectAtIndex:j]];
+	  [resources replaceObjectAtIndex:j 
+	                       withObject:resourceItem];
 	}
 
       [mf appendResourceItems:resources];

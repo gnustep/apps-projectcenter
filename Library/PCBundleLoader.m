@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -25,9 +25,6 @@
 
 #include "PCBundleLoader.h"
 #include "PCDefines.h"
-//#include "PreferenceController.h"
-#include "ProjectEditor.h"
-#include "ProjectDebugger.h"
 
 #include "PCLogController.h"
 

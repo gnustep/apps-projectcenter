@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -39,17 +39,9 @@
 
 @class NewSubprojectController;
 
-#ifndef GNUSTEP_BASE_VERSION
-@protocol ProjectBuilder;
-@protocol ProjectDelegate;
-#else
-#include <ProjectCenter/ProjectBuilder.h>
-#include <ProjectCenter/ProjectDelegate.h>
-#endif
-
 extern NSString *PCActiveProjectDidChangeNotification;
 
-@interface PCProjectManager : NSObject <ProjectBuilder>
+@interface PCProjectManager : NSObject
 {
   id                  delegate;
   id                  prefController;
@@ -141,6 +133,9 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ==== Project actions
 // ============================================================================
 
+- (NSString *)convertLegacyProject:(NSMutableDictionary *)pDict
+                            atPath:(NSString *)aPath;
+			    
 // Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
 

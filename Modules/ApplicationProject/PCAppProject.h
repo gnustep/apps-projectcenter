@@ -1,9 +1,14 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
+	    
+   Description: This is the project type 'Application' for GNUstep. You never 
+                should create it yourself but use PCAppProj for doing this. 
+		Otherwise needed files don't get copied to the right place.
 
    This file is part of GNUstep.
 
@@ -22,14 +27,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-/*
-   Description:
-
-   This is the project type 'Application' for GNUstep. You never should create 
-   it yourself but use PCAppProj for doing this. Otherwise needed files don't 
-   get copied to the right place.
- */
- 
 #ifndef _PCAppProj_PCAppProject_h_
 #define _PCAppProj_PCAppProject_h_
 

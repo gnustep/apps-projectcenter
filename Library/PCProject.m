@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -26,7 +26,6 @@
 #include "PCFileManager.h"
 #include "PCProject.h"
 #include "PCDefines.h"
-#include "ProjectBuilder.h"
 
 #include "PCProjectWindow.h"
 #include "PCProjectBrowser.h"
@@ -460,11 +459,6 @@ NSString
   return nil;
 }
 
-- (NSArray *)defaultLocalizableKeys
-{
-  return nil;
-}
-
 - (NSArray *)localizableKeys
 {
   return nil;
@@ -490,6 +484,35 @@ NSString
 
 - (NSArray *)fileTypesForCategoryKey:(NSString *)key 
 {
+  if ([key isEqualToString:PCClasses])
+    {
+      return [NSArray arrayWithObjects:@"m",nil];
+    }
+  else if ([key isEqualToString:PCHeaders])
+    {
+      return [NSArray arrayWithObjects:@"h",nil];
+    }
+  else if ([key isEqualToString:PCOtherSources])
+    {
+      return [NSArray arrayWithObjects:@"c",@"C",@"m",nil];
+    }
+  else if ([key isEqualToString:PCInterfaces])
+    {
+      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
+    }
+  else if ([key isEqualToString:PCImages])
+    {
+      return [NSImage imageFileTypes];
+    }
+  else if ([key isEqualToString:PCSubprojects])
+    {
+      return [NSArray arrayWithObjects:@"subproj",nil];
+    }
+  else if ([key isEqualToString:PCLibraries])
+    {
+      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
+    }
+
   return nil;
 }
 
@@ -511,6 +534,14 @@ NSString
 
 - (NSString *)dirForCategoryKey:(NSString *)key 
 {
+  if ([key isEqualToString:PCInterfaces] 
+      || [key isEqualToString:PCImages]
+      || [key isEqualToString:PCOtherResources]
+      || [key isEqualToString:PCDocuFiles])
+    {
+      return [projectPath stringByAppendingPathComponent:@"Resources"];
+    }
+
   return projectPath;
 }
 

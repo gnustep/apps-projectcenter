@@ -67,7 +67,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 
 @class PCProject;
 
-#ifndef GNUSTEP_BASE_VERSION
+/*#ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectEditor;
 @protocol ProjectDebugger;
 @protocol PreferenceController;
@@ -75,7 +75,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 #include <ProjectCenter/PreferenceController.h>
 #include <ProjectCenter/ProjectEditor.h>
 #include <ProjectCenter/ProjectDebugger.h>
-#endif
+#endif*/
 
 @interface PCServer : NSObject <Server>
 {
@@ -96,9 +96,9 @@ extern NSString *PCProjectBuildDidStopNotification;
 - (BOOL)registerProjectSubmenu:(NSMenu *)menu;
 - (BOOL)registerFileSubmenu:(NSMenu *)menu;
 - (BOOL)registerToolsSubmenu:(NSMenu *)menu;
-- (BOOL)registerPrefController:(id<PreferenceController>)prefs;
+/*- (BOOL)registerPrefController:(id<PreferenceController>)prefs;
 - (BOOL)registerEditor:(id<ProjectEditor>)anEditor;
-- (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger;
+- (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger;*/
 
 - (PCProject *)activeProject;
 - (NSString*)pathToActiveProject;

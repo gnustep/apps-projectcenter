@@ -1,9 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -51,7 +51,6 @@
 
       rootEntries = [[NSDictionary 
 	dictionaryWithObjects:rootCategories forKeys:rootKeys] retain];
-    
     }
 
   return self;
@@ -80,65 +79,10 @@
   return @"Project that contains subprojects.";
 }
 
-- (BOOL)isExecutable
-{
-  return NO;
-}
-
-- (NSString *)execAggregateName
-{
-  return nil;
-}
-
-- (NSArray *)fileTypesForCategoryKey:(NSString *)category
-{
-  if ([category isEqualToString:PCSubprojects])
-    {
-      return [NSArray arrayWithObjects:@"subproj",nil];
-    }
-
-  return nil;
-}
-
-- (NSString *)dirForCategory:(NSString *)category
-{
-  return projectPath;
-}
-
-- (NSArray *)buildTargets
-{
-  return nil;
-}
-
-- (NSArray *)sourceFileKeys
-{
-  return nil;
-}
-
-- (NSArray *)resourceFileKeys
-{
-  return nil;
-}
-
-- (NSArray *)otherKeys
-{
-  return [NSArray arrayWithObjects:PCSupportingFiles,nil];
-}
-
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
     @"Application", @"Bundle", @"Library", @"Tool", nil];
-}
-
-- (NSArray *)defaultLocalizableKeys
-{
-  return nil;
-}
-
-- (NSArray *)localizableKeys
-{
-  return nil;
 }
 
 @end

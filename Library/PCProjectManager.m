@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -44,8 +44,6 @@
 #include "PCServer.h"
 
 #include "ProjectType.h"
-#include "ProjectBuilder.h"
-#include "ProjectComponent.h"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
@@ -394,6 +392,108 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== Project actions
 // ============================================================================
 
+- (NSString *)convertLegacyProject:(NSMutableDictionary *)pDict
+                            atPath:(NSString *)aPath
+{
+  NSString      *pPath = nil;
+  NSString      *projectClassName = nil;
+  NSString      *projectTypeName = nil;
+  NSString      *_projectPath = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSString      *_resPath = nil;
+  NSArray       *_fromDirArray = nil;
+  NSString      *_fromDirPath = nil;
+  NSString      *_file = nil;
+  NSString      *_2file = nil;
+  int           i = 0;
+  id<ProjectType> projectCreator;
+  NSMutableArray *otherResArray = nil;
+  NSString       *plistFile = nil;
+
+  projectClassName = [pDict objectForKey:PCProjectBuilderClass];
+  if (projectClassName == nil)
+    {
+      // Project created by 0.4 release or later
+      return nil;
+    }
+
+  // Gorm project type doesn't exists anymore
+  if ([projectClassName isEqualToString:@"PCGormProj"])
+    {
+      projectTypeName = [NSString stringWithString:@"Application"];
+      projectClassName = [projectTypes objectForKey:projectTypeName];
+    }
+
+  // Handling directory layout
+  _projectPath = [aPath stringByDeletingLastPathComponent];
+  _resPath = [_projectPath stringByAppendingPathComponent:@"Resources"];
+  [fm createDirectoryAtPath:_resPath attributes:nil];
+
+  // Documents
+  _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Documentation"];
+  _fromDirArray = [fm directoryContentsAtPath:_fromDirPath];
+  if (_fromDirArray)
+    {
+      for (i = 0; i < [_fromDirArray count]; i++)
+	{
+	  _file = [_fromDirPath 
+	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
+	  _2file = [_resPath 
+	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
+	  [fm movePath:_file toPath:_2file handler:nil];
+	}
+    }
+  [fm removeFileAtPath:_fromDirPath handler:nil];
+
+  // Images
+  _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Images"];
+  _fromDirArray = [fm directoryContentsAtPath:_fromDirPath];
+  if (_fromDirArray)
+    {
+      for (i = 0; i < [_fromDirArray count]; i++)
+	{
+	  _file = [_fromDirPath 
+	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
+	  _2file = [_resPath 
+	    stringByAppendingPathComponent:[_fromDirArray objectAtIndex:i]];
+	  [fm movePath:_file toPath:_2file handler:nil];
+	}
+    }
+  [fm removeFileAtPath:_fromDirPath handler:nil];
+
+  // Info-gnustep.plist
+  plistFile = [NSString stringWithFormat:@"%@Info.plist",
+    [pDict objectForKey:PCProjectName]];
+  _file = [_projectPath stringByAppendingPathComponent:plistFile];
+  _2file = [_resPath stringByAppendingPathComponent:
+    [NSString stringWithString:@"Info-gnustep.plist"]];
+  [fm movePath:_file toPath:_2file handler:nil];
+  otherResArray = [NSMutableArray 
+    arrayWithArray:[pDict objectForKey:PCOtherResources]];
+  [otherResArray removeObject:plistFile];
+  [otherResArray addObject:@"Info-gnustep.plist"];
+  [pDict setObject:otherResArray forKey:PCOtherResources];
+
+  // GNUmakefiles will be generated in [PCProject initWithProjectDictionary:]
+
+  // Remove obsolete records from project dictionary and write to PC.project
+  pPath = [[aPath stringByDeletingLastPathComponent]
+    stringByAppendingPathComponent:@"PC.project"];
+  projectCreator = [NSClassFromString(projectClassName) sharedCreator];
+
+  projectTypeName = [projectCreator projectTypeName];
+  [pDict setObject:projectTypeName forKey:PCProjectType];
+  [pDict removeObjectForKey:PCProjectBuilderClass];
+  [pDict removeObjectForKey:PCPrincipalClass];
+  
+  if ([pDict writeToFile:pPath atomically:YES] == YES)
+    {
+//      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
+    }
+
+  return projectClassName;
+}
+
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {
   NSMutableDictionary *projectFile = nil;
@@ -405,15 +505,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
   
   // For compatibility with 0.3.x projects
-  projectClassName = [projectFile objectForKey:PCProjectBuilderClass];
-  // Gorm project type doesn't exists anymore
-  if ([projectClassName isEqualToString:@"PCGormProj"])
+  projectClassName = [self convertLegacyProject:projectFile atPath:aPath];
+  if (projectClassName)
     {
-      projectTypeName = [NSString stringWithString:@"Application"];;
-      projectClassName = [projectTypes objectForKey:projectTypeName];
-      projectTypeName = nil;
+      aPath = [[aPath stringByDeletingLastPathComponent]
+	stringByAppendingPathComponent:@"PC.project"];
     }
-  
+
+  // No conversion were taken
   if (projectClassName == nil)
     {
       projectTypeName = [projectFile objectForKey:PCProjectType];
@@ -421,24 +520,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
-
-   if (projectTypeName == nil)
-    {
-      NSString *pPath = nil;
-
-      pPath = [[aPath stringByDeletingLastPathComponent]
-        stringByAppendingPathComponent:@"PC.project"];
-
-//      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
-
-      [projectFile removeObjectForKey:PCProjectBuilderClass];
-      projectTypeName = [projectCreator projectTypeName];
-      [projectFile setObject:projectTypeName forKey:PCProjectType];
-      [projectFile removeObjectForKey:PCPrincipalClass];
-      [projectFile writeToFile:pPath atomically:YES];
-
-      aPath = pPath;
-    }
 
   if ((project = [projectCreator openProjectAt:aPath])) 
     {
@@ -759,10 +840,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if ([loadedProjects count] == 0)
     {
-      if (projectInspector) [projectInspector close];
-      if (loadedFilesPanel) [loadedFilesPanel close];
-      if (buildPanel) [buildPanel close];
-      if (launchPanel) [launchPanel close];
+      if (projectInspector)
+	{
+	  [projectInspector close];
+	}
+      if (loadedFilesPanel && [loadedFilesPanel isVisible])
+	{
+	  [loadedFilesPanel close];
+	}
+      if (buildPanel && [buildPanel isVisible])
+	{
+	  [buildPanel close];
+	}
+      if (launchPanel && [launchPanel isVisible])
+	{
+	  [launchPanel close];
+	}
       [self setActiveProject: nil];
       [self stopSaveTimer];
     }

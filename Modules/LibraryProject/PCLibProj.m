@@ -1,9 +1,12 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
+	    
+   Description: Creates new project of the type Library!
 
    This file is part of GNUstep.
 
@@ -20,13 +23,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-*/
-
-/*
- Description:
-
- PCLibProj creates new project of the type Application!
-
 */
 
 #include <ProjectCenter/PCFileCreator.h>
@@ -77,7 +73,8 @@ static PCLibProj *_creator = nil;
       NSString            *projectName = nil;
       NSString            *_file = nil;
       NSString            *_2file = nil;
-//      NSString            *_resourcePath;
+//      NSString            *_lresourcePath;
+      NSString            *_resourcePath;
       PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
 
       project = [[[PCLibProject alloc] init] autorelease];
@@ -118,17 +115,14 @@ static PCLibProj *_creator = nil;
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
       // Resources
-      /*
-	 _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-	 [fm createDirectoryAtPath:_resourcePath attributes:nil];
-       */
-      _file = [path stringByAppendingPathComponent:@"Images"];
-      [fm createDirectoryAtPath:_file attributes:nil];
-      _file = [path stringByAppendingPathComponent:@"Documentation"];
-      [fm createDirectoryAtPath:_file attributes:nil];
+/*      _lresourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
+      
+      _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];
 
       _file = [projectBundle pathForResource:@"Version" ofType:@""];
-      _2file = [path stringByAppendingPathComponent:@"Version"];
+      _2file = [_resourcePath stringByAppendingPathComponent:@"Version"];
       [fm copyPath:_file toPath:_2file handler:nil];
 
       // Set the new dictionary - this causes the GNUmakefile 

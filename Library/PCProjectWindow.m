@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -112,7 +112,7 @@
   [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [buildButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: buildButton];
-  [buildButton setShowTooltip:YES];
+//  [buildButton setShowTooltip:YES];
   RELEASE (buildButton);
   
   launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,5,43,43)];
@@ -124,7 +124,7 @@
   [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [launchButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: launchButton];
-  [launchButton setShowTooltip:YES];
+//  [launchButton setShowTooltip:YES];
   RELEASE (launchButton);
   
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
@@ -136,7 +136,7 @@
   [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [editorButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: editorButton];
-  [editorButton setShowTooltip:YES];
+//  [editorButton setShowTooltip:YES];
   RELEASE (editorButton);
 
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
@@ -148,7 +148,7 @@
   [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [findButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: findButton];
-  [findButton setShowTooltip:YES];
+//  [findButton setShowTooltip:YES];
   RELEASE (findButton);
   
   inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(176,5,43,43)];
@@ -160,7 +160,7 @@
   [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
   [inspectorButton setButtonType: NSMomentaryPushButton];
   [toolbarView addSubview: inspectorButton];
-  [inspectorButton setShowTooltip:YES];
+//  [inspectorButton setShowTooltip:YES];
   RELEASE (inspectorButton);
   
 
@@ -720,7 +720,7 @@
   PCProject *changedProject = [aNotif object];
 
   if (changedProject != project
-      && [[project projectManager] activeProject] != changedProject)
+      && changedProject != [project activeSubproject])
     {
       return;
     }

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -398,21 +398,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  PCProject *changedProject = nil;
-  PCProject *activeProject = nil;
+  PCProject *changedProject = [aNotif object];
 
   if (!browser)
     {
       return;
     }
 
-  changedProject = [aNotif object];
-  activeProject = [[project projectManager] activeProject];
-    
-  if (changedProject == project || changedProject == activeProject)
+  if (changedProject != project && changedProject != [project activeSubproject])
     {
-      [self reloadLastColumn];
+      return;
     }
+
+  [self reloadLastColumn];
 }
 
 @end

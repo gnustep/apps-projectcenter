@@ -68,7 +68,7 @@
   return NO;
 }
 
-- (BOOL)registerPrefController:(id<PreferenceController>)prefs
+/*- (BOOL)registerPrefController:(id<PreferenceController>)prefs
 {
   return NO;
 }
@@ -81,7 +81,7 @@
 - (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger
 {
   return NO;
-}
+}*/
 
 - (PCProject *)activeProject
 {

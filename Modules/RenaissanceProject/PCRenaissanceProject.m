@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -137,54 +138,6 @@
   return [NSString stringWithString:@"openapp"];
 }
 
-- (NSArray *)fileTypesForCategoryKey:(NSString *)key 
-{
-  if ([key isEqualToString:PCClasses])
-    {
-      return [NSArray arrayWithObjects:@"m",nil];
-    }
-  else if ([key isEqualToString:PCHeaders])
-    {
-      return [NSArray arrayWithObjects:@"h",nil];
-    }
-  else if ([key isEqualToString:PCOtherSources])
-    {
-      return [NSArray arrayWithObjects:@"c",@"C",@"m",nil];
-    }
-  else if ([key isEqualToString:PCInterfaces])
-    {
-      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
-    }
-  else if ([key isEqualToString:PCImages])
-    {
-      return [NSImage imageFileTypes];
-    }
-  else if ([key isEqualToString:PCSubprojects])
-    {
-      return [NSArray arrayWithObjects:@"subproj",nil];
-    }
-  else if ([key isEqualToString:PCLibraries])
-    {
-      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
-    }
-
-  return nil;
-}
-
-- (NSString *)dirForCategoryKey:(NSString *)key
-{
-  if ([key isEqualToString:PCImages])
-    {
-      return [projectPath stringByAppendingPathComponent:@"Images"];
-    }
-  else if ([key isEqualToString:PCDocuFiles])
-    {
-      return [projectPath stringByAppendingPathComponent:@"Documentation"];
-    }
-
-  return projectPath;
-}
-
 - (NSArray *)buildTargets
 {
   return [NSArray arrayWithObjects:
@@ -212,12 +165,7 @@
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
-    @"Bundle", @"Tool", @"Library", nil];
-}
-
-- (NSArray *)defaultLocalizableKeys
-{
-  return [NSArray arrayWithObjects: PCInterfaces, nil];
+    @"Aggregate", @"Bundle", @"Tool", @"Library", nil];
 }
 
 - (NSArray *)localizableKeys
@@ -389,7 +337,8 @@
   [infoDict setObject:[self convertExtensions] forKey:@"NSTypes"];
   [self writeInfoEntry:@"URL" forKey:PCURL];
 
-  infoFile = [projectPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
+  infoFile = [self dirForCategoryKey:PCOtherResources];
+  infoFile = [infoFile stringByAppendingPathComponent:@"Info-gnustep.plist"];
 
   return [infoDict writeToFile:infoFile atomically:YES];
 }
@@ -493,15 +442,14 @@
     {
       NSString       *k = [[self resourceFileKeys] objectAtIndex:i];
       NSMutableArray *resources = [[projectDict objectForKey:k] mutableCopy];
+      NSString       *resourceItem = nil;
 
-      if ([k isEqualToString:PCImages])
-	{
-	  for (j=0; j<[resources count]; j++)
-	    {
-	      [resources replaceObjectAtIndex:j 
-		withObject:[NSString stringWithFormat:@"Images/%@", 
-		[resources objectAtIndex:j]]];
-	    }
+      for (j = 0; j < [resources count]; j++)                                   
+	{                                                                       
+	  resourceItem = [NSString stringWithFormat:@"Resources/%@",            
+	                  [resources objectAtIndex:j]];
+	  [resources replaceObjectAtIndex:j
+	                       withObject:resourceItem];
 	}
 
       [mf appendResourceItems:resources];
@@ -545,10 +493,6 @@
     
   [mff appendString:[NSString stringWithFormat:@"%@_APPLICATION_ICON = %@\n",
                      projectName, [projectDict objectForKey:PCAppIcon]]];
-
-  // TODO: proper support for localisation
-  //[self appendString:[NSString stringWithFormat:@"%@_LANGUAGES=English\n",pnme]];
-  //[self appendString:[NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES=Localizable.strings\n",pnme]];
 }
 
 - (void)appendTail:(PCMakefileFactory *)mff

@@ -1,12 +1,27 @@
-/* 
- * PCProjectEditor.m created by probert on 2002-02-10 09:27:09 +0000
- *
- * Project ProjectCenter
- *
- * Created with ProjectCenter - http://www.gnustep.org
- *
- * $Id$
- */
+/*
+   GNUstep ProjectCenter - http://www.gnustep.org
+
+   Copyright (C) 2002-2004 Free Software Foundation
+
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
+
+   This file is part of GNUstep.
+
+   This application is free software; you can redistribute it and/or
+   modify it under the terms of the GNU General Public
+   License as published by the Free Software Foundation; either
+   version 2 of the License, or (at your option) any later version.
+
+   This application is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+   Library General Public License for more details.
+
+   You should have received a copy of the GNU General Public
+   License along with this library; if not, write to the Free
+   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
+*/
 
 #include "PCDefines.h"
 #include "PCProjectWindow.h"
@@ -14,7 +29,6 @@
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 #include "PCEditorView.h"
-#include "ProjectComponent.h"
 
 #include "PCLogController.h"
 
@@ -253,8 +267,6 @@ NSString *PCEditorDidResignActiveNotification =
 {
   PCEditor *editor = [editorsDict objectForKey:path];
 
-  NSLog(@"PCProjectEditor: orderFrontEditorForFile");
-
   if ([editor isWindowed])
     {
       [editor show];
@@ -286,7 +298,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)closeActiveEditor:(id)sender
 {
-  [[self activeEditor] closeFile:self save:YES];
+  [activeEditor closeFile:self save:YES];
 }
 
 - (void)closeEditorForFile:(NSString *)file
@@ -448,10 +460,11 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidClose:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
+  PCEditor         *editor = [aNotif object];
+  PCProjectBrowser *browser = nil;
 
   // It is not our editor
-  if ([editorsDict objectForKey:[editor path]] != editor)
+  if ([editor projectEditor] != self)
     {
       return;
     }
@@ -465,14 +478,15 @@ NSString *PCEditorDidResignActiveNotification =
 
       lastEditorKey = [[editorsDict allKeys] lastObject];
       [componentView setContentView:[lastEditor componentView]];
-//      [[project projectWindow] makeFirstResponder:[lastEditor editorView]];
-      [self setActiveEditor:lastEditor];
+      [[project projectWindow] makeFirstResponder:[lastEditor editorView]];
     }
   else
     {
-//      [[project projectWindow] makeFirstResponder:scrollView];
+      browser = [project projectBrowser];
+      [browser setPath:[browser pathToSelectedCategory]];
+
+      [[project projectWindow] makeFirstResponder:scrollView];
       [componentView setContentView:scrollView];
-      [self setActiveEditor:nil];
     }
 }
 
@@ -481,10 +495,7 @@ NSString *PCEditorDidResignActiveNotification =
   PCEditor *editor = [aNotif object];
   NSString *categoryPath = nil;
 
-  NSLog(@"PCPE: editorDidBecomeActive: %@", [editor path]);
-
-  if ([editorsDict objectForKey:[editor path]] != editor
-      || activeEditor == editor)
+  if ([editor projectEditor] != self || activeEditor == editor)
     {
       return;
     }
@@ -495,13 +506,19 @@ NSString *PCEditorDidResignActiveNotification =
 
   if (categoryPath)
     {
-      PCLogInfo(self, @"set browser path: %@", categoryPath);
       [[project projectBrowser] setPath:categoryPath];
     }
 }
 
 - (void)editorDidResignActive:(NSNotification *)aNotif
 {
+  PCEditor *editor = [aNotif object];
+  
+  if ([editor projectEditor] != self)
+    {
+      return;
+    }
+
   [self setActiveEditor:nil];
 }
 

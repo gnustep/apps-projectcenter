@@ -21,7 +21,7 @@ ProjectCenter 0.5
 
 - Add more project types                                        stoyan
 - Localization support for projects                             stoyan
-- Add pending files adding/removing                             stoyan
+- Add pending add/removal of files                              stoyan
 - Editor enhancements (syntax highlighting, etc.)               stoyan
 - Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
 - ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan

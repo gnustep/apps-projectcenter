@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -40,11 +40,11 @@
 @class PCProjectLauncher;
 @class PCProjectEditor;
 
-#ifndef GNUSTEP_BASE_VERSION
+/*#ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
 #else
 #include <ProjectCenter/ProjectBuilder.h>
-#endif
+#endif*/
 
 extern NSString *PCProjectDictDidChangeNotification;
 extern NSString *PCProjectDictDidSaveNotification;
@@ -129,7 +129,6 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSArray *)resourceFileKeys;
 - (NSArray *)otherKeys;
 - (NSArray *)allowableSubprojectTypes;
-- (NSArray *)defaultLocalizableKeys;
 - (NSArray *)localizableKeys;
 
 - (BOOL)isEditableCategory:(NSString *)category;

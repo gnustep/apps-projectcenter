@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Author: Philippe C.D. Robert
            Serg Stoyan
@@ -33,9 +33,8 @@
 
 @interface PCBundleLoader : NSObject
 {
-    id 			delegate; // The PCAppController!
-
-    NSMutableArray	*loadedBundles;
+  id              delegate; // The PCAppController!
+  NSMutableArray *loadedBundles;
 }
 
 //----------------------------------------------------------------------------

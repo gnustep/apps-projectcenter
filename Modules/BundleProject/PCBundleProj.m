@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    Description: creates new project of the type Bundle!
 
@@ -72,7 +73,8 @@ static PCBundleProj *_creator = nil;
       NSString            *projectName = nil;
       NSString            *_file = nil;
       NSString            *_2file = nil;
-//      NSString            *_resourcePath;
+//      NSString            *_lresourcePath;
+      NSString            *_resourcePath;
       PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
 
       project = [[[PCBundleProject alloc] init] autorelease];
@@ -115,14 +117,10 @@ static PCBundleProj *_creator = nil;
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
       // Resources
-/*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+/*      _lresourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
       [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
-      [fm createDirectoryAtPath:
-	[path stringByAppendingPathComponent:@"Images"]
-	             attributes:nil];
-      [fm createDirectoryAtPath:
-	[path stringByAppendingPathComponent:@"Documentation"]
-	             attributes:nil];
+      _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];
 
       // Set the new dictionary - this causes the GNUmakefile to be written
       if (![project assignProjectDict:projectDict])

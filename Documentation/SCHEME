@@ -49,12 +49,6 @@ PCServer (don't used)
 ----------
 THOUGHTS:
 ----------
-- test Projects and Files operations (Project and File menu entries);
-- GORMify Prefernces;
-- make PC prefernces changes applying immediately after changing;
-- finish Preferences;
-- remember ProjectWindow, BuildPanel, LaunchPanel, LoadedFilesPanel 
-  geometry and visibility on per project basis;
 - remember splitviews geometry on per project basis;
 - try to incorporate CodeEditor approach
 - implement PCProjectFinder and PCFindPanel GUI;
@@ -64,4 +58,13 @@ THOUGHTS:
   and "Add Class", "Add Header" and so on checkbox;
 - "New File in Project..." panel should provide "Create Header", 
   "Create Class" and so on checkbox.
-
+  
+Localization:
+~~~~~~~~~~~~~
+- On project creation, all resources go to Resources subdir and placed into
+  GNUmakefile as *_RESOURCE_FILES;
+- If some file from [PC*Proj localizableKeys] categories selected as 
+  "Localizable Resource", that file removed from *_RESOURCE_FILES and placed
+  into *_LOCALIZED_RESOURCE_FILES (Resources->Language.lproj);
+- in PC.project add LANGUAGES=();
+- in PC.project add LOCALIZED_FILES=();

@@ -1,3 +1,34 @@
+2004-06-15 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectManager.m:
+	(convertLegacyProject:atPath:): added and implemented for conversion 
+	of old projects.
+	(closeProject:): check if panels visible before performing close.
+	
+	* Libarary/PCProject.m:
+	(fileTypesForCategoryKey:): moved implementation here from PC*Project
+	classes.
+	(dirForCategory:): ditto.
+	
+	* Library/PCProjectEditor.m:
+	(editorDidClose:): remove calling to setActiveEditor:. 
+	(editorDidResignActive:): check if editor belongs to current project.
+	(editorDidBecomeActive:): fix checking if editor belongs to current 
+	project.
+	
+	* Library/PCProjectBrowser.m:
+	(projectDictDidChange:): Fix detection of project changed.
+	
+	* Modules/ApplicationProject/*.[hm]:
+	* Modules/BundleProject/*.[hm]:
+	* Modules/LibraryProject/*.[hm]:
+	* Modules/RenaissanceProject/*.[hm]:
+	* Modules/ToolProject/*.[hm]:
+	Default location of non-localized resources changed to Resources 
+	subdir in project directory layout. No more Documentation and Images
+	subdirectories.
+	Removed PCProject overridings that are identical. Cleaned up.
+
 2004-06-14 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFileManager.m:

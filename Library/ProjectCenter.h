@@ -44,10 +44,8 @@
 #include <ProjectCenter/PCTextFinder.h>
 #include <ProjectCenter/PCMakefileFactory.h>
 
-#include <ProjectCenter/ProjectEditor.h>
 #include <ProjectCenter/ProjectType.h>
 #include <ProjectCenter/Server.h>
-#include <ProjectCenter/ProjectComponent.h>
 
 #endif
 

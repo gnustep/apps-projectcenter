@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -28,16 +28,10 @@
 
 #include <AppKit/AppKit.h>
 
-#ifndef GNUSTEP_BASE_VERSION
-@protocol ProjectComponent;
-#else
-#include <ProjectCenter/ProjectComponent.h>
-#endif
-
 @class PCProject;
 @class PCButton;
 
-@interface PCProjectBuilder : NSObject <ProjectComponent>
+@interface PCProjectBuilder : NSObject
 {
   NSBox           *componentView;
   PCButton        *buildButton;

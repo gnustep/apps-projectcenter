@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -175,6 +175,7 @@ static NSString * const PCSupportingFiles      = @"SUPPORTING_FILES";
 static NSString * const PCLibraries            = @"LIBRARIES";
 static NSString * const PCNonProject           = @"NON_PROJECT_FILES";
 static NSString * const PCGSMarkupFiles	       = @"INTERFACES";
+static NSString * const PCLanguages	       = @"LANGUAGES";
 
 static NSString * const PCBuildTool            = @"BUILDTOOL";
 static NSString * const PCCompilerOptions      = @"COMPILEROPTIONS";
