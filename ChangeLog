@@ -1,3 +1,10 @@
+2004-02-28 08:40 Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* PCLib/PCProjectBuilder.m: -build: method now calls make: directly
+	instead of doing so in a thread.  AppKit is not thread-safe 
+	(it's not supposed to be :)) and this was causing a segfault when
+	building.
+
 2003-11-08  Serg Stoyan <stoyan@on.com.ua>
 
 	* Fix segfault when closing Gorm and Renaissance projects (pathc by

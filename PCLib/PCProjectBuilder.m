@@ -602,9 +602,13 @@
   [logOutput setString: @""];
   [errorOutput setString: @""];
 
+  [self make: data];
+
+  /* AppKit is not multi-threaded.  This is causing a segfault.
   [NSThread detachNewThreadSelector: @selector(make:)
                            toTarget: self
                          withObject: data];
+  */
 }
 
 - (void)buildDidTerminate
