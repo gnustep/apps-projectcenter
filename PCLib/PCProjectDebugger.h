@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef __PCPROJECTDEBUGGER_H
+#define __PCPROJECTDEBUGGER_H
+
 #include <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
@@ -83,3 +86,6 @@
 - (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end
+
+#endif
+
