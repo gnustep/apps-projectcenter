@@ -10,7 +10,7 @@ ProjectCenter 0.4                                                   Owner
 - ProjectCenter localisation                                        robert
 - Editor enhancements                                               robert
 - Project Inspector completion                                      serg
-- UI using Gorm and overal code cleanup                             ??? (all)
+- UI using Gorm and code cleanup                                    serg
 - Initial user documentation                                        ???
 
 ProjectCenter 0.5
