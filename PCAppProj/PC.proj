@@ -2,7 +2,7 @@
     APPCLASS = "NSApplication"; 
     APPKIT = "GNUSTEP-GUI"; 
     APPLICATIONICON = ""; 
-    BUILDTOOL = "gnumake"; 
+    BUILDTOOL = "/usr/bin/make"; 
     CLASS_FILES = ("main.m","AppController.m"); 
     COMPILEROPTIONS = ""; 
     LINKEROPTIONS = ""; 

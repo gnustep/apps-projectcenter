@@ -1,6 +1,6 @@
 {
     APPKIT = "GNUSTEP-GUI"; 
-    BUILDTOOL = "gnumake"; 
+    BUILDTOOL = "/usr/bin/make"; 
     CLASS_FILES = (); 
     COMPILEROPTIONS = ""; 
     LINKEROPTIONS = "";  

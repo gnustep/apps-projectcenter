@@ -2,7 +2,7 @@
     APPCLASS = NSApplication;
     APPKIT = GNUSTEP-GUI;
     APPLICATIONICON = "";
-    BUILDTOOL = make;
+    BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
 	PCBundleProject.m,
 	PCBundleProj.m,

@@ -2,7 +2,7 @@
     APPCLASS = NSApplication;
     APPKIT = GNUSTEP-GUI;
     APPLICATIONICON = ProjectCenter.app.tiff;
-    BUILDTOOL = gnumake;
+    BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
 	PCAppController.m,
 	PCFindController.m,
