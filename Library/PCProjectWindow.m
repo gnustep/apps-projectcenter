@@ -447,7 +447,7 @@
 	{
 	  [self showProjectEditor:self];
 	}
-      [buildPanel orderFront: nil];
+      [buildPanel orderFront:nil];
     }
   else
     {

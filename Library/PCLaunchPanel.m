@@ -81,6 +81,16 @@
   [super dealloc];
 }
 
+- (NSView *)contentView
+{
+  if (contentBox)
+    {
+      return [contentBox contentView];
+    }
+
+  return [super contentView];
+}
+
 - (void)setContentView:(NSView *)view
 {
   if (view == contentBox)
@@ -97,17 +107,18 @@
 {
   PCProject *activeProject = [aNotif object];
 
-  if (![self isVisible])
+/*  if (![self isVisible])
     {
       return;
-    }
+    }*/
 
   [self setTitle: [NSString stringWithFormat: 
     @"%@ - Launch", [activeProject projectName]]];
 
   if (!activeProject)
     {
-      [[contentBox contentView] removeFromSuperview];
+//      [[contentBox contentView] removeFromSuperview];
+      [contentBox setContentView:nil];
     }
   else
     {

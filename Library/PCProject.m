@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #include "PCFileManager.h"
@@ -230,13 +228,14 @@ NSString
   RELEASE(projectPath);
   RELEASE(projectDict);
 
+  // Initialized in -init
   RELEASE(projectWindow);
   RELEASE(projectBrowser);
+  RELEASE(projectHistory);
+  RELEASE(projectEditor);
 
-  if (projectHistory)  RELEASE(projectHistory);
-  if (projectBuilder)  RELEASE(projectBuilder);
+  if (projectBuilder) RELEASE(projectBuilder);
   if (projectLauncher) RELEASE(projectLauncher);
-  if (projectEditor)   RELEASE(projectEditor);
   
   RELEASE(buildOptions);
 
@@ -367,8 +366,7 @@ NSString
       || [key isEqualToString:PCDocuFiles]
       || [key isEqualToString:PCOtherSources]
       || [key isEqualToString:PCOtherResources]
-      || [key isEqualToString:PCNonProject]
-      || [key isEqualToString:PCGSMarkupFiles]) 
+      || [key isEqualToString:PCNonProject]) 
     {
       return YES;
     }

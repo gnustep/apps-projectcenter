@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #include "PCAppController.h"
@@ -307,7 +305,7 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-  NSLog (@"Applictaion WILL terminate");
+  NSLog (@"--- Application WILL terminate");
   if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
@@ -336,7 +334,7 @@
   RELEASE(doServer);
   RELEASE(projectTypes);
 
-  NSLog (@"Applictaion WILL terminate.END");
+  NSLog (@"--- Application WILL terminate.END");
 }
 
 //============================================================================
