@@ -1,3 +1,8 @@
+2003-09-06  Fred Kiefer <FredKiefer@gmx.de>
+
+        * PCLib/GNUMakefile.preamble
+	Removed all -Werror. 
+
 2003-08-25 Philippe C.D. Robert <probert@siggraph.org>
 
 	* Fixing "stop logging" fix: PCProjectBuilder.m
