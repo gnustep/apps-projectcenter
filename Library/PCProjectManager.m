@@ -437,7 +437,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCProject    *project = nil;
   NSDictionary *wap = nil;
 
-  projectName = [[aPath stringByDeletingLastPathComponent] lastPathComponent];
+  projectName = [[NSDictionary dictionaryWithContentsOfFile:aPath] 
+                 objectForKey:PCProjectName];
 
   if ((project = [loadedProjects objectForKey:projectName]) != nil)
     {
@@ -463,7 +464,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       // Windows and panels
       wap = [[NSDictionary dictionaryWithContentsOfFile:aPath]
 	     objectForKey:@"PC_WINDOWS"];
-      PCLogInfo(self, @"%s", wap);
       if ([[wap allKeys] containsObject:@"ProjectBuild"])
 	{
 	  [[self buildPanel] orderFront:self];

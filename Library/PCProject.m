@@ -122,9 +122,9 @@ NSString
   PCLogInfo(self, @"Closing %@ project", projectName);
   
   // Save visible windows and panels positions to project dictionary
-  if (isSubproject == NO && [self saveProjectWindowsAndPanels] == NO)
+  if (isSubproject == NO)
     {
-      return NO;
+      [self saveProjectWindowsAndPanels];
     }
   
   // Project files (GNUmakefile, PC.project etc.)

@@ -172,10 +172,10 @@ static PCPrefController *_prefCtrllr = nil;
     (val = [preferencesDict objectForKey: EditorLines]) ? val : @"30"];
   [editorColumnsField setStringValue:
     (val = [preferencesDict objectForKey: EditorColumns]) ? val : @"80"];
-  if ([separateEditor state] == NSOffState)
+  if ([separateEditor state] == NSOffState 
+      || ![[editorField stringValue] isEqualToString:@"ProjectCenter"])
     {
-      [editorLinesField setEditable:NO];
-      [editorColumnsField setEditable:NO];
+      [self setEditorSizeEnabled:NO];
     }
      
   [rememberWindows setState:
@@ -621,20 +621,37 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)setEditor:(id)sender
 {
-  NSString *path = [editorField stringValue];
+  NSString      *path = [editorField stringValue];
+  NSString      *editorPath = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
   
+  [separateEditor setEnabled:YES];
+  [self setEditorSizeEnabled:YES];
+  
+  editorPath = [[path componentsSeparatedByString:@" "] objectAtIndex:0];
   if ([path isEqualToString:@""] || !path)
     {
       [editorField setStringValue:@"ProjectCenter"];
       path = [editorField stringValue];
     }
-  else if (![[NSFileManager defaultManager] fileExistsAtPath:path]
-      && ![path isEqualToString:@"ProjectCenter"])
+  else if (![path isEqualToString:@"ProjectCenter"])
     {
-      [editorField selectText:self];
-      NSRunAlertPanel(@"Editor not found!",
-		      @"File %@ doesn't exist!",
-      		      @"OK", nil, nil, path);
+      if (![fm fileExistsAtPath:editorPath])
+	{
+	  [editorField selectText:self];
+	  NSRunAlertPanel(@"Editor not found!",
+	    		  @"File %@ doesn't exist!",
+	    		  @"Close", nil, nil, path);
+	}
+      else if (![fm isExecutableFileAtPath:editorPath])
+	{
+	  [editorField selectText:self];
+	  NSRunAlertPanel(@"Editor file error!",
+	    		  @"File %@ exist but is not executable!",
+	    		  @"Close", nil, nil, path);
+	}
+      [separateEditor setEnabled:NO];
+      [self setEditorSizeEnabled:NO];
     }
     
   [[NSUserDefaults standardUserDefaults] setObject:path forKey:Editor];
@@ -679,13 +696,11 @@ static PCPrefController *_prefCtrllr = nil;
     {
       if ([sender state] == NSOffState)
 	{
-	  [editorLinesField setEditable:NO];
-	  [editorColumnsField setEditable:NO];
+	  [self setEditorSizeEnabled:NO];
 	}
       else
 	{
-	  [editorLinesField setEditable:YES];
-	  [editorColumnsField setEditable:YES];
+	  [self setEditorSizeEnabled:YES];
 	}
       [sender becomeFirstResponder];
     }
@@ -714,6 +729,28 @@ static PCPrefController *_prefCtrllr = nil;
     }
   [[NSUserDefaults standardUserDefaults] setObject:val forKey:key];
   [preferencesDict setObject:val forKey:key];
+}
+
+- (void)setEditorSizeEnabled:(BOOL)yn
+{
+  if (yn)
+    {
+      [editorLinesField setEnabled:YES];
+      [editorLinesField setTextColor:[NSColor blackColor]];
+      [editorLinesField setEditable:YES];
+      [editorColumnsField setEnabled:YES];
+      [editorColumnsField setTextColor:[NSColor blackColor]];
+      [editorColumnsField setEditable:YES];
+    }
+  else
+    {
+      [editorLinesField setEnabled:NO];
+      [editorLinesField setTextColor:[NSColor darkGrayColor]];
+      [editorLinesField setEditable:NO];
+      [editorColumnsField setEnabled:NO];
+      [editorColumnsField setTextColor:[NSColor darkGrayColor]];
+      [editorColumnsField setEditable:NO];
+    }
 }
 
 - (void)setRememberWindows:(id)sender

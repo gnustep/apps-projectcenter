@@ -38,12 +38,12 @@
 
 @interface PCProjectLauncher : NSObject <ProjectComponent>
 {
+  PCProject     *project;           // Not retained!
+  NSDictionary  *currentOptions;    // Not retained!
+
   NSBox         *componentView;
   PCButton      *runButton;
   PCButton      *debugButton;
-
-  PCProject     *currentProject;    // Not retained!
-  NSDictionary  *currentOptions;    // Not retained!
 
   NSTextView    *stdOut;
   NSDictionary  *textAttributes;

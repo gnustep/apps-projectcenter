@@ -46,6 +46,11 @@
 				    | NSResizableWindowMask)
 			   backing: NSBackingStoreRetained
 			     defer: YES];
+  [self setFloatingPanel:YES];
+/*  self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
+                         styleMask: NSUtilityWindowMask
+			   backing: NSBackingStoreRetained
+			     defer: YES];*/
   [self setMinSize: NSMakeSize(120, 23)];
   [self setFrameAutosaveName: @"LoadedFiles"];
   [self setReleasedWhenClosed: NO];
@@ -116,11 +121,11 @@
   [super close];
 }
 
-- (BOOL)canBecomeKeyWindow
+/*- (BOOL)canBecomeKeyWindow
 {
   // Panels controls doesn't receive mouse click if return NO
   return YES;
-}
+}*/
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {

@@ -220,32 +220,30 @@ NSString *PCEditorDidResignActiveNotification =
   NSString       *ed = [ud objectForKey:Editor];
   PCEditor       *editor;
 
+  if (![ed isEqualToString:@"ProjectCenter"])
+    {
+      editor = [[PCEditor alloc] initExternalEditor:ed
+	                                   withPath:path
+	                              projectEditor:self];
+      return editor;
+    }
+
   if (!(editor = [editorsDict objectForKey:path]))
     {
-      if ([ed isEqualToString:@"ProjectCenter"])
-	{
-	  editor = [[PCEditor alloc] initWithPath:path 
-	                             categoryPath:categoryPath
-	                            projectEditor:self];
-	  [editor setWindowed:yn];
-
-	  [componentView setContentView:[editor componentView]];
-	  [[project projectWindow] makeFirstResponder:[editor editorView]];
-
-	  if (yn)
-	    {
-	      [editor show];
-	    }
-	}
-      else
-	{
-	  editor = [[PCEditor alloc] initExternalEditor:ed
-	                                       withPath:path
-	                                  projectEditor:self];
-	}
+      editor = [[PCEditor alloc] initWithPath:path 
+	                         categoryPath:categoryPath
+	                        projectEditor:self];
+      [componentView setContentView:[editor componentView]];
+      [[project projectWindow] makeFirstResponder:[editor editorView]];
 
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
+    }
+
+  [editor setWindowed:yn];
+  if (yn)
+    {
+      [editor show];
     }
 
   return editor;

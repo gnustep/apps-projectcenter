@@ -1,3 +1,16 @@
+2004-06-02 Serg Stoyan <stoyan255@ukr.net>
+
+        * Library/PCProjectManager (openProjectAt:): get project name from 
+	PC.project file instead of directory name. So project name and 
+	directory name may differ.
+
+	* Library/PCProjectLauncher.m (debug:): Debug application using 
+	full path instead of "~/Application".
+	
+	* PCMenuController.m: disable "Tear-Off Editor Size" fields editing
+	if Project Editor is not tear-off or Editor is not "ProjectCenter".
+	Check only first arg of Editor value.
+	
 2004-06-01 Serg Stoyan <stoyan255@ukr.net>
 
         * Finished on-the-fly applying "Tear-Off Panels" preferences.

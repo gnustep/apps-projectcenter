@@ -109,6 +109,7 @@
 
 - (void)setDisplayPanels:(id)sender;
 - (void)setEditorSize:(id)sender;
+- (void)setEditorSizeEnabled:(BOOL)yn;
 - (void)setRememberWindows:(id)sender;
 - (void)setDisplayLog:(id)sender;
 

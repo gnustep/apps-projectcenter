@@ -143,7 +143,7 @@ enum {
     {
       NSFont *font = [NSFont userFixedPitchFontOfSize: 10.0];
 
-      currentProject = aProject;
+      project = aProject;
 
       textAttributes = 
 	[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
@@ -206,70 +206,62 @@ enum {
 
 - (void)debug:(id)sender
 {
-  NSString                   *dp = [currentProject projectName];
+  NSString                   *dp = [project projectName];
   NSString                   *fp = nil;
   NSString                   *pn = nil;
-  NSString                   *gdbPath;
-  NSArray                    *args;
-  NSTask                     *task;
+  NSString                   *gdbPath = nil;
+  NSArray                    *args = nil;
   NSDistantObject <Terminal> *terminal;
+  NSFileManager              *fm = [NSFileManager defaultManager];
 
   /* Get the Terminal application */
   terminal = (NSDistantObject<Terminal> *)[NSConnection 
     rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
 
-  pn = [dp stringByAppendingPathExtension:@"debug"];
-
   if (terminal == nil)
     {
       NSRunAlertPanel(@"Attention!",
-		      @"Terminal.app is not running! Please\nlaunch it before debugging %@",
+		      @"Run Terminal application first",
+		      @"Close",nil,nil);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+  // Executable
+  pn = [dp stringByAppendingPathExtension:@"debug"];
+  fp = [project projectPath];
+  fp = [fp stringByAppendingPathComponent:pn];
+  fp = [fp stringByAppendingPathComponent:dp];
+
+  PCLogInfo(self, @"debug: %@", fp);
+  
+  if ([fm isExecutableFileAtPath:fp] == NO)
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Can't execute %@!",
 		      @"Abort",nil,nil,pn);
       [debugButton setState:NSOffState];
       return;
     }
 
-  fp = [[NSFileManager defaultManager] currentDirectoryPath];
-  dp = [fp stringByAppendingPathComponent:dp];
-  fp = [dp stringByAppendingPathComponent:pn];
-
-  task = [[NSTask alloc] init];
-  [task setLaunchPath:fp];
-  fp = [task validatedLaunchPath];
-  RELEASE(task);
-
-  if (fp == nil)
+  // Debugger
+  gdbPath = [[NSUserDefaults standardUserDefaults] objectForKey:Debugger];
+  if (gdbPath == nil)
     {
-      NSRunAlertPanel(@"Attention!",
-		      @"No executable found in %@!",
-		      @"Abort",nil,nil,dp);
-      [debugButton setState:NSOffState];
-      return;
+      gdbPath = [NSString stringWithString:@"/usr/bin/gdb"];
     }
 
-  task = [[NSTask alloc] init];
-
-  dp = [[NSUserDefaults standardUserDefaults] objectForKey:Debugger];
-  if (dp == nil)
-    {
-      dp = [NSString stringWithString:@"/usr/bin/gdb"];
-    }
-
-  if ([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
+  if ([fm isExecutableFileAtPath:gdbPath] == NO)
     {
       NSRunAlertPanel(@"Attention!",
 		      @"Invalid debugger specified: %@!",
 		      @"Abort",nil,nil,dp);
-      RELEASE(task);
       [debugButton setState:NSOffState];
       return;
     }
-
-  [task setLaunchPath:dp];
-  gdbPath = [task validatedLaunchPath];
-  RELEASE(task);
-
-  args = [NSArray arrayWithObjects: gdbPath, @"--args", AUTORELEASE(fp), nil];
+    
+  // Task
+  args = [[NSArray alloc] initWithObjects:gdbPath, @"--args", fp, nil];
 
   [terminal terminalRunProgram:AUTORELEASE(gdbPath)
                  withArguments:args
@@ -277,6 +269,10 @@ enum {
                     properties:nil];
 
   [debugButton setState:NSOffState];
+
+/*  RELEASE(args);
+  [runButton setEnabled:NO];
+  _isDebugging = YES;*/
 }
 
 - (void)run:(id)sender
@@ -287,10 +283,10 @@ enum {
   NSString       *openPath;
 
   // Check if project type is executable
-  if ([currentProject isExecutable])
+  if ([project isExecutable])
     {
-      openPath = [currentProject execToolName];
-      [args addObject:[currentProject projectName]];
+      openPath = [project execToolName];
+      [args addObject:[project projectName]];
     }
   else 
     {
@@ -342,11 +338,13 @@ enum {
                             object:launchTask];  
 
   [launchTask setArguments:args];  
-  [launchTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [launchTask setCurrentDirectoryPath:[project projectPath]];
   [launchTask setLaunchPath:openPath];
   [launchTask setStandardOutput:logPipe];
   [launchTask setStandardError:errorPipe];
   [launchTask launch];
+
+  [debugButton setEnabled:NO];
 
   _isRunning = YES;
   RELEASE(args);
@@ -363,6 +361,8 @@ enum {
 
   [runButton setState:NSOffState];
   [debugButton setState:NSOffState];
+  [runButton setEnabled:YES];
+  [debugButton setEnabled:YES];
   [componentView display];
 
   RELEASE(launchTask);

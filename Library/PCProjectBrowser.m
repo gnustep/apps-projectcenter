@@ -239,16 +239,16 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
       if ((sp = [project activeSubproject]) != nil)
 	{
-	  filePath = [[sp projectPath] 
-	    stringByAppendingPathComponent:fileName];
+	  filePath = [sp dirForCategoryKey:[sp keyForCategory:category]]; 
+	  filePath = [filePath stringByAppendingPathComponent:fileName];
 	}
       else
 	{
-	  filePath = [[project projectPath] 
-	    stringByAppendingPathComponent:fileName];
+	  filePath = [project dirForCategoryKey:
+	    [project keyForCategory:category]];
+	  filePath = [filePath stringByAppendingPathComponent:fileName];
 	}
 
-      PCLogInfo(self ,@"opening windowed editor");
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])
 	{
@@ -256,13 +256,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	                            categoryPath:[browser path]
 					windowed:YES];
 	}
-      else if([[NSWorkspace sharedWorkspace] openFile:filePath] == NO) 
+      else if ([[NSWorkspace sharedWorkspace] openFile:filePath] == NO) 
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Could not open %@.",
 			  @"OK",nil,nil,filePath);
 	}
-      PCLogInfo(self ,@"opening windowed editor.END");
     }
   else 
     {
