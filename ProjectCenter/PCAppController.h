@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCAPPCONTROLLER_H
+#define _PCAPPCONTROLLER_H
+
 #include <AppKit/AppKit.h>
 
 #include "PCPrefController.h"
@@ -111,3 +114,5 @@
 // Returns YES upon successfully registering a new projecttype.
 
 @end
+
+#endif

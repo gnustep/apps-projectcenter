@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCAPPCONTROLLER_MENUHANDLING_H
+#define _PCAPPCONTROLLER_MENUHANDLING_H
+
 #include <AppKit/AppKit.h>
 #include "PCAppController.h"
 
@@ -67,5 +70,4 @@
 
 @end
 
-
-
+#endif

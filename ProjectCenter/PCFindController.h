@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCFINDCONTROLLER_H
+#define _PCFINDCONTROLLER_H
+
 #include <AppKit/AppKit.h>
 
 @interface PCFindController : NSObject
@@ -32,3 +35,5 @@
 }
 
 @end
+
+#endif

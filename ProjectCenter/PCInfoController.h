@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCINFOCONTROLLER_H
+#define _PCINFOCONTROLLER_H
+
 #include <AppKit/AppKit.h>
 
 @interface PCInfoController : NSObject
@@ -38,3 +41,5 @@
 - (void)showInfoWindow:(id)sender;
 
 @end
+
+#endif

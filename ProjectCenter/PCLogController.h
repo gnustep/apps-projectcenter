@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCLOGCONTROLLER_H
+#define _PCLOGCONTROLLER_H
+
 #include <AppKit/AppKit.h>
 
 #define INFORMATION	0
@@ -37,3 +40,5 @@
 - (void)logMessage:(NSString *)message tag:(int)tag;
 
 @end
+
+#endif

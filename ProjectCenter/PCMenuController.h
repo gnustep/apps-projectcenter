@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCMENUCONTROLLER_H
+#define _PCMENUCONTROLLER_H
+
 #include <AppKit/AppKit.h>
 
 @class PCProjectManager;
@@ -90,3 +93,5 @@
 - (void)editorDidBecomeKey:(NSNotification *)aNotification;
 
 @end
+
+#endif
