@@ -1,3 +1,7 @@
+2002-11-27 15:45  probert
+
+        * Mac OS X port using Cocoa
+
 2002-06-01 15:56  probert
 
 	* GNUmakefile, PCBundleProj.pcproj: Installation into

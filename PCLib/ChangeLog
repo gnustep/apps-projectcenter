@@ -1,3 +1,8 @@
+2002-11-27  Philippe C.D. Robert  <probert@siggraph.org>
+
+	* Extracting UI code into separate categories. PBX project file for
+	Mac OS X using Cocoa.
+
 2002-11-24  Philippe C.D. Robert  <probert@siggraph.org>
 
 	* Fixing import statements in most headers and source files preparing 
