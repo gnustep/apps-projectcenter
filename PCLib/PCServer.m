@@ -106,7 +106,7 @@
 				       styleMask:style
 				       backing:NSBackingStoreBuffered
 				       defer:NO];
-  NSTextView *textView;
+  PCEditorView *textView;
   NSScrollView *scrollView;
 
   NSString *text = [NSString stringWithContentsOfFile:aFile];
@@ -114,10 +114,10 @@
   [window setMinSize:NSMakeSize(512,320)];
   [window setTitle:[aFile lastPathComponent]];
 
-  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
+  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setVerticallyResizable:YES];
-  [textView setHorizontallyResizable:YES];
+  [textView setHorizontallyResizable:NO];
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setBackgroundColor:[NSColor whiteColor]];
   [[textView textContainer] setWidthTracksTextView:YES];

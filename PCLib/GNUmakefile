@@ -50,6 +50,7 @@ libProjectCenter_MFILES = 	\
 	PCBrowserController.m 	\
 	PCBundleLoader.m 	\
 	PCDataSource.m 		\
+	PCEditorView.m		\
 	PCFileManager.m 	\
 	PCProject.m 		\
 	PCProjectBuilder.m 	\
@@ -63,6 +64,7 @@ libProjectCenter_HFILES = 	\
 	PCBrowserController.h 	\
 	PCBundleLoader.h 	\
 	PCDataSource.h 		\
+	PCEditorView.h		\
 	PCFileManager.h 	\
 	PCProject.h 		\
 	PCProjectBuilder.h 	\

@@ -77,9 +77,12 @@
   [browserController setBrowser:browser];
   [browserController setProject:self];
 
-  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  //  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setRichText:NO];
+  [textView setEditable:YES];
+  [textView setSelectable:YES];
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setVerticallyResizable:YES];
   [textView setHorizontallyResizable:YES];
@@ -485,6 +488,34 @@
 // ==== Miscellaneous
 //===========================================================================================
 
+- (void)editSelectedFile:(NSString *)file
+{
+  //  NSLayoutManager *_lm = [textView layoutManager];
+  //  NSTextStorage *_ts = [[NSTextStorage alloc] initWithString:file];
+
+  /*
+  [_ts beginEditing];
+  [[_ts mutableString] setString:file];
+  [_ts endEditing];
+  */
+
+  /*
+  if (_lm) {
+    [_lm replaceTextStorage:_ts];
+  }
+  */
+
+  [textView setString:file];
+  // [textView structure:self];
+  [textView display];
+  //  [_ts autorelease];
+}
+
+- (void)structureEditedFile:(id)sender
+{
+  [textView structure:self];
+}
+
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
 {
     if ([[projectDict allKeys] containsObject:type]) {
@@ -830,4 +861,5 @@
 }
 
 @end
+
 

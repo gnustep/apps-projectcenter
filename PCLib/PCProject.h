@@ -172,6 +172,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 // ==== Miscellaneous
 //===========================================================================================
 
+- (void)editSelectedFile:(NSString *)file;
+- (void)structureEditedFile:(id)sender;
+
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
     // Returns YES if type is a valid key and file is not contained in the project already
 
