@@ -1,0 +1,43 @@
+{
+  NSIcon = "ProjectCenter.tiff";
+  NSRole = "Editor";
+  NSTypes = (
+    {
+      NSUnixExtensions = ( "project" );
+      NSIcon = "ProjectCenter.tiff";
+    },
+    {
+      NSUnixExtensions = ( "pcproj" );
+      NSIcon = "ProjectCenter.tiff";
+    },
+    {
+      NSUnixExtensions = ( "m" );
+      NSIcon = "FileIcon_.m.tiff";
+    },
+    {
+      NSUnixExtensions = ( "h" );
+      NSIcon = "FileIcon_.h.tiff";
+    },
+    {
+      NSUnixExtensions = ( "c" );
+      NSIcon = "FileIcon_.c.tiff";
+    }
+  );
+  NOTE = "Automatically generated, do not edit!";
+  ApplicationName = "ProjectCenter";
+  ApplicationDescription = "GNUstep IDE";
+  ApplicationIcon = "ProjectCenter.tiff";
+  ApplicationRelease = "0.3.2";
+  FullVersionID = "ProjectCenter 0.3.2";
+  Authors = (
+    "Serg Stoyan <stoyan@on.com.ua>",
+    "David Ayers",
+    "Richard Frith-Macdonald",
+    "Nicola Pero",
+    "Pierre-Yves Rivaille",
+    "Adam Fedor",
+    "Philippe C.D. Robert <probert@siggraph.org>");
+  URL = "http://www.gnustep.org";
+  Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
+  CopyrightDescription = "Released under the GNU General Public License 2.0";
+}
