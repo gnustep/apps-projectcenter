@@ -54,8 +54,6 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   storage = [[NSTextStorage alloc] init];
   
   lm = [[NSLayoutManager alloc] init];
-  [storage addLayoutManager:lm];
-  RELEASE(lm);
 
   rect.origin.x = 0;
   rect.origin.y = 0;
@@ -65,6 +63,9 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
   [lm addTextContainer:tc];
   RELEASE(tc);
+
+  [storage addLayoutManager:lm];
+  RELEASE(lm);
 
   iView = [[PCEditorView alloc] initWithFrame:rect
                                 textContainer:tc];
@@ -83,12 +84,13 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [[iView textContainer] setWidthTracksTextView:YES];
 
   lm = [[NSLayoutManager alloc] init];
-  [storage addLayoutManager:lm];
-  RELEASE(lm);
 
   tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
   [lm addTextContainer:tc];
   RELEASE(tc);
+
+  [storage addLayoutManager:lm];
+  RELEASE(lm);
 
   eView = [[PCEditorView alloc] initWithFrame:rect
                                 textContainer:tc];
