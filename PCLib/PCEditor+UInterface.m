@@ -44,9 +44,6 @@
 
   /*
    * Creating external view's window
-   *
-   * FIXME: this still is untested as I <d.ayers@inode.at>
-   * haven't found the way to display the external window yet. :-(
    */
 
   style = NSTitledWindowMask
