@@ -86,7 +86,6 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
   if (browser) {
-    NSLog(@"%@ %x loads column!",browser,[browser class]);
     [browser loadColumnZero];
   }
 }
