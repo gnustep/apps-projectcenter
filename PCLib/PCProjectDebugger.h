@@ -34,11 +34,30 @@
 
   PCProject *currentProject;
   NSDictionary *currentOptions;
+
+  NSTextView *stdOut;
+  NSTextView *stdError;
+
+  NSFileHandle *readHandle;
+  NSFileHandle *errorReadHandle;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
 - (NSView *)componentView;
+
+- (void)run:(id)sender;
+
+- (void)logStdOut:(NSNotification *)aNotif;
+- (void)logErrOut:(NSNotification *)aNotif;
+
+@end
+
+@interface PCProjectDebugger (BuildLogging)
+
+- (void)logString:(NSString *)string error:(BOOL)yn;
+- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
+- (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end

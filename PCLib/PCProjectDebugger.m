@@ -63,27 +63,88 @@
   [componentView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
 
   /*
+   *
    */
 
-  _w_frame = NSMakeRect(0,194,244,44);
-  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
-                                       mode: NSHighlightModeMatrix
-                                  prototype: buttonCell
-                               numberOfRows: 1
-                            numberOfColumns: 5] autorelease];
+  stdOut = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,80)];
+  [stdOut setMaxSize:NSMakeSize(1e7, 1e7)];
+  // [stdOut setMinSize:NSMakeSize(516, 48)];
+  [stdOut setRichText:NO];
+  [stdOut setEditable:NO];
+  [stdOut setSelectable:YES];
+  [stdOut setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [stdOut setBackgroundColor:[NSColor colorWithDeviceRed:0.95
+				      green:0.75
+				      blue:0.85
+				      alpha:1.0]];
+  [[stdOut textContainer] setWidthTracksTextView:YES];
+
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
+  [scrollView1 setDocumentView:stdOut];
+  [[stdOut textContainer] setContainerSize:NSMakeSize([scrollView1 contentSize].width,1e7)];
+  [scrollView1 setHasHorizontalScroller: NO];
+  [scrollView1 setHasVerticalScroller: YES];
+  [scrollView1 setBorderType: NSBezelBorder];
+  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  /*
+   *
+   */
+
+  stdError = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,32)];
+  [stdError setMaxSize:NSMakeSize(1e7, 1e7)];
+  //[stdError setMinSize:NSMakeSize(516, 48)];
+  [stdError setRichText:NO];
+  [stdError setEditable:NO];
+  [stdError setSelectable:YES];
+  [stdError setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [stdError setBackgroundColor:[NSColor whiteColor]];
+  [[stdError textContainer] setWidthTracksTextView:YES];
+
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,46)];
+  [scrollView2 setDocumentView:stdError];
+  [[stdError textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
+  [scrollView2 setHasHorizontalScroller:NO];
+  [scrollView2 setHasVerticalScroller:YES];
+  [scrollView2 setBorderType: NSBezelBorder];
+  [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
+  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  [split addSubview: scrollView1];
+  [split addSubview: scrollView2];
+  [split adjustSubviews];
+  
+  [componentView addSubview:split];
+
+  RELEASE(scrollView1);
+  RELEASE(scrollView2);
+  RELEASE(split);
+
+  /*
+   */
+
+  _w_frame = NSMakeRect(0,194,88,44);
+  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+			     mode: NSHighlightModeMatrix
+			     prototype: buttonCell
+			     numberOfRows: 1
+			     numberOfColumns: 2];
   [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget:self];
-  [matrix setAction:@selector(build:)];
+  [matrix setAction:@selector(run:)];
   [componentView addSubview:matrix];
+
+  RELEASE(matrix);
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
   [button setImagePosition:NSImageOnly];
-  //[button setImage:IMAGE(@"ProjectCenter_make")];
+  [button setImage:IMAGE(@"ProjectCenter_run")];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Build"];
+  [button setTitle:@"Run"];
 
   button = [matrix cellAtRow:0 column:1];
   [button setTag:1];
@@ -91,27 +152,6 @@
   //[button setImage:IMAGE(@"ProjectCenter_clean")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Clean"];
-
-  button = [matrix cellAtRow:0 column:2];
-  [button setTag:2];
-  [button setImagePosition:NSImageOnly];
-  //[button setImage:IMAGE(@"ProjectCenter_debug")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Debug"];
-
-  button = [matrix cellAtRow:0 column:3];
-  [button setTag:3];
-  [button setImagePosition:NSImageOnly];
-  //[button setImage:IMAGE(@"ProjectCenter_profile")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Profile"];
-
-  button = [matrix cellAtRow:0 column:4];
-  [button setTag:4];
-  [button setImagePosition:NSImageOnly];
-  //[button setImage:IMAGE(@"ProjectCenter_install")];
-  [button setButtonType:NSMomentaryPushButton];
-  [button setTitle:@"Install"];
 }
 
 @end
@@ -132,6 +172,9 @@
 {
   [componentView release];
 
+  RELEASE(stdOut);
+  RELEASE(stdError);
+
   [super dealloc];
 }
 
@@ -142,6 +185,162 @@
   }
 
   return componentView;
+}
+
+- (void)run:(id)sender
+{
+  NSTask *makeTask;
+  NSMutableArray *args;
+  NSPipe *logPipe;
+  NSPipe *errorPipe;
+  NSString *openPath;
+
+  logPipe = [NSPipe pipe];
+  readHandle = [[logPipe fileHandleForReading] retain];
+
+  errorPipe = [NSPipe pipe];
+  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+
+  makeTask = [[NSTask alloc] init];
+  args = [NSMutableArray array];
+
+  /*
+   * Ugly hack! We should ask the porject itself about the req. information!
+   *
+   */
+
+  if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")]) {
+    NSString *tname;
+
+    openPath = [NSString stringWithString:@"openapp"];
+    tname = [[currentProject projectName] stringByAppendingPathExtension:@"app"];
+    [args addObject:tname];
+  }
+  else if ([currentProject isKindOfClass:NSClassFromString(@"PCToolProject")]) {
+    openPath = [NSString stringWithString:@"opentool"];
+    [args addObject:[currentProject projectName]];
+  }
+  else {
+    [NSException raise:@"PCInternalDevException" format:@"Unknown executable project type!"];
+    return;
+  }
+
+  /*
+   * Debugging, running, ...
+   */
+
+  switch ([[sender selectedCell] tag]) {
+  case 0:
+    break;
+  }
+
+  /*
+   * Setting everything up
+   */
+
+  [NOTIFICATION_CENTER addObserver:self 
+		       selector:@selector(logStdOut:) 
+		       name:NSFileHandleDataAvailableNotification
+		       object:readHandle];
+  
+  [NOTIFICATION_CENTER addObserver:self 
+		       selector:@selector(logErrOut:) 
+		       name:NSFileHandleDataAvailableNotification
+		       object:errorReadHandle];
+  
+  [makeTask setArguments:args];  
+  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [makeTask setLaunchPath:openPath];
+  
+  [makeTask setStandardOutput:logPipe];
+  [makeTask setStandardError:errorPipe];
+
+  [stdOut setString:@""];
+  [readHandle waitForDataInBackgroundAndNotify];
+
+  [stdError setString:@""];
+  [errorReadHandle waitForDataInBackgroundAndNotify];
+
+  /*
+   * Go! Later on this will be handled much more optimised!
+   *
+   */
+  
+  [makeTask launch];
+  [makeTask waitUntilExit];
+
+  /*
+   * Clean up...
+   *
+   */
+
+  [NOTIFICATION_CENTER removeObserver:self 
+		       name:NSFileHandleDataAvailableNotification
+		       object:readHandle];
+  
+  [NOTIFICATION_CENTER removeObserver:self 
+		       name:NSFileHandleDataAvailableNotification
+		       object:errorReadHandle];
+  
+  RELEASE(readHandle);
+  RELEASE(errorReadHandle);  
+  RELEASE(makeTask);
+}
+
+- (void)logStdOut:(NSNotification *)aNotif
+{
+  NSData *data;
+
+  if ((data = [readHandle availableData])) {
+    [self logData:data error:NO];
+  }
+
+  [readHandle waitForDataInBackgroundAndNotifyForModes:nil];
+}
+
+- (void)logErrOut:(NSNotification *)aNotif
+{
+  NSData *data;
+
+  if ((data = [errorReadHandle availableData])) {
+    [self logData:data error:YES];
+  }
+
+  [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
+}
+
+@end
+
+@implementation PCProjectDebugger (BuildLogging)
+
+- (void)logString:(NSString *)string error:(BOOL)yn
+{
+  [self logString:string error:yn newLine:YES];
+}
+
+- (void)logString:(NSString *)str error:(BOOL)yn newLine:(BOOL)newLine
+{
+  NSTextView *out = (yn)?stdError:stdOut;
+
+  [out replaceCharactersInRange:NSMakeRange([[out string] length],0) withString:str];
+
+  if (newLine) {
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@"\n"];
+  }
+  else {
+    [out replaceCharactersInRange:NSMakeRange([[out string] length], 0) withString:@" "];
+  }
+  
+  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
+}
+
+- (void)logData:(NSData *)data error:(BOOL)yn
+{
+  NSString *s = [[NSString alloc] initWithData:data 
+				  encoding:[NSString defaultCStringEncoding]];
+
+  [self logString:s error:yn newLine:YES];
+  [s autorelease];
 }
 
 @end

@@ -381,6 +381,7 @@
 
   if (postProcess) {
     [self performSelector:postProcess];
+    postProcess = NULL;
   }
   
   [buildStatusField setStringValue:@"Waiting..."];  
@@ -457,8 +458,6 @@
   if (source) {
     [[NSFileManager defaultManager] copyPath:source toPath:dest handler:nil];
   }
-  // Copy the package to path
-  postProcess = NULL;
 }
 
 @end
