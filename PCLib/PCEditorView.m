@@ -77,6 +77,10 @@ static int  _tabFlags       = PCTab4Sp;
 						 @"#pragma",
 						 @"#warning",
 						 nil];
+#ifndef GNUSTEP_BASE_VERSION
+      _textStorage = [self textStorage];
+#endif
+
   }
   return self;
 }
