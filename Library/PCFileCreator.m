@@ -26,6 +26,8 @@
 #include "PCFileCreator.h"
 #include "PCProject.h"
 
+#include "PCLogController.h"
+
 @implementation PCFileCreator
 
 static PCFileCreator *_creator = nil;
@@ -126,7 +128,7 @@ static NSDictionary  *dict = nil;
   // A class and possibly a header
   files = [NSMutableDictionary dictionaryWithCapacity:2];
 
-//  NSLog(@"<%@ %x>: create %@ at %@",[self class],self,type,path);
+  PCLogStatus(self, @"create %@ at %@", type, path);
 
   bundle = [NSBundle bundleForClass:[self class]];
   newFile = [path copy];

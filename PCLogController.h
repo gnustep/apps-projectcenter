@@ -27,14 +27,37 @@
 
 #include <AppKit/AppKit.h>
 
-#define INFORMATION	0
-#define WARNING		1
+#define INFO	0
+#define STATUS	1
+#define WARNING	2
+#define ERROR	3
+
+// --- Functions
+void
+PCLog(id sender, int tag, NSString* format, va_list args);
+void
+PCLogInfo(id sender, NSString* format, ...);
+void
+PCLogStatus(id sender, NSString* format, ...);
+void
+PCLogWarning(id sender, NSString* format, ...);
+void
+PCLogError(id sender, NSString* format, ...);
+
 
 @interface PCLogController : NSObject
 {
+  IBOutlet NSPanel    *panel;
+  IBOutlet NSTextView *textView;
+
+  NSMutableDictionary *textAttributes;
 }
 
-- (void)logMessage:(NSString *)message tag:(int)tag;
++ (PCLogController *)sharedLogController;
+
+- (void)showLogPanel;
+- (void)logMessage:(NSString *)message withTag:(int)tag sender:(id)sender;
+- (void)putMessageOnScreen:(NSAttributedString *)message;
 
 @end
 

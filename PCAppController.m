@@ -61,7 +61,8 @@
   [defaults setObject:@"YES" forKey:ExternalEditor];
   [defaults setObject:@"YES" forKey:ExternalDebugger];
 
-  [defaults setObject:[NSString stringWithFormat:@"%@/PCBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
+  [defaults setObject:[NSString stringWithFormat:@"%@/PCBuildDir",NSTemporaryDirectory()]
+               forKey:RootBuildDirectory];
 
   [defaults setObject:@"YES" forKey:SaveOnQuit];
   [defaults setObject:@"YES" forKey:PromptOnClean];
@@ -81,7 +82,7 @@
     {
       infoController = [[PCInfoController alloc] init];
       prefController = [[PCPrefController alloc] init];
-      logController  = [[PCLogController alloc] init];
+      logController  = [PCLogController sharedLogController];
       
       projectManager = [[PCProjectManager alloc] init];
       [projectManager setDelegate:self];
@@ -178,11 +179,10 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-  NSString *h = [[NSProcessInfo processInfo] hostName];
-  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
+  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
 
   [logController 
-    logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+    logMessage:@"Loading additional subsystems..." withTag:INFO sender:self];
 
   doServer = [[PCServer alloc] init];
   
@@ -193,8 +193,10 @@
   
   NS_HANDLER
     
-  NSRunAlertPanel(@"Warning!",@"Could not register the DO connection %@",
-                  @"OK",nil,nil,nil,connectionName);
+  NSRunAlertPanel(@"Warning!",
+		  @"Could not register the DO connection %@",
+                  @"OK",nil,nil,nil,
+		  connectionName);
   NS_ENDHANDLER
     
   [[NSNotificationCenter defaultCenter] addObserver:doServer 

@@ -14,6 +14,8 @@
 #include "PCEditorView.h"
 #include "ProjectComponent.h"
 
+#include "PCLogController.h"
+
 @implementation PCEditor (UInterface)
 
 - (void)_createWindow
@@ -22,7 +24,7 @@
   NSRect       rect;
   float        windowWidth;
 
-  NSLog(@"PCEditor: _createWindow");
+  PCLogInfo(self, @"[_createWindow]");
 
   style = NSTitledWindowMask
         | NSClosableWindowMask

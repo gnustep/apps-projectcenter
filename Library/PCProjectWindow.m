@@ -37,6 +37,8 @@
 
 #include "PCProjectWindow.h"
 
+#include "PCLogController.h"
+
 @implementation PCProjectWindow
 
 // ============================================================================
@@ -84,7 +86,6 @@
   [_c_view addSubview:toolbarView];
   RELEASE(toolbarView);
   
-//  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,397,43,43)];
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,5,43,43)];
   [buildButton setRefusesFirstResponder:YES];
   [buildButton setTitle: @"Build"];
@@ -93,12 +94,10 @@
   [buildButton setAction: @selector(showProjectBuild:)];
   [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [buildButton setButtonType: NSMomentaryPushButton];
-//  [_c_view addSubview: buildButton];
   [toolbarView addSubview: buildButton];
   [buildButton setShowTooltip:YES];
   RELEASE (buildButton);
   
-//  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(52,397,43,43)];
   launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,5,43,43)];
   [launchButton setRefusesFirstResponder:YES];
   [launchButton setTitle: @"Launch/Debug"];
@@ -107,12 +106,10 @@
   [launchButton setAction: @selector(showProjectLaunch:)];
   [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [launchButton setButtonType: NSMomentaryPushButton];
-//  [_c_view addSubview: launchButton];
   [toolbarView addSubview: launchButton];
   [launchButton setShowTooltip:YES];
   RELEASE (launchButton);
   
-//  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(96,397,43,43)];
   editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
   [editorButton setRefusesFirstResponder:YES];
   [editorButton setTitle: @"Editor"];
@@ -121,12 +118,10 @@
   [editorButton setAction: @selector(showProjectEditor:)];
   [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [editorButton setButtonType: NSMomentaryPushButton];
-//  [_c_view addSubview: editorButton];
   [toolbarView addSubview: editorButton];
   [editorButton setShowTooltip:YES];
   RELEASE (editorButton);
 
-//  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(140,397,43,43)];
   findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
   [findButton setRefusesFirstResponder:YES];
   [findButton setTitle: @"Find"];
@@ -135,21 +130,18 @@
   [findButton setAction: @selector(showFindView:)];
   [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [findButton setButtonType: NSMomentaryPushButton];
-//  [_c_view addSubview: findButton];
   [toolbarView addSubview: findButton];
   [findButton setShowTooltip:YES];
   RELEASE (findButton);
   
-//  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(184,397,43,43)];
   inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(176,5,43,43)];
   [inspectorButton setRefusesFirstResponder:YES];
   [inspectorButton setTitle: @"Inspector"];
   [inspectorButton setImage: IMAGE(@"Inspector")];
-  [inspectorButton setTarget: project];
-  [inspectorButton setAction: @selector(showInspector:)];
+  [inspectorButton setTarget: [project projectManager]];
+  [inspectorButton setAction: @selector(showProjectInspector:)];
   [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
   [inspectorButton setButtonType: NSMomentaryPushButton];
-//  [_c_view addSubview: inspectorButton];
   [toolbarView addSubview: inspectorButton];
   [inspectorButton setShowTooltip:YES];
   RELEASE (inspectorButton);
@@ -158,17 +150,14 @@
   /*
    * File icon and title
    */
-//  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (504,391,48,48)];
   fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (496,0,48,48)];
   [fileIcon setRefusesFirstResponder:YES];
   [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [fileIcon setImage: IMAGE (@"projectSuitcase")];
-//  [_c_view addSubview: fileIcon];
   [toolbarView addSubview: fileIcon];
   RELEASE (fileIcon);
 
   fileIconTitle = [[NSTextField alloc]
-//    initWithFrame: NSMakeRect (316,395,180,21)];
     initWithFrame: NSMakeRect (308,4,180,21)];
   [fileIconTitle setAutoresizingMask: (NSViewMinXMargin 
 				       | NSViewMinYMargin 
@@ -178,7 +167,6 @@
   [fileIconTitle setDrawsBackground: NO];
   [fileIconTitle setAlignment:NSRightTextAlignment];
   [fileIconTitle setBezeled:NO];
-//  [_c_view addSubview: fileIconTitle];
   [toolbarView addSubview: fileIconTitle];
   RELEASE (fileIconTitle);
 
@@ -205,24 +193,21 @@
   /*
    * Vertical split view
    */
-/*  if (![[prefsDict objectForKey:@"SeparateLoadedFiles"] isEqualToString:@"YES"])
-    {*/
-      rect = [[projectWindow contentView] frame];
-      if (h_split)
-	{
-	  rect.size.height = 130;
-	}
-      else
-	{
-	  rect.size.height -= 64;
-	  rect.size.width -= 16;
-	  rect.origin.x += 8;
-	  rect.origin.y = 0;
-	}
-      v_split = [[PCSplitView alloc] initWithFrame:rect];
-      [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-      [v_split setVertical:YES];
-//    }
+  rect = [[projectWindow contentView] frame];
+  if (h_split)
+    {
+      rect.size.height = 130;
+    }
+  else
+    {
+      rect.size.height -= 64;
+      rect.size.width -= 16;
+      rect.origin.x += 8;
+      rect.origin.y = 0;
+    }
+  v_split = [[PCSplitView alloc] initWithFrame:rect];
+  [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [v_split setVertical:YES];
 
   /*
    * File Browser
@@ -307,10 +292,10 @@
 
       pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
       windowFrame = [pcWindows objectForKey:@"ProjectWindow"];
-      NSLog(@"PCProjectWindow: window frame %@", windowFrame);
+      PCLogInfo(self, @"window frame %@", windowFrame);
       if (windowFrame != nil)
 	{
-	  NSLog(@"PCProjectWindow: set frame from project");
+	  PCLogStatus(self, @"PCProjectWindow: set frame from project");
 	  [projectWindow setFrameFromString:windowFrame];
 	}
       else if (![projectWindow setFrameUsingName: @"ProjectWindow"])
@@ -740,7 +725,7 @@
 
 - (void)makeKeyAndOrderFront:(id)sender
 {
-  NSLog(@"PCPW: makeKeyAndOrderFront sender: %@", [sender className]);
+  PCLogInfo(self, @"makeKeyAndOrderFront sender: %@", [sender className]);
   [projectWindow makeKeyAndOrderFront:nil];
 }
 

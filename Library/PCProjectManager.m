@@ -43,6 +43,8 @@
 #include "ProjectType.h"
 #include "ProjectBuilder.h"
 
+#include "PCLogController.h"
+
 #define SavePeriodDCN @"SavePeriodDidChangeNotification"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
@@ -150,7 +152,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSDictionary *)preferencesDict
 {
-  NSLog(@"Getting preferencesDict");
   return [prefController preferencesDict];
 }
 
@@ -418,7 +419,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if ((project = [projectCreator openProjectAt:aPath])) 
     {
-      NSLog (@"Project %@ loaded as %@", [projectCreator projectTypeName]);
+      PCLogStatus(self, @"Project %@ loaded as %@", 
+		  [project projectName], [projectCreator projectTypeName]);
       return project;
     }
 
@@ -555,7 +557,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return NO;
     }
     
-  NSLog(@"PCPM: save root project: %@", [rootProject projectName]);
+  PCLogInfo(self, @"save root project: %@", [rootProject projectName]);
 
   // Save PC.project and the makefiles!
   if ([rootProject save] == NO)
@@ -580,7 +582,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   files = [fileManager filesForAdd];
 
-  NSLog(@"PCPM {addProjectFiles} %@", files);
+  PCLogInfo(self, @"[addProjectFiles] %@", files);
 
   // No files was selected 
   if (!files)
@@ -646,9 +648,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       project = activeProject;
     }
 
-  NSLog(@"%@: %@ from %@", removeString, files, directory);
-  NSLog(@"PCPM(removeProjectFiles):%@ KEY:%@ bPath:%@", 
-	[activeProject projectName], categoryKey, bPath);
+  PCLogInfo(self, @"%@: %@ from %@", removeString, files, directory);
+  PCLogInfo(self, @"[removeProjectFiles]:%@ KEY:%@ bPath:%@", 
+	    [activeProject projectName], categoryKey, bPath);
 
   if (files)
     {
@@ -767,7 +769,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCProject    *project = nil;
   NSEnumerator *enumerator = [loadedProjects objectEnumerator];
 
-  NSLog(@"ProjectManager: loaded %i projects", [loadedProjects count]);
+  PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
 
   while ([loadedProjects count] > 0)
     {
@@ -950,13 +952,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // --- New
 - (BOOL)newSubproject
 {
-  NSLog (@"newSubproject");
+  PCLogInfo(self, @"newSubproject");
 
   if (!nsPanel)
     {
       if ([NSBundle loadNibNamed:@"NewSubproject" owner:self] == NO)
 	{
-	  NSLog(@"PCProjectManager: error loading NewSubproject NIB!");
+	  PCLogError(self, @"error loading NewSubproject NIB!");
 	  return NO;
 	}
 
@@ -1012,8 +1014,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   spPath = [[activeProject projectPath] stringByAppendingPathComponent:spName];
 
-  NSLog(@"ProjectManager: creating subproject with type %@ at path %@",
-	spType, spPath);
+  PCLogInfo(self, @"creating subproject with type %@ at path %@",
+    	    spType, spPath);
   // Create subproject
   subproject = [self createProjectOfType:spType path:spPath];
 

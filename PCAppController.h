@@ -27,8 +27,8 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCPrefController.h"
 #include "PCInfoController.h"
+#include "PCPrefController.h"
 #include "PCLogController.h"
 
 @class PCServer;

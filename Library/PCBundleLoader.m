@@ -28,6 +28,8 @@
 #include "ProjectEditor.h"
 #include "ProjectDebugger.h"
 
+#include "PCLogController.h"
+
 @interface PCBundleLoader (PrivateLoader)
 
 - (void)loadAdditionalBundlesAt:(NSString *)path;
@@ -42,26 +44,25 @@
 
   NSAssert(path,@"No valid bundle path specified!");
 
-#ifdef DEBUG
-  NSLog([NSString stringWithFormat:@"Loading bundle %@...",path]);
-#endif// DEBUG
+  PCLogInfo(self, @"Loading bundle %@...", path);
 
   if ((bundle = [NSBundle bundleWithPath:path])) 
     {
       [loadedBundles addObject:bundle];
+      PCLogInfo(self, @"Bundle %@ successfully loaded!", path);
 
-#ifdef DEBUG
-      NSLog([NSString stringWithFormat:@"Bundle %@ successfully loaded!",path]);
-#endif// DEBUG
-
-      if (delegate && [delegate respondsToSelector:@selector(bundleLoader: didLoadBundle:)]) 
+      if (delegate 
+	  && 
+	  [delegate respondsToSelector:@selector(bundleLoader:didLoadBundle:)]) 
 	{
 	  [delegate bundleLoader:self didLoadBundle:bundle];
 	}
     }
   else 
     {
-      NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
+      NSRunAlertPanel(@"Attention!",
+		      @"Could not load %@!",
+		      @"OK",nil,nil,path);
     }
 }
 
@@ -127,17 +128,16 @@
       [[NSUserDefaults standardUserDefaults] synchronize];
     }
 
-#ifdef DEBUG
   if (![[NSFileManager defaultManager] fileExistsAtPath: path]) 
     {
-      NSLog([NSString stringWithFormat: @"No third party bundles at %@", path]);
+      PCLogInfo(self, @"No third party bundles at %@", path);
       return;
     }
   else 
     {
-      NSLog([NSString stringWithFormat: @"Loading bundles at %@", path]);
+      PCLogInfo(self, @"Loading bundles at %@", path);
     }
-#endif// DEBUG
+    
   [self loadBundlesAtPath: path];
 }
 

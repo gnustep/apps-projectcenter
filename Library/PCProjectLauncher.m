@@ -28,6 +28,8 @@
 #include "PCProjectManager.h"
 #include "PCButton.h"
 
+#include "PCLogController.h"
+
 #include <AppKit/AppKit.h>
 
 #ifndef NOTIFICATION_CENTER
@@ -315,7 +317,7 @@ enum {
   // "waitpid 7045, result -1, error No child processes" is printed.
   if (launchTask)
     {
-      NSLog(@"task will terminate");
+      PCLogStatus(self, @"task will terminate");
       [launchTask terminate];
       return;
     }

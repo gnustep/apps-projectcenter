@@ -29,7 +29,7 @@
 #include "PCProject.h"
 #include "PCServer.h"
 
-//#include "PCFileManager+UInterface.h"
+#include "PCLogController.h"
 
 @implementation PCFileManager
 
@@ -202,13 +202,13 @@ static PCFileManager *_mgr = nil;
   NSString *fileType = [nfTypePB titleOfSelectedItem];
   NSString *key = [[creators objectForKey:fileType] objectForKey:@"ProjectKey"];
 
-  NSLog(@"FileManager: createFile %@", fileName);
+  PCLogInfo(self, @"[createFile] %@", fileName);
 
   path = [projectManager fileManager:self 
                       willCreateFile:fileName
 		             withKey:key];
 
-  NSLog(@"<%@ %x>: creating file at %@", [self class], self, path);
+  PCLogInfo(self, @"creating file at %@", path);
 
   // Create file
   if (path) 
@@ -255,7 +255,7 @@ static PCFileManager *_mgr = nil;
     {
       if ([NSBundle loadNibNamed:@"NewFile" owner:self] == NO)
 	{
-	  NSLog(@"PCFileManager: error loading NewFile NIB!");
+	  PCLogError(self, @"error loading NewFile NIB!");
 	  return;
 	}
       [newFilePanel setFrameAutosaveName:@"NewFile"];
@@ -430,7 +430,7 @@ static PCFileManager *_mgr = nil;
 
   if (!(fileType = [fileTypePopup titleOfSelectedItem]))
     {
-      NSLog(@"Selected File type is nil!");
+      PCLogWarning(self, @"Selected File type is nil!");
       return YES;
     }
   
@@ -439,11 +439,11 @@ static PCFileManager *_mgr = nil;
   fileTypes = [project fileTypesForCategoryKey:categoryKey];
   if (fileTypes == nil)
     {
-      NSLog(@"Project file types is nil! Category: %@", categoryKey);
+      PCLogWarning(self, 
+		   @"Project file types is nil! Category: %@", categoryKey);
       return YES;
     }
 
-//  NSLog(@"%@ : %@", fileTypes, [filename pathExtension]);
   if (fileTypes && [fileTypes containsObject:[filename pathExtension]])
     {
       NSString *filePath;
@@ -453,7 +453,6 @@ static PCFileManager *_mgr = nil;
 	          stringByResolvingSymlinksInPath];
       projectPath = [[project projectPath] stringByResolvingSymlinksInPath];
 
-//      NSLog(@"Path: %@ | Project path: %@", filePath, projectPath);
       if ([filePath isEqualToString:projectPath])
 	{
 	  return NO;

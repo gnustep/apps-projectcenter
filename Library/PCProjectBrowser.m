@@ -29,6 +29,8 @@
 #include "PCProjectEditor.h"
 #include "PCProjectBrowser.h"
 
+#include "PCLogController.h"
+
 NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 @implementation PCProjectBrowser
@@ -130,7 +132,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [columnMatrix deselectAllCells];
     }
 
-  NSLog(@"NSPB {setPath}: %@", path);
+  PCLogInfo(self, @"[setPath]: %@", path);
 
   return [browser setPath:path];
 }
@@ -198,7 +200,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	    stringByAppendingPathComponent:fileName];
 	}
 
-      NSLog(@"NSPB {click:} category: %@ filePath: %@", category, filePath);
+      PCLogInfo(self, @"[click] category: %@ filePath: %@",
+		category, filePath);
 
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])

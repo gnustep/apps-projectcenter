@@ -26,6 +26,7 @@ SUBPROJECTS = \
 #
 ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
+Resources/LogPanel.gorm \
 ProjectCenterInfo.plist \
 Images/ProjectCenter.tiff \
 Images/ButtonTile.tiff \

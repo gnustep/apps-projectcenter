@@ -37,6 +37,8 @@
 #include "PCProjectLauncher.h"
 #include "PCEditor.h"
 
+#include "PCLogController.h"
+
 NSString 
 *PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";
 NSString 
@@ -79,11 +81,11 @@ NSString
 	  projectPath = [path copy];
 	}
 
-      NSLog (@"PCProject initWithProjectDictionary");
+      PCLogStatus(self, @"initWithProjectDictionary");
 
       if (![self assignProjectDict:dict])
 	{
-	  NSLog(@"<%@ %x>: could not load the project...",[self class],self);
+	  PCLogError(self, @"could not load the project...");
 	  [self autorelease];
 	  return nil;
 	}
@@ -105,7 +107,7 @@ NSString
 
 - (BOOL)close:(id)sender
 {
-  NSLog(@"Closing %@ project", projectName);
+  PCLogInfo(self, @"Closing %@ project", projectName);
 
   // Project files (GNUmakefile, PC.project etc.)
   if (isSubproject == NO && [self isProjectChanged] == YES)
@@ -233,7 +235,7 @@ NSString
     }
     
   [projectDict setObject:windows forKey:@"PC_WINDOWS"];
-  NSLog(@"Windows saved");
+  PCLogInfo(self, @"Windows saved");
 
   return YES;
 }
@@ -332,7 +334,7 @@ NSString
   NSString *_path = [[self projectBrowser] pathOfSelectedFile];
   NSString *key = [self keyForCategoryPath:_path];
 
-  NSLog(@"PCProject: selected category: %@. key: %@", _path, key);
+  PCLogInfo(self, @"selected category: %@. key: %@", _path, key);
 
   return key;
 }
@@ -619,7 +621,7 @@ NSString
 	  return NO;
 	}
 
-      NSLog(@"Complementary files: %@", complementaryFiles);
+      PCLogInfo(self, @"Complementary files: %@", complementaryFiles);
       // Complementaries
       if (![fileManager copyFiles:complementaryFiles 
 	            intoDirectory:complementaryDir])
@@ -718,7 +720,7 @@ NSString
   toPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:toFile];
 
-  NSLog(@"PCProject: move %@ to %@", fromPath, toPath);
+  PCLogInfo(self, @"move %@ to %@", fromPath, toPath);
 
   if ([fm movePath:fromPath toPath:toPath handler:nil] == YES)
     {
@@ -768,7 +770,7 @@ NSString
   [projectDict autorelease];
   projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
 
-  NSLog (@"PCProject assignProjectDict");
+  PCLogInfo(self, @"assignProjectDict");
 
   [self setProjectName:[projectDict objectForKey:PCProjectName]];
   [self writeMakefile];
@@ -1250,8 +1252,6 @@ NSString
   NSString       *category = nil;
   NSString       *key = nil;
 
-//  NSLog(@"PCP{%@}(keyForCategoryPath:) %@", projectName, categoryPath);
-
   if (categoryPath == nil 
       || [categoryPath isEqualToString:@""]
       || [categoryPath isEqualToString:@"/"])
@@ -1262,7 +1262,8 @@ NSString
   category = [self categoryForCategoryPath:categoryPath];
   key = [self keyForCategory:category];
 
-  NSLog(@"PCP{%@}(keyForCategoryPath): %@ key:%@", projectName, category, key);
+  PCLogInfo(self, @"{%@}(keyForCategoryPath): %@ key:%@", 
+	    projectName, category, key);
 
   return key;
 }

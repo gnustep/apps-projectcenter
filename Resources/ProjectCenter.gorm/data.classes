@@ -183,7 +183,8 @@
 	    "loadedFilesSortByTime:",
 	    "loadedFilesSortByName:",
 	    "loadedFilesNextFile:",
-	    "loadedFilesPreviousFile:"
+	    "loadedFilesPreviousFile:",
+	    "showLogPanel:"
 	);
 	Outlets = (
 	);

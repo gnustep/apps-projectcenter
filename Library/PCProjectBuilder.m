@@ -29,6 +29,8 @@
 #include "PCSplitView.h"
 #include "PCButton.h"
 
+#include "PCLogController.h"
+
 #include <AppKit/AppKit.h>
 
 #ifndef IMAGE
@@ -356,7 +358,7 @@
 {
   NSAssert(aProject, @"No project specified!");
 
-  NSLog (@"PCProjectBuilder: initWithProject %@", [aProject projectName]);
+  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
   
   if ((self = [super init]))
     {
@@ -494,7 +496,7 @@
   // "waitpid 7045, result -1, error No child processes" is printed.
   if (makeTask)
     {
-      NSLog(@"task will terminate");
+      PCLogStatus(self, @"task will terminate");
       [makeTask terminate];
       return YES;
     }

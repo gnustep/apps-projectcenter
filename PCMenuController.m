@@ -87,6 +87,11 @@
   [[[projectManager activeProject] projectWindow] showProjectEditor:self];
 }
 
+- (void)showLogPanel:(id)sender
+{
+  [[appController logController] showLogPanel];
+}
+
 // Project
 - (void)projectOpen:(id)sender
 {

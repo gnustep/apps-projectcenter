@@ -29,6 +29,8 @@
 #include "PCProjectWindow.h"
 #include "PCProjectInspector.h"
 
+#include "PCLogController.h"
+
 @implementation PCFileNameField
 
 - (void)setEditableField:(BOOL)yn
@@ -146,7 +148,7 @@
 {
   if ([NSBundle loadNibNamed:@"ProjectInspector" owner:self] == NO)
     {
-      NSLog(@"PCProjectInspector: error loading NIB file!");
+      PCLogError(self, @"error loading NIB file!");
       return NO;
     }
 
@@ -296,8 +298,8 @@
   project = [projectManager activeProject];
   projectDict = [project projectDict];
 
-  NSLog (@"Active projectChanged to %@", 
-	 [[project projectDict] objectForKey:PCProjectName]);
+  PCLogStatus(self, @"Active projectChanged to %@", 
+	      [[project projectDict] objectForKey:PCProjectName]);
 
   [inspectorPanel setTitle: [NSString stringWithFormat: 
     @"%@ - Project Inspector", [project projectName]]];
@@ -366,7 +368,7 @@
 
   if ([NSBundle loadNibNamed:@"BuildAttributes" owner:self] == NO)
     {
-      NSLog(@"PCProjectInspector: error loading BuildAttributes NIB file!");
+      PCLogError(self, @"error loading BuildAttributes NIB file!");
       return;
     }
 
@@ -493,8 +495,6 @@
 {
   NSString *value = [searchOrderTF stringValue];
 
-  NSLog(@"OTF:%@", value);
-
   [searchItems addObject:value];
   [searchOrderTF setStringValue:@""];
   [self syncSearchOrder];
@@ -533,7 +533,7 @@
     
   if ([NSBundle loadNibNamed:@"ProjectDescription" owner:self] == NO)
     {
-      NSLog(@"PCProjectInspector: error loading ProjectDescription NIB file!");
+      PCLogError(self, @"error loading ProjectDescription NIB file!");
       return;
     }
 
@@ -668,7 +668,7 @@
 
   if ([NSBundle loadNibNamed:@"FileAttributes" owner:self] == NO)
     {
-      NSLog(@"PCProjectInspector: error loading ProjectDescription NIB file!");
+      PCLogError(self, @"error loading ProjectDescription NIB file!");
       return;
     }
 
@@ -724,8 +724,8 @@
       return;
     }
 
-  NSLog(@"PCProjectInspector: file name changed from: %@ to: %@",
-	fileName, [fileNameField stringValue]);
+  PCLogInfo(self, @"file name changed from: %@ to: %@",
+	    fileName, [fileNameField stringValue]);
 
   if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
     {

@@ -7,6 +7,8 @@
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 
+#include "PCLogController.h"
+
 #include "PCProjectLoadedFiles.h"
 
 @implementation PCProjectLoadedFiles
@@ -191,7 +193,7 @@
 - (void)doubleClick:(id)sender
 {
   // TODO: Open separate editor window for file
-  NSLog(@"ProjectLoadedFiles doubleClick received");
+  PCLogInfo(self, @"ProjectLoadedFiles doubleClick received");
 }
 
 // ===========================================================================
@@ -209,7 +211,7 @@
       return;
     }
 
-  NSLog(@"PCProjectLoadedFiles: project %@", [project projectName]);
+  PCLogInfo(self, @"File did open in project %@", [project projectName]);
 
   filePath = [editor path];
   
@@ -224,7 +226,7 @@
   row = [[self editedFilesRep] indexOfObject:filePath];
   [filesList selectRow:row byExtendingSelection:NO];
   
-  NSLog(@"PCProjectLoadedFiles: fileDidOpen.END");
+  PCLogInfo(self, @"fileDidOpen.END");
 }
 
 - (void)fileDidClose:(NSNotification *)aNotif
@@ -234,7 +236,7 @@
 
   if ([editor projectEditor] != [project projectEditor])
     {
-      NSLog(@"File from other project closed");
+      PCLogWarning(self, @"File from other project closed");
       return;
     }
 

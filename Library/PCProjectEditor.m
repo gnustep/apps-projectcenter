@@ -16,6 +16,8 @@
 #include "PCEditorView.h"
 #include "ProjectComponent.h"
 
+#include "PCLogController.h"
+
 NSString *PCEditorDidOpenNotification = 
           @"PCEditorDidOpenNotification";
 NSString *PCEditorDidCloseNotification = 
@@ -106,7 +108,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 	  if (ret == NO)
 	    {
-	      NSLog(@"Could not open %@ using %@",path,app);
+	      PCLogError(self, @"Could not open %@ using %@", path, app);
 	    }
 
 	  return nil;
@@ -149,7 +151,7 @@ NSString *PCEditorDidResignActiveNotification =
 
   if ((self = [super init]))
     {
-      NSLog(@"PCProjectEditor: init");
+      PCLogStatus(self, @"[init]");
       project = aProject;
       componentView  = nil;
       editorsDict = [[NSMutableDictionary alloc] init];
@@ -482,7 +484,7 @@ NSString *PCEditorDidResignActiveNotification =
 
   if (categoryPath)
     {
-      NSLog(@"PCPE: set browser path: %@", categoryPath);
+      PCLogInfo(self, @"set browser path: %@", categoryPath);
       [[project projectBrowser] setPath:categoryPath];
     }
 }

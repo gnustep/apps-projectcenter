@@ -56,6 +56,7 @@
 // Info
 - (void)showInfoPanel:(id)sender;
 - (void)showPrefWindow:(id)sender;
+- (void)showLogPanel:(id)sender;
 
 // Project
 - (void)projectOpen:(id)sender;
