@@ -52,6 +52,7 @@
   id saveOnQuit;
 
   id useExternalEditor;
+  id useExternalDebugger;
   id promptWhenQuit;
   id promptOnClean;
   
@@ -83,6 +84,7 @@
 - (void)setSaveOnQuit:(id)sender;
 
 - (void)setUseExternalEditor:(id)sender;
+- (void)setUseExternalDebugger:(id)sender;
 
 - (void)setEditor:(id)sender;
 - (void)setCompiler:(id)sender;

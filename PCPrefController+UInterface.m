@@ -410,7 +410,7 @@
   RELEASE(separateEditor);
 
   // Some buttons
-  v = [[NSBox alloc] initWithFrame: NSMakeRect(5,121,254,77)];
+  v = [[NSBox alloc] initWithFrame: NSMakeRect(5,100,254,98)];
   [v setTitle: @"Misc"];
   [prefInterfaceView addSubview: v];
   RELEASE(v);
@@ -438,6 +438,18 @@
   [v addSubview: useExternalEditor];
   [useExternalEditor sizeToFit];
   RELEASE(useExternalEditor);
+
+  useExternalDebugger=[[NSButton alloc] initWithFrame:NSMakeRect(48,49,204,21)];
+  [useExternalDebugger setTitle: @"Use external Debugger"];
+  [useExternalDebugger setButtonType: NSSwitchButton];
+  [useExternalDebugger setBordered: NO];
+  [useExternalDebugger setRefusesFirstResponder: YES];
+  [useExternalDebugger setTarget: self];
+  [useExternalDebugger setAction: @selector(setUseExternalDebugger:)];
+  [useExternalDebugger setContinuous: NO];
+  [v addSubview: useExternalDebugger];
+  [useExternalDebugger sizeToFit];
+  RELEASE(useExternalDebugger);
 }
 
 @end

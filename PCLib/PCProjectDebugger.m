@@ -42,6 +42,15 @@ enum {
     DEBUG_DEBUG_TARGET   = 2
 };
 
+@protocol Terminal
+
+- (BOOL)terminalRunProgram:(NSString *)path
+             withArguments:(NSArray *)args
+               inDirectory:(NSString *)directory
+                properties:(NSDictionary *)properties;
+
+@end
+
 @implementation PCProjectDebugger
 
 - (id)initWithProject:(PCProject *)aProject
@@ -129,9 +138,96 @@ enum {
 
 - (void)debug:(id)sender
 {
-  NSRunAlertPanel(@"Attention!",
-                  @"Integrated debugging is not yet available...",
-                  @"OK",nil,nil);
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey:ExternalDebugger] isEqualToString: @"YES"])
+  {
+    NSString *dp = [currentProject projectName];
+    NSString *fp = nil;
+    NSString *pn = nil;
+    NSString *gdbPath;
+    NSArray  *args;
+    NSTask   *task;
+    NSDistantObject <Terminal>*terminal;
+    
+    /* Get the Terminal application */
+    terminal = (NSDistantObject<Terminal> *)[NSConnection rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
+
+    /* Prepare tasks */
+    switch( debugTarget )
+    {
+        case DEBUG_DEFAULT_TARGET:
+	    pn = [dp stringByAppendingPathExtension:@"app"];
+            break;
+        case DEBUG_DEBUG_TARGET:
+	    pn = [dp stringByAppendingPathExtension:@"debug"];
+            break;
+        default:
+	    [NSException raise:@"PCInternalDevException" 
+                        format:@"Unknown build target!"];
+            break;
+    }
+
+    if( terminal == nil ) 
+    {
+      NSRunAlertPanel(@"Attention!", @"Terminal.app is not running! Please\nlaunch it before debugging %@", @"Abort",nil,nil,pn);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+    fp = [[NSFileManager defaultManager] currentDirectoryPath];
+    dp = [fp stringByAppendingPathComponent:dp];
+    fp = [dp stringByAppendingPathComponent:pn];
+
+    task = [[NSTask alloc] init];
+    [task setLaunchPath:fp];
+    fp = [task validatedLaunchPath];
+    RELEASE(task);
+
+    if( fp == nil )
+    {
+      NSRunAlertPanel(@"Attention!", @"No executable found in %@!", @"Abort",nil,nil,dp);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+    task = [[NSTask alloc] init];
+
+    dp = [[NSUserDefaults standardUserDefaults] objectForKey:PDebugger];
+    if(dp == nil)
+    {
+      dp = [NSString stringWithString:@"/usr/bin/gdb"];
+    }
+
+    if([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
+    {
+      NSRunAlertPanel(@"Attention!", @"Invalid debugger specified: %@!", @"Abort",nil,nil,dp);
+      RELEASE(task);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+    [task setLaunchPath:dp];
+    gdbPath = [task validatedLaunchPath];
+    RELEASE(task);
+
+    args = [NSArray arrayWithObjects:
+                        gdbPath,
+                        @"--args",
+                        AUTORELEASE(fp),
+                        nil];
+
+    [terminal terminalRunProgram: AUTORELEASE(gdbPath)
+                       withArguments: args
+                         inDirectory: nil
+                          properties: nil];
+  }
+  else
+  {
+    NSRunAlertPanel(@"Attention!",
+                    @"Integrated debugging is not yet available...",
+                    @"OK",nil,nil);
+  }
+  [debugButton setState:NSOffState];
 }
 
 - (void)run:(id)sender

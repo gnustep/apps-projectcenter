@@ -61,6 +61,7 @@
   [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
 
   [defaults setObject:@"YES" forKey:ExternalEditor];
+  [defaults setObject:@"YES" forKey:ExternalDebugger];
 
   [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 

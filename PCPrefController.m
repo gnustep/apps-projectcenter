@@ -163,6 +163,9 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [useExternalEditor setState:
     ([[preferencesDict objectForKey: ExternalEditor] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+  [useExternalDebugger setState:
+    ([[preferencesDict objectForKey: ExternalDebugger] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
 
 
   if (![prefWindow isVisible])
@@ -326,6 +329,24 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 
   [preferencesDict setObject:[def objectForKey:ExternalEditor] 
                       forKey:ExternalEditor];
+}
+
+- (void)setUseExternalDebugger:(id)sender
+{
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  switch ([[sender selectedCell] state]) {
+  case 0:
+    [def setObject:@"NO" forKey:ExternalDebugger];
+    break;
+  case 1:
+    [def setObject:@"YES" forKey:ExternalDebugger];
+    break;
+  }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:ExternalDebugger] 
+                      forKey:ExternalDebugger];
 }
 
 - (void)setEditor:(id)sender

@@ -1,4 +1,10 @@
 
+2003-08-09 Philippe C.D. Robert <probert@siggraph.org>
+
+        * Support for an external debugger: PCLib/PCDefines.h,
+          PCAppController.m, PCPrefController.m, PCPrefController+UInterface.m,
+          PCPrefController.h, PCLib/PCProjectDebugger.m
+
 2003-08-03 Philippe C.D. Robert <probert@siggraph.org>
 
         * Fixed typo: PCLib/PCProject+ComponentHandling.m, PCMenuController.m
