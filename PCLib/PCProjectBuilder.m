@@ -38,7 +38,7 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-#define DEFAULT_RPM_PATH @"/usr/src/redhat/SOURCES/"
+#define DEFAULT_RPM_ROOT @"/usr/src/redhat/"
 
 @interface PCProjectBuilder (CreateUI)
 
@@ -139,12 +139,12 @@
    * 6 build Buttons
    */
 
-  _w_frame = NSMakeRect(0,194,272,44);
+  _w_frame = NSMakeRect(0,194,318,44);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
 			     numberOfRows:1
-			     numberOfColumns:6];
+			     numberOfColumns:7];
   [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -196,11 +196,18 @@
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Packaging"];
 
+  button = [matrix cellAtRow:0 column:6];
+  [button setTag:6];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_dist")];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Packaging"];
+
   /*
    * Status
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(288,220,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,220,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -217,7 +224,7 @@
    * Status message
    */
 
-  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(340,220,104,15)];
+  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,220,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
   [buildStatusField setEditable: NO];
@@ -235,7 +242,7 @@
    * Target
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(288,196,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(334,196,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setBezeled: NO];
@@ -252,7 +259,7 @@
    * Target message
    */
 
-  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(340,196,104,15)];
+  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(386,196,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -355,21 +362,27 @@
   case 5:
     status = [NSString stringWithString:@"Packaging..."];
     target = [NSString stringWithString:@"Making RPM"];
-    [args addObject:@"specfile"];
+    [args addObject:@"rpm"];
     postProcess = @selector(copyPackageTo:);
+
+    if ( [currentProject writeSpecFile] == NO )
+    {
+	return;
+    }
 
     if( [env objectForKey:@"RPM_TOPDIR"] == nil )
     {
 	NSRunAlertPanel(@"Attention!",
 	                @"First set the environment variable 'RPM_TOPDIR'!",
 			@"OK",nil,nil);     
-	//return;
-    }
-
-    if ( [currentProject writeSpecFile] == NO )
-    {
 	return;
     }
+
+    break;
+  case 6:
+    status = [NSString stringWithString:@"Packaging..."];
+    target = [NSString stringWithString:@"Making TGZ"];
+    [args addObject:@"dist"];
     break;
   }
 
@@ -469,21 +482,16 @@
 
 - (void)copyPackageTo:(NSString *)path
 {
-  NSString *dest;
   NSString *source = nil;
+  NSString *dest = nil;
+  NSString *rpm = nil;
+  NSString *srcrpm = nil;
 
-  if (!path) {
-    dest = [NSString stringWithString:DEFAULT_RPM_PATH];
-  }
-  else {
-    dest = path;
-  }
-
-  // Create the tar.gz package
-
-  // Copy it
-  if (source) {
-    [[NSFileManager defaultManager] copyPath:source toPath:dest handler:nil];
+  // Copy the rpm files to the source directory
+  if (source) 
+  {
+    [[NSFileManager defaultManager] copyPath:srcrpm toPath:dest handler:nil];
+    [[NSFileManager defaultManager] copyPath:rpm    toPath:dest handler:nil];
   }
 }
 
