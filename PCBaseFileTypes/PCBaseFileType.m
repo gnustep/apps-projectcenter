@@ -225,7 +225,17 @@ static NSDictionary *dict = nil;
 
     [file replaceCharactersInRange:
 	    [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
-    
+
+    if ([aType isEqualToString:ObjCHeader] || 
+        [aType isEqualToString:CHeaderFile]) {
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
+    }
+
     if ([aType isEqualToString:ObjCClass]) {
       [file replaceCharactersInRange:
 	      [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];

@@ -8,6 +8,9 @@
  * $Id$
  */
 
+#ifndef $UCFILENAMESANSEXTENSION$_H_
+#define $UCFILENAMESANSEXTENSION$_H_
+
 #import <Foundation/Foundation.h>
 
 @interface $FILENAMESANSEXTENSION$ : NSObject
@@ -16,3 +19,6 @@
 }
 
 @end
+
+#endif // $UCFILENAMESANSEXTENSION$_H_
+
