@@ -15,36 +15,21 @@ void createMenu();
  * Initialise and go!
  */
 
-int main(int argc, const char *argv[]) {
-  NSApplication     *theApp;
+int main(int argc, const char *argv[]) 
+{
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   AppController     *controller;
   
-#ifndef NX_CURRENT_COMPILER_RELEASE
-  initialize_gnustep_backend();
-#endif
-  
-  theApp = [NSApplication sharedApplication];
+  [NSApplication sharedApplication];
 
   createMenu();
 
   controller = [[AppController alloc] init];
-  [theApp setDelegate:controller];
+  [NSApp setDelegate:controller];
 
-  /*
-   * Go...
-   */  
-
-  [theApp run];
-  
-  /*
-   * ...and finish!
-   */
-
-  RELEASE(controller);
   RELEASE(pool);
-  
-  return 0;
+
+  return NSApplicationMain (argc, argv);
 }
 
 void createMenu()
@@ -59,7 +44,8 @@ void createMenu()
 
   menu = [[NSMenu alloc] initWithTitle:APP_NAME];
 
-  [menu addItemWithTitle:@"Info" action:@selector(showInfoPanel:) keyEquivalent:@""];
+  [menu addItemWithTitle:@"Info" action:@selector(showInfoPanel:) 
+	keyEquivalent:@""];
   [menu addItemWithTitle:@"Edit" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Windows" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Services" action:action keyEquivalent:@""];
@@ -68,16 +54,28 @@ void createMenu()
 
   info = AUTORELEASE([[NSMenu alloc] init]);
   [menu setSubmenu:info forItem:[menu itemWithTitle:@"Info"]];
-  [info addItemWithTitle:@"Info Panel..." action:@selector(showInfoPanel:) keyEquivalent:@""];
-  [info addItemWithTitle:@"Preferences" action:@selector(showPrefPanel:) keyEquivalent:@""];
+  [info addItemWithTitle:@"Info Panel..." 
+	action:@selector(showInfoPanel:) keyEquivalent:@""];
+  [info addItemWithTitle:@"Preferences" 
+	action:@selector(showPrefPanel:) keyEquivalent:@""];
   [info addItemWithTitle:@"Help" action:action keyEquivalent:@"?"];
 
   edit = AUTORELEASE([[NSMenu alloc] init]);
-  [edit addItemWithTitle:@"Cut" action:action keyEquivalent:@"x"];
-  [edit addItemWithTitle:@"Copy" action:action keyEquivalent:@"c"];
-  [edit addItemWithTitle:@"Paste" action:action keyEquivalent:@"v"];
-  [edit addItemWithTitle:@"Delete" action:action keyEquivalent:@""];
-  [edit addItemWithTitle:@"Select All" action:action keyEquivalent:@"a"];
+  [edit addItemWithTitle:@"Cut" 
+	action:@selector(cut:) 
+	keyEquivalent:@"x"];
+  [edit addItemWithTitle:@"Copy" 
+	action:@selector(copy:) 
+	keyEquivalent:@"c"];
+  [edit addItemWithTitle:@"Paste" 
+	action:@selector(paste:)
+	keyEquivalent:@"v"];
+  [edit addItemWithTitle:@"Delete" 
+	action:@selector(delete:)
+	keyEquivalent:@""];
+  [edit addItemWithTitle:@"Select All" 
+	action:@selector(selectAll:)
+	keyEquivalent:@"a"];
   [menu setSubmenu:edit forItem:[menu itemWithTitle:@"Edit"]];
 
   windows = AUTORELEASE([[NSMenu alloc] init]);
@@ -95,12 +93,11 @@ void createMenu()
   services = AUTORELEASE([[NSMenu alloc] init]);
   [menu setSubmenu:services forItem:[menu itemWithTitle:@"Services"]];
 
-  [[NSApplication sharedApplication] setMainMenu:menu];
-  [[NSApplication sharedApplication] setServicesMenu: services];
-
-  [menu update];
-  [menu display];
+  [NSApp setMainMenu:menu];
+  [NSApp setServicesMenu: services];
 }
+
+
 
 
 
