@@ -30,13 +30,7 @@
 // ----------------------------------------------------------------------------
 NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
-@interface PCITextField : NSTextField
-{
-}
-
-@end
-
-@implementation PCITextField
+@implementation PCAppTextField
 
 - (BOOL)becomeFirstResponder
 {
@@ -57,127 +51,20 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)createProjectAttributes
 {
-  NSTextField *textField = nil;
-  NSBox       *_iconViewBox = nil;
-  NSBox       *_iconsBox = nil;
-
-  if (projectAttributesView)
+/*  if (projectAttributesView)
     {
       return;
-    }
-
-  projectAttributesView = [[NSBox alloc] init];
-  [projectAttributesView setFrame:NSMakeRect(0,0,295,384)];
-  [projectAttributesView setTitlePosition:NSNoTitle];
-  [projectAttributesView 
-    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [projectAttributesView setContentViewMargins:NSMakeSize(0.0, 0.0)];
-
-  // Project Type
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,343,104,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Project Type:"];
-  [projectAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  projectTypeField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,343,185,21)];
-  [projectTypeField setAlignment: NSLeftTextAlignment];
-  [projectTypeField setBordered: NO];
-  [projectTypeField setEditable: NO];
-  [projectTypeField setSelectable: NO];
-  [projectTypeField setBezeled: NO];
-  [projectTypeField setDrawsBackground: NO];
-  [projectTypeField setFont:[NSFont boldSystemFontOfSize: 12.0]];
-  [projectTypeField setStringValue:@""];
-  [projectAttributesView addSubview:projectTypeField];
-  RELEASE(projectTypeField);
-
-  // Project Name
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,318,104,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Project Name:"];
-  [projectAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  projectNameField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,318,185,21)];
-  [projectNameField setAlignment: NSLeftTextAlignment];
-  [projectNameField setBordered: NO];
-  [projectNameField setEditable: NO];
-  [projectNameField setBezeled: YES];
-  [projectNameField setDrawsBackground: YES];
-  [projectNameField setStringValue:@""];
-  [projectAttributesView addSubview:projectNameField];
-  RELEASE(projectNameField);
-
-  // Project Language
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,293,104,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Language:"];
-  [projectAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  projectLanguageField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,293,185,21)];
-  [projectLanguageField setAlignment: NSLeftTextAlignment];
-  [projectLanguageField setBordered: NO];
-  [projectLanguageField setEditable: NO];
-  [projectLanguageField setBezeled: YES];
-  [projectLanguageField setDrawsBackground: YES];
-  [projectLanguageField setStringValue:@""];
-  [projectAttributesView addSubview:projectLanguageField];
-  RELEASE(projectLanguageField);
-
-  // Application Class
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,268,104,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Application Class:"];
-  [projectAttributesView addSubview:textField];
-  RELEASE(textField);
-
-  appClassField = [[NSTextField alloc] initWithFrame:
-    NSMakeRect(111,268,185,21)];
-  [appClassField setAlignment: NSLeftTextAlignment];
-  [appClassField setBordered: YES];
-  [appClassField setEditable: YES];
-  [appClassField setBezeled: YES];
-  [appClassField setDrawsBackground: YES];
-  [appClassField setStringValue:@""];
-  [appClassField setTarget:self];
-  [appClassField setAction:@selector(setAppClass:)];
-  [projectAttributesView addSubview:appClassField];
-  RELEASE(appClassField);
+    }*/
 
   // Icons, Main NIB file, Help file
-  _iconsBox = [[NSBox alloc] init];
+/*  _iconsBox = [[NSBox alloc] init];
   [_iconsBox setFrame:NSMakeRect(6,6,290,259)];
   [_iconsBox setContentViewMargins:NSMakeSize(4.0, 4.0)];
   [_iconsBox setTitlePosition:NSNoTitle];
-  [projectAttributesView addSubview:_iconsBox];
+  [projectAttributesView addSubview:_iconsBox];*/
 
   // Icon view
-  _iconViewBox = [[NSBox alloc] initWithFrame:NSMakeRect(220,189,56,56)];
+/*  _iconViewBox = [[NSBox alloc] initWithFrame:NSMakeRect(220,189,56,56)];
   [_iconViewBox setTitlePosition:NSNoTitle];
   [_iconViewBox setBorderType:NSBezelBorder];
   [_iconViewBox setContentViewMargins:NSMakeSize(2.0, 2.0)];
@@ -186,110 +73,13 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   
   iconView = [[NSImageView alloc] initWithFrame:NSMakeRect(220,0,56,56)];
   [_iconViewBox addSubview:iconView];
-  RELEASE(iconView);
+  RELEASE(iconView);*/
 
   // TFs Buttons
-  setAppIconButton = [[NSButton alloc]
-    initWithFrame:NSMakeRect(220,156,56,24)];
-  [setAppIconButton setTitle:@"Set..."];
-  [setAppIconButton setRefusesFirstResponder:YES];
-  [setAppIconButton setTarget:self];
-  [setAppIconButton setAction:@selector(setFile:)];
-  [setAppIconButton setEnabled:NO];
-  [_iconsBox addSubview:setAppIconButton];
-  RELEASE(setAppIconButton);
-
-  clearAppIconButton = [[NSButton alloc]
-    initWithFrame:NSMakeRect(220,128,56,24)];
-  [clearAppIconButton setTitle:@"Clear"];
-  [clearAppIconButton setRefusesFirstResponder:YES];
-  [clearAppIconButton setTarget:self];
-  [clearAppIconButton setAction:@selector(clearFile:)];
-  [clearAppIconButton setEnabled:NO];
-  [_iconsBox addSubview:clearAppIconButton];
-  RELEASE(clearAppIconButton);
-
-  // Application Icon
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,227,108,18)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Application Icon:"];
-  [_iconsBox addSubview:textField];
-  RELEASE(textField);
-
-  appImageField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,206,211,21)];
-  [appImageField setAlignment: NSLeftTextAlignment];
-  [appImageField setBordered: YES];
-  [appImageField setEditable: YES];
-  [appImageField setBezeled: YES];
-  [appImageField setDrawsBackground: YES];
-  [appImageField setStringValue:@""];
-  [appImageField setDelegate:self];
-  [_iconsBox addSubview:appImageField];
-  RELEASE(appImageField);
-  
-  // Help File
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,188,108,18)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Help File:"];
-  [_iconsBox addSubview:textField];
-  RELEASE(textField);
-
-  helpFileField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,167,211,21)];
-  [helpFileField setAlignment: NSLeftTextAlignment];
-  [helpFileField setBordered: YES];
-  [helpFileField setEditable: YES];
-  [helpFileField setBezeled: YES];
-  [helpFileField setDrawsBackground: YES];
-  [helpFileField setStringValue:@""];
-  [helpFileField setDelegate:self];
-  [_iconsBox addSubview:helpFileField];
-  RELEASE(helpFileField);
-  
-  // Main NIB File
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,149,108,18)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Main Interface File:"];
-  [_iconsBox addSubview:textField];
-  RELEASE(textField);
-
-  mainNIBField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,128,211,21)];
-  [mainNIBField setAlignment: NSLeftTextAlignment];
-  [mainNIBField setBordered: YES];
-  [mainNIBField setEditable: YES];
-  [mainNIBField setBezeled: YES];
-  [mainNIBField setDrawsBackground: YES];
-  [mainNIBField setStringValue:@""];
-  [mainNIBField setDelegate:self];
-  [_iconsBox addSubview:mainNIBField];
-  RELEASE(mainNIBField);
+  [setFieldButton setRefusesFirstResponder:YES];
+  [clearFieldButton setRefusesFirstResponder:YES];
 
   // Document Icons
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,107,108,21)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Document Icons:"];
-  [_iconsBox addSubview:textField];
-  RELEASE(textField);
-
   //
   docExtColumn = [[NSTableColumn alloc] initWithIdentifier: @"extension"];
   [[docExtColumn headerCell] setStringValue:@"Extenstion"];
@@ -297,8 +87,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   docIconColumn = [[NSTableColumn alloc] initWithIdentifier: @"icon"];
   [[docIconColumn headerCell] setStringValue:@"Icon name"];
 
-  docIconsList = [[NSTableView alloc]
-    initWithFrame:NSMakeRect(2,0,211,108)];
+  docIconsList = [[NSTableView alloc] initWithFrame:NSMakeRect(2,0,211,108)];
   [docIconsList setAllowsMultipleSelection:NO];
   [docIconsList setAllowsColumnReordering:NO];
   [docIconsList setAllowsColumnResizing:NO];
@@ -310,40 +99,21 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [docIconsList setTarget:self];
 
   //
-  docIconsScroll = [[NSScrollView alloc] initWithFrame:
-    NSMakeRect (2,0,211,106)];
   [docIconsScroll setDocumentView:docIconsList];
   [docIconsScroll setHasHorizontalScroller:NO];
   [docIconsScroll setHasVerticalScroller:YES];
   [docIconsScroll setBorderType:NSBezelBorder];
   RELEASE(docIconsList);
-  [_iconsBox addSubview:docIconsScroll];
-  RELEASE(docIconsScroll);
-  [docIconsList reloadData];
   
   // Document icons buttons
-  addDocIcon = [[NSButton alloc] initWithFrame:NSMakeRect(220,28,56,24)];
-  [addDocIcon setTitle:@"Add"];
   [addDocIcon setRefusesFirstResponder:YES];
-  [addDocIcon setTarget:self];
-  [addDocIcon setAction:@selector(addDocIcon:)];
-  [_iconsBox addSubview:addDocIcon];
-  RELEASE(addDocIcon);
-
-  removeDocIcon = [[NSButton alloc] initWithFrame:NSMakeRect(220,0,56,24)];
-  [removeDocIcon setTitle:@"Remove"];
   [removeDocIcon setRefusesFirstResponder:YES];
-  [removeDocIcon setTarget:self];
-  [removeDocIcon setAction:@selector(removeDocIcon:)];
-  [_iconsBox addSubview:removeDocIcon];
-  RELEASE(removeDocIcon);
-
-  RELEASE(_iconsBox);
 
   [[NSNotificationCenter defaultCenter] addObserver:self
                                            selector:@selector(tfGetFocus:)
                                                name:PCITextFieldGetFocus
                                              object:nil];
+  [projectAttributesView retain];
 
   [self updateInspectorValues:nil];
 }
@@ -352,8 +122,14 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 {
   if (!projectAttributesView)
     {
+      if ([NSBundle loadNibNamed:@"Inspector" owner:self] == NO)
+	{
+	  NSLog(@"PCAppProject: error loading Inspector NIB!");
+	  return nil;
+	}
       [self createProjectAttributes];
     }
+
   return projectAttributesView;
 }
 
@@ -369,8 +145,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)setIconViewImage:(NSImage *)image
 {
-  NSRect   frame = {{0,0}, {64, 64}};
-
   [iconView setImage:nil];
   [iconView display];
 
@@ -379,8 +153,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       return;
     }
 
-  frame.size = [image size];
-  [iconView setFrame:frame];
   [iconView setImage:image];
   [iconView display];
 }
@@ -466,7 +238,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path
 {
-//  NSRect   frame = {{0,0}, {64, 64}};
   NSImage  *image = nil;
   NSString *imageName = nil;
 
@@ -480,15 +251,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [appImageField setStringValue:imageName];
 
   [self setIconViewImage:image];
-
-/*  [iconView setImage:nil];
-  [iconView display];
-
-  frame.size = [image size];
-  [iconView setFrame:frame];
-  [iconView setImage:image];
-  [iconView display];
-  RELEASE(image);*/
 
   [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCImages];
   
@@ -699,7 +461,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
       if (![file isEqualToString:@""])
 	{
-	  path = [self dirForCategory:PCImages];
+	  path = [self dirForCategoryKey:PCImages];
 	  path = [path stringByAppendingPathComponent:file];
 	  [self setIconViewImage:[[NSImage alloc]
           initWithContentsOfFile:path]];
@@ -723,8 +485,8 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       activeTextField = mainNIBField;
     }
 
-  [setAppIconButton setEnabled:YES];
-  [clearAppIconButton setEnabled:YES];
+  [setFieldButton setEnabled:YES];
+  [clearFieldButton setEnabled:YES];
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotification
@@ -742,8 +504,8 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   activeTextField = nil;
   [self setIconViewImage:nil];
 
-  [setAppIconButton setEnabled:NO];
-  [clearAppIconButton setEnabled:NO];
+  [setFieldButton setEnabled:NO];
+  [clearFieldButton setEnabled:NO];
 }
 
 @end

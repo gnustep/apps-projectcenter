@@ -69,9 +69,9 @@ extern NSString *PCProjectDictDidSaveNotification;
   NSString            *projectName;
   NSString            *projectPath;
 
-  NSArray             *rootObjects;
-  NSArray             *rootKeys;
-  NSDictionary        *rootCategories; // Needs to be initialised by subclasses!
+  NSArray             *rootKeys;       // CLASS_FILES
+  NSArray             *rootCategories; // Classes
+  NSDictionary        *rootEntries;    // Initialised by subclasses
   NSMutableDictionary *buildOptions;
 
   BOOL                editorIsActive;
@@ -105,7 +105,9 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
 - (BOOL)isProjectChanged;
+
 - (NSString *)selectedRootCategory;
+- (NSString *)selectedRootCategoryKey;
 
 - (Class)principalClass;
 
@@ -123,8 +125,8 @@ extern NSString *PCProjectDictDidSaveNotification;
 // Subclasses need to call this before their customised implementation!
 - (BOOL)writeMakefile;
 
-- (NSArray *)fileTypesForCategory:(NSString *)category;
-- (NSString *)dirForCategory:(NSString *)category;
+- (NSArray *)fileTypesForCategoryKey:(NSString *)key;
+- (NSString *)dirForCategoryKey:(NSString *)key;
 
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
@@ -165,8 +167,10 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)projectPath;
 
 - (NSArray *)rootKeys;
-- (NSDictionary *)rootCategories;
+- (NSArray *)rootCategories;
+- (NSDictionary *)rootEntries;
 - (NSString *)keyForCategory:(NSString *)category;
+- (NSString *)categoryForKey:(NSString *)key;
 
 - (BOOL)save;
 - (BOOL)saveAt:(NSString *)projPath;
@@ -195,11 +199,13 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 @end
 
-@interface PCProject (ProjectKeyPaths)
+@interface PCProject (CategoryPaths)
 
-- (NSArray *)contentAtKeyPath:(NSString *)keyPath;
-- (BOOL)hasChildrenAtKeyPath:(NSString *)keyPath;
-- (NSString *)projectKeyForKeyPath:(NSString *)kp;
+- (NSArray *)contentAtCategoryPath:(NSString *)categoryPath;
+- (BOOL)hasChildrenAtCategoryPath:(NSString *)keyPath;
+
+- (NSString *)categoryForCategoryPath:(NSString *)categoryPath;
+- (NSString *)keyForCategoryPath:(NSString *)kp;
 
 @end
 

@@ -89,20 +89,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // This is responsibility of PC*Project classes
 - (BOOL)isEditableCategory:(NSString *)category  file:(NSString *)title
 {
-  NSString *k = [[project rootCategories] objectForKey:category];
+  NSString *key = [project keyForCategory:category];
 
-  if ([k isEqualToString:PCClasses] || 
-      [k isEqualToString:PCHeaders] || 
-      [k isEqualToString:PCSupportingFiles] || 
-      [k isEqualToString:PCDocuFiles] || 
-      [k isEqualToString:PCOtherSources] || 
-      [k isEqualToString:PCOtherResources] ||
-      [k isEqualToString:PCNonProject]) 
+  if ([key isEqualToString:PCClasses]
+      || [key isEqualToString:PCHeaders]
+      || [key isEqualToString:PCSupportingFiles]
+      || [key isEqualToString:PCDocuFiles]
+      || [key isEqualToString:PCOtherSources]
+      || [key isEqualToString:PCOtherResources]
+      || [key isEqualToString:PCNonProject]) 
     {
       return YES;
     }
 
-  if ([k isEqualToString:PCGSMarkupFiles]
+  if ([key isEqualToString:PCGSMarkupFiles]
       && [[title pathExtension] isEqual: @"gorm"] == NO)
     {
       return YES;
@@ -165,12 +165,14 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [columnMatrix deselectAllCells];
     }
   // End of HACK
-  
+
   result = [browser setPath:path];
+
+  [self click:browser];
   
-  [[NSNotificationCenter defaultCenter]
+/*  [[NSNotificationCenter defaultCenter]
     postNotificationName:PCBrowserDidSetPathNotification 
-                  object:self];
+                  object:self];*/
 
   return result;
 }
@@ -236,12 +238,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   if (browser) 
     {
       NSString *browserPath = [browser path];
-      NSString *path = [[browserPath componentsSeparatedByString:@"/"] objectAtIndex:1];
-
-      if (![browserPath isEqualToString:path] 
-	  && [[[project projectEditor] allEditors] count] == 0)
+      NSString *path = nil;
+      NSString *slctdCategory = [project selectedRootCategory];
+ 
+      if (slctdCategory && browserPath && ![browserPath isEqualToString:@"/"])
 	{
-	  [self setPathForFile:nil category:path];
+	  path = [[browserPath componentsSeparatedByString:@"/"] 
+	    objectAtIndex:1];
+
+	  if ([[[project projectEditor] allEditors] count] == 0
+	      && [self isEditableCategory:slctdCategory file:nil])
+	    {
+	      [self setPathForFile:nil category:path];
+	    }
 	}
 
       [browser reloadColumn:[browser lastColumn]];
@@ -255,26 +264,31 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 - (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix
 {
   NSString *pathToCol = [sender pathToColumn:column];
-  NSArray  *files = [project contentAtKeyPath:pathToCol];
+  NSArray  *files = [project contentAtCategoryPath:pathToCol];
   int      i;
   int      count = [files count];
 
-  if( sender != browser ) return;
+  if (sender != browser)
+    {
+      return;
+    }
 
   for (i = 0; i < count; ++i) 
     {
-      NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
-      id cell;
-
+      NSMutableString *categoryPath = nil;
+      id              cell;
+      
+      categoryPath = [NSMutableString stringWithString:pathToCol];
+      
       [matrix insertRow:i];
 
       cell = [matrix cellAtRow:i column:0];
       [cell setStringValue:[files objectAtIndex:i]];
 
-      [keyPath appendString:@"/"];
-      [keyPath appendString:[files objectAtIndex:i]];
+      [categoryPath appendString:@"/"];
+      [categoryPath appendString:[files objectAtIndex:i]];
 
-      [cell setLeaf:![project hasChildrenAtKeyPath:keyPath]];
+      [cell setLeaf:![project hasChildrenAtCategoryPath:categoryPath]];
     }
 }
 

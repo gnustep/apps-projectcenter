@@ -29,7 +29,8 @@ Resources/main.m \
 Resources/PC.project \
 Resources/GNUmakefile.preamble \
 Resources/GNUmakefile.postamble \
-Resources/Main.gorm
+Resources/Main.gorm \
+Resources/Inspector.gorm
 
 #
 # Header files

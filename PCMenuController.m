@@ -198,7 +198,9 @@
       else
 	{
 	  PCProject *project = [projectManager activeProject];
-	  NSString  *category = [[[project rootCategories] allKeysForObject:PCNonProject] objectAtIndex:0];
+	  NSString  *category =  nil;
+	  
+	  category = [[project rootEntries] objectForKey:PCNonProject];
 
 	  [projectManager closeFile];
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
@@ -209,6 +211,7 @@
 	}
     }
 }
+
 
 - (void)fileSaveTo:(id)sender
 {

@@ -12,7 +12,7 @@ PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 VERSION = 0.4
-COMPRESSION = bzip2
+COMPRESSION = gzip
 
 #
 # Subprojects

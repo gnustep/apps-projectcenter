@@ -451,7 +451,14 @@
 
 - (void)textDidChange:(NSNotification *)aNotification
 {
-  [self setIsEdited:YES];
+  id object = [aNotification object];
+
+
+  if ([object isKindOfClass:[PCEditorView class]]
+      && (object == _intEditorView || object == _extEditorView))
+    {
+      [self setIsEdited:YES];
+    }
 }
 
 - (BOOL)becomeFirstResponder

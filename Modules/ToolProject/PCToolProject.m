@@ -53,7 +53,7 @@
 {
   if ((self = [super init]))
     {
-      rootObjects = [[NSArray arrayWithObjects: PCClasses,
+      rootKeys = [[NSArray arrayWithObjects: PCClasses,
 						PCHeaders,
 						PCOtherSources,
 						PCImages,
@@ -65,7 +65,7 @@
 						PCNonProject,
 						nil] retain];
 
-      rootKeys = [[NSArray arrayWithObjects: @"Classes",
+      rootCategories = [[NSArray arrayWithObjects: @"Classes",
 					     @"Headers",
 					     @"Other Sources",
 					     @"Images",
@@ -77,8 +77,8 @@
 					     @"Non Project Files",
 					     nil] retain];
 
-      rootCategories = [[NSDictionary 
-	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
+      rootEntries = [[NSDictionary 
+	dictionaryWithObjects:rootCategories forKeys:rootKeys] retain];
     
     }
 
@@ -88,8 +88,8 @@
 - (void)dealloc
 {
   [rootCategories release];
-  [rootObjects release];
   [rootKeys release];
+  [rootEntries release];
   
   [super dealloc];
 }

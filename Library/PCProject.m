@@ -296,7 +296,14 @@ NSString
 {
   NSString *_path = [[self projectBrowser] pathOfSelectedFile];
 
-  return [self projectKeyForKeyPath:_path];
+  return [self categoryForCategoryPath:_path];
+}
+
+- (NSString *)selectedRootCategoryKey
+{
+  NSString *_path = [[self projectBrowser] pathOfSelectedFile];
+
+  return [self keyForCategoryPath:_path];
 }
 
 - (void)setProjectDictObject:(id)object forKey:(NSString *)key
@@ -369,12 +376,12 @@ NSString
   return nil;
 }
 
-- (NSArray *)fileTypesForCategory:(NSString *)category
+- (NSArray *)fileTypesForCategoryKey:(NSString *)key 
 {
   return nil;
 }
 
-- (NSString *)dirForCategory:(NSString *)category
+- (NSString *)dirForCategoryKey:(NSString *)key 
 {
   return projectPath;
 }
@@ -481,7 +488,7 @@ NSString
   NSString       *file = nil;
   NSMutableArray *fileList = [[files mutableCopy] autorelease];
   PCFileManager  *fileManager = [projectManager fileManager];
-  NSString       *directory = [self dirForCategory:key];
+  NSString       *directory = [self dirForCategoryKey:key];
 
   // Validate files
   while ((file = [fileEnum nextObject]))
@@ -561,23 +568,23 @@ NSString
 {
   NSFileManager *fm = [NSFileManager defaultManager];
   NSString      *selectedCategory = [self selectedRootCategory];
+  NSString      *selectedCategoryKey = [self selectedRootCategoryKey];
   NSString      *fromPath = nil;
   NSString      *toPath = nil;
 
-  fromPath = [[self dirForCategory:selectedCategory]
+  fromPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:fromFile];
-  toPath = [[self dirForCategory:selectedCategory]
+  toPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:toFile];
+
+  [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
+             forKey:selectedCategoryKey];
+  [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
+          forKey:selectedCategoryKey];
 
   [fm movePath:fromPath toPath:toPath handler:nil];
 
-  [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
-             forKey:selectedCategory];
-  [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
-          forKey:selectedCategory];
-
-  [projectBrowser setPathForFile:toFile 
-                        category:[self keyForCategory:selectedCategory]];
+  [projectBrowser setPathForFile:toFile category:selectedCategory];
   
   return YES;
 }
@@ -624,19 +631,35 @@ NSString
 
 - (NSArray *)rootKeys
 {
+  // e.g. CLASS_FILES
   return rootKeys;
 }
 
-- (NSDictionary *)rootCategories
+- (NSArray *)rootCategories
 {
+  // e.g. Classes
   return rootCategories;
 }
 
-- (NSString *)keyForCategory:(NSString *)category 
+- (NSDictionary *)rootEntries
 {
-  int index = [rootObjects indexOfObject:category];
+  return rootEntries;
+}
+
+// Category is the name we see in project browser, e.g.
+// Classes. 
+// Key is the uppercase names which are located in PC.roject, e.g.
+// CLASS_FILES
+- (NSString *)keyForCategory:(NSString *)category
+{
+  int index = [rootCategories indexOfObject:category];
 
   return [rootKeys objectAtIndex:index];
+}
+
+- (NSString *)categoryForKey:(NSString *)key
+{
+  return [rootEntries objectForKey:key];
 }
 
 - (BOOL)save
@@ -855,47 +878,55 @@ NSString
 
 @end
 
-@implementation PCProject (ProjectKeyPaths)
+@implementation PCProject (CategoryPaths)
 
-- (NSArray *)contentAtKeyPath:(NSString *)keyPath
+- (NSArray *)contentAtCategoryPath:(NSString *)categoryPath
 {
-    NSString *key;
+  NSString *key = nil;
 
-#ifdef DEBUG
-    NSLog(@"<%@ %x>: content at path %@",[self class],self,keyPath);
-#endif
-
-    if ([keyPath isEqualToString:@""] || [keyPath isEqualToString:@"/"])
+  if ([categoryPath isEqualToString:@""] || [categoryPath isEqualToString:@"/"])
     {
-        return rootKeys;
+      return rootCategories;
     }
 
-    key = [[keyPath componentsSeparatedByString:@"/"] lastObject];
-    return [projectDict objectForKey:[rootCategories objectForKey:key]];
+  key = [self keyForCategoryPath:categoryPath];
+
+  return [projectDict objectForKey:key];;
 }
 
-- (BOOL)hasChildrenAtKeyPath:(NSString *)keyPath
+- (BOOL)hasChildrenAtCategoryPath:(NSString *)categoryPath
 {
-    NSString *key;
+  NSString *listEntry = nil;
 
-    if (!keyPath || [keyPath isEqualToString:@""]) {
-        return NO;
+  if (!categoryPath || [categoryPath isEqualToString:@""]
+      ||[categoryPath isEqualToString:@"/"])
+    {
+      return NO;
     }
 
-    key = [[keyPath componentsSeparatedByString:@"/"] lastObject];
-    if ([[rootCategories allKeys] containsObject:key] || 
-	[[projectDict objectForKey:PCSubprojects] containsObject:key]) {
-        return YES;
+  listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
+
+  if ([rootCategories containsObject:listEntry]
+      || [[projectDict objectForKey:PCSubprojects] containsObject:listEntry])
+    {
+      return YES;
     }
-    
-    return NO;
+
+  return NO;
 }
 
-- (NSString *)projectKeyForKeyPath:(NSString *)kp
+- (NSString *)categoryForCategoryPath:(NSString *)categoryPath
 {
-  NSString *type = [[kp componentsSeparatedByString:@"/"] objectAtIndex:1];
+  return [[categoryPath componentsSeparatedByString:@"/"] objectAtIndex:1];
+}
+
+- (NSString *)keyForCategoryPath:(NSString *)categoryPath
+{
+  NSString *category = nil;
   
-  return [rootCategories objectForKey:type];
+  category = [[categoryPath componentsSeparatedByString:@"/"] objectAtIndex:1];
+  
+  return [self keyForCategory:category];
 }
 
 @end

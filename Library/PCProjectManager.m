@@ -521,12 +521,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)addProjectFiles
 {
-  NSString       *category = nil;
+  NSString       *categoryKey = nil;
   NSArray        *fileTypes = nil;
   NSMutableArray *files = nil;
 
-  category = [activeProject selectedRootCategory];
-  fileTypes = [activeProject fileTypesForCategory:category];
+  categoryKey = [activeProject selectedRootCategoryKey];
+  fileTypes = [activeProject fileTypesForCategoryKey:categoryKey];
 
 /*  [fileTypePopup removeAllItems];
   [fileTypePopup addItemsWithTitles:[activeProject rootKeys]];
@@ -544,7 +544,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     }
 
   // Copy and add files
-  [activeProject addAndCopyFiles:files forKey:category];
+  [activeProject addAndCopyFiles:files forKey:categoryKey];
 
   return YES;
 }
@@ -557,7 +557,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (BOOL)removeProjectFiles
 {
   NSArray  *files = nil;
-  NSString *category = nil;
+  NSString *categoryKey = nil;
   NSString *directory = nil;
 
   if (!activeProject)
@@ -566,8 +566,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     }
 
   files = [[activeProject projectBrowser] selectedFiles];
-  category = [activeProject selectedRootCategory];
-  directory = [activeProject dirForCategory:category];
+  categoryKey = [activeProject selectedRootCategoryKey];
+  directory = [activeProject dirForCategoryKey:categoryKey];
 
   if (files)
     {
@@ -583,7 +583,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	{
 	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
-	  ret = [activeProject removeFiles:files forKey:category];
+	  ret = [activeProject removeFiles:files forKey:categoryKey];
 	  if (flag && ret)
 	    {
 	      ret = [fileManager removeFiles:files fromDirectory:directory];

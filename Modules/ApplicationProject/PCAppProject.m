@@ -42,36 +42,38 @@
 
   if ((self = [super init]))
     {
-      rootObjects = [[NSArray arrayWithObjects: PCClasses,
-						PCHeaders,
-						PCOtherSources,
-						PCInterfaces,
-						PCImages,
-						PCOtherResources,
-						PCSubprojects,
-						PCDocuFiles,
-						PCSupportingFiles,
-						PCLibraries,
-						PCNonProject,
-						nil] retain];
+      rootKeys = [[NSArray arrayWithObjects: 
+	PCClasses,
+        PCHeaders,
+        PCOtherSources,
+        PCInterfaces,
+        PCImages,
+        PCOtherResources,
+        PCSubprojects,
+        PCDocuFiles,
+        PCSupportingFiles,
+        PCLibraries,
+        PCNonProject,
+        nil] retain];
 
-      rootKeys = [[NSArray arrayWithObjects: @"Classes",
-					     @"Headers",
-					     @"Other Sources",
-					     @"Interfaces",
-					     @"Images",
-					     @"Other Resources",
-					     @"Subprojects",
-					     @"Documentation",
-//					     @"Context Help",
-					     @"Supporting Files",
-//					     @"Frameworks",
-					     @"Libraries",
-					     @"Non Project Files",
-					     nil] retain];
-
-      rootCategories = [[NSDictionary 
-	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
+      rootCategories = [[NSArray arrayWithObjects: 
+  	@"Classes",
+      @"Headers",
+      @"Other Sources",
+      @"Interfaces",
+      @"Images",
+      @"Other Resources",
+      @"Subprojects",
+      @"Documentation",
+//      @"Context Help",
+      @"Supporting Files",
+//      @"Frameworks",
+      @"Libraries",
+      @"Non Project Files",
+      nil] retain];
+      
+      rootEntries = [[NSDictionary 
+	dictionaryWithObjects:rootCategories forKeys:rootKeys] retain];
 	
     }
   return self;
@@ -107,8 +109,8 @@
   RELEASE(projectAttributesView);
 
   RELEASE(rootCategories);
-  RELEASE(rootObjects);
   RELEASE(rootKeys);
+  RELEASE(rootEntries);
 
   [super dealloc];
 }
@@ -137,35 +139,35 @@
   return [NSString stringWithString:@"openapp"];
 }
 
-- (NSArray *)fileTypesForCategory:(NSString *)category
+- (NSArray *)fileTypesForCategoryKeyy:(NSString *)key 
 {
 //  NSLog(@"Category: %@", category);
 
-  if ([category isEqualToString:PCClasses])
+  if ([key isEqualToString:PCClasses])
     {
       return [NSArray arrayWithObjects:@"m",nil];
     }
-  else if ([category isEqualToString:PCHeaders])
+  else if ([key isEqualToString:PCHeaders])
     {
       return [NSArray arrayWithObjects:@"h",nil];
     }
-  else if ([category isEqualToString:PCOtherSources])
+  else if ([key isEqualToString:PCOtherSources])
     {
       return [NSArray arrayWithObjects:@"c",@"C",nil];
     }
-  else if ([category isEqualToString:PCInterfaces])
+  else if ([key isEqualToString:PCInterfaces])
     {
       return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
     }
-  else if ([category isEqualToString:PCImages])
+  else if ([key isEqualToString:PCImages])
     {
       return [NSImage imageFileTypes];
     }
-  else if ([category isEqualToString:PCSubprojects])
+  else if ([key isEqualToString:PCSubprojects])
     {
       return [NSArray arrayWithObjects:@"subproj",nil];
     }
-  else if ([category isEqualToString:PCLibraries])
+  else if ([key isEqualToString:PCLibraries])
     {
       return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
     }
@@ -173,13 +175,13 @@
   return nil;
 }
 
-- (NSString *)dirForCategory:(NSString *)category
+- (NSString *)dirForCategoryKey:(NSString *)key
 {
-  if ([category isEqualToString:PCImages])
+  if ([key isEqualToString:PCImages])
     {
       return [projectPath stringByAppendingPathComponent:@"Images"];
     }
-  else if ([category isEqualToString:PCDocuFiles])
+  else if ([key isEqualToString:PCDocuFiles])
     {
       return [projectPath stringByAppendingPathComponent:@"Documentation"];
     }
@@ -285,7 +287,7 @@
 {
   NSString *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
   NSString *appIcon = [projectDict objectForKey:PCAppIcon];
-  NSString *key = [self selectedRootCategory];
+  NSString *key = [self selectedRootCategoryKey];
   NSString *ff = [fromFile copy];
   NSString *tf = [toFile copy];
   BOOL     success = NO;
@@ -298,7 +300,7 @@
       if ([super renameFile:ff toFile:tf] == YES)
 	{
 	  [self setMainNibWithFileAtPath:
-	    [[self dirForCategory:key] stringByAppendingPathComponent:tf]];
+	    [[self dirForCategoryKey:key] stringByAppendingPathComponent:tf]];
 	  success = YES;
 	}
     }
@@ -310,10 +312,14 @@
       if ([super renameFile:ff toFile:tf] == YES)
 	{
 	  [self setAppIconWithImageAtPath:
-	    [[self dirForCategory:key] stringByAppendingPathComponent:tf]];
+	    [[self dirForCategoryKey:key] stringByAppendingPathComponent:tf]];
 	  success = YES;
 	}
     }
+    
+  [projectBrowser setPathForFile:toFile 
+                        category:[self categoryForKey:key]];
+  
   [ff release];
   [tf release];
 

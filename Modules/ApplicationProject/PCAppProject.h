@@ -37,37 +37,38 @@
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectInspector.h>
 
-@class PCITextField;
+@interface PCAppTextField : NSTextField
+{
+}
+
+@end
 
 @interface PCAppProject : PCProject
 {
-  NSBox          *projectAttributesView;
-  NSTextField    *projectTypeField;
-  NSTextField    *projectNameField;
-  NSTextField    *projectLanguageField;
-  NSTextField    *appClassField;
+  IBOutlet NSBox          *projectAttributesView;
+  IBOutlet NSTextField    *projectTypeField;
+  IBOutlet NSTextField    *projectNameField;
+  IBOutlet NSTextField    *projectLanguageField;
+  IBOutlet NSTextField    *appClassField;
 
-  PCITextField   *activeTextField;
-  PCITextField   *appImageField;
-  PCITextField   *helpFileField;
-  PCITextField   *mainNIBField;
+  PCAppTextField          *activeTextField;
+  IBOutlet PCAppTextField *appImageField;
+  IBOutlet PCAppTextField *helpFileField;
+  IBOutlet PCAppTextField *mainNIBField;
 
-  NSImageView    *iconView;
-  NSImage        *icon;
-  NSButton       *setAppIconButton;
-  NSButton       *clearAppIconButton;
+  IBOutlet NSImageView    *iconView;
+  NSImage                 *icon;
+  IBOutlet NSButton       *setFieldButton;
+  IBOutlet NSButton       *clearFieldButton;
 
-  NSTableView    *docIconsList;
-  NSTableColumn  *docExtColumn;
-  NSTableColumn  *docIconColumn;
-  NSMutableArray *docIconsItems;
-  NSScrollView   *docIconsScroll;
+  NSTableView             *docIconsList;
+  NSTableColumn           *docExtColumn;
+  NSTableColumn           *docIconColumn;
+  NSMutableArray          *docIconsItems;
+  IBOutlet NSScrollView   *docIconsScroll;
 
-  NSBrowser      *docIconsBrowser;
-  NSPopUpButton  *iconNamePopup;
-  NSPopUpButton  *extensionPopup;
-  NSButton       *addDocIcon;
-  NSButton       *removeDocIcon;
+  IBOutlet NSButton       *addDocIcon;
+  IBOutlet NSButton       *removeDocIcon;
                
   NSMutableDictionary *infoDict;
 }

@@ -50,6 +50,8 @@
       [self setBackgroundColor:[NSColor whiteColor]];
       [self setEditable:YES];
       [self selectText:nil];
+      [self setNeedsDisplay:YES];
+      [[self superview] setNeedsDisplay:YES];
     }
   else
     {
@@ -57,9 +59,10 @@
       frame.origin.x += 4;
       [self setFrame:frame];
 
-      [self setBordered:NO];
       [self setBackgroundColor:[NSColor lightGrayColor]];
+      [self setBordered:NO];
       [self setEditable:NO];
+      [self setNeedsDisplay:YES];
       [[self superview] setNeedsDisplay:YES];
     }
 }
@@ -67,7 +70,7 @@
 - (void)mouseDown:(NSEvent *)theEvent
 {
   [self setEditableField:YES];
-  [super mouseDown:theEvent];
+//  [super mouseDown:theEvent];
 }
 
 - (BOOL)textShouldSetEditable
@@ -670,6 +673,11 @@
        selector:@selector(browserDidSetPath:)
            name:PCBrowserDidSetPathNotification
          object:[project projectBrowser]];*/
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:self
+       selector:@selector(panelDidResignKey:)
+           name: NSWindowDidResignKeyNotification
+         object:inspectorPanel];
 }
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
@@ -704,16 +712,25 @@
 
 - (void)fileNameDidChange:(id)sender
 {
-  NSLog(@"PCProjectInspector: file name changed from: %@ to: %@",
-	fileName, [fileNameField stringValue]);
-
   if ([fileName isEqualToString:[fileNameField stringValue]])
     {
       return;
     }
 
+  NSLog(@"PCProjectInspector: file name changed from: %@ to: %@",
+	fileName, [fileNameField stringValue]);
+
   if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
     {
+      [fileNameField setStringValue:fileName];
+    }
+}
+
+- (void)panelDidResignKey:(NSNotification *)aNotif
+{
+  if ([fileNameField isEditable] == YES)
+    {
+      [inspectorPanel makeFirstResponder:fileIconView];
       [fileNameField setStringValue:fileName];
     }
 }

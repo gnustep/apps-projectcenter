@@ -217,8 +217,7 @@
 
   [self _createAddFilesPanel];
 
-  [fileTypePopup selectItemWithTitle:
-    [project keyForCategory:[project selectedRootCategory]]];
+  [fileTypePopup selectItemWithTitle:[project selectedRootCategory]];
 
   [self filesForAddPopupClicked:self];
 
@@ -259,7 +258,7 @@
   NSFileManager *fileManager = [NSFileManager defaultManager];
   BOOL          isDir;
   NSString      *fileType = nil;
-  NSString      *category = nil;
+  NSString      *categoryKey = nil;
 
 //  NSLog(@"Panel should show %@", filename);
   if ([fileManager fileExistsAtPath:filename isDirectory:&isDir] && isDir)
@@ -279,13 +278,13 @@
       return YES;
     }
   
-  category = [project projectKeyForKeyPath:
+  categoryKey = [project keyForCategoryPath:
     [NSString stringWithFormat:@"/%@",fileType]];
   
-  fileTypes = [project fileTypesForCategory:category];
+  fileTypes = [project fileTypesForCategoryKey:categoryKey];
   if (fileTypes == nil);
     {
-      NSLog(@"Project file types is nil! Category: %@", category);
+      NSLog(@"Project file types is nil! Category: %@", categoryKey);
       return YES;
     }
 
