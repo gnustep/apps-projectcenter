@@ -155,6 +155,8 @@ void createMenu()
   [tools addItemWithTitle:@"Editor Panel" action:@selector(showEditorPanel:) keyEquivalent:@"E"];
   [tools addItemWithTitle:@"Inspector Panel" action:@selector(showInspector:) keyEquivalent:@""];
   [tools addItemWithTitle:@"Find" action:action keyEquivalent:@""];
+  [tools addItemWithTitle:@"Fonts" action:NULL keyEquivalent:@""];
+  [tools setSubmenu:[[NSFontManager sharedFontManager] fontMenu: YES] forItem:[tools itemWithTitle:@"Fonts"]];
   [tools addItemWithTitle:@"Run..." action:@selector(runTarget:) keyEquivalent:@"r"];
 
   /*
