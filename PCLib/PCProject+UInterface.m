@@ -74,7 +74,6 @@
                                                   defer: YES];
   [projectWindow setDelegate: self];
   [projectWindow setMinSize: NSMakeSize (560,448)];
-  [projectWindow setFrameAutosaveName: @"ProjectWindow"];
   _c_view = [projectWindow contentView];
 
   /*
@@ -255,6 +254,7 @@
   RELEASE(browser);
   RELEASE(split);
 
+  [projectWindow setFrameAutosaveName: @"ProjectWindow"];
   if (![projectWindow setFrameUsingName: @"ProjectWindow"])
     {
       [projectWindow center];
