@@ -83,7 +83,11 @@
   [logOutput setEditable:NO];
   [logOutput setSelectable:YES];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [logOutput setBackgroundColor:[NSColor lightGrayColor]];
+  //[logOutput setBackgroundColor:[NSColor lightGrayColor]];
+  [logOutput setBackgroundColor:[NSColor colorWithDeviceRed:0.93
+                                                      green:0.77 
+						       blue:0.46 
+						      alpha:1.0]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
   [[logOutput textContainer] setHeightTracksTextView:YES];
   [logOutput setHorizontallyResizable: NO];

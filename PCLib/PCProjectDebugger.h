@@ -32,6 +32,7 @@
 @interface PCProjectDebugger : NSObject <ProjectComponent>
 {
   NSBox *componentView;
+  NSPopUpButton *popup;
 
   NSButton *runButton;
 
@@ -44,12 +45,16 @@
   NSFileHandle *readHandle;
   NSFileHandle *errorReadHandle;
   NSTask *task;
+
+  int debugTarget;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
 - (NSView *)componentView;
+
+- (void)popupChanged:(id)sender;
 
 - (void)debug:(id)sender;
 - (void)run:(id)sender;

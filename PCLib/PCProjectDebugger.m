@@ -38,6 +38,11 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
+enum {
+    DEBUG_DEFAULT_TARGET = 1,
+    DEBUG_DEBUG_TARGET   = 2
+};
+
 @interface PCProjectDebugger (CreateUI)
 
 - (void)_createComponentView;
@@ -56,6 +61,7 @@
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id button;
   id textField;
+  NSBox *box;
 
   componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];
   [componentView setTitlePosition:NSNoTitle];
@@ -67,7 +73,7 @@
    *
    */
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,40)];
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,46)];
 
   [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
@@ -110,7 +116,7 @@
 
   [scrollView2 setDocumentView:stdError];
 
-  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,136)];  
+  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,152)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
@@ -124,7 +130,7 @@
   /*
    */
 
-  _w_frame = NSMakeRect(-1,144,120,60);
+  _w_frame = NSMakeRect(-1,160,120,60);
   matrix = [[NSMatrix alloc] initWithFrame: _w_frame
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
@@ -156,6 +162,21 @@
   [button setTitle:@"Debug"];
   [button setAction:@selector(debug:)];
 
+  box = [[NSBox alloc] initWithFrame:NSMakeRect(128,160,204,60)];
+  [box setTitle:@"Launch Target"];
+  [box setBorderType:NSBezelBorder];
+  [box setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [componentView addSubview:box];
+  RELEASE(box);
+
+  popup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(8,6,172,21)];
+  [popup addItemWithTitle:@"Default"];
+  [popup addItemWithTitle:@"Debug"];
+  [popup setTarget:self];
+  [popup setAction:@selector(popupChanged:)];
+  [box addSubview:popup];
+  RELEASE(popup);
+
   [componentView sizeToFit];
   [split adjustSubviews];
 }
@@ -168,8 +189,11 @@
 {
   NSAssert(aProject,@"No project specified!");
 
-  if ((self = [super init])) {
+  if ((self = [super init])) 
+  {
     currentProject = aProject;
+    debugTarget = DEBUG_DEFAULT_TARGET;
+
   }
   return self;
 }
@@ -194,6 +218,21 @@
   }
 
   return componentView;
+}
+
+- (void)popupChanged:(id)sender
+{
+  switch ([sender indexOfSelectedItem])
+  {
+      case 0:
+          debugTarget = DEBUG_DEFAULT_TARGET;
+          break;
+      case 1:
+          debugTarget = DEBUG_DEBUG_TARGET;
+          break;
+      default:
+          break;
+  }
 }
 
 - (void)debug:(id)sender
@@ -227,19 +266,37 @@
    */
 
   if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")] ||
-      [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) {
-    NSString *tname;
+      [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) 
+  {
+    NSString *tn;
+    NSString *pn = [currentProject projectName];
 
     openPath = [NSString stringWithString:@"openapp"];
-    tname = [[currentProject projectName] stringByAppendingPathExtension:@"app"];
-    [args addObject:tname];
+
+    switch( debugTarget )
+    {
+        case DEBUG_DEFAULT_TARGET:
+	    tn = [pn stringByAppendingPathExtension:@"app"];
+            break;
+        case DEBUG_DEBUG_TARGET:
+	    tn = [pn stringByAppendingPathExtension:@"debug"];
+            break;
+        default:
+	    [NSException raise:@"PCInternalDevException" 
+                        format:@"Unknown build target!"];
+            break;
+    }
+    [args addObject:tn];
   }
-  else if ([currentProject isKindOfClass:NSClassFromString(@"PCToolProject")]) {
+  else if ([currentProject isKindOfClass:NSClassFromString(@"PCToolProject")]) 
+  {
     openPath = [NSString stringWithString:@"opentool"];
     [args addObject:[currentProject projectName]];
   }
-  else {
-    [NSException raise:@"PCInternalDevException" format:@"Unknown executable project type!"];
+  else 
+  {
+    [NSException raise:@"PCInternalDevException" 
+                format:@"Unknown executable project type!"];
     return;
   }
 
