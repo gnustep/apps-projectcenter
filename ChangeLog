@@ -1,4 +1,24 @@
-2003-05-01 Serg Stoyan <stoyan@hologr.com>
+2003-05-02 Serg Stoyan <stoyan@on.com.ua>
+
+	* PCLib/PCProjectBuilder.h:
+	* PCLib/PCProjectBuilder.m:
+	Rename buildPanelCreate: to createBuildPanel. Add buildPanel method.
+	(_createBuildPanel): Add setHidesOnDeactivate: NO.
+	
+	* PCLib/PCProjectDebugger.h:
+	* PCLib/PCProjectDebugger.m:
+	Rename launchPanelCreate: to createLaunchPanel. Add launchPanel method.
+	(_createLaunchPanel): Add setHidesOnDeactivate:NO and 
+	setReleasedWhenClosed:NO.
+	
+	* PCLib/PCProject+ComponentHandling.m:
+	(showBuildView): Fix methods calling according to the above changes.  
+	(showRunView): Ditto.
+	
+	* PCLib/PCProject.m:
+	(windowWillClose:): Close build and debugger panels if any.
+	
+2003-05-01 Serg Stoyan <stoyan@on.com.ua>
 
 	* PCLib/PCProjectBuilder.h:
 	* PCLib/PCProjectBuilder.m:
