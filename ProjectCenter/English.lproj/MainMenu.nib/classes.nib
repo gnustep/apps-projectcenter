@@ -1,0 +1,41 @@
+{
+    IBClasses = (
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {
+                addFile = id; 
+                addSubproject = id; 
+                closeProject = id; 
+                findNext = id; 
+                findPrevious = id; 
+                newFile = id; 
+                newProject = id; 
+                newSubproject = id; 
+                openFile = id; 
+                openProject = id; 
+                removeFile = id; 
+                removeSubproject = id; 
+                renameFile = id; 
+                revertFile = id; 
+                revertToSaved = id; 
+                runTarget = id; 
+                saveFile = id; 
+                saveFiles = id; 
+                saveProject = id; 
+                saveProjectAs = id; 
+                showBuildPanel = id; 
+                showEditorPanel = id; 
+                showFindPanel = id; 
+                showInfoPanel = id; 
+                showInspector = id; 
+                showPrefWindow = id; 
+                showRunPanel = id; 
+            }; 
+            CLASS = PCAppController; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {delegate = id; }; 
+            SUPERCLASS = NSObject; 
+        }
+    ); 
+    IBVersion = 1; 
+}
