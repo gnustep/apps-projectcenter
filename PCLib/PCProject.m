@@ -453,7 +453,9 @@
 
 - (NSString *)selectedRootCategory
 {
-  return [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
+  NSString *_path = [browserController pathOfSelectedFile];
+
+  return [self projectKeyForKeyPath:_path];
 }
 
 - (NSArray *)fileExtensionsForCategory:(NSString *)key

@@ -84,7 +84,8 @@ static PCBundleMakefileFactory *_factory = nil;
     if ((tmp = [prDict objectForKey:PCPrincipalClass]) && 
 	[tmp isEqualToString:@""] == NO) {
     }
-    else if ((tmp = [[prDict objectForKey:PCClasses] objectAtIndex:0])) {
+    else if (([[prDict objectForKey:PCClasses] count])) {
+      tmp = [[[prDict objectForKey:PCClasses] objectAtIndex:0] stringByDeletingPathExtension];
     }
     else {
       tmp = [NSString string];

@@ -212,7 +212,9 @@ static PCFileManager *_mgr = nil;
   NSString *title = nil;
   NSArray *types = nil;
 
-  if (delegate && [delegate respondsToSelector:@selector(fileManagerWillAddFiles:)]) {
+  if (delegate && 
+      [delegate respondsToSelector:@selector(fileManagerWillAddFiles:)]) {
+
     if (!(project = [delegate fileManagerWillAddFiles:self])) {
       NSLog(@"No project to add files available...");
       return;
@@ -220,8 +222,13 @@ static PCFileManager *_mgr = nil;
   }
 
   key = [project selectedRootCategory];
+
+  NSLog(@"Key: %@",key);
+
   title = [[[project rootCategories] allKeysForObject:key] objectAtIndex:0];
   title = [NSString stringWithFormat:@"Add to %@...",title];
+
+  NSLog(@"Title is %@ (Key %@)",title,key);
 
   types = [project fileExtensionsForCategory:key];
 
