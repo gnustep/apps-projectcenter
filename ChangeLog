@@ -10,6 +10,10 @@
 
 	* ProjectCenter/Images/Stop.tiff: Added.
 	* ProjectCenter/GNUmakefile: Added Stop.tiff to resources.
+
+	* ProjectCenter/PCPrefController.m:
+	(showPrefWindow:): Set successField and failureField values from
+	defaults.
 	
 2003-04-28  Adam Fedor  <fedor@gnu.org>
 
