@@ -113,7 +113,7 @@
 
   if (separate)
     {
-      NSPanel *panel = [projectDebugger createLaunchPanel];;
+      NSPanel *panel = [projectDebugger createLaunchPanel];
       NSRect  frame = [NSPanel contentRectForFrameRect: [panel frame]
                                              styleMask: [panel styleMask]];
 
