@@ -44,8 +44,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (void)_initUI
 {
   NSView *_c_view;
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
-                       NSResizableWindowMask;
+  unsigned int style = NSTitledWindowMask | NSClosableWindowMask;
   NSRect _w_frame;
   NSBox *line;
 
@@ -65,7 +64,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   [inspector setFrameAutosaveName:@"Inspector"];
   _c_view = [inspector contentView];
 
-  inspectorPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(80,352,128,20)];
+  _w_frame = NSMakeRect(80,352,128,20);
+  inspectorPopup = [[NSPopUpButton alloc] initWithFrame:_w_frame];
   [inspectorPopup addItemWithTitle:@"None"];
   [inspectorPopup setTarget:self];
   [inspectorPopup setAction:@selector(inspectorPopupDidChange:)];

@@ -46,6 +46,8 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
     NSString *ctitle = [[sender selectedCellInColumn:0] stringValue];
     NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
 
+    [project browserDidSelectFileNamed:ltitle];
+
     if ([ctitle isEqualToString:@"Classes"]) {
       NSString *f = [NSString stringWithContentsOfFile:ctitlef];
 

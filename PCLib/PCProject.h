@@ -97,8 +97,17 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id methodPopup;
 
     id projectAttributeInspectorView;
+    NSTextField *installPathField;
+    NSTextField *toolField;
+    NSTextField *ccOptField;
+    NSTextField *ldOptField;
+
     id projectProjectInspectorView;
+    NSTextField *projectTypeField;
+
     id projectFileInspectorView;
+    NSTextField *fileNameField;
+    NSButton *changeFileNameButton;
     
     id buildTargetPanel;
     id buildTargetHostField;
@@ -108,7 +117,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     NSString *projectPath;
     NSMutableDictionary *projectDict;
 
-    NSDictionary *rootCategories;	// Needs to be initialised by subclasses!
+    NSDictionary *rootCategories; // Needs to be initialised by subclasses!
     NSMutableDictionary *buildOptions;
 }
 
@@ -169,6 +178,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 // ==== Miscellaneous
 //===========================================================================================
 
+- (void)browserDidSelectFileNamed:(NSString *)fileName;
+
 - (void)editSelectedFile:(NSString *)file;
 - (void)structureEditedFile:(id)sender;
 
@@ -178,6 +189,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)addFile:(NSString *)file forKey:(NSString *)key;
 - (void)removeFile:(NSString *)file forKey:(NSString *)key;
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn;
+- (void)renameFile:(NSString *)aFile;
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict;
 - (NSDictionary *)projectDict;

@@ -355,8 +355,10 @@ static PCProjectBuilder *_builder;
    * This is just a quick hack for now...
    */
 
-  /*
+
   [logOutput setString:@""];
+
+  /*
   [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
   [errorOutput setString:@""];
   [errorOutput scrollRangeToVisible:NSMakeRange([[errorOutput textStorage] length], 0)];

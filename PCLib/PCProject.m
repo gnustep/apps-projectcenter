@@ -236,6 +236,147 @@
   [buildTargetArgsField setAction:@selector(setArguments:)];
   [_c_view addSubview:[buildTargetArgsField autorelease]];
 
+  /*
+   * Model the standard inspector UI
+   *
+   */
+
+  projectAttributeInspectorView = [[NSBox alloc] init];
+  [projectAttributeInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [projectAttributeInspectorView setTitlePosition:NSNoTitle];
+  [projectAttributeInspectorView setBorderType:NSNoBorder];
+  [projectAttributeInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Install in:"];
+  [projectAttributeInspectorView addSubview:[textField autorelease]];
+
+  installPathField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  [installPathField setAlignment: NSLeftTextAlignment];
+  [installPathField setBordered: YES];
+  [installPathField setEditable: YES];
+  [installPathField setBezeled: YES];
+  [installPathField setDrawsBackground: YES];
+  [installPathField setStringValue:@""];
+  [projectAttributeInspectorView addSubview:installPathField];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Build tool:"];
+  [projectAttributeInspectorView addSubview:[textField autorelease]];
+
+  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
+  [toolField setAlignment: NSLeftTextAlignment];
+  [toolField setBordered: YES];
+  [toolField setEditable: YES];
+  [toolField setBezeled: YES];
+  [toolField setDrawsBackground: YES];
+  [toolField setStringValue:@""];
+  [projectAttributeInspectorView addSubview:toolField];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,232,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"CC options:"];
+  [projectAttributeInspectorView addSubview:[textField autorelease]];
+
+  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,232,176,21)];
+  [ccOptField setAlignment: NSLeftTextAlignment];
+  [ccOptField setBordered: YES];
+  [ccOptField setEditable: YES];
+  [ccOptField setBezeled: YES];
+  [ccOptField setDrawsBackground: YES];
+  [ccOptField setStringValue:@""];
+  [projectAttributeInspectorView addSubview:ccOptField];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"LD options:"];
+  [projectAttributeInspectorView addSubview:[textField autorelease]];
+
+  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
+  [ldOptField setAlignment: NSLeftTextAlignment];
+  [ldOptField setBordered: YES];
+  [ldOptField setEditable: YES];
+  [ldOptField setBezeled: YES];
+  [ldOptField setDrawsBackground: YES];
+  [ldOptField setStringValue:@""];
+  [projectAttributeInspectorView addSubview:ldOptField];
+
+  projectProjectInspectorView = [[NSBox alloc] init];
+  [projectProjectInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [projectProjectInspectorView setTitlePosition:NSNoTitle];
+  [projectProjectInspectorView setBorderType:NSNoBorder];
+  [projectProjectInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Project Type:"];
+  [projectProjectInspectorView addSubview:[textField autorelease]];
+
+  projectTypeField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  [projectTypeField setAlignment: NSLeftTextAlignment];
+  [projectTypeField setBordered: NO];
+  [projectTypeField setEditable: NO];
+  [projectTypeField setBezeled: NO];
+  [projectTypeField setDrawsBackground: NO];
+  [projectTypeField setStringValue:@""];
+  [projectProjectInspectorView addSubview:projectTypeField];
+
+  projectFileInspectorView = [[NSBox alloc] init];
+  [projectFileInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [projectFileInspectorView setTitlePosition:NSNoTitle];
+  [projectFileInspectorView setBorderType:NSNoBorder];
+  [projectFileInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Filename:"];
+  [projectFileInspectorView addSubview:[textField autorelease]];
+
+  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  [fileNameField setAlignment: NSLeftTextAlignment];
+  [fileNameField setBordered: NO];
+  [fileNameField setEditable: NO];
+  [fileNameField setBezeled: NO];
+  [fileNameField setDrawsBackground: NO];
+  [fileNameField setStringValue:@""];
+  [projectFileInspectorView addSubview:fileNameField];
+
+  changeFileNameButton = [[NSButton alloc] initWithFrame:NSMakeRect(84,240,104,21)];
+  [changeFileNameButton setTitle:@"Rename..."];
+  [changeFileNameButton setTarget:self];
+  [changeFileNameButton setAction:@selector(renameFile:)];
+  [projectFileInspectorView addSubview:changeFileNameButton];
+
+  /*
+   *
+   */
+
   // Redisplay!
   [browser loadColumnZero];
 }
@@ -280,20 +421,32 @@
 
 - (void)dealloc
 {
-    [projectName release];
-    [projectPath release];
-    [projectDict release];
+  [projectName release];
+  [projectPath release];
+  [projectDict release];
+  
+  [filePopup release];
+  [methodPopup release];
+  
+  [browserController release];
+  [projectWindow release];
+  [buildTargetPanel release];
+  
+  [buildOptions release];
+ 
+  [projectAttributeInspectorView release];
+  [installPathField release];
+  [toolField release];
+  [ccOptField release];
+  [ldOptField release];
+  [projectTypeField release];
 
-    [filePopup release];
-    [methodPopup release];
-
-    [browserController release];
-    [projectWindow release];
-    [buildTargetPanel release];
-
-    [buildOptions release];
-
-    [super dealloc];
+  [projectProjectInspectorView release];
+  [projectFileInspectorView release];
+  [fileNameField release];
+  [changeFileNameButton release];
+ 
+  [super dealloc];
 }
 
 //===========================================================================================
@@ -366,23 +519,23 @@
 
 - (id)delegate
 {
-    return delegate;
+  return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  delegate = aDelegate;
 }
 
 - (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder
 {
-    [projectManager autorelease];
-    projectManager = [aBuilder retain];
+  [projectManager autorelease];
+  projectManager = [aBuilder retain];
 }
 
 - (id<ProjectBuilder>)projectBuilder
 {
-    return projectManager;
+  return projectManager;
 }
 
 //===========================================================================================
@@ -432,6 +585,11 @@
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
+
+- (void)browserDidSelectFileNamed:(NSString *)fileName
+{
+  [fileNameField setStringValue:fileName];
+}
 
 - (void)editSelectedFile:(NSString *)file
 {
@@ -570,6 +728,10 @@
     }
 
     return YES;
+}
+
+- (void)renameFile:(NSString *)aFile
+{
 }
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict
