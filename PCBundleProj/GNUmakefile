@@ -1,11 +1,10 @@
-#   GNUmakefile 
+#   GNUmakefile
 #
-#   Copyright (C) 2000 Philippe C.D. Robert
+#   Copyright (C) 2001 Free Software Foundation, Inc.
 #
-#   Author:  Philippe C.D. Robert <phr@projectcenter.ch>
-#   Date: 2000
-#   
-#   This file is part of ProjectCenter
+#   Author: Philippe C.D. Robert <prh@3dkit.org>
+#
+#   This file is part of GNUstep 
 #   
 #   This program is free software; you can redistribute it and/or modify
 #   it under the terms of the GNU General Public License as published by

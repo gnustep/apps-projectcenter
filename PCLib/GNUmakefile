@@ -1,11 +1,11 @@
 #
-#  src makefile for the PCLib
+#  GNUmakefile
 #
-#  Copyright (C) 2000 Philippe C.D. Robert
+#  Copyright (C) 2001 Free Software Foundation, Inc.
 #
-#  Written by: Philippe C.D. Robert <robert@iam.unibe.ch>
+#  Author: Philippe C.D. Robert <prh@3dkit.org>
 #
-#  This file is part of the ProjectCenter.
+#  This file is part of GNUstep 
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Library General Public

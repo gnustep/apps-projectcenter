@@ -1,25 +1,25 @@
+# GNUmakefile: main makefile for GNUstep ProjectCenter
 #
-#  Main Makefile for ProjectCenter
-#  
-#  Copyright (C) 2000 Philippe C.D. Robert
+# Copyright (C) 2001 Free Software Foundation, Inc.
 #
-#  Written by:	Philippe C.D. Robert <phr@projectcenter.ch>
+# Author:      Philippe C.D. Robert <phr@3dkit.org>
+# Date:        2000
 #
-#  This file is part of the ProjectCenter
+# This file is part of GNUstep.
 #
-#  This library is free software; you can redistribute it and/or
-#  modify it under the terms of the GNU Library General Public
-#  License as published by the Free Software Foundation; either
-#  version 2 of the License, or (at your option) any later version.
+# This program is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License, or
+# (at your option) any later version.
 #
-#  This library is distributed in the hope that it will be useful,
-#  but WITHOUT ANY WARRANTY; without even the implied warranty of
-#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.	 See the GNU
-#  Library General Public License for more details.
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
 #
-#  You should have received a copy of the GNU Library General Public
-#  License along with this library; if not, write to the Free
-#  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
 #
 
 # Install into the system root by default

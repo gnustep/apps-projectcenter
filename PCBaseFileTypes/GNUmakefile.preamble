@@ -1,11 +1,10 @@
+#  GNUmakefile.preamble
 #
-#  Makefile.preamble
+#  Copyright (C) 2001 Free Software Foundation, Inc.
 #
-#  Copyright (C) 1997 Free Software Foundation, Inc.
+#  Author: Philippe C.D. Robert <prh@3dkit.org>
 #
-#  Original Author: Scott Christley <scottc@net-community.com>
-#
-#  This file is part of the GNUstep ProjectCenter.
+#  This file is part of GNUstep 
 #
 #  This library is free software; you can redistribute it and/or
 #  modify it under the terms of the GNU Library General Public
