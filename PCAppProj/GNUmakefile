@@ -48,7 +48,6 @@ PC.proj
 #
 
 PCAppProj_HEADERS= \
-PCAppMakefileFactory.h \
 PCAppProj.h \
 PCAppProject.h 
 
@@ -58,7 +57,6 @@ PCAppProject.h
 #
 
 PCAppProj_OBJC_FILES= \
-PCAppMakefileFactory.m \
 PCAppProj.m \
 PCAppProject.m 
 

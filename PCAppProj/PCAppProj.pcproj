@@ -4,7 +4,6 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCAppMakefileFactory.m,
 	PCAppProj.m,
 	PCAppProject.m
     );
@@ -16,7 +15,6 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCAppMakefileFactory.h,
 	PCAppProj.h,
 	PCAppProject.h
     );
