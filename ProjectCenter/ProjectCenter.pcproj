@@ -55,7 +55,7 @@
 	ProjectCentre_uml.tiff,
 	ProjectCenter_dist.tiff
     );
-    INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
+    INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)";
     INTERFACES = (
     );
     LANGUAGE = English;

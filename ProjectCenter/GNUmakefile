@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Main application
@@ -20,17 +23,16 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME=ProjectCenter
 APP_NAME=ProjectCenter
-GNUSTEP_INSTALLATION_DIR=$(GNUSTEP_SYSTEM_ROOT)
 ProjectCenter_APPLICATION_ICON=ProjectCenter.app.tiff
-#
 
+
+#
 # Additional libraries
 #
 
 ADDITIONAL_GUI_LIBS += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -62,7 +64,6 @@ ProjectCentre_uml.tiff \
 ProjectCenter_dist.tiff 
 
 #
-
 # Header files
 #
 
@@ -76,7 +77,6 @@ PCPrefController.h \
 PCAppController+MenuHandling.h 
 
 #
-
 # Class files
 #
 
@@ -91,7 +91,6 @@ ProjectCenter_main.m \
 PCAppController+MenuHandling.m 
 
 #
-
 # C files
 #
 
