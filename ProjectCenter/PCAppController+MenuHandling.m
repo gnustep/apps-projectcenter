@@ -29,9 +29,9 @@
 #import "PCPrefController.h"
 #import "PCInfoController.h"
 
-#import "PCProject+ComponentHandling.h"
-#import "PCProjectManager.h"
-#import "PCTextFinder.h"
+#import <ProjectCenter/PCProject+ComponentHandling.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCTextFinder.h>
 
 @implementation PCAppController (MenuHandling)
 

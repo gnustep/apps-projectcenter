@@ -66,7 +66,7 @@
   [infoWindow center];
   [infoWindow makeKeyAndOrderFront:self];
 #else
-  NSRunAlertPanel(@"Info",@"OPENSTEP has no support for GSInfoPanel",@"OK".nil.nil.nil);
+  NSRunAlertPanel(@"Info",@"OPENSTEP has no support for GSInfoPanel",@"OK",nil,nil,nil);
 #endif
 }
 

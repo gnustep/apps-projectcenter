@@ -25,12 +25,15 @@
 */
 
 #import <AppKit/AppKit.h>
+
+#import <ProjectCenter/PCDefines.h>
 #import"PCAppController.h"
 
 void createMenu();
 
 int main(int argc, const char **argv) 
 {
+#ifdef GNUSTEP_BASE_VERSION
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   PCAppController   *controller;
 
@@ -42,6 +45,7 @@ int main(int argc, const char **argv)
   [NSApp setDelegate:controller];
 
   RELEASE(pool);
+#endif
 
   return NSApplicationMain (argc, argv);
 }
@@ -54,7 +58,6 @@ void createMenu()
   NSMenu *project;
   NSMenu *file;
   NSMenu *edit;
-  NSMenu *fontmenu;
   NSMenu *tools;
   NSMenu *find;
   NSMenu *services;

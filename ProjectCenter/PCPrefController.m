@@ -48,7 +48,6 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   NSRect _w_frame;
   NSBox *line;
   NSBox *v;
-  NSButton *b;
   NSTextField *textField;
   NSButtonCell *cell;
 
