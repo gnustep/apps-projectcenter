@@ -281,6 +281,45 @@
   return [super removeFiles:filesToRemove forKey:key];
 }
 
+- (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile
+{
+  NSString *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
+  NSString *appIcon = [projectDict objectForKey:PCAppIcon];
+  NSString *key = [self selectedRootCategory];
+  NSString *ff = [fromFile copy];
+  NSString *tf = [toFile copy];
+  BOOL     success = NO;
+
+  // Check for main NIB file
+  if ([key isEqualToString:PCInterfaces] 
+      && [fromFile isEqualToString:mainNibFile])
+    {
+      [self clearMainNib:self];
+      if ([super renameFile:ff toFile:tf] == YES)
+	{
+	  [self setMainNibWithFileAtPath:
+	    [[self dirForCategory:key] stringByAppendingPathComponent:tf]];
+	  success = YES;
+	}
+    }
+  // Check for application icon files
+  else if ([key isEqualToString:PCImages] 
+	   && [fromFile isEqualToString:appIcon])
+    {
+      [self clearAppIcon:self];
+      if ([super renameFile:ff toFile:tf] == YES)
+	{
+	  [self setAppIconWithImageAtPath:
+	    [[self dirForCategory:key] stringByAppendingPathComponent:tf]];
+	  success = YES;
+	}
+    }
+  [ff release];
+  [tf release];
+
+  return success;
+}
+
 @end
 
 @implementation PCAppProject (GeneratedFiles)

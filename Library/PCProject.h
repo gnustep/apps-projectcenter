@@ -152,8 +152,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key;
 - (void)addFiles:(NSArray *)files forKey:(NSString *)key;
 - (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
-
-- (void)renameFile:(NSString *)aFile;
+- (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile;
 
 // ============================================================================
 // ==== Project handling

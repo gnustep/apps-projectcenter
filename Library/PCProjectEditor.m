@@ -437,7 +437,6 @@ NSString *PCEditorDidResignActiveNotification =
 {
   PCEditor *editor = [aNotif object];
 
-  NSLog(@"PCPE: editorDidClose");
   // It is not our editor
   if ([editorsDict objectForKey:[editor path]] != editor)
     {

@@ -178,9 +178,12 @@
       return;
     }
 
-  file = [[editor path] lastPathComponent];
-  index = [editedFiles indexOfObject:file];
-  [filesList selectRow:index byExtendingSelection:NO];
+  if ([editedFiles count] > 0)
+    {
+      file = [[editor path] lastPathComponent];
+      index = [editedFiles indexOfObject:file];
+      [filesList selectRow:index byExtendingSelection:NO];
+    }
 }
 
 @end

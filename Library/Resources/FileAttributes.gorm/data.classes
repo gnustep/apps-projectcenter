@@ -136,7 +136,8 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "fileNameDidChange:"
 	);
 	Super = NSObject;
     };
@@ -149,6 +150,7 @@
     };
     PCProjectInspector = {
 	Actions = (
+	    "fileNameDidChange:"
 	);
 	Outlets = (
 	    fileIconView,

@@ -32,6 +32,9 @@
 {
 }
 
+- (void)setEditableField:(BOOL)yn;
+- (BOOL)textShouldSetEditable;
+
 @end
 
 @interface PCProjectInspector : NSObject
@@ -90,6 +93,7 @@
   IBOutlet NSBox           *fileAttributesView;
   IBOutlet NSImageView     *fileIconView;
   IBOutlet PCFileNameField *fileNameField;
+  NSString                 *fileName;
 }
 
 // ============================================================================

@@ -35,6 +35,11 @@
 {
   NSRect frame = [self frame];
 
+  if ([self textShouldSetEditable] == NO)
+    {
+      return;
+    }
+
   if (yn == YES)
     {
       frame.size.width += 4;
@@ -44,6 +49,7 @@
       [self setBordered:YES];
       [self setBackgroundColor:[NSColor whiteColor]];
       [self setEditable:YES];
+      [self selectText:nil];
     }
   else
     {
@@ -53,23 +59,32 @@
 
       [self setBordered:NO];
       [self setBackgroundColor:[NSColor lightGrayColor]];
-      [self setDrawsBackground:YES];
       [self setEditable:NO];
+      [[self superview] setNeedsDisplay:YES];
     }
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
 {
-  NSLog(@"PCFileNameField mouseDown");
-  
   [self setEditableField:YES];
-
   [super mouseDown:theEvent];
+}
+
+- (BOOL)textShouldSetEditable
+{
+  NSString *text = [self stringValue];
+
+  if ([text isEqualToString:@"No files selected"]
+      || [text isEqualToString:@"Multiple files selected"])
+    {
+      return NO;
+    }
+
+  return YES;
 }
 
 - (void)textDidEndEditing:(NSNotification *)aNotification
 {
-  NSLog(@"PCFileNameField textDidEndEditing");
   [self setEditableField:NO];
   [super textDidEndEditing:aNotification];
 }
@@ -110,14 +125,13 @@
   NSLog (@"PCProjectInspector: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-  RELEASE(inspectorPanel);
-  RELEASE(inspectorView);
-  RELEASE(inspectorPopup);
-
   RELEASE(buildAttributesView);
   RELEASE(projectAttributesView);
   RELEASE(projectDescriptionView);
   RELEASE(fileAttributesView);
+
+  RELEASE(inspectorPanel);
+  RELEASE(fileName);
 
   [super dealloc];
 }
@@ -397,10 +411,7 @@
   [buildAttributesView retain];
 }
 
-// ----------------------------------------------------------------------------
 // --- Search Order
-// ----------------------------------------------------------------------------
-
 - (void)searchOrderPopupDidChange:(id)sender
 {
   NSString *selectedTitle = [sender titleOfSelectedItem];
@@ -668,7 +679,11 @@
 
 - (void)setFANameAndIcon:(PCProjectBrowser *)browser
 {
-  NSString *fileName = [browser nameOfSelectedFile];
+  if (fileName != nil)
+    {
+      [fileName release];
+    }
+  fileName = [[browser nameOfSelectedFile] retain];
 
   if (fileName)
     {
@@ -687,13 +702,28 @@
     }
 }
 
+- (void)fileNameDidChange:(id)sender
+{
+  NSLog(@"PCProjectInspector: file name changed from: %@ to: %@",
+	fileName, [fileNameField stringValue]);
+
+  if ([fileName isEqualToString:[fileNameField stringValue]])
+    {
+      return;
+    }
+
+  if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
+    {
+      [fileNameField setStringValue:fileName];
+    }
+}
+
 // ============================================================================
 // ==== NSTableViews
 // ============================================================================
 
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
 {
-  NSLog(@"Number in rows in the table");
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
       return [searchItems count];

@@ -557,8 +557,29 @@ NSString
   return YES;
 }
 
-- (void)renameFile:(NSString *)aFile
+- (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile
 {
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSString      *selectedCategory = [self selectedRootCategory];
+  NSString      *fromPath = nil;
+  NSString      *toPath = nil;
+
+  fromPath = [[self dirForCategory:selectedCategory]
+    stringByAppendingPathComponent:fromFile];
+  toPath = [[self dirForCategory:selectedCategory]
+    stringByAppendingPathComponent:toFile];
+
+  [fm movePath:fromPath toPath:toPath handler:nil];
+
+  [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
+             forKey:selectedCategory];
+  [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
+          forKey:selectedCategory];
+
+  [projectBrowser setPathForFile:toFile 
+                        category:[self keyForCategory:selectedCategory]];
+  
+  return YES;
 }
 
 // ============================================================================

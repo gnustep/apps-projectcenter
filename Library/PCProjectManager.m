@@ -122,9 +122,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   RELEASE(rootBuildPath);
   RELEASE(loadedProjects);
 
-  if (historyPanel) RELEASE(historyPanel);
-  if (buildPanel)   RELEASE(buildPanel);
-  if (launchPanel)  RELEASE(launchPanel);
+  if (projectInspector)  RELEASE(projectInspector);
+  if (historyPanel)      RELEASE(historyPanel);
+  if (buildPanel)        RELEASE(buildPanel);
+  if (launchPanel)       RELEASE(launchPanel);
 
   [super dealloc];
 }
