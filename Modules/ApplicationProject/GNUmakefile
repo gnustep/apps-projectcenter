@@ -26,7 +26,8 @@ Application_RESOURCE_FILES= \
   Resources/main.m \
   Resources/PC.project \
   Resources/Main.gorm \
-  Resources/Inspector.gorm
+  Resources/Inspector.gorm \
+  Resources/Renaissance
 
 #
 # Header files

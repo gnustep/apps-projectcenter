@@ -151,7 +151,7 @@
 
 - (NSArray *)allowableSubprojectTypes
 {
-  return [NSArray arrayWithObjects:@"Bundle", @"Library", nil];
+  return [NSArray arrayWithObjects:@"Bundle", @"Library", @"Framework", nil];
 }
 
 - (NSArray *)localizableKeys

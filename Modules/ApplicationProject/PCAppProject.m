@@ -321,10 +321,16 @@
   [self writeInfoEntry:@"FullVersionID" forKey:PCRelease];
   [self writeInfoEntry:@"NSExecutable" forKey:PCProjectName];
   [self writeInfoEntry:@"NSIcon" forKey:PCAppIcon];
-  [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
+  if ([[projectDict objectForKey:PCAppType] isEqualToString:@"GORM"])
+    {
+      [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
+    }
+  else
+    {
+      [self writeInfoEntry:@"GSMainMarkupFile" forKey:PCMainInterfaceFile];
+    }
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
   [infoDict setObject:@"Application" forKey:@"NSRole"];
-//  [infoDict setObject:[self convertExtensions] forKey:@"NSTypes"];
   [self writeInfoEntry:@"NSTypes" forKey:PCDocumentTypes];
   [self writeInfoEntry:@"URL" forKey:PCURL];
 
@@ -332,67 +338,6 @@
   infoFile = [infoFile stringByAppendingPathComponent:@"Info-gnustep.plist"];
 
   return [infoDict writeToFile:infoFile atomically:YES];
-}
-
-- (NSArray *)convertExtensions
-{
-  NSMutableArray *icons = [NSMutableArray arrayWithCapacity:1];
-  NSMutableArray *extensions = [NSMutableArray arrayWithCapacity:1];
-  NSArray        *docIE = [projectDict objectForKey:PCDocumentExtensions];
-  NSEnumerator   *enumerator = [docIE objectEnumerator];
-  NSDictionary   *anObject;
-
-  NSMutableArray      *resArray = [[NSMutableArray alloc] init];
-  NSMutableDictionary *tmpDict = [NSMutableDictionary dictionaryWithCapacity:1];
-  NSString            *ic;
-  NSArray             *ex;
-
-  while ((anObject = [enumerator nextObject]))
-    {
-      [icons addObject:[anObject objectForKey:@"Icon"]];
-      [extensions addObject:[anObject objectForKey:@"Extension"]];
-    }
-
-  // At this point we have 2 arrays; 1 list of icons and 2 list of extensions.
-  // So go group it!
-  while ([icons count] && [extensions count])
-    {
-      int                 i;
-      BOOL                loaded = NO;
-      NSMutableDictionary *tdict;
-      NSString            *tic;
-
-      ic = [icons objectAtIndex:0];
-      ex = [NSMutableArray arrayWithObject:[extensions objectAtIndex:0]];
-
-      for (i = 0; i < [resArray count]; i++)
-	{
-	  tdict = [resArray objectAtIndex:i];
-	  tic = [tdict objectForKey:@"NSIcon"];
-
-	  if([tic isEqualToString:ic])
-	    {
-	      [[tdict objectForKey:@"NSUnixExtensions"] 
-		addObject:[ex objectAtIndex:0]];
-	      loaded = YES;
-	      continue;
-	    }
-	}
-
-      if (!loaded)
-	{
-	  [tmpDict setObject:ic forKey:@"NSIcon"];
-	  [tmpDict setObject:ex forKey:@"NSUnixExtensions"];
-      
-	  [resArray addObject:[tmpDict copy]];
-	}
-
-      [tmpDict removeAllObjects];
-      [icons removeObjectAtIndex:0];
-      [extensions removeObjectAtIndex:0];
-    }
-
-  return resArray;
 }
 
 // Overriding

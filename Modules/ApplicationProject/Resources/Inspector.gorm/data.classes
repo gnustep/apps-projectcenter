@@ -2,14 +2,15 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "setAppClass:",
-	    "setFile:",
 	    "clearFile:",
-	    "setDocIcon:",
+	    "docFieldSet:",
+	    "setAppType:",
 	    "removeDocType:",
-	    "showDocTypesPanel:",
+	    "setAppClass:",
 	    "setDocBasedApp:",
-	    "docFieldSet:"
+	    "setDocIcon:",
+	    "setFile:",
+	    "showDocTypesPanel:"
 	);
 	Super = NSObject;
     };
@@ -23,7 +24,8 @@
 	    "setCurrentLanguage:",
 	    "showDocTypesPanel:",
 	    "setDocBasedApp:",
-	    "docFieldSet:"
+	    "docFieldSet:",
+	    "setAppType:"
 	);
 	Outlets = (
 	    projectAttributesView,
@@ -58,7 +60,7 @@
 	    iconColumn,
 	    roleColumn,
 	    classColumn,
-	    applicationType
+	    appTypeField
 	);
 	Super = NSObject;
     };

@@ -131,7 +131,7 @@
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
-    @"Aggregate", @"Bundle", @"Tool", @"Library", nil];
+    @"Aggregate", @"Bundle", @"Tool", @"Library", @"Framework", nil];
 }
 
 - (NSArray *)localizableKeys

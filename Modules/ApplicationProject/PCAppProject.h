@@ -43,6 +43,7 @@
 @interface PCAppProject : PCProject
 {
   IBOutlet NSBox          *projectAttributesView;
+  IBOutlet NSTextField    *appTypeField;
   IBOutlet NSTextField    *appClassField;
 
   PCAppTextField          *activeTextField;
@@ -103,7 +104,6 @@
 
 - (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key;
 - (BOOL)writeInfoFile;
-- (NSArray *)convertExtensions;
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;
 - (void)appendTail:(PCMakefileFactory *)mff;

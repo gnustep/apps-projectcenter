@@ -211,6 +211,7 @@ static NSString * const PCAppIcon              = @"APPLICATIONICON";
 static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
 static NSString * const PCHelpFile             = @"HELP_FILE";
 static NSString * const PCDocumentBasedApp     = @"APP_DOCUMENT_BASED";
+static NSString * const PCAppType              = @"APP_TYPE";
 
 // Library specific
 static NSString * const PCPublicHeaders        = @"PUBLIC_HEADERS";

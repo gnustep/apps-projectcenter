@@ -1,5 +1,7 @@
 {
     APPLICATIONICON = "";
+    APP_DOCUMENT_BASED = NO;
+    APP_TYPE = GORM;
     CLASS_FILES = ("AppController.m");
     COMPILEROPTIONS = "";
     CPPOPTIONS = "";

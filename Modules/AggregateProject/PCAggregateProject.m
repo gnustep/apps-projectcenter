@@ -96,7 +96,7 @@
 - (NSArray *)allowableSubprojectTypes
 {
   return [NSArray arrayWithObjects:
-    @"Application", @"Bundle", @"Library", @"Tool", nil];
+    @"Application", @"Bundle", @"Library", @"Framework", @"Tool", nil];
 }
 
 @end

@@ -99,6 +99,13 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // --- Actions
 // ----------------------------------------------------------------------------
 
+- (void)setAppType:(id)sender
+{
+  [self setProjectDictObject:[appTypeField stringValue]
+                      forKey:PCAppType
+		      notify:YES];
+}
+
 - (void)setAppClass:(id)sender
 {
   [self setProjectDictObject:[appClassField stringValue]
