@@ -33,6 +33,7 @@
 #define CFile		@"C File"
 #define CHeader	        @"C Header"
 #define ProtocolFile	@"Objective-C Protocol"
+#define GSMarkupFile	@"GSMarkup"
 
 @implementation PCBaseFileType
 
@@ -49,6 +50,7 @@ static NSDictionary *dict = nil;
     NSDictionary *ccDict;
     NSDictionary *chDict;
     NSDictionary *protocolDict;
+    NSDictionary *gsmarkupDict;
     NSString     *descr;
     
     _creator = [[[self class] alloc] init];
@@ -95,6 +97,14 @@ static NSDictionary *dict = nil;
 				 PCHeaders,@"ProjectKey",
 			      descr,@"TypeDescription",
 				 nil];
+
+descr = [NSString stringWithString:@"Generic GSMarkup File.\n\nThis is the interface description of GNUstep Renaissance."];
+    gsmarkupDict =[NSDictionary dictionaryWithObjectsAndKeys:
+                                _creator,@"Creator",
+                              PCGSMarkupFiles,@"ProjectKey",
+                              descr,@"TypeDescription",
+                              nil];
+
     
     dict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				   ccDict,CFile,
@@ -103,6 +113,7 @@ static NSDictionary *dict = nil;
 				 headerDict,ObjCHeader,
 				 classDict,ObjCClass,
 				 nsviewClassDict,ObjCNSViewClass,
+				 gsmarkupDict, GSMarkupFile,
 				 nil];
   }
   return _creator;
@@ -225,6 +236,17 @@ static NSDictionary *dict = nil;
     [files setObject:ObjCHeader forKey:newFile];
   }
   
+ else if ([type isEqualToString:GSMarkupFile])
+  {
+    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"gsmarkup" ofType:@"template"];
+    if ([[path pathExtension] isEqual: @"gsmarkup"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
+    [fm copyPath:_file toPath:newFile handler:nil];
+    [files setObject:GSMarkupFile forKey:newFile];
+  }
+
+
+
   /*
    *
    */

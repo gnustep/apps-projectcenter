@@ -266,6 +266,7 @@ enum {
    */
 
   if ([currentProject isKindOfClass:NSClassFromString(@"PCAppProject")] ||
+      [currentProject isKindOfClass:NSClassFromString(@"PCRenaissanceProject")] ||
       [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) 
   {
     NSString *tn;

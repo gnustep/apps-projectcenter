@@ -1,0 +1,50 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+
+<gsmarkup>
+  <objects>
+
+    <!-- application menu -->
+    <menu type="main">
+
+      <menuItem title="NewApplication">
+	<menu title="NewApplication" type="apple">
+          <menuItem title="About NewApplication" action="orderFrontStandardAboutPanel:" />
+          <menuSeparator />
+
+          <menuItem title="Services">
+	    <menu title="Services" type="services" />
+          </menuItem>
+
+          <menuSeparator />
+
+          <menuItem title="Hide NewApplication" action="hide:" key="h" />
+          <menuItem title="Hide Others" action="hideOtherApplications:" />
+          <menuItem title="Show All" action="unhideAllApplications:" />
+
+          <menuSeparator />
+
+          <menuItem title="Quit NewApplication" action="terminate:" key="q" />
+	</menu>
+      </menuItem>
+
+      <menuItem title="Edit">
+	<menu title="Edit">
+<!--	  <menuItem title="Cut" action="cut:" key="x" /> -->
+	  <menuItem title="Copy" action="copy:" key="c" />
+	  <menuItem title="Paste" action="paste:" key="v" />
+<!-- 	  <menuItem title="Delete" action="delete:" /> -->
+	  <menuItem title="Select All" action="selectAll:" key="a" />
+	</menu>
+      </menuItem>
+      
+      <menuItem title="Window">
+	<menu title="Window">
+          <menuItem title="Minimize Window" action="performMiniaturize:" key="m" />
+          <menuSeparator />
+          <menuItem title="Bring All to Front" action="arrangeInFront:" key="" />
+        </menu>
+      </menuItem>
+    </menu>
+  </objects>
+</gsmarkup>

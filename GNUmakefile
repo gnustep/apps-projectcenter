@@ -41,6 +41,7 @@ SUBPROJECTS = 			\
 	PCToolProj		\
 	PCLibProj		\
 	PCBaseFileTypes		\
+	PCRenaissanceProj	\
 	ProjectCenter
 
 -include GNUMakefile.preamble

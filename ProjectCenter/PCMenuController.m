@@ -55,6 +55,7 @@
     
       projectTypeAccessaryView = [[NSBox alloc] init];
       projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
+      [projectTypePopup setAutoenablesItems: NO];
       [projectTypePopup addItemWithTitle:@"No type available!"];
       
       [projectTypeAccessaryView setTitle:@"Project Types"];

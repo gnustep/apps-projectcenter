@@ -44,7 +44,7 @@
     NSString *ltitle   = [[sender selectedCell] stringValue];
     NSString *category = [[sender selectedCellInColumn:0] stringValue];
 
-    if ([self isEditableCategory:category])
+    if ([self isEditableCategory:category file: ltitle])
     {
 	[[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:ltitle];
 	
@@ -61,7 +61,7 @@
     NSString *fn = [self nameOfSelectedFile];
     NSString *f = [[project projectPath] stringByAppendingPathComponent:fn];
 
-    if ([self isEditableCategory:category])
+    if ([self isEditableCategory:category file: fn])
     {
       [project browserDidDblClickFile:f category:category];
     }
@@ -76,7 +76,7 @@
   }
 }
 
-- (BOOL)isEditableCategory:(NSString *)category
+- (BOOL)isEditableCategory:(NSString *)category  file: (NSString *)title
 {
     NSString *k = [[project rootCategories] objectForKey:category];
 
@@ -89,6 +89,12 @@
     {
         return YES;
     }
+
+    if ([k isEqualToString:PCGSMarkupFiles]
+	&& [[title pathExtension] isEqual: @"gorm"] == NO)
+      {
+        return YES;
+      }
 
     return NO;
 }

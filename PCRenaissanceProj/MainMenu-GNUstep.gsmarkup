@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!DOCTYPE gsmarkup>
+
+<gsmarkup>
+  <objects>
+
+    <!-- application menu -->
+    <menu type="main">
+
+      <menuItem title="Info..." action="orderFrontStandardInfoPanel:" />
+
+      <menuItem title="Edit">
+	<menu>
+<!--	  <menuItem title="Cut" action="cut:" key="x" /> -->
+	  <menuItem title="Copy" action="copy:" key="c" />
+	  <menuItem title="Paste" action="paste:" key="v" />
+	  <menuItem title="SelectAll" action="selectAll:" key="a" />
+	</menu>
+      </menuItem>
+
+      <menuItem title="Services">
+	<menu type="services" />
+      </menuItem>
+
+      <menuItem title="Hide" action="hide:" key="h" />
+      <menuItem title="Quit" action="terminate:" key="q" />
+    </menu>
+  </objects>
+</gsmarkup>

@@ -81,6 +81,7 @@ typedef int PCProjInfoBits;
 
 static NSString * const PCClasses             = @"CLASS_FILES";
 static NSString * const PCHeaders             = @"HEADER_FILES";
+static NSString * const PCGSMarkupFiles	      = @"INTERFACES";
 static NSString * const PCOtherSources        = @"OTHER_SOURCES";
 static NSString * const PCOtherResources      = @"OTHER_RESOURCES";
 static NSString * const PCSupportingFiles     = @"SUPPORTING_FILES";

@@ -42,7 +42,7 @@
 - (void)click:(id)sender;
 - (void)doubleClick:(id)sender;
 
-- (BOOL)isEditableCategory:(NSString *)category;
+- (BOOL)isEditableCategory:(NSString *)category file: (NSString *)title;
 
 - (void)projectDictDidChange:(NSNotification *)aNotif;
 

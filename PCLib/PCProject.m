@@ -138,6 +138,9 @@
   if ([key isEqualToString:PCGModels]) {
     return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
   }
+  if ([key isEqualToString:PCGSMarkupFiles]) {
+    return [NSArray arrayWithObjects:@"gsmarkup",nil];
+  }
   else if ([key isEqualToString:PCClasses]) {
     return [NSArray arrayWithObjects:@"m",nil];
   }

@@ -1,3 +1,7 @@
+2003-01-25  Daniel Luederwald <das_flip@gmx.de>
+
+	* GNUmakefile (SUBPROJECTS): New project PCRenaissanceProj
+
 2002-10-06 15:45  probert
 
 	* AUTHORS, PCLib/PCEditor.h, PCLib/PCEditor.m,
