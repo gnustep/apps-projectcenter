@@ -69,7 +69,8 @@ PCProjectEditor.h \
 ProjectComponent.h \
 PCProject+ComponentHandling.h \
 PCEditorView+Highlighting.h \
-PCHistoryController.h 
+PCHistoryController.h \
+PCMakefileFactory.h 
 
 #
 
@@ -94,7 +95,8 @@ PCTextFinder.m \
 PCProjectEditor.m \
 PCProject+ComponentHandling.m \
 PCEditorView+Highlighting.m \
-PCHistoryController.m 
+PCHistoryController.m \
+PCMakefileFactory.m 
 
 #
 

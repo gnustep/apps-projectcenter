@@ -53,6 +53,7 @@
 #import <ProjectCenter/PCEditorView.h>
 #import <ProjectCenter/PCEditorView+Highlighting.h>
 #import <ProjectCenter/PCTextFinder.h>
+#import <ProjectCenter/PCMakefileFactory.h>
 
 #endif
 

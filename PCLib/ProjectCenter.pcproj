@@ -19,7 +19,8 @@
 	PCProjectEditor.m,
 	PCProject+ComponentHandling.m,
 	PCEditorView+Highlighting.m,
-	PCHistoryController.m
+	PCHistoryController.m,
+	PCMakefileFactory.m
     );
     COMPILEROPTIONS = "";
     CREATION_DATE = "";
@@ -56,7 +57,8 @@
 	ProjectComponent.h,
 	PCProject+ComponentHandling.h,
 	PCEditorView+Highlighting.h,
-	PCHistoryController.h
+	PCHistoryController.h,
+	PCMakefileFactory.h
     );
     INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
     LANGUAGE = English;
