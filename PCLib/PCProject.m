@@ -148,7 +148,7 @@
     return [NSArray arrayWithObjects:@"h",nil];
   }
   else if ([key isEqualToString:PCOtherSources]) {
-    return [NSArray arrayWithObjects:@"c",@"C",@"m",@"M",nil];
+    return [NSArray arrayWithObjects:@"c",@"C",nil];
   }
   else if ([key isEqualToString:PCLibraries]) {
     return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
@@ -159,55 +159,6 @@
   else if ([key isEqualToString:PCImages]) {
     return [NSImage imageFileTypes];
   }
-
-  return nil;
-}
-
-- (NSString *)categoryForFile:(NSString *)file
-{
-  NSString *fileExt = [[file componentsSeparatedByString: @"."] lastObject];
-
-  if ([fileExt isEqualToString:@"gmodel"] || [fileExt isEqualToString:@"gorm"])
-    {
-      return PCGModels;
-    }
-  else if ([fileExt isEqualToString:@"gsmarkup"])
-    {
-      return PCGSMarkupFiles;
-    }
-  else if ([fileExt isEqualToString:@"h"] || [fileExt isEqualToString:@"H"])
-    {
-      return PCHeaders;
-    }
-  else if ([fileExt isEqualToString:@"m"] || [fileExt isEqualToString:@"M"])
-    {
-      return PCClasses;
-    }
-  else if ([fileExt isEqualToString:@"c"] || [fileExt isEqualToString:@"C"])
-    {
-      return PCOtherSources;
-    }
-  else if ([fileExt isEqualToString:@"so"] || [fileExt isEqualToString:@"lib"]
-	   || [fileExt isEqualToString:@"a"])
-    {
-      return PCLibraries;
-    }
-  else if ([fileExt isEqualToString:@"subproj"])
-    {
-      return PCSubprojects;
-    }
-  else if ([[NSImage imageFileTypes] containsObject: fileExt])
-    {
-      return PCImages;
-    }
-  else if ([file hasPrefix: @"GNUmakefile"])
-    {
-      return PCSupportingFiles;
-    }
-  else if (file != nil)
-    {
-      return PCOtherResources;
-    }
 
   return nil;
 }
@@ -351,6 +302,7 @@
     }
 
   [self showEditorView:self];
+  [e setCategory:c];
   [e showInProjectEditor:projectEditor];
 
   [projectWindow makeFirstResponder:(NSResponder*)[projectEditor editorView]];
@@ -358,13 +310,14 @@
 
 - (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c
 {
-    PCEditor *e;
+  PCEditor *e;
 
-    e = [editorController editorForFile:fileName];
+  e = [editorController editorForFile:fileName];
 
-    if( e )
+  if (e)
     {
-	[e show];
+      [e setCategory:c];
+      [e show];
     }
 }
 
@@ -431,11 +384,19 @@
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key
 {
-    NSMutableArray *array;
+    NSMutableArray  *array;
+    NSMutableString *filePath;
 
     if (!file || !key) {
         return;
     }
+
+    // Close editor
+    filePath = [[NSMutableString alloc] initWithString:projectPath];
+    [filePath appendString:@"/"];
+    [filePath appendString:file];
+    [editorController closeEditorForFile:filePath];
+    [filePath release];
 
     array = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
     [array removeObject:file];
@@ -444,7 +405,7 @@
     [projectWindow setDocumentEdited:YES];
 }
 
-- (BOOL)removeSelectedFilePermanently:(BOOL)yn
+- (BOOL)removeSelectedFilesPermanently:(BOOL)yn
 {
   NSEnumerator *files = [[browserController selectedFiles] objectEnumerator];
   NSString     *file = nil;
@@ -824,8 +785,9 @@
     NSLog(@"<%@ %x>: content at path %@",[self class],self,keyPath);
 #endif
 
-    if ([keyPath isEqualToString:@""] || [keyPath isEqualToString:@"/"]) {
-        return [rootCategories allKeys];
+    if ([keyPath isEqualToString:@""] || [keyPath isEqualToString:@"/"])
+    {
+        return rootKeys;
     }
 
     key = [[keyPath componentsSeparatedByString:@"/"] lastObject];

@@ -25,6 +25,7 @@
 */
 
 #include "PCBrowserController.h"
+#include "PCEditorController.h"
 #include "PCProject.h"
 #include "PCFileManager.h"
 
@@ -84,7 +85,9 @@
 	[k isEqualToString:PCHeaders] || 
 	[k isEqualToString:PCSupportingFiles] || 
 	[k isEqualToString:PCDocuFiles] || 
-	[k isEqualToString:PCOtherSources]) 
+	[k isEqualToString:PCOtherSources] || 
+	[k isEqualToString:PCOtherResources] ||
+	[k isEqualToString:PCNonProject]) 
     {
         return YES;
     }
@@ -100,9 +103,18 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-    if (browser) 
+  if (browser) 
     {
-        [browser reloadColumn:[browser lastColumn]];
+      NSString *browserPath = [browser path];
+      NSString *path = [[browserPath componentsSeparatedByString:@"/"] objectAtIndex:1];
+
+      if (![browserPath isEqualToString:path] 
+	  && [[[project editorController] allEditors] count] == 0)
+	{
+	  [self setPathForFile:nil category:path];
+	}
+
+      [browser reloadColumn:[browser lastColumn]];
     }
 }
 
@@ -163,13 +175,9 @@
   project = aProj;
 }
 
-- (BOOL)setPathForFile:(NSString *)file
+- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category
 {
-  NSString *category = [project categoryForFile:file];
-  NSString *browserCategory = [[[project rootCategories] 
-                                 allKeysForObject: category]
-				 lastObject];
-  NSArray  *comp = [NSArray arrayWithObjects: @"/",browserCategory,file,nil];
+  NSArray  *comp = [NSArray arrayWithObjects: @"/",category,@"/",file,nil];
   NSString *path = [NSString pathWithComponents:comp];
 
   int      selectedColumn;

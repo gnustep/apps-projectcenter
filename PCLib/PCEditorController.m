@@ -168,6 +168,15 @@
     return [editorDict allValues];
 }
 
+- (void)closeEditorForFile:(NSString *)file
+{
+  PCEditor *editor;
+
+  editor = [editorDict objectForKey:file];
+  [editor closeFile:self];
+  [editorDict removeObjectForKey:file];
+}
+
 - (void)closeAllEditors
 {
   NSEnumerator *enumerator = [editorDict keyEnumerator];
@@ -224,7 +233,13 @@
 
   if (editor != nil)
     {
-      return [editor saveFileAs:file];
+      BOOL res;
+      res = [editor saveFileTo:file];
+      [editor closeFile:self];
+
+      [[self internalEditorForFile:file]
+	showInProjectEditor:[project projectEditor]];
+      return res;
     }
 
   return NO;
@@ -259,7 +274,6 @@
   [[self activeEditor] closeFile:self];
 }
 
-
 // ===========================================================================
 // ==== Delegate
 // ===========================================================================
@@ -279,13 +293,14 @@
   else
     {
       [[project projectEditor] setEditorView:nil];
-      [self setBrowserPath:nil];
+      [[project browserController] projectDictDidChange:nil];
     }
 }
 
 - (void)setBrowserPath:(NSString *)file
 {
-  [(PCBrowserController *)[project browserController] setPathForFile:file];
+  [[project browserController] setPathForFile:file
+                                     category:[[self activeEditor] category]];
 }
 
 @end

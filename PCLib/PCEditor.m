@@ -119,6 +119,16 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   _path = [path copy];
 }
 
+- (NSString *)category
+{
+  return _category;
+}
+
+- (void)setCategory:(NSString *)category
+{
+  _category = [category copy];
+}
+
 - (BOOL)isEdited
 {
   return _isEdited;
@@ -160,15 +170,6 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   // Operate on the text storage!
   return [[_storage string] writeToFile:_path atomically:YES];
-}
-
-- (BOOL)saveFileAs:(NSString *)path
-{
-  // Unfinished
-/*  [self setPath:file];
-
-  // Operate on the text storage!*/
-  return [self saveFile];
 }
 
 - (BOOL)saveFileTo:(NSString *)path
@@ -323,3 +324,4 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 }
 
 @end
+

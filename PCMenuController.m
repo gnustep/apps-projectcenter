@@ -255,7 +255,7 @@
 	{
 	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
 
-	  [projectManager removeFilePermanently:flag];
+	  [projectManager removeFilesPermanently:flag];
 	}
     }
 }
@@ -343,22 +343,29 @@
 // Not finished
 - (void)fileSaveAs:(id)sender
 {
-/*  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSSavePanel	 *savePanel = [NSSavePanel savePanel];;
-  NSString       *oldFilePath;
-  NSString 	 *newFilePath;
-  int		 retval;
+  NSString       *oldFilePath = nil;
+  NSString 	 *newFilePath = nil;
+  NSString       *directory = nil;
+  int		 retval = NSOKButton;
 
   oldFilePath = 
     [[[[projectManager activeProject] editorController] activeEditor] path];
 
   [savePanel setTitle: @"Save As..."];
-  retval = [savePanel runModalForDirectory:[projectManager projectPath]
-                                      file:[projectManager selectedFileName]];
+  while (![directory isEqualToString: [projectManager projectPath]] 
+	 && retval != NSCancelButton)
+    {
+      retval = [savePanel 
+	runModalForDirectory:[projectManager projectPath]
+	                file:[projectManager selectedFileName]];
+      directory = [savePanel directory];
+    }
 
   if (retval == NSOKButton)
     {
-      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
+      [ud setObject:directory forKey:@"LastOpenDirectory"];
 
       newFilePath = [savePanel filename];
 		  
@@ -368,10 +375,17 @@
 			  @"Couldn't save file as\n%@!",
 			  @"OK",nil,nil,newFilePath);
 	}
-    }*/
-  NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
-		  @"OK",nil,nil);
+      else
+	{
+	  PCProject *project = [projectManager activeProject];
+	  NSString  *category = [[[project rootCategories] allKeysForObject:PCNonProject] objectAtIndex:0];
+
+	  [projectManager closeFile];
+	  [project addFile:newFilePath forKey:PCNonProject];
+	  [project browserDidClickFile:[newFilePath lastPathComponent]
+	                      category:category];
+	}
+    }
 }
 
 - (void)fileSaveTo:(id)sender

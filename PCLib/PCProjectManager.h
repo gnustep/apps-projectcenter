@@ -156,7 +156,7 @@
 - (void)closeFile;
 
 - (BOOL)renameFileTo:(NSString *)path;
-- (BOOL)removeFilePermanently:(BOOL)yn;
+- (BOOL)removeFilesPermanently:(BOOL)yn;
 
 @end
 

@@ -52,7 +52,7 @@
 
 - (void)setBrowser:(NSBrowser *)aBrowser;
 - (void)setProject:(PCProject *)aProj;
-- (BOOL)setPathForFile:(NSString *)file;
+- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category;
 
 @end
 

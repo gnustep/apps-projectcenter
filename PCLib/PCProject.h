@@ -81,15 +81,17 @@ typedef int PCProjInfoBits;
 
 static NSString * const PCClasses             = @"CLASS_FILES";
 static NSString * const PCHeaders             = @"HEADER_FILES";
-static NSString * const PCGSMarkupFiles	      = @"INTERFACES";
 static NSString * const PCOtherSources        = @"OTHER_SOURCES";
-static NSString * const PCOtherResources      = @"OTHER_RESOURCES";
-static NSString * const PCSupportingFiles     = @"SUPPORTING_FILES";
-static NSString * const PCDocuFiles           = @"DOCU_FILES";
-static NSString * const PCSubprojects         = @"SUBPROJECTS";
 static NSString * const PCGModels             = @"INTERFACES";
 static NSString * const PCImages              = @"IMAGES";
+static NSString * const PCOtherResources      = @"OTHER_RESOURCES";
+static NSString * const PCSubprojects         = @"SUBPROJECTS";
+static NSString * const PCDocuFiles           = @"DOCU_FILES";
+static NSString * const PCSupportingFiles     = @"SUPPORTING_FILES";
 static NSString * const PCLibraries           = @"LIBRARIES";
+static NSString * const PCNonProject          = @"NON_PROJECT_FILES";
+static NSString * const PCGSMarkupFiles	      = @"INTERFACES";
+
 static NSString * const PCCompilerOptions     = @"COMPILEROPTIONS";
 static NSString * const PCLinkerOptions       = @"LINKEROPTIONS";
 static NSString * const PCProjectName         = @"PROJECT_NAME";
@@ -158,6 +160,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     NSString            *projectPath;
     NSMutableDictionary *projectDict;
 
+    NSArray      *rootObjects;
+    NSArray      *rootKeys;
     NSDictionary *rootCategories; // Needs to be initialised by subclasses!
     NSMutableDictionary *buildOptions;
 
@@ -181,7 +185,6 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (NSString *)selectedRootCategory;
 
 - (NSArray *)fileExtensionsForCategory:(NSString *)key;
-- (NSString *)categoryForFile:(NSString *)file;
 
 - (void)setProjectName:(NSString *)aName;
 - (NSString *)projectName;
@@ -236,7 +239,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (void)addFile:(NSString *)file forKey:(NSString *)key copy:(BOOL)yn;
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key;
-- (BOOL)removeSelectedFilePermanently:(BOOL)yn;
+- (BOOL)removeSelectedFilesPermanently:(BOOL)yn;
 - (void)renameFile:(NSString *)aFile;
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict;

@@ -45,6 +45,7 @@
 - (PCEditor *)editorForFile:(NSString *)path;
 - (PCEditor *)activeEditor;
 - (NSArray *)allEditors;
+- (void)closeEditorForFile:(NSString *)file;
 - (void)closeAllEditors;
 
 

@@ -121,27 +121,46 @@
 
 - (id)init
 {
-  if ((self = [super init])) {
-    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
-				      PCGModels,@"Interfaces",
-				    PCSupportingFiles,@"Supporting Files",
-				    PCImages,@"Images",
-				    PCOtherResources,@"Other Resources",
-				    PCSubprojects,@"Subprojects",
-				    PCLibraries,@"Libraries",
-				    PCDocuFiles,@"Documentation",
-				    PCOtherSources,@"Other Sources",
-				    PCHeaders,@"Headers",
-				    PCClasses,@"Classes",
-				    nil] retain];
+  if ((self = [super init]))
+    {
+      rootObjects = [[NSArray arrayWithObjects: PCClasses,
+						PCHeaders,
+						PCOtherSources,
+						PCGModels,
+						PCImages,
+						PCOtherResources,
+						PCSubprojects,
+						PCDocuFiles,
+						PCSupportingFiles,
+						PCLibraries,
+						PCNonProject,
+						nil] retain];
 
-  }
+      rootKeys = [[NSArray arrayWithObjects: @"Classes",
+					     @"Headers",
+					     @"Other Sources",
+					     @"Interfaces",
+					     @"Images",
+					     @"Other Resources",
+					     @"Subprojects",
+					     @"Documentation",
+					     @"Supporting Files",
+					     @"Libraries",
+					     @"Non Project Files",
+					     nil] retain];
+
+      rootCategories = [[NSDictionary 
+	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
+    }
+
   return self;
 }
 
 - (void)dealloc
 {
   [rootCategories release];
+  [rootObjects release];
+  [rootKeys release];
   [appClassField release];
   [appImageField release];
 

@@ -23,6 +23,7 @@
   NSTextStorage   *_storage;
   NSWindow        *_window;
   NSMutableString *_path;
+  NSString        *_category;
 
   id   _delegate;
 
@@ -40,6 +41,8 @@
 - (NSWindow *)editorWindow;
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
+- (NSString *)category;
+- (void)setCategory:(NSString *)category;
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 
@@ -47,7 +50,6 @@
 - (void)show;
 - (BOOL)saveFileIfNeeded;
 - (BOOL)saveFile;
-- (BOOL)saveFileAs:(NSString *)path;
 - (BOOL)saveFileTo:(NSString *)path;
 - (BOOL)revertFileToSaved;
 - (BOOL)closeFile:(id)sender;

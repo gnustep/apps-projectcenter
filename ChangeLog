@@ -1,3 +1,48 @@
+2003-05-29 Serg Stoyan <stoyan@hologr.com>
+
+	* PCMenuController.m:
+	(projectRemoveFiles:): Call removeFilesPermanently.
+	(fileSaveAs:): Implemented.
+
+	* PCAppProj/PCAppProject.m:
+	(init): Initialize rootObjects and rootKeys arrays. Initialize
+	rootCategories dictionary with these arrays to preserve order of
+	categories in browser. "Non Project Files" category added.
+	(dealloc): Release rootObjects and rootKeys arrays.
+	(otherKeys): Added PCNonProject.
+	* PCBundleProj/PCBundleProject.m: Ditto.
+	* PCGormProj/PCGormProject.m: Ditto.
+	* PCLibProj/PCLibProject.m: Ditto.
+	* PCRenaissanceProj/PCRenaissanceProject.m: Ditto.
+	* PCToolProj/PCToolProject.m: Ditto.
+
+	* PCLib/PCBrowserController.[hm]: Rename method setPathForFile: to
+	setPathForFile:category:.
+	* PCLib/PCBrowserController.m:
+	(isEditableCategory:file:): PCOtherSources, PCOtherResources and
+	PCNonProject to editable categories.
+	(projectDictDidChange:): Set path to category if there is no file
+	editing.
+	* PCLib/PCEditor.[hm]: Added _category ivar. Every editor now holds
+	category of the file being edited. Added methods category and
+	setCategory:. Removed saveFileAs: method.
+	* PCLib/PCEditorController.[hm]: Added and implemented method
+	closeEditorForFile:.
+	* PCLib/PCEditorController.m:
+	(editorDidClose:): Call [PCBrowserController projectDictDidChange:]
+	instead of [self setBrowserPath:].
+	* PCLib/PCProject.h: Added PCNonProject contant. Added rootObjects,
+	rootKeys ivars. Removed categoryForFile: method. Renamed
+	removeSelectedFilePermanently: to removeSelectedFilesPermanently:.
+	* PCLib/PCProject.m:
+	(fileExtensionsForCategory:): Removed .m and .M extenstions from
+	PCOtherSources category.
+	(browserDidClickFile:category:): Setting category to editor added.
+	(removeFile:forKey:): Close editor when file removed.
+	(contentAtKeyPath:): Return rootKeys instead of all keys of 	rootCategories dictionary.
+	(removeFilesPermanently:): Call removeSelectedFilesPermanently:
+	(after renaming).
+
 2003-05-23 Serg Stoyan <stoyan@hologr.com>
 
 	* PCMenuController.h: Added fileOpenQuickly:, fileNewUntitled: 

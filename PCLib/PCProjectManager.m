@@ -491,14 +491,14 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return YES;
 }
 
-- (BOOL)removeFilePermanently:(BOOL)yn
+- (BOOL)removeFilesPermanently:(BOOL)yn
 {
   if (!activeProject)
     {
       return NO;
     }
 
-  return [activeProject removeSelectedFilePermanently:yn];
+  return [activeProject removeSelectedFilesPermanently:yn];
 }
 
 @end
