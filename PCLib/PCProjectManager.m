@@ -366,20 +366,18 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)openFile:(NSString *)path
 {
-    id<ProjectEditor> editor = [[[delegate prefController] preferencesDict] objectForKey:Editor];
+  BOOL isDir;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:
+				    path,@"FilePathKey",
+				  nil];
 
-    if (!editor) {
-    }
+  if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir) {
+    [[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
+    return YES;
+  }
 
-    [editor openFile:path];
-}
-
-- (BOOL)addFile:(NSString *)path
-{
-}
-
-- (BOOL)newFile:(NSString *)path
-{
+  return NO;
 }
 
 - (BOOL)saveFile

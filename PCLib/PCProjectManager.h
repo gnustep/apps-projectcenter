@@ -131,8 +131,7 @@
 // ===========================================================================
 
 - (BOOL)openFile:(NSString *)path;
-- (BOOL)addFile:(NSString *)path;
-- (BOOL)newFile:(NSString *)path;
+
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)path;
 - (BOOL)revertFile;
