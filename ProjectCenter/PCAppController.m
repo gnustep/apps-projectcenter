@@ -79,6 +79,11 @@
 	fileManager = [[PCFileManager alloc] init];
 	menuController = [[PCMenuController alloc] init];
 
+	[projectManager setDelegate:self];
+
+	[menuController setAppController:self];
+	[menuController setFileManager:fileManager];
+	[menuController setProjectManager:projectManager];
     }
     return self;
 }
