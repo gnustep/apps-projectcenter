@@ -29,6 +29,7 @@ after-clean::
 	rm -f ../ProjectCenter
 
 after-uninstall::
-	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Headers/ProjectCenter
-	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Libraries/Resources/ProjectCenter
+#	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Headers/ProjectCenter
+#	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Libraries/Resources/ProjectCenter
+	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Libraries/libProjectCenter*
 

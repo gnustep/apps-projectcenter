@@ -384,12 +384,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:6];
   int                 selectedRow = [docTypesList selectedRow];
 
-  [entry setObject:[docTypeField stringValue] forKey:@"NSName"];
-  [entry setObject:[docNameField stringValue] forKey:@"NSHumanReadableName"];
-  [entry setObject:[[docExtensionsField stringValue] componentsSeparatedByString:@","] forKey:@"NSUnixExtensions"];
-  [entry setObject:[docIconField stringValue] forKey:@"NSIcon"];
-  [entry setObject:[docRoleField stringValue] forKey:@"NSRole"];
-  [entry setObject:[docClassField stringValue] forKey:@"NSDocumentClass"];
+  [entry setObject:@"" forKey:@"NSName"];
+  [entry setObject:@"" forKey:@"NSHumanReadableName"];
+  [entry setObject:[NSArray array] forKey:@"NSUnixExtensions"];
+  [entry setObject:@"" forKey:@"NSIcon"];
+  [entry setObject:@"" forKey:@"NSRole"];
+  [entry setObject:@"NSDocumentClass" forKey:@"NSDocumentClass"];
 
   if (selectedRow >= 0 && [docTypesItems count] > 0)
     {
@@ -404,6 +404,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [docTypesList reloadData];
   
   [docTypesList selectRow:row byExtendingSelection:NO];
+  [docTypesList scrollRowToVisible:row];
 
   [self fillFieldsForRow:row];
 
@@ -425,8 +426,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   if (([docTypesList selectedRow] < 0) && ([docTypesItems count] > 0))
     {
       [docTypesList selectRow:[docTypesItems count]-1 byExtendingSelection:NO];
-      [self fillFieldsForRow:[docTypesItems count]-1];
     }
+
+  [self fillFieldsForRow:[docTypesList selectedRow]];
 
   [self setProjectDictObject:docTypesItems
                       forKey:PCDocumentTypes

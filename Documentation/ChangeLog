@@ -1,8 +1,24 @@
+2005-01-22 Serg Stoyan <stoyan255@ukr.net>
+
+	* Release 0.4.1
+	
+	* Modules/ApplicationProject/PCAppProject+Inspector.m: 
+	(addDocType:): Set all textfields to default values.
+	(removeDocType:): Call fillFieldsForRow: after row removing.
+	
+2005-01-09 Gregory Jonh Casamento <greg_casamento@yahoo.com>
+
+	* Library/PCProjectBuilder.m: 
+	(build:): Exception handler added.
+	
 2005-01-09 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCButton.m: 
 	(release): Added and implemented. Remove tooltips if object is
 	about to be dealloced.
+
+	* Library/PCProjectBuilder.m:
+	(stopBuild:): Eception handler added.
 	
 2005-01-05 Serg Stoyan <stoyan255@ukr.net>
 

@@ -97,8 +97,8 @@
 
 @interface PCProjectBuilder (UserInterface)
 
-- (void) _createComponentView;
-- (void) _createOptionsPanel;
+- (void)_createComponentView;
+- (void)_createOptionsPanel;
 
 @end
 

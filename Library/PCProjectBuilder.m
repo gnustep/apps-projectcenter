@@ -382,6 +382,7 @@
 #ifdef DEVELOPMENT
   NSLog (@"PCProjectBuilder: dealloc");
 #endif
+
   [buildTarget release];
   [buildArgs release];
   [makePath release];
@@ -459,25 +460,25 @@
   // Set build arguments
   if ([buildTarget isEqualToString: @"Debug"])
     {
-      [buildArgs addObject: @"debug=yes"];
+      [buildArgs addObject:@"debug=yes"];
     }
-  else if ([buildTarget isEqualToString: @"Profile"])
+  else if ([buildTarget isEqualToString:@"Profile"])
     {
-      [buildArgs addObject: @"profile=yes"];
-      [buildArgs addObject: @"static=yes"];
+      [buildArgs addObject:@"profile=yes"];
+      [buildArgs addObject:@"static=yes"];
     }
-  else if ([buildTarget isEqualToString: @"Tarball"])
+  else if ([buildTarget isEqualToString:@"Tarball"])
     {
-      [buildArgs addObject: @"dist"];
+      [buildArgs addObject:@"dist"];
     }
-  else if ([buildTarget isEqualToString: @"RPM"])
+  else if ([buildTarget isEqualToString:@"RPM"])
     {
-      [buildArgs addObject: @"rpm"];
+      [buildArgs addObject:@"rpm"];
       postProcess = @selector (copyPackageTo:);
     }
 
-  statusString = [NSString stringWithString: @"Building..."];
-  [buildTarget setString: @"Build"];
+  statusString = [NSString stringWithString:@"Building..."];
+  [buildTarget setString:@"Build"];
   [cleanButton setEnabled:NO];
   [installButton setEnabled:NO];
   [self build:self];
@@ -513,13 +514,10 @@
     {
       if (NSRunAlertPanel(@"Clean Project?",
 			  @"Do you really want to clean project '%@'?",
-			  @"Yes",
-			  @"No",
-			  nil,
-			  [currentProject projectName])
+			  @"Yes", @"No", nil, [currentProject projectName])
 	  == NSAlertAlternateReturn)
 	{
-	  [cleanButton setState: NSOffState];
+	  [cleanButton setState:NSOffState];
 	  return;
 	}
     }
@@ -534,12 +532,12 @@
 
 - (void)startInstall:(id)sender
 {
-  [buildTarget setString: @"Install"];
-  statusString = [NSString stringWithString: @"Installing..."];
-  [buildArgs addObject: @"install"];
+  [buildTarget setString:@"Install"];
+  statusString = [NSString stringWithString:@"Installing..."];
+  [buildArgs addObject:@"install"];
   [buildButton setEnabled:NO];
   [cleanButton setEnabled:NO];
-  [self build: self];
+  [self build:self];
 }
 
 - (void)showOptionsPanel:(id)sender
@@ -548,7 +546,7 @@
     {
       [self _createOptionsPanel];
     }
-  [optionsPanel orderFront: nil];
+  [optionsPanel orderFront:nil];
 }
 
 // --- Actions
@@ -566,7 +564,7 @@
     {
       if (NSRunAlertPanel(@"Project Changed!",
 			  @"Should it be saved first?",
-			  @"Yes",@"No",nil) == NSAlertDefaultReturn) 
+			  @"Yes", @"No", nil) == NSAlertDefaultReturn) 
 	{
 	  [currentProject save];
 	}
@@ -577,12 +575,12 @@
       [currentProject save];
     }
 
-  if( [buildTarget isEqualToString: @"RPM"] 
-      && [env objectForKey:@"RPM_TOPDIR"] == nil )
+  if ([buildTarget isEqualToString:@"RPM"]
+      && [env objectForKey:@"RPM_TOPDIR"] == nil)
     {
       NSRunAlertPanel(@"Attention!",
 		      @"First set the environment variable 'RPM_TOPDIR'!",
-		      @"OK",nil,nil);     
+		      @"OK", nil, nil);
       return;
     }
 
@@ -591,38 +589,38 @@
   readHandle = [logPipe fileHandleForReading];
   [readHandle waitForDataInBackgroundAndNotify];
 
-  [NOTIFICATION_CENTER addObserver: self 
-                          selector: @selector (logStdOut:)
-			      name: NSFileHandleDataAvailableNotification
-			    object: readHandle];
+  [NOTIFICATION_CENTER addObserver:self 
+                          selector:@selector(logStdOut:)
+			      name:NSFileHandleDataAvailableNotification
+			    object:readHandle];
 
   errorPipe = [NSPipe pipe];
   errorReadHandle = [errorPipe fileHandleForReading];
   [errorReadHandle waitForDataInBackgroundAndNotify];
 
-  [NOTIFICATION_CENTER addObserver: self 
-                          selector: @selector (logErrOut:) 
-			      name: NSFileHandleDataAvailableNotification
-			    object: errorReadHandle];
+  [NOTIFICATION_CENTER addObserver:self 
+                          selector:@selector(logErrOut:) 
+			      name:NSFileHandleDataAvailableNotification
+			    object:errorReadHandle];
 
-  [buildStatusField setStringValue: statusString];
+  [buildStatusField setStringValue:statusString];
 
   // Run make task
   [logOutput setString: @""];
   [errorOutput setString: @""];
 
-  [NOTIFICATION_CENTER addObserver: self 
-                          selector: @selector (buildDidTerminate:) 
-			      name: NSTaskDidTerminateNotification
-			    object: nil];
+  [NOTIFICATION_CENTER addObserver:self 
+                          selector:@selector(buildDidTerminate:) 
+			      name:NSTaskDidTerminateNotification
+			    object:nil];
 
   makeTask = [[NSTask alloc] init];
-  [makeTask setArguments: buildArgs];
+  [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath: [currentProject projectPath]];
-  [makeTask setLaunchPath: makePath];
+  [makeTask setLaunchPath:makePath];
 
-  [makeTask setStandardOutput: logPipe];
-  [makeTask setStandardError: errorPipe];
+  [makeTask setStandardOutput:logPipe];
+  [makeTask setStandardError:errorPipe];
 
   NS_DURING
     {
@@ -632,11 +630,12 @@
     {
       NSRunAlertPanel(@"Problem Launching Build Tool",
 		      [localException reason],
-		      @"OK",
-		      nil,
-		      nil,
-		      nil);
-
+		      @"OK", nil, nil, nil);
+		      
+      //Clean up after task is terminated
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:NSTaskDidTerminateNotification
+	              object:makeTask];
     }
   NS_ENDHANDLER
 }
@@ -650,50 +649,66 @@
       return;
     }
 
-  [NOTIFICATION_CENTER removeObserver:self];
+  NSLog(@"task did terminate");
 
-  status = [makeTask terminationStatus];
+//  [NOTIFICATION_CENTER removeObserver:self];
+
+  [NOTIFICATION_CENTER removeObserver:self 
+			         name:NSTaskDidTerminateNotification
+			       object:nil];
+
+  // If task was not launched catch exception
+  NS_DURING
+    {
+      status = [makeTask terminationStatus];
+    }
+  NS_HANDLER
+    {
+      status = 1;
+    }
+  NS_ENDHANDLER
+  
   if (status == 0)
     {
       [self logString: 
-	[NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
-	error: NO newLine: NO];
-      [buildStatusField setStringValue: 
-	[NSString stringWithFormat: 
+	[NSString stringWithFormat:@"=== %@ succeeded!", buildTarget] 
+	                     error:NO
+			   newLine:NO];
+      [buildStatusField setStringValue:[NSString stringWithFormat: 
 	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
     } 
   else
     {
       [self logString: 
-	[NSString stringWithFormat: @"=== %@ terminated!", buildTarget]
-	error: NO newLine: NO];
-      [buildStatusField setStringValue: 
-	[NSString stringWithFormat: 
+	[NSString stringWithFormat:@"=== %@ terminated!", buildTarget]
+	                     error:NO
+			   newLine:NO];
+      [buildStatusField setStringValue:[NSString stringWithFormat: 
 	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
     }
 
   // Rstore buttons state
-  if ([buildTarget isEqualToString: @"Build"])
+  if ([buildTarget isEqualToString:@"Build"])
     {
-      [buildButton setState: NSOffState];
-      [cleanButton setEnabled: YES];
-      [installButton setEnabled: YES];
+      [buildButton setState:NSOffState];
+      [cleanButton setEnabled:YES];
+      [installButton setEnabled:YES];
     }
-  else if ([buildTarget isEqualToString: @"Clean"])
+  else if ([buildTarget isEqualToString:@"Clean"])
     {
-      [cleanButton setState: NSOffState];
-      [buildButton setEnabled: YES];
-      [installButton setEnabled: YES];
+      [cleanButton setState:NSOffState];
+      [buildButton setEnabled:YES];
+      [installButton setEnabled:YES];
     }
-  else if ([buildTarget isEqualToString: @"Install"])
+  else if ([buildTarget isEqualToString:@"Install"])
     {
-      [installButton setState: NSOffState];
-      [buildButton setEnabled: YES];
-      [cleanButton setEnabled: YES];
+      [installButton setState:NSOffState];
+      [buildButton setEnabled:YES];
+      [cleanButton setEnabled:YES];
     }
 
   [buildArgs removeAllObjects];
-  [buildTarget setString: @"Default"];
+  [buildTarget setString:@"Default"];
 
   RELEASE(makeTask);
   makeTask = nil;
@@ -701,7 +716,7 @@
   // Run post process if configured
   if (status && postProcess)
     {
-      [self performSelector: postProcess];
+      [self performSelector:postProcess];
       postProcess = NULL;
     }
 
@@ -719,7 +734,6 @@
             [buildTargetArgsField stringValue]];
 
   [targetField setStringValue: target];
-
 }
 
 - (void)logStdOut:(NSNotification *)aNotif
@@ -728,22 +742,42 @@
 
   if ((data = [readHandle availableData]))
     {
-      [self logData: data error: NO];
+      [self logData:data error:NO];
     }
 
-  [readHandle waitForDataInBackgroundAndNotifyForModes: nil];
+  if (makeTask)
+    {
+      [readHandle waitForDataInBackgroundAndNotify];
+    }
+  else
+    {
+      [NOTIFICATION_CENTER removeObserver:self 
+			             name:NSFileHandleDataAvailableNotification
+			           object:readHandle];
+    }
 }
 
 - (void)logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
 
+  NSLog(@"logErrOut");
+  
   if ((data = [errorReadHandle availableData]))
     {
       [self logData:data error:YES];
     }
 
-  [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
+  if (makeTask)
+    {
+      [errorReadHandle waitForDataInBackgroundAndNotify];
+    }
+  else
+    {
+      [NOTIFICATION_CENTER removeObserver:self 
+			             name:NSFileHandleDataAvailableNotification
+			           object:errorReadHandle];
+    }
 }
 
 - (void)copyPackageTo:(NSString *)path
@@ -765,43 +799,46 @@
 
 @implementation PCProjectBuilder (BuildLogging)
 
-- (void)logString: (NSString *)string
-            error: (BOOL)yn
+- (void)logString:(NSString *)string
+            error:(BOOL)yn
 {
-  [self logString: string error: yn newLine: NO];
+  [self logString:string error:yn newLine:NO];
 }
 
-- (void)logString: (NSString *)str
-            error: (BOOL)yn
-	  newLine: (BOOL)newLine
+- (void)logString:(NSString *)str
+            error:(BOOL)yn
+	  newLine:(BOOL)newLine
 {
   NSTextView *out = (yn) ? errorOutput : logOutput;
 
   [out replaceCharactersInRange:
-    NSMakeRange ([[out string] length],0) withString: str];
+    NSMakeRange([[out string] length],0) withString:str];
 
   if (newLine)
     {
       [out replaceCharactersInRange:
-	NSMakeRange ([[out string] length], 0) withString: @"\n"];
+	NSMakeRange([[out string] length], 0) withString:@"\n"];
     }
   else
     {
       [out replaceCharactersInRange:
-	NSMakeRange ([[out string] length], 0) withString: @" "];
+	NSMakeRange([[out string] length], 0) withString:@" "];
     }
 
-  [out scrollRangeToVisible: NSMakeRange([[out string] length], 0)];
-  [out setNeedsDisplay: YES];
+  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
+  [out setNeedsDisplay:YES];
 }
 
-- (void)logData: (NSData *)data
-          error: (BOOL)yn
+- (void)logData:(NSData *)data
+          error:(BOOL)yn
 {
-  NSString *s = [[NSString alloc] initWithData: data 
-				  encoding: [NSString defaultCStringEncoding]];
+  NSString *s = nil;
 
-  [self logString: s error: yn newLine: NO];
+  s = [[NSString alloc] initWithData:data 
+                            encoding:[NSString defaultCStringEncoding]];
+			    
+  [self logString:s error:yn newLine:NO];
+
   RELEASE(s);
 }
 

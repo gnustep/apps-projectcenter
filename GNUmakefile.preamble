@@ -47,8 +47,6 @@ ADDITIONAL_LDFLAGS += -lProjectCenter
 #ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR)
 ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current
 
-ADDITIONAL_TOOL_LIBS +=
-
 #
 # Flags dealing with installing and uninstalling
 #

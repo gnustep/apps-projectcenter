@@ -1,7 +1,7 @@
 ANNOUNCE
 ************
 
-This is version 0.4.0 of ProjectCenter.
+This is version 0.4.1 of ProjectCenter. This is a bugfix version.
 
 What is ProjectCenter?
 ======================
@@ -10,38 +10,26 @@ What is ProjectCenter?
    application.  It is a clone of the OPENSTEP ProjectBuilder application 
    for GNUstep.
 
-   ProjectCenter is covered under the GNU Public License. This means if you 
-   make changes to these programs, you cannot charge a fee, other than
+   ProjectCenter is covered under the GNU General Public License. This means 
+   if you make changes to these programs, you cannot charge a fee, other than
    distribution fees, for others to use the program. You should read the
    Documentation/COPYING file for more information.
 
-Noteworthy changes in version `0.4.0'.
+Noteworthy changes in version `0.4.1'.
 ======================================
 
-   * A lot of refactoring and cleanup was made
+   * Fixes in file and subprojects handling.
 
-   * Some parts of interface were recreated using GORM
+   * Improvements and fixes in file selection dialog.
 
-   * Most part of Project Inspector is completed
+   * Rewritten toolips code for buttons. Made it NSView compatible
+     (ready for incorporation into NSView code).
 
-   * Finished Loaded Files and appropriate menu items
+   * All .gorm files updated with latest GORM.
 
-   * Stability issues fixed in Project Builder
+   * Added support for document-based applications (added "Document Types" 
+     panel into Project Inspector).
 
-   * Interaces fixes were made in Project Launcher
-
-   * Added subprojects support
-
-   * Preferences recreated and cleaned up.
-
-   * Many browser fixes were made in Project Window
-
-   * Much time was spent to fix stability problems
-
-   * Added "Aggregate" project type
-
-   * "Application" and "GormApplication" project types merged 
-     into "Application" project type
 
 How can I get support for this software?
 ========================================

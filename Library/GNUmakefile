@@ -9,9 +9,9 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 # Framework
 #
-VERSION = 0.4.0
+VERSION = 0.4.1
 FRAMEWORK_NAME = ProjectCenter
-ProjectCenter_CURRENT_VERSION_NAME = 0.4.0
+ProjectCenter_CURRENT_VERSION_NAME = 0.4.1
 ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
 
 ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui

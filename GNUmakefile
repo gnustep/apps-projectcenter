@@ -8,7 +8,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 # Main application
 #
-VERSION = 0.4.1pre
+VERSION = 0.4.1
 PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
@@ -84,7 +84,6 @@ Modules/LibraryProject/LibraryProject.bundle \
 Modules/RenaissanceProject/RenaissanceProject.bundle \
 Modules/ToolProject/ToolProject.bundle 
 
-
 #
 # Header files
 #
@@ -105,11 +104,6 @@ PCLogController.m \
 PCMenuController.m \
 PCPrefController.m \
 ProjectCenter_main.m
-
-#
-# C files
-#
-ProjectCenter_C_FILES = 
 
 -include GNUmakefile.preamble
 include $(GNUSTEP_MAKEFILES)/aggregate.make
