@@ -314,20 +314,14 @@
 
 - (void)showPrefWindow:(id)sender
 {
+  NSDictionary *prefs;
+  NSString *val;
+
   if (!prefWindow) {
     id	     view;
-    NSString *val;
     
     [self _initUI];
     
-    // Fill in the defaults
-    [compilerField setStringValue:(val=[preferencesDict objectForKey:Compiler]) ? val : @""];
-    [debuggerField setStringValue:(val=[preferencesDict objectForKey:Debugger]) ? val : @""];
-    [editorField setStringValue:(val=[preferencesDict objectForKey:Editor]) ? val : @""];
-    [bundlePathField setStringValue:(val=[preferencesDict objectForKey:BundlePaths]) ? val : @""];
-
-    [useExternalEditor setState:([[preferencesDict objectForKey:ExternalEditor] isEqualToString:@"YES"])?NSOnState:NSOffState];
-
     // The popup and selected view
     [prefPopup removeAllItems];
     [prefPopup addItemWithTitle:@"Building"];
@@ -340,8 +334,21 @@
     [(NSBox *)prefEmptyView setContentView:view];
     [prefEmptyView display]; 
   }
+
+  prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+  [preferencesDict addEntriesFromDictionary:prefs];
   
-  [prefWindow center];
+  // Fill in the defaults
+  [compilerField setStringValue:(val=[preferencesDict objectForKey:Compiler]) ? val : @""];
+  [debuggerField setStringValue:(val=[preferencesDict objectForKey:Debugger]) ? val : @""];
+  [editorField setStringValue:(val=[preferencesDict objectForKey:Editor]) ? val : @""];
+  [bundlePathField setStringValue:(val=[preferencesDict objectForKey:BundlePaths]) ? val : @""];
+  
+  [useExternalEditor setState:([[preferencesDict objectForKey:ExternalEditor] isEqualToString:@"YES"])?NSOnState:NSOffState];
+
+  if (![prefWindow isVisible]) { 
+    [prefWindow center];
+  }
   [prefWindow makeKeyAndOrderFront:self];
 }
 
