@@ -60,7 +60,7 @@ static PCLibMakefileFactory *_factory = nil;
     
     // The 'real' thing
     [string appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
-    [string appendString:@"include English.lproj/Version\n"];
+    [string appendString:@"include Version\n"];
 
     [string appendString:@"#\n\n"];
     [string appendString:@"# Subprojects\n"];
