@@ -177,7 +177,6 @@
     [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
 
     [mf appendApplication];
-    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
     [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
     [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
 

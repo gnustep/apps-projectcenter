@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -21,17 +24,17 @@ include $(GNUSTEP_MAKEFILES)/common.make
 PACKAGE_NAME=PCAppProj
 BUNDLE_NAME=PCAppProj
 BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter
 PCAppProj_PRINCIPAL_CLASS=PCAppProj
-#
 
+
+#
 # Additional libraries
 #
 
 PCAppProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -43,7 +46,6 @@ main.m \
 PC.proj 
 
 #
-
 # Header files
 #
 
@@ -52,7 +54,6 @@ PCAppProj.h \
 PCAppProject.h 
 
 #
-
 # Class files
 #
 
@@ -61,7 +62,6 @@ PCAppProj.m \
 PCAppProject.m 
 
 #
-
 # C files
 #
 
