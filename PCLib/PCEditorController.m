@@ -125,10 +125,12 @@
     if([[ud objectForKey:ExternalEditor] isEqualToString:@"YES"])
     {
         [PCEditorController openFileInEditor:path];
+
+	return nil;
     }
     else
     {
-        [self internalEditorForFile:path];
+        return [self internalEditorForFile:path];
     }
 }
 
