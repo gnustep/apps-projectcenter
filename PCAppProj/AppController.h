@@ -23,8 +23,9 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notif;
 
-- (void)applicationShouldTerminate:(id)sender;
+- (BOOL)applicationShouldTerminate:(id)sender;
 - (void)applicationWillTerminate:(NSNotification *)notification;
+
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
 
 - (void)showPrefPanel:(id)sender;

@@ -50,7 +50,7 @@ static NSDictionary *infoDict = nil;
 {
 }
 
-- (void)applicationShouldTerminate:(id)sender
+- (BOOL)applicationShouldTerminate:(id)sender
 {
 }
 
