@@ -1,3 +1,99 @@
+2000-11-04 17:47  robert
+
+	* PCBundleLoader.m: the bundle path is now depending on the env
+	variable
+
+2000-11-04 14:20  robert
+
+	* PCProject.h, PCProject.m: projects are by default not executable
+
+2000-11-02 11:21  robert
+
+	* PCProject.m, PCProjectBuilder.m: 2 lines of information when
+	launching...
+
+2000-11-01 11:38  robert
+
+	* PCBrowserController.m, PCProject.m: removed logs
+
+2000-10-29 21:17  robert
+
+	* PCProjectDebugger.h, PCProjectDebugger.m: added the class which
+	will one day become a simple gdb frontend
+
+2000-10-29 21:15  robert
+
+	* GNUmakefile, PCBrowserController.m, PCProject.h, PCProject.m,
+	PCProjectBuilder.h, PCProjectBuilder.m, ProjectCenter.h: new style
+	interface - simpler but hopefully more usable
+
+2000-10-29 13:00  robert
+
+	* PCBundleLoader.m, PCProject.m, PCProjectBuilder.h,
+	PCProjectBuilder.m, PCServer.h, PCServer.m: build logging now
+	works, as well as some enhancements when using the internal
+	'editor'
+
+2000-10-27 19:15  robert
+
+	* PCProject.h, PCProject.m: removed the 2 popups, which are not
+	needed on the top right side
+
+2000-10-26 11:12  robert
+
+	* PCProject.m: more image files are allowed now
+
+2000-10-20 20:13  robert
+
+	* PCProject.h, PCProjectBuilder.m: new build images in the build
+	panel
+
+2000-10-20 17:18  robert
+
+	* PCEditorView.m, PCProject.m: Support for protocols in file
+	creation
+
+2000-10-15 20:24  robert
+
+	* PCBrowserController.m, PCProject.h, PCProject.m,
+	PCProjectBuilder.m, PCProjectManager.m: More UI enhancements - not
+	really functional yet
+
+2000-10-15 14:27  robert
+
+	* PCBrowserController.m, PCProject.m, PCProjectBuilder.h,
+	PCProjectBuilder.m, PCProjectManager.m: typo and note about GNUstep
+	version added
+
+2000-09-22 19:11  robert
+
+	* PCProject.h, PCProject.m: minor UI changes
+
+2000-09-22 12:33  robert
+
+	* PCBrowserController.m, PCProject.h, PCProject.m,
+	PCProjectBuilder.h, PCProjectBuilder.m: some UI modifications
+
+2000-09-21 09:36  robert
+
+	* PCBundleLoader.m: bundle path issues
+
+2000-09-21 07:42  robert
+
+	* PCProjectManager.h, PCProjectManager.m: daily work
+
+2000-09-21 07:20  robert
+
+	* PCFileManager.m: daily work
+
+2000-09-21 07:16  robert
+
+	* PCEditorView.m: @end is now highlighted, too
+
+2000-09-20 17:50  robert
+
+	* ChangeLog: Added a changelog
+
 2000-09-20 17:46  robert
 
 	* GNUmakefile, PCBrowserController.m, PCEditorView.h,

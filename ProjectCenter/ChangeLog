@@ -1,3 +1,60 @@
+2000-11-04 18:11  robert
+
+	* PCPrefController.m: some interface changes
+
+2000-11-04 17:48  robert
+
+	* PCAppController.m, PCPrefController.m: the bundle path is now
+	depending on the GNUSTEP_LOCAL_ROOT env variable
+
+2000-10-29 13:16  robert
+
+	* Info-project.plist: some GWorkspace additions
+
+2000-10-29 13:01  robert
+
+	* Info-project.plist: 0.2 coming soon
+
+2000-10-20 20:20  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project:
+	remove old PB support
+
+2000-10-20 20:18  robert
+
+	* PC.project: updated project file
+
+2000-10-20 20:13  robert
+
+	* GNUmakefile, ProjectCenter_clean.tiff, ProjectCenter_debug.tiff,
+	ProjectCenter_install.tiff, ProjectCenter_make.tiff,
+	ProjectCenter_profile.tiff: added build images
+
+2000-10-20 17:18  robert
+
+	* PCAppController.m: Support for protocols in file creation
+
+2000-10-15 20:23  robert
+
+	* PCAppController.h, PCAppController.m: modified launching
+	behaviour
+
+2000-10-15 14:25  robert
+
+	* PCPrefController.m: UI improvement
+
+2000-09-21 09:32  robert
+
+	* PCPrefController.m: bundle path issue now fixed, hopefully...
+
+2000-09-21 07:42  robert
+
+	* PCAppController.m, PCPrefController.m: open file now works, too
+
+2000-09-20 17:50  robert
+
+	* ChangeLog: Added a changelog
+
 2000-09-20 17:46  robert
 
 	* ProjectCenter_main.m: Added the font panel stuff
