@@ -99,30 +99,32 @@
   [toolbarView setTitlePosition:NSNoTitle];
   [toolbarView setBorderType:NSNoBorder];
   [toolbarView setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
-  [toolbarView setContentViewMargins: NSMakeSize(0.0,0.0)];
+  [toolbarView setContentViewMargins:NSMakeSize(0.0,0.0)];
   [_c_view addSubview:toolbarView];
   RELEASE(toolbarView);
   
-  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,5,43,43)];
+  buildButton = [[PCButton alloc] initWithFrame:NSMakeRect(0,5,43,43)];
   [buildButton setRefusesFirstResponder:YES];
-  [buildButton setToolTip: @"Build"];
-  [buildButton setImage: IMAGE(@"Build")];
-  [buildButton setTarget: self];
-  [buildButton setAction: @selector(showProjectBuild:)];
-  [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [buildButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: buildButton];
-  RELEASE (buildButton);
+  [buildButton setToolTip:@"Build"];
+  [buildButton setTitle:@"Build"];
+  [buildButton setImage:IMAGE(@"Build")];
+  [buildButton setTarget:self];
+  [buildButton setAction:@selector(showProjectBuild:)];
+  [buildButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [buildButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:buildButton];
+  RELEASE(buildButton);
   
-  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,5,43,43)];
+  launchButton = [[PCButton alloc] initWithFrame:NSMakeRect(44,5,43,43)];
   [launchButton setRefusesFirstResponder:YES];
-  [launchButton setToolTip: @"Launch/Debug"];
-  [launchButton setImage: IMAGE(@"Run")];
-  [launchButton setTarget: self];
-  [launchButton setAction: @selector(showProjectLaunch:)];
-  [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [launchButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: launchButton];
+  [launchButton setToolTip:@"Launch/Debug"];
+  [launchButton setTitle:@"Launch/Debug"];
+  [launchButton setImage:IMAGE(@"Run")];
+  [launchButton setTarget:self];
+  [launchButton setAction:@selector(showProjectLaunch:)];
+  [launchButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [launchButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:launchButton];
   RELEASE (launchButton);
   
   if (![project isExecutable])
@@ -130,56 +132,59 @@
       [launchButton setEnabled:NO];
     }
   
-  loadedFilesButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
+  loadedFilesButton = [[PCButton alloc] initWithFrame:NSMakeRect(88,5,43,43)];
   [loadedFilesButton setRefusesFirstResponder:YES];
-  [loadedFilesButton setToolTip: @"Loaded Files"];
-  [loadedFilesButton setImage: IMAGE(@"Files")];
-  [loadedFilesButton setTarget: self];
-  [loadedFilesButton setAction: @selector(showProjectLoadedFiles:)];
+  [loadedFilesButton setToolTip:@"Loaded Files"];
+  [loadedFilesButton setTitle:@"Loaded Files"];
+  [loadedFilesButton setImage:IMAGE(@"Files")];
+  [loadedFilesButton setTarget:self];
+  [loadedFilesButton setAction:@selector(showProjectLoadedFiles:)];
   [loadedFilesButton 
-    setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [loadedFilesButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: loadedFilesButton];
-  RELEASE (loadedFilesButton);
+    setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [loadedFilesButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:loadedFilesButton];
+  RELEASE(loadedFilesButton);
   
   if ([self hasLoadedFilesView])
     {
       [loadedFilesButton setEnabled:NO];
     }
 
-  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
+  findButton = [[PCButton alloc] initWithFrame:NSMakeRect(132,5,43,43)];
   [findButton setRefusesFirstResponder:YES];
-  [findButton setToolTip: @"Find"];
-  [findButton setImage: IMAGE(@"Find")];
-  [findButton setTarget: project];
-  [findButton setAction: @selector(showFindView:)];
-  [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [findButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: findButton];
-  RELEASE (findButton);
+  [findButton setToolTip:@"Find"];
+  [findButton setTitle:@"Find"];
+  [findButton setImage:IMAGE(@"Find")];
+  [findButton setTarget:project];
+  [findButton setAction:@selector(showFindView:)];
+  [findButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [findButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:findButton];
+  RELEASE(findButton);
   
-  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(176,5,43,43)];
+  inspectorButton = [[PCButton alloc] initWithFrame:NSMakeRect(176,5,43,43)];
   [inspectorButton setRefusesFirstResponder:YES];
-  [inspectorButton setToolTip: @"Inspector"];
-  [inspectorButton setImage: IMAGE(@"Inspector")];
-  [inspectorButton setTarget: [project projectManager]];
-  [inspectorButton setAction: @selector(showProjectInspector:)];
+  [inspectorButton setToolTip:@"Inspector"];
+  [inspectorButton setTitle:@"Inspector"];
+  [inspectorButton setImage:IMAGE(@"Inspector")];
+  [inspectorButton setTarget:[project projectManager]];
+  [inspectorButton setAction:@selector(showProjectInspector:)];
   [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [inspectorButton setButtonType: NSMomentaryPushButton];
-  [toolbarView addSubview: inspectorButton];
-  RELEASE (inspectorButton);
+  [inspectorButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:inspectorButton];
+  RELEASE(inspectorButton);
   
 
   /*
    * File icon and title
    */
-  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (496,0,48,48)];
+  fileIcon = [[NSImageView alloc] initWithFrame:NSMakeRect (496,0,48,48)];
   [fileIcon setRefusesFirstResponder:YES];
   [fileIcon setEditable:NO];
-  [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
-  [fileIcon setImage: IMAGE (@"projectSuitcase")];
-  [toolbarView addSubview: fileIcon];
-  RELEASE (fileIcon);
+  [fileIcon setAutoresizingMask:(NSViewMinXMargin | NSViewMinYMargin)];
+  [fileIcon setImage:IMAGE(@"projectSuitcase")];
+  [toolbarView addSubview:fileIcon];
+  RELEASE(fileIcon);
 
   fileIconTitle = [[NSTextField alloc]
     initWithFrame: NSMakeRect (308,4,180,21)];
@@ -191,9 +196,9 @@
   [fileIconTitle setDrawsBackground: NO];
   [fileIconTitle setAlignment:NSRightTextAlignment];
   [fileIconTitle setBezeled:NO];
-  [toolbarView addSubview: fileIconTitle];
-  RELEASE (fileIconTitle);
-
+  [toolbarView addSubview:fileIconTitle];
+  RELEASE(fileIconTitle);
+ 
   /*
    * Hosrizontal split view
    */
@@ -203,7 +208,7 @@
   rect.origin.x += 8;
   rect.origin.y = -2;
   h_split = [[PCSplitView alloc] initWithFrame:rect];
-  [h_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  [h_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
   /*
    * Vertical split view

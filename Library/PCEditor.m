@@ -596,5 +596,163 @@
   return YES;
 }
 
+// ===========================================================================
+// ==== Parser and scrolling
+// ===========================================================================
+
+- (NSString *)classNameFromString:(NSString *)string
+{
+  NSString        *className = nil;
+  NSMutableArray  *lineComps = nil;
+
+  // @implementation ClassName (Category)
+  //
+  // @implementation ClassName(Category)
+  // @implementation ClassName( Category)
+  // @implementation ClassName(Category )
+  // 
+  // @implementation ClassName ( Category )
+  // @implementation ClassName (Category )
+  // @implementation ClassName ( Category)
+  lineComps = [[string componentsSeparatedByString:@" "] mutableCopy];
+
+  if ([lineComps count] > 2)
+//      && [[[lineComps objectAtIndex:2] substringWithRange:NSMakeRange(0,1)] isEqualToString:@"("])
+    {
+      [lineComps removeObjectAtIndex:0];
+      className = [lineComps componentsJoinedByString:@""];
+      RELEASE(lineComps);
+
+      return [NSString stringWithFormat:@"@%@", className];
+    }
+  else
+    {
+      return [NSString stringWithFormat:@"@%@", [lineComps objectAtIndex:1]];
+    }
+
+  return nil;
+}
+
+- (NSString *)methodNameFromString:(NSString *)string
+{
+  NSString *methodName = nil;
+
+  return methodName;
+}
+
+- (NSMutableArray *)linesWithKeyword:(NSString *)keyword atBOL:(BOOL)yn
+{
+  NSMutableArray *lines = [[NSMutableArray alloc] init];
+  NSString       *text = [_storage string];
+  NSRange        range = {0, [text length]};
+  NSRange        subRange = {0, 0};
+  NSRange        lineRange = {0, 0};
+  NSString       *tmpStr = nil;
+  NSString       *lineString = nil;
+  
+  while (range.location < [text length])
+    {
+      subRange = [text rangeOfString:keyword
+	                     options:NSLiteralSearch
+	                       range:range];
+			       
+      NSLog(@"subRange: {%i, %i}", subRange.location, subRange.length);
+
+      if (subRange.location == NSNotFound)
+	{
+	  break;
+	}
+
+      // Set range for next search
+      range.location = subRange.location + subRange.length;
+      range.length = [text length] - range.location;
+      NSLog(@"range: {%i, %i}", range.location, range.length);
+
+      // If keyword is located not at the beginning of line then skip it.
+      if (yn)
+	{
+	  tmpStr = [text substringWithRange:NSMakeRange(subRange.location-1,1)];
+	  if (![tmpStr isEqualToString:@"\n"])
+	    {
+	      NSLog(@"CONTINUE %i %i", range.location, range.length);
+	      continue;
+	    }
+	}
+
+      // Get line range where @implementation is located
+      lineRange = [text lineRangeForRange:subRange];
+      lineString = [text substringWithRange:lineRange];
+      NSLog(@"0. line range: {%i, %i}", lineRange.location, lineRange.length);
+
+      [lines addObject:lineString];
+    }
+
+  return AUTORELEASE(lines);
+}
+
+- (NSArray *)listOfClasses
+{
+  NSMutableArray *classesArray = [[NSMutableArray alloc] init];
+  NSMutableArray *linesArray = nil;
+  NSString       *lineString = nil;
+  int            i;
+
+  NSLog(@"Start searching for class implementations...");
+
+  // Get lines with keywords
+  if ([[[_path lastPathComponent] pathExtension] isEqualToString:@"m"])
+    {
+      linesArray = [self linesWithKeyword:@"@implementation" atBOL:YES];
+    }
+  else if ([[[_path lastPathComponent] pathExtension] isEqualToString:@"h"])
+    {
+      linesArray = [self linesWithKeyword:@"@interface" atBOL:YES];
+    }
+
+  // Get class names
+  for (i = 0; i < [linesArray count]; i++)
+    {
+      lineString = [linesArray objectAtIndex:i];
+      [classesArray addObject:[self classNameFromString:lineString]];
+    }
+
+  return AUTORELEASE((NSArray*)classesArray);
+}
+
+- (NSArray *)listOfMethodsOfClass:(NSString *)className
+{
+  NSMutableArray *methodsArray = [[NSMutableArray alloc] init];
+
+  return AUTORELEASE((NSArray*)methodsArray);
+}
+
+- (NSArray *)listOfDefines
+{
+  NSMutableArray *definesArray = [[NSMutableArray alloc] init];
+
+  return AUTORELEASE((NSArray*)definesArray);
+}
+
+- (NSArray *)listOfVars
+{
+  NSMutableArray *varsArray = [[NSMutableArray alloc] init];
+
+  return AUTORELEASE((NSArray*)varsArray);
+}
+
+//--- Scrolling
+
+- (void)scrollToClassName:(NSString *)className
+{
+}
+
+- (void)scrollToMethodName:(NSString *)className
+{
+}
+
+- (void)scrollToLineNumber:(int)line
+{
+}
+
 @end
 

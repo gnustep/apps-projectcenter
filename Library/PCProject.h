@@ -134,6 +134,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSArray *)localizableKeys;
 
 - (BOOL)isEditableCategory:(NSString *)category;
+- (BOOL)isEditableFile:(NSString *)filePath;
 - (NSArray *)fileTypesForCategoryKey:(NSString *)key;
 - (NSString *)categoryKeyForFileType:(NSString *)type;
 - (NSString *)dirForCategoryKey:(NSString *)key;

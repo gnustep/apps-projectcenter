@@ -39,8 +39,9 @@
   self = [super initWithFrame:frameRect];
   [_cell setGradientType:NSGradientConvexWeak];
   [self setImagePosition:NSImageOnly];
-  [self setFont:[NSFont systemFontOfSize: 10.0]];
+  [self setFont:[NSFont systemFontOfSize:10.0]];
 
+  _hasTooltips = NO;
   ttTimer = nil;
   ttWindow = nil;
   ttTitleAttrs = [[NSMutableDictionary alloc] init];
@@ -60,6 +61,12 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
+  NSLog(@"PCButton %@: dealloc", [self stringValue]);
+#endif
+  
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   if (_hasTooltips)
     {
       [self removeAllToolTips];
@@ -69,6 +76,18 @@
     }
 
   [super dealloc];
+}
+
+- (void)release
+{
+  // If retain count is number of tracking rects + superview retain,
+  // remove tracking rects. It seems that tracking rects retain this object.
+  if (_hasTooltips && [self retainCount] == [_tracking_rects count] + 1)
+    {
+      [self removeAllToolTips];
+    }
+
+  [super release];
 }
 
 // ============================================================================
@@ -87,11 +106,12 @@
     {
       return;
     }
-
+    
   j = [_tracking_rects count];
   for (i = 0; i < j; i++)
     {
       tr = [_tracking_rects objectAtIndex:i];
+      [self removeTrackingRect:tr->tag];
 
 //      NSLog(@"PCButton: tr: %i data: %@", tr->tag, tr->user_data);
 
@@ -110,7 +130,6 @@
 	  mainToolTip = tag;
 	}
 
-      [self removeTrackingRect:tr->tag];
       RELEASE(string);
     }
 }
@@ -272,10 +291,10 @@
     }
 
   // Set rect tracking
-  tag = [[self superview] addTrackingRect:aRect
-                                    owner:self
-                                 userData:data
-                             assumeInside:NO];
+  tag = [self addTrackingRect:aRect
+                        owner:self
+                     userData:data
+                 assumeInside:NO];
 
   return tag;
 }
@@ -307,14 +326,13 @@
 - (void)removeToolTip:(NSToolTipTag)tag
 {
   [self removeTrackingRect:tag];
-//  [toolTips removeObjectForKey:[NSNumber numberWithInt:tag]];
 }
                               
 - (void)setToolTip:(NSString *)string
 {
   NSTrackingRectTag tag;
   NSRect            rect;
-  
+
   if (string == nil) // Remove old tooltip
     {
       if (_hasTooltips)

@@ -103,6 +103,18 @@
 - (BOOL)becomeFirstResponder;
 - (BOOL)resignFirstResponder;
 
+// ===========================================================================
+// ==== Parser and scrolling
+// ===========================================================================
+
+- (NSArray *)listOfClasses;
+- (NSArray *)listOfMethodsOfClass:(NSString *)className;
+- (NSArray *)listOfDefines;
+- (NSArray *)listOfVars;
+- (void)scrollToClassName:(NSString *)className;
+- (void)scrollToMethodName:(NSString *)className;
+- (void)scrollToLineNumber:(int)line;
+
 @end
 
 @interface PCEditor (UInterface)

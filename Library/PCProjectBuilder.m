@@ -64,6 +64,7 @@
    */
   buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,271,43,43)];
   [buildButton setToolTip: @"Build"];
+  [buildButton setTitle: @"Make"];
   [buildButton setImage: IMAGE(@"Build")];
   [buildButton setAlternateImage: IMAGE(@"Stop")];
   [buildButton setTarget: self];
@@ -75,6 +76,7 @@
   
   cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,271,43,43)];
   [cleanButton setToolTip: @"Clean"];
+  [cleanButton setTitle: @"Make-Clean"];
   [cleanButton setImage: IMAGE(@"Clean")];
   [cleanButton setAlternateImage: IMAGE(@"Stop")];
   [cleanButton setTarget: self];
@@ -86,6 +88,7 @@
 
   installButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,271,43,43)];
   [installButton setToolTip: @"Install"];
+  [installButton setTitle: @"Make-Install"];
   [installButton setImage: IMAGE(@"Install")];
   [installButton setAlternateImage: IMAGE(@"Stop")];
   [installButton setTarget: self];
@@ -97,6 +100,7 @@
 
   optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,271,43,43)];
   [optionsButton setToolTip: @"Options"];
+  [optionsButton setTitle: @"Make-Options"];
   [optionsButton setImage: IMAGE(@"Options")];
   [optionsButton setTarget: self];
   [optionsButton setAction: @selector(showOptionsPanel:)];

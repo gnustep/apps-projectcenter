@@ -512,6 +512,28 @@ NSString
   return NO;
 }
 
+- (BOOL)isEditableFile:(NSString *)filePath
+{
+  NSString *key = [self keyForCategory:[projectBrowser nameOfSelectedCategory]];
+  NSString *extension = [filePath pathExtension];
+
+  if ([key isEqualToString:PCSupportingFiles]
+      || [key isEqualToString:PCDocuFiles]) 
+    {
+      return YES;
+    }
+
+  if ([extension isEqualToString:@"m"]
+      || [extension isEqualToString:@"h"]
+      || [extension isEqualToString:@"c"]
+      || [extension isEqualToString:@"plist"])
+    {
+      return YES;
+    }
+    
+  return NO;
+}
+
 - (NSArray *)fileTypesForCategoryKey:(NSString *)key 
 {
   if ([key isEqualToString:PCClasses])
@@ -1355,6 +1377,11 @@ NSString
 
       return [_subproject contentAtCategoryPath:spCategoryPath];
     }
+  else if ([[[categoryPath lastPathComponent] pathExtension] isEqualToString:@"m"]
+	   || [[[categoryPath lastPathComponent] pathExtension] isEqualToString:@"h"])
+    { // ".m" file
+      return [[projectEditor activeEditor] listOfClasses];
+    }
 
   return [projectDict objectForKey:key];
 }
@@ -1370,16 +1397,31 @@ NSString
     }
 
   listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
+ 
+  // Categories
   if ([rootCategories containsObject:listEntry])
     {
       return YES;
     }
-    
+   
+  // Subprojects
   if ([[projectDict objectForKey:PCSubprojects] containsObject:listEntry]
       && [[projectBrowser nameOfSelectedCategory] isEqualToString:@"Subprojects"])
     {
       return YES;
     }
+
+  // Class and header files
+/*  if ([[listEntry pathExtension] isEqualToString:@"m"]
+    || [[listEntry pathExtension] isEqualToString:@"h"])
+    {
+      return YES;
+    }*/
+
+  // TODO: Libraries
+//  if ([[projectBrowser nameOfSelectedCategory] isEqualToString:@"Libraries"])
+//    {
+//    }
   
   return NO;
 }

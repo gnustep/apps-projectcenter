@@ -1,3 +1,9 @@
+2005-01-09 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCButton.m: 
+	(release): Added and implemented. Remove tooltips if object is
+	about to be dealloced.
+	
 2005-01-05 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/GNUstep.postamble: Make "ln -s" ProjectCenter to the 

@@ -163,6 +163,12 @@ NSString *PCEditorDidResignActiveNotification =
       
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
+	   selector:@selector(editorDidOpen:)
+	       name:PCEditorDidOpenNotification
+	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
 	   selector:@selector(editorDidClose:)
 	       name:PCEditorDidCloseNotification
 	     object:nil];
@@ -461,9 +467,22 @@ NSString *PCEditorDidResignActiveNotification =
 // ==== Notifications
 // ===========================================================================
 
+- (void)editorDidOpen:(NSNotification *)aNotif
+{
+/*  PCEditor         *editor = [aNotif object];
+  PCProjectBrowser *browser = [project projectBrowser];
+  NSString         *path = [browser path];
+  
+  // Active editor is set after PCEditorDidBecomeActiveNotification will be
+  // sent, but we should do it here for loading list of classes into browser.
+  [self setActiveEditor:editor];
+  [browser reloadLastColumnAndNotify:NO];
+  [browser setPath:path];*/
+}
+
 - (void)editorDidClose:(NSNotification *)aNotif
 {
-  PCEditor         *editor = [aNotif object];
+  PCEditor *editor = [aNotif object];
 
   // It is not our editor
   if ([editor projectEditor] != self)
@@ -484,10 +503,13 @@ NSString *PCEditorDidResignActiveNotification =
     }
   else
     {
+      PCProjectBrowser *browser = [project projectBrowser];
+      NSString         *path = [browser path];
+      
       [componentView setContentView:scrollView];
       [[project projectWindow] makeFirstResponder:scrollView];
 
-      [[project projectBrowser] reloadLastColumnAndNotify:YES];
+      [browser setPath:[path stringByDeletingLastPathComponent]];
     }
 }
 

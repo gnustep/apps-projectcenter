@@ -289,7 +289,21 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   PCProject *p = [[project projectManager] activeProject];
   NSString  *catKey = [p keyForCategory:[self nameOfSelectedCategory]];
   NSArray   *array = [[p projectDict] objectForKey:catKey];
-  
+  NSString  *path = [self path];
+  NSString  *tmp = nil;
+
+  // Determine last column with files (removing classes and methods from path)
+  tmp = [[path lastPathComponent] substringWithRange:NSMakeRange(0,1)];
+  while ([tmp isEqualToString:@"@"]     // classes
+	 || [tmp isEqualToString:@"+"]  // factory methods
+	 || [tmp isEqualToString:@"-"]) // instance methods
+    {
+      path = [path stringByDeletingLastPathComponent];
+      tmp = [[path lastPathComponent] substringWithRange:NSMakeRange(0,1)];
+    }
+
+  NSLog(@"PCBrowser set path: %@", path);
+  [self setPath:[path stringByDeletingLastPathComponent]];
   [self reloadLastColumnAndNotify:NO];
 
   [browser selectRow:[array indexOfObject:file] inColumn:[browser lastColumn]];
@@ -306,13 +320,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)click:(id)sender
 {
-  NSUserDefaults *ud = nil;
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSFileManager  *fm = [NSFileManager defaultManager];
   NSString       *category = nil;
   NSString       *fileName = nil;
   NSString       *filePath = nil;
   NSString       *key = nil;
   PCProject      *activeProject = nil;
-  NSFileManager  *fm = [NSFileManager defaultManager];
   BOOL           isDir;
 
   if (sender != browser)
@@ -320,28 +334,33 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       return;
     }
 
-  if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
+  category = [self nameOfSelectedCategory];
+  activeProject = [[project projectManager] activeProject];
+
+  // [[sender selectedCell] isLeaf]
+
+  if ([activeProject isEditableCategory:category]
+      && [[self selectedFiles] count] == 1)
     {
-      ud = [NSUserDefaults standardUserDefaults];
-      category = [self nameOfSelectedCategory];
       fileName = [[sender selectedCell] stringValue];
-      
-      activeProject = [[project projectManager] activeProject];
       key = [activeProject keyForCategory:category];
       filePath = [activeProject dirForCategoryKey:key];
       filePath = [filePath stringByAppendingPathComponent:fileName];
-
+  
 /*      PCLogInfo(self, @"[click] category: %@ filePath: %@",
 		category, filePath);*/
 
-      if ([activeProject isEditableCategory:category]
-	  && [fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
+      if ([fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir
+	  && [activeProject isEditableFile:filePath])
 	{
 	  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	    {
+	      NSString *path = [self path];
 	      [[project projectEditor] editorForFile:filePath
 		                        categoryPath:[browser path]
 					    windowed:NO];
+	      [self reloadLastColumnAndNotify:NO];
+	      [self setPath:path];
 	    }
 	}
     }
