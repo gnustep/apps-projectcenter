@@ -1,3 +1,62 @@
+2003-05-16 Serg Stoyan <stoyan@hologr.com>
+
+	* GNUmakefile: Remove PCAppController+MenuHandling.h and 
+	PCAppController+MenuHandling.m.
+	* GNUmakefile.bundles: Add -Wall -Werror options to 
+	ADDITIONAL_CFLAGS, ADDITIONAL_CPPFLAGS and ADDITIONAL_OBJCFLAGS.
+	* GNUmakefile.preamble: Ditto.
+	* PCAppController.h: infoController and menuController definitions
+	added.
+	* PCAppController.m: respondsToSelector:, forwardInvocation:, 
+	infoController, menuController methods added.
+	* PCMenuController.h: Rename all action methods in form like
+	openFile into fileOpen to avoid name conflict with PCLib/ objects's
+	methods.
+	* ProjectCenter_main.m: Ditto. Remove unused format_font ivar.
+	* PCMenuController.m: Ditto.
+	(projectSaveAs:): Added alert panel.
+	(projectRemoveFiles:): Ability to remove multiple files added.
+	(fileSaveAs:): Added alert panel.
+	(fileSaveTo:): Ditto.
+	(fileClose:): Ditto.
+	(validateMenuItem:): Fixes related to "File" menu items.
+	* PCPrefController.m:
+	(_initUI): Increase prefEmptyView height by 2 pixels.
+	
+	* PCLib/PCBrowserController.h: selectedFiles method added.
+	* PCLib/PCBrowserController.m:
+	(selectedFiles): Added. Returns array of selected filenames.
+	* PCLib/PCBundleLoader.m:
+	(loadBundlesAtPath:): Added parentheses around assignment used as 
+	truth value to avoid warning.
+	* PCLib/PCDataSource.m:
+	(init): Ditto.
+	* PCLib/PCEditorController.h: Added activeEditor method.
+	* PCLib/PCEditorController.m:
+	(activeEditor): Implemented. Returns current editor displayed in
+	project window.
+	(internalEditorForFile:): Added parentheses around assignment used 
+	as truth value to avoid warning.
+	(saveFile): Use activeEditor.
+	(revertFile): Ditto.
+	* PCLib/PCFileManager.m:
+	(showAddFileWindow): Initialize ivars to avoid warning. Added 
+	parentheses around assignment used as truth value to avoid warning.
+	* PCLib/PCProject.m:
+	(removeSelectedFilePermanently:): Initialize ivars to avoid warning.
+	Added ability to remove multiple files.
+	* PCLib/PCProjectBuilder.m:
+	(_createComponentView): Remove unused box and separateView ivars.
+	* PCLib/PCProjectDebugger.m
+	(_createComponentView): Remove unused split, scrollView1 and box
+	ivars. 
+	(run:): Initialize tn ivar.
+	* PCLib/ProjectDelegate.h: Added. Declare ProjectDelegate protocol.
+	* PCLib/PCProjectManager.h: Added ProjectDelegate protocol. delegate
+	conforms to ProjectDelegate protocol.
+	* PCLib/PCProjectManager.m
+	(saveProjectAs:): Removed alert panel.
+
 2003-05-11 Philippe C.D. Robert <probert@siggraph.org>
 
 	* PCFileManager.m:

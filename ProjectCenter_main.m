@@ -31,7 +31,8 @@
 
 void createMenu();
 
-int main(int argc, const char **argv) 
+int
+main(int argc, const char **argv)
 {
 #ifdef GNUSTEP_BASE_VERSION
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
@@ -68,7 +69,6 @@ createMenu()
   NSMenu *edit_indent;
   
   NSMenu *format;
-  NSMenu *format_font;
   NSMenu *format_text;
   
   NSMenu *tools;
@@ -125,31 +125,31 @@ createMenu()
   project = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:project forItem:[menu itemWithTitle:@"Project"]];
   [project addItemWithTitle:@"Open..." 
-	             action:@selector(openProject:)
+	             action:@selector(projectOpen:)
 	      keyEquivalent:@"O"];
   [project addItemWithTitle:@"New..."
-	             action:@selector(newProject:)
+	             action:@selector(projectNew:)
 	      keyEquivalent:@"N"];
   [project addItemWithTitle:@"Save"
-	             action:@selector(saveProject:) 
+	             action:@selector(projectSave:) 
 	      keyEquivalent:@"S"];
   [project addItemWithTitle:@"Save As..."
-	             action:@selector(saveProjectAs:)
+	             action:@selector(projectSaveAs:)
 	      keyEquivalent:@""];
   [project addItemWithTitle:@"Add Files..."
-	             action:@selector(addFile:)
+	             action:@selector(projectAddFiles:)
 	      keyEquivalent:@"A"];
   [project addItemWithTitle:@"Save Files..."
-	             action:@selector(saveFiles:)
+	             action:@selector(projectSaveFiles:)
 	      keyEquivalent:@"Q"];
   [project addItemWithTitle:@"Remove Files..."
-	             action:@selector(removeFile:)
+	             action:@selector(projectRemoveFiles:)
 	      keyEquivalent:@"r"];
   [project addItemWithTitle:@"Subprojects"
 	             action:action
 	      keyEquivalent:@""];
   [project addItemWithTitle:@"Close"
-	             action:@selector(closeProject:)
+	             action:@selector(projectClose:)
 	      keyEquivalent:@""];
 
   subprojects = [[[NSMenu alloc] init] autorelease];
@@ -171,25 +171,25 @@ createMenu()
   file = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:file forItem:[menu itemWithTitle:@"File"]];
   [file addItemWithTitle:@"Open..."
-                  action:@selector(openFile:)
+                  action:@selector(fileOpen:)
 	   keyEquivalent:@"o"];
   [file addItemWithTitle:@"New in Project"
-                  action:@selector(newFile:)
+                  action:@selector(fileNew:)
 	   keyEquivalent:@"n"];
   [file addItemWithTitle:@"Save"
-                  action:@selector(saveFile:)
+                  action:@selector(fileSave:)
 	   keyEquivalent:@"s"];
   [file addItemWithTitle:@"Save As..."
-                  action:@selector(saveFile:)
+                  action:@selector(fileSaveAs:)
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"Save To..."
-                  action:action
+                  action:@selector(fileSaveTo:)
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"Revert to Saved"
-                  action:@selector(revertFile:)
+                  action:@selector(fileRevert:)
 	   keyEquivalent:@"u"];
   [file addItemWithTitle:@"Close"
-                  action:action
+                  action:@selector(fileClose:)
 	   keyEquivalent:@"W"];
   [file addItemWithTitle:@"View"
                   action:action
@@ -198,7 +198,7 @@ createMenu()
                   action:action
 	   keyEquivalent:@"D"];
   [file addItemWithTitle:@"Rename"
-                  action:@selector(renameFile:)
+                  action:@selector(fileRename:)
 	   keyEquivalent:@""];
   [file addItemWithTitle:@"New Untitled"
                   action:action
@@ -259,7 +259,7 @@ createMenu()
   [edit setSubmenu:edit_find
            forItem:[edit itemWithTitle:@"Find"]];
   [edit_find addItemWithTitle:@"Find Panel..." 
-                       action:@selector(showFindPanel:) 
+                       action:@selector(findShowPanel:) 
 		keyEquivalent:@"f"];
   [edit_find addItemWithTitle:@"Find Next" 
                        action:@selector(findNext:)

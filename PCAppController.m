@@ -142,6 +142,32 @@
   delegate = aDelegate;
 }
 
+- (BOOL)respondsToSelector: (SEL)aSelector
+{
+  if (![super respondsToSelector: aSelector])
+    {
+      return [menuController respondsToSelector: aSelector];
+    }
+  else
+    {
+      return YES;
+    }
+}
+                            
+- (void)forwardInvocation:(NSInvocation *)anInvocation
+{
+  SEL aSelector = [anInvocation selector];
+
+  if ([menuController respondsToSelector: aSelector])
+    {   
+      [anInvocation invokeWithTarget:  menuController];
+    }
+  else
+    {
+      [super forwardInvocation: anInvocation];
+    }
+}
+
 //============================================================================
 //==== Bundle Management
 //============================================================================
@@ -156,9 +182,19 @@
   return projectManager;
 }
 
+- (PCInfoController *)infoController
+{
+  return infoController;
+}
+
 - (PCPrefController *)prefController
 {
   return prefController;
+}
+
+- (PCMenuController *)menuController
+{
+  return menuController;
 }
 
 - (PCServer *)doServer
@@ -270,28 +306,28 @@
 
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
 {
-    Class principalClass;
-    
-    NSAssert(aBundle,@"No valid bundle!");
+  Class principalClass;
 
-    principalClass = [aBundle principalClass];
-    if ([principalClass conformsToProtocol:@protocol(ProjectType)]) {
-        NSString	*name = [[principalClass sharedCreator] projectTypeName];
+  NSAssert(aBundle,@"No valid bundle!");
 
-        [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully loaded!",name] tag:INFORMATION];
+  principalClass = [aBundle principalClass];
+  if ([principalClass conformsToProtocol:@protocol(ProjectType)]) {
+      NSString	*name = [[principalClass sharedCreator] projectTypeName];
 
-        if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) {
-            [menuController addProjectTypeNamed:name];
+      [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully loaded!",name] tag:INFORMATION];
 
-            [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully registered!",name] tag:INFORMATION];
-        }
-    }
-    else if ([principalClass conformsToProtocol:@protocol(FileCreator)]) {
-        [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
+      if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) {
+	  [menuController addProjectTypeNamed:name];
 
-	// In objc.h there is already th like (char *)name...
-	// [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
-}
+	  [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully registered!",name] tag:INFORMATION];
+      }
+  }
+  else if ([principalClass conformsToProtocol:@protocol(FileCreator)]) {
+      [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
+
+      // In objc.h there is already th like (char *)name...
+      // [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
+  }
 }
 
 @end

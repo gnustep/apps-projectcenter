@@ -82,10 +82,8 @@
   NSScrollView *scrollView2; 
   NSRect       _w_frame;
   NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
-  NSBox        *box;
   id           button;
   id           textField;
-  BOOL         separateView;
 
 
   componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8, -1, 464, 322)];
@@ -549,8 +547,7 @@
 {
   NSPipe              *logPipe;
   NSPipe              *errorPipe;
-  NSDictionary        *optionDict = [currentProject buildOptions];
-  NSString            *status;
+//  NSDictionary        *optionDict = [currentProject buildOptions];
   NSDictionary        *env = [[NSProcessInfo processInfo] environment];
   NSMutableDictionary *data = [NSMutableDictionary dictionary];
 

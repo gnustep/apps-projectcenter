@@ -87,8 +87,7 @@ PCFindController.h \
 PCInfoController.h \
 PCLogController.h \
 PCMenuController.h \
-PCPrefController.h \
-PCAppController+MenuHandling.h
+PCPrefController.h
 
 #
 # Class files
@@ -101,8 +100,7 @@ PCInfoController.m \
 PCLogController.m \
 PCMenuController.m \
 PCPrefController.m \
-ProjectCenter_main.m \
-PCAppController+MenuHandling.m
+ProjectCenter_main.m
 
 #
 # C files

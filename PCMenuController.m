@@ -37,27 +37,27 @@
 
 - (id)init
 {
-    if ((self = [super init])) 
+  if ((self = [super init])) 
     {
       NSRect fr = NSMakeRect(20,30,160,20);
 
       [[NSNotificationCenter defaultCenter] addObserver:self 
-                                         selector:@selector(editorDidBecomeKey:)
-					 name:PCEditorDidBecomeKeyNotification 
-					 object:nil];
+	selector:@selector(editorDidBecomeKey:)
+	name:PCEditorDidBecomeKeyNotification 
+	object:nil];
 
       [[NSNotificationCenter defaultCenter] addObserver:self 
-                                         selector:@selector(editorDidResignKey:)
-					 name:PCEditorDidResignKeyNotification 
-					 object:nil];
+	selector:@selector(editorDidResignKey:)
+	name:PCEditorDidResignKeyNotification 
+	object:nil];
 
       editorIsKey = NO;
-    
+
       projectTypeAccessaryView = [[NSBox alloc] init];
       projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
       [projectTypePopup setAutoenablesItems: NO];
       [projectTypePopup addItemWithTitle:@"No type available!"];
-      
+
       [projectTypeAccessaryView setTitle:@"Project Types"];
       [projectTypeAccessaryView setTitlePosition:NSAtTop];
       [projectTypeAccessaryView setBorderType:NSGrooveBorder];
@@ -68,7 +68,8 @@
 
       RELEASE(projectTypePopup);
     }
-    return self;
+
+  return self;
 }
 
 - (void)dealloc
@@ -117,204 +118,300 @@
 //==== Menu stuff
 //============================================================================
 
-- (void)openProject:(id)sender
+// Info
+- (void)showPrefWindow:(id)sender
 {
-    NSString 	*projPath;
-    NSOpenPanel	*openPanel;
-    int		retval;
-
-    openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection:NO];
-    [openPanel setCanChooseDirectories:NO];
-    [openPanel setCanChooseFiles:YES];
-
-    retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
-
-    if (retval == NSOKButton) 
-    {
-        BOOL isDir;
-
-        [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
-	                                          forKey:@"LastOpenDirectory"];
-
-        projPath = [[openPanel filenames] objectAtIndex:0];
-
-        if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
-	                                         isDirectory:&isDir] && !isDir)
-        {
-            if (![projectManager openProjectAt:projPath]) 
-	    {
-                NSRunAlertPanel(@"Attention!",
-		                @"Couldn't open %@!",
-				@"OK",nil,nil,
-				[projPath stringByDeletingLastPathComponent]);
-            }
-        }
-    }
+  [[[NSApp delegate] prefController] showPrefWindow:sender];
 }
 
-- (void)newProject:(id)sender
+- (void)showInfoPanel:(id)sender
 {
-    NSSavePanel *sp;
-    int 	 runResult;
-    NSString    *dir = nil;
+  [[[NSApp delegate] infoController] showInfoWindow:sender];
+}
 
-    sp = [NSSavePanel savePanel];
+- (void)showEditorPanel:(id)sender
+{
+  [[projectManager activeProject] showEditorView:self];
+}
 
-    [sp setTitle:@"Create new project..."];
-    [sp setAccessoryView:nil];
-    [sp setAccessoryView:projectTypeAccessaryView];
+// Project
+- (void)projectOpen:(id)sender
+{
+  NSString 	*projPath;
+  NSOpenPanel	*openPanel;
+  int		retval;
 
-    dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];
-    if( !dir )
+  openPanel = [NSOpenPanel openPanel];
+  [openPanel setAllowsMultipleSelection:NO];
+  [openPanel setCanChooseDirectories:NO];
+  [openPanel setCanChooseFiles:YES];
+
+  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
+
+  if (retval == NSOKButton) 
     {
-        dir = NSHomeDirectory();
-    }
+      BOOL isDir;
 
-    runResult = [sp runModalForDirectory:dir file:@""];
-    if (runResult == NSOKButton) 
-    {
-        NSString *projectType = [projectTypePopup titleOfSelectedItem];
-        NSString *className = [[appController projectTypes] objectForKey:projectType];
+      [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
+	forKey:@"LastOpenDirectory"];
 
-        [[NSUserDefaults standardUserDefaults] setObject:[sp directory] 
-	                                          forKey:@"LastNewDirectory"];
+      projPath = [[openPanel filenames] objectAtIndex:0];
 
-        if (![projectManager createProjectOfType:className path:[sp filename]])
+      if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
+	  isDirectory:&isDir] && !isDir)
 	{
-            NSRunAlertPanel(@"Attention!",
-	                    @"Failed to create %@!",
-			    @"OK",nil,nil,[sp filename]);
-        }
+	  if (![projectManager openProjectAt:projPath]) 
+	    {
+	      NSRunAlertPanel(@"Attention!",
+			      @"Couldn't open %@!",
+			      @"OK",nil,nil,
+			      [projPath stringByDeletingLastPathComponent]);
+	    }
+	}
     }
 }
 
-- (void)saveProject:(id)sender
+- (void)projectNew:(id)sender
 {
-    [projectManager saveProject];
+  NSSavePanel *sp;
+  int 	 runResult;
+  NSString    *dir = nil;
+
+  sp = [NSSavePanel savePanel];
+
+  [sp setTitle:@"Create new project..."];
+  [sp setAccessoryView:nil];
+  [sp setAccessoryView:projectTypeAccessaryView];
+
+  dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];
+  if( !dir )
+    {
+      dir = NSHomeDirectory();
+    }
+
+  runResult = [sp runModalForDirectory:dir file:@""];
+  if (runResult == NSOKButton) 
+    {
+      NSString *projectType = [projectTypePopup titleOfSelectedItem];
+      NSString *className = [[appController projectTypes] objectForKey:projectType];
+
+      [[NSUserDefaults standardUserDefaults] setObject:[sp directory] 
+	forKey:@"LastNewDirectory"];
+
+      if (![projectManager createProjectOfType:className path:[sp filename]])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Failed to create %@!",
+			  @"OK",nil,nil,[sp filename]);
+	}
+    }
 }
 
-- (void)saveProjectAs:(id)sender
+- (void)projectSave:(id)sender
 {
-  NSString *proj;
+  [projectManager saveProject];
+}
+
+- (void)projectSaveAs:(id)sender
+{
+  NSString    *proj = nil;
 
   // Show save panel
+  NSRunAlertPanel(@"Attention!",
+		  @"This feature is not yet implemented!", 
+		  @"OK",nil,nil);
 
   [projectManager saveProjectAs:proj];
 }
 
-- (void)saveFiles:(id)sender
-{
-  [projectManager saveFiles];
-}
-
-- (void)revertToSaved:(id)sender
-{
-    [projectManager revertToSaved];
-}
-
-- (void)newSubproject:(id)sender
-{
-    [projectManager newSubproject];
-}
-
-- (void)addSubproject:(id)sender
-{
-    NSString *proj;
-
-// Show open panel
-
-    [projectManager addSubprojectAt:proj];
-}
-
-- (void)removeSubproject:(id)sender
-{
-    [projectManager removeSubproject];
-}
-
-- (void)closeProject:(id)sender
-{
-    [projectManager closeProject];
-}
-
-- (void)newFile:(id)sender
-{
-  [fileManager showNewFileWindow];
-}
-
-- (void)openFile:(id)sender
-{
-    NSString 	*filePath;
-    NSOpenPanel	*openPanel;
-    int		retval;
-
-    openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection:NO];
-    [openPanel setCanChooseDirectories:NO];
-    [openPanel setCanChooseFiles:YES];
-
-    retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:nil];
-
-    if (retval == NSOKButton) {
-        BOOL isDir;
-
-        [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-
-        filePath = [[openPanel filenames] objectAtIndex:0];
-
-        if ([[NSFileManager defaultManager] fileExistsAtPath:filePath isDirectory:&isDir] && !isDir) 
-	{
-            if (![projectManager openFile:filePath]) 
-	    {
-                NSRunAlertPanel(@"Attention!",
-		                @"Couldn't open %@!",
-				@"OK",nil,nil,filePath);
-            }
-        }
-    }
-}
-
-- (void)addFile:(id)sender
+- (void)projectAddFiles:(id)sender
 {
   [fileManager showAddFileWindow];
 }
 
-- (void)saveFile:(id)sender
+- (void)projectSaveFiles:(id)sender
+{
+  [projectManager saveFiles];
+}
+
+- (void)projectRemoveFiles:(id)sender
+{
+  NSString  *fileName = nil;
+  PCProject *proj = [projectManager activeProject];
+  NSArray   *files = [[proj browserController] selectedFiles];
+
+  if ((fileName = [[proj browserController] nameOfSelectedFile]))
+    {
+      int ret;
+
+      ret = NSRunAlertPanel(@"Remove File!",
+			    @"Really remove %@ in project %@?",
+			    @"Cancel",
+			    @"...from Project only",
+			    @"...from Project and Disk",
+			    files, [proj projectName]);
+
+      if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
+	{
+	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
+
+	  [projectManager removeFilePermanently:flag];
+	}
+    }
+}
+
+- (void)projectRevertToSaved:(id)sender
+{
+  [projectManager revertToSaved];
+}
+
+- (void)projectClose:(id)sender
+{
+  [projectManager closeProject];
+}
+
+// Subproject
+- (void)subprojectNew:(id)sender
+{
+  [projectManager newSubproject];
+}
+
+- (void)subprojectAdd:(id)sender
+{
+  NSString *proj = nil;
+
+  // Show open panel
+
+  [projectManager addSubprojectAt:proj];
+}
+
+- (void)subprojectRemove:(id)sender
+{
+  [projectManager removeSubproject];
+}
+
+// File
+
+- (void)fileOpen:(id)sender
+{
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString 	 *filePath;
+  NSOpenPanel	 *openPanel;
+  int		 retval;
+
+  openPanel = [NSOpenPanel openPanel];
+  [openPanel setAllowsMultipleSelection:NO];
+  [openPanel setCanChooseDirectories:NO];
+  [openPanel setCanChooseFiles:YES];
+
+  retval = [openPanel runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
+                                                       file:nil
+					              types:nil];
+
+  if (retval == NSOKButton)
+    {
+      BOOL isDir;
+
+      [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+
+      filePath = [[openPanel filenames] objectAtIndex:0];
+
+      if ([[NSFileManager defaultManager] fileExistsAtPath:filePath 
+                                               isDirectory:&isDir] && !isDir) 
+	{
+	  if (![projectManager openFile:filePath]) 
+	    {
+	      NSRunAlertPanel(@"Attention!",
+			      @"Couldn't open %@!",
+			      @"OK",nil,nil,filePath);
+	    }
+	}
+  }
+}
+
+- (void)fileNew:(id)sender
+{
+  [fileManager showNewFileWindow];
+}
+
+- (void)fileSave:(id)sender
 {
   [projectManager saveFile];
 }
 
-- (void)revertFile:(id)sender
+- (void)fileSaveAs:(id)sender
 {
-    [projectManager revertFile];
+//  [projectManager saveFileAs];
+  NSRunAlertPanel(@"PCMenuController: Sorry!",
+  		  @"This feature is not yet implemented!",
+    		  @"OK",nil,nil);
 }
 
-- (void)renameFile:(id)sender
+- (void)fileSaveTo:(id)sender
 {
-    NSString *proj;
-
-// Show open panel
-
-    [projectManager renameFileTo:proj];
+//  [projectManager saveFileTo];
+  NSRunAlertPanel(@"PCMenuController: Sorry!",
+  		  @"This feature is not yet implemented!",
+    		  @"OK",nil,nil);
 }
 
-- (void)removeFile:(id)sender
+- (void)fileRevertToSaved:(id)sender
 {
-  NSString *file = nil;
-  PCProject *proj = [projectManager activeProject];
-  
-  if ((file = [[proj browserController] nameOfSelectedFile])) {
-    int ret;
-    
-    ret = NSRunAlertPanel(@"Remove File!",@"Really remove %@ in project %@?",@"Cancel",@"...from Project only",@"...from Project and Disk",file,[proj projectName]);
-    
-    if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
-    {
-      BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
-      
-      [projectManager removeFilePermanently:flag];
-    }
-  }    
+  [projectManager revertFile];
+}
+
+- (void)fileClose:(id)sender
+{
+  NSRunAlertPanel(@"PCMenuController: Sorry!",
+  		  @"This feature is not yet implemented!",
+    		  @"OK",nil,nil);
+}
+
+- (void)fileRename:(id)sender
+{
+  NSString *proj = nil;
+
+  // Show open panel
+
+  [projectManager renameFileTo:proj];
+}
+
+
+// Edit
+- (void)findShowPanel:(id)sender
+{
+  [[PCTextFinder sharedFinder] showFindPanel:self];
+}
+
+- (void)findNext:(id)sender
+{
+  [[PCTextFinder sharedFinder] findNext:self];
+}
+
+- (void)findPrevious:(id)sender
+{
+  [[PCTextFinder sharedFinder] findPrevious:self];
+}
+
+// Tools
+- (void)showInspector:(id)sender
+{
+  [projectManager showInspectorForProject:[projectManager activeProject]];
+}
+
+- (void)showRunPanel:(id)sender
+{
+  [[projectManager activeProject] showRunView:self];
+}
+
+- (void)showBuildPanel:(id)sender
+{
+  [[projectManager activeProject] showBuildView:self];
+}
+
+- (void)runTarget:(id)sender
+{
+  [[projectManager activeProject] runSelectedTarget:self];
 }
 
 //============================================================================
@@ -323,7 +420,9 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-  NSString *menuTitle = [[menuItem menu] title];
+  NSString            *menuTitle = [[menuItem menu] title];
+  PCProject           *aProject = [projectManager activeProject];
+  NSResponder         *firstResponder = [[aProject projectWindow] firstResponder];
 
   if ([[projectManager loadedProjects] count] == 0) 
     {
@@ -402,7 +501,7 @@
 
   // Project related menu items
   if ([menuTitle isEqualToString: @"Project"] 
-      && [[projectManager activeProject] selectedRootCategory] == nil)
+      && [aProject selectedRootCategory] == nil)
     {
       if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
       if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
@@ -411,13 +510,8 @@
   // File related menu items
   if (([menuTitle isEqualToString: @"File"]))
     {
-      PCEditorController  *ed = [[projectManager activeProject] editorController];
-      PCBrowserController *br = [[projectManager activeProject] browserController];
-      NSArray             *path = [[br pathOfSelectedFile] pathComponents];
-      
-      if (![[ed allEditors] count] || editorIsKey == NO
-	  || ([path count] 
-	      && [[path objectAtIndex: [path count]-1] isEqualToString: @"/"]))
+      if (![[firstResponder className] isEqualToString: @"PCEditorView"]
+	  || ![[aProject projectWindow] isKeyWindow])
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
@@ -427,7 +521,7 @@
 	  if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
 	}
     }
-;
+
   // Find menu items
   if (editorIsKey == NO && [menuTitle isEqualToString: @"Find"])
     {
@@ -452,7 +546,7 @@
 
 - (void)editorDidBecomeKey:(NSNotification *)aNotification
 {
-    editorIsKey = YES;
+  editorIsKey = YES;
 }
 
 @end

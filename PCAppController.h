@@ -42,21 +42,21 @@
 
 @interface PCAppController : NSObject
 {
-  PCPrefController 	*prefController;
-  PCFindController 	*finder;
-  PCInfoController 	*infoController;
-  PCLogController 	*logger;
-  PCProjectManager 	*projectManager;
-  PCFileManager	*fileManager;
-  PCMenuController	*menuController;
+  PCPrefController *prefController;
+  PCFindController *finder;
+  PCInfoController *infoController;
+  PCLogController  *logger;
+  PCProjectManager *projectManager;
+  PCFileManager    *fileManager;
+  PCMenuController *menuController;
   
-  PCBundleLoader 		*bundleLoader;
-  PCServer 			*doServer;
-  NSConnection 		*doConnection;
+  PCBundleLoader   *bundleLoader;
+  PCServer         *doServer;
+  NSConnection     *doConnection;
   
-  id				delegate;
+  id		   delegate;
   
-  NSMutableDictionary		*projectTypes;
+  NSMutableDictionary *projectTypes;
 }
 
 //============================================================================
@@ -81,7 +81,9 @@
 
 - (PCBundleLoader *)bundleLoader;
 - (PCProjectManager *)projectManager;
+- (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
+- (PCMenuController *)menuController;
 - (PCServer *)doServer;
 - (PCFindController *)finder;
 - (PCLogController *)logger;

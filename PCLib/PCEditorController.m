@@ -90,6 +90,32 @@
 }
 
 // ===========================================================================
+// ==== Acessor methods
+// ===========================================================================
+
+- (PCEditor *) activeEditor
+{
+  NSEnumerator *enumerator = [editorDict keyEnumerator];
+  PCEditor     *editor;
+  NSString     *key;
+  NSWindow     *window;
+
+  while(( key = [enumerator nextObject] ))
+    {
+      editor = [editorDict objectForKey:key];
+      window = [editor editorWindow];
+
+      if( ([window isKeyWindow] && [window isMainWindow]) ||
+	  ([project isEditorActive] && [[project projectWindow] isKeyWindow]))
+	{
+	  return editor;
+	}
+    }
+
+  return nil;
+}
+
+// ===========================================================================
 // ==== Project and Editor handling
 // ===========================================================================
 
@@ -102,7 +128,7 @@
 {
     PCEditor *editor;
 
-    if( editor = [editorDict objectForKey:path] )
+    if((editor = [editorDict objectForKey:path]))
     {
 	return editor;
     }
@@ -188,46 +214,26 @@
 
 - (BOOL)saveFile
 {
-    NSEnumerator *enumerator = [editorDict keyEnumerator];
-    PCEditor *editor;
-    NSString *key;
-    NSWindow *window;
+  PCEditor *editor = [self activeEditor];
 
-    while(( key = [enumerator nextObject] ))
+  if (editor != nil)
     {
-        editor = [editorDict objectForKey:key];
-	window = [editor editorWindow];
-
-	if( [window isKeyWindow] && [window isMainWindow] ||
-	    [project isEditorActive] && [[project projectWindow] isKeyWindow])
-	{
-	    return [editor saveFileIfNeeded];
-	}
+      return [editor saveFileIfNeeded];
     }
 
-    return NO;
+  return NO;
 }
 
 - (BOOL)revertFile
 {
-    NSEnumerator *enumerator = [editorDict keyEnumerator];
-    PCEditor *editor;
-    NSString *key;
-    NSWindow *window;
+  PCEditor *editor = [self activeEditor];
 
-    while(( key = [enumerator nextObject] ))
+  if (editor != nil)
     {
-        editor = [editorDict objectForKey:key];
-	window = [editor editorWindow];
-
-	if( [window isKeyWindow] && [window isMainWindow] ||
-	    [project isEditorActive] && [[project projectWindow] isKeyWindow])
-	{
-	    return [editor revertFile];
-	}
+      return [editor revertFile];
     }
 
-    return NO;
+  return NO;
 }
 
 @end

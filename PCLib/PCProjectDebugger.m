@@ -77,14 +77,13 @@ enum {
 
 - (void)_createComponentView
 {
-  NSSplitView  *split;
-  NSScrollView *scrollView1; 
+//  NSSplitView  *split;
+//  NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
   NSMatrix     *matrix;
   NSRect       _w_frame;
   NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id           button;
-  NSBox        *box;
 
   componentView = [[NSBox alloc] initWithFrame:NSMakeRect(8,-1,464,322)];
   [componentView setTitlePosition:NSNoTitle];
@@ -293,7 +292,7 @@ enum {
       [currentProject isKindOfClass:NSClassFromString(@"PCRenaissanceProject")] ||
       [currentProject isKindOfClass:NSClassFromString(@"PCGormProject")]) 
   {
-    NSString *tn;
+    NSString *tn = nil;
     NSString *pn = [currentProject projectName];
 
     openPath = [NSString stringWithString:@"openapp"];

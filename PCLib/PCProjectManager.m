@@ -221,13 +221,13 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {    
-  if (delegate && [delegate respondsToSelector:@selector(projectTypes)]) 
+  if (delegate && [delegate respondsToSelector:@selector(projectTypes)])
   {
     NSDictionary *builders = [delegate projectTypes];
     NSEnumerator *enumerator = [builders keyEnumerator];
     NSString 	 *builderKey;
     
-    while (builderKey = [enumerator nextObject]) 
+    while ((builderKey = [enumerator nextObject]))
     {
       id<ProjectType>	concretBuilder;
       PCProject		*project;
@@ -337,11 +337,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveProjectAs:(NSString *)projName
 {
-    NSRunAlertPanel(@"Attention!",
-                @"This feature is not yet implemented!", 
-		@"OK",nil,nil);
-                
-    return YES;
+  return NO;
 }
 
 - (void)inspectorPopupDidChange:(id)sender
@@ -456,27 +452,27 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)openFile:(NSString *)path
 {
-    BOOL isDir;
-    NSFileManager *fm = [NSFileManager defaultManager];
+  BOOL isDir;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-    if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir)
+  if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir)
     {
-	[PCEditorController openFileInEditor:path];
+      [PCEditorController openFileInEditor:path];
 
-	return YES;
+      return YES;
     }
 
-    return NO;
+  return NO;
 }
 
 - (BOOL)saveFile
 {
-    if (!activeProject) 
+  if (!activeProject) 
     {
-        return NO;
+      return NO;
     }
 
-    return [activeProject saveFile];
+  return [activeProject saveFile];
 }
 
 - (BOOL)revertFile
@@ -491,6 +487,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)renameFileTo:(NSString *)path
 {
+  return YES;
 }
 
 - (BOOL)removeFilePermanently:(BOOL)yn

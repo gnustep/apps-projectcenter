@@ -46,6 +46,7 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif;
 
+- (NSArray *)selectedFiles;
 - (NSString *)nameOfSelectedFile;
 - (NSString *)pathOfSelectedFile;
 

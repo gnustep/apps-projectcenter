@@ -392,62 +392,82 @@
 
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn
 {
-    NSString *file = [browserController nameOfSelectedFile];
-    NSString *key;
-    NSString *otherKey;
-    NSString *ext;
-    NSString *fn;
-    BOOL ret = NO;
+  NSEnumerator *files = [[browserController selectedFiles] objectEnumerator];
+  NSString     *file = nil;
+  NSString     *key = nil;
+  NSString     *otherKey = nil;
+  NSString     *ext = nil;
+  NSString     *fn = nil;
+  BOOL         ret = NO;
 
-    if (!file) {
-        return NO;
+  if (!files)
+    {
+      return NO;
     }
 
-    key = [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
-    [self removeFile:file forKey:key];
+  key = [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
 
-    if ([key isEqualToString:PCClasses]) {
-      otherKey = PCHeaders;
-      ext = [NSString stringWithString:@"h"];
-      
-      fn = [file stringByDeletingPathExtension];
-      fn = [fn stringByAppendingPathExtension:ext];
-      
-      if ([self doesAcceptFile:fn forKey:otherKey] == NO) {
-	ret = NSRunAlertPanel(@"Removing Header?",@"Should %@ be removed from the project %@ as well?",@"Yes",@"No",nil,fn,[self projectName]);
-      }
-    }
-    else if ([key isEqualToString:PCHeaders]) {
-      otherKey = PCClasses;
-      ext = [NSString stringWithString:@"m"];
-      
-      fn = [file stringByDeletingPathExtension];
-      fn = [fn stringByAppendingPathExtension:ext];
-      
-      if ([self doesAcceptFile:fn forKey:otherKey] == NO) {
-	ret = NSRunAlertPanel(@"Removing Class?",@"Should %@ be removed from the project %@ as well?",@"Yes",@"No",nil,fn,[self projectName]);
-      }
-    }
+  while (file = [files nextObject])
+    {
+      [self removeFile:file forKey:key];
 
-    if (ret) {
-      [self removeFile:fn forKey:otherKey];
-    }
-    
-    // Remove the file permanently?!
-    if (yn) {
-        NSString *pth = [projectPath stringByAppendingPathComponent:file];
+      if ([key isEqualToString:PCClasses])
+	{
+	  otherKey = PCHeaders;
+	  ext = [NSString stringWithString:@"h"];
 
-        [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
+	  fn = [file stringByDeletingPathExtension];
+	  fn = [fn stringByAppendingPathExtension:ext];
 
-	if (ret) {
-	  pth = [projectPath stringByAppendingPathComponent:fn];
+	  if ([self doesAcceptFile:fn forKey:otherKey] == NO)
+	    {
+	      ret = NSRunAlertPanel(@"Removing Header?",
+				    @"Should %@ be removed from the project %@ as well?",
+				    @"Yes", @"No", nil, 
+				    fn, [self projectName]);
+	    }
+	}
+      else if ([key isEqualToString:PCHeaders])
+	{
+	  otherKey = PCClasses;
+	  ext = [NSString stringWithString:@"m"];
+
+	  fn = [file stringByDeletingPathExtension];
+	  fn = [fn stringByAppendingPathExtension:ext];
+
+	  if ([self doesAcceptFile:fn forKey:otherKey] == NO)
+	    {
+	      ret = NSRunAlertPanel(@"Removing Class?",
+				    @"Should %@ be removed from the project %@ as well?",
+				    @"Yes", @"No", nil,
+				    fn, [self projectName]);
+	    }
+	}
+
+      if (ret)
+	{
+	  [self removeFile:fn forKey:otherKey];
+	}
+
+      // Remove the file permanently?!
+      if (yn)
+	{
+	  NSString *pth = [projectPath stringByAppendingPathComponent:file];
+
 	  [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
+
+	  if (ret)
+	    {
+	      pth = [projectPath stringByAppendingPathComponent:fn];
+	      [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
+	    }
 	}
     }
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:@"ProjectDictDidChangeNotification" object:self];
 
-    return YES;
+  return YES;
 }
 
 - (void)renameFile:(NSString *)aFile

@@ -119,6 +119,21 @@
   return name;
 }
 
+- (NSArray *)selectedFiles
+{
+  NSArray        *cells = [browser selectedCells];
+  NSMutableArray *files = [[NSMutableArray alloc] initWithCapacity: 1];
+  int     i;
+  int     count = [cells count];
+
+  for (i = 0; i < count; i++)
+    {
+      [files addObject: [[cells objectAtIndex: i] stringValue]];
+    }
+
+  return (NSArray *)files;
+}
+
 - (NSString *)pathOfSelectedFile
 {
   return [browser path];

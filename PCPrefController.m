@@ -83,7 +83,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 
   prefEmptyView = [[NSBox alloc] init];
   [prefEmptyView setTitlePosition: NSNoTitle];
-  [prefEmptyView setFrameFromContentFrame: NSMakeRect(0,0,270,310)];
+  [prefEmptyView setFrameFromContentFrame: NSMakeRect(0,0,270,312)];
   [prefEmptyView setBorderType: NSNoBorder];
   [_c_view addSubview: prefEmptyView];
 
@@ -838,7 +838,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 - (void)setDisplayPanels: (id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-  NSString       *key;
+  NSString       *key = nil;
 
   if (sender == separateBuilder)
     {

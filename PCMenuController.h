@@ -39,10 +39,10 @@
   PCFileManager	   *fileManager;
   PCAppController  *appController;
   
-  NSBox		        *projectTypeAccessaryView;
-  id			projectTypePopup;
+  NSBox	*projectTypeAccessaryView;
+  id    projectTypePopup;
 
-  BOOL editorIsKey;
+  BOOL  editorIsKey;
 }
 
 //============================================================================
@@ -62,26 +62,47 @@
 
 - (void)addProjectTypeNamed:(NSString *)name;
 
-- (void)openProject:(id)sender;
-- (void)newProject:(id)sender;
-- (void)saveProject:(id)sender;
-- (void)saveProjectAs:(id)sender;
-- (void)saveFiles:(id)sender;
-- (void)revertToSaved:(id)sender;
+// Info
+- (void)showInfoPanel:(id)sender;
+- (void)showPrefWindow:(id)sender;
 
-- (void)newSubproject:(id)sender;
-- (void)addSubproject:(id)sender;
-- (void)removeSubproject:(id)sender;
+// Project
+- (void)projectOpen:(id)sender;
+- (void)projectNew:(id)sender;
+- (void)projectSave:(id)sender;
+- (void)projectSaveAs:(id)sender;
+- (void)projectAddFiles:(id)sender;
+- (void)projectSaveFiles:(id)sender;
+- (void)projectRemoveFiles:(id)sender;
+- (void)projectRevertToSaved:(id)sender;
+- (void)projectClose:(id)sender;
 
-- (void)closeProject:(id)sender;
+// Subproject
+- (void)subprojectNew:(id)sender;
+- (void)subprojectAdd:(id)sender;
+- (void)subprojectRemove:(id)sender;
 
-- (void)newFile:(id)sender;
-- (void)addFile:(id)sender;
-- (void)openFile:(id)sender;
-- (void)saveFile:(id)sender;
-- (void)revertFile:(id)sender;
-- (void)renameFile:(id)sender;
-- (void)removeFile:(id)sender;
+// File
+- (void)fileNew:(id)sender;
+- (void)fileOpen:(id)sender;
+- (void)fileSave:(id)sender;
+- (void)fileSaveAs:(id)sender;
+- (void)fileSaveTo:(id)sender;
+- (void)fileRevertToSaved:(id)sender;
+- (void)fileRename:(id)sender;
+- (void)fileClose:(id)sender;
+
+// Edit
+- (void)findShowPanel:(id)sender;
+- (void)findNext:(id)sender;
+- (void)findPrevious:(id)sender;
+
+// Tools
+- (void)showInspector:(id)sender;
+- (void)showEditorPanel:(id)sender;
+- (void)showRunPanel:(id)sender;
+- (void)showBuildPanel:(id)sender;
+- (void)runTarget:(id)sender;
 
 //============================================================================
 //==== Delegate stuff

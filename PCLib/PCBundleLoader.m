@@ -152,7 +152,7 @@
   dir = [[NSFileManager defaultManager] directoryContentsAtPath: path];
   enumerator = [dir objectEnumerator];
 
-  while (bundleName = [enumerator nextObject]) 
+  while ((bundleName = [enumerator nextObject]))
     {
       if ([[bundleName pathExtension] isEqualToString:@"bundle"]) 
 	{

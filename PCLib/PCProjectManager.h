@@ -33,13 +33,15 @@
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
+@protocol ProjectDelegate;
 #else
 #include <ProjectCenter/ProjectBuilder.h>
+#include <ProjectCenter/ProjectDelegate.h>
 #endif
 
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {
-  id			delegate;      // The PCAppController
+  id<ProjectDelegate>	delegate;      // The PCAppController
   id			fileManager;
 
   id			inspector;
