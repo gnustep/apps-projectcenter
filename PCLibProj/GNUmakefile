@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -23,15 +26,15 @@ BUNDLE_NAME=PCLibProj
 BUNDLE_EXTENSION=.bundle
 BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
 PCLibProj_PRINCIPAL_CLASS=PCLibProj
-#
 
+
+#
 # Additional libraries
 #
 
 PCLibProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -40,27 +43,22 @@ PC.proj \
 Version 
 
 #
-
 # Header files
 #
 
 PCLibProj_HEADERS= \
-PCLibMakefileFactory.h \
 PCLibProj.h \
 PCLibProject.h 
 
 #
-
 # Class files
 #
 
 PCLibProj_OBJC_FILES= \
-PCLibMakefileFactory.m \
 PCLibProj.m \
 PCLibProject.m 
 
 #
-
 # C files
 #
 

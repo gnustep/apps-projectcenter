@@ -26,13 +26,7 @@
 
 #import "PCLibProject.h"
 #import "PCLibProj.h"
-#import "PCLibMakefileFactory.h"
-
-#import <ProjectCenter/ProjectCenter.h>
-
-#if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
-#endif
+#import "PCMakefileFactory.h"
 
 @interface PCLibProject (CreateUI)
 
@@ -92,19 +86,39 @@
 
 - (BOOL)writeMakefile
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
     NSData   *mfd;
-    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *tmp;
+    int i; 
+    PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
+    NSDictionary      *dict = [self projectDict];
 
     // Save the project file
     [super writeMakefile];
    
-    if (mfd = [[PCLibMakefileFactory sharedFactory] makefileForProject:self]) {
-        if ([mfd writeToFile:mf atomically:YES]) {
+    [mf createMakefileForProject:[self projectName]];
+    [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
+    [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
+
+    [mf appendLibrary];
+    [mf appendLibraryInstallDir:[dict objectForKey:PCInstallDir]];
+    [mf appendLibraryLibraries:[dict objectForKey:PCLibraries]];
+
+    [mf appendLibraryHeaders:[dict objectForKey:PCHeaders]];
+    [mf appendLibraryClasses:[dict objectForKey:PCClasses]];
+    [mf appendLibraryCFiles:[dict objectForKey:PCOtherSources]];
+
+    [mf appendTailForLibrary];
+
+    // Write the new file to disc!
+    if (mfd = [mf encodedMakefile])
+    {
+        if ([mfd writeToFile:mfl atomically:YES])
+        {
             return YES;
         }
-    }   
-    
+    }
+
     return NO;
 }
 

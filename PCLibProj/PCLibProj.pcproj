@@ -4,7 +4,6 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCLibMakefileFactory.m,
 	PCLibProj.m,
 	PCLibProject.m
     );
@@ -16,7 +15,6 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCLibMakefileFactory.h,
 	PCLibProj.h,
 	PCLibProject.h
     );
