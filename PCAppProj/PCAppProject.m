@@ -43,29 +43,7 @@
 
 - (void)_initUI
 {
-  // Always call super!!!
   [super _initUI];
-
-  projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setTitlePosition:NSAtTop];
-  [projectAttributeInspectorView setBorderType:NSGrooveBorder];
-  //    [projectAttributeInspectorView addSubview:projectTypePopup];
-  [projectAttributeInspectorView sizeToFit];
-  [projectAttributeInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setTitlePosition:NSAtTop];
-  [projectProjectInspectorView setBorderType:NSGrooveBorder];
-  //    [projectProjectInspectorView addSubview:projectTypePopup];
-  [projectProjectInspectorView sizeToFit];
-  [projectProjectInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setTitlePosition:NSAtTop];
-  [projectFileInspectorView setBorderType:NSGrooveBorder];
-  //    [projectFileInspectorView addSubview:projectTypePopup];
-  [projectFileInspectorView sizeToFit];
-  [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
 }
 
 @end
@@ -99,11 +77,7 @@
 - (void)dealloc
 {
   [rootCategories release];
-  
-  [projectAttributeInspectorView release];
-  [projectProjectInspectorView release];
-  [projectFileInspectorView release];
-  
+    
   [super dealloc];
 }
 

@@ -43,31 +43,7 @@
 
 - (void)_initUI
 {
-  // Always call super!!!
   [super _initUI];
-
-  projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setTitlePosition:NSAtTop];
-  [projectAttributeInspectorView setBorderType:NSGrooveBorder];
-  //    [projectAttributeInspectorView addSubview:projectTypePopup];
-  [projectAttributeInspectorView sizeToFit];
-  [projectAttributeInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setTitlePosition:NSAtTop];
-  [projectProjectInspectorView setBorderType:NSGrooveBorder];
-  //    [projectProjectInspectorView addSubview:projectTypePopup];
-  [projectProjectInspectorView sizeToFit];
-  [projectProjectInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setTitlePosition:NSAtTop];
-  [projectFileInspectorView setBorderType:NSGrooveBorder];
-  //    [projectFileInspectorView addSubview:projectTypePopup];
-  [projectFileInspectorView sizeToFit];
-  [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
-
-  _needsAdditionalReleasing = YES;
 }
 
 @end
@@ -80,31 +56,27 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-        rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
-					PCSubprojects, @"Subprojects", 
-					PCLibraries, @"Libraries",
-					PCDocuFiles,@"Documentation",
-					PCOtherResources,@"Other Resources", 
-					PCOtherSources,@"Other Sources",
-					PCHeaders,@"Headers",
-					PCClasses,@"Classes",
-					nil] retain];
-
-        [self _initUI];
-    }
-    return self;
+  if ((self = [super init])) {
+    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+				      PCSubprojects, @"Subprojects", 
+				    PCLibraries, @"Libraries",
+				    PCDocuFiles,@"Documentation",
+				    PCOtherResources,@"Other Resources", 
+				    PCOtherSources,@"Other Sources",
+				    PCHeaders,@"Headers",
+				    PCClasses,@"Classes",
+				    nil] retain];
+    
+    [self _initUI];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [rootCategories release];
-
-    [projectAttributeInspectorView release];
-    [projectProjectInspectorView release];
-    [projectFileInspectorView release];
-
-    [super dealloc];
+  [rootCategories release];
+  
+  [super dealloc];
 }
 
 //----------------------------------------------------------------------------
