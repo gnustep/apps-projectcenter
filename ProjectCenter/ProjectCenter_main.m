@@ -63,6 +63,7 @@ void createMenu()
   NSMenu *file;
   NSMenu *edit;
   NSMenu *format;
+  NSMenu *fontmenu;
   NSMenu *tools;
   NSMenu *services;
   NSMenu *windows;
@@ -159,7 +160,10 @@ void createMenu()
 
   format = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:format forItem:[menu itemWithTitle:@"Format"]];
-  [format addItemWithTitle:@"Font Panel" action:action keyEquivalent:@""];
+  [format addItemWithTitle:@"Fonts" action:NULL keyEquivalent:@""];
+
+  fontmenu = [[[NSMenu alloc] init] autorelease];
+  [format setSubmenu:[[NSFontManager sharedFontManager] fontMenu: YES] forItem:[format itemWithTitle:@"Fonts"]];
 
   /*
    * Tools submenu
