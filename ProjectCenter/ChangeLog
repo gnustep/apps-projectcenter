@@ -1,3 +1,31 @@
+2001-08-01 14:35  probert
+
+	* GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble: New
+	copyright information and minor template additions
+
+2001-07-07 13:56  probert
+
+	* PCAppController.m, ProjectCenterInfo.plist: Default editor is now
+	vi, new version number added
+
+2001-07-07 13:48  probert
+
+	* GNUmakefile, ProjectCenter_main.m: Little GUI modifications
+
+2001-07-01 21:01  probert
+
+	* GNUmakefile.preamble: Applied patch from Adam Fedor
+
+2001-01-26 09:45  robert
+
+	* GNUmakefile, Info-project.plist, PC.project,
+	ProjectCenterInfo.plist: updated the PC.project file and renamed
+	the plist file
+
+2001-01-14 18:54  robert
+
+	* ChangeLog: Updated the ChangeLogs
+
 2001-01-14 17:19  robert
 
 	* ProjectCenter_main.m: cleanup in main()
