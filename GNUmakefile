@@ -8,7 +8,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 # Main application
 #
-VERSION = 0.4.1
+VERSION = 0.5.0
 PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
@@ -77,12 +77,13 @@ Images/soundSuitcase.tiff \
 Images/soundSuitcaseH.tiff \
 Images/subprojectSuitcase.tiff \
 Images/subprojectSuitcaseH.tiff \
-Modules/AggregateProject/AggregateProject.bundle \
-Modules/ApplicationProject/ApplicationProject.bundle \
-Modules/BundleProject/BundleProject.bundle \
-Modules/LibraryProject/LibraryProject.bundle \
-Modules/RenaissanceProject/RenaissanceProject.bundle \
-Modules/ToolProject/ToolProject.bundle 
+Modules/AggregateProject/Aggregate.project \
+Modules/ApplicationProject/Application.project \
+Modules/BundleProject/Bundle.project \
+Modules/FrameworkProject/Framework.project \
+Modules/LibraryProject/Library.project \
+Modules/RenaissanceProject/Renaissance.project \
+Modules/ToolProject/Tool.project
 
 #
 # Header files

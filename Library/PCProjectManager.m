@@ -1075,7 +1075,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   bundleLoader = [[PCBundleLoader alloc] init];
   [bundleLoader setDelegate:self];
-  [bundleLoader loadBundles];
+  [bundleLoader loadBundlesWithExtension:@"project"];
 }
 
 - (PCBundleLoader *)bundleLoader

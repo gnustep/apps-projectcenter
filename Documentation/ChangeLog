@@ -1,3 +1,20 @@
+2005-01-23 Serg Stoyan <stoyan255@ukr.net>
+
+	* Project type bundles now have .project suffix.
+	
+	* Library/PCBundleLoader.[hm]:
+	(loadBundlesWithExtension:): Added and implemented.
+	(loadBundlesAtPath:withExtension:): ditto.
+	(loadBundleWithFullPath:): ditto.
+	(loadBundles): removed.
+	
+	* Library/PCProjectManager.m:
+	(loadProjectTypeBunldes): Call loadBundlesWithExtension:@"project".
+	
+	* Added Framework project type.
+	
+	* 0.5 branch started.
+	
 2005-01-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.1

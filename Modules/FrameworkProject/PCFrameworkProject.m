@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2004 Free Software Foundation
+   Copyright (C) 2005 Free Software Foundation
 
    Authors: Serg Stoyan
 
@@ -159,6 +159,42 @@
     PCInterfaces, PCImages, PCOtherResources, PCDocuFiles, nil];
 }
 
+// ============================================================================
+// ==== File Handling
+// ============================================================================
+
+- (void)addFiles:(NSArray *)files forKey:(NSString *)type notify:(BOOL)yn
+{
+  if ([type isEqualToString:PCHeaders])
+    {
+      [super addFiles:files forKey:PCPublicHeaders notify:NO];
+    }
+
+  [super addFiles:files forKey:type notify:YES];
+}
+
+- (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile
+{
+  NSString *category = [projectBrowser nameOfSelectedCategory];
+  BOOL     success = NO;
+  BOOL     isPublicHeader = YES;
+
+  isPublicHeader = 
+    [[projectDict objectForKey:PCPublicHeaders] containsObject:fromFile];
+
+  success = [super renameFile:fromFile toFile:toFile];
+
+  if (success && [category isEqualToString:[super categoryForKey:PCHeaders]])
+    {
+      if (isPublicHeader == NO)
+	{
+	  [self setHeaderFile:toFile public:NO];
+	}
+    }
+
+  return success;
+}
+
 @end
 
 @implementation PCFrameworkProject (GeneratedFiles)
@@ -239,7 +275,7 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
-  [mff appendString:@"\n#\n# Bundle\n#\n"];
+  [mff appendString:@"\n#\n# Framework\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
     [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"FRAMEWORK_NAME = %@\n",

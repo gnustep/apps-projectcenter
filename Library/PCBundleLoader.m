@@ -28,44 +28,6 @@
 
 #include "PCLogController.h"
 
-@interface PCBundleLoader (PrivateLoader)
-
-- (void)loadAdditionalBundlesAt:(NSString *)path;
-
-@end
-
-@implementation PCBundleLoader (PrivateLoader)
-
-- (void)loadAdditionalBundlesAt:(NSString *)path
-{
-  NSBundle *bundle;
-
-  NSAssert(path,@"No valid bundle path specified!");
-
-  PCLogInfo(self, @"Loading bundle %@...", path);
-
-  if ((bundle = [NSBundle bundleWithPath:path])) 
-    {
-      [loadedBundles addObject:bundle];
-      PCLogInfo(self, @"Bundle %@ successfully loaded!", path);
-
-      if (delegate 
-	  && 
-	  [delegate respondsToSelector:@selector(bundleLoader:didLoadBundle:)]) 
-	{
-	  [delegate bundleLoader:self didLoadBundle:bundle];
-	}
-    }
-  else 
-    {
-      NSRunAlertPanel(@"Attention!",
-		      @"Could not load %@!",
-		      @"OK",nil,nil,path);
-    }
-}
-
-@end
-
 @implementation PCBundleLoader
 
 //----------------------------------------------------------------------------
@@ -74,42 +36,44 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-        loadedBundles = [[NSMutableArray alloc] init];
+  if ((self = [super init]))
+    {
+      loadedBundles = [[NSMutableArray alloc] init];
     }
-    return self;
+
+  return self;
 }
 
 - (void)dealloc
 {
-    RELEASE(loadedBundles);
+  RELEASE(loadedBundles);
 
-    [super dealloc];
+  [super dealloc];
 }
 
 - (id)delegate
 {
-    return delegate;
+  return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  delegate = aDelegate;
 }
 
-- (void) loadBundles
+- (void)loadBundlesWithExtension:(NSString *)extension
 {
-  NSString *path = nil;
+  NSString *path = [[NSBundle mainBundle] resourcePath];
 
   // Load bundles that comes with ProjectCenter
-  path = [[NSBundle mainBundle] resourcePath];
-  if (![[NSFileManager defaultManager] fileExistsAtPath: path]) 
+  if (![[NSFileManager defaultManager] fileExistsAtPath:path]) 
     {
-      [NSException raise: @"PCBundleLoaderPathException" 
-	          format: @"No valid bundles at path:\n%@", path];
+      [NSException raise:@"PCBundleLoaderPathException" 
+	          format:@"ProjectCenter installed incorrectly"];
       return;
     }
-  [self loadBundlesAtPath: path];
+
+  [self loadBundlesAtPath:path withExtension:extension];
  
   // Load third party bundles
   path = [[NSUserDefaults standardUserDefaults] objectForKey:BundlePaths];
@@ -121,12 +85,12 @@
       path = [prefix stringByAppendingPathComponent:
  	      @"Library/ApplicationSupport/ProjectCenter"];
 
-      [[NSUserDefaults standardUserDefaults] setObject: path 
-                                                forKey: BundlePaths];
+      [[NSUserDefaults standardUserDefaults] setObject:path 
+                                                forKey:BundlePaths];
       [[NSUserDefaults standardUserDefaults] synchronize];
     }
 
-  if (![[NSFileManager defaultManager] fileExistsAtPath: path]) 
+  if (![[NSFileManager defaultManager] fileExistsAtPath:path]) 
     {
       PCLogInfo(self, @"No third party bundles at %@", path);
       return;
@@ -134,35 +98,59 @@
   else 
     {
       PCLogInfo(self, @"Loading bundles at %@", path);
+      [self loadBundlesAtPath:path withExtension:extension];
     }
-    
-  [self loadBundlesAtPath: path];
 }
 
-- (void) loadBundlesAtPath: (NSString *)path
+- (void)loadBundlesAtPath:(NSString *)path withExtension:(NSString *)extension
 {
   NSEnumerator *enumerator;
   NSString     *bundleName;
   NSArray      *dir;
 
-  dir = [[NSFileManager defaultManager] directoryContentsAtPath: path];
+  dir = [[NSFileManager defaultManager] directoryContentsAtPath:path];
   enumerator = [dir objectEnumerator];
 
   while ((bundleName = [enumerator nextObject]))
     {
-      if ([[bundleName pathExtension] isEqualToString:@"bundle"]) 
+      if ([[bundleName pathExtension] isEqualToString:extension]) 
 	{
-	  NSString *fullPath;
+	  NSString *fullPath = nil;
 
-	  fullPath = [NSString stringWithFormat:@"%@/%@",path,bundleName];
-	  [self loadAdditionalBundlesAt:fullPath];
+	  fullPath = [NSString stringWithFormat:@"%@/%@", path, bundleName];
+
+	  [self loadBundleWithFullPath:fullPath];
 	}
+    }
+}
+
+- (void)loadBundleWithFullPath:(NSString *)path
+{
+  NSBundle *bundle = nil;
+  SEL      bundleDidLoadedSel = @selector(bundleLoader:didLoadBundle:);
+
+  if ((bundle = [NSBundle bundleWithPath:path])) 
+    {
+      [loadedBundles addObject:bundle];
+
+      PCLogInfo(self, @"Bundle %@ successfully loaded!", path);
+
+      if (delegate && [delegate respondsToSelector:bundleDidLoadedSel]) 
+	{
+	  [delegate bundleLoader:self didLoadBundle:bundle];
+	}
+    }
+  else 
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Could not load %@!",
+		      @"OK", nil, nil, path);
     }
 }
 
 - (NSArray *)loadedBundles
 {
-    return loadedBundles;
+  return loadedBundles;
 }
 
 @end

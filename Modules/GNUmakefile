@@ -13,9 +13,11 @@ SUBPROJECTS = \
         AggregateProject   \
         ApplicationProject \
         BundleProject      \
+	FrameworkProject   \
         LibraryProject     \
         RenaissanceProject \
         ToolProject        
+#	ObjCParser
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 

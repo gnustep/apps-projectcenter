@@ -33,7 +33,7 @@
 
 @interface PCBundleLoader : NSObject
 {
-  id              delegate; // The PCAppController!
+  id              delegate;
   NSMutableArray *loadedBundles;
 }
 
@@ -48,8 +48,9 @@
 - (void)setDelegate:(id)aDelegate;
 
 // Load all bundles found in the BundlePaths
-- (void)loadBundles;
-- (void)loadBundlesAtPath: (NSString *)path;
+- (void)loadBundlesWithExtension:(NSString *)extension;
+- (void)loadBundlesAtPath:(NSString *)path withExtension:(NSString *)extension;
+- (void)loadBundleWithFullPath:(NSString *)path;
 
 // Returns all loaded ProjectCenter bundles.
 - (NSArray *)loadedBundles;
