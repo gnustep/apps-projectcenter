@@ -38,8 +38,6 @@
 
 @interface PCAppProject : PCProject
 {
-    @private
-    BOOL _needsAdditionalReleasing;
 }
 
 //----------------------------------------------------------------------------

@@ -66,8 +66,6 @@
   //    [projectFileInspectorView addSubview:projectTypePopup];
   [projectFileInspectorView sizeToFit];
   [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  _needsAdditionalReleasing = YES;
 }
 
 @end
@@ -80,42 +78,33 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-      rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+  if ((self = [super init])) {
+    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
 				      PCGModels,@"Interfaces",
-				      PCImages,@"Images",
-				      PCOtherResources,@"Other Resources",
-				      PCSubprojects,@"Subprojects",
-				      PCLibraries,@"Libraries",
-				      PCDocuFiles,@"Documentation",
-				      PCOtherSources,@"Other Sources",
-				      PCHeaders,@"Headers",
-				      PCClasses,@"Classes",
-				      nil] retain];
+				    PCImages,@"Images",
+				    PCOtherResources,@"Other Resources",
+				    PCSubprojects,@"Subprojects",
+				    PCLibraries,@"Libraries",
+				    PCDocuFiles,@"Documentation",
+				    PCOtherSources,@"Other Sources",
+				    PCHeaders,@"Headers",
+				    PCClasses,@"Classes",
+				    nil] retain];
 
-#if defined(GNUSTEP)
-        [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"AppProject.nib" owner:self]) {
-            [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load AppProject.gmodel" userInfo:nil] raise];
-            return nil;
-        }
-#endif
-    }
-    return self;
+    [self _initUI];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [rootCategories release];
-
-    if (_needsAdditionalReleasing) {
-        [projectAttributeInspectorView release];
-        [projectProjectInspectorView release];
-        [projectFileInspectorView release];
-    }
-    
-    [super dealloc];
+  [rootCategories release];
+  
+  [projectAttributeInspectorView release];
+  [projectProjectInspectorView release];
+  [projectFileInspectorView release];
+  
+  [super dealloc];
 }
 
 //----------------------------------------------------------------------------
