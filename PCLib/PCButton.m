@@ -25,6 +25,7 @@
  */
 
 #include "PCButton.h"
+#include "PCDefines.h"
 
 @implementation PCButton
 

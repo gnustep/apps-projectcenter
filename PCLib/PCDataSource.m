@@ -25,6 +25,7 @@
 */
 
 #include "PCDataSource.h"
+#include "PCDefines.h"
 
 @implementation PCDataSource
 
