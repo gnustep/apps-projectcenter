@@ -29,13 +29,13 @@
 #
 
 # Additional flags to pass to the preprocessor
-ADDITIONAL_CPPFLAGS += -Wall
+ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -Wall -Werror -DDEVELOPMENT
+ADDITIONAL_OBJCFLAGS +=
 
 # Additional flags to pass to the C compiler
-ADDITIONAL_CFLAGS += -Wall
+ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
 ADDITIONAL_INCLUDE_DIRS += -I./Library
@@ -55,9 +55,3 @@ ADDITIONAL_TOOL_LIBS +=
 
 # Additional directories to be created during installation
 ADDITIONAL_INSTALL_DIRS +=
-
-#
-# Local configuration
-#
-
-

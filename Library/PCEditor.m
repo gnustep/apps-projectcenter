@@ -459,8 +459,6 @@
 
 - (BOOL)closeFile:(id)sender save:(BOOL)save
 {
-  NSLog(@"PCEditor: closeFile");
-
   if ((save == NO) || [self editorShouldClose])
     {
       // Close window first if visible

@@ -434,57 +434,34 @@ static PCFileManager *_mgr = nil;
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename
 {
   NSFileManager *fileManager = [NSFileManager defaultManager];
-  PCProject     *project = [projectManager activeProject];
+  BOOL          isDir;
+  PCProject     *project = nil;
   NSArray       *fileTypes = nil;
   NSString      *fileType = nil;
   NSString      *categoryKey = nil;
-  BOOL          isDir;
 
-  if (sender != addFilesPanel)
-    {
-      // This is not "Add Files" panel (Open... or Save...)
-      return YES;
-    }
+  if (sender == addFilesPanel
+      && [fileManager fileExistsAtPath:filename isDirectory:&isDir]
+      && !isDir)
+      {
+	project = [projectManager activeProject];
+	fileType = [fileTypePopup titleOfSelectedItem];
+	categoryKey = [project keyForCategory:fileType];
+	fileTypes = [project fileTypesForCategoryKey:categoryKey];
+	// Wrong file extension
+	if (fileTypes 
+	    && ![fileTypes containsObject:[filename pathExtension]])
+	  {
+	    return NO;
+	  }
+	// File is already in project
+	if (![project doesAcceptFile:filename forKey:categoryKey])
+	  {
+	    return NO;
+	  }
+      }
     
-  // Directories must be shown
-  if ([fileManager fileExistsAtPath:filename isDirectory:&isDir] && isDir)
-    {
-      return YES;
-    }
-
-  if (!(fileType = [fileTypePopup titleOfSelectedItem]))
-    {
-      PCLogWarning(self, @"Selected File type is nil!");
-      return YES;
-    }
-  
-  categoryKey = [project keyForCategory:fileType];
-
-  fileTypes = [project fileTypesForCategoryKey:categoryKey];
-  if (fileTypes == nil)
-    {
-      PCLogWarning(self, 
-		   @"Project file types is nil! Category: %@", categoryKey);
-      return YES;
-    }
-
-  if (fileTypes && [fileTypes containsObject:[filename pathExtension]])
-    {
-      NSString *filePath;
-      NSString *projectPath;
-
-      filePath = [[filename stringByDeletingLastPathComponent]
-	          stringByResolvingSymlinksInPath];
-      projectPath = [[project projectPath] stringByResolvingSymlinksInPath];
-
-      if ([filePath isEqualToString:projectPath])
-	{
-	  return NO;
-	}
-      return YES;
-    }
-
-  return NO;
+  return YES;
 }
 
 // Test if we should accept file name selected or entered

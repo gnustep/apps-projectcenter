@@ -1,5 +1,13 @@
+2004-06-21 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFileManager.m: 
+	(panel:shouldShowFilename:): Fix filtering out files already 
+	included in project. Optimized.
+	
 2004-06-20 Serg Stoyan <stoyan255@ukr.net>
 
+	* Release 0.4.0.
+	
 	* Library/PCProjectWindow.m: 
 	(activeProjectDidChange:): Take into account subprojects of 
 	subprojects.

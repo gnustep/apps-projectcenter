@@ -84,7 +84,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCBuildPanel: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
