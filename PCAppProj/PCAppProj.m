@@ -79,7 +79,8 @@ static PCAppProj *_creator = nil;
         NSString *_file;
         NSString *_resourcePath;
         NSMutableDictionary *dict;
-        
+        NSDictionary *infoDict;
+
         project = [[[PCAppProject alloc] init] autorelease];
 
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
@@ -91,6 +92,20 @@ static PCAppProj *_creator = nil;
 
         // Save the project to disc
         [dict writeToFile:[path stringByAppendingPathComponent:@"PC.project"] atomically:YES];
+
+	// Create the Info-project.plist
+	infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
+				   @"Automatically generated!",@"NOTE",
+				   [path lastPathComponent],@"ApplicationName",
+				   @"",@"ApplicationDescription",
+				   @"",@"ApplicationIcon",
+				   @"0.1",@"ApplicationRelease",
+				   @"0.1",@"FullVersionID",
+				   @"",@"Authors",
+				   @"",@"URL",
+				   @"Copyright (C) 200x by ...",@"Copyright",
+				   @"Released under ...",@"CopyrightDescription", nil];
+	[infoDict writeToFile:[path stringByAppendingPathComponent:@"Info-project.plist"] atomically:YES];
         
         // Copy the project files to the provided path
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];

@@ -1,0 +1,22 @@
+2000-09-17 14:13  robert
+
+	* PCLibMakefileFactory.m: makefile improvements
+
+2000-08-27 21:13  robert
+
+	* PCLibMakefileFactory.h, PCLibProj.h, GNUmakefile,
+	GNUmakefile.postamble, GNUmakefile.preamble, Info.table,
+	PCLibProj.m, Makefile, Makefile.postamble, Makefile.preamble,
+	PB.project, PC.proj, PCLibMakefileFactory.m, PCLibProject.h,
+	PCLibProject.m, h.template, m.template, LibProject.gmodel, Version:
+	Initial revision
+
+2000-08-27 21:13  robert
+
+	* PCLibMakefileFactory.h, PCLibProj.h, GNUmakefile,
+	GNUmakefile.postamble, GNUmakefile.preamble, Info.table,
+	PCLibProj.m, Makefile, Makefile.postamble, Makefile.preamble,
+	PB.project, PC.proj, PCLibMakefileFactory.m, PCLibProject.h,
+	PCLibProject.m, h.template, m.template, LibProject.gmodel, Version:
+	Initial import
+

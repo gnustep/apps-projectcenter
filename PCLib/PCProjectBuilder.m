@@ -26,6 +26,7 @@
 
 #import "PCProjectBuilder.h"
 #import "PCProject.h"
+#import "PCProjectManager.h"
 
 #import <AppKit/AppKit.h>
 
@@ -44,11 +45,12 @@
                        NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSSplitView *split;
   NSScrollView *scrollView1; 
-
   NSScrollView *scrollView2; 
   NSTextView *textView2;
-
+  NSMatrix* matrix;
   NSRect _w_frame;
+  NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  id button;
 
   /*
    * Build Window
@@ -67,16 +69,16 @@
   logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
   [logOutput setVerticallyResizable:YES];
-  [logOutput setHorizontallyResizable:YES];
+  [logOutput setHorizontallyResizable:NO];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [logOutput setBackgroundColor:[NSColor whiteColor]];
+  [logOutput setBackgroundColor:[NSColor lightGrayColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
 
   scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
   [scrollView1 setDocumentView:logOutput];
   [logOutput setMinSize:NSMakeSize(0.0,[scrollView1 contentSize].height)];
   [[logOutput textContainer] setContainerSize:NSMakeSize([scrollView1 contentSize].width,1e7)];
-  [scrollView1 setHasHorizontalScroller: YES];
+  [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
   [scrollView1 setBorderType: NSBezelBorder];
   [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
@@ -89,7 +91,7 @@
   textView2 = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [textView2 setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView2 setVerticallyResizable:YES];
-  [textView2 setHorizontallyResizable:YES];
+  [textView2 setHorizontallyResizable:NO];
   [textView2 setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView2 setBackgroundColor:[NSColor whiteColor]];
   [[textView2 textContainer] setWidthTracksTextView:YES];
@@ -98,19 +100,66 @@
   [scrollView2 setDocumentView:textView2];
   [textView2 setMinSize:NSMakeSize(0.0,[scrollView2 contentSize].height)];
   [[textView2 textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
-  [scrollView2 setHasHorizontalScroller: YES];
-  [scrollView2 setHasVerticalScroller: YES];
+  [scrollView2 setHasHorizontalScroller:NO];
+  [scrollView2 setHasVerticalScroller:YES];
   [scrollView2 setBorderType: NSBezelBorder];
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView2 autorelease];
 
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,264)] autorelease];  
+  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,288)] autorelease];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
 
   _c_view = [buildWindow contentView];
   [_c_view addSubview:split];
+
+  /*
+   * 5 build Buttons
+   */
+
+  _w_frame = NSMakeRect(8,292,244,24);
+  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
+                                       mode: NSHighlightModeMatrix
+                                  prototype: buttonCell
+                               numberOfRows: 1
+                            numberOfColumns: 5] autorelease];
+  [matrix sizeToCells];
+  [matrix setSelectionByRect:YES];
+  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [matrix setTarget:self];
+  [matrix setAction:@selector(build:)];
+  [_c_view addSubview:matrix];
+
+  button = [matrix cellAtRow:0 column:0];
+  [button setTag:0];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Build"];
+
+  button = [matrix cellAtRow:0 column:1];
+  [button setTag:1];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Clean"];
+
+  button = [matrix cellAtRow:0 column:2];
+  [button setTag:2];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Debug"];
+
+  button = [matrix cellAtRow:0 column:3];
+  [button setTag:3];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Profile"];
+
+  button = [matrix cellAtRow:0 column:4];
+  [button setTag:4];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Install"];
 }
 
 @end
@@ -133,12 +182,16 @@ static PCProjectBuilder *_builder;
     [self _initUI];
     makePath = [[NSString stringWithString:@"/usr/bin/make"] retain];
     buildTasks = [[NSMutableDictionary dictionary] retain];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDidChange:) name:ActiveProjectDidChangeNotification object:nil];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   [buildWindow release];
   [makePath release];
   [buildTasks release];
@@ -146,9 +199,21 @@ static PCProjectBuilder *_builder;
   [super dealloc];
 }
 
-- (BOOL)buildProject:(PCProject *)aProject options:(NSDictionary *)optionDict
+- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
 {
-  BOOL ret = NO;
+  if (![buildWindow isVisible]) {
+    [buildWindow center];
+  }
+  [buildWindow makeKeyAndOrderFront:self];
+
+  currentProject = proj;
+  currentOptions = options;
+
+  [buildWindow setTitle:[proj projectName]];
+}
+
+- (void)build:(id)sender
+{
   NSString *tg = nil;
   NSTask *makeTask;
   NSMutableArray *args;
@@ -156,73 +221,82 @@ static PCProjectBuilder *_builder;
   NSPipe *logPipe;
   NSFileHandle *readHandle;
   NSData  *inData = nil;
+  NSDictionary *optionDict;
+
+  if (!currentProject) {
+    return;
+  }
 
   logPipe = [NSPipe pipe];
   readHandle = [logPipe fileHandleForReading];
-  
-  NSAssert(aProject,@"No project provided!");
-
   makeTask = [[NSTask alloc] init];
 
-  if ((tg = [optionDict objectForKey:BUILD_KEY])) {
-    if ([tg isEqualToString:TARGET_MAKE_DEBUG]) {
-      args = [NSMutableArray array];
-      [args addObject:@"debug=yes"];
-      [makeTask setArguments:args];
-    }
-    else if ([tg isEqualToString:TARGET_MAKE_PROFILE]) {
-      args = [NSMutableArray array];
-      [args addObject:@"profile=YES"];
-      [args addObject:@"static=YES"];
-      [makeTask setArguments:args];
-    }
-    else if ([tg isEqualToString:TARGET_MAKE_INSTALL]) {
-      args = [NSMutableArray array];
-      [args addObject:@"install"];
-      [makeTask setArguments:args];
-    }
-    else if ([tg isEqualToString:TARGET_MAKE_CLEAN]) {
-      args = [NSMutableArray array];
-      [args addObject:@"clean"];
-      [makeTask setArguments:args];
-    }
+  optionDict = [currentProject buildOptions];
+  args = [NSMutableArray array];
 
-    [makeTask setCurrentDirectoryPath:[aProject projectPath]];
-    [makeTask setLaunchPath:makePath];
+  switch ([[sender selectedCell] tag]) {
+  case 0:
+    break;
+  case 1:
+    [args addObject:@"clean"];
+    break;
+  case 2:
+    [args addObject:@"debug=yes"];
+    break;
+  case 3:
+    [args addObject:@"profile=yes"];
+    [args addObject:@"static=yes"];
+    break;
+  case 4:
+    [args addObject:@"install"];
+    break;
+  }
 
-    [makeTask setStandardOutput:logPipe];
-    [makeTask setStandardError:logPipe];
+  [makeTask setArguments:args];
 
-    if (![buildWindow isVisible]) {
-      [buildWindow center];
-      [buildWindow makeKeyAndOrderFront:self];
-    }
-
-    [makeTask launch];
-
-    /*
-     * This is just a quick hack for now...
-     */
-
-    while ((inData = [readHandle availableData]) && [inData length]) {
-      output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
-      [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
-      [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
-      [output release];
-    }
-    
-    [makeTask waitUntilExit];
-
-    ret = [makeTask terminationStatus];
-
-#ifdef DEBUG
-    NSLog(@"Task terminated %@...",(ret)?@"successfully":@"not successfully");
-#endif DEBUG
-
-    [makeTask autorelease];
+  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [makeTask setLaunchPath:makePath];
+  
+  [makeTask setStandardOutput:logPipe];
+  [makeTask setStandardError:logPipe];
+  
+  [makeTask launch];
+  
+  /*
+   * This is just a quick hack for now...
+   */
+  
+  while ((inData = [readHandle availableData]) && [inData length]) {
+    output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
+    [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
+    [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
+    [output release];
   }
   
-  return ret;
+  [makeTask waitUntilExit];
+  [makeTask autorelease];
+}
+
+- (void)clean:(id)sender
+{
+}
+
+- (void)install:(id)sender
+{
+}
+
+- (void)projectDidChange:(NSNotification *)aNotif
+{
+  PCProject *project = [aNotif object];
+
+  if (project) {
+    currentProject = project;
+    [buildWindow setTitle:[project projectName]];
+  }
+  else {
+    currentProject = nil;
+    [buildWindow orderOut:self];
+  }
 }
 
 @end

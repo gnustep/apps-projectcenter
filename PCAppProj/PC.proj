@@ -10,12 +10,12 @@
     FOUNDATION = "GNUSTEP-BASE"; 
     FRAMEWORKS = (); 
     HEADER_FILES = ("AppController.h"); 
-    INTERFACES = ("Main.gmodel"); 
+    INTERFACES = (); 
     IMAGES = (); 
     LANGUAGE = "English"; 
     LAST_EDITING = ""; 
     LIBRARIES = ("gnustep-base","gnustep-gui"); 
-    MAININTERFACE = "Main.gmodel"; 
+    MAININTERFACE = ""; 
     MAKEFILEDIR = "/usr/GNUstep/Makefiles"; 
     INSTALLDIR = "$(HOME)/Apps";
     OTHER_FILES = (); 

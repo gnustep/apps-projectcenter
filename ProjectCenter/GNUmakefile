@@ -19,12 +19,10 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 APP_NAME=ProjectCenter
 
-ProjectCenter_LDFLAGS		= -lPC
-ProjectCenter_MAIN_MODEL_FILE	= ProjectCenter.gmodel
+ProjectCenter_LDFLAGS		= -lProjectCenter
 ProjectCenter_APPLICATION_ICON	= ProjectCenter.tiff
 
 ProjectCenter_RESOURCE_FILES= 			\
-	English.lproj/ProjectCenter.gmodel 	\
 	ProjectCenter.tiff 			\
 	ProjectCenter.app.tiff 			\
 	ProjectCentre_add.tiff 			\
@@ -37,6 +35,7 @@ ProjectCenter_RESOURCE_FILES= 			\
 	ProjectCentre_prefs.tiff 		\
 	ProjectCentre_run.tiff 			\
 	ProjectCentre_uml.tiff 			\
+	ProjectCentre_settings.tiff		\
 	FileIcon_.c.tiff 			\
 	FileIcon_.h.tiff 			\
 	FileIcon_.m.tiff 			\
@@ -48,6 +47,7 @@ ProjectCenter_RESOURCE_FILES= 			\
 
 ProjectCenter_HEADERS= 				\
 	PCAppController.h 			\
+	PCAppController+MenuHandling.h		\
 	PCFindController.h 			\
 	PCInfoController.h 			\
 	PCLogController.h 			\
@@ -60,6 +60,7 @@ ProjectCenter_HEADERS= 				\
 
 ProjectCenter_OBJC_FILES= 			\
 	PCAppController.m 			\
+	PCAppController+MenuHandling.m		\
 	PCFindController.m 			\
 	PCInfoController.m 			\
 	PCLogController.m 			\

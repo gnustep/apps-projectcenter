@@ -28,6 +28,19 @@
 
 #import "ProjectBuilder.h"
 
+#ifndef IMAGE
+#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#endif
+
+#define BUILD_ARGS_KEY      @"BuildArgsKey"
+#define BUILD_HOST_KEY      @"BuildHostKey"
+
+#define TARGET_MAKE         @"Make"
+#define TARGET_MAKE_DEBUG   @"MakeDebug"
+#define TARGET_MAKE_PROFILE @"MakeProfile"
+#define TARGET_MAKE_INSTALL @"MakeInstall"
+#define TARGET_MAKE_CLEAN   @"MakeClean"
+
 #define TOUCHED_NOTHING		(0)
 #define TOUCHED_EVERYTHING	(1 << 0)
 #define TOUCHED_PROJECT_NAME	(1 << 1)
@@ -45,13 +58,6 @@
 #define TOUCHED_PATHS		(1 << 13)
 
 typedef int PCProjInfoBits;
-
-typedef enum {
-    defaultTarget = 0,
-    debug,
-    profile,
-    install
-} btarget;
 
 //===========================================================================================
 // ==== Project keys
@@ -82,7 +88,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 {
     id projectWindow;
     id delegate;
-    id projectBuilder;
+    id projectManager;
     id browserController;
 
     id textView;
@@ -92,7 +98,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id projectFileInspectorView;
     
     id buildTargetPanel;
-    id buildTargetPopup;
+    id buildTargetHostField;
+    id buildTargetArgsField;
     
     id buildStatusField;
     id targetField;
@@ -102,10 +109,10 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     NSMutableDictionary *projectDict;
 
     NSDictionary *rootCategories;	// Needs to be initialised by subclasses!
+    NSMutableDictionary *buildOptions;
 
     @private
     BOOL _needsReleasing;
-    btarget _buildTarget;
 }
 
 //===========================================================================================
@@ -122,6 +129,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 //===========================================================================================
 
 - (id)browserController;
+- (NSString *)selectedRootCategory;
+
+- (NSArray *)fileExtensionsForCategory:(NSString *)key;
 
 - (void)setProjectName:(NSString *)aName;
 - (NSString *)projectName;
@@ -161,6 +171,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
+
+- (void)editSelectedFile:(NSString *)file;
+- (void)structureEditedFile:(id)sender;
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
     // Returns YES if type is a valid key and file is not contained in the project already
@@ -204,12 +217,12 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (id)updatedFilesView;
 
 - (void)showBuildTargetPanel:(id)sender;
-- (void)setTarget:(id)sender;
 - (void)setHost:(id)sender;
 - (void)setArguments:(id)sender;
 
 - (void)build:(id)sender;
-- (void)clean:(id)sender;
+
+- (NSDictionary *)buildOptions;
 
 @end
 
@@ -226,5 +239,11 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeMain:(NSNotification *)aNotification;
 - (void)windowWillClose:(NSNotification *)aNotification;
+
+@end
+
+@interface PCProject (TextDelegate)
+
+- (void)textDidEndEditing:(NSNotification *)aNotification;
 
 @end

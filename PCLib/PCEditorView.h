@@ -24,41 +24,30 @@
    $Id$
 */
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
-@class PCProject;
-
-@class NSWindow;
-@class NSTextView;
-
-@interface PCProjectBuilder : NSObject
+@interface PCEditorView : NSTextView
 {
-  NSWindow *buildWindow;
+  NSScanner *scanner;
 
-  NSTextView *logOutput;
-
-  NSMutableDictionary *buildTasks;
-  NSString *makePath;
-
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
+  @private
+  NSRange range;
+  NSArray *_keywords;
 }
 
-+ (id)sharedBuilder;
-
-- (id)init;
+- (id)initWithFrame:(NSRect)frameRect;
 - (void)dealloc;
 
-- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
+- (void)setString:(NSString *)aString;
 
-- (void)build:(id)sender;
-- (void)clean:(id)sender;
-- (void)install:(id)sender;
+- (void)colourise:(id)sender;
 
-- (void)projectDidChange:(NSNotification *)aNotif;
+- (void)colouriseKeyword:(NSString *)keyword;
+- (void)colouriseKeywords:(NSArray *)keywords;
+
+- (void)colouriseStrings;
+- (void)colouriseCharStrings;
+- (void)colouriseComments;
+- (void)colouriseCPPComments;
 
 @end
-
-
-
-

@@ -77,11 +77,15 @@
   [browserController setBrowser:browser];
   [browserController setProject:self];
 
-  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  //  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [textView setRichText:NO];
+  [textView setEditable:YES];
+  [textView setSelectable:YES];
+  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setVerticallyResizable:YES];
   [textView setHorizontallyResizable:YES];
-  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setBackgroundColor:[NSColor whiteColor]];
   [[textView textContainer] setWidthTracksTextView:YES];
 
@@ -89,7 +93,7 @@
   [scrollView setDocumentView:textView];
   [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
   [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
-  [scrollView setHasHorizontalScroller: YES];
+  [scrollView setHasHorizontalScroller: NO];
   [scrollView setHasVerticalScroller: YES];
   [scrollView setBorderType: NSBezelBorder];
   [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
@@ -110,27 +114,28 @@
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 3] autorelease];
+  [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
 
   button = [matrix cellAtRow:0 column:0];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_build.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_build")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTarget:self];
   [button setAction:@selector(build:)];
 
   button = [matrix cellAtRow:0 column:1];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_clean.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
   [button setButtonType:NSMomentaryPushButton];
   [button setTarget:self];
-  [button setAction:@selector(clean:)];
+  [button setAction:@selector(showInspector:)];
 
   button = [matrix cellAtRow:0 column:2];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_prefs.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
   [button setTarget:self];
   [button setAction:@selector(showBuildTarget:)];
   [button setButtonType:NSMomentaryPushButton];
@@ -144,31 +149,35 @@
                                   prototype: buttonCell
                                numberOfRows: 1
                             numberOfColumns: 4] autorelease];
+  [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [_c_view addSubview:matrix];
 
   button = [matrix cellAtRow:0 column:0];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_run.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:1];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_uml.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_uml.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:2];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_documentation.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_documentation.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:3];
   [button setImagePosition:NSImageOnly];
-  [button setImage:[[[NSImage alloc] initWithContentsOfFile:@"ProjectCentre_find.tiff"] autorelease]];
+  [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  // Status
+  /*
+   * Status
+   */
+
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,296,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
@@ -180,7 +189,10 @@
 				   NSViewMinYMargin)];
   [_c_view addSubview:[textField autorelease]];
 
-  // Status message
+  /*
+   * Status message
+   */
+
   buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,296,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
@@ -193,7 +205,10 @@
 					  NSViewMinYMargin)];
   [_c_view addSubview:[buildStatusField autorelease]];
 
-  // Target
+  /*
+   * Target
+   */
+
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,272,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
@@ -205,7 +220,10 @@
 				   NSViewMinYMargin)];
   [_c_view addSubview:[textField autorelease]];
 
-  // Target message
+  /*
+   * Target message
+   */
+
   targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,272,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
@@ -219,40 +237,19 @@
   [_c_view addSubview:[targetField autorelease]];
 
   /*
-   * Build Panel
+   * Build Options Panel
    *
    */
 
-  _w_frame = NSMakeRect(100,100,272,104);
+  _w_frame = NSMakeRect(100,100,272,80);
   buildTargetPanel = [[NSWindow alloc] initWithContentRect:_w_frame styleMask:style backing:NSBackingStoreBuffered defer:NO];
-
+  [buildTargetPanel setDelegate:self];
   [buildTargetPanel setReleasedWhenClosed:NO];
   [buildTargetPanel setTitle:@"Build Options"];
   _c_view = [buildTargetPanel contentView];
 
-  buildTargetPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(72,24,184,20)];
-  [buildTargetPopup addItemWithTitle:@"Default"];
-  [buildTargetPopup addItemWithTitle:@"Debug"];
-  [buildTargetPopup addItemWithTitle:@"Profile"];
-  [buildTargetPopup addItemWithTitle:@"Install"];
-  [buildTargetPopup autorelease];
-
-  [buildTargetPopup setTarget:self];
-  [buildTargetPopup setAction:@selector(setTarget:)];
-  [_c_view addSubview:buildTargetPopup];
-
-  // Target (popup)
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,24,56,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Target:"];
-  [_c_view addSubview:[textField autorelease]];
-
   // Host
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,48,56,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,24,56,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -262,17 +259,20 @@
   [_c_view addSubview:[textField autorelease]];
 
   // Host message
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,48,184,21)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: YES];
-  [textField setBezeled: YES];
-  [textField setDrawsBackground: YES];
-  [textField setStringValue:@"localhost"];
-  [_c_view addSubview:[textField autorelease]];
+  buildTargetHostField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,184,21)];
+  [buildTargetHostField setAlignment: NSLeftTextAlignment];
+  [buildTargetHostField setBordered: NO];
+  [buildTargetHostField setEditable: YES];
+  [buildTargetHostField setBezeled: YES];
+  [buildTargetHostField setDrawsBackground: YES];
+  [buildTargetHostField setStringValue:@"localhost"];
+  [buildTargetHostField setDelegate:self];
+  [buildTargetHostField setTarget:self];
+  [buildTargetHostField setAction:@selector(setHost:)];
+  [_c_view addSubview:[buildTargetHostField autorelease]];
 
   // Args
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,68,60,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,44,60,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -282,19 +282,20 @@
   [_c_view addSubview:[textField autorelease]];
 
   // Args message
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,68,184,21)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: YES];
-  [textField setBezeled: YES];
-  [textField setDrawsBackground: YES];
-  [textField setStringValue:@""];
-  [_c_view addSubview:[textField autorelease]];
+  buildTargetArgsField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,44,184,21)];
+  [buildTargetArgsField setAlignment: NSLeftTextAlignment];
+  [buildTargetArgsField setBordered: NO];
+  [buildTargetArgsField setEditable: YES];
+  [buildTargetArgsField setBezeled: YES];
+  [buildTargetArgsField setDrawsBackground: YES];
+  [buildTargetArgsField setStringValue:@""];
+  [buildTargetArgsField setDelegate:self];
+  [buildTargetArgsField setTarget:self];
+  [buildTargetArgsField setAction:@selector(setArguments:)];
+  [_c_view addSubview:[buildTargetArgsField autorelease]];
 
   // Redisplay!
   [browser loadColumnZero];
-
-  _needsReleasing = YES;
 }
 
 @end
@@ -308,18 +309,8 @@
 - (id)init
 {
     if ((self = [super init])) {
-        _buildTarget = defaultTarget;
-
-        _needsReleasing = NO;
-
-#if defined(GNUSTEP)
+	buildOptions = [[NSMutableDictionary alloc] init];
         [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"Project.nib" owner:self]) {
-            [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load Project.gmodel" userInfo:nil] raise];
-            return nil;
-        }
-#endif
     }
     return self;
 }
@@ -351,11 +342,11 @@
     [projectPath release];
     [projectDict release];
 
-    if (_needsReleasing) {
-        [browserController release];
-        [projectWindow release];
-	[buildTargetPanel release];
-    }
+    [browserController release];
+    [projectWindow release];
+    [buildTargetPanel release];
+
+    [buildOptions release];
 
     [super dealloc];
 }
@@ -367,6 +358,38 @@
 - (id)browserController
 {
   return browserController;
+}
+
+- (NSString *)selectedRootCategory
+{
+  return [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
+}
+
+- (NSArray *)fileExtensionsForCategory:(NSString *)key
+{
+  if ([key isEqualToString:PCGModels]) {
+    return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
+  }
+  else if ([key isEqualToString:PCClasses]) {
+    return [NSArray arrayWithObjects:@"m",nil];
+  }
+  else if ([key isEqualToString:PCHeaders]) {
+    return [NSArray arrayWithObjects:@"h",nil];
+  }
+  else if ([key isEqualToString:PCOtherSources]) {
+    return [NSArray arrayWithObjects:@"c",@"C",nil];
+  }
+  else if ([key isEqualToString:PCLibraries]) {
+    return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
+  }
+  else if ([key isEqualToString:PCSubprojects]) {
+    return [NSArray arrayWithObjects:@"subproj",nil];
+  }
+  else if ([key isEqualToString:PCImages]) {
+    return [NSArray arrayWithObjects:@"tiff",@"TIFF",@"jpg",@"JPG",@"jpeg",@"JPEG",@"bmp",@"BMP",nil];
+  }
+
+  return nil;
 }
 
 - (void)setProjectName:(NSString *)aName
@@ -408,13 +431,13 @@
 
 - (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder
 {
-    [projectBuilder autorelease];
-    projectBuilder = [aBuilder retain];
+    [projectManager autorelease];
+    projectManager = [aBuilder retain];
 }
 
 - (id<ProjectBuilder>)projectBuilder
 {
-    return projectBuilder;
+    return projectManager;
 }
 
 //===========================================================================================
@@ -465,6 +488,34 @@
 // ==== Miscellaneous
 //===========================================================================================
 
+- (void)editSelectedFile:(NSString *)file
+{
+  //  NSLayoutManager *_lm = [textView layoutManager];
+  //  NSTextStorage *_ts = [[NSTextStorage alloc] initWithString:file];
+
+  /*
+  [_ts beginEditing];
+  [[_ts mutableString] setString:file];
+  [_ts endEditing];
+  */
+
+  /*
+  if (_lm) {
+    [_lm replaceTextStorage:_ts];
+  }
+  */
+
+  [textView setString:file];
+  // [textView structure:self];
+  [textView display];
+  //  [_ts autorelease];
+}
+
+- (void)structureEditedFile:(id)sender
+{
+  [textView structure:self];
+}
+
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
 {
     if ([[projectDict allKeys] containsObject:type]) {
@@ -489,7 +540,7 @@
     }
 
     if ([files containsObject:newFile]) {
-        NSRunAlertPanel(@"Attention!",@"The file %@ is already contained in this project!",@"OK",nil,nil,newFile);
+        NSRunAlertPanel(@"Attention!",@"The file %@ is already part of this project!",@"OK",nil,nil,newFile);
         return;
     }
 
@@ -522,6 +573,10 @@
     NSString *file = [browserController nameOfSelectedFile];
     NSMutableArray *array;
     NSString *key;
+    NSString *otherKey;
+    NSString *ext;
+    NSString *fn;
+    BOOL ret = NO;
 
     if (!file) {
         return NO;
@@ -530,11 +585,43 @@
     key = [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
     [self removeFile:file forKey:key];
 
+    if ([key isEqualToString:PCClasses]) {
+      otherKey = PCHeaders;
+      ext = [NSString stringWithString:@"h"];
+      
+      fn = [file stringByDeletingPathExtension];
+      fn = [fn stringByAppendingPathExtension:ext];
+      
+      if ([self doesAcceptFile:fn forKey:otherKey] == NO) {
+	ret = NSRunAlertPanel(@"Removing Header?",@"Should %@ be removed from the project %@ as well?",@"Yes",@"No",nil,fn,[self projectName]);
+      }
+    }
+    else if ([key isEqualToString:PCHeaders]) {
+      otherKey = PCClasses;
+      ext = [NSString stringWithString:@"m"];
+      
+      fn = [file stringByDeletingPathExtension];
+      fn = [fn stringByAppendingPathExtension:ext];
+      
+      if ([self doesAcceptFile:fn forKey:otherKey] == NO) {
+	ret = NSRunAlertPanel(@"Removing Class?",@"Should %@ be removed from the project %@ as well?",@"Yes",@"No",nil,fn,[self projectName]);
+      }
+    }
+
+    if (ret) {
+      [self removeFile:fn forKey:otherKey];
+    }
+    
     // Remove the file permanently?!
     if (yn) {
         NSString *pth = [projectPath stringByAppendingPathComponent:file];
 
         [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
+
+	if (ret) {
+	  pth = [projectPath stringByAppendingPathComponent:fn];
+	  [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
+	}
     }
 
     return YES;
@@ -641,7 +728,7 @@
 
 - (void)showInspector:(id)sender
 {
-  [projectBuilder showInspectorForProject:self];
+  [projectManager showInspectorForProject:self];
 }
 
 - (id)updatedAttributeView
@@ -661,74 +748,34 @@
 
 - (void)showBuildTargetPanel:(id)sender
 {
-  [buildTargetPanel center];
+  if (![buildTargetPanel isVisible]) {
+    [buildTargetPanel center];
+  }
   [buildTargetPanel makeKeyAndOrderFront:self];
-}
-
-- (void)setTarget:(id)sender
-{
-  _buildTarget = [buildTargetPopup indexOfSelectedItem];
 }
 
 - (void)setHost:(id)sender
 {
-  NSLog(@"Setting host...");
+  NSString *host = [buildTargetHostField stringValue];
+  [buildOptions setObject:host forKey:BUILD_HOST_KEY];
+
+  NSLog(@"New host %@",host);
 }
 
 - (void)setArguments:(id)sender
 {
-  NSLog(@"Setting args...");
+  NSString *args = [buildTargetArgsField stringValue];
+  [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
 }
 
 - (void)build:(id)sender
 {
-  BOOL ret = YES;
-  NSString *target = [buildTargetPopup titleOfSelectedItem];
-  NSMutableDictionary *optionDict = [NSMutableDictionary dictionary];
-
-  [buildStatusField setStringValue:@"Building..."];
-
-  // Check the panel for this option!
-  if ([target isEqualToString:@"Debug"]) {
-    [optionDict setObject:TARGET_MAKE_DEBUG forKey:BUILD_KEY];
-  }
-  if ([target isEqualToString:@"Profile"]) {
-    [optionDict setObject:TARGET_MAKE_PROFILE forKey:BUILD_KEY];
-  }
-  if ([target isEqualToString:@"Install"]) {
-    [optionDict setObject:TARGET_MAKE_INSTALL forKey:BUILD_KEY];
-  }
-  else {
-    [optionDict setObject:TARGET_MAKE forKey:BUILD_KEY];
-  }
-
-  [[PCProjectBuilder sharedBuilder] buildProject:self options:optionDict];
-
-  if (ret) {
-    [buildStatusField setStringValue:@"Build completed!"];
-  }
-  else {
-    [buildStatusField setStringValue:@"Build failed!"];
-  }
+  [[PCProjectBuilder sharedBuilder] showPanelWithProject:self options:buildOptions];
 }
 
-- (void)clean:(id)sender
+- (NSDictionary *)buildOptions
 {
-  BOOL ret = YES;
-  NSMutableDictionary *optionDict = [NSMutableDictionary dictionary];
-
-  [buildStatusField setStringValue:@"Cleaning..."];
-
-  // Check the panel for this option!
-  [optionDict setObject:TARGET_MAKE_CLEAN forKey:BUILD_KEY];
-  [[PCProjectBuilder sharedBuilder] buildProject:self options:optionDict];
-
-  if (ret) {
-    [buildStatusField setStringValue:@"Cleaning completed!"];
-  }
-  else {
-    [buildStatusField setStringValue:@"Cleaning failed!"];
-  }
+  return (NSDictionary *)buildOptions;
 }
 
 @end
@@ -758,7 +805,8 @@
     }
 
     key = [[keyPath componentsSeparatedByString:@"/"] lastObject];
-    if ([[rootCategories allKeys] containsObject:key] || [[projectDict objectForKey:PCSubprojects] containsObject:key]) {
+    if ([[rootCategories allKeys] containsObject:key] || 
+	[[projectDict objectForKey:PCSubprojects] containsObject:key]) {
         return YES;
     }
     
@@ -767,9 +815,9 @@
 
 - (NSString *)projectKeyForKeyPath:(NSString *)kp
 {
-    NSString *type = [[kp componentsSeparatedByString:@"/"] objectAtIndex:1];
-    
-    return [rootCategories objectForKey:type];
+  NSString *type = [[kp componentsSeparatedByString:@"/"] objectAtIndex:1];
+  
+  return [rootCategories objectForKey:type];
 }
 
 @end
@@ -778,23 +826,40 @@
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-    [projectBuilder setActiveProject:self];
+    [projectManager setActiveProject:self];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)aNotification
 {
-    [projectBuilder setActiveProject:self];
+    [projectManager setActiveProject:self];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
+  id object = [aNotification object];
+
+  if (object == buildTargetPanel) {
+  }
+  else if (object == [self projectWindow]) {
     if ([[self projectWindow] isDocumentEdited]) {
-        if (NSRunAlertPanel(@"Project changed!",@"The project %@ has unsaved files! Should they be saved before closing it?",@"Yes",@"No",nil,[self projectName])) {
-            [self save];
-        }
+      if (NSRunAlertPanel(@"Project changed!",@"The project %@ has unsaved files! Should they be saved before closing it?",@"Yes",@"No",nil,[self projectName])) {
+	[self save];
+      }
     }
+    
     // The PCProjectController is our delegate!
-    [projectBuilder closeProject:self];
+    [projectManager closeProject:self];
+  }
 }
 
 @end
+
+@implementation PCProject (TextDelegate)
+
+- (void)textDidEndEditing:(NSNotification *)aNotification
+{
+}
+
+@end
+
+

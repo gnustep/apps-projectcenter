@@ -135,32 +135,25 @@
   [newFileName setStringValue:@""];
   [newFileName setAutoresizingMask: (NSViewWidthSizable | NSViewMinYMargin)];
   [_c_view addSubview:[newFileName autorelease]];
-
-  /*
-   * the accessory view needed for adding files
-   *
-   */
-
-  fileTypeAccessaryView = [[NSBox alloc] init];
-  addFileTypePopup = [[[NSPopUpButton alloc] initWithFrame:NSMakeRect(20,30,160,20) pullsDown:NO] autorelease];
-  [addFileTypePopup addItemWithTitle:@"No type available!"];
-  
-  [fileTypeAccessaryView setTitle:@"Add to category"];
-  [fileTypeAccessaryView setTitlePosition:NSAtTop];
-  [fileTypeAccessaryView setBorderType:NSGrooveBorder];
-  [fileTypeAccessaryView addSubview:addFileTypePopup];
-  [fileTypeAccessaryView sizeToFit];
-  [fileTypeAccessaryView setAutoresizingMask: NSViewWidthSizable];
-  
-  [fileTypePopup setTarget:self];
-  [fileTypePopup setAction:@selector(fileTypePopupChanged:)];
-
-  _needsAdditionalReleasing = YES;
 }
 
 @end
 
 @implementation PCFileManager
+
+//===========================================================================================
+// ==== Class methods
+//===========================================================================================
+
+static PCFileManager *_mgr = nil;
+
++ (PCFileManager *)fileManager
+{
+  if (!_mgr) {
+    _mgr = [[PCFileManager alloc] init];
+  }
+  return _mgr;
+}
 
 //===========================================================================================
 // ==== Init and free
@@ -170,15 +163,7 @@
 {
     if ((self = [super init])) {
        	creators = [[NSMutableDictionary alloc] init];
-
-#if defined(GNUSTEP)
 	[self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"FileCreation.nib" owner:self]) {
-	  [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load FileCreation.gmodel" userInfo:nil] raise];
-	  return nil;
-        }
-#endif
     }
     return self;
 }
@@ -186,18 +171,14 @@
 - (void)dealloc
 {
   [creators release];
-  
-  if (_needsAdditionalReleasing) {
-    [fileTypeAccessaryView release];
-    [newFileWindow release];
-  }
+  [newFileWindow release];
   
   [super dealloc];
 }
 
 - (void)awakeFromNib
 {
-    [fileTypePopup removeAllItems];
+  [fileTypePopup removeAllItems];
 }
 
 // ===========================================================================
@@ -206,56 +187,53 @@
 
 - (id)delegate
 {
-    return delegate;
+  return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  delegate = aDelegate;
 }
 
 // ===========================================================================
 // ==== File stuff
 // ===========================================================================
 
-- (void)fileTypePopupChanged:(id)sender
-{
-}
-
 - (void)showAddFileWindow
 {
-  NSOpenPanel	*openPanel;
-  int	retval;
+  NSOpenPanel *openPanel;
+  int retval;
+  
   NSMutableArray *validTypes = nil;
   NSDictionary *categories = nil;
+
   PCProject *project = nil;
-  
+  NSString *key = nil;
+  NSString *title = nil;
+  NSArray *types = nil;
+
   if (delegate && [delegate respondsToSelector:@selector(fileManagerWillAddFiles:)]) {
     if (!(project = [delegate fileManagerWillAddFiles:self])) {
       NSLog(@"No project to add files available...");
+      return;
     }
   }
-  
-  // Ask the active project for the valid file types first!
-  categories = [project rootCategories];
-  validTypes = [NSMutableArray arrayWithArray:[categories allKeys]];
-  [validTypes removeObject:@"Subprojects"];
-  
-  [addFileTypePopup removeAllItems];
-  [addFileTypePopup addItemsWithTitles:validTypes];
-  
+
+  key = [project selectedRootCategory];
+  title = [[[project rootCategories] allKeysForObject:key] objectAtIndex:0];
+  title = [NSString stringWithFormat:@"Add to %@...",title];
+
+  types = [project fileExtensionsForCategory:key];
+
   openPanel = [NSOpenPanel openPanel];
   [openPanel setAllowsMultipleSelection:YES];
   [openPanel setCanChooseDirectories:NO];
   [openPanel setCanChooseFiles:YES];
-  
-  [openPanel setTitle:@"Add File(s)..."];
-  [openPanel setAccessoryView:fileTypeAccessaryView];
-  
-  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:nil];
-  
+  [openPanel setTitle:title];
+
+  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:types];
+
   if (retval == NSOKButton) {
-    NSString *key = [categories objectForKey:[addFileTypePopup titleOfSelectedItem]];
     NSEnumerator *enumerator;
     NSString *file;
     
@@ -263,17 +241,57 @@
     
     enumerator = [[openPanel filenames] objectEnumerator];
     while (file = [enumerator nextObject]) {
+      NSString *otherKey;
+      NSString *ext;
+      BOOL ret = NO;
+      NSString *fn;
+      NSString *fileName;
+      NSString *pth;
+
       if ([delegate fileManager:self shouldAddFile:file forKey:key]) {
-	NSString *fileName = [file lastPathComponent];
-	NSString *pth = [[project projectPath] stringByAppendingPathComponent:fileName];
+	fileName = [file lastPathComponent];
+	pth = [[project projectPath] stringByAppendingPathComponent:fileName];
 	
 	if (![key isEqualToString:PCLibraries]) {
-	  if ([[NSFileManager defaultManager] copyPath:file toPath:pth handler:nil]) {
-	    [delegate fileManager:self didAddFile:pth forKey:key];
+	  if (![[NSFileManager defaultManager] fileExistsAtPath:pth]) {
+	    [[NSFileManager defaultManager] copyPath:file toPath:pth handler:nil];
 	  }
 	}
-	else {
-	  [delegate fileManager:self didAddFile:pth forKey:key];
+	[project addFile:pth forKey:key];
+      }
+
+      if ([key isEqualToString:PCClasses]) {
+	otherKey = PCHeaders;
+	ext = [NSString stringWithString:@"h"];
+
+	fn = [file stringByDeletingPathExtension];
+	fn = [fn stringByAppendingPathExtension:ext];
+
+	if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) {
+	  ret = NSRunAlertPanel(@"Adding Header?",@"Should %@ be added to project %@ as well?",@"Yes",@"No",nil,fn,[project projectName]);
+	}
+      }
+      else if ([key isEqualToString:PCHeaders]) {
+	otherKey = PCClasses;
+	ext = [NSString stringWithString:@"m"];
+
+	fn = [file stringByDeletingPathExtension];
+	fn = [fn stringByAppendingPathExtension:ext];
+
+	if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) {
+	  ret = NSRunAlertPanel(@"Adding Class?",@"Should %@ be added to project %@ as well?",@"Yes",@"No",nil,fn,[project projectName]);
+	}
+      }
+
+      if (ret) {
+	if ([delegate fileManager:self shouldAddFile:fn forKey:otherKey]) {
+	  NSString *pp = [project projectPath];
+	  fileName = [fn lastPathComponent];
+	  pth = [pp stringByAppendingPathComponent:fileName];
+
+	  [[NSFileManager defaultManager] copyPath:fn toPath:pth handler:nil];
+
+	  [project addFile:pth forKey:otherKey];
 	}
       }
     }
@@ -367,3 +385,6 @@
 }
 
 @end
+
+
+
