@@ -26,7 +26,8 @@
 
 #import "PCBundleProject.h"
 #import "PCBundleProj.h"
-#import "PCMakefileFactory.h"
+
+#import <ProjectCenter/PCMakefileFactory.h>
 
 #import <ProjectCenter/ProjectCenter.h>
 
