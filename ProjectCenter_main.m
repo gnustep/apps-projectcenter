@@ -90,7 +90,7 @@ createMenu()
 
   SEL action = @selector(method:);
 
-  menu = [[NSMenu alloc] initWithTitle: @"PC"];
+  menu = [[NSMenu alloc] initWithTitle: @"ProjectCenter"];
 
   /*
    * The main menu

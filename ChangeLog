@@ -17,6 +17,7 @@
         * Disabling unused menu entries using defines: ProjectCenter_main.m
         * Added missing files to project: PCLib/PCButton.h, PCLib/PCButton.m
         * Updated version for PCLib: PCLib/Version
+        * Changed menu title to ProjectCenter: ProjectCenter_main.m
 
 2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
 
