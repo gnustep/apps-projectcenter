@@ -10,6 +10,7 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 #
+
 # Subprojects
 #
 
@@ -17,64 +18,77 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # Main application
 #
 
+PACKAGE_NAME=ProjectCenter
 APP_NAME=ProjectCenter
+ProjectCenter_APPLICATION_ICON=ProjectCenter.app.tiff
+#
 
-ProjectCenter_LDFLAGS		= -lProjectCenter
-ProjectCenter_APPLICATION_ICON	= ProjectCenter.tiff
+# Additional libraries
+#
 
-ProjectCenter_RESOURCE_FILES= 			\
-	ProjectCenter.tiff 			\
-	ProjectCenter.app.tiff 			\
-	ProjectCentre_add.tiff 			\
-	ProjectCentre_build.tiff 		\
-	ProjectCentre_clean.tiff 		\
-	ProjectCentre_cvs.tiff 			\
-	ProjectCentre_documentation.tiff 	\
-	ProjectCentre_files.tiff 		\
-	ProjectCentre_find.tiff 		\
-	ProjectCentre_prefs.tiff 		\
-	ProjectCentre_run.tiff 			\
-	ProjectCentre_uml.tiff 			\
-	ProjectCentre_settings.tiff		\
-	FileIcon_.c.tiff 			\
-	FileIcon_.h.tiff 			\
-	FileIcon_.m.tiff 			\
-	FileIcon_rtf.tiff 			\
-	ProjectCenter_make.tiff 		\
-	ProjectCenter_rpm.tiff 			\
-	ProjectCenter_clean.tiff 		\
-	ProjectCenter_debug.tiff 		\
-	ProjectCenter_profile.tiff 		\
-	ProjectCenter_install.tiff 		\
-	Info-project.plist
+ADDITIONAL_GUI_LIBS += -lProjectCenter 
+
+#
+
+# Resource files
+#
+
+ProjectCenter_RESOURCE_FILES= \
+ProjectCenterInfo.plist \
+FileIcon_.c.tiff \
+FileIcon_.h.tiff \
+FileIcon_.m.tiff \
+FileIcon_rtf.tiff \
+ProjectCenter.app.tiff \
+ProjectCenter.tiff \
+ProjectCenter_clean.tiff \
+ProjectCenter_debug.tiff \
+ProjectCenter_install.tiff \
+ProjectCenter_make.tiff \
+ProjectCenter_profile.tiff \
+ProjectCentre_add.tiff \
+ProjectCentre_build.tiff \
+ProjectCentre_clean.tiff \
+ProjectCentre_cvs.tiff \
+ProjectCentre_documentation.tiff \
+ProjectCentre_files.tiff \
+ProjectCentre_find.tiff \
+ProjectCentre_prefs.tiff \
+ProjectCentre_run.tiff \
+ProjectCentre_settings.tiff \
+ProjectCentre_uml.tiff 
+
+#
 
 # Header files
 #
 
-ProjectCenter_HEADERS= 				\
-	PCAppController.h 			\
-	PCAppController+MenuHandling.h		\
-	PCFindController.h 			\
-	PCInfoController.h 			\
-	PCLogController.h 			\
-	PCMenuController.h 			\
-	PCPrefController.h 
+ProjectCenter_HEADERS= \
+PCAppController.h \
+PCFindController.h \
+PCInfoController.h \
+PCLogController.h \
+PCMenuController.h \
+PCPrefController.h \
+PCAppController+MenuHandling.h 
 
 #
+
 # Class files
 #
 
-ProjectCenter_OBJC_FILES= 			\
-	PCAppController.m 			\
-	PCAppController+MenuHandling.m		\
-	PCFindController.m 			\
-	PCInfoController.m 			\
-	PCLogController.m 			\
-	PCMenuController.m 			\
-	PCPrefController.m 			\
-	ProjectCenter_main.m 
+ProjectCenter_OBJC_FILES= \
+PCAppController.m \
+PCFindController.m \
+PCInfoController.m \
+PCLogController.m \
+PCMenuController.m \
+PCPrefController.m \
+ProjectCenter_main.m \
+PCAppController+MenuHandling.m 
 
 #
+
 # C files
 #
 
@@ -82,11 +96,6 @@ ProjectCenter_C_FILES=
 
 -include GNUmakefile.preamble
 -include GNUmakefile.local
+include $(GNUSTEP_MAKEFILES)/aggregate.make
 include $(GNUSTEP_MAKEFILES)/application.make
 -include GNUmakefile.postamble
-
-
-
-
-
-

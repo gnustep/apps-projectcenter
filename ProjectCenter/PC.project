@@ -1,7 +1,7 @@
 {
     APPCLASS = NSApplication;
     APPKIT = "GNUSTEP-GUI";
-    APPLICATIONICON = "";
+    APPLICATIONICON = ProjectCenter.app.tiff;
     BUILDTOOL = gnumake;
     CLASS_FILES = (
 	PCAppController.m,
@@ -40,11 +40,21 @@
 	ProjectCenter_debug.tiff,
 	ProjectCenter_install.tiff,
 	ProjectCenter_make.tiff,
-	ProjectCenter_profile.tiff
+	ProjectCenter_profile.tiff,
+	ProjectCentre_add.tiff,
+	ProjectCentre_build.tiff,
+	ProjectCentre_clean.tiff,
+	ProjectCentre_cvs.tiff,
+	ProjectCentre_documentation.tiff,
+	ProjectCentre_files.tiff,
+	ProjectCentre_find.tiff,
+	ProjectCentre_prefs.tiff,
+	ProjectCentre_run.tiff,
+	ProjectCentre_settings.tiff,
+	ProjectCentre_uml.tiff
     );
     INSTALLDIR = "$(HOME)/Apps";
     INTERFACES = (
-	ProjectCenter.gmodel
     );
     LANGUAGE = English;
     LAST_EDITING = "";
@@ -58,6 +68,7 @@
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (
+	ProjectCenterInfo.plist
     );
     OTHER_SOURCES = (
     );
