@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -23,15 +26,15 @@ BUNDLE_NAME=PCGormProj
 BUNDLE_EXTENSION=.bundle
 BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
 PCGormProj_PRINCIPAL_CLASS=PCGormProj
-#
 
+
+#
 # Additional libraries
 #
 
 PCGormProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -43,27 +46,22 @@ baseInterface.gorm \
 Info-project.plist 
 
 #
-
 # Header files
 #
 
 PCGormProj_HEADERS= \
-PCGormMakefileFactory.h \
 PCGormProj.h \
 PCGormProject.h 
 
 #
-
 # Class files
 #
 
 PCGormProj_OBJC_FILES= \
-PCGormMakefileFactory.m \
 PCGormProj.m \
 PCGormProject.m 
 
 #
-
 # C files
 #
 

@@ -4,7 +4,6 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCGormMakefileFactory.m,
 	PCGormProj.m,
 	PCGormProject.m
     );
@@ -16,7 +15,6 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCGormMakefileFactory.h,
 	PCGormProj.h,
 	PCGormProject.h
     );

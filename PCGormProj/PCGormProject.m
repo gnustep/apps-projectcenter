@@ -24,13 +24,7 @@
 
 #import "PCGormProject.h"
 #import "PCGormProj.h"
-#import "PCGormMakefileFactory.h"
-
-#import <ProjectCenter/ProjectCenter.h>
-
-#if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
-#endif
+#import "PCMakefileFactory.h"
 
 @interface PCGormProject (CreateUI)
 
@@ -164,19 +158,51 @@
 
 - (BOOL)writeMakefile
 {
-    NSFileManager *fm = [NSFileManager defaultManager];
     NSData   *mfd;
-    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    int i; 
+    PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
+    NSDictionary      *dict = [self projectDict];
 
     // Save the project file
     [super writeMakefile];
    
-    if (mfd = [[PCGormMakefileFactory sharedFactory] makefileForProject:self]) {
-        if ([mfd writeToFile:mf atomically:YES]) {
+    // Create the new file
+    [mf createMakefileForProject:[self projectName]];
+
+    [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
+    
+    [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
+
+    [mf appendApplication];
+    [mf appendInstallDir:[dict objectForKey:PCInstallDir]];
+    [mf appendAppIcon:[dict objectForKey:PCAppIcon]];
+
+    [mf appendString:[NSString stringWithFormat:@"%@_MAIN_MODEL_FILE=%@\n",[self projectName],[dict objectForKey:PCMainGModelFile]]];
+
+    [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
+    [mf appendResources];
+    for (i=0;i<[[self resourceFileKeys] count];i++)
+    {
+        NSString *k = [[self resourceFileKeys] objectAtIndex:i];
+        [mf appendResourceItems:[dict objectForKey:k]];
+    }
+
+    [mf appendHeaders:[dict objectForKey:PCHeaders]];
+    [mf appendClasses:[dict objectForKey:PCClasses]];
+    [mf appendCFiles:[dict objectForKey:PCOtherSources]];
+
+    [mf appendTailForApp];
+
+    // Write the new file to disc!
+    if (mfd = [mf encodedMakefile]) 
+    {
+        if ([mfd writeToFile:mfl atomically:YES]) 
+        {
             return YES;
         }
-    }   
-    
+    }
+
     return NO;
 }
 
