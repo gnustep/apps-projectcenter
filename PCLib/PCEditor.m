@@ -40,7 +40,19 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [window setReleasedWhenClosed:NO];
   [window setMinSize:NSMakeSize(512,320)];
 
-  view = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
+  rect = [[window contentView] frame];
+  rect.origin.x = -1;
+  rect.origin.y = -1;
+  rect.size.width += 2;
+
+  scrollView = [[NSScrollView alloc] initWithFrame:rect];
+
+  rect.origin.x = 0;
+  rect.origin.y = 0;
+  rect.size.height -= 24;
+  rect.size.width -= 4;
+
+  view = [[PCEditorView alloc] initWithFrame:rect];
   [view setEditor:self];
 
   [view setMinSize: NSMakeSize (0, 0)];
@@ -52,14 +64,13 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
   [view setHorizontallyResizable:NO];
   [view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [view setBackgroundColor:[NSColor whiteColor]];
-  [[view textContainer] setContainerSize:
-                              NSMakeSize ([view frame].size.width,1e7)];
   [[view textContainer] setWidthTracksTextView:YES];
 
-  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];
   [scrollView setDocumentView:view];
+  RELEASE(view);
 
-  [[view textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
+  rect.size = NSMakeSize([scrollView contentSize].width,1e7);
+  [[view textContainer] setContainerSize:rect.size];
 
   [scrollView setHasHorizontalScroller: YES];
   [scrollView setHasVerticalScroller: YES];
@@ -98,7 +109,6 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 - (void)dealloc
 {
     RELEASE(window);
-    RELEASE(view);
     RELEASE(path);
 
     [super dealloc];
