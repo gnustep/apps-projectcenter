@@ -76,6 +76,7 @@ static PCToolMakefileFactory *_factory = nil;
     [string appendString:@"# Tool\n"];
     [string appendString:@"#\n\n"];
 
+    [string appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",prName]];
     [string appendString:[NSString stringWithFormat:@"TOOL_NAME=%@\n",prName]];
     //    [string appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS=%@\n",prName,[prDict objectForKey:PCPrincipalClass]]];
     [string appendString:[NSString stringWithFormat:@"%@_TOOL_ICON=%@\n",prName, [prDict objectForKey:PCToolIcon]]];
