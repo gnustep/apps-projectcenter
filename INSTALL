@@ -3,21 +3,24 @@ Installation
 
 This file documents the installation of the GNUstep ProjectCenter.
 
-   Copyright (C) 2000 Philippe C.D. Robert.  You may copy,
-distribute, and modify it freely as long as you preserve this copyright
-notice and permission notice.
+Copyright (C) 2000-2001 Philippe C.D. Robert.  You may copy, distribute, and 
+modify it freely as long as you preserve this copyright notice and permission 
+notice.
 
 Installing `ProjectCenter'
 =========================
 
 ProjectCenter requires GNUstep to be installed. Make sure that you have an
 up to date version on your system installed! 
+
 In order to use apps built with ProjectCenter, you will need at least a 
 version not older than from October 2000.
 
 Here is a quick-and-dirty example of installation commands:
 
-GNUstep:	make install;
+GNUstep:	
+		cd ProjectCenter
+		make install
 
 		If you want to do make; make install, make sure that you
 		first make; make install PCLib, and *then* the rest of the
