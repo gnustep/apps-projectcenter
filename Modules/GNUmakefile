@@ -11,7 +11,6 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 SUBPROJECTS = \
         ApplicationProject \
-        GormProject        \
         BundleProject      \
         ToolProject        \
         LibraryProject     \
