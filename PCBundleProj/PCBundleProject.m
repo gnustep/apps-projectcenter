@@ -24,6 +24,7 @@
    $Id$
 */
 
+#include "PCProject+UInterface.h"
 #include "PCBundleProject.h"
 #include "PCBundleProj.h"
 

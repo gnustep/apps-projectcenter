@@ -3,7 +3,7 @@
 	* PCLib/PCDefines.h: SeparateBuilder, SeparateLauncher,
 	SeparateEditor defines were added.
 
-	* PCLib/PCProject+ComponentHandling.m: Add ability to display
+	* PCLib/PCProject+ComponentHandling.m: Added ability to display
 	ProjectBuilder as separate panel or as view inside main project
 	window.
 	
@@ -28,6 +28,13 @@
 	
 	* ChangLogs in all subprojects moved to ChangeLog.old files.
 	All changes should go into this ChangeLog only.
+
+	* PCAppProj/PCAppProject.m: Added PCProject+UInterface.h include.
+	* PCBundleProj/PCBundleProject.m: Ditto.
+	* PCGormProj/PCGormProject.m: Ditto.
+	* PCLibProj/PCLibProject.m: Ditto.
+	* PCRenaissanceProj/PCRenaissanceProject.m: Ditto.
+	* PCToolProj/PCToolProject.m: Ditto.
 	
 2003-01-25  Daniel Luederwald <das_flip@gmx.de>
 

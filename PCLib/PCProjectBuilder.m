@@ -29,6 +29,7 @@
 #include "PCProject.h"
 #include "PCProject+ComponentHandling.h"
 #include "PCProjectManager.h"
+#include "PCSplitView.h"
 
 #include <AppKit/AppKit.h>
 
@@ -206,7 +207,7 @@
 
   [scrollView2 setDocumentView:logOutput];
 
-  split = [[NSSplitView alloc] initWithFrame: NSMakeRect (-1, -1, 464, 253)];
+  split = [[PCSplitView alloc] initWithFrame: NSMakeRect (-1, -1, 464, 253)];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];

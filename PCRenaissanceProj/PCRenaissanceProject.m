@@ -23,6 +23,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#include "PCProject+UInterface.h"
 #include "PCRenaissanceProject.h"
 #include "PCRenaissanceProj.h"
 

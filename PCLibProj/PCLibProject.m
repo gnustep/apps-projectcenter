@@ -24,6 +24,7 @@
    $Id$
 */
 
+#include "PCProject+UInterface.h"
 #include "PCLibProject.h"
 #include "PCLibProj.h"
 
