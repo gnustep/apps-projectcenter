@@ -1,4 +1,4 @@
-2004-06- Serg Stoyan <stoyan255@ukr.net>
+2004-06-20 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
 	(convertLegacyProject:atPath:): Get files list from .pcproj file not
