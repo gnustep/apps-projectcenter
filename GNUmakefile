@@ -16,13 +16,12 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 # Subprojects
 #
 SUBPROJECTS =                   \
-        PCLib                   \
+        Framework               \
         PCAppProj               \
         PCGormProj              \
         PCBundleProj            \
         PCToolProj              \
         PCLibProj               \
-        PCBaseFileTypes         \
         PCRenaissanceProj
 
 #
@@ -101,7 +100,6 @@ PCGormProj/PCGormProj.bundle \
 PCBundleProj/PCBundleProj.bundle \
 PCToolProj/PCToolProj.bundle \
 PCLibProj/PCLibProj.bundle \
-PCBaseFileTypes/PCBaseFileTypes.bundle \
 PCRenaissanceProj/PCRenaissanceProj.bundle
 
 #

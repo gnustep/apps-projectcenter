@@ -111,7 +111,7 @@ static PCGormProj *_creator = nil;
         [dict setObject:[NSArray arrayWithObjects:plistFileName,nil] 
 	      forKey:PCOtherResources];
 	[dict setObject:[NSArray arrayWithObject:[NSString stringWithFormat: @"%@.gorm", [path lastPathComponent]]]
-	      forKey:PCGModels];
+	      forKey:PCInterfaces];
 	[dict setObject:[NSString stringWithFormat: @"%@.gorm", [path lastPathComponent]]
 	      forKey:PCMainGModelFile];
 

@@ -113,7 +113,7 @@ static PCRenaissanceProj *_creator = nil;
 	      forKey:PCOtherResources];
 	//	[dict setObject:[NSArray arrayWithObject:[NSString stringWithFormat: @"%@.gsmarkup", [path lastPathComponent]]]
 	[dict setObject:[NSArray arrayWithObjects: @"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup",nil]
-	      forKey:PCGModels];
+	      forKey:PCInterfaces];
 
         // Save the project to disc
 	projectFile = [NSString stringWithString:[path lastPathComponent]];

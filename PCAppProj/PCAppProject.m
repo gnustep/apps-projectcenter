@@ -38,12 +38,13 @@
 
 - (id)init
 {
+
   if ((self = [super init]))
     {
       rootObjects = [[NSArray arrayWithObjects: PCClasses,
 						PCHeaders,
 						PCOtherSources,
-						PCGModels,
+						PCInterfaces,
 						PCImages,
 						PCOtherResources,
 						PCSubprojects,
@@ -70,13 +71,29 @@
 
       rootCategories = [[NSDictionary 
 	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
-
+	
     }
   return self;
 }
 
+- (void)assignInfoDict:(NSMutableDictionary *)dict
+{
+  infoDict = [dict mutableCopy];
+}
+
+- (void)loadInfoFileAtPath:(NSString *)path
+{
+  NSString *infoFile = nil;
+
+  infoFile = [path stringByAppendingPathComponent:@"Info-gnustep.plist"];
+  infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:infoFile];
+}
+
 - (void)dealloc
 {
+  NSLog (@"PCAppProject: dealloc");
+
+  RELEASE(infoDict);
   RELEASE(buildAttributesView);
   RELEASE(projectAttributesView);
   RELEASE(fileAttributesView);
@@ -520,9 +537,13 @@
   int         result;  
   NSArray     *fileTypes = [NSImage imageFileTypes];
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+  NSString    *dir = nil;
 
   [openPanel setAllowsMultipleSelection:NO];
-  result = [openPanel runModalForDirectory:NSHomeDirectory()
+  
+  dir = [[NSUserDefaults standardUserDefaults]
+    objectForKey:@"LastOpenDirectory"];
+  result = [openPanel runModalForDirectory:dir
                                       file:nil 
                                      types:fileTypes];
 
@@ -540,18 +561,25 @@
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path
 {
-  NSRect  frame = {{0,0}, {64, 64}};
-  NSImage *image;
+  NSRect   frame = {{0,0}, {64, 64}};
+  NSImage  *image = nil;
+  NSString *imageName = nil;
 
   if (!(image = [[NSImage alloc] initWithContentsOfFile:path]))
     {
       return NO;
     }
 
-  [self addFile:path forKey:PCImages copy:YES];
-  [projectDict setObject:[path lastPathComponent] forKey:PCAppIcon];
+  imageName = [path lastPathComponent];
 
-  [appImageField setStringValue:[path lastPathComponent]];
+  [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCImages];
+  
+  [projectDict setObject:imageName forKey:PCAppIcon];
+
+  [infoDict setObject:imageName forKey:@"NSIcon"];
+  [infoDict setObject:imageName forKey:@"ApplicationIcon"];
+
+  [appImageField setStringValue:imageName];
 
   [appIconView setImage:nil];
   [appIconView display];
@@ -572,6 +600,8 @@
 - (void)clearAppIcon:(id)sender
 {
   [projectDict setObject:@"" forKey:PCAppIcon];
+  [infoDict setObject:@"" forKey:@"NSIcon"];
+  [infoDict setObject:@"" forKey:@"ApplicationIcon"];
   [appImageField setStringValue:@""];
   [appIconView setImage:nil];
   [appIconView display];
@@ -610,7 +640,8 @@
   _icon = [projectDict objectForKey:PCAppIcon];
   if (_icon && ![_icon isEqualToString:@""])
     {
-      path = [projectPath stringByAppendingPathComponent:_icon];
+      path = [self dirForCategory:PCImages];
+      path = [path stringByAppendingPathComponent:_icon];
     }
 
   if (path && (image = [[NSImage alloc] initWithContentsOfFile:path]))
@@ -652,12 +683,17 @@
 {
   NSData   *mfd;
   NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-  int i; 
+  int i,j; 
   PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
   NSDictionary      *dict = [self projectDict];
+  NSString          *infoFile = nil;
 
   // Save the project file
   [super writeMakefile];
+
+  // Save Info-gnustep.plist
+  infoFile = [projectPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
+  [infoDict writeToFile:infoFile atomically:YES];
 
   // Create the new file
   [mf createMakefileForProject:[self projectName]];
@@ -671,10 +707,23 @@
   [mf appendGuiLibraries:[dict objectForKey:PCLibraries]];
 
   [mf appendResources];
-  for (i=0;i<[[self resourceFileKeys] count];i++)
+  for (i=0; i<[[self resourceFileKeys] count]; i++)
     {
-      NSString *k = [[self resourceFileKeys] objectAtIndex:i];
-      [mf appendResourceItems:[dict objectForKey:k]];
+      NSString       *k = [[self resourceFileKeys] objectAtIndex:i];
+      NSMutableArray *resources = [[dict objectForKey:k] mutableCopy];
+
+      if ([k isEqualToString:PCImages])
+	{
+	  for (j=0; j<[resources count]; j++)
+	    {
+	      [resources replaceObjectAtIndex:j 
+		withObject:[NSString stringWithFormat:@"Images/%@", 
+		[resources objectAtIndex:j]]];
+	    }
+	}
+
+      [mf appendResourceItems:resources];
+      [resources release];
     }
 
   [mf appendHeaders:[dict objectForKey:PCHeaders]];
@@ -695,6 +744,63 @@
   return NO;
 }
 
+- (NSArray *)fileTypesForCategory:(NSString *)category
+{
+  NSLog(@"Category: %@", category);
+
+  if ([category isEqualToString:PCClasses])
+    {
+      return [NSArray arrayWithObjects:@"m",nil];
+    }
+  else if ([category isEqualToString:PCHeaders])
+    {
+      return [NSArray arrayWithObjects:@"h",nil];
+    }
+  else if ([category isEqualToString:PCOtherSources])
+    {
+      return [NSArray arrayWithObjects:@"c",@"C",nil];
+    }
+  else if ([category isEqualToString:PCInterfaces])
+    {
+      return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
+    }
+  else if ([category isEqualToString:PCImages])
+    {
+      return [NSImage imageFileTypes];
+    }
+  else if ([category isEqualToString:PCSubprojects])
+    {
+      return [NSArray arrayWithObjects:@"subproj",nil];
+    }
+  else if ([category isEqualToString:PCLibraries])
+    {
+      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
+    }
+
+  return nil;
+}
+
+- (NSString *)dirForCategory:(NSString *)category
+{
+  if ([category isEqualToString:PCImages])
+    {
+      return [projectPath stringByAppendingPathComponent:@"Images"];
+    }
+  else if ([category isEqualToString:PCDocuFiles])
+    {
+      return [projectPath stringByAppendingPathComponent:@"Documentation"];
+    }
+  else if ([category isEqualToString:PCInterfaces])
+    {
+      NSString *language = [projectDict objectForKey:@"LANGUAGE"];
+
+      return [projectPath stringByAppendingPathComponent:
+	                  [language stringByAppendingString:@".lproj"]];
+    }
+
+  return projectPath;
+}
+
 - (NSArray *)sourceFileKeys
 {
   return [NSArray arrayWithObjects:
@@ -704,7 +810,7 @@
 - (NSArray *)resourceFileKeys
 {
   return [NSArray arrayWithObjects:
-    PCGModels, PCOtherResources, PCImages, nil];
+    PCInterfaces, PCOtherResources, PCImages, nil];
 }
 
 - (NSArray *)otherKeys

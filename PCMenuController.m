@@ -99,13 +99,6 @@
   RETAIN(appController);
 }
 
-- (void)setFileManager:(id)anObject
-{
-  [fileManager autorelease];
-  fileManager = anObject;
-  RETAIN(fileManager);
-}
-
 - (void)setProjectManager:(id)anObject
 {
   projectManager = anObject;
@@ -234,38 +227,17 @@
 
 - (void)projectAddFiles:(id)sender
 {
-  [fileManager showAddFileWindow];
+  [projectManager addProjectFiles];
 }
 
 - (void)projectSaveFiles:(id)sender
 {
-  [projectManager saveAllFiles];
+  [projectManager saveProjectFiles];
 }
 
 - (void)projectRemoveFiles:(id)sender
 {
-  NSString  *fileName = nil;
-  PCProject *proj = [projectManager activeProject];
-  NSArray   *files = [[proj projectBrowser] selectedFiles];
-
-  if ((fileName = [[proj projectBrowser] nameOfSelectedFile]))
-  {
-      int ret;
-
-      ret = NSRunAlertPanel(@"Remove File!",
-			    @"Really remove %@ in project %@?",
-			    @"Cancel",
-			    @"...from Project only",
-			    @"...from Project and Disk",
-			    files, [proj projectName]);
-
-      if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
-      {
-	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
-
-	  [projectManager removeFilesPermanently:flag];
-       }
-  }
+  [projectManager removeProjectFiles];
 }
 
 - (void)projectRevertToSaved:(id)sender
@@ -340,7 +312,7 @@
 
 - (void)fileNew:(id)sender
 {
-  [fileManager showNewFileWindow];
+  [projectManager newFile];
 }
 
 - (void)fileSave:(id)sender
@@ -389,7 +361,8 @@
 	  NSString  *category = [[[project rootCategories] allKeysForObject:PCNonProject] objectAtIndex:0];
 
 	  [projectManager closeFile];
-	  [project addFile:newFilePath forKey:PCNonProject];
+	  [project addFiles:[NSArray arrayWithObject:newFilePath]
+	             forKey:PCNonProject];
 	  [project browserDidClickFile:[newFilePath lastPathComponent]
 	                      category:category];
 	}
@@ -483,7 +456,7 @@
 
 - (void)showHistoryPanel:(id)sender
 {
-  [[[projectManager activeProject] projectWindow] showProjectHistory:self];
+//  [[[projectManager activeProject] projectWindow] showProjectHistory:self];
   [projectManager showProjectHistory:self];
 }
 

@@ -63,6 +63,8 @@
   NSBox       *fileAttributesView;
   NSImageView *fileIconView;
   NSTextField *fileNameField;
+
+  NSMutableDictionary *infoDict;
 }
 
 // ----------------------------------------------------------------------------
@@ -70,10 +72,12 @@
 // ----------------------------------------------------------------------------
 
 - (id)init;
+- (void)assignInfoDict:(NSMutableDictionary *)dict;
+- (void)loadInfoFileAtPath:(NSString *)path;
 - (void)dealloc;
 
 // ----------------------------------------------------------------------------
-// --- User Interfave
+// --- User Interface
 // ----------------------------------------------------------------------------
 
 - (void)createInspectors;

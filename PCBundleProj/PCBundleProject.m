@@ -85,7 +85,7 @@
       rootObjects = [[NSArray arrayWithObjects: PCClasses,
 						PCHeaders,
 						PCOtherSources,
-						PCGModels,
+						PCInterfaces,
 						PCImages,
 						PCOtherResources,
 						PCSubprojects,
@@ -207,7 +207,7 @@
 
 - (NSArray *)resourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCGModels,PCOtherResources,PCImages,nil];
+  return [NSArray arrayWithObjects:PCInterfaces,PCOtherResources,PCImages,nil];
 }
 
 - (NSArray *)otherKeys

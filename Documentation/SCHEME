@@ -1,38 +1,40 @@
-+- PCProjectInspector
-|
-+- PCHistoryPanel (PCProjectHistory, ...)
-|
-+- PCBuildPanel (PCProjectBuilder, ...)
-|
-+- PCLaunchPanel (PCProjectLauncher, ...)
-|
-+- [SI]PCFindPanel (PCProjectFinder, ...)
-|                                                   
-PCProjectManager
-||
-++- PCProject -- PC*Project (PCAppProject, PCBundleProject and so on)
-|   |
-|   +- PCProjectWindow (PCButton, PCSplitView)
-|   |
-|   +- PCProjectBrowser (PCButton, PCSplitView)
-|   |
-|   +- PCProjectHistory
-|   |
-|   +- PCProjectBuilder (PCButton, PCSplitView, PCOutputView)
-|   |
-|   +- PCProjectLauncher (PCButton, PCSplitView)
-|   |
-|   +- [SI]PCProjectFinder (PCButton, PCSplitView, PCStructuredView)
-|   |
-|   +- PCProjectEditor
-|
-+- PCEditorController
-   ||
-   ++- PCEditor
-   |   |
-   |   +- PCEditorView 
-   |
-   +- PCTextFinder
+                       +- PCProjectInspector
+                       |
+                       +- PCHistoryPanel
+                       |
+                       +- PCBuildPanel
+                       |
+                       +- PCLaunchPanel
+                       |
+                       +- [SI]PCFindPanel
+PCAppController-\      |
+|                ----- PCProjectManager
+PCMenuController/      |   ||
+                       |   PCProject <PCAppProject, PCBundleProject>
+                       |   |
+                       |   +- PCProjectWindow
+                       |   |
+                       |   +- PCProjectBrowser
+                       |   |
+                       |   +- PCProjectHistory
+                       |   |
+                       |   +- PCProjectBuilder
+                       |   |
+                       |   +- PCProjectLauncher
+                       |   |
+                       |   +- [SI]PCProjectFinder
+                       |   |
+                       |   +- PCProjectEditor
+                       |
+                       PCEditorController
+                       | ||
+                       | PCEditor
+                       | |
+                       | +- PCEditorView 
+                       |
+                       PCTextFinder
+		       |
+		       PCFileManager
 
 ------------------------------
 Other (controls, tools, etc.):
@@ -69,8 +71,12 @@ Part II:
 - 
 
 
-------
-NOTES:
-------
-- "Edit" menu should be completely provided by Editor part.
+---------
+THOUGHTS:
+---------
+- "Edit" menu should be completely provided by Editor part;
+- "Add Files" panel should provide selection of type and "Choose Folders"
+  and "Add Class", "Add Header" and so on checkbox;
+- "New File in Project..." panel should provide "Create Header", 
+  "Create Class" and so on checkbox. Redesign panel.
 

@@ -37,22 +37,22 @@
 #
 
 # Additional flags to pass to the preprocessor
-ADDITIONAL_CPPFLAGS += -Wall
+ADDITIONAL_CPPFLAGS += -Wall 
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -Wall
+ADDITIONAL_OBJCFLAGS += -Wall -Werror
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS += -Wall
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I../PCLib -I../..
+ADDITIONAL_INCLUDE_DIRS += -I../Framework -I../..
 
 # Additional LDFLAGS to pass to the linker
 ADDITIONAL_LDFLAGS += 
 
 # Additional library directories the linker should search
-ADDITIONAL_LIB_DIRS += -L../PCLib/$(GNUSTEP_OBJ_DIR)
+ADDITIONAL_LIB_DIRS += -L../Framework/ProjectCenter.framework/Versions/Current
 
 ADDITIONAL_TOOL_LIBS +=
 

@@ -36,7 +36,6 @@
 @interface PCMenuController : NSObject
 {
   PCProjectManager *projectManager;
-  PCFileManager	   *fileManager;
   PCAppController  *appController;
   
   NSBox	*projectTypeAccessaryView;
@@ -53,7 +52,6 @@
 - (void)dealloc;
 
 - (void)setAppController:(id)anObject;
-- (void)setFileManager:(id)anObject;
 - (void)setProjectManager:(id)anObject;
 
 //============================================================================

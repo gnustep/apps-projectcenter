@@ -47,7 +47,6 @@
   PCInfoController *infoController;
   PCLogController  *logger;
   PCProjectManager *projectManager;
-  PCFileManager    *fileManager;
   PCMenuController *menuController;
   
   PCBundleLoader   *bundleLoader;

@@ -91,13 +91,9 @@
       infoController = [[PCInfoController alloc] init];
       logger         = [[PCLogController alloc] init];
       projectManager = [[PCProjectManager alloc] init];
-      fileManager    = [PCFileManager fileManager];
       menuController = [[PCMenuController alloc] init];
 
-      [fileManager setDelegate:projectManager];
-
       [menuController setAppController:self];
-      [menuController setFileManager:fileManager];
       [menuController setProjectManager:projectManager];
     }
 
@@ -217,7 +213,8 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
-  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == NO) 
+  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == NO
+      && [[fileName pathExtension] isEqualToString:@"project"] == NO) 
   {
     return NO;
   }
@@ -312,7 +309,6 @@
   RELEASE(infoController);
   RELEASE(logger);
   RELEASE(projectManager);
-  RELEASE(fileManager);
   RELEASE(menuController);
   
   RELEASE(bundleLoader);
@@ -331,24 +327,16 @@
   NSAssert(aBundle,@"No valid bundle!");
 
   principalClass = [aBundle principalClass];
-  if ([principalClass conformsToProtocol:@protocol(ProjectType)]) 
+  NSString	*name = [[principalClass sharedCreator] projectTypeName];
+
+  [logger logMessage: [NSString stringWithFormat:
+    @"Project type %@ successfully loaded!",name] tag:INFORMATION];
+
+  if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) 
     {
-      NSString	*name = [[principalClass sharedCreator] projectTypeName];
-
-      [logger logMessage: [NSString stringWithFormat:@"Project type %@ successfully loaded!",name] tag:INFORMATION];
-
-      if ([self registerProjectCreator:NSStringFromClass(principalClass) forKey:name]) 
-	{
-	  [menuController addProjectTypeNamed:name];
-	  [logger logMessage:[NSString stringWithFormat:@"Project type %@ successfully registered!",name] tag:INFORMATION];
-	}
-    }
-  else if ([principalClass conformsToProtocol:@protocol(FileCreator)]) 
-    {
-      [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
-
-      // In objc.h there is already th like (char *)name...
-      // [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
+      [menuController addProjectTypeNamed:name];
+      [logger logMessage:[NSString stringWithFormat:
+	@"Project type %@ successfully registered!",name] tag:INFORMATION];
     }
 }
 
