@@ -68,7 +68,7 @@
   [box setFrame:NSMakeRect(16,96,224,56)];
   fileTypePopup = [[[NSPopUpButton alloc] initWithFrame:NSMakeRect(32,2,160,20)
 					  pullsDown:NO] autorelease];
-  [fileTypePopup addItemWithTitle:@"No type available!"];
+  //[fileTypePopup addItemWithTitle:@"No type available!"];
   [fileTypePopup setAutoresizingMask: (NSViewWidthSizable)];
   [box setTitle:@"Type"];
   [box setTitlePosition:NSAtTop];
@@ -327,9 +327,11 @@ static PCFileManager *_mgr = nil;
   if (delegate) {
     path = [delegate fileManager:self willCreateFile:fileName withKey:key];
   }
-  
+
+#ifdef DEBUG  
   NSLog(@"<%@ %x>: creating file at %@",[self class],self,path);
-  
+#endif DEBUG
+
   // Create file
   if (path) {
     NSDictionary *newFiles;
@@ -362,9 +364,11 @@ static PCFileManager *_mgr = nil;
 {
   NSEnumerator *enumerator = [dict keyEnumerator];
   id type;
-  
+
+#ifdef DEBUG  
   NSLog(@"<%@ %x>: Registering creators...",[self class],self);
-  
+#endif DEBUG
+
   while (type = [enumerator nextObject]) {
     id creator = [[dict objectForKey:type] objectForKey:@"Creator"];
     
