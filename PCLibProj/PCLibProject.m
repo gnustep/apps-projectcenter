@@ -26,7 +26,8 @@
 
 #import "PCLibProject.h"
 #import "PCLibProj.h"
-#import "PCMakefileFactory.h"
+
+#import <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCLibProject (CreateUI)
 
@@ -87,8 +88,6 @@
 {
     NSData   *mfd;
     NSString *mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-    NSString *tmp;
-    int i; 
     PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
     NSDictionary      *dict = [self projectDict];
 

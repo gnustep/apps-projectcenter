@@ -26,7 +26,8 @@
 
 #import "PCToolProject.h"
 #import "PCToolProj.h"
-#import "PCMakefileFactory.h"
+
+#import <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCToolProject (CreateUI)
 

@@ -1,67 +1,102 @@
-{
-    APPCLASS = NSApplication;
-    APPKIT = GNUSTEP-GUI;
-    APPLICATIONICON = "";
-    BUILDTOOL = "/usr/bin/make";
-    CLASS_FILES = (
-	PCBaseFileType.m
-    );
-    COMPILEROPTIONS = "";
-    CREATION_DATE = "";
-    DOCU_FILES = (
-    );
-    FOUNDATION = GNUSTEP-BASE;
-    FRAMEWORKS = (
-    );
-    HEADER_FILES = (
-	PCBaseFileType.h
-    );
-    IMAGES = (
-    );
-    INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter";
-    INTERFACES = (
-    );
-    LANGUAGE = English;
-    LAST_EDITING = "";
-    LIBRARIES = (
-	gnustep-base,
-	gnustep-gui,
-	ProjectCenter
-    );
-    LINKEROPTIONS = "";
-    MAININTERFACE = "";
-    MAKEFILEDIR = "$(GNUSTEP_SYSTEM_ROOT)/Makefiles";
-    OTHER_FILES = (
-    );
-    OTHER_RESOURCES = (
-	cfile.template,
-	cheader.template,
-	class.template,
-	header.template,
-	protocol.template,
-	nsviewclass.template,
-	nsviewheader.template
-    );
-    OTHER_SOURCES = (
-    );
-    PRINCIPAL_CLASS = PCBaseFileType;
-    PROJECT_BUILDER = PCBundleProj;
-    PROJECT_COPYRIGHT = "No license specified!";
-    PROJECT_CREATOR = "";
-    PROJECT_DESCRIPTION = "No description avaliable!";
-    PROJECT_GROUP = "No description avaliable!";
-    PROJECT_MAINTAINER = "";
-    PROJECT_NAME = PCBaseFileTypes;
-    PROJECT_RELEASE = 1;
-    PROJECT_SOURCE = "%{gs_name}-%{gs_version}.tar.gz";
-    PROJECT_SUMMARY = "No summary avaliable!";
-    PROJECT_TYPE = PCBundleProject;
-    PROJECT_VERSION = 1.0;
-    SUBPROJECTS = (
-    );
-    SUPPORTING_FILES = (
-	GNUmakefile.preamble,
-	GNUmakefile,
-	GNUmakefile.postamble
-    );
-}
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>APPCLASS</key>
+	<string>NSApplication</string>
+	<key>APPKIT</key>
+	<string>GNUSTEP-GUI</string>
+	<key>APPLICATIONICON</key>
+	<string></string>
+	<key>BUILDTOOL</key>
+	<string>/usr/bin/make</string>
+	<key>CLASS_FILES</key>
+	<array>
+		<string>PCBaseFileType.m</string>
+	</array>
+	<key>COMPILEROPTIONS</key>
+	<string></string>
+	<key>CREATION_DATE</key>
+	<string></string>
+	<key>DOCU_FILES</key>
+	<array/>
+	<key>FOUNDATION</key>
+	<string>GNUSTEP-BASE</string>
+	<key>FRAMEWORKS</key>
+	<array/>
+	<key>HEADER_FILES</key>
+	<array>
+		<string>PCBaseFileType.h</string>
+	</array>
+	<key>IMAGES</key>
+	<array/>
+	<key>INSTALLDIR</key>
+	<string>$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter</string>
+	<key>INTERFACES</key>
+	<array/>
+	<key>LANGUAGE</key>
+	<string>English</string>
+	<key>LAST_EDITING</key>
+	<string></string>
+	<key>LIBRARIES</key>
+	<array>
+		<string>gnustep-base</string>
+		<string>gnustep-gui</string>
+		<string>ProjectCenter</string>
+	</array>
+	<key>LINKEROPTIONS</key>
+	<string></string>
+	<key>MAININTERFACE</key>
+	<string></string>
+	<key>MAKEFILEDIR</key>
+	<string>$(GNUSTEP_SYSTEM_ROOT)/Makefiles</string>
+	<key>OTHER_FILES</key>
+	<array/>
+	<key>OTHER_RESOURCES</key>
+	<array>
+		<string>cfile.template</string>
+		<string>cheader.template</string>
+		<string>class.template</string>
+		<string>header.template</string>
+		<string>protocol.template</string>
+		<string>nsviewclass.template</string>
+		<string>nsviewheader.template</string>
+	</array>
+	<key>OTHER_SOURCES</key>
+	<array/>
+	<key>PRINCIPAL_CLASS</key>
+	<string>PCBaseFileType</string>
+	<key>PROJECT_BUILDER</key>
+	<string>PCBundleProj</string>
+	<key>PROJECT_COPYRIGHT</key>
+	<string>No license specified!</string>
+	<key>PROJECT_CREATOR</key>
+	<string></string>
+	<key>PROJECT_DESCRIPTION</key>
+	<string>No description avaliable!</string>
+	<key>PROJECT_GROUP</key>
+	<string>No description avaliable!</string>
+	<key>PROJECT_MAINTAINER</key>
+	<string></string>
+	<key>PROJECT_NAME</key>
+	<string>PCBaseFileTypes</string>
+	<key>PROJECT_RELEASE</key>
+	<string>1</string>
+	<key>PROJECT_SOURCE</key>
+	<string>%{gs_name}-%{gs_version}.tar.gz</string>
+	<key>PROJECT_SUMMARY</key>
+	<string>No summary avaliable!</string>
+	<key>PROJECT_TYPE</key>
+	<string>PCBundleProject</string>
+	<key>PROJECT_VERSION</key>
+	<string>1.0</string>
+	<key>SUBPROJECTS</key>
+	<array/>
+	<key>SUPPORTING_FILES</key>
+	<array>
+		<string>GNUmakefile.preamble</string>
+		<string>GNUmakefile</string>
+		<string>GNUmakefile.postamble</string>
+	</array>
+</dict>
+</plist>

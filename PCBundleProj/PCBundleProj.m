@@ -91,7 +91,11 @@ static PCBundleProj *_creator = nil;
                 
         // Customise the project
         [dict setObject:[path lastPathComponent] forKey:PCProjectName];
+#ifndef GNUSTEP_BASE_VERSION
+        [dict setObject:[[project principalClass] description] forKey:PCProjType];
+#else
         [dict setObject:[project principalClass] forKey:PCProjType];
+#endif
 
         // Save the project to disc
 	projectFile = [NSString stringWithString:[path lastPathComponent]];

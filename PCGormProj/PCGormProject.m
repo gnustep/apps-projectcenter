@@ -24,7 +24,8 @@
 
 #import "PCGormProject.h"
 #import "PCGormProj.h"
-#import "PCMakefileFactory.h"
+
+#import <ProjectCenter/PCMakefileFactory.h>
 
 @interface PCGormProject (CreateUI)
 
