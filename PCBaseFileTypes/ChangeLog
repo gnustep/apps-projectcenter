@@ -1,3 +1,8 @@
+2002-11-04  Adam Fedor  <fedor@gnu.org>
+
+	* PCBaseFileType.m (-createFileOfType:path:project:): Only add
+	file extension if it doesn't already have one
+
 2002-06-01 15:56  probert
 
 	* GNUmakefile, PCBaseFileTypes.pcproj: Installation into

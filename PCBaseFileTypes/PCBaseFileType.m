@@ -137,7 +137,8 @@ static NSDictionary *dict = nil;
   if ([type isEqualToString:ObjCClass]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"class" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"m"];
+    if ([[path pathExtension] isEqual: @"m"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"m"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [files setObject:ObjCClass forKey:newFile];
     
@@ -164,7 +165,8 @@ static NSDictionary *dict = nil;
   else if ([type isEqualToString:ObjCNSViewClass]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"nsviewclass" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"m"];
+    if ([[path pathExtension] isEqual: @"m"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"m"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [files setObject:ObjCNSViewClass forKey:newFile];
     
@@ -191,7 +193,8 @@ static NSDictionary *dict = nil;
   else if ([type isEqualToString:CFile]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cfile" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"c"];
+    if ([[path pathExtension] isEqual: @"c"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"c"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [files setObject:CFile forKey:newFile];
     
@@ -215,7 +218,8 @@ static NSDictionary *dict = nil;
   else if ([type isEqualToString:ObjCHeader]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"header" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"h"];
+    if ([[path pathExtension] isEqual: @"h"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
     [files setObject:ObjCHeader forKey:newFile];
@@ -228,7 +232,8 @@ static NSDictionary *dict = nil;
   else if ([type isEqualToString:CHeader]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"h"];
+    if ([[path pathExtension] isEqual: @"h"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
     [files setObject:CHeader forKey:newFile];
@@ -241,7 +246,8 @@ static NSDictionary *dict = nil;
   else if ([type isEqualToString:ProtocolFile]) 
   {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"protocol" ofType:@"template"];
-    newFile = [path stringByAppendingPathExtension:@"h"];
+    if ([[path pathExtension] isEqual: @"h"] == NO)
+      newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
     [files setObject:ProtocolFile forKey:newFile];

@@ -354,7 +354,9 @@ static PCFileManager *_mgr = nil;
 	  fileName = [fn lastPathComponent];
 	  pth = [pp stringByAppendingPathComponent:fileName];
 
-	  [[NSFileManager defaultManager] copyPath:fn toPath:pth handler:nil];
+          /* Only copy the file if it isn't already there */
+	  if ([pth isEqual: fn] == NO)
+	    [[NSFileManager defaultManager] copyPath:fn toPath:pth handler:nil];
 
 	  [project addFile:pth forKey:otherKey];
 	}
