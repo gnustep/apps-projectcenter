@@ -165,9 +165,9 @@ void createMenu()
 
   find = [[[NSMenu alloc] init] autorelease];
   [tools setSubmenu:find forItem:[tools itemWithTitle:@"Find"]];
-  [find addItemWithTitle:@"Find Panel..." action:@selector(showFindPanel:) keyEquivalent:@"f"];
-  [find addItemWithTitle:@"Find Next" action:@selector(findNext:) keyEquivalent:@"g"];
-  [find addItemWithTitle:@"Find Previous" action:@selector(findPrevious:) keyEquivalent:@"d"];
+  [find addItemWithTitle:@"Find Panel..." action:@selector(showFindPanel:) keyEquivalent:@""];
+  [find addItemWithTitle:@"Find Next" action:@selector(findNext:) keyEquivalent:@""];
+  [find addItemWithTitle:@"Find Previous" action:@selector(findPrevious:) keyEquivalent:@""];
 
   /*
    * Windows submenu
