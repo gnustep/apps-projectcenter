@@ -73,7 +73,9 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCPrefController: dealloc");
+#endif
   
   RELEASE(preferencesDict);
   

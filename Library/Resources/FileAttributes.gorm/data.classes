@@ -150,12 +150,15 @@
     };
     PCProjectInspector = {
 	Actions = (
-	    "fileNameDidChange:"
+	    "fileNameDidChange:",
+	    "setPublicHeader:"
 	);
 	Outlets = (
 	    fileIconView,
 	    fileNameField,
-	    fileAttributesView
+	    fileAttributesView,
+	    localizableButton,
+	    publicHeaderButton
 	);
 	Super = NSObject;
     };

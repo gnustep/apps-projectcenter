@@ -58,13 +58,15 @@ THOUGHTS:
   and "Add Class", "Add Header" and so on checkbox;
 - "New File in Project..." panel should provide "Create Header", 
   "Create Class" and so on checkbox.
+- Add "Installable" or something to "Bundle" project type project attributes.
   
 Localization:
 ~~~~~~~~~~~~~
 - On project creation, all resources go to Resources subdir and placed into
-  GNUmakefile as *_RESOURCE_FILES;
+  GNUmakefile as *_RESOURCE_FILES; [done!]
 - If some file from [PC*Proj localizableKeys] categories selected as 
   "Localizable Resource", that file removed from *_RESOURCE_FILES and placed
-  into *_LOCALIZED_RESOURCE_FILES (Resources->Language.lproj);
-- in PC.project add LANGUAGES=();
-- in PC.project add LOCALIZED_FILES=();
+  into *_LOCALIZED_RESOURCE_FILES (for directories: Resources->Language.lproj);
+- in PC.project add USER_LANGUAGES=(); [done!]
+- in PC.project add LOCALIZED_RESOURCES=(); [done!]
+

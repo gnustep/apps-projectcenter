@@ -133,6 +133,8 @@ NSString
   if (isSubproject == NO)
     {
       [self saveProjectWindowsAndPanels];
+      [projectBrowser setPath:@"/"];
+      [projectManager setActiveProject:self];
     }
   
   // Project files (GNUmakefile, PC.project etc.)
@@ -197,7 +199,7 @@ NSString
 - (BOOL)saveProjectWindowsAndPanels
 {
   NSUserDefaults      *ud = [NSUserDefaults standardUserDefaults];
-  NSMutableDictionary *windows = [[NSMutableDictionary alloc] init];
+  NSMutableDictionary *windows = [NSMutableDictionary dictionary];
   NSString            *projectFile = nil;
   NSMutableDictionary *projectFileDict = nil;
 
@@ -288,7 +290,9 @@ NSString
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProject %@: dealloc", projectName);
+#endif
   
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -296,17 +300,16 @@ NSString
   RELEASE(projectPath);
   RELEASE(projectDict);
   RELEASE(loadedSubprojects);
+  RELEASE(buildOptions);
 
-  // Initialized in -setProjectManager:
+  // Initialized in -setProjectManager: of project and
+  // in setSuperProject: of subproject
   RELEASE(projectWindow);
   RELEASE(projectBrowser);
   RELEASE(projectLoadedFiles);
   RELEASE(projectEditor);
-  
   if (projectBuilder) RELEASE(projectBuilder);
   if (projectLauncher) RELEASE(projectLauncher);
-
-  RELEASE(buildOptions);
 
   if (isSubproject == YES)
     {
@@ -371,9 +374,10 @@ NSString
   return projectEditor;
 }
 
-- (void)setProjectDictObject:(id)object forKey:(NSString *)key
+- (void)setProjectDictObject:(id)object forKey:(NSString *)key notify:(BOOL)yn
 {
-  id currentObject = [projectDict objectForKey:key];
+  id                  currentObject = [projectDict objectForKey:key];
+  NSMutableDictionary *notifObject = [NSMutableDictionary dictionary];
 
   if ([object isKindOfClass:[NSString class]]
       && [currentObject isEqualToString:object])
@@ -383,9 +387,17 @@ NSString
 
   [projectDict setObject:object forKey:key];
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCProjectDictDidChangeNotification
-                  object:self];
+  // Send in notification project itself and project dictionary object key 
+  // that was changed
+  [notifObject setObject:self forKey:@"Project"];
+  [notifObject setObject:key forKey:@"Attribute"];
+
+  if (yn == YES)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCProjectDictDidChangeNotification
+                      object:notifObject];
+    }
 }
 
 - (void)setProjectName:(NSString *)aName
@@ -432,6 +444,24 @@ NSString
 - (NSString *)execToolName
 {
   return nil;
+}
+
+- (BOOL)canHavePublicHeaders
+{
+  return NO;
+}
+
+- (NSArray *)publicHeaders
+{
+  return nil;
+}
+
+- (void)setHeaderFile:(NSString *)file public:(BOOL)yn
+{
+}
+
+- (void)setLocalizableFile:(NSString *)file public:(BOOL)yn
+{
 }
 
 - (NSArray *)buildTargets
@@ -688,17 +718,17 @@ NSString
 	}
     }
 
-  // Add files to project
-  [self addFiles:fileList forKey:key];
   if ([complementaryFiles count] > 0)
     {
-      [self addFiles:complementaryFiles forKey:complementaryKey];
+      [self addFiles:complementaryFiles forKey:complementaryKey notify:NO];
     }
+  // Add files to project
+  [self addFiles:fileList forKey:key notify:YES];
 
   return YES;
 }
 
-- (void)addFiles:(NSArray *)files forKey:(NSString *)type
+- (void)addFiles:(NSArray *)files forKey:(NSString *)type notify:(BOOL)yn
 {
   NSEnumerator   *enumerator = nil;
   NSString       *file = nil;
@@ -713,10 +743,10 @@ NSString
       [projectFiles addObject:pFile];
     }
 
-  [self setProjectDictObject:projectFiles forKey:type];
+  [self setProjectDictObject:projectFiles forKey:type notify:yn];
 }
 
-- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key
+- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key notify:(BOOL)yn
 {
   NSEnumerator   *enumerator = nil;
   NSString       *filePath = nil;
@@ -739,7 +769,7 @@ NSString
       [projectEditor closeEditorForFile:filePath];
     }
 
-  [self setProjectDictObject:projectFiles forKey:key];
+  [self setProjectDictObject:projectFiles forKey:key notify:yn];
 
   return YES;
 }
@@ -755,15 +785,37 @@ NSString
   NSString            *_file = nil;
   NSMutableArray      *_array = nil;
   BOOL                saveToFile = NO;
+  int                 index = 0;
+  PCEditor            *_editor = nil;
+  NSString            *_editorPath = nil;
+  NSString            *_editorCategory = nil;
   
   selectedCategory = [projectBrowser nameOfSelectedCategory];
-  selectedCategoryKey = [[projectManager rootActiveProject] 
-    keyForCategory:selectedCategory];
+  selectedCategoryKey = [self keyForCategory:selectedCategory];
 
   fromPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:fromFile];
   toPath = [[self dirForCategoryKey:selectedCategoryKey]
     stringByAppendingPathComponent:toFile];
+
+  if ([fm fileExistsAtPath:toPath])
+    {
+      switch (NSRunAlertPanel(@"Rename file",
+       			      @"File \"%@\" already exist",
+			      @"Overwrite file",@"Cancel",nil, toFile))
+	{
+	case NSAlertDefaultReturn: // Overwrite
+	  if ([fm removeFileAtPath:toPath handler:nil] == NO)
+	    {
+	      return NO;
+	    }
+	  break;
+	case NSAlertAlternateReturn: // Stop rename
+	  return NO;
+	  break;
+
+	}
+    }
 
   PCLogInfo(self, @"{%@} move %@ to %@ category: %@", 
 	    projectName, fromPath, toPath, selectedCategory);
@@ -777,10 +829,9 @@ NSString
 	}
 
       // Make changes to projectDict
-      [self removeFiles:[NSArray arrayWithObjects:fromFile,nil] 
- 	         forKey:selectedCategoryKey];
-      [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
-   	      forKey:selectedCategoryKey];
+      _array = [projectDict objectForKey:selectedCategoryKey];
+      index = [_array indexOfObject:fromFile];
+      [_array replaceObjectAtIndex:index withObject:toFile];
 
       // Put only this change to project file, leaving 
       // other changes in memory(projectDict)
@@ -800,9 +851,24 @@ NSString
 	}
 	
       // Set browser path to new file name
-      [projectBrowser 
-	setPath:[[projectBrowser pathToSelectedCategory]
-	stringByAppendingPathComponent:toFile]];
+      [projectBrowser reloadLastColumnAndSelectFile:toFile];
+
+      // Handle editor(if any) information
+//      if ([[[_editor path] lastPathComponent] isEqualToString:fromFile])
+      _editor = [projectEditor activeEditor];
+      if (_editor)
+	{
+	  _editorPath = [_editor path];
+	  _editorPath = [_editorPath stringByDeletingLastPathComponent];
+	  _editorPath = [_editorPath stringByAppendingPathComponent:toFile];
+	  [_editor setPath:_editorPath];
+
+	  _editorCategory = [_editor categoryPath];
+	  _editorCategory = [_editorCategory stringByDeletingLastPathComponent];
+	  _editorCategory = [_editorCategory 
+	    stringByAppendingPathComponent:toFile];
+	  [_editor setCategoryPath:_editorCategory];
+	}
     }
 
   return YES;
@@ -816,18 +882,16 @@ NSString
 {
   NSAssert(aDict,@"No valid project dictionary!");
 
-  [projectDict autorelease];
+  [projectDict release];
   projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
 
-  PCLogInfo(self, @"assignProjectDict");
+  PCLogStatus(self, @"assignProjectDict");
 
   [self setProjectName:[projectDict objectForKey:PCProjectName]];
   [self writeMakefile];
 
-  // Notify on dictionary changes. Update the interface and so on.
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCProjectDictDidChangeNotification 
-                  object:self];
+  // Also notify on dictionary changes. Update the interface and so on.
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   return YES;
 }
@@ -938,39 +1002,6 @@ NSString
     }
 
   return YES;
-}
-
-- (BOOL)writeSpecFile
-{
-  NSString *name = [projectDict objectForKey:PCProjectName];
-  NSString *specInPath = [projectPath stringByAppendingPathComponent:name];
-  NSMutableString *specIn = [NSMutableString string];
-
-  if( [[projectDict objectForKey:PCRelease] intValue] < 1 )
-    {
-      NSRunAlertPanel(@"Spec Input File Creation!",
-		      @"The Release entry seems to be wrong, please fix it!",
-		      @"OK",nil,nil);
-      return NO;
-    }
-
-  specInPath = [specInPath stringByAppendingPathExtension:@"spec.in"];
-
-  [specIn appendString:@"# Automatically generated by ProjectCenter.app\n"];
-  [specIn appendString:@"#\nsummary: "];
-  [specIn appendString:[projectDict objectForKey:PCSummary]];
-  [specIn appendString:@"\nRelease: "];
-  [specIn appendString:[projectDict objectForKey:PCRelease]];
-  [specIn appendString:@"\nCopyright: "];
-  [specIn appendString:[projectDict objectForKey:PCCopyright]];
-  [specIn appendString:@"\nGroup: "];
-  [specIn appendString:[projectDict objectForKey:PCGroup]];
-  [specIn appendString:@"\nSource: "];
-  [specIn appendString:[projectDict objectForKey:PCSource]];
-  [specIn appendString:@"\n\n%description\n\n"];
-  [specIn appendString:[projectDict objectForKey:PCDescription]];
-
-  return [specIn writeToFile:specInPath atomically:YES];
 }
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
@@ -1146,7 +1177,7 @@ NSString
 
   [_subprojects addObject:[aSubproject projectName]];
   [loadedSubprojects addObject:aSubproject];
-  [self setProjectDictObject:_subprojects forKey:PCSubprojects];
+  [self setProjectDictObject:_subprojects forKey:PCSubprojects notify:YES];
 }
 
 - (void)addSubprojectWithName:(NSString *)name
@@ -1161,7 +1192,7 @@ NSString
   _subprojects = [NSMutableArray 
     arrayWithArray:[projectDict objectForKey:PCSubprojects]];
   [_subprojects addObject:name];
-  [self setProjectDictObject:_subprojects forKey:PCSubprojects];
+  [self setProjectDictObject:_subprojects forKey:PCSubprojects notify:YES];
 }
 
 - (BOOL)removeSubprojectWithName:(NSString *)subprojectName
@@ -1225,9 +1256,7 @@ NSString
     { // Click on "/Subprojects/Name+"
       PCProject      *_subproject = nil;
       NSString       *spCategoryPath = nil;
-      NSMutableArray *mCategoryPath = nil;
-
-      mCategoryPath = [pathArray mutableCopy];
+      NSMutableArray *mCategoryPath = [NSMutableArray arrayWithArray:pathArray];
 
       _subproject = [self subprojectWithName:[pathArray objectAtIndex:2]];
       activeSubproject = _subproject;

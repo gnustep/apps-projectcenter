@@ -6,48 +6,54 @@ This is version 0.4.0 of ProjectCenter.
 What is ProjectCenter?
 ======================
 
-   ProjectCenter is a clone of the NEXTSTEP ProjectBuilder application for
-   GNUstep.
+   ProjectCenter is GNUstep IDE(Intergated Development Environment) 
+   application.  It is a clone of the OPENSTEP ProjectBuilder application 
+   for GNUstep.
 
-   ProjectCenter is covered under the GNU Public License.  This means if you 
+   ProjectCenter is covered under the GNU Public License. This means if you 
    make changes to these programs, you cannot charge a fee, other than
    distribution fees, for others to use the program. You should read the
-   COPYING file for more information.
+   Documentation/COPYING file for more information.
 
 Noteworthy changes in version `0.4.0'.
 ======================================
 
-   * A lot of refactoring and cleanup made
-   
+   * A lot of refactoring and cleanup was made
+
    * Some parts of interface were recreated using GORM
-   
+
    * Most part of Project Inspector is completed
-   
-   * Finished Loaded Files 
-   
+
+   * Finished Loaded Files and appropriate menu items
+
    * Stability issues fixed in Project Builder
-   
+
    * Interaces fixes were made in Project Launcher
-   
+
    * Added subprojects support
-   
-   * Preferences recreated and cleaned up
-   
+
+   * Preferences recreated and cleaned up.
+
    * Many browser fixes were made in Project Window
-   
+
    * Much time was spent to fix stability problems
+
+   * Added "Aggregate" project type
+
+   * "Application" and "GormApplication" project types merged 
+     into "Application" project type
 
 How can I get support for this software?
 ========================================
 
    You may wish to use the GNUstep discussion mailing list for general
-questions and discussion.  Look at the GNUstep Web Pages for more
-information regarding GNUstep resources <http://www.gnustep.org/>
+   questions and discussion.  Look at the GNUstep Web Pages for more
+   information regarding GNUstep resources <http://www.gnustep.org/>
 
 Where can you get it?  How can you compile it?
 ==============================================
 
-   You can download sources and rpms (for some machines) from
+   You can download sources (for some machines) from
    ftp://ftp.gnustep.org/pub/gnustep/dev-apps/.
 
 Where do I send bug reports?
@@ -61,16 +67,4 @@ Obtaining GNU Software
    Check out the GNU web site. (`http://www.gnu.org/')
 
    Check out the GNUstep web site. (`http://www.gnustep.org/')
-
-   Most GNU software is packed using the GNU `gzip' compression program.
-   Source code is available on most sites distributing GNU software.
-
-   For information on how to order GNU software on tape, floppy or
-   cd-rom, or printed GNU manuals, check the file etc/ORDERS in the GNU
-   Emacs distribution or in GNUinfo/ORDERS on prep, or e-mail a request to:
-   <gnu@gnu.org>
-
-   By ordering your GNU software from the FSF, you help us continue to
-   develop more free software.  Media revenues are our primary source of
-   support.  Donations to FSF are deductible on US tax returns.
 

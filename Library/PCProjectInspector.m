@@ -127,7 +127,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectInspector: dealloc");
+#endif
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(buildAttributesView);
@@ -232,11 +234,11 @@
   if (sender == installPathField
       && ![[[project projectDict] objectForKey:PCInstallDir] isEqualToString:newEntry])
     {
-      [project setProjectDictObject:newEntry forKey:PCInstallDir];
+      [project setProjectDictObject:newEntry forKey:PCInstallDir notify:YES];
     }
   else if (sender == toolField)
     {
-      [project setProjectDictObject:newEntry forKey:PCBuildTool];
+      [project setProjectDictObject:newEntry forKey:PCBuildTool notify:YES];
 
       if (![[NSFileManager defaultManager] isExecutableFileAtPath:newEntry])
 	{
@@ -247,40 +249,50 @@
     }
   else if (sender == cppOptField)
     {
-      [project setProjectDictObject:newEntry forKey:PCPreprocessorOptions];
+      [project setProjectDictObject:newEntry
+	                     forKey:PCPreprocessorOptions
+			     notify:YES];
     }
   else if (sender == objcOptField)
     {
-      [project setProjectDictObject:newEntry forKey:PCObjCCompilerOptions];
+      [project setProjectDictObject:newEntry
+                             forKey:PCObjCCompilerOptions
+			     notify:YES];
     }
   else if (sender == cOptField)
     {
-      [project setProjectDictObject:newEntry forKey:PCCompilerOptions];
+      [project setProjectDictObject:newEntry
+                             forKey:PCCompilerOptions
+			     notify:YES];
     }
   else if ( sender == ldOptField )
     {
-      [project setProjectDictObject:newEntry forKey:PCLinkerOptions];
+      [project setProjectDictObject:newEntry
+                             forKey:PCLinkerOptions
+			     notify:YES];
     }
   // Project Description
   else if ( sender == descriptionField )
     {
-      [project setProjectDictObject:newEntry forKey:PCDescription];
+      [project setProjectDictObject:newEntry forKey:PCDescription notify:YES];
     }
   else if ( sender == releaseField )
     {
-      [project setProjectDictObject:newEntry forKey:PCRelease];
+      [project setProjectDictObject:newEntry forKey:PCRelease notify:YES];
     }
   else if ( sender == licenseField )
     {
-      [project setProjectDictObject:newEntry forKey:PCCopyright];
+      [project setProjectDictObject:newEntry forKey:PCCopyright notify:YES];
     }
   else if ( sender == licDescriptionField )
     {
-      [project setProjectDictObject:newEntry forKey:PCCopyrightDescription];
+      [project setProjectDictObject:newEntry
+	                     forKey:PCCopyrightDescription
+			    notify:YES];
     }
   else if ( sender == urlField )
     {
-      [project setProjectDictObject:newEntry forKey:PCURL];
+      [project setProjectDictObject:newEntry forKey:PCURL notify:YES];
     }
 }
 
@@ -296,14 +308,19 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
+  PCProject *rootProject = [projectManager rootActiveProject];
+  
+  if (rootProject != project)
+    {
+      [inspectorPanel setTitle: [NSString stringWithFormat: 
+	@"%@ - Project Inspector", [rootProject projectName]]];
+    }
+
   project = [projectManager activeProject];
   projectDict = [project projectDict];
 
   PCLogStatus(self, @"Active projectChanged to %@", 
 	      [[project projectDict] objectForKey:PCProjectName]);
-
-  [inspectorPanel setTitle: [NSString stringWithFormat: 
-    @"%@ - Project Inspector", [project projectName]]];
 
   // 1. Get custom project attributes view
   projectAttributesView = [project projectAttributesView];
@@ -353,7 +370,7 @@
   [authorsList reloadData];
 
   // File Attributes view
-  [self setFANameAndIcon:[project projectBrowser]];
+//  [self setFileNameAndIcon:[project projectBrowser]];
 }
 
 // ============================================================================
@@ -512,10 +529,14 @@
   switch (pIndex)
     {
     case 0:
-      [project setProjectDictObject:searchItems forKey:PCSearchHeaders];
+      [project setProjectDictObject:searchItems
+                             forKey:PCSearchHeaders
+			     notify:YES];
       break;
     case 1:
-      [project setProjectDictObject:searchItems forKey:PCSearchLibs];
+      [project setProjectDictObject:searchItems
+                             forKey:PCSearchLibs
+			     notify:YES];
       break;
     case 2:
       return;
@@ -595,7 +616,7 @@
   [authorsList selectRow:row byExtendingSelection:NO];
   [authorsList editColumn:0 row:row withEvent:nil select:YES];
 
-  [project setProjectDictObject:authorsItems forKey:PCAuthors];
+  [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
 }
 
 - (void)removeAuthor:(id)sender
@@ -613,7 +634,7 @@
     [authorsList selectRow:[authorsItems count]-1 byExtendingSelection:NO];
   }
 
-  [project setProjectDictObject:authorsItems forKey:PCAuthors];
+  [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
 }
 
 - (void)upAuthor:(id)sender
@@ -633,7 +654,7 @@
     [authorsList selectRow: selectedRow-1 byExtendingSelection: NO];
 
     [authorsList reloadData];
-    [project setProjectDictObject:authorsItems forKey:PCAuthors];
+    [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
   }
 }
 
@@ -654,7 +675,7 @@
     [authorsList selectRow: selectedRow+1 byExtendingSelection: NO];
 
     [authorsList reloadData];
-    [project setProjectDictObject:authorsItems forKey:PCAuthors];
+    [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
   }
 }
 
@@ -676,6 +697,8 @@
     }
 
   [fileAttributesView retain];
+  [localizableButton setRefusesFirstResponder:YES];
+  [publicHeaderButton setRefusesFirstResponder:YES];
 
 /*  [[NSNotificationCenter defaultCenter] 
     addObserver:self
@@ -695,24 +718,48 @@
   [inspectorPanel makeFirstResponder:fileNameField];
 }
 
-- (void)setFANameAndIcon:(PCProjectBrowser *)browser
+//- (void)setFileNameAndIcon:(PCProjectBrowser *)browser
+- (void)setFileName:(NSString *)name andIcon:(NSImage *)icon
 {
+  NSArray   *publicHeaders = nil;
+
+//  NSLog(@"PCPI: setFANameAndIcon");
+
+  // Initial default buttons state
+  [localizableButton setEnabled:NO];
+  [localizableButton setState:NSOffState];
+  [publicHeaderButton setEnabled:NO];
+  [publicHeaderButton setState:NSOffState];
+
   if (fileName != nil)
     {
       [fileName release];
     }
-  fileName = [[browser nameOfSelectedFile] retain];
 
-  if (fileName)
+//  fileName = [[browser nameOfSelectedFile] retain];
+  fileName = [name copy];
+
+  if (fileName && icon)
     {
       [fileNameField setStringValue:fileName];
       [fileIconView setImage:[[project projectWindow] fileIconImage]];
+
+      if ([project canHavePublicHeaders] 
+	  && [[fileName pathExtension] isEqualToString:@"h"])
+	{
+	  [publicHeaderButton setEnabled:YES];
+	  publicHeaders = [project publicHeaders];
+	  if (publicHeaders && [publicHeaders containsObject:fileName])
+	    {
+	      [publicHeaderButton setState:NSOnState];
+	    }
+	}
     }
-  else if ([[browser selectedFiles] count] > 1)
+/*  else if ([[browser selectedFiles] count] > 1)
     {
       [fileNameField setStringValue:@"Multiple files selected"];
       [fileIconView setImage:[[project projectWindow] fileIconImage]];
-    }
+    }*/
   else
     {
       [fileNameField setStringValue:@"No files selected"];
@@ -736,10 +783,34 @@
     }
 }
 
+- (void)setPublicHeader:(id)sender
+{
+  if ([sender state] == NSOffState)
+    {
+      [project setHeaderFile:fileName public:NO];
+    }
+  else
+    {
+      [project setHeaderFile:fileName public:YES];
+    }
+}
+
+- (void)setLocalizableResource:(id)sender
+{
+  if ([sender state] == NSOffState)
+    {
+      [project setLocalizableFile:fileName public:NO];
+    }
+  else
+    {
+      [project setLocalizableFile:fileName public:YES];
+    }
+}
+
 // --- Notifications
 - (void)browserDidSetPath:(NSNotification *)aNotif
 {
-  [self setFANameAndIcon:[aNotif object]];
+//  [self setFANameAndIcon:[aNotif object]];
 }
 
 - (void)panelDidResignKey:(NSNotification *)aNotif
@@ -800,7 +871,7 @@
       [authorsItems removeObjectAtIndex:rowIndex];
       [authorsItems insertObject:anObject atIndex:rowIndex];
 
-      [project setProjectDictObject:authorsItems forKey:PCAuthors];
+      [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
     }
 }
 

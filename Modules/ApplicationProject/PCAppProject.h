@@ -45,7 +45,7 @@
   IBOutlet NSBox          *projectAttributesView;
   IBOutlet NSTextField    *projectTypeField;
   IBOutlet NSTextField    *projectNameField;
-  IBOutlet NSTextField    *projectLanguageField;
+  IBOutlet NSPopUpButton  *projectLanguagePB;
   IBOutlet NSTextField    *appClassField;
 
   PCAppTextField          *activeTextField;

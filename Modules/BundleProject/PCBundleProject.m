@@ -109,17 +109,21 @@
 
 - (NSArray *)sourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCClasses,PCOtherSources,nil];
+  return [NSArray arrayWithObjects:
+    PCClasses, PCHeaders, PCOtherSources, nil];
 }
 
 - (NSArray *)resourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCInterfaces,PCOtherResources,PCImages,nil];
+  return [NSArray arrayWithObjects:
+    PCInterfaces, PCOtherResources, PCImages, nil];
 }
 
 - (NSArray *)otherKeys
 {
-  return [NSArray arrayWithObjects:PCDocuFiles,PCSupportingFiles,nil];
+  return [NSArray arrayWithObjects:
+    PCDocuFiles, PCLibraries, PCSubprojects, PCSupportingFiles, PCNonProject,
+    nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
@@ -209,6 +213,8 @@
 - (void)appendHead:(PCMakefileFactory *)mff
 {
   [mff appendString:@"\n#\n# Bundle\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
+    [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"BUNDLE_NAME = %@\n",
@@ -290,13 +296,15 @@
 - (void)setPrincipalClass:(id)sender
 {
   [self setProjectDictObject:[principalClassField stringValue]
-                      forKey:PCPrincipalClass];
+                      forKey:PCPrincipalClass
+		      notify:YES];
 }
 
 - (void)setBundleExtension:(id)sender
 {
   [self setProjectDictObject:[bundleExtensionField stringValue]
-                      forKey:PCBundleExtension];
+                      forKey:PCBundleExtension
+		      notify:YES];
 }
 
 @end

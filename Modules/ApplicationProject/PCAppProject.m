@@ -148,7 +148,7 @@
 - (NSArray *)sourceFileKeys
 {
   return [NSArray arrayWithObjects:
-    PCClasses, PCOtherSources, nil];
+    PCClasses, PCHeaders, PCOtherSources, nil];
 }
 
 - (NSArray *)resourceFileKeys
@@ -160,7 +160,8 @@
 - (NSArray *)otherKeys
 {
   return [NSArray arrayWithObjects:
-    PCDocuFiles, PCSupportingFiles, PCNonProject, nil];
+    PCDocuFiles, PCLibraries, PCSubprojects, PCSupportingFiles, PCNonProject, 
+    nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
@@ -179,7 +180,7 @@
 // ==== File Handling
 // ============================================================================
 
-- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key
+- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key notify:(BOOL)yn
 {
   NSMutableArray *filesToRemove = [[files mutableCopy] autorelease];
   NSString       *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
@@ -225,7 +226,7 @@
 	}
     }
 
-  return [super removeFiles:filesToRemove forKey:key];
+  return [super removeFiles:filesToRemove forKey:key notify:yn];
 }
 
 - (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile
@@ -315,7 +316,7 @@
   [self writeInfoEntry:@"Authors" forKey:PCAuthors];
   [self writeInfoEntry:@"Copyright" forKey:PCCopyright];
   [self writeInfoEntry:@"CopyrightDescription" forKey:PCCopyrightDescription];
-  [self writeInfoEntry:@"FullVersionID" forKey:PCVersion];
+  [self writeInfoEntry:@"FullVersionID" forKey:PCRelease];
   [self writeInfoEntry:@"NSExecutable" forKey:PCProjectName];
   [self writeInfoEntry:@"NSIcon" forKey:PCAppIcon];
   [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
@@ -479,6 +480,8 @@
 - (void)appendApplication:(PCMakefileFactory *)mff
 {
   [mff appendString:@"\n#\n# Application\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
+    [projectDict objectForKey:PCRelease]]];
   [mff appendString:
     [NSString stringWithFormat:@"PACKAGE_NAME = %@\n", projectName]];
   [mff appendString:

@@ -156,7 +156,9 @@ enum {
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectLauncher: dealloc");
+#endif
   RELEASE (componentView);
   RELEASE (textAttributes);
 

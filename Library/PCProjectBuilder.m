@@ -383,7 +383,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectBuilder: dealloc");
+#endif
   [buildTarget release];
   [buildArgs release];
   [makePath release];

@@ -88,9 +88,14 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCLoadedFilesPanel: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  RELEASE(contentBox);
+  RELEASE(emptyBox);
   
   [super dealloc];
 }
@@ -120,16 +125,10 @@
 {
   PCProject *rootProject = [projectManager rootActiveProject];
 
-  PCLogInfo(self, @"rootProject %@ currentProject %@",
-	    [rootProject projectName], [currentProject projectName]);
-
   if (rootProject == currentProject)
     {
       return;
     }
-
-  PCLogInfo(self, @"1--- rootProject %@ currentProject %@",
-	    [rootProject projectName], [currentProject projectName]);
 
   currentProject = rootProject;
     

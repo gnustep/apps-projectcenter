@@ -59,9 +59,6 @@ extern NSString *PCProjectDictDidSaveNotification;
   PCProjectBuilder     *projectBuilder;
   PCProjectLauncher    *projectLauncher;
 
-  NSView               *builderContentView;
-  NSView               *debuggerContentView;
-  
   NSMutableDictionary  *projectDict;
   NSString             *projectName;
   NSString             *projectPath;
@@ -69,9 +66,8 @@ extern NSString *PCProjectDictDidSaveNotification;
   NSArray              *rootKeys;       // e.g. CLASS_FILES
   NSArray              *rootCategories; // e.g. Classes
   NSDictionary         *rootEntries;    // Initialised by subclasses
-  NSMutableDictionary  *buildOptions;
 
-  BOOL                 editorIsActive;
+  NSMutableDictionary  *buildOptions;
 
   PCProject            *activeSubproject;
 
@@ -107,7 +103,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (PCProjectLauncher *)projectLauncher;
 - (PCProjectEditor *)projectEditor;
 
-- (void)setProjectDictObject:(id)object forKey:(NSString *)key;
+- (void)setProjectDictObject:(id)object forKey:(NSString *)key notify:(BOOL)yn;
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
 - (BOOL)isProjectChanged;
@@ -123,6 +119,10 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)projectDescription; // Project type
 - (BOOL)isExecutable;
 - (NSString *)execToolName;
+- (BOOL)canHavePublicHeaders;
+- (NSArray *)publicHeaders;
+- (void)setHeaderFile:(NSString *)file public:(BOOL)yn;
+- (void)setLocalizableFile:(NSString *)file public:(BOOL)yn;
 
 - (NSArray *)buildTargets;
 - (NSArray *)sourceFileKeys;
@@ -152,8 +152,8 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
 
 - (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key;
-- (void)addFiles:(NSArray *)files forKey:(NSString *)key;
-- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key;
+- (void)addFiles:(NSArray *)files forKey:(NSString *)key notify:(BOOL)yn;
+- (BOOL)removeFiles:(NSArray *)files forKey:(NSString *)key notify:(BOOL)yn;
 - (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile;
 
 // ============================================================================
@@ -173,8 +173,6 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)categoryForKey:(NSString *)key;
 
 - (BOOL)save;
-
-- (BOOL)writeSpecFile;
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict;
 - (void)updateProjectDict;

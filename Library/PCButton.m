@@ -31,8 +31,8 @@
 {
   self = [super initWithFrame:frameRect];
   [self setCell:[[PCButtonCell alloc] init]];
-  [self setImagePosition: NSImageOnly];
-  [self setFont: [NSFont systemFontOfSize: 10.0]];
+  [self setImagePosition:NSImageOnly];
+  [self setFont:[NSFont systemFontOfSize: 10.0]];
 
   ttTimer = nil;
   ttWindow = nil;

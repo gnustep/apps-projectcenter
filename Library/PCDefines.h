@@ -175,7 +175,9 @@ static NSString * const PCSupportingFiles      = @"SUPPORTING_FILES";
 static NSString * const PCLibraries            = @"LIBRARIES";
 static NSString * const PCNonProject           = @"NON_PROJECT_FILES";
 static NSString * const PCGSMarkupFiles	       = @"INTERFACES";
-static NSString * const PCLanguages	       = @"LANGUAGES";
+static NSString * const PCLanguage	       = @"LANGUAGE";
+static NSString * const PCUserLanguages	       = @"USER_LANGUAGES";
+static NSString * const PCLocalizedResources   = @"LOCALIZED_RESOURCES";
 
 static NSString * const PCBuildTool            = @"BUILDTOOL";
 static NSString * const PCCompilerOptions      = @"COMPILEROPTIONS";
@@ -196,10 +198,8 @@ static NSString * const PCGroup                = @"PROJECT_GROUP";
 static NSString * const PCProjectMaintainer    = @"PROJECT_MAINTAINER";
 static NSString * const PCProjectName          = @"PROJECT_NAME";
 static NSString * const PCRelease              = @"PROJECT_RELEASE";
-static NSString * const PCSource               = @"PROJECT_SOURCE";
 static NSString * const PCSummary              = @"PROJECT_SUMMARY";
 static NSString * const PCProjectType          = @"PROJECT_TYPE";
-static NSString * const PCVersion              = @"PROJECT_VERSION";
 static NSString * const PCURL                  = @"PROJECT_URL";
 static NSString * const PCSearchHeaders        = @"SEARCH_HEADER_DIRS";
 static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
@@ -210,7 +210,7 @@ static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
 static NSString * const PCHelpFile             = @"HELP_FILE";
 
 // Library specific
-static NSString * const PCHeadersToInstall     = @"HEADERS_TO_INSTALL";
+static NSString * const PCPublicHeaders        = @"PUBLIC_HEADERS";
 static NSString * const PCHeadersInstallDir    = @"HEADERS_INSTALL_DIR";
 
 // Bundle specific

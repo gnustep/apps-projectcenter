@@ -28,7 +28,7 @@ ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
 Resources/LogPanel.gorm \
 Resources/Preferences.gorm \
-ProjectCenterInfo.plist \
+Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
 Images/ButtonTile.tiff \
 Images/FileC.tiff \

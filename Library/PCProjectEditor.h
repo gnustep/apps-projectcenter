@@ -99,9 +99,9 @@
 
 @end
 
-extern NSString *PCEditorWillOpenNotification;
+extern NSString *PCEditorDidChangeFileNameNotification;
+
 extern NSString *PCEditorDidOpenNotification;
-extern NSString *PCEditorWillCloseNotification;
 extern NSString *PCEditorDidCloseNotification;
 
 extern NSString *PCEditorDidBecomeActiveNotification;

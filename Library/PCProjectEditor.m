@@ -32,6 +32,9 @@
 
 #include "PCLogController.h"
 
+NSString *PCEditorDidChangeFileNameNotification = 
+          @"PCEditorDidChangeFileNameNotification";
+	  
 NSString *PCEditorDidOpenNotification = 
           @"PCEditorDidOpenNotification";
 NSString *PCEditorDidCloseNotification = 
@@ -107,9 +110,7 @@ NSString *PCEditorDidResignActiveNotification =
 
   if (![editor isEqualToString:@"ProjectCenter"])
     {
-//      NSTask         *editorTask;
       NSArray        *ea = [editor componentsSeparatedByString:@" "];
-//      NSMutableArray *args = [NSMutableArray arrayWithArray:ea];
       NSString       *app = [ea objectAtIndex: 0];
 
       if ([[app pathExtension] isEqualToString:@"app"])
@@ -128,14 +129,6 @@ NSString *PCEditorDidResignActiveNotification =
       editor = [[PCEditor alloc] initExternalEditor:editor 
 	                                   withPath:path
 				      projectEditor:self];
-/*      editorTask = [[NSTask alloc] init];
-      [editorTask setLaunchPath:app];
-      [args removeObjectAtIndex:0];
-      [args addObject:path];
-      [editorTask setArguments:args];
-
-      AUTORELEASE(editorTask);
-      [editorTask launch];*/
     }
   else
     {
@@ -185,6 +178,12 @@ NSString *PCEditorDidResignActiveNotification =
 	   selector:@selector(editorDidResignActive:)
 	       name:PCEditorDidResignActiveNotification
 	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidChangeFileName:)
+	       name:PCEditorDidChangeFileNameNotification
+	     object:nil];
     }
 
   return self;
@@ -192,12 +191,15 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectEditor: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   if (componentView)
     {
+      RELEASE(scrollView);
       RELEASE(componentView);
     }
 
@@ -303,11 +305,14 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)closeEditorForFile:(NSString *)file
 {
-  PCEditor *editor;
+  PCEditor *editor = nil;
 
-  editor = [editorsDict objectForKey:file];
-  [editor closeFile:self save:YES];
-  [editorsDict removeObjectForKey:file];
+//  editor = [editorsDict objectForKey:file];
+  if ([editorsDict count] > 0 && (editor = [editorsDict objectForKey:file]))
+    {
+      [editor closeFile:self save:YES];
+      [editorsDict removeObjectForKey:file];
+    }
 }
 
 - (BOOL)closeAllEditors
@@ -330,7 +335,7 @@ NSString *PCEditorDidResignActiveNotification =
 	}
     }
 
-  // Order panel with list of changed files
+  // TODO: Order panel with list of changed files
   if ([editedFiles count])
     {
       if ([self saveEditedFiles:(NSArray *)editedFiles] == NO)
@@ -461,7 +466,6 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)editorDidClose:(NSNotification *)aNotif
 {
   PCEditor         *editor = [aNotif object];
-  PCProjectBrowser *browser = nil;
 
   // It is not our editor
   if ([editor projectEditor] != self)
@@ -482,8 +486,7 @@ NSString *PCEditorDidResignActiveNotification =
     }
   else
     {
-      browser = [project projectBrowser];
-      [browser setPath:[browser pathToSelectedCategory]];
+      [[project projectBrowser] reloadLastColumnAndNotify:YES];
 
       [[project projectWindow] makeFirstResponder:scrollView];
       [componentView setContentView:scrollView];
@@ -520,6 +523,25 @@ NSString *PCEditorDidResignActiveNotification =
     }
 
   [self setActiveEditor:nil];
+}
+
+- (void)editorDidChangeFileName:(NSNotification *)aNotif
+{
+  NSDictionary *_editorDict = [aNotif object];
+  PCEditor     *_editor = [_editorDict objectForKey:@"Editor"];
+  NSString     *_oldFileName = nil;
+  NSString     *_newFileName = nil;
+
+  if ([_editor projectEditor] != self)
+    {
+      return;
+    }
+    
+  _oldFileName = [_editorDict objectForKey:@"OldFile"];
+  _newFileName = [_editorDict objectForKey:@"NewFile"];
+  
+  [editorsDict removeObjectForKey:_oldFileName];
+  [editorsDict setObject:_editor forKey:_newFileName];
 }
 
 @end

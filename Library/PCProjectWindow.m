@@ -332,7 +332,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectWindow: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -361,6 +363,7 @@
   NSString *fileExtension = nil;
   NSString *iconName = nil;
   NSImage  *icon = nil;
+  PCProjectInspector *inspector = [[project projectManager] projectInspector];
 
   fileName = [object nameOfSelectedFile];
   if (fileName)
@@ -372,7 +375,7 @@
       categoryName = [object nameOfSelectedCategory];
     }
 
-  PCLogInfo(self,@"{setFileIcon} file %@ category %@", 
+  PCLogError(self,@"{setFileIcon} file %@ category %@", 
 	    fileName, categoryName);
   
   // Should be provided by PC*Proj bundles
@@ -451,19 +454,23 @@
       [fileIconTitle setStringValue:
 	[NSString stringWithFormat: 
 	@"%i files", [[object selectedFiles] count]]];
+      [inspector setFileName:@"Multiple" andIcon:icon];
     }
   else if (fileName)
     {
       [fileIconTitle setStringValue:fileName];
+      [inspector setFileName:fileName andIcon:icon];
     }
   else if (categoryName)
     {
       [fileIconTitle setStringValue:categoryName];
+      [inspector setFileName:nil andIcon:nil];
     }
-
-  // Project Inspector
-  [[[project projectManager] projectInspector] 
-    setFANameAndIcon:[project projectBrowser]];
+  else
+    {
+      [fileIconTitle setStringValue:[project projectName]];
+      [inspector setFileName:nil andIcon:nil];
+    }
 }
 
 - (NSString *)fileIconTitle
@@ -717,7 +724,8 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  PCProject *changedProject = [aNotif object];
+  NSDictionary *notifObject = [aNotif object];
+  PCProject    *changedProject = [notifObject objectForKey:@"Project"];
 
   if (changedProject != project
       && changedProject != [project activeSubproject])

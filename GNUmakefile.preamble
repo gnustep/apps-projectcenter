@@ -32,7 +32,7 @@
 ADDITIONAL_CPPFLAGS += -Wall
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -Wall -Werror
+ADDITIONAL_OBJCFLAGS += -Wall -Werror -DDEVELOPMENT
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS += -Wall

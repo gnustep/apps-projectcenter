@@ -61,6 +61,8 @@
   [rootCategories release];
   [rootKeys release];
   [rootEntries release];
+
+  if (projectAttributesView) [projectAttributesView release];
   
   [super dealloc];
 }
@@ -77,6 +79,12 @@
 - (NSString *)projectDescription
 {
   return @"Project that contains subprojects.";
+}
+
+- (NSArray *)otherKeys
+{
+  return [NSArray arrayWithObjects:
+    PCSubprojects, PCSupportingFiles, PCNonProject, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
@@ -132,6 +140,8 @@
 - (void)appendHead:(PCMakefileFactory *)mff
 {
   [mff appendString:@"\n#\n# Aggregate\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
+    [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
     projectName]];
 }

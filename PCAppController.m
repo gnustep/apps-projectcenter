@@ -210,7 +210,10 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
+#ifdef DEVELOPMENT
   NSLog (@"--- Application WILL terminate");
+#endif
+
   if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
@@ -236,7 +239,9 @@
 
   RELEASE(doServer);
 
+#ifdef DEVELOPMENT
   NSLog (@"--- Application WILL terminate.END");
+#endif
 }
 
 @end

@@ -151,13 +151,14 @@
 	    "setFile:",
 	    "clearFile:",
 	    "setDocIcon:",
-	    "removeDocIcon:"
+	    "removeDocIcon:",
+	    "setCurrentLanguage:"
 	);
 	Outlets = (
 	    projectAttributesView,
 	    projectTypeField,
 	    projectNameField,
-	    projectLanguageField,
+	    projectLanguagePB,
 	    appClassField,
 	    iconView,
 	    setFieldButton,

@@ -56,7 +56,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCMenuController: dealloc");
+#endif
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   [super dealloc];
@@ -205,7 +207,8 @@
 
 	  [projectManager closeFile];
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
-	             forKey:PCNonProject];
+	             forKey:PCNonProject
+		     notify:YES];
 	  [[project projectEditor] editorForFile:newFilePath
 	                            categoryPath:categoryPath
 				        windowed:NO];

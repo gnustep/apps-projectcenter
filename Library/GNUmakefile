@@ -30,7 +30,6 @@ ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 #
 # Header files
 #
-
 ProjectCenter_HEADER_FILES = \
   PCBundleLoader.h \
   PCFileManager.h \

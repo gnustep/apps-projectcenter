@@ -96,7 +96,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectManager: dealloc");
+#endif
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   if ([saveTimer isValid])
@@ -104,12 +107,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [saveTimer invalidate];
     }
 
+  RELEASE(loadedProjects);
+  RELEASE(nonProjectEditors);
+  RELEASE(fileManager);
+
   RELEASE(bundleLoader);
   RELEASE(projectTypes);
   RELEASE(projectTypeAccessaryView);
   RELEASE(fileTypeAccessaryView);
   RELEASE(rootBuildPath);
-  RELEASE(loadedProjects);
 
   if (projectInspector) RELEASE(projectInspector);
   if (loadedFilesPanel) RELEASE(loadedFilesPanel);
@@ -796,7 +802,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
 	  // Remove from projectDict
-	  ret = [project removeFiles:files forKey:categoryKey];
+	  ret = [project removeFiles:files forKey:categoryKey notify:YES];
 
 	  // Remove files from disk
 	  if (flag && ret && ![categoryKey isEqualToString:PCLibraries])
@@ -1036,7 +1042,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       didCreateFile:(NSString *)aFile
             withKey:(NSString *)key
 {
-  [activeProject addFiles:[NSArray arrayWithObject:aFile] forKey:key];
+  [activeProject addFiles:[NSArray arrayWithObject:aFile]
+                   forKey:key
+		   notify:YES];
 }
 
 @end

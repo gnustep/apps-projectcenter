@@ -71,8 +71,8 @@
   IBOutlet NSTextField    *toolField;
 
   // Project Attributes
-  // Suuplied by concrete project
-  NSView           *projectAttributesView;
+  // Suplied by concrete project
+  NSView                  *projectAttributesView;
 
   // Project Description
   IBOutlet NSBox          *projectDescriptionView;
@@ -81,10 +81,10 @@
   IBOutlet NSTextField    *licenseField;
   IBOutlet NSTextField    *licDescriptionField;
   IBOutlet NSTextField    *urlField;
-  NSTableView    *authorsList;
-  NSTableColumn  *authorsColumn;
+  NSTableView             *authorsList;
+  NSTableColumn           *authorsColumn;
   IBOutlet NSScrollView   *authorsScroll;
-  NSMutableArray *authorsItems;
+  NSMutableArray          *authorsItems;
   IBOutlet NSButton       *authorAdd;
   IBOutlet NSButton       *authorRemove;
   IBOutlet NSButton       *authorUp;
@@ -95,6 +95,9 @@
   IBOutlet NSImageView     *fileIconView;
   IBOutlet PCFileNameField *fileNameField;
   NSString                 *fileName;
+  IBOutlet NSButton        *localizableButton;
+  IBOutlet NSButton        *publicHeaderButton;
+  IBOutlet NSButton        *projectHeaderButton;
 }
 
 // ============================================================================
@@ -153,7 +156,8 @@
 
 - (void)beginFileRename;
 - (void)browserDidSetPath:(NSNotification *)aNotif;
-- (void)setFANameAndIcon:(PCProjectBrowser *)browser;
+- (void)setFileName:(NSString *)name andIcon:(NSImage *)icon;
+- (void)setPublicHeader:(id)sender;
 
 @end
 

@@ -48,7 +48,7 @@ static PCFileManager *_mgr = nil;
       _mgr = [[PCFileManager alloc] init];
     }
 
-  return _mgr;
+  return AUTORELEASE(_mgr);
 }
 
 // ===========================================================================
@@ -68,6 +68,10 @@ static PCFileManager *_mgr = nil;
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
+  NSLog (@"PCFileManager: dealloc");
+#endif
+
   RELEASE(creators);
   RELEASE(newFilePanel);
   
@@ -355,10 +359,10 @@ static PCFileManager *_mgr = nil;
       // Panel
       addFilesPanel = [NSOpenPanel openPanel];
       [addFilesPanel setAllowsMultipleSelection:YES];
-      [addFilesPanel setCanChooseFiles:YES];
-      [addFilesPanel setCanChooseDirectories:NO];
       [addFilesPanel setDelegate:self];
       [addFilesPanel setAccessoryView:fileTypeAccessaryView];
+
+      RELEASE(fileTypeAccessaryView);
     }
 }
 
@@ -376,6 +380,16 @@ static PCFileManager *_mgr = nil;
     {
       [addFilesPanel setCanChooseFiles:NO];
       [addFilesPanel setCanChooseDirectories:YES];
+    }
+  else if ([selectedCategory isEqualToString:@"Other Resources"])
+    {
+      [addFilesPanel setCanChooseFiles:YES];
+      [addFilesPanel setCanChooseDirectories:YES];
+    }
+  else
+    {
+      [addFilesPanel setCanChooseFiles:YES];
+      [addFilesPanel setCanChooseDirectories:NO];
     }
   [fileTypePopup selectItemWithTitle:selectedCategory];
 

@@ -133,17 +133,20 @@
 
 - (NSArray *)sourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCClasses,PCOtherSources,nil];
+  return [NSArray arrayWithObjects:
+    PCClasses, PCHeaders, PCOtherSources, nil];
 }
 
 - (NSArray *)resourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCOtherResources,PCImages,nil];
+  return [NSArray arrayWithObjects:
+    PCImages, PCOtherResources, nil];
 }
 
 - (NSArray *)otherKeys
 {
-  return [NSArray arrayWithObjects:PCDocuFiles,PCSupportingFiles,nil];
+  return [NSArray arrayWithObjects:
+    PCSubprojects, PCLibraries, PCDocuFiles, PCSupportingFiles, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
@@ -192,7 +195,7 @@
   [self writeInfoEntry:@"ToolDescription" forKey:PCDescription];
   [self writeInfoEntry:@"ToolIcon" forKey:PCToolIcon];
   [self writeInfoEntry:@"ToolRelease" forKey:PCRelease];
-  [self writeInfoEntry:@"FullVersionID" forKey:PCVersion];
+  [self writeInfoEntry:@"FullVersionID" forKey:PCRelease];
   [self writeInfoEntry:@"Authors" forKey:PCAuthors];
   [self writeInfoEntry:@"URL" forKey:PCURL];
   [self writeInfoEntry:@"Copyright" forKey:PCCopyright];
@@ -278,6 +281,8 @@
 - (void)appendHead:(PCMakefileFactory *)mff
 {
   [mff appendString:@"\n#\n# Tool\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
+    [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"TOOL_NAME = %@\n",

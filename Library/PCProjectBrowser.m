@@ -71,7 +71,10 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectBrowser: dealloc");
+#endif
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(browser);
@@ -214,7 +217,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [files addObject: [[cells objectAtIndex: i] stringValue]];
     }
     
-  return (NSArray *)files;
+  return AUTORELEASE((NSArray *)files);
 }
 
 - (NSString *)path
@@ -252,7 +255,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return res;
 }
 
-- (void)reloadLastColumn
+- (void)reloadLastColumnAndNotify:(BOOL)yn
 {
   int       column = [browser lastColumn];
   NSString  *category = [self nameOfSelectedCategory];
@@ -282,6 +285,25 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   
   [browser reloadColumn:column];
 
+  if (yn)
+    {
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:PCBrowserDidSetPathNotification
+                      object:self];
+    }
+}
+
+- (void)reloadLastColumnAndSelectFile:(NSString *)file
+{
+  PCProject *p = [[project projectManager] activeProject];
+  NSString  *catKey = [p keyForCategory:[self nameOfSelectedCategory]];
+  NSArray   *array = [[p projectDict] objectForKey:catKey];
+  
+  [self reloadLastColumnAndNotify:NO];
+
+  [browser selectRow:[array indexOfObject:file] inColumn:[browser lastColumn]];
+
+  // Notify
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCBrowserDidSetPathNotification
                   object:self];
@@ -299,6 +321,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString       *filePath = nil;
   NSString       *key = nil;
   PCProject      *activeProject = nil;
+  NSFileManager  *fm = [NSFileManager defaultManager];
+  BOOL           isDir;
 
   if (sender != browser)
     {
@@ -319,7 +343,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       PCLogInfo(self, @"[click] category: %@ filePath: %@",
 		category, filePath);
 
-      if ([activeProject isEditableCategory:category])
+      if ([activeProject isEditableCategory:category]
+	  && [fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
 	{
 	  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	    {
@@ -329,11 +354,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	    }
 	}
     }
-
-  PCLogStatus(self, @"nameOfSelectedCategory: %@",
-	      [self nameOfSelectedCategory]);
-  PCLogStatus(self, @"nameOfSelectedFile: %@",
-	      [self nameOfSelectedFile]);
 
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCBrowserDidSetPathNotification 
@@ -398,19 +418,28 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  PCProject *changedProject = [aNotif object];
+  NSDictionary *notifObject = [aNotif object];
+  PCProject    *changedProject = [notifObject objectForKey:@"Project"];
+  NSString     *changedAttribute = [notifObject objectForKey:@"Attribute"];
 
   if (!browser)
     {
       return;
     }
 
-  if (changedProject != project && changedProject != [project activeSubproject])
+  if (changedProject != project 
+      && changedProject != [project activeSubproject]
+      && [changedProject superProject] != [project activeSubproject])
     {
       return;
     }
 
-  [self reloadLastColumn];
+  if ([[changedProject sourceFileKeys] containsObject:changedAttribute]
+      || [[changedProject resourceFileKeys] containsObject:changedAttribute]
+      || [[changedProject otherKeys] containsObject:changedAttribute])
+    {
+      [self reloadLastColumnAndNotify:YES];
+    }
 }
 
 @end

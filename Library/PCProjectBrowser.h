@@ -60,7 +60,8 @@ extern NSString *PCBrowserDidSetPathNotification;
 
 - (NSString *)path;
 - (BOOL)setPath:(NSString *)path;
-- (void)reloadLastColumn;
+- (void)reloadLastColumnAndNotify:(BOOL)yn;
+- (void)reloadLastColumnAndSelectFile:(NSString *)file;
 
 // ============================================================================
 // ==== Actions

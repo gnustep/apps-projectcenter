@@ -87,6 +87,34 @@
   return [PCLibProj class];
 }
 
+- (BOOL)canHavePublicHeaders
+{
+  return YES;
+}
+
+- (NSArray *)publicHeaders
+{
+  return [projectDict objectForKey:PCPublicHeaders];
+}
+
+- (void)setHeaderFile:(NSString *)file public:(BOOL)yn
+{
+  NSMutableArray *publicHeaders = [projectDict objectForKey:PCPublicHeaders];
+
+  if (yn)
+    {
+      [publicHeaders addObject:file];
+    }
+  else if ([publicHeaders count] > 0 && [publicHeaders containsObject:file])
+    {
+      [publicHeaders removeObject:file];
+    }
+
+  [self setProjectDictObject:publicHeaders 
+                      forKey:PCPublicHeaders 
+		      notify:YES];
+}
+
 - (NSString *)projectDescription
 {
   return @"GNUstep Objective-C library project";
@@ -100,17 +128,20 @@
 
 - (NSArray *)sourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCClasses,PCOtherSources,nil];
+  return [NSArray arrayWithObjects:
+    PCClasses, PCHeaders, PCOtherSources,nil];
 }
 
 - (NSArray *)resourceFileKeys
 {
-  return [NSArray arrayWithObjects:PCInterfaces,PCOtherResources,PCImages,nil];
+  return [NSArray arrayWithObjects:
+    PCInterfaces, PCImages, PCOtherResources, nil];
 }
 
 - (NSArray *)otherKeys
 {
-  return [NSArray arrayWithObjects:PCDocuFiles,PCSupportingFiles,nil];
+  return [NSArray arrayWithObjects:
+    PCDocuFiles, PCLibraries, PCSubprojects, PCSupportingFiles, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
@@ -123,6 +154,42 @@
 {
   return [NSArray arrayWithObjects: 
     PCInterfaces, PCImages, PCOtherResources, PCDocuFiles, nil];
+}
+
+// ============================================================================
+// ==== File Handling
+// ============================================================================
+
+- (void)addFiles:(NSArray *)files forKey:(NSString *)type notify:(BOOL)yn
+{
+  if ([type isEqualToString:PCHeaders])
+    {
+      [super addFiles:files forKey:PCPublicHeaders notify:NO];
+    }
+
+  [super addFiles:files forKey:type notify:YES];
+}
+
+- (BOOL)renameFile:(NSString *)fromFile toFile:(NSString *)toFile
+{
+  NSString *category = [projectBrowser nameOfSelectedCategory];
+  BOOL     success = NO;
+  BOOL     isPublicHeader = YES;
+
+  isPublicHeader = 
+    [[projectDict objectForKey:PCPublicHeaders] containsObject:fromFile];
+
+  success = [super renameFile:fromFile toFile:toFile];
+
+  if (success && [category isEqualToString:[super categoryForKey:PCHeaders]])
+    {
+      if (isPublicHeader == NO)
+	{
+	  [self setHeaderFile:toFile public:NO];
+	}
+    }
+
+  return success;
 }
 
 @end
@@ -177,6 +244,9 @@
       [resources release];
     }
 
+  [self appendPublicHeaders:mf];
+  
+  // For compiling
   [mf appendHeaders:[projectDict objectForKey:PCHeaders]
           forTarget:[NSString stringWithFormat:@"lib%@",projectName]];
   [mf appendClasses:[projectDict objectForKey:PCClasses]
@@ -203,6 +273,8 @@
 - (void)appendHead:(PCMakefileFactory *)mff
 {
   [mff appendString:@"\n#\n# Bundle\n#\n"];
+  [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
+    [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"LIBRARY_VAR = %@\n",
@@ -236,6 +308,32 @@
 	    {
 	      [mff appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
 	    }
+	}
+    }
+}
+
+- (void)appendPublicHeaders:(PCMakefileFactory *)mff
+{
+  NSArray *array = [projectDict objectForKey:PCPublicHeaders];
+
+  if ([array count] == 0)
+    {
+      return;
+    }
+
+  [mff appendString:@"\n#\n# Public headers (will be installed)\n#\n"];
+
+  [mff appendString:[NSString stringWithFormat:@"%@_HEADERS = ", 
+                     projectName]];
+
+  if (array && [array count])
+    {
+      NSString     *tmp;
+      NSEnumerator *enumerator = [array objectEnumerator];
+
+      while ((tmp = [enumerator nextObject])) 
+	{
+	  [mff appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
 	}
     }
 }

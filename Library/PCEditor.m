@@ -282,7 +282,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCEditor: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -359,13 +361,34 @@
 
 - (void)setPath:(NSString *)path
 {
+  NSMutableDictionary *notifDict = [[NSMutableDictionary dictionary] retain];
+
+  // Prepare notification object
+  [notifDict setObject:self forKey:@"Editor"];
+  [notifDict setObject:_path forKey:@"OldFile"];
+  [notifDict setObject:path forKey:@"NewFile"];
+
+  // Set path
   [_path autorelease];
   _path = [path copy];
+
+  // Post notification
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidChangeFileNameNotification
+                  object:notifDict];
+
+  [notifDict autorelease];
 }
 
 - (NSString *)categoryPath
 {
   return _categoryPath;
+}
+
+- (void)setCategoryPath:(NSString *)path
+{
+  [_categoryPath autorelease];
+  _categoryPath = [path copy];
 }
 
 - (BOOL)isEdited
@@ -436,6 +459,8 @@
 
 - (BOOL)closeFile:(id)sender save:(BOOL)save
 {
+  NSLog(@"PCEditor: closeFile");
+
   if ((save == NO) || [self editorShouldClose])
     {
       // Close window first if visible

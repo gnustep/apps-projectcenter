@@ -1,9 +1,61 @@
-2004-06-16 Serg Stoyan <stoyan255@ukr.net>
+2004-06- Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
 	(convertLegacyProject:atPath:): Get files list from .pcproj file not
 	from directories.
 	
+	* Library/PCProject.m:
+	(renameFile:toFile): Handle the case when filename already exist.
+	Do not use removeFiles and addFiles methods, change projectDict
+	directly.
+	(setProjectDictObject:forKey:): Post notification with dictionary as
+	notification object. Dictionary consists of "Project" and "Attribute"
+	records. This is narrows actions to be taken on project dictionary
+	changes.
+	(assignProjectDict:): Set LANGUAGES to [NSUserDefaults userLanguages].
+	(setProjectDictObject:forKey:notify:): Renamed from 
+	setProjectDictObject:forKey:. Changed in various places accordinly.
+	(removeFiles:forKey:notify:): Renamed from removeFiles:forKey:.
+	(addFiles:forKey:notify:): Renamed from addFiles:forKey:.
+	
+	* Library/PCProjectBrowser.m:
+	(projectDictDidChange): Changed wrt last PCProject changes. Reload 
+	column only if "Attribute" is one of the tracked by Projectbrowser.
+	(reloadLastColumn): Renamed to reloadLastColumnAndNotify: and changed
+	accordinly to its name.
+	(reloadLastColumnAndSelectFile:): Added and implemented.
+	
+	* Library/PCProjectWindow.m:
+	(projectDictDidChange:): Changed wrt last PCProject changes.
+	
+	* Library/PCLoadedFiles.m:
+	(initWithProject:): Change NSLog with PCLogStatus.
+	
+	* Library/PCProjectInspector.m:
+	(activeProjectDidChange:): Set window title only if project change to 
+	other project not subproject.
+	
+	* Library/PCFileManager.m:
+	(filesForAdd): Fix setting panel attributes.
+	
+	* Modules/AggregateProject/PCAggregateProject.m: 
+	(appendApplication:): (appendHead:) Added generating of VERSION var.
+	* Modules/ApplicationProject/PCAppProject.m: 
+	(appendApplication:): ditto.
+	* Modules/BundleProject/PCBundleProject.m: 
+	(appendHead:): ditto.
+	* Modules/LibraryProject/PCLibProject.m: 
+	(appendHead:): ditto. Added support for public headers.
+	(renameFile:toFile:): Implemented. Handles the case with public 
+	headers.
+	* Modules/RenaissanceProject/PCRenaissanceProject.m: 
+	(appendApplication:): ditto.
+	* Modules/ToolProject/PCToolProject.m: 
+	(appendHead:): ditto
+	
+	* Modules/: Cleanup PC.project templates. Added PUBLIC_HEADERS and 
+	LANGUAGES.
+
 2004-06-15 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:

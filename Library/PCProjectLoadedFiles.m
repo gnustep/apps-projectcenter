@@ -39,7 +39,7 @@
 {
   NSAssert(aProj, @"Project is mandatory!");
 
-  NSLog(@"PCProjectLoadedFiles: init");
+  PCLogStatus(self, @"init");
   
   if ((self = [super init]))
     {
@@ -106,6 +106,12 @@
 	   selector:@selector(editorDidBecomeActive:)
 	       name:PCEditorDidBecomeActiveNotification
 	     object:nil];
+	     
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidChangeFileName:)
+	       name:PCEditorDidChangeFileNameNotification
+	     object:nil];
     }
 
   return self;
@@ -113,7 +119,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog (@"PCProjectLoadedFiles: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -144,7 +152,6 @@
 
   return editedFiles;
 }
-
 
 - (void)setSortType:(PHSortType)type
 {
@@ -288,16 +295,44 @@
   PCEditor *editor = [aNotif object];
   NSString *filePath = nil;
   unsigned index;
+  unsigned filesCount;
   
   if ([editor projectEditor] != [project projectEditor])
     {
       return;
     }
 
-  if ([editedFiles count] > 0)
+  if ((filesCount = [editedFiles count]) > 0)
     {
       filePath = [editor path];
       index = [[self editedFilesRep] indexOfObject:filePath];
+      if (index >=0 && index < filesCount)
+	{
+	  [filesList selectRow:index byExtendingSelection:NO];
+	}
+    }
+}
+
+- (void)editorDidChangeFileName:(NSNotification *)aNotif
+{
+  NSDictionary *_editorDict = [aNotif object];
+  PCEditor     *_editor = [_editorDict objectForKey:@"Editor"];
+  NSString     *_oldFileName = nil;
+  NSString     *_newFileName = nil;
+  unsigned     index;
+
+  if ([_editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+    
+  _oldFileName = [_editorDict objectForKey:@"OldFile"];
+  _newFileName = [_editorDict objectForKey:@"NewFile"];
+  if ([editedFiles count] > 0)
+    {
+      index = [editedFiles indexOfObject:_oldFileName];
+      [editedFiles replaceObjectAtIndex:index withObject:_newFileName];
+      [filesList reloadData];
       [filesList selectRow:index byExtendingSelection:NO];
     }
 }

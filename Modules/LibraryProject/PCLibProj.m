@@ -91,6 +91,10 @@ static PCLibProj *_creator = nil;
 	}
       [projectDict setObject:projectName forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
+      [projectDict setObject:[[NSCalendarDate date] description]
+	              forKey:PCCreationDate];
+      [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+      [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
       // The path cannot be in the PC.project file!
       [project setProjectPath:path];
       [project setProjectName:projectName];
@@ -110,6 +114,8 @@ static PCLibProj *_creator = nil;
       _file = [NSString stringWithFormat:@"%@.h", projectName];
       [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
 	              forKey:PCHeaders];
+      [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+	              forKey:PCPublicHeaders];
 
       // GNUmakefile.postamble
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];

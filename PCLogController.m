@@ -127,7 +127,9 @@ static PCLogController *_logCtrllr = nil;
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCLogController: dealloc");
+#endif
   RELEASE(textAttributes);
 }
 

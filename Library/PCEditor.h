@@ -74,6 +74,7 @@
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
 - (NSString *)categoryPath;
+- (void)setCategoryPath:(NSString *)path;
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
 

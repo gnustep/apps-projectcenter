@@ -117,7 +117,8 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 - (void)setAppClass:(id)sender
 {
   [self setProjectDictObject:[appClassField stringValue]
-                      forKey:PCPrincipalClass];
+                      forKey:PCPrincipalClass
+		      notify:YES];
 }
 
 - (void)setIconViewImage:(NSImage *)image
@@ -210,7 +211,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [infoDict setObject:@"" forKey:@"NSIcon"];
   [infoDict setObject:@"" forKey:@"ApplicationIcon"];
   
-  [self setProjectDictObject:@"" forKey:PCAppIcon];
+  [self setProjectDictObject:@"" forKey:PCAppIcon notify:YES];
 }
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path
@@ -234,7 +235,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [infoDict setObject:imageName forKey:@"NSIcon"];
   [infoDict setObject:imageName forKey:@"ApplicationIcon"];
 
-  [self setProjectDictObject:imageName forKey:PCAppIcon];
+  [self setProjectDictObject:imageName forKey:PCAppIcon notify:YES];
 
   return YES;
 }
@@ -276,7 +277,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCInterfaces];
   [infoDict setObject:nibName forKey:@"NSMainNibFile"];
 
-  [self setProjectDictObject:nibName forKey:PCMainInterfaceFile];
+  [self setProjectDictObject:nibName forKey:PCMainInterfaceFile notify:YES];
 
   [mainNIBField setStringValue:nibName];
 
@@ -288,7 +289,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [mainNIBField setStringValue:@""];
   [infoDict setObject:@"" forKey:@"NSMainNibFile"];
 
-  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile];
+  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile notify:YES];
 }
 
 // Document Icons
@@ -316,7 +317,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   [docIconsList selectRow:row byExtendingSelection:NO];
   [docIconsList editColumn:0 row:row withEvent:nil select:YES];
 
-  [self setProjectDictObject:docIconsItems forKey:PCDocumentExtensions];
+  [self setProjectDictObject:docIconsItems
+                      forKey:PCDocumentExtensions
+		      notify:YES];
 }
 
 - (void)removeDocIcon:(id)sender
@@ -334,7 +337,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     [docIconsList selectRow:[docIconsItems count]-1 byExtendingSelection:NO];
   }
 
-  [self setProjectDictObject:docIconsItems forKey:PCDocumentExtensions];
+  [self setProjectDictObject:docIconsItems
+                      forKey:PCDocumentExtensions
+		      notify:YES];
 }
 
 // ----------------------------------------------------------------------------
@@ -388,7 +393,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       [ext setObject:anObject forKey:@"Icon"];
     }
   
-  [self setProjectDictObject:docIconsItems forKey:PCDocumentExtensions];
+  [self setProjectDictObject:docIconsItems
+                      forKey:PCDocumentExtensions
+		      notify:YES];
 }
 
 // ----------------------------------------------------------------------------
