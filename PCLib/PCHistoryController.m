@@ -30,7 +30,6 @@
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-    RELEASE(browser);
     RELEASE(editedFiles);
 
     [super dealloc];
@@ -42,8 +41,11 @@
 
     [project browserDidClickFile:file category:nil];
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:file];
-    //[browser selectRow:0 inColumn:0];
+    /* This causes a problem because we try to reloadColumn on the browser
+       in the middle of someone clicking in it (-click: sends notification
+       which is received by histortDidChange:, etc. Is there a better
+       way around this? */
+    //[[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:file];
 
     AUTORELEASE(file);
 }
@@ -52,7 +54,7 @@
 {
     NSAssert(browser==nil,@"The browser is already set!");
 
-    ASSIGN(browser, aBrowser);
+    browser = aBrowser;
 
     [browser setTitled:NO];
 

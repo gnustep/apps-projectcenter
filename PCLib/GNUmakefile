@@ -10,10 +10,13 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include Version
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Library
@@ -24,20 +27,20 @@ LIBRARY_VAR=PROJECTCENTER
 LIBRARY_NAME=libProjectCenter
 libProjectCenter_HEADER_FILES_DIR=.
 libProjectCenter_HEADER_FILES_INSTALL_DIR=/ProjectCenter
+ADDITIONAL_INCLUDE_DIRS = -I..
+srcdir = .
 GNUSTEP_INSTALLATION_DIR=$(GNUSTEP_SYSTEM_ROOT)
 PROJECTCENTER_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)
 PROJECTCENTER_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)
-ADDITIONAL_INCLUDE_DIRS = -I..
-srcdir = .
-#
 
+
+#
 # Additional libraries
 #
 
 libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui 
 
 #
-
 # Header files
 #
 
@@ -73,7 +76,6 @@ PCHistoryController.h \
 PCMakefileFactory.h 
 
 #
-
 # Class files
 #
 
@@ -99,7 +101,6 @@ PCHistoryController.m \
 PCMakefileFactory.m 
 
 #
-
 # C files
 #
 

@@ -242,7 +242,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     BOOL ret;
     PCProject *project;
 
-    while ( key = [enumerator nextObject] )
+    while ( (key = [enumerator nextObject]) )
     {
         project = [loadedProjects objectForKey:key];
 	ret = [project save];
@@ -364,7 +364,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     BOOL ret;
 
     if (![self activeProject]) {
-      return;
+      return NO;
     }
   
     // Save all files that need to be saved
@@ -382,6 +382,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	                @"Couldn't save project %@!", 
 			@"OK",nil,nil,[activeProject projectName]);
     }
+    return YES;
 }
 
 - (BOOL)saveProjectAs:(NSString *)projName
@@ -468,23 +469,25 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     key = [path stringByAppendingPathComponent:projectName];
     key = [key stringByAppendingPathExtension:@"pcproj"];
   
-    currentProject = RETAIN( [loadedProjects objectForKey:key] );
-
+    currentProject = RETAIN([loadedProjects objectForKey:key]);
     if( !currentProject )
     {
         return;
     }
 
-    // Remove it from the loaded projects!
+    // Remove it from the loaded projects! This is the only place it
+    // is retained, so it should dealloc after this.
     [loadedProjects removeObjectForKey:key];
-    [self setActiveProject:[[loadedProjects allValues] lastObject]];
+    if ([loadedProjects count] == 0)
+      [self setActiveProject: nil];
+    else if (currentProject == [self activeProject])
+      [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
     if ([loadedProjects count] == 0) 
     {
 	[inspector performClose:self];
     }
-
-    AUTORELEASE( currentProject );
+    RELEASE(currentProject);
 }
 
 - (void)closeProject

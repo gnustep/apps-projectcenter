@@ -1,3 +1,8 @@
+2002-04-25  Adam Fedor  <fedor@gnu.org>
+
+	* PCToolProject.m (-init): Remove call to _iniUI - 
+	already in [PCProject -init].
+
 2002-03-01 16:32  probert
 
 	* GNUmakefile, PCToolMakefileFactory.h, PCToolMakefileFactory.m,

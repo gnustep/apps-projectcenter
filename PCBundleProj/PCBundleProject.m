@@ -95,7 +95,6 @@
 				    PCClasses,@"Classes",
 				    nil] retain];
     
-    [self _initUI];
   }
   return self;
 }

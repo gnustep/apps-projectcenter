@@ -1,8 +1,9 @@
 2002-04-25  Adam Fedor  <fedor@gnu.org>
 
-	* PCHistoryController.m (-setBrowser:): ASSIGN browser
-	(-dealloc): Release it.
-	* PCBrowserController.m: Idem.
+	* PCHistoryController.m (-click:): Don't send notification.
+
+	* PCProject.m: Don't retain or release projectManger.
+	(-dealloc): Don't release window (releasedWhenClosed).
 
 2002-03-03 14:47  probert
 

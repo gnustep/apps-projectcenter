@@ -465,7 +465,6 @@
   RELEASE(projectName);
   RELEASE(projectPath);
   RELEASE(projectDict);
-  RELEASE(projectManager);
 
   if( projectBuilder)  RELEASE(projectBuilder);
   if( projectDebugger) RELEASE(projectDebugger);
@@ -473,7 +472,6 @@
   
   RELEASE(historyController);
   RELEASE(browserController);
-  RELEASE(projectWindow);
 
   RELEASE(buildTargetPanel);
   RELEASE(buildTargetHostField);
@@ -585,8 +583,9 @@
 
 - (void)setProjectBuilder:(id<ProjectBuilder,NSObject>)aBuilder
 {
-    AUTORELEASE(projectManager);
-    projectManager = RETAIN(aBuilder);
+  // This is our owner, don't retain.
+  //projectManager = aBuilder;
+  ASSIGN(projectManager, aBuilder);
 }
 
 - (id<ProjectBuilder>)projectBuilder
@@ -1074,7 +1073,7 @@
     keys   = [origin allKeys];
 
     enumerator = [keys objectEnumerator];
-    while( key = [enumerator nextObject] )
+    while( (key = [enumerator nextObject]) )
     {
         if( [aDict objectForKey:key] == nil )
         {

@@ -34,8 +34,6 @@
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
-  RELEASE(browser);
-    
   [super dealloc];
 }
 
@@ -122,7 +120,7 @@
 
 - (void)setBrowser:(NSBrowser *)aBrowser
 {
-  ASSIGN(browser, aBrowser);
+  browser = aBrowser;
   
   [browser setTitled:NO];
 

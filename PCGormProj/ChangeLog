@@ -1,3 +1,8 @@
+2002-04-25  Adam Fedor  <fedor@gnu.org>
+
+	* PCGormProject.m (-init): Remove call to _iniUI - 
+	already in [PCProject -init].
+
 2002-03-01 15:38  probert
 
 	* GNUmakefile, PCGormMakefileFactory.h, PCGormMakefileFactory.m,
