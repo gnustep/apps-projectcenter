@@ -18,6 +18,8 @@
 {
   NSAssert(aProj, @"Project is mandatory!");
 
+  NSLog(@"PCProjectLoadedFiles: init");
+  
   if ((self = [super init]))
     {
       project = aProj;
@@ -186,8 +188,8 @@
 
 - (void)click:(id)sender
 {
-  int      row = [filesList selectedRow];
-  NSString *path = [[self editedFilesRep] objectAtIndex:row];
+  int       row = [filesList selectedRow];
+  NSString  *path = [[self editedFilesRep] objectAtIndex:row];
 
   [[project projectEditor] orderFrontEditorForFile:path];
 }

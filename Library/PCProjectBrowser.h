@@ -50,11 +50,16 @@ extern NSString *PCBrowserDidSetPathNotification;
 - (NSView *)view;
 
 - (NSString *)nameOfSelectedFile;
-- (NSString *)pathOfSelectedFile;
+- (NSString *)pathToSelectedFile;
+- (NSString *)nameOfSelectedCategory;
+- (NSString *)pathToSelectedCategory;
+- (NSString *)nameOfSelectedRootCategory;
+
 - (NSArray *)selectedFiles;
 
+- (NSString *)path;
 - (BOOL)setPath:(NSString *)path;
-- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category;
+- (void)reloadLastColumn;
 
 // ============================================================================
 // ==== Actions
@@ -71,7 +76,8 @@ extern NSString *PCBrowserDidSetPathNotification;
 
 @interface PCProjectBrowser (ProjectBrowserDelegate)
 
-- (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix;
+- (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column 
+                                               inMatrix:(NSMatrix *)matrix;
 
 @end
 

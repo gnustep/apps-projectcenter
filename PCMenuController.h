@@ -70,7 +70,6 @@
 // Subproject
 - (void)subprojectNew:(id)sender;
 - (void)subprojectAdd:(id)sender;
-- (void)subprojectRemove:(id)sender;
 
 // File
 - (void)fileNew:(id)sender;

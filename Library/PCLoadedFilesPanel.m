@@ -35,10 +35,13 @@
 {
   PCProjectLoadedFiles *projectLoadedFiles = nil;
   PCProject            *activeProject = nil;
-  
+
   projectManager = aManager;
   activeProject = [projectManager rootActiveProject];
+  currentProject = activeProject;
   projectLoadedFiles = [activeProject projectLoadedFiles];
+
+  PCLogStatus(self, @"[init]");
 
   self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
                          styleMask: (NSTitledWindowMask 
@@ -46,11 +49,7 @@
 				    | NSResizableWindowMask)
 			   backing: NSBackingStoreRetained
 			     defer: YES];
-  [self setFloatingPanel:YES];
-/*  self = [super initWithContentRect: NSMakeRect (0, 300, 220, 322)
-                         styleMask: NSUtilityWindowMask
-			   backing: NSBackingStoreRetained
-			     defer: YES];*/
+//  [self setFloatingPanel:YES];
   [self setMinSize: NSMakeSize(120, 23)];
   [self setFrameAutosaveName: @"LoadedFiles"];
   [self setReleasedWhenClosed: NO];
@@ -89,7 +88,7 @@
 
 - (void)dealloc
 {
-  NSLog (@"PCLoadedFilesPanel: dealloc");
+  NSLog(@"PCLoadedFilesPanel: dealloc");
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
@@ -112,36 +111,38 @@
 
 - (void)close
 {
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
-
   [contentBox setContentView:emptyBox];
-  
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
   [super close];
 }
 
-/*- (BOOL)canBecomeKeyWindow
-{
-  // Panels controls doesn't receive mouse click if return NO
-  return YES;
-}*/
-
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *activeProject = [projectManager rootActiveProject];
+  PCProject *rootProject = [projectManager rootActiveProject];
 
-  [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Loaded Files", [activeProject projectName]]];
+  PCLogInfo(self, @"rootProject %@ currentProject %@",
+	    [rootProject projectName], [currentProject projectName]);
 
-  if (!activeProject)
+  if (rootProject == currentProject)
+    {
+      return;
+    }
+
+  PCLogInfo(self, @"1--- rootProject %@ currentProject %@",
+	    [rootProject projectName], [currentProject projectName]);
+
+  currentProject = rootProject;
+    
+  if (!rootProject)
     {
       [contentBox setContentView:emptyBox];
     }
   else
     {
+      [self setTitle: [NSString stringWithFormat: 
+	@"%@ - Loaded Files", [rootProject projectName]]];
       [contentBox 
-	setContentView:[[activeProject projectLoadedFiles] componentView]];
+	setContentView:[[rootProject projectLoadedFiles] componentView]];
     }
 }
 

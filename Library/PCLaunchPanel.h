@@ -32,6 +32,7 @@
 @interface PCLaunchPanel : NSPanel
 {
   PCProjectManager *projectManager;
+  PCProject        *currentProject;
   NSBox            *contentBox;
   NSBox            *emptyBox;
 }

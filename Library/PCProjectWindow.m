@@ -168,6 +168,7 @@
    */
   fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (496,0,48,48)];
   [fileIcon setRefusesFirstResponder:YES];
+  [fileIcon setEditable:NO];
   [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [fileIcon setImage: IMAGE (@"projectSuitcase")];
   [toolbarView addSubview: fileIcon];
@@ -354,68 +355,75 @@
 - (void)setFileIcon:(NSNotification *)notification
 {
   id       object = [notification object];
-  NSString *path = nil;
-  NSArray  *pathComponents = nil;
-  NSString *lastComponent = nil;
+  NSString *categoryName = nil;
+  NSString *fileName = nil;
   NSString *fileExtension = nil;
   NSString *iconName = nil;
   NSImage  *icon = nil;
 
-  path = [object pathOfSelectedFile];
-  pathComponents = [path pathComponents];
-  lastComponent = [path lastPathComponent];
-  fileExtension = [lastComponent pathExtension];
+  fileName = [object nameOfSelectedFile];
+  if (fileName)
+    {
+      fileExtension = [fileName pathExtension];
+    }
+  else
+    {
+      categoryName = [object nameOfSelectedCategory];
+    }
+
+  PCLogInfo(self,@"{setFileIcon} file %@ category %@", 
+	    fileName, categoryName);
   
   // Should be provided by PC*Proj bundles
-  if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
+  if ([[object selectedFiles] count] > 1)
     {
       iconName = [[NSString alloc] initWithString:@"MultiFiles"];
     }
-  else if ([lastComponent isEqualToString: @"/"])
+  else if (!categoryName && !fileName) // Nothing selected
     {
       iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Classes"])
+  else if ([categoryName isEqualToString: @"Classes"])
     {
       iconName = [[NSString alloc] initWithString:@"classSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Headers"])
+  else if ([categoryName isEqualToString: @"Headers"])
     {
       iconName = [[NSString alloc] initWithString:@"headerSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Other Sources"])
+  else if ([categoryName isEqualToString: @"Other Sources"])
     {
       iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Interfaces"])
+  else if ([categoryName isEqualToString: @"Interfaces"])
     {
       iconName = [[NSString alloc] initWithString:@"nibSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Images"])
+  else if ([categoryName isEqualToString: @"Images"])
     {
       iconName = [[NSString alloc] initWithString:@"iconSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Other Resources"])
+  else if ([categoryName isEqualToString: @"Other Resources"])
     {
       iconName = [[NSString alloc] initWithString:@"otherSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Subprojects"])
+  else if ([categoryName isEqualToString: @"Subprojects"])
     {
       iconName = [[NSString alloc] initWithString:@"subprojectSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Documentation"])
+  else if ([categoryName isEqualToString: @"Documentation"])
     {
       iconName = [[NSString alloc] initWithString:@"helpSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Supporting Files"])
+  else if ([categoryName isEqualToString: @"Supporting Files"])
     {
       iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Libraries"])
+  else if ([categoryName isEqualToString: @"Libraries"])
     {
       iconName = [[NSString alloc] initWithString:@"librarySuitcase"];
     }
-  else if ([lastComponent isEqualToString: @"Non Project Files"])
+  else if ([categoryName isEqualToString: @"Non Project Files"])
     {
       iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
     }
@@ -427,7 +435,7 @@
     }
   else if (fileExtension != nil && ![fileExtension isEqualToString:@""])
     {
-      icon = [[NSWorkspace sharedWorkspace] iconForFile:lastComponent];
+      icon = [[NSWorkspace sharedWorkspace] iconForFile:fileName];
     }
 
   // Set icon to Project Window and Project Inspector
@@ -437,15 +445,19 @@
     }
 
   // Set title
-  if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
+  if ([[object selectedFiles] count] > 1)
     {
       [fileIconTitle setStringValue:
 	[NSString stringWithFormat: 
 	@"%i files", [[object selectedFiles] count]]];
     }
-  else
+  else if (fileName)
     {
-      [fileIconTitle setStringValue:lastComponent];
+      [fileIconTitle setStringValue:fileName];
+    }
+  else if (categoryName)
+    {
+      [fileIconTitle setStringValue:categoryName];
     }
 
   // Project Inspector
@@ -531,7 +543,7 @@
 
   if ([self hasLoadedFilesView])
     {
-      if ([panel isVisible])
+      if (panel && [panel isVisible])
 	{
 	  [panel close];
 	}
@@ -542,7 +554,6 @@
     }
   else
     {
-//      [[[project projectLoadedFiles] componentView] removeFromSuperview];
       [componentView setBorderType:NSNoBorder];
       [panel orderFront:nil];
       [v_split adjustSubviews];
@@ -602,7 +613,7 @@
     }
   else
     {
-      if (launchPanel)
+      if ([launchPanel isVisible])
 	{
 	  [launchPanel close];
 	}
@@ -705,10 +716,10 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  NSArray *sps = [project loadedSubprojects];
+  PCProject *changedProject = [aNotif object];
 
-  if ([aNotif object] != project
-      && ![sps containsObject:[aNotif object]])
+  if (changedProject != project
+      && [[project projectManager] activeProject] != changedProject)
     {
       return;
     }
@@ -716,7 +727,7 @@
   [self setTitle];
 
   // TODO: if window isn't visible and "edited" attribute set, after ordering
-  // out window doesn't show broken close button. Fix it in GNUstep.
+  // front window doesn't show broken close button. Fix it in GNUstep.
   // Workaround is in windowDidBecomeKey.
   [projectWindow setDocumentEdited:YES];
 }
@@ -868,10 +879,6 @@
 {
   firstResponder = aResponder;
   [projectWindow makeFirstResponder:firstResponder];
-  if (![projectWindow isKeyWindow])
-    {
-      [self makeKeyWindow];
-    }
 
   return YES;
 }
@@ -879,16 +886,24 @@
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
   [projectWindow makeMainWindow];
-  [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
+//  [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
 
-  if ([project activeSubproject] != nil)
+  PCLogInfo(self, @"windowDidBecomeKey: activeSubproject %@",
+	    [[project activeSubproject] projectName]);
+
+  if ([[project projectManager] rootActiveProject] != project)
     {
-      [[project projectManager] setActiveProject:[project activeSubproject]];
+      if ([project activeSubproject] != nil)
+	{
+	  [[project projectManager] 
+	    setActiveProject:[project activeSubproject]];
+	}
+      else
+	{
+	  [[project projectManager] setActiveProject:project];
+	}
     }
-  else
-    {
-      [[project projectManager] setActiveProject:project];
-    }
+
 
   // Workaround
   if ([projectWindow isDocumentEdited])
@@ -900,7 +915,7 @@
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-  [projectWindow makeFirstResponder:nil];
+//  [projectWindow makeFirstResponder:nil];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)aNotification
@@ -914,20 +929,6 @@
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
-/*  [project close];
-  if ([aNotification object] == projectWindow) 
-    {
-      if ([projectWindow isDocumentEdited]) 
-	{
-	  if (NSRunAlertPanel(@"Close Project",
-			      @"The project %@ has been edited!\nShould it be saved before closing?",
-			      @"Yes",@"No",nil,[project projectName])) 
-	    {
-	      [project save];
-	    }
-	}
-      [project close];
-    }*/
 }
 
 @end

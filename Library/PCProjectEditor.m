@@ -252,7 +252,9 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)orderFrontEditorForFile:(NSString *)path
 {
   PCEditor *editor = [editorsDict objectForKey:path];
-  
+
+  NSLog(@"PCProjectEditor: orderFrontEditorForFile");
+
   if ([editor isWindowed])
     {
       [editor show];
@@ -463,12 +465,12 @@ NSString *PCEditorDidResignActiveNotification =
 
       lastEditorKey = [[editorsDict allKeys] lastObject];
       [componentView setContentView:[lastEditor componentView]];
-      [[project projectWindow] makeFirstResponder:[lastEditor editorView]];
+//      [[project projectWindow] makeFirstResponder:[lastEditor editorView]];
       [self setActiveEditor:lastEditor];
     }
   else
     {
-      [[project projectWindow] makeFirstResponder:scrollView];
+//      [[project projectWindow] makeFirstResponder:scrollView];
       [componentView setContentView:scrollView];
       [self setActiveEditor:nil];
     }
@@ -478,8 +480,11 @@ NSString *PCEditorDidResignActiveNotification =
 {
   PCEditor *editor = [aNotif object];
   NSString *categoryPath = nil;
-  
-  if ([editorsDict objectForKey:[editor path]] != editor)
+
+  NSLog(@"PCPE: editorDidBecomeActive: %@", [editor path]);
+
+  if ([editorsDict objectForKey:[editor path]] != editor
+      || activeEditor == editor)
     {
       return;
     }
@@ -497,6 +502,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidResignActive:(NSNotification *)aNotif
 {
+  [self setActiveEditor:nil];
 }
 
 @end

@@ -121,22 +121,28 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *activeProject = [projectManager rootActiveProject];
+  PCProject *rootProject = [projectManager rootActiveProject];
 
-  [self setTitle: [NSString stringWithFormat: 
-    @"%@ - Project Build", [activeProject projectName]]];
+  if (rootProject == currentProject)
+    {
+      return;
+    }
+  
+  currentProject = rootProject;
 
   PCLogInfo(self, @"activeProjectDidChange to: %@", 
-	    [activeProject projectName]);
+	    [rootProject projectName]);
 
-  if (!activeProject)
+  if (!rootProject)
     {
       [contentBox setContentView:emptyBox];
     }
   else
     {
+      [self setTitle: [NSString stringWithFormat: 
+	@"%@ - Project Build", [rootProject projectName]]];
       [contentBox 
-	setContentView:[[activeProject projectBuilder] componentView]];
+	setContentView:[[rootProject projectBuilder] componentView]];
     }
 }
 

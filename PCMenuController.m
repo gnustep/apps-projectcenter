@@ -140,16 +140,7 @@
 
 - (void)subprojectAdd:(id)sender
 {
-  NSString *proj = nil;
-
-  // Show open panel
-
-  [projectManager addSubprojectAt:proj];
-}
-
-- (void)subprojectRemove:(id)sender
-{
-  [projectManager removeSubproject];
+  [projectManager addSubproject];
 }
 
 // File
@@ -371,8 +362,10 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-  NSString    *menuTitle = [[menuItem menu] title];
-  PCProject   *aProject = [projectManager activeProject];
+  NSString         *menuTitle = [[menuItem menu] title];
+  PCProject        *aProject = [projectManager activeProject];
+  PCProjectEditor  *projectEditor = [aProject projectEditor];
+  PCProjectBrowser *projectBrowser = [aProject projectBrowser];
 
   if ([[projectManager loadedProjects] count] == 0) 
     {
@@ -456,10 +449,26 @@
 
   // Project related menu items
   if ([menuTitle isEqualToString: @"Project"] 
-      && [aProject selectedRootCategory] == nil)
+      && [projectBrowser nameOfSelectedFile] == nil
+      && [projectBrowser selectedFiles] == nil)
+    {
+      if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && [[projectEditor allEditors] count] == 0)
+    {
+      if ([[menuItem title] isEqualToString:@"Save Files..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && [projectBrowser nameOfSelectedCategory] == nil)
     {
       if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
-      if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+      if ([[menuItem title] isEqualToString:@"Add Subproject..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && ![[projectBrowser nameOfSelectedRootCategory] isEqualToString:@"Subprojects"])
+    {
+      if ([[menuItem title] isEqualToString:@"Add Subproject..."]) return NO;
     }
 
   // File related menu items
@@ -474,7 +483,7 @@
 	  if ([[menuItem title] isEqualToString:@"Close"]) return NO;
 	}
     }
-  if ([[aProject projectBrowser] nameOfSelectedFile] == nil)
+  if ([projectBrowser nameOfSelectedFile] == nil)
     {
       if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }

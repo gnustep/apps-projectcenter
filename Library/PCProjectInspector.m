@@ -724,8 +724,8 @@
       return;
     }
 
-  PCLogInfo(self, @"file name changed from: %@ to: %@",
-	    fileName, [fileNameField stringValue]);
+  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
+	    [project projectName], fileName, [fileNameField stringValue]);
 
   if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
     {

@@ -285,32 +285,36 @@
 {
   NSString *mainNibFile = [projectDict objectForKey:PCMainInterfaceFile];
   NSString *appIcon = [projectDict objectForKey:PCAppIcon];
-  NSString *key = [self selectedRootCategoryKey];
+  NSString *categoryKey = nil;
   NSString *ff = [fromFile copy];
   NSString *tf = [toFile copy];
   BOOL     success = NO;
 
+  categoryKey = [self 
+    keyForCategory:[projectBrowser nameOfSelectedRootCategory]];
   // Check for main NIB file
-  if ([key isEqualToString:PCInterfaces] 
+  if ([categoryKey isEqualToString:PCInterfaces] 
       && [fromFile isEqualToString:mainNibFile])
     {
       [self clearMainNib:self];
       if ([super renameFile:ff toFile:tf] == YES)
 	{
 	  [self setMainNibWithFileAtPath:
-	    [[self dirForCategoryKey:key] stringByAppendingPathComponent:tf]];
+	    [[self dirForCategoryKey:categoryKey] 
+	      stringByAppendingPathComponent:tf]];
 	  success = YES;
 	}
     }
   // Check for application icon files
-  else if ([key isEqualToString:PCImages] 
+  else if ([categoryKey isEqualToString:PCImages] 
 	   && [fromFile isEqualToString:appIcon])
     {
       [self clearAppIcon:self];
       if ([super renameFile:ff toFile:tf] == YES)
 	{
 	  [self setAppIconWithImageAtPath:
-	    [[self dirForCategoryKey:key] stringByAppendingPathComponent:tf]];
+	    [[self dirForCategoryKey:categoryKey] 
+	      stringByAppendingPathComponent:tf]];
 	  success = YES;
 	}
     }
@@ -319,9 +323,6 @@
       success = YES;
     }
     
-  [projectBrowser setPathForFile:toFile 
-                        category:[self categoryForKey:key]];
-  
   [ff release];
   [tf release];
 

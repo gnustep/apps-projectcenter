@@ -543,10 +543,11 @@
 
 - (BOOL)becomeFirstResponder
 {
+  NSLog(@"PCEditor: becomeFirstResponder");
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCEditorDidBecomeActiveNotification
                   object:self];
-  
+
   return YES;
 }
 

@@ -393,7 +393,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)updateInspectorValues:(NSNotification *)aNotif
 {
-  NSLog (@"PCAppProject: updateInspectorValues");
+//  NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
   [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];

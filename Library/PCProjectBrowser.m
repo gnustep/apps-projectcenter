@@ -26,8 +26,8 @@
 #include "PCFileManager.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
-#include "PCProjectEditor.h"
 #include "PCProjectBrowser.h"
+#include "PCProjectEditor.h"
 
 #include "PCLogController.h"
 
@@ -62,8 +62,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	addObserver:self 
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification 
-	     object:project];
-
+	     object:nil];
     }
 
   return self;
@@ -88,22 +87,109 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return browser;
 }
 
+// Returns nil if multiple files selected
 - (NSString *)nameOfSelectedFile
 {
   NSString *name = nil;
 
-  // Doesn't work with subprojects!
-  if ([browser selectedColumn] != 0 && [[browser selectedCells] count] == 1)
+  if ([[browser selectedCells] count] == 1)
     {
-      name = [[[browser path] componentsSeparatedByString:@"/"] lastObject];
+      name = [[browser path] lastPathComponent];
+      if ([name isEqualToString:[self nameOfSelectedCategory]])
+	{
+	  return nil;
+	}
+    }
+    
+  return name;
+}
+
+// Returns nil if multiple files selected
+- (NSString *)pathToSelectedFile
+{
+  NSString *name = nil;
+  NSString *path = nil;
+
+  if ([[browser selectedCells] count] == 1)
+    {
+      name = [[browser path] lastPathComponent];
+      if ([name isEqualToString:[self nameOfSelectedCategory]])
+	{
+	  path = nil;
+	}
+      else
+	{
+	  path = [browser path];
+	}
+    }
+  
+  return path;
+}
+
+// Returns nil of multiple categories selected
+- (NSString *)nameOfSelectedCategory
+{
+  NSString  *name = nil;
+  NSArray   *pathArray = [[browser path] componentsSeparatedByString:@"/"];
+  PCProject *activeProject = [[project projectManager] activeProject];
+  NSArray   *rootCategories = [activeProject rootCategories];
+  int       i;
+
+  if ([rootCategories containsObject:[pathArray lastObject]]
+      && [[browser selectedCells] count] > 1)
+    {
+      return nil;
+    }
+
+  for (i = [pathArray count] - 1; i >= 0; i--)
+    {
+      if ([rootCategories containsObject:[pathArray objectAtIndex:i]])
+	{
+	  name = [pathArray objectAtIndex:i];
+	  break;
+	}
     }
   
   return name;
 }
 
-- (NSString *)pathOfSelectedFile
+// Returns nil of multiple categories selected
+- (NSString *)pathToSelectedCategory
 {
-  return [browser path];
+  NSString       *path = nil;
+  NSString       *selectedCategory = [self nameOfSelectedCategory];
+  NSMutableArray *bPathArray = nil;
+  int            i;
+ 
+  if (selectedCategory)
+    {
+      bPathArray = [NSMutableArray arrayWithArray:[[browser path]
+	componentsSeparatedByString:@"/"]];
+      i = [bPathArray count] - 1;
+      while (![[bPathArray objectAtIndex:i] isEqualToString:selectedCategory])
+	{
+	  [bPathArray removeObjectAtIndex:i];
+	  i = [bPathArray count] - 1;
+	}
+      path = [bPathArray componentsJoinedByString:@"/"];
+    }
+  
+  return path;
+}
+
+- (NSString *)nameOfSelectedRootCategory
+{
+  NSString *categoryPath = [self pathToSelectedCategory];
+  NSArray  *pathComponents = nil;
+
+  if ([categoryPath isEqualToString:@"/"] || [categoryPath isEqualToString:@""])
+    {
+      return nil;
+    }
+    
+  pathComponents = [categoryPath componentsSeparatedByString:@"/"];
+
+  return [pathComponents objectAtIndex:1];
 }
 
 - (NSArray *)selectedFiles
@@ -112,39 +198,34 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSMutableArray *files = [[NSMutableArray alloc] initWithCapacity: 1];
   int            i;
   int            count = [cells count];
+  PCProject      *activeProject = [[project projectManager] activeProject];
+
+  // Return nil if categories selected
+  if ([cells count] == 0
+      || [[activeProject rootCategories] 
+      containsObject:[[cells objectAtIndex:0] stringValue]])
+    {
+      return nil;
+    }
 
   for (i = 0; i < count; i++)
     {
       [files addObject: [[cells objectAtIndex: i] stringValue]];
     }
-
+    
   return (NSArray *)files;
+}
+
+- (NSString *)path
+{
+  return [browser path];
 }
 
 - (BOOL)setPath:(NSString *)path
 {
   int      selectedColumn;
   NSMatrix *columnMatrix = nil;
-
-  while ((selectedColumn = [browser selectedColumn]) >= 0)
-    {
-      columnMatrix = [browser matrixInColumn:selectedColumn];
-      [columnMatrix deselectAllCells];
-    }
-
-  PCLogInfo(self, @"[setPath]: %@", path);
-
-  return [browser setPath:path];
-}
-
-- (BOOL)setPathForFile:(NSString *)file category:(NSString *)category
-{
-  NSArray  *comp = [NSArray arrayWithObjects: @"/",category,@"/",file,nil];
-  NSString *path = [NSString pathWithComponents:comp];
-  BOOL     result;
-
-  int      selectedColumn;
-  NSMatrix *columnMatrix = nil;
+  BOOL     res;
 
   if ([[browser path] isEqualToString: path])
     {
@@ -159,15 +240,40 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
   // End of HACK
 
-  result = [browser setPath:path];
+  PCLogInfo(self, @"[setPath]: %@", path);
 
-  [self click:browser];
+  res = [browser setPath:path];
+
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCBrowserDidSetPathNotification
+                  object:self];
+
+  return res;
+}
+
+- (void)reloadLastColumn
+{
+  int      column = [browser lastColumn];
+  NSString *category = [self nameOfSelectedCategory];
+  int      selectedColumn = [browser selectedColumn];
+  NSMatrix *colMatrix = [browser matrixInColumn:selectedColumn];
+  int      rowCount = 0, colCount = 0, spCount = 0;
+  PCProject *activeProject = [[project projectManager] activeProject];
+
+  [colMatrix getNumberOfRows:&rowCount columns:&colCount];
+  spCount = [[[activeProject projectDict] objectForKey:PCSubprojects] count];
+
+  if ([category isEqualToString:@"Subprojects"] && rowCount != spCount
+      && ![[[browser selectedCell] stringValue] isEqualToString:@"Subprojects"])
+    {
+      column = selectedColumn;
+    }
   
-/*  [[NSNotificationCenter defaultCenter]
-    postNotificationName:PCBrowserDidSetPathNotification 
-                  object:self];*/
+  [browser reloadColumn:column];
 
-  return result;
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCBrowserDidSetPathNotification
+                  object:self];
 }
 
 // ============================================================================
@@ -176,38 +282,33 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)click:(id)sender
 {
+  NSUserDefaults *ud = nil;
   NSString       *category = nil;
   NSString       *fileName = nil;
-  PCProject      *sp = nil;
   NSString       *filePath = nil;
-  NSUserDefaults *ud = nil;
+  NSString       *key = nil;
+  PCProject      *activeProject = nil;
 
   if (sender != browser)
     {
       return;
     }
-    
+
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
       ud = [NSUserDefaults standardUserDefaults];
-      category = [project categoryForCategoryPath:[browser path]];
+      category = [self nameOfSelectedCategory];
       fileName = [[sender selectedCell] stringValue];
-      if ((sp = [project activeSubproject]) != nil)
-	{
-	  filePath = [[sp projectPath] 
-	    stringByAppendingPathComponent:fileName];
-	}
-      else
-	{
-	  filePath = [[project projectPath] 
-	    stringByAppendingPathComponent:fileName];
-	}
+      
+      activeProject = [[project projectManager] activeProject];
+      key = [activeProject keyForCategory:category];
+      filePath = [activeProject dirForCategoryKey:key];
+      filePath = [filePath stringByAppendingPathComponent:fileName];
 
       PCLogInfo(self, @"[click] category: %@ filePath: %@",
 		category, filePath);
 
-      if ([project isEditableCategory:category] 
-	  || [sp isEditableCategory:category])
+      if ([activeProject isEditableCategory:category])
 	{
 	  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	    {
@@ -218,6 +319,11 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	}
     }
 
+  PCLogStatus(self, @"nameOfSelectedCategory: %@",
+	      [self nameOfSelectedCategory]);
+  PCLogStatus(self, @"nameOfSelectedFile: %@",
+	      [self nameOfSelectedFile]);
+
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCBrowserDidSetPathNotification 
                   object:self];
@@ -225,32 +331,31 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)doubleClick:(id)sender
 {
+  id selectedCell;
+  
   if (sender != browser)
     {
       return;
     }
 
-  if ([[sender selectedCell] isLeaf]) 
+  selectedCell = [sender selectedCell];
+
+  if ([selectedCell isLeaf]) 
     {
-      NSString  *category = [project categoryForCategoryPath:[browser path]];
+      NSString  *category = [self nameOfSelectedCategory];
       NSString  *fileName = [[sender selectedCell] stringValue];
-      PCProject *sp = nil;
       NSString  *filePath = nil;
+      NSString  *key = nil;
+      PCProject *activeProject = nil;
+      
+      activeProject = [[project projectManager] activeProject];
+      key = [activeProject keyForCategory:category];
+      filePath = [activeProject dirForCategoryKey:key];
+      filePath = [filePath stringByAppendingPathComponent:fileName];
 
-      if ((sp = [project activeSubproject]) != nil)
-	{
-	  filePath = [sp dirForCategoryKey:[sp keyForCategory:category]]; 
-	  filePath = [filePath stringByAppendingPathComponent:fileName];
-	}
-      else
-	{
-	  filePath = [project dirForCategoryKey:
-	    [project keyForCategory:category]];
-	  filePath = [filePath stringByAppendingPathComponent:fileName];
-	}
+      PCLogInfo(self, @"{doubleClick} filePath: %@", filePath);
 
-      if ([project isEditableCategory:category] 
-	  || [sp isEditableCategory:category])
+      if ([activeProject isEditableCategory:category])
 	{
 	  [[project projectEditor] editorForFile:filePath
 	                            categoryPath:[browser path]
@@ -265,7 +370,14 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
   else 
     {
-      [[project projectManager] addProjectFiles];
+      if ([[selectedCell title] isEqualToString:@"Subprojects"]) 
+	{
+	  [[project projectManager] addSubproject];
+	}
+      else
+	{
+	  [[project projectManager] addProjectFiles];
+	}
     }
 }
 
@@ -275,23 +387,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  if (browser && 
-      ([aNotif object] == project 
-       || [[project loadedSubprojects] containsObject:[aNotif object]]))
-    {
-      NSString *browserPath = [browser path];
-      NSString *slctdCategory = [project selectedRootCategory];
- 
-      if (slctdCategory && browserPath && ![browserPath isEqualToString:@"/"])
-	{
-	  if ([[[project projectEditor] allEditors] count] == 0
-	      && [project isEditableCategory:slctdCategory])
-	    {
-	      [self setPathForFile:nil category:slctdCategory];
-	    }
-	}
+  PCProject *changedProject = nil;
+  PCProject *activeProject = nil;
 
-      [browser reloadColumn:[browser lastColumn]];
+  if (!browser)
+    {
+      return;
+    }
+
+  changedProject = [aNotif object];
+  activeProject = [[project projectManager] activeProject];
+    
+  if (changedProject == project || changedProject == activeProject)
+    {
+      [self reloadLastColumn];
     }
 }
 
@@ -299,21 +408,25 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 @implementation PCProjectBrowser (ProjectBrowserDelegate)
 
-- (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix
+- (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column
+                                               inMatrix:(NSMatrix *)matrix
 {
-  NSString *pathToCol = nil;
-  NSArray  *files = nil;
-  int      i = 0;
-  int      count = 0;
+  NSString  *pathToCol = nil;
+  NSArray   *files = nil;
+  int       i = 0;
+  int       count = 0;
 
-  if (sender != browser || !matrix ||![matrix isKindOfClass:[NSMatrix class]])
+  if (sender != browser || !matrix || ![matrix isKindOfClass:[NSMatrix class]])
     {
       return;
     }
 
   pathToCol = [sender pathToColumn:column];
   files = [project contentAtCategoryPath:pathToCol];
-  count = [files count];
+  if (files)
+    {
+      count = [files count];
+    }
 
   for (i = 0; i < count; ++i) 
     {

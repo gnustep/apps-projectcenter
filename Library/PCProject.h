@@ -92,7 +92,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (BOOL)close:(id)sender;
 - (void)dealloc;
 
-- (BOOL)saveProjectWindowsAndPanels; // Not finished
+- (BOOL)saveProjectWindowsAndPanels;
 
 // ============================================================================
 // ==== Accessory methods
@@ -110,11 +110,6 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
 - (BOOL)isProjectChanged;
-
-- (NSString *)selectedRootCategory;
-- (NSString *)selectedRootCategoryKey;
-
-- (Class)principalClass;
 
 // ===========================================================================
 // ==== Can be overriden
@@ -178,7 +173,6 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSString *)categoryForKey:(NSString *)key;
 
 - (BOOL)save;
-- (BOOL)saveAt:(NSString *)projPath;
 
 - (BOOL)writeSpecFile;
 
@@ -204,8 +198,9 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (PCProject *)subprojectWithName:(NSString *)name;
 
 - (void)addSubproject:(PCProject *)aSubproject;
-- (void)newSubprojectNamed:(NSString *)aName;
-- (void)removeSubproject:(PCProject *)aSubproject;
+- (void)addSubprojectWithName:(NSString *)name;
+- (BOOL)removeSubproject:(PCProject *)aSubproject;
+- (BOOL)removeSubprojectWithName:(NSString *)subprojectName;
 
 @end
 
@@ -216,7 +211,8 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 - (NSString *)rootCategoryForCategoryPath:(NSString *)categoryPath;
 - (NSString *)categoryForCategoryPath:(NSString *)categoryPath;
-- (NSString *)keyForCategoryPath:(NSString *)kp;
+- (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath;
+- (NSString *)keyForCategoryPath:(NSString *)categoryPath;
 
 @end
 

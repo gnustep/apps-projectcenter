@@ -32,6 +32,7 @@
 @interface PCBuildPanel : NSPanel
 {
   PCProjectManager *projectManager;
+  PCProject        *currentProject;
   NSBox            *contentBox;
   NSBox            *emptyBox;
 }

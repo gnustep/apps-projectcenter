@@ -233,18 +233,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 @interface PCProjectManager (Subprojects)
 
-// --- New
 - (BOOL)newSubproject;
+- (BOOL)addSubproject;
 - (void)closeNewSubprojectPanel:(id)sender;
 - (BOOL)createSubproject:(id)sender;
+- (PCProject *)createSubprojectOfType:(NSString *)projectType 
+                                 path:(NSString *)aPath;
 - (BOOL)createSubproject;
-
-// --- Add
-- (BOOL)addSubprojectAt:(NSString *)path;
-
-// --- Remove
-- (void)removeSubproject;
-
 @end
 
 #endif

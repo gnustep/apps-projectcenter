@@ -27,6 +27,7 @@
 #include "PCFileCreator.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
+#include "PCProjectBrowser.h"
 #include "PCServer.h"
 
 #include "PCLogController.h"
@@ -362,12 +363,18 @@ static PCFileManager *_mgr = nil;
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
+  PCProject      *project = [projectManager rootActiveProject];
+  NSString       *selectedCategory = nil;
   int            retval;
-  PCProject      *project = [projectManager activeProject];
 
   [self _createAddFilesPanel];
-
-  [fileTypePopup selectItemWithTitle:[project selectedRootCategory]];
+  selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
+  if ([selectedCategory isEqualToString:@"Subprojects"])
+    {
+      [addFilesPanel setCanChooseFiles:NO];
+      [addFilesPanel setCanChooseDirectories:YES];
+    }
+  [fileTypePopup selectItemWithTitle:selectedCategory];
 
   [self filesForAddPopupClicked:self];
 
@@ -382,7 +389,7 @@ static PCFileManager *_mgr = nil;
   if (retval == NSOKButton) 
     {
       [ud setObject:[addFilesPanel directory] forKey:@"LastOpenDirectory"];
-      return [[[addFilesPanel filenames] mutableCopy] autorelease];
+      return [[addFilesPanel filenames] mutableCopy];
     }
 
   return nil;
