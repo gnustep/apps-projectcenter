@@ -655,6 +655,8 @@
 - (void)updateValuesFromProjectDict
 {
     [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
+    [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
+    [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
     [installPathField setStringValue:[projectDict objectForKey:PCInstallDir]];
     [toolField setStringValue:[projectDict objectForKey:PCBuildTool]];
     [ccOptField setStringValue:[projectDict objectForKey:PCCompilerOptions]];

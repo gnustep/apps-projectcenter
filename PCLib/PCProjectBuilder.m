@@ -453,96 +453,15 @@
   [optionsButton setShowTooltip:YES];
 }
 
-- (void) topButtonPressed: (id)sender
-{
-  NSString *tFString = [targetField stringValue];
-  NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
-
-  if (makeTask)
-    {
-      [makeTask terminate];
-      return;
-    }
-
-  [buildTarget setString: [tFArray objectAtIndex: 0]];
-
-  switch ([[sender selectedCell] tag]) 
-    {
-    case 0:
-      // Set build arguments
-      if ([buildTarget isEqualToString: @"Default"])
-	{
-	  ;
-	}
-      else if ([buildTarget isEqualToString: @"Debug"])
-	{
-	  [buildArgs addObject: @"debug=yes"];
-	}
-      else if ([buildTarget isEqualToString: @"Profile"])
-	{
-	  [buildArgs addObject: @"profile=yes"];
-	  [buildArgs addObject: @"static=yes"];
-	}
-      else if ([buildTarget isEqualToString: @"Tarball"])
-	{
-	  [buildArgs addObject: @"dist"];
-	}
-      else if ([buildTarget isEqualToString: @"RPM"])
-	{
-	  [buildArgs addObject: @"rpm"];
-	  postProcess = @selector (copyPackageTo:);
-	}
-
-      statusString = [NSString stringWithString: @"Building..."];
-      [buildTarget setString: @"Build"];
-      [self build: self];
-      break;
-      
-    case 1:
-      if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-	  objectForKey: PromptOnClean] isEqualToString: @"YES"])
-	{
-	  if (NSRunAlertPanel(@"Clean Project?",
-			      @"Do you really want to clean project '%@'?",
-			      @"Yes",
-			      @"No",
-			      nil,
-			      [currentProject projectName])
-	      == NSAlertAlternateReturn)
-	    {
-	      return;
-	    }
-	}
-      [buildTarget setString: @"Clean"];
-      statusString = [NSString stringWithString: @"Cleaning..."];
-      [buildArgs addObject: @"distclean"];
-      [self build: self];
-      break;
-      
-    case 2:
-      [buildTarget setString: @"Install"];
-      statusString = [NSString stringWithString: @"Installing..."];
-      [buildArgs addObject: @"install"];
-      [self build: self];
-      break;
-
-    case 3:
-      if (!optionsPanel)
-	{
-	  [self _createOptionsPanel];
-	}
-      [optionsPanel orderFront: nil];
-      return;
-    }
-}
-
 
 - (void)startBuild:(id)sender
 {
   NSString *tFString = [targetField stringValue];
   NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
 
-  if (makeTask && [makeTask isRunning])
+  // [makeTask isRunning] doesn't work here.
+  // "waitpid 7045, result -1, error No child processes" is printed.
+  if (makeTask)
     {
       [makeTask terminate];
       return;
@@ -649,8 +568,6 @@
       return;
     }
 
-  NSLog (@"Status: %@ BuildTarget: %@", statusString, buildTarget);
-
   // Prepearing to building
   logPipe = [NSPipe pipe];
 //  readHandle = [[logPipe fileHandleForReading] retain];
@@ -704,20 +621,18 @@
   if ([aNotif object] == makeTask)
     {
       [NOTIFICATION_CENTER removeObserver: self 
-	name: NSFileHandleDataAvailableNotification
-	object: readHandle];
+	                             name: NSFileHandleDataAvailableNotification
+	                           object: readHandle];
 
       [NOTIFICATION_CENTER removeObserver: self 
-	name: NSFileHandleDataAvailableNotification
-	object: errorReadHandle];
+	                             name: NSFileHandleDataAvailableNotification
+ 	                           object: errorReadHandle];
 
       [NOTIFICATION_CENTER removeObserver: self 
-	name: NSTaskDidTerminateNotification 
-	object: makeTask];
+	                             name: NSTaskDidTerminateNotification 
+	                           object: makeTask];
       //  RELEASE (readHandle);
       //  RELEASE (errorReadHandle);
-
-      NSLog (@"Observers removed!");
 
       if (status == 0)
 	{
@@ -757,8 +672,8 @@
       [buildArgs removeAllObjects];
       [buildTarget setString: @"Default"];
 
-      /*  RELEASE (makeTask);
-	  makeTask = nil;*/
+      /*  RELEASE (makeTask);*/
+      makeTask = nil;
     }
 }
 
@@ -865,7 +780,7 @@
 - (void)make:(NSDictionary *)data
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
-  
+
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments: [data objectForKey: @"args"]];
   [makeTask setCurrentDirectoryPath: [data objectForKey: @"currentDirectory"]];

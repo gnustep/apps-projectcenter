@@ -47,12 +47,12 @@
                                             backing:NSBackingStoreBuffered
                                               defer:YES];
   [inspector setMinSize:NSMakeSize(280,384)];
-  [inspector setTitle:@"Inspector"];
+  [inspector setTitle:@"Project Inspector"];
   [inspector setReleasedWhenClosed:NO];
   [inspector setFrameAutosaveName:@"Inspector"];
   _c_view = [inspector contentView];
 
-  _w_frame = NSMakeRect(80,352,128,20);
+  _w_frame = NSMakeRect(80,358,128,20);
   inspectorPopup = [[NSPopUpButton alloc] initWithFrame:_w_frame];
   [inspectorPopup addItemWithTitle:@"None"];
   [inspectorPopup setTarget:self];
@@ -66,7 +66,7 @@
 
   inspectorView = [[NSBox alloc] init];
   [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [inspectorView setFrame:NSMakeRect(-8,-8,295,364)];
   [inspectorView setBorderType:NSNoBorder];
   [_c_view addSubview:inspectorView];
 	

@@ -143,9 +143,37 @@ static PCFileManager *_mgr = nil;
   if (retval == NSOKButton) 
     {
       NSEnumerator *enumerator;
-      NSString     *file;
+      NSString     *file = nil;
+      NSString     *cPath = nil;
 
       [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+
+      // Check for "Images" "Documentation" "Non Project Files"
+      if ([key isEqualToString:PCImages])
+	{
+	  cPath = [[project projectPath] 
+	            stringByAppendingPathComponent:@"Images"];
+	}
+      else if ([key isEqualToString:PCDocuFiles])
+	{
+	  cPath = [[project projectPath] 
+	            stringByAppendingPathComponent:@"Documentation"];
+	}
+      else if ([key isEqualToString:PCNonProject])
+	{
+	  cPath = [[project projectPath] 
+	            stringByAppendingPathComponent:@"NonProject"];
+	}
+      else if ([key isEqualToString:PCGModels])
+	{
+	  NSString *language = [[project projectDict] objectForKey:@"LANGUAGE"];
+	  cPath = [[project projectPath] stringByAppendingPathComponent:
+	    [language stringByAppendingString:@".lproj"]];
+	}
+      else
+	{
+	  cPath = [project projectPath];
+	}
 
       enumerator = [[openPanel filenames] objectEnumerator];
       while ((file = [enumerator nextObject]))
@@ -162,7 +190,7 @@ static PCFileManager *_mgr = nil;
 	      NSFileManager *fm = [NSFileManager defaultManager];
 
 	      fileName = [file lastPathComponent];
-	      pth = [[project projectPath] stringByAppendingPathComponent:fileName];
+	      pth = [cPath stringByAppendingPathComponent:fileName];
 
 	      if (![key isEqualToString:PCLibraries]) 
 		{

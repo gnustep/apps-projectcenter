@@ -33,7 +33,7 @@
 
 #include "PCButton.h"
 
-#undef ENABLE_HISTORY
+#define ENABLE_HISTORY
 
 @implementation PCProject (UInterface)
 
@@ -53,6 +53,7 @@
   PCButton     *findButton;
   PCButton     *inspectorButton;
   id           textField;
+  NSBox        *hLine;
   PCSplitView  *split;
 
 #ifdef ENABLE_HISTORY
@@ -200,7 +201,7 @@
 #ifdef ENABLE_HISTORY
   historyController = [[PCHistoryController alloc] initWithProject:self];
 
-  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,100,60)];
+  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,80,128)];
   [history setDelegate: historyController];
   [history setMaxVisibleColumns: 1];
   [history setAllowsMultipleSelection: NO];
@@ -210,8 +211,7 @@
   [historyController setBrowser: history];
   
   rect = [[projectWindow contentView] frame];
-  rect.size.width -= 16;
-  rect.size.height /= 2;
+  rect.size.height = 130;
   v_split = [[PCSplitView alloc] initWithFrame: rect];
   [v_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [v_split setVertical: YES];
@@ -271,64 +271,24 @@
    *
    */
   projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [projectAttributeInspectorView setFrame:NSMakeRect(0,0,295,364)];
   [projectAttributeInspectorView setTitlePosition:NSNoTitle];
-  [projectAttributeInspectorView setBorderType:NSNoBorder];
-  [projectAttributeInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [projectAttributeInspectorView 
+    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [projectAttributeInspectorView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  // Compiler Flags -- ADDITIONAL_OBJCFLAGS(?), ADDITIONAL_CFLAGS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Install in:"];
+  [textField setStringValue:@"Compiler Flags:"];
   [projectAttributeInspectorView addSubview:textField];
   RELEASE(textField);
 
-  installPathField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
-  [installPathField setAlignment: NSLeftTextAlignment];
-  [installPathField setBordered: YES];
-  [installPathField setEditable: YES];
-  [installPathField setBezeled: YES];
-  [installPathField setDrawsBackground: YES];
-  [installPathField setStringValue:@""];
-  [installPathField setAction:@selector(changeCommonProjectEntry:)];
-  [installPathField setTarget:self];
-  [projectAttributeInspectorView addSubview:installPathField];
-
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Build tool:"];
-  [projectAttributeInspectorView addSubview:textField];
-  RELEASE(textField);
-
-  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
-  [toolField setAlignment: NSLeftTextAlignment];
-  [toolField setBordered: YES];
-  [toolField setEditable: YES];
-  [toolField setBezeled: YES];
-  [toolField setDrawsBackground: YES];
-  [toolField setStringValue:@""];
-  [toolField setAction:@selector(changeCommonProjectEntry:)];
-  [toolField setTarget:self];
-  [projectAttributeInspectorView addSubview:toolField];
-
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,232,64,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"CC options:"];
-  [projectAttributeInspectorView addSubview:textField];
-  RELEASE(textField);
-
-  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,232,176,21)];
+  ccOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,323,165,21)];
   [ccOptField setAlignment: NSLeftTextAlignment];
   [ccOptField setBordered: YES];
   [ccOptField setEditable: YES];
@@ -338,27 +298,124 @@
   [ccOptField setAction:@selector(changeCommonProjectEntry:)];
   [ccOptField setTarget:self];
   [projectAttributeInspectorView addSubview:ccOptField];
+  RELEASE(ccOptField);
 
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
+  // Linker Flags -- ADDITIONAL_LDFLAGS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"LD options:"];
+  [textField setStringValue:@"Linker Flags:"];
   [projectAttributeInspectorView addSubview:textField];
   RELEASE(textField);
 
-  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
+  ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,298,165,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
   [ldOptField setBordered: YES];
-  [ldOptField setEditable: NO];
+  [ldOptField setEditable: YES];
   [ldOptField setBezeled: YES];
   [ldOptField setDrawsBackground: YES];
   [ldOptField setStringValue:@""];
   [ldOptField setAction:@selector(changeCommonProjectEntry:)];
   [ldOptField setTarget:self];
   [projectAttributeInspectorView addSubview:ldOptField];
+  RELEASE(ldOptField);
+
+  // Install In
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Install In:"];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
+
+  installPathField =[[NSTextField alloc] 
+    initWithFrame:NSMakeRect(111,273,165,21)];
+  [installPathField setAlignment: NSLeftTextAlignment];
+  [installPathField setBordered: YES];
+  [installPathField setEditable: YES];
+  [installPathField setBezeled: YES];
+  [installPathField setDrawsBackground: YES];
+  [installPathField setStringValue:@""];
+  [installPathField setAction:@selector(changeCommonProjectEntry:)];
+  [installPathField setTarget:self];
+  [projectAttributeInspectorView addSubview:installPathField];
+  RELEASE(installPathField);
+
+  // Build Tool
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,248,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Build Tool:"];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
+
+  toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,248,165,21)];
+  [toolField setAlignment: NSLeftTextAlignment];
+  [toolField setBordered: YES];
+  [toolField setEditable: YES];
+  [toolField setBezeled: YES];
+  [toolField setDrawsBackground: YES];
+  [toolField setStringValue:@""];
+  [toolField setAction:@selector(changeCommonProjectEntry:)];
+  [toolField setTarget:self];
+  [projectAttributeInspectorView addSubview:toolField];
+  RELEASE(toolField);
+
+  // Public Headers In -- ADDITIONAL_INCLUDE_DIRS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,223,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Public Headers In:"];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
+
+  headersField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,223,165,21)];
+  [headersField setAlignment: NSLeftTextAlignment];
+  [headersField setBordered: YES];
+  [headersField setEditable: YES];
+  [headersField setBezeled: YES];
+  [headersField setDrawsBackground: YES];
+  [headersField setStringValue:@""];
+  [headersField setAction:@selector(changeCommonProjectEntry:)];
+  [headersField setTarget:self];
+  [projectAttributeInspectorView addSubview:headersField];
+  RELEASE(headersField);
+
+  // Public Libraries In -- ADDITIONAL_TOOL_LIBS
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(4,198,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Public Libraries In:"];
+  [projectAttributeInspectorView addSubview:textField];
+  RELEASE(textField);
+
+  libsField =[[NSTextField alloc] initWithFrame:NSMakeRect(111,198,165,21)];
+  [libsField setAlignment: NSLeftTextAlignment];
+  [libsField setBordered: YES];
+  [libsField setEditable: YES];
+  [libsField setBezeled: YES];
+  [libsField setDrawsBackground: YES];
+  [libsField setStringValue:@""];
+  [libsField setAction:@selector(changeCommonProjectEntry:)];
+  [libsField setTarget:self];
+  [projectAttributeInspectorView addSubview:libsField];
+  RELEASE(libsField);
+
 
   /*
    * Project View
@@ -366,60 +423,120 @@
    */
 
   projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
+  [projectProjectInspectorView setFrame:NSMakeRect(0,0,295,364)];
   [projectProjectInspectorView setTitlePosition:NSNoTitle];
-  [projectProjectInspectorView setBorderType:NSNoBorder];
-  [projectProjectInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [projectProjectInspectorView 
+    setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [projectProjectInspectorView setContentViewMargins:NSMakeSize(0.0, 0.0)];
 
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  // Project Type
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,323,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Type:"];
+  [textField setStringValue:@"Project Type:"];
   [projectProjectInspectorView addSubview:textField];
   RELEASE(textField);
 
-  projectTypeField = [[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  projectTypeField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,323,165,21)];
   [projectTypeField setAlignment: NSLeftTextAlignment];
   [projectTypeField setBordered: NO];
   [projectTypeField setEditable: NO];
+  [projectTypeField setSelectable: NO];
   [projectTypeField setBezeled: NO];
   [projectTypeField setDrawsBackground: NO];
+  [projectTypeField setFont:[NSFont boldSystemFontOfSize: 12.0]];
   [projectTypeField setStringValue:@""];
   [projectProjectInspectorView addSubview:projectTypeField];
+  RELEASE(projectTypeField);
 
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
-  [projectFileInspectorView setTitlePosition:NSNoTitle];
-  [projectFileInspectorView setBorderType:NSNoBorder];
-  [projectFileInspectorView setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-
-  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,280,64,21)];
+  // Project Name
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,298,104,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Filename:"];
-  [projectFileInspectorView addSubview:textField];
+  [textField setStringValue:@"Project Name:"];
+  [projectProjectInspectorView addSubview:textField];
   RELEASE(textField);
 
-  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  projectNameField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,298,165,21)];
+  [projectNameField setAlignment: NSLeftTextAlignment];
+  [projectNameField setBordered: NO];
+  [projectNameField setEditable: NO];
+  [projectNameField setBezeled: YES];
+  [projectNameField setDrawsBackground: YES];
+  [projectNameField setStringValue:@""];
+  [projectProjectInspectorView addSubview:projectNameField];
+  RELEASE(projectNameField);
+
+  // Project Language
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(4,273,104,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Language:"];
+  [projectProjectInspectorView addSubview:textField];
+  RELEASE(textField);
+
+  projectLanguageField = [[NSTextField alloc] initWithFrame:
+    NSMakeRect(111,273,165,21)];
+  [projectLanguageField setAlignment: NSLeftTextAlignment];
+  [projectLanguageField setBordered: NO];
+  [projectLanguageField setEditable: NO];
+  [projectLanguageField setBezeled: YES];
+  [projectLanguageField setDrawsBackground: YES];
+  [projectLanguageField setStringValue:@""];
+  [projectProjectInspectorView addSubview:projectLanguageField];
+  RELEASE(projectLanguageField);
+
+  /*
+   * File View
+   *
+   */
+
+  projectFileInspectorView = [[NSBox alloc] init];
+  [projectFileInspectorView setFrame:NSMakeRect(0,0,295,364)];
+  [projectFileInspectorView setTitlePosition:NSNoTitle];
+  [projectFileInspectorView setAutoresizingMask:
+    (NSViewWidthSizable | NSViewHeightSizable)];
+  [projectFileInspectorView setContentViewMargins:NSMakeSize(0.0, 0.0)];
+
+  fileIconView = [[NSImageView alloc] initWithFrame:NSMakeRect(8,290,48,48)];
+  [fileIconView setImage:[NSImage imageNamed:@"common_Unknown"]];
+  [projectFileInspectorView addSubview:fileIconView];
+  RELEASE(fileIconView);
+
+  fileNameField =[[NSTextField alloc] initWithFrame:NSMakeRect(60,290,216,48)];
   [fileNameField setAlignment: NSLeftTextAlignment];
   [fileNameField setBordered: NO];
   [fileNameField setEditable: NO];
+  [fileNameField setSelectable: NO];
   [fileNameField setBezeled: NO];
   [fileNameField setDrawsBackground: NO];
-  [fileNameField setStringValue:@""];
+  [fileNameField setFont:[NSFont systemFontOfSize:20.0]];
+  [fileNameField setStringValue:@"No file selected"];
   [projectFileInspectorView addSubview:fileNameField];
+  RELEASE(fileNameField);
+  
+  hLine = [[NSBox alloc] initWithFrame:NSMakeRect(0,278,295,2)];
+  [hLine setTitlePosition:NSNoTitle];
+  [projectFileInspectorView addSubview:hLine];
 
-  changeFileNameButton = [[NSButton alloc] initWithFrame:NSMakeRect(84,240,104,21)];
+  changeFileNameButton = [[NSButton alloc] initWithFrame:
+    NSMakeRect(84,240,104,21)];
   [changeFileNameButton setTitle:@"Rename..."];
   [changeFileNameButton setTarget:self];
   [changeFileNameButton setAction:@selector(renameFile:)];
   [projectFileInspectorView addSubview:changeFileNameButton];
+  RELEASE(changeFileNameButton);
 }
 
 - (void)setFileIcon:(NSNotification *)notification
@@ -430,8 +547,6 @@
   NSString *lastComp = [path lastPathComponent];
   NSString *extension = [[lastComp componentsSeparatedByString:@"."] lastObject];
  
-//  NSLog (@"PCP+UI %i -- %@", [pathComps count], path);
-
   // Should be provided by PC*Proj bundles
   if ([[object selectedFiles] count] > 1
       && [pathComps count] > 2)
@@ -486,11 +601,20 @@
     {
       [fileIcon setImage: IMAGE (@"projectSuitcase")];
     }
-  else 
+  else
     {
       [fileIcon 
 	setImage: [[NSWorkspace sharedWorkspace] iconForFileType:extension]];
     }
+    
+  if ([fileIcon image] == nil)
+    {
+      [fileIcon 
+	setImage: [[NSWorkspace sharedWorkspace] iconForFileType:extension]];
+    }
+
+  // Set icon in Inspector "File Attributes". Should not be here!
+  [fileIconView setImage:[fileIcon image]];
 
   // Set title
   if ([[object selectedFiles] count] > 1

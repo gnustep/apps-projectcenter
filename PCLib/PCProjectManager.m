@@ -418,33 +418,34 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject:(PCProject *)aProject
 {
-    PCProject *currentProject = nil;
-    NSString  *path = [aProject projectPath];
-    NSString  *projectName = [path lastPathComponent];
-    NSString  *key;
-    
-    key = [path stringByAppendingPathComponent:projectName];
-    key = [key stringByAppendingPathExtension:@"pcproj"];
-  
-    currentProject = RETAIN([loadedProjects objectForKey:key]);
-    if( !currentProject )
+  PCProject *currentProject = nil;
+  NSString  *path = [aProject projectPath];
+  NSString  *projectName = [path lastPathComponent];
+  NSString  *key;
+
+  key = [path stringByAppendingPathComponent:projectName];
+  key = [key stringByAppendingPathExtension:@"pcproj"];
+
+  currentProject = RETAIN([loadedProjects objectForKey:key]);
+  if (!currentProject)
     {
-        return;
+      return;
     }
 
-    // Remove it from the loaded projects! This is the only place it
-    // is retained, so it should dealloc after this.
-    [loadedProjects removeObjectForKey:key];
-    if ([loadedProjects count] == 0)
-      [self setActiveProject: nil];
-    else if (currentProject == [self activeProject])
-      [self setActiveProject:[[loadedProjects allValues] lastObject]];
+  // Remove it from the loaded projects! This is the only place it
+  // is retained, so it should dealloc after this.
+  [loadedProjects removeObjectForKey:key];
+  if ([loadedProjects count] == 0)
+    [self setActiveProject: nil];
+  else if (currentProject == [self activeProject])
+    [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-    if ([loadedProjects count] == 0) 
+  if ([loadedProjects count] == 0) 
     {
-	[inspector performClose:self];
+      [inspector performClose:self];
     }
-    RELEASE(currentProject);
+
+  RELEASE(currentProject);
 }
 
 - (void)closeProject

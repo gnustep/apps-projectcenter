@@ -1,3 +1,37 @@
+2003-07-02 Serg Stoyan <stoyan@hologr.com>
+
+	* PCAppProj/PCAppProj.m:
+	* PCBundleProj/PCBundleProj.m:
+	* PCGormProj/PCGormProj.m:
+	* PCLibProj/PCLibProj.m:
+	* PCRenaissanceProj/PCRenaissanceProj.m:
+	* PCToolProj/PCToolProj.m:
+	Set project type field to class description both in GNUstep and 
+	non-GNUstep environment. Fixes bug #3393.
+
+	* PCAppProj/PCAppProject.m:
+	(_initUI): Rearrangements of controls. Release control after adding 
+	to superview.
+
+	* PCLib/PCFileManager.m:
+	(showAddFileWindow): Handling of image, docs, models and non project
+	files added. Now images go into Images subdir, docs into Documentation,
+	.gorm files into $LANGUAGE.lproj subdir.
+
+	* PCLib/PCProject+UInterface.m:
+	(_initUI): Files' history list enabled back. Adjust size of history 
+	list. Added some fileds, controls rearranged in Project Inspector.
+
+	* PCLib/PCProject.h: Added definition of new Inspector fields.
+	* PCLib/PCProject.m: (updateValuesFromProjectDict): Set project's 
+	language.
+	* PCLib/PCProjectBuilder.m: Stability improved via cleanup in build
+	task handling.
+	(topButtonPressed:): Removed.
+
+	* PCLib/PCProjectManager+UInterface.m: ProjectInspector content view
+	resized. Changed title from "Inspector" to "Project Inspector".
+
 2003-06-20 Serg Stoyan <stoyan@hologr.com>
 
 	* Images/ButtonTile.tiff: Added.

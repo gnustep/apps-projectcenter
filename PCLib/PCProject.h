@@ -144,15 +144,20 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     NSTextField        *fileIconTitle;
 
     id          projectAttributeInspectorView;
-    NSTextField *installPathField;
-    NSTextField *toolField;
     NSTextField *ccOptField;
     NSTextField *ldOptField;
+    NSTextField *installPathField;
+    NSTextField *toolField;
+    NSTextField *headersField;
+    NSTextField *libsField;
 
     id          projectProjectInspectorView;
     NSTextField *projectTypeField;
+    NSTextField *projectNameField;
+    NSTextField *projectLanguageField;
 
     id          projectFileInspectorView;
+    NSImageView  *fileIconView;
     NSTextField *fileNameField;
     NSButton    *changeFileNameButton;
     
