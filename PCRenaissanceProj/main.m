@@ -1,7 +1,7 @@
-#import <AppKit/AppKit.h>
-#import <Foundation/Foundation.h>
-#import <Renaissance/Renaissance.h>
-#import "AppController.h"
+#include <Foundation/Foundation.h>
+#include <AppKit/AppKit.h>
+#include <Renaissance/Renaissance.h>
+#include "AppController.h"
 
 
 /*

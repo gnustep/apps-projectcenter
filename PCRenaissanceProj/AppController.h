@@ -9,8 +9,8 @@
 #ifndef _APPCONTROLLER_H_
 #define _APPCONTROLLER_H_
 
-#import <Foundation/Foundation.h>
-#import <Renaissance/Renaissance.h>
+#include <Foundation/Foundation.h>
+#include <Renaissance/Renaissance.h>
 
 @interface AppController : NSObject
 {
@@ -21,5 +21,5 @@
 
 @end
 
-#endif // _APPCONTROLLER_H_
+#endif /* _APPCONTROLLER_H_ */
 

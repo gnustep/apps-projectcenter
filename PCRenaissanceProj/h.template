@@ -1,7 +1,12 @@
 $$
 /* $FILENAME$ created by $USERNAME$ on $DATE$ */
 
-#import <AppKit/AppKit.h>
+#ifdef _PC_HEADER_$FILENAMESANSEXTENSION$_H_
+#define _PC_HEADER_$FILENAMESANSEXTENSION$_H_
+
+#include <Foundation/Foundation.h>
+#include <AppKit/AppKit.h>
+#include <Renaissance/Renaissance.h>
 
 @interface $FILENAMESANSEXTENSION$ : NSObject
 {
@@ -9,3 +14,5 @@ $$
 }
 
 @end
+
+#endif /* _PC_HEADER_$FILENAMESANSEXTENSION$_H_ */
