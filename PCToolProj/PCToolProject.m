@@ -92,14 +92,7 @@
 				      PCClasses,@"Classes",
 				      nil] retain];
 
-#if defined(GNUSTEP)
         [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"ToolProject.nib" owner:self]) {
-            [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load ToolProject.gmodel" userInfo:nil] raise];
-            return nil;
-        }
-#endif
     }
     return self;
 }
