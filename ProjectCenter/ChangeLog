@@ -1,3 +1,49 @@
+2002-01-07 10:37  probert
+
+	* PC.project, PCMenuController.m, ProjectCenter.pcproj,
+	ProjectCenterInfo.plist: ProjectCenter now stores the project files
+	under PROJECTNAME.pcproj to avoid name clashes.
+
+2002-01-02 18:51  probert
+
+	* PC.project: Changed the build tool entry to /usr/bin/make in all
+	project files and templates.
+
+2002-01-02 17:05  probert
+
+	* GNUmakefile, PC.project: The inspector now handles the
+	installation path and other settings. Furthermore it does not save
+	changes automatically but marks the project as being edited.  Upon
+	'save' the project file and GNUmakefile are being saved, not
+	before! In addition the various PC* bundles are now maintained by
+	ProjectCenter itself.  The installation path for ProjectCenter.app
+	is corrected to the SYSTEM ROOT as well.
+
+2002-01-02 13:13  probert
+
+	* PCAppController.m: All bundles and libProjectCenter are now
+	installed under GNUSTEP_SYSTEM_ROOT.  Also the PC.proj templates
+	have now a correct install path default value.
+
+2002-01-01 19:09  probert
+
+	* GNUmakefile, PC.project, ProjectCenter_dist.tiff,
+	ProjectCenter_rpm.tiff: Added the icon for creating a tar.gz dist
+	and updated the project files using the latest CVS code.
+
+2002-01-01 18:27  probert
+
+	* ProjectCenterInfo.plist: ProjectCenter now validates project
+	dictionaries and updates them if requested.  I also added new keys
+	tp the PC.project files in order to be able to generate valid
+	*.spec.in files needed when building RPMs.
+
+2001-12-29 16:37  probert
+
+	* ChangeLog, ProjectCenterInfo.plist: Removed the toplevel
+	ChangeLog, updated the ChangeLogs in the subdirectories and raised
+	the version number to 0.2.6.
+
 2001-12-29 16:28  probert
 
 	* PCPrefController.h, PCPrefController.m: Automatic, periodic
