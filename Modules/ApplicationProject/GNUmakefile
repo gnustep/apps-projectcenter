@@ -23,13 +23,13 @@ ApplicationProject_PRINCIPAL_CLASS = PCAppProj
 # Resource files
 #
 ApplicationProject_RESOURCE_FILES= \
-Templates/AppController.h \
-Templates/AppController.m \
-Templates/main.m \
-Templates/PC.project \
-Templates/GNUmakefile.preamble \
-Templates/GNUmakefile.postamble \
-Templates/Main.gorm
+Resources/AppController.h \
+Resources/AppController.m \
+Resources/main.m \
+Resources/PC.project \
+Resources/GNUmakefile.preamble \
+Resources/GNUmakefile.postamble \
+Resources/Main.gorm
 
 #
 # Header files
