@@ -141,8 +141,8 @@
   runButton = [matrix cellAtRow:0 column:0];
   [runButton setTag:0];
   [runButton setImagePosition:NSImageOnly];
-  [runButton setImage:IMAGE(@"ProjectCenter_run")];
-  [runButton setAlternateImage:IMAGE(@"ProjectCenter_run")];
+  [runButton setImage:IMAGE(@"ProjectCentre_run")];
+  [runButton setAlternateImage:IMAGE(@"ProjectCentre_run")];
   [runButton setButtonType:NSOnOffButton];
   [runButton setTitle:@"Run"];
   [runButton setAction:@selector(run:)];
@@ -151,7 +151,8 @@
   [button setTag:1];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCenter_debug")];
-  [button setButtonType:NSMomentaryPushButton];
+  [button setAlternateImage:IMAGE(@"ProjectCenter_debug")];
+  [button setButtonType:NSOnOffButton];
   [button setTitle:@"Clean"];
   [button setAction:@selector(debug:)];
 }
