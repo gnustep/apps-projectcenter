@@ -153,35 +153,30 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+  NSString *h = [[NSProcessInfo processInfo] hostName];
+  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
+  [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+  
+  [bundleLoader loadBundles];
+  
+  // The DO server
+  doServer = [[PCServer alloc] init];
+  
+  NS_DURING
+    
+  doConnection = [[NSConnection alloc] init];
+  [doConnection registerName:connectionName];
+  
+  NS_HANDLER
+    
+  NSRunAlertPanel(@"Warning!",@"Could not register the DO connection %@",@"OK",nil,nil,nil,connectionName);
+  NS_ENDHANDLER
+    
+  [[NSNotificationCenter defaultCenter] addObserver:doServer selector:@selector(connectionDidDie:) name:NSConnectionDidDieNotification object:doConnection];
+  
+  [doConnection setDelegate:doServer];
 
-    [bundleLoader loadBundles];
-
-    // The DO server
-    doServer = [[PCServer alloc] init];
-
-#if defined(GNUSTEP)
-    NS_DURING
-    doConnection = [NSConnection newRegisteringAtName:@"ProjectCenter" withRootObject:doServer];
-    [logger logMessage:@"Successful initialisation of the DO connection 'ProjectCenter'." tag:INFORMATION];
-    NS_HANDLER
-      [logger logMessage:@"Could not initialise the DO connection 'ProjectCenter'!" tag:WARNING];
-    NSRunAlertPanel(@"Warning!",@"Could not register the DO connection 'ProjectCenter'",@"OK",nil,nil,nil);
-    NS_ENDHANDLER
-#else
-    doConnection = [NSConnection defaultConnection];
-    [doConnection setRootObject:doServer];
-    if (![doConnection registerName:@"ProjectCenter"]) {
-        [logger logMessage:@"Could not initialise the DO connection 'ProjectCenter'!" tag:WARNING];
-    }
-    else {
-        [logger logMessage:@"Successful initialisation of the DO connection 'ProjectCenter'." tag:INFORMATION];
-    }
-#endif
-    [[NSNotificationCenter defaultCenter] addObserver:doServer selector:@selector(connectionDidDie:) name:NSConnectionDidDieNotification object:doConnection];
-    [doConnection setDelegate:doServer];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:PCAppDidInitNotification object:nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:PCAppDidInitNotification object:nil];
 }
 
 - (BOOL)applicationShouldTerminate:(id)sender
