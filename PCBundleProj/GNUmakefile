@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -21,17 +24,17 @@ include $(GNUSTEP_MAKEFILES)/common.make
 PACKAGE_NAME=PCBundleProj
 BUNDLE_NAME=PCBundleProj
 BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter
 PCBundleProj_PRINCIPAL_CLASS=PCBundleProj
-#
 
+
+#
 # Additional libraries
 #
 
 PCBundleProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -39,7 +42,6 @@ PCBundleProj_RESOURCE_FILES= \
 PC.proj 
 
 #
-
 # Header files
 #
 
@@ -48,7 +50,6 @@ PCBundleProject.h \
 PCBundleProj.h 
 
 #
-
 # Class files
 #
 
@@ -57,7 +58,6 @@ PCBundleProject.m \
 PCBundleProj.m 
 
 #
-
 # C files
 #
 

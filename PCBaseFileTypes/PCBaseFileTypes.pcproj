@@ -18,7 +18,7 @@
     );
     IMAGES = (
     );
-    INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter";
+    INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter";
     INTERFACES = (
     );
     LANGUAGE = English;

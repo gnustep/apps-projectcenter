@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -21,17 +24,17 @@ include $(GNUSTEP_MAKEFILES)/common.make
 PACKAGE_NAME=PCBaseFileTypes
 BUNDLE_NAME=PCBaseFileTypes
 BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter
 PCBaseFileTypes_PRINCIPAL_CLASS=PCBaseFileType
-#
 
+
+#
 # Additional libraries
 #
 
 PCBaseFileTypes_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -45,7 +48,6 @@ nsviewclass.template \
 nsviewheader.template 
 
 #
-
 # Header files
 #
 
@@ -53,7 +55,6 @@ PCBaseFileTypes_HEADERS= \
 PCBaseFileType.h 
 
 #
-
 # Class files
 #
 
@@ -61,7 +62,6 @@ PCBaseFileTypes_OBJC_FILES= \
 PCBaseFileType.m 
 
 #
-
 # C files
 #
 
