@@ -304,7 +304,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     [[project projectWindow] center];
 
     [project setProjectBuilder:self];
+    
+    aPath = [aPath stringByAppendingPathComponent: [aPath lastPathComponent]];
+    aPath = [aPath stringByAppendingPathExtension: @"pcproj"];
     [loadedProjects setObject:project forKey:aPath];
+    
     [self setActiveProject:project];
     [project setDelegate:self];
     
@@ -448,7 +452,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject
 {
-    [[[self activeProject] projectWindow] performClose:self];
+  [[[self activeProject] projectWindow] performClose:self];
 }
 
 // ===========================================================================
