@@ -357,7 +357,7 @@
 {
   NSAssert(aProject, @"No project specified!");
 
-  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
+//  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
   
   if ((self = [super init]))
     {
@@ -390,8 +390,8 @@
   [buildArgs release];
   [makePath release];
 
-  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
-  PCLogInfo(self, @"RC: %i", [self retainCount]);
+//  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
+//  PCLogInfo(self, @"RC: %i", [self retainCount]);
   [componentView release];
 
   [super dealloc];

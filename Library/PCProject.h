@@ -210,9 +210,9 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)keyPath;
 
 - (NSString *)rootCategoryForCategoryPath:(NSString *)categoryPath;
-- (NSString *)categoryForCategoryPath:(NSString *)categoryPath;
+//- (NSString *)categoryForCategoryPath:(NSString *)categoryPath;
 - (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath;
-- (NSString *)keyForCategoryPath:(NSString *)categoryPath;
+//- (NSString *)keyForCategoryPath:(NSString *)categoryPath;
 
 @end
 

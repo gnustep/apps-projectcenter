@@ -245,7 +245,7 @@ enum {
   fp = [fp stringByAppendingPathComponent:pn];
   fp = [fp stringByAppendingPathComponent:dp];
 
-  PCLogInfo(self, @"debug: %@", fp);
+//  PCLogInfo(self, @"debug: %@", fp);
   
   if ([fm isExecutableFileAtPath:fp] == NO)
     {

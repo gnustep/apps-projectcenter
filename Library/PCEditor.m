@@ -38,7 +38,7 @@
   NSRect       rect;
   float        windowWidth;
 
-  PCLogInfo(self, @"[_createWindow]");
+//  PCLogInfo(self, @"[_createWindow]");
 
   style = NSTitledWindowMask
         | NSClosableWindowMask

@@ -127,7 +127,7 @@ NSString
 
 - (BOOL)close:(id)sender
 {
-  PCLogInfo(self, @"Closing %@ project", projectName);
+//  PCLogInfo(self, @"Closing %@ project", projectName);
   
   // Save visible windows and panels positions to project dictionary
   if (isSubproject == NO)
@@ -283,7 +283,7 @@ NSString
   [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
   [projectFileDict writeToFile:projectFile atomically:YES];
   
-  PCLogInfo(self, @"Windows and geometries saved");
+//  PCLogInfo(self, @"Windows and geometries saved");
 
   return YES;
 }
@@ -688,7 +688,7 @@ NSString
       complementaryDir = [self dirForCategoryKey:complementaryKey];
     }
     
-  PCLogInfo(self, @"{%@} {addAndCopyFiles} %@", projectName, fileList);
+//  PCLogInfo(self, @"{%@} {addAndCopyFiles} %@", projectName, fileList);
 
   // Validate files
   while ((file = [fileEnum nextObject]))
@@ -711,7 +711,7 @@ NSString
 	}
     }
 
-  PCLogInfo(self, @"{addAndCopyFiles} %@", fileList);
+//  PCLogInfo(self, @"{addAndCopyFiles} %@", fileList);
 
   // Copy files
   if (![key isEqualToString:PCLibraries]) // Don't copy libraries
@@ -724,7 +724,7 @@ NSString
 	  return NO;
 	}
 
-      PCLogInfo(self, @"Complementary files: %@", complementaryFiles);
+//      PCLogInfo(self, @"Complementary files: %@", complementaryFiles);
       // Complementaries
       if (![fileManager copyFiles:complementaryFiles 
 	            intoDirectory:complementaryDir])
@@ -835,8 +835,8 @@ NSString
 	}
     }
 
-  PCLogInfo(self, @"{%@} move %@ to %@ category: %@", 
-	    projectName, fromPath, toPath, selectedCategory);
+/*  PCLogInfo(self, @"{%@} move %@ to %@ category: %@", 
+	    projectName, fromPath, toPath, selectedCategory);*/
 
   if ([fm movePath:fromPath toPath:toPath handler:nil] == YES)
     {
@@ -951,8 +951,14 @@ NSString
 // Key - the uppercase names located in PC.roject, e.g. "CLASS_FILES"
 - (NSString *)keyForCategory:(NSString *)category
 {
-  int index = [rootCategories indexOfObject:category];
+  int index = -1;
 
+  if (![rootCategories containsObject:category])
+    {
+      return nil;
+    }
+    
+  index = [rootCategories indexOfObject:category];
   return [rootKeys objectAtIndex:index];
 }
 
@@ -1145,8 +1151,8 @@ NSString
   // Subproject in project but not loaded
   if ([[projectDict objectForKey:PCSubprojects] containsObject:name])
     {
-      PCLogInfo(self, @"{%@}Searching for loaded subproject: %@",
-		projectName, name);
+/*      PCLogInfo(self, @"{%@}Searching for loaded subproject: %@",
+		projectName, name);*/
       // Search for subproject with name among loaded subprojects 
       for (i = 0; i < count; i++)
 	{
@@ -1165,8 +1171,8 @@ NSString
 	  spFile = [projectPath stringByAppendingPathComponent:name];
 	  spFile = [spFile stringByAppendingPathExtension:@"subproj"];
 	  spFile = [spFile stringByAppendingPathComponent:@"PC.project"];
-	  PCLogInfo(self, @"Not found! Load subproject: %@ at path: %@",
-		    name, spFile);
+/*	  PCLogInfo(self, @"Not found! Load subproject: %@ at path: %@",
+		    name, spFile);*/
 	  sp = [projectManager loadProjectAt:spFile];
 	  if (sp)
 	    {
@@ -1249,8 +1255,8 @@ NSString
 
   pathArray = [categoryPath componentsSeparatedByString:@"/"];
 
-  PCLogInfo(self, @"{%@}{contentAtCategoryPath:} %@",
-	    projectName, categoryPath);
+/*  PCLogInfo(self, @"{%@}{contentAtCategoryPath:} %@",
+	    projectName, categoryPath);*/
 
   // Click on /Category
   if ([pathArray count] == 2)
@@ -1302,22 +1308,16 @@ NSString
       return [activeProject hasChildrenAtCategoryPath:categoryPath];
     }
 
-  PCLogInfo(self, @"{%@} hasChildrenAtCategoryPath: %@", 
-	    [self projectName], categoryPath);
-
   listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
   if ([rootCategories containsObject:listEntry])
     {
       return YES;
     }
-
-  category = [projectBrowser nameOfSelectedCategory];
-  categoryKey = [self keyForCategory:category];
-  if ([categoryKey isEqualToString:PCSubprojects]
-      && [[projectDict objectForKey:PCSubprojects] containsObject:listEntry])
-    {
-      return YES;
-    }
+    
+  if ([[projectDict objectForKey:PCSubprojects] containsObject:listEntry])
+      {
+	return YES;
+      }
   
   return NO;
 }
@@ -1336,7 +1336,7 @@ NSString
   return [pathComponents objectAtIndex:1];
 }
 
-- (NSString *)categoryForCategoryPath:(NSString *)categoryPath
+/*- (NSString *)categoryForCategoryPath:(NSString *)categoryPath
 {
   NSString *category = nil;
   NSString *key = nil;
@@ -1375,7 +1375,7 @@ NSString
     }
   
   return category;
-}
+}*/
 
 - (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath
 {
@@ -1392,16 +1392,16 @@ NSString
   category = [self rootCategoryForCategoryPath:categoryPath];
   key = [self keyForCategory:category];
 
-  PCLogInfo(self, @"{%@}(keyForRootCategoryInCategoryPath): %@ key:%@", 
-	    projectName, categoryPath, key);
+/*  PCLogInfo(self, @"{%@}(keyForRootCategoryInCategoryPath): %@ key:%@", 
+	    projectName, categoryPath, key);*/
 
   return key;
 }
 
-- (NSString *)keyForCategoryPath:(NSString *)categoryPath
+/*- (NSString *)keyForCategoryPath:(NSString *)categoryPath
 {
   return [self keyForCategory:[self categoryForCategoryPath:categoryPath]];
-}
+}*/
 
 @end
 

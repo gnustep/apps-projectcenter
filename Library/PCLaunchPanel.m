@@ -104,19 +104,19 @@
       [contentBox display];
     }
 
-  PCLogInfo(self, @"orderFront: %@ -> %@", 
-	    launcherView, [launcherView superview]);
+/*  PCLogInfo(self, @"orderFront: %@ -> %@", 
+	    launcherView, [launcherView superview]);*/
 
   [super orderFront:self];
 }
 
 - (void)close
 {
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+//  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
   [contentBox setContentView:emptyBox];
   
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+//  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
   [super close];
 }

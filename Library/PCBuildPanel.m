@@ -104,19 +104,19 @@
       [contentBox display];
     }
 
-  PCLogInfo(self, @"orderFront: %@ -> %@", 
-	    builderView, [builderView superview]);
+/*  PCLogInfo(self, @"orderFront: %@ -> %@", 
+	    builderView, [builderView superview]);*/
 
   [super orderFront:self];
 }
 
 - (void)close
 {
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+//  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
   [contentBox setContentView:emptyBox];
   
-  PCLogInfo(self, @"close: %@", [contentBox contentView]);
+//  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
   [super close];
 }
@@ -132,8 +132,8 @@
   
   currentProject = rootProject;
 
-  PCLogInfo(self, @"activeProjectDidChange to: %@", 
-	    [rootProject projectName]);
+/*  PCLogInfo(self, @"activeProjectDidChange to: %@", 
+	    [rootProject projectName]);*/
 
   if (!rootProject)
     {

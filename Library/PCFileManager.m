@@ -209,13 +209,13 @@ static PCFileManager *_mgr = nil;
   NSDictionary *theCreator = [creators objectForKey:fileType];
   NSString     *key = [theCreator objectForKey:@"ProjectKey"];
 
-  PCLogInfo(self, @"[createFile] %@", fileName);
+//  PCLogInfo(self, @"[createFile] %@", fileName);
 
   path = [projectManager fileManager:self 
                       willCreateFile:fileName
 		             withKey:key];
 
-  PCLogInfo(self, @"creating file at %@", path);
+//  PCLogInfo(self, @"creating file at %@", path);
 
   // Create file
   if (path) 

@@ -57,6 +57,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [browser setTarget:self];
       [browser setAction:@selector(click:)];
       [browser setDoubleAction:@selector(doubleClick:)];
+      [browser setRefusesFirstResponder:YES];
       [browser loadColumnZero];
 
       [[NSNotificationCenter defaultCenter] 
@@ -236,15 +237,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       return YES;
     }
 
-  // HACK!!! NSBrowser needs fixing!!!
-  while ((selectedColumn = [browser selectedColumn]) >= 0)
-    {
-      columnMatrix = [browser matrixInColumn:selectedColumn];
-      [columnMatrix deselectAllCells];
-    }
-  // End of HACK
-
-  PCLogInfo(self, @"[setPath]: %@", path);
+//  PCLogInfo(self, @"[setPath]: %@", path);
 
   res = [browser setPath:path];
 
@@ -340,8 +333,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       filePath = [activeProject dirForCategoryKey:key];
       filePath = [filePath stringByAppendingPathComponent:fileName];
 
-      PCLogInfo(self, @"[click] category: %@ filePath: %@",
-		category, filePath);
+/*      PCLogInfo(self, @"[click] category: %@ filePath: %@",
+		category, filePath);*/
 
       if ([activeProject isEditableCategory:category]
 	  && [fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)

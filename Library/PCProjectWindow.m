@@ -266,7 +266,7 @@
 
       pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
       windowFrame = [pcWindows objectForKey:@"ProjectWindow"];
-      PCLogInfo(self, @"window frame %@", windowFrame);
+//      PCLogInfo(self, @"window frame %@", windowFrame);
       if (windowFrame != nil)
 	{
 	  PCLogStatus(self, @"PCProjectWindow: set frame from project");
@@ -547,7 +547,7 @@
   NSPanel       *panel = [[project projectManager] loadedFilesPanel];
   NSScrollView  *componentView = [[project projectLoadedFiles] componentView];
       
-  PCLogInfo(self, @"showProjectLoadedFiles");
+//  PCLogInfo(self, @"showProjectLoadedFiles");
 
   if ([self hasLoadedFilesView])
     {
@@ -840,7 +840,7 @@
 
 - (void)makeKeyAndOrderFront:(id)sender
 {
-  PCLogInfo(self, @"makeKeyAndOrderFront sender: %@", [sender className]);
+//  PCLogInfo(self, @"makeKeyAndOrderFront sender: %@", [sender className]);
   [projectWindow makeKeyAndOrderFront:nil];
 }
 
@@ -896,8 +896,8 @@
   [projectWindow makeMainWindow];
 //  [projectWindow makeFirstResponder:(NSResponder *)firstResponder];
 
-  PCLogInfo(self, @"windowDidBecomeKey: activeSubproject %@",
-	    [[project activeSubproject] projectName]);
+/*  PCLogInfo(self, @"windowDidBecomeKey: activeSubproject %@",
+	    [[project activeSubproject] projectName]);*/
 
   if ([[project projectManager] rootActiveProject] != project)
     {

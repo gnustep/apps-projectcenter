@@ -366,7 +366,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-  PCLogInfo(self, @"saveAllProjectsIfNeeded");
+//  PCLogInfo(self, @"saveAllProjectsIfNeeded");
 
   // If this method was called not by NSTimer, check if we should save projects
   if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
@@ -702,7 +702,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return NO;
     }
     
-  PCLogInfo(self, @"save root project: %@", [rootProject projectName]);
+//  PCLogInfo(self, @"save root project: %@", [rootProject projectName]);
 
   // Save PC.project and the makefiles!
   if ([rootProject save] == NO)
@@ -725,8 +725,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   files = [fileManager filesForAdd];
 
-  PCLogInfo(self, @"[addProjectFiles] %@ to category: %@ of project %@",
-	    files, categoryKey, [activeProject projectName]);
+/*  PCLogInfo(self, @"[addProjectFiles] %@ to category: %@ of project %@",
+	    files, categoryKey, [activeProject projectName]);*/
 
   // No files was selected 
   if (!files)
@@ -772,9 +772,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       project = activeProject;
     }
 
-  PCLogInfo(self, @"%@: %@ from %@", removeString, files, directory);
+/*  PCLogInfo(self, @"%@: %@ from %@", removeString, files, directory);
   PCLogInfo(self, @"[removeProjectFiles]:%@ KEY:%@", 
-	    [activeProject projectName], categoryKey);
+	    [activeProject projectName], categoryKey);*/
 
   if (files)
     {
@@ -905,7 +905,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSEnumerator   *enumerator = [loadedProjects objectEnumerator];
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-  PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
+//  PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
 
   while ([loadedProjects count] > 0)
     {
@@ -1093,7 +1093,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)newSubproject
 {
-  PCLogInfo(self, @"newSubproject");
+//  PCLogInfo(self, @"newSubproject");
 
   if (!nsPanel)
     {
@@ -1192,7 +1192,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [subproject setSuperProject:activeProject];
   [subproject setProjectManager:self];
 
-  PCLogInfo(self, @"{createSubproject} add to %@", [activeProject projectName]);
+//  PCLogInfo(self, @"{createSubproject} add to %@", [activeProject projectName]);
   [activeProject addSubproject:subproject];
 
   return subproject;
@@ -1240,7 +1240,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
     }
   
-  PCLogInfo(self, @"{addSubproject} %@", files);
+//  PCLogInfo(self, @"{addSubproject} %@", files);
 
   if (![fileManager copyFiles:files
                 intoDirectory:[activeProject projectPath]])
@@ -1255,7 +1255,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       spDict = [NSDictionary dictionaryWithContentsOfFile:pcProject];
       spName = [spDict objectForKey:PCProjectName];
       
-      PCLogInfo(self, @"{addSubproject} dir: %@ file: %@", spDir, pcProject);
+//      PCLogInfo(self, @"{addSubproject} dir: %@ file: %@", spDir, pcProject);
 	
       [activeProject addSubprojectWithName:spName];
     }

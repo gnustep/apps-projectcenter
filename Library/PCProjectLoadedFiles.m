@@ -226,7 +226,7 @@
 - (void)doubleClick:(id)sender
 {
   // TODO: Open separate editor window for file
-  PCLogInfo(self, @"ProjectLoadedFiles doubleClick received");
+//  PCLogInfo(self, @"ProjectLoadedFiles doubleClick received");
 }
 
 // ===========================================================================
@@ -245,7 +245,7 @@
       return;
     }
 
-  PCLogInfo(self, @"File did open in project %@", [project projectName]);
+//  PCLogInfo(self, @"File did open in project %@", [project projectName]);
 
   filePath = [editor path];
   
