@@ -1,3 +1,30 @@
+2001-01-14 17:19  robert
+
+	* ProjectCenter_main.m: cleanup in main()
+
+2001-01-14 16:38  robert
+
+	* PCPrefController.h, PCPrefController.m: UI cleanup and
+	optimisation
+
+2001-01-10 16:19  robert
+
+	* GNUmakefile, ProjectCenter_rpm.tiff: Initial support for RPM SPEC
+	file creation
+
+2001-01-07 15:43  robert
+
+	* Info-project.plist, PCAppController+MenuHandling.m: some more
+	minor fix and cleanup work
+
+2000-11-10 19:27  robert
+
+	* PCPrefController.m: some daily work...
+
+2000-11-10 15:07  robert
+
+	* ChangeLog: changelog for 0.2.0
+
 2000-11-04 18:11  robert
 
 	* PCPrefController.m: some interface changes

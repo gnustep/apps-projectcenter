@@ -1,3 +1,13 @@
+2001-01-14 17:15  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project,
+	PCBaseFileType.m: removed old PB stuff and rearranged the file
+	types
+
+2000-11-10 15:08  robert
+
+	* ChangeLog: changelog for 0.2
+
 2000-10-29 13:00  robert
 
 	* protocol.template: updated textfiles and new version coming

@@ -1,3 +1,35 @@
+2001-01-14 17:08  robert
+
+	* PCBundleProject.m: Added the supporting files category
+
+2001-01-14 16:08  robert
+
+	* PCBundleProject.h, PCBundleProject.m: the principal class can now
+	be set using the GUI
+
+2001-01-13 21:46  robert
+
+	* PCBundleMakefileFactory.m: fix in the bundle project related to
+	the principal class.
+
+2001-01-13 16:56  robert
+
+	* PCBundleMakefileFactory.m: the principal class should now be set
+	in any cases
+
+2001-01-10 16:19  robert
+
+	* PCBundleMakefileFactory.m: Initial support for RPM SPEC file
+	creation
+
+2000-11-10 19:27  robert
+
+	* PCBundleProject.h, PCBundleProject.m: some daily work...
+
+2000-11-10 15:08  robert
+
+	* ChangeLog: changelog for 0.2
+
 2000-11-04 14:22  robert
 
 	* GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble,

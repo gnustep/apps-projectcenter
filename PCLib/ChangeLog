@@ -1,3 +1,82 @@
+2001-01-14 18:01  robert
+
+	* PB.project: removing old PB stuff
+
+2001-01-14 17:57  robert
+
+	* PCProjectBuilder.m, PCProjectDebugger.h, PCProjectDebugger.m:
+	Major improvements to the launch/debugger part
+
+2001-01-14 17:23  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble: removed old PB
+	stuff
+
+2001-01-14 16:53  robert
+
+	* PCProject.m: Fixed some mem leaks
+
+2001-01-13 21:46  robert
+
+	* PCFileManager.m, PCProject.m: fix in the bundle project related
+	to the principal class.
+
+2001-01-11 20:21  robert
+
+	* PCProjectBuilder.m, PCProjectDebugger.m: some more textview
+	handling...sigh
+
+2001-01-11 19:42  robert
+
+	* PCProjectBuilder.m, PCProjectDebugger.h, PCProjectDebugger.m:
+	Added a primitive app/too launcher/debugger
+
+2001-01-10 16:19  robert
+
+	* PCProjectBuilder.h, PCProjectBuilder.m: Initial support for RPM
+	SPEC file creation
+
+2001-01-07 15:43  robert
+
+	* PCProjectManager.h, PCProjectManager.m: some more minor fix and
+	cleanup work
+
+2001-01-07 15:11  robert
+
+	* PCBrowserController.m: removed unneeded log
+
+2001-01-07 15:10  robert
+
+	* PCProjectManager.m: logs only when in DEBUG
+
+2001-01-07 15:07  robert
+
+	* PCBrowserController.m: opening files using the workspace now
+	works a little bit better...
+
+2001-01-07 14:44  robert
+
+	* PCServer.h, PCServer.m: reopening a file in the internal editor
+	now works w/o crashing
+
+2001-01-07 13:12  robert
+
+	* PCBrowserController.m, PCProject.m, PCProjectManager.m: reopening
+	projects is now possible - finally...
+
+2001-01-06 17:26  robert
+
+	* PCProject.h, PCProject.m, PCServer.m: minor bugfix in the editor
+	textview and new method to copy files into proj
+
+2000-11-10 19:27  robert
+
+	* PCProject.h, PCProject.m, PCProjectManager.m: some daily work...
+
+2000-11-10 15:07  robert
+
+	* ChangeLog: changelog for 0.2.0
+
 2000-11-04 17:47  robert
 
 	* PCBundleLoader.m: the bundle path is now depending on the env

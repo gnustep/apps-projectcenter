@@ -1,3 +1,20 @@
+2001-01-14 17:09  robert
+
+	* PCLibProject.m: Added the supporting files category
+
+2001-01-10 15:17  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project: no
+	PB support anymore
+
+2000-11-10 19:27  robert
+
+	* PCLibProject.h, PCLibProject.m: some daily work...
+
+2000-11-10 15:08  robert
+
+	* ChangeLog: changelog for 0.2
+
 2000-10-15 20:29  robert
 
 	* PCLibProject.m: some code improvements regarding the inspector

@@ -1,3 +1,51 @@
+2001-01-14 17:08  robert
+
+	* PCAppProject.m: Added the supporting files category
+
+2001-01-14 16:07  robert
+
+	* PCAppProject.h, PCAppProject.m: teh application class can now be
+	set - althoug still ignored by the makefile
+
+2001-01-10 15:18  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project,
+	PCAppMakefileFactory.m: no PB support anymore, inclusion of
+	PACKAGE_NAME
+
+2001-01-10 14:10  robert
+
+	* main.m: applied the patch of nicola
+
+2001-01-10 13:56  robert
+
+	* AppController.m: default is YES in applicationShouldTerminate:
+
+2001-01-07 15:43  robert
+
+	* PCAppProject.m: some more minor fix and cleanup work
+
+2001-01-07 12:36  robert
+
+	* PCAppProject.m: somehow the makefile was not being written...?!
+
+2001-01-06 17:44  robert
+
+	* PCAppProject.h, PCAppProject.m: AppIcons are now set/cleaned
+	correctly
+
+2001-01-03 07:38  robert
+
+	* AppController.h, AppController.m: fixed a typo
+
+2000-11-10 19:27  robert
+
+	* PCAppProject.h, PCAppProject.m: some daily work...
+
+2000-11-10 15:07  robert
+
+	* ChangeLog: changelog for 0.2
+
 2000-11-04 13:41  robert
 
 	* PCAppProj.m, PCAppProject.h, PCAppProject.m: we do not use
