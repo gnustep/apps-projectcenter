@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PROJECT_DEBUGGER_PROTO_H
+#define _PROJECT_DEBUGGER_PROTO_H
+
 /*
  Description:
 
@@ -39,3 +42,5 @@
 @protocol ProjectDebugger
 
 @end
+
+#endif

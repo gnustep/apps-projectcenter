@@ -24,56 +24,29 @@
    $Id$
 */
 
-#define PC_EXTERN	extern
-#define PRIVATE_EXTERN	__private_extern__
+#ifndef _PROJECTCENTER_H
+#define _PROJECTCENTER_H
 
-#define BUNDLE_PATH	@"/LocalDeveloper/ProjectCenter/Bundles"
+#import <ProjectCenter/PCBundleLoader.h>
+#import <ProjectCenter/PCDataSource.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCServer.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectBuilder.h>
+#import <ProjectCenter/PCProjectDebugger.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCBrowserController.h>
+#import <ProjectCenter/ProjectDebugger.h>
+#import <ProjectCenter/ProjectEditor.h>
+#import <ProjectCenter/ProjectType.h>
+#import <ProjectCenter/Server.h>
+#import <ProjectCenter/PreferenceController.h>
+#import <ProjectCenter/ProjectBuilder.h>
+#import <ProjectCenter/FileCreator.h>
+#import <ProjectCenter/PCEditor.h>
+#import <ProjectCenter/PCEditorController.h>
+#import <ProjectCenter/PCEditorView.h>
 
-#define Editor				@"Editor"
-#define Debugger			@"Debugger"
-#define Compiler			@"Compiler"
-#define PromptOnClean			@"PromtOnClean"
-#define PromptOnQuit			@"PromtOnQuit"
-#define SaveOnQuit			@"SaveOnQuit"
-#define AutoSave			@"AutoSave"
-#define KeepBackup			@"KeepBackup"
-#define AutoSavePeriod			@"AutoSavePeriod"
-#define RootBuildDirectory		@"RootBuildDirectory"
-#define DeleteCacheWhenQuitting		@"DeleteBuildCacheWhenQuitting"
-#define BundlePaths			@"BundlePaths"
-#define SuccessSound			@"SuccessSound"
-#define FailureSound			@"FailureSound"
-#define ExternalEditor                  @"ExternalEditor"
-
-#define PCAppDidInitNotification	@"PCAppDidInit"
-#define PCAppWillTerminateNotification	@"PCAppWillTerminate"
-
-#define NIB_NOT_FOUND_EXCEPTION		@"NibNotFoundException"
-#define UNKNOWN_PROJECT_TYPE_EXCEPTION	@"UnknownProjectTypeException"
-#define NOT_A_PROJECT_TYPE_EXCEPTION	@"NoProjectTypeCreatorException"
-#define PROJECT_CREATION_EXCEPTION	@"ProjectCreationException"
-#define PROJECT_OPEN_FAILED_EXCEPTION	@"ProjectOpenFailedException"
-#define PROJECT_SAVE_FAILED_EXCEPTION	@"ProjectSaveFailedException"
-#define BUNDLE_MANAGER_EXCEPTION	@"BundleManagerException"
-
-#import "PCBundleLoader.h"
-#import "PCDataSource.h"
-#import "PCProjectManager.h"
-#import "PCServer.h"
-#import "PCProject.h"
-#import "PCProjectBuilder.h"
-#import "PCProjectDebugger.h"
-#import "PCFileManager.h"
-#import "PCBrowserController.h"
-#import "ProjectDebugger.h"
-#import "ProjectEditor.h"
-#import "ProjectType.h"
-#import "Server.h"
-#import "PreferenceController.h"
-#import "ProjectBuilder.h"
-#import "FileCreator.h"
-#import "PCEditorView.h"
-
-
-
+#endif
 

@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCPROJECT_H
+#define _PCPROJECT_H
+
 #import <AppKit/AppKit.h>
 
 #import "ProjectBuilder.h"
@@ -304,3 +307,5 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (void)windowWillClose:(NSNotification *)aNotification;
 
 @end
+
+#endif

@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCBUNDLELOADER_H
+#define _PCBUNDLELOADER_H
+
 /*
  Descriotion:
 
@@ -68,3 +71,5 @@
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle;
 
 @end
+
+#endif

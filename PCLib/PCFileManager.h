@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCFILEMANAGER_H
+#define _PCFILEMANAGER_H
+
 #import <Foundation/Foundation.h>
 
 @interface PCFileManager : NSObject
@@ -89,5 +92,4 @@
 
 @end
 
-
-
+#endif

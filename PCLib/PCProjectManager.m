@@ -520,10 +520,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     return [activeProject saveFile];
 }
 
-- (BOOL)saveFileAs:(NSString *)path
-{
-}
-
 - (BOOL)revertFile
 {
     if (!activeProject) 

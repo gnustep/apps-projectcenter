@@ -44,7 +44,8 @@
 	Server.h,
 	PCSplitView.h,
 	PCEditor.h,
-	PCEditorController.h
+	PCEditorController.h,
+	PCDefines.h
     );
     INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
     LANGUAGE = English;

@@ -45,6 +45,8 @@
 - (BOOL)revertFile;
 
 - (void)windowWillClose:(NSNotification *)aNotif;
+- (void)windowDidBecomeKey:(NSNotification *)aNotification;
+- (void)windowDidResignKey:(NSNotification *)aNotification;
 
 @end
 
@@ -53,6 +55,9 @@
 - (void)editorDidClose:(id)sender;
 
 @end
+
+extern NSString *PCEditorDidBecomeKeyNotification;
+extern NSString *PCEditorDidResignKeyNotification;
 
 #endif // _PCEDITOR_H_
 

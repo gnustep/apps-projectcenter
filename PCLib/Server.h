@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _SERVER_PROTO_H
+#define _SERVER_PROTO_H
+
 #import <AppKit/AppKit.h>
 
 #import "PCProject.h"
@@ -57,3 +60,5 @@
 - (BOOL)removeFileFromProject:(PCProject *)filePath;
 
 @end
+
+#endif

@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCBROWSERCONTROLLER_H
+#define _PCBROWSERCONTROLLER_H
+
 #import <AppKit/AppKit.h>
 
 @class PCProject;
@@ -56,3 +59,5 @@
 - (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column;
 
 @end
+
+#endif

@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCPROJECTMANAGER_H
+#define _PCPROJECTMANAGER_H
+
 #import <AppKit/AppKit.h>
 
 #import "PCProject.h"
@@ -135,7 +138,6 @@
 - (BOOL)openFile:(NSString *)path;
 
 - (BOOL)saveFile;
-- (BOOL)saveFileAs:(NSString *)path;
 - (BOOL)revertFile;
 - (BOOL)renameFileTo:(NSString *)path;
 - (BOOL)removeFilePermanently:(BOOL)yn;
@@ -171,4 +173,4 @@
 
 extern NSString *ActiveProjectDidChangeNotification;
 
-
+#endif

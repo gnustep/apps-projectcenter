@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PROJECT_EDITOR_PROTO_H
+#define _PROJECT_EDITOR_PROTO_H
+
 /*
  Description:
 
@@ -54,3 +57,5 @@
 - (void)editorWillTerminate:(id<ProjectEditor>)editor;
 
 @end
+
+#endif

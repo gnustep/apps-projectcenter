@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCSERVER_H
+#define _PCSERVER_H
+
 #import <AppKit/AppKit.h>
 
 #import "Server.h"
@@ -103,3 +106,5 @@ extern NSString *PCProjectBuildDidStopNotification;
 - (void)connectionDidDie:(NSNotification *)notif;
 
 @end
+
+#endif

@@ -62,7 +62,8 @@ ProjectType.h \
 Server.h \
 PCSplitView.h \
 PCEditor.h \
-PCEditorController.h 
+PCEditorController.h \
+PCDefines.h 
 
 #
 

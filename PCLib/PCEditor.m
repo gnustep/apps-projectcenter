@@ -11,6 +11,9 @@
 #import "PCEditor.h"
 #import "PCEditorView.h"
 
+NSString *PCEditorDidBecomeKeyNotification=@"PCEditorDidBecomeKeyNotification";
+NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
+
 @interface PCEditor (InitUI)
 
 - (void)_initUI;
@@ -200,11 +203,27 @@
     [view setText:text];
 }
 
-- (void)windowWillClose:(NSNotification *)aNotif
+- (void)windowWillClose:(NSNotification *)aNotification
 {
-    if( [[aNotif object] isEqual:window] )
+    if( [[aNotification object] isEqual:window] )
     {
         [self close];
+    }
+}
+
+- (void)windowDidBecomeKey:(NSNotification *)aNotification
+{
+    if( [[aNotification object] isEqual:window] )
+    {
+	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
+    }
+}
+
+- (void)windowDidResignKey:(NSNotification *)aNotification
+{
+    if( [[aNotification object] isEqual:window] )
+    {
+	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
     }
 }
 

@@ -370,7 +370,7 @@ static BOOL isInitialised = NO;
     NSString *chars = [anEvent charactersIgnoringModifiers];
     int modifiers = [anEvent modifierFlags];
 
-    if(([chars lossyCString][0] == 's') && (modifiers & NSAlternateKeyMask))
+    if(([chars lossyCString][0] == 's') && (modifiers & NSCommandKeyMask))
     {
 	[editor saveFile];
 

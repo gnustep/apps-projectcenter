@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PREFERENCE_CONTOLLER_PROTO_H
+#define _PREFERENCE_CONTOLLER_PROTO_H
+
 /*
  Description:
 
@@ -45,3 +48,5 @@
 - (id)controller;
 
 @end
+
+#endif

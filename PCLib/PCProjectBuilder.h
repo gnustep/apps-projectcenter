@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PCPROJECTBUILDER_H
+#define _PCPROJECTBUILDER_H
+
 #import <AppKit/AppKit.h>
 
 @class PCProject;
@@ -73,6 +76,4 @@
 
 @end
 
-
-
-
+#endif

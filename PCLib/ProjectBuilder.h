@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef _PROJECT_BUILDER_PROTO_H
+#define _PROJECT_BUILDER_PROTO_H
+
 #import <Foundation/Foundation.h>
 
 @class PCProject;
@@ -35,3 +38,5 @@
 - (void)showInspectorForProject:(PCProject *)aProject;
 
 @end
+
+#endif
