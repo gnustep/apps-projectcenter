@@ -1,3 +1,22 @@
+2002-10-06 15:45  probert
+
+	* PCEditor.h, PCEditor.m, PCEditorView.m, PCProjectEditor.h,
+	PCProjectEditor.m: Updated the AUTHORS file and applied David
+	Ayers' patch.
+
+2002-08-10 14:10  probert
+
+	* PCEditor.m: Applied patch sent in by O. Kornilov to avoid
+	exception when clicking on file name in browser
+
+2002-08-10 13:41  probert
+
+	* PCEditorView+Highlighting.m: Removed call to super's initialize
+
+2002-06-01 16:00  probert
+
+	* ChangeLog: Updated ChangeLogs
+
 2002-06-01 15:55  probert
 
 	* PCMakefileFactory.m: Code cleanup

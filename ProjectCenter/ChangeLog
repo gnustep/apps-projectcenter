@@ -1,3 +1,12 @@
+2002-10-06 15:45  probert
+
+	* ProjectCenterInfo.plist, ProjectCenter_main.m: Updated the
+	AUTHORS file and applied David Ayers' patch.
+
+2002-06-01 16:00  probert
+
+	* ChangeLog: Updated ChangeLogs
+
 2002-06-01 15:54  probert
 
 	* GNUmakefile, ProjectCenter.pcproj, ProjectCenterInfo.plist: New
