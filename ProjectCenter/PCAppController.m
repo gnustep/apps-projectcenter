@@ -192,6 +192,7 @@
     return NO;
   }
 
+  [NSApp activateIgnoringOtherApps:YES];
   return [projectManager openProjectAt:fileName];
 }
 
