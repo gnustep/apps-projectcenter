@@ -487,7 +487,15 @@
   if (makeTask)
     {
       PCLogStatus(self, @"task will terminate");
-      [makeTask terminate];
+      NS_DURING
+	{
+	  [makeTask terminate];
+	}
+      NS_HANDLER
+	{
+	  return NO;
+	}
+      NS_ENDHANDLER
       return YES;
     }
 
@@ -612,7 +620,21 @@
   [makeTask setStandardOutput: logPipe];
   [makeTask setStandardError: errorPipe];
 
-  [makeTask launch];
+  NS_DURING
+    {
+      [makeTask launch];
+    }
+  NS_HANDLER
+    {
+      NSRunAlertPanel(@"Problem Launching Build Tool",
+		      [localException reason],
+		      @"OK",
+		      nil,
+		      nil,
+		      nil);
+
+    }
+  NS_ENDHANDLER
 }
 
 - (void)buildDidTerminate:(NSNotification *)aNotif
