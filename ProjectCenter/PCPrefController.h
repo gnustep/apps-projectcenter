@@ -84,3 +84,6 @@
 - (NSString *)selectFileWithTypes:(NSArray *)types;
 
 @end
+
+extern NSString *SavePeriodDidChangeNotification;
+

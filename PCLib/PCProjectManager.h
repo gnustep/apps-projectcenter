@@ -43,15 +43,11 @@
   
   NSString		*rootBuildPath;
 
+  NSTimer		*saveTimer;
+
   @private
   BOOL _needsReleasing;
 }
-
-// ===========================================================================
-// ==== Class files
-// ===========================================================================
-
-+ (void)initialize;
 
 // ===========================================================================
 // ==== Intialization & deallocation
@@ -68,23 +64,32 @@
 - (void)setDelegate:(id)aDelegate;
 
 // ===========================================================================
+// ==== Timer handling
+// ===========================================================================
+
+- (void)resetSaveTimer:(NSNotification *)notif;
+
+// ===========================================================================
 // ==== Project management
 // ===========================================================================
 
 - (NSMutableDictionary *)loadedProjects;
-   // Returns all currently loaded projects. They are stored with their absolut paths as the keys.
+    // Returns all currently loaded projects. They are stored with their absolut paths as the keys.
 
 - (PCProject *)activeProject;
-   // Returns the currently active project
+    // Returns the currently active project
 
 - (void)setActiveProject:(PCProject *)aProject;
-// Sets the new currently active project
+    // Sets the new currently active project
+
+- (void)saveAllProjectsIfNeeded;
+    // Calls saveAllProjects if the preferences are setup accordingly.
 
 - (void)saveAllProjects;
-   // Saves all projects if needed.
+    // Saves all projects if needed.
 
 - (NSString *)rootBuildPath;
-   // Gets set while initialising!
+    // Gets set while initialising!
 
 // ===========================================================================
 // ==== Project actions

@@ -31,6 +31,8 @@
 #import <AppKit/IMLoading.h>
 #endif
 
+#define SavePeriodDCN @"SavePeriodDidChangeNotification"
+
 NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 @interface PCProjectManager (CreateUI)
@@ -90,26 +92,37 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 @implementation PCProjectManager
 
 // ===========================================================================
-// ==== Class methods
-// ===========================================================================
-
-+ (void)initialize
-{
-}
-
-// ===========================================================================
 // ==== Intialization & deallocation
 // ===========================================================================
 
 - (id)init
 {
     if ((self = [super init])) {
+        NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+	SEL sall = @selector(saveAllProjectsIfNeeded);
+	SEL spdc = @selector(resetSaveTimer:);
+	NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
+
        	loadedProjects = [[NSMutableDictionary alloc] init];
 
-        rootBuildPath = [[[NSUserDefaults standardUserDefaults] stringForKey:RootBuildDirectory] copy];
-        if (!rootBuildPath || rootBuildPath == @"") {
+        rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
+        if (!rootBuildPath || [rootBuildPath isEqualToString:@""]) {
             rootBuildPath = [NSTemporaryDirectory() copy];
         }
+
+        if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) {
+	    saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+	                                                 target:self
+	                                               selector:sall
+                                                       userInfo:nil
+                                                        repeats:YES];
+        }
+
+        [[NSNotificationCenter defaultCenter] addObserver:self 
+	                                         selector:spdc 
+						     name:SavePeriodDCN 
+						   object:nil];
+
 	_needsReleasing = NO;
     }
     return self;
@@ -117,16 +130,24 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)dealloc
 {
-  [rootBuildPath release];
-  [loadedProjects release];
+    [rootBuildPath release];
+    [loadedProjects release];
+
+    if( [saveTimer isValid] )
+    {
+        [saveTimer invalidate];
+    }
+
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
   
-  if (_needsReleasing) {
-    [inspector release];
-    [inspectorView release];
-    [inspectorPopup release];
-  }
+    if (_needsReleasing) 
+    {
+      [inspector release];
+      [inspectorView release];
+      [inspectorPopup release];
+    }
   
-  [super dealloc];
+    [super dealloc];
 }
 
 // ===========================================================================
@@ -141,6 +162,27 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (void)setDelegate:(id)aDelegate
 {
     delegate = aDelegate;
+}
+
+// ===========================================================================
+// ==== Timer handling
+// ===========================================================================
+
+- (void)resetSaveTimer:(NSNotification *)notif
+{
+    NSTimeInterval interval = [[notif object] intValue];
+    SEL sall = @selector(saveAllProjectsIfNeeded);
+
+    if( [saveTimer isValid] ) 
+    {
+        [saveTimer invalidate];
+    }
+  
+    saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
+						 target:self
+					       selector:sall
+					       userInfo:nil
+						repeats:YES];
 }
 
 // ===========================================================================
@@ -159,20 +201,38 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)setActiveProject:(PCProject *)aProject
 {
-  if (aProject != activeProject) {
-    activeProject = aProject;
+    if (aProject != activeProject) {
+        activeProject = aProject;
 
-    [[NSNotificationCenter defaultCenter] postNotificationName:ActiveProjectDidChangeNotification object:activeProject];
+        [[NSNotificationCenter defaultCenter] postNotificationName:ActiveProjectDidChangeNotification object:activeProject];
     
-    //~ Is this needed?
-    if (activeProject) {
-      [[activeProject projectWindow] makeKeyAndOrderFront:self];
-    }
+        //~ Is this needed?
+        if (activeProject) {
+            [[activeProject projectWindow] makeKeyAndOrderFront:self];
+        }
     
-    if ([inspector isVisible]) {
-      [self inspectorPopupDidChange:inspectorPopup];
+        if ([inspector isVisible]) {
+          [self inspectorPopupDidChange:inspectorPopup];
+        }
     }
-  }
+}
+
+- (void)saveAllProjectsIfNeeded
+{
+    NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
+
+    if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) {
+	NSRunAlertPanel(@"Save All", 
+	                @"Going to save all projects!", 
+			@"OK",nil,nil);
+
+        [self saveAllProjects];
+    }
+    else {
+        if( [saveTimer isValid] ) {
+	    [saveTimer invalidate];
+	}
+    }
 }
 
 - (void)saveAllProjects

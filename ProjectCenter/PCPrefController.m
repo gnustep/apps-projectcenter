@@ -31,6 +31,8 @@
 #import <AppKit/IMLoading.h>
 #endif
 
+NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
+
 @interface PCPrefController (CreateUI)
 
 - (void)_initUI;
@@ -528,12 +530,14 @@
   NSString *periodString = [autoSaveField stringValue];
   
   if (periodString == nil || [periodString isEqualToString:@""]) {
-      periodString = [NSString stringWithString:@"120"];
+      periodString = [NSString stringWithString:@"300"];
   }
 
   [[NSUserDefaults standardUserDefaults] setObject:periodString 
                                             forKey:AutoSavePeriod];
   [preferencesDict setObject:periodString forKey:AutoSavePeriod];
+
+  [[NSNotificationCenter defaultCenter] postNotificationName:SavePeriodDidChangeNotification object:periodString];
 }
 
 - (void)setSaveOnQuit:(id)sender
