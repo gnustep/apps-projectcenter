@@ -98,6 +98,7 @@
    
     [mf createMakefileForProject:[self projectName]];
     [mf appendString:@"include $(GNUSTEP_MAKEFILES)/common.make\n"];
+    [mf appendString:@"include Version\n"];
     [mf appendSubprojects:[dict objectForKey:PCSubprojects]];
 
     [mf appendLibrary];
