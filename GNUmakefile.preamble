@@ -38,13 +38,13 @@
 #
 
 # Additional flags to pass to the preprocessor
-ADDITIONAL_CPPFLAGS += -Wall -Werror
+ADDITIONAL_CPPFLAGS += -Wall
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -Wall -Werror
+ADDITIONAL_OBJCFLAGS += -Wall
 
 # Additional flags to pass to the C compiler
-ADDITIONAL_CFLAGS += -Wall -Werror
+ADDITIONAL_CFLAGS += -Wall
 
 # Additional include directories the compiler should search
 ADDITIONAL_INCLUDE_DIRS += -I./PCLib
