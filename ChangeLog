@@ -3,6 +3,8 @@
 	* PCAppProj/Templates: Created. AppController.h, AppController.m, 
 	PC.proj, main.m moved here. Added GNUmakefile.preamble and
 	GNUmakefile.postamble files.
+	* PCAppProj/Templates/PC.proj: Changed MAKEFILEDIR to 
+	$(GNUSTEP_MAKEFILES).
 	* PCAppProj/GNUmakefile: Changed resources' locations to new.
 	* PCAppProj/Info-project.plist: Removed.
 
