@@ -81,9 +81,16 @@ static PCBundleMakefileFactory *_factory = nil;
     [string appendString:[NSString stringWithFormat:@"BUNDLE_NAME=%@\n",prName]];
     [string appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION=.bundle\n"]];
     [string appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR=%@\n",installDir]];
-    if ([prDict objectForKey:PCPrincipalClass]) {
-      [string appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS=%@\n",prName,[prDict objectForKey:PCPrincipalClass]]];
+    if ((tmp = [prDict objectForKey:PCPrincipalClass]) && 
+	[tmp isEqualToString:@""] == NO) {
     }
+    else if ((tmp = [[prDict objectForKey:PCClasses] objectAtIndex:0])) {
+    }
+    else {
+      tmp = [NSString string];
+    }
+
+    [string appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS=%@\n",prName,tmp]];
 
     [string appendString:@"#\n\n"];
     [string appendString:@"# Additional libraries\n"];
