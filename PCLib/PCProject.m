@@ -800,6 +800,8 @@
 	}
     }
 
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
+
     return YES;
 }
 
