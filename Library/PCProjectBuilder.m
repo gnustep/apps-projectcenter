@@ -362,15 +362,7 @@
   if ((self = [super init]))
     {
       currentProject = aProject;
-      makePath = [[aProject projectDict] objectForKey: PCBuildTool];
-
-      if ([makePath isEqualToString: @""])
-	{
-	  makePath = [NSString stringWithString: @"/usr/bin/make"];
-	}
-      RETAIN(makePath);
-
-      buildTarget = [[NSMutableString alloc] initWithString: @"Default"];
+      buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
       buildArgs = [[NSMutableArray array] retain];
       postProcess = NULL;
       makeTask = nil;
@@ -450,14 +442,15 @@
 - (void)startBuild:(id)sender
 {
   NSString *tFString = [targetField stringValue];
-  NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
+  NSArray  *tFArray = [tFString componentsSeparatedByString:@" "];
 
   if ([self stopBuild:self] == YES)
     {// We've just stopped build process
       return;
     }
+  makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
 
-  [buildTarget setString: [tFArray objectAtIndex: 0]];
+  [buildTarget setString:[tFArray objectAtIndex:0]];
 
   // Set build arguments
   if ([buildTarget isEqualToString: @"Debug"])
@@ -483,7 +476,7 @@
   [buildTarget setString: @"Build"];
   [cleanButton setEnabled:NO];
   [installButton setEnabled:NO];
-  [self build: self];
+  [self build:self];
   _isBuilding = YES;
 }
 

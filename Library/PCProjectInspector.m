@@ -236,17 +236,6 @@
     {
       [project setProjectDictObject:newEntry forKey:PCInstallDir notify:YES];
     }
-  else if (sender == toolField)
-    {
-      [project setProjectDictObject:newEntry forKey:PCBuildTool notify:YES];
-
-      if (![[NSFileManager defaultManager] isExecutableFileAtPath:newEntry])
-	{
-	  NSRunAlertPanel(@"Build Tool Error!",
-			  @"No valid executable found at '%@'!",
-			  @"OK",nil,nil,newEntry);
-	}
-    }
   else if (sender == cppOptField)
     {
       [project setProjectDictObject:newEntry
@@ -351,8 +340,6 @@
     [projectDict objectForKey:PCLinkerOptions]];
   [installPathField setStringValue:
     [projectDict objectForKey:PCInstallDir]];
-  [toolField setStringValue:
-    [projectDict objectForKey:PCBuildTool]];
     
   // Project Description view
   [descriptionField setStringValue:
@@ -434,8 +421,7 @@
   [objcOptField setNextText:cOptField];
   [cOptField setNextText:ldOptField];
   [ldOptField setNextText:installPathField];
-  [installPathField setNextText:toolField];
-  [toolField setNextText:cppOptField];
+  [installPathField setNextText:cppOptField];
   
   // Retain view
   [buildAttributesView retain];

@@ -73,8 +73,8 @@
       
       rootEntries = [[NSDictionary 
 	dictionaryWithObjects:rootCategories forKeys:rootKeys] retain];
-	
     }
+
   return self;
 }
 
@@ -324,7 +324,8 @@
   [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
   [infoDict setObject:@"Application" forKey:@"NSRole"];
-  [infoDict setObject:[self convertExtensions] forKey:@"NSTypes"];
+//  [infoDict setObject:[self convertExtensions] forKey:@"NSTypes"];
+  [self writeInfoEntry:@"NSTypes" forKey:PCDocumentTypes];
   [self writeInfoEntry:@"URL" forKey:PCURL];
 
   infoFile = [self dirForCategoryKey:PCOtherResources];

@@ -60,6 +60,7 @@
   IBOutlet NSButton      *promptWhenQuit;
   IBOutlet NSButton      *deleteCache;
   IBOutlet NSButton      *fullPathInFilePanels;
+  IBOutlet NSTextField   *buildToolField;
   IBOutlet NSTextField   *debuggerField;
   IBOutlet NSTextField   *editorField;
 

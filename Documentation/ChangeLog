@@ -1,7 +1,14 @@
-2004-11-19  Nicola Pero <n.pero@mi.flashnet.it>
+2004-12-24 Serg Stoyan <stoyan255@ukr.net>
 
-	* GNUmakefile.preamble (ADDITIONAL_LIB_DIRS): Fixed finding the
-	ProjectCenter framework when non-flattened.
+	* "Build Tool" setting from Project Inspector was moved to PC 
+	Preferences.
+
+	* Implemented support of document-based applications
+	
+	* Added "Document types" panel into Project Inspector
+
+	* Library/PCFileManager.m: Fix crashing while calling "Add Files" 
+	panel.
 
 2004-10-14 Serg Stoyan <stoyan255@ukr.net>
 

@@ -41,6 +41,7 @@
 #define PromptOnQuit                    @"PromtOnQuit"
 #define DeleteCacheWhenQuitting         @"DeleteBuildCacheWhenQuitting"
 #define FullPathInFilePanels            @"FullPathInFilePanels"
+#define BuildTool                       @"BuildTool"
 #define Debugger                        @"Debugger"
 #define Editor                          @"Editor"
 #define SeparateBuilder			@"SeparateBuilder"
@@ -194,6 +195,7 @@ static NSString * const PCCopyrightDescription = @"PROJECT_COPYRIGHT_DESC";
 static NSString * const PCProjectCreator       = @"PROJECT_CREATOR";
 static NSString * const PCDescription          = @"PROJECT_DESCRIPTION";
 static NSString * const PCDocumentExtensions   = @"PROJECT_DOCUMENTEXTENSIONS";
+static NSString * const PCDocumentTypes        = @"PROJECT_DOCUMENTTYPES";
 static NSString * const PCGroup                = @"PROJECT_GROUP";
 static NSString * const PCProjectMaintainer    = @"PROJECT_MAINTAINER";
 static NSString * const PCProjectName          = @"PROJECT_NAME";
@@ -208,6 +210,7 @@ static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
 static NSString * const PCAppIcon              = @"APPLICATIONICON";
 static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
 static NSString * const PCHelpFile             = @"HELP_FILE";
+static NSString * const PCDocumentBasedApp     = @"APP_DOCUMENT_BASED";
 
 // Library specific
 static NSString * const PCPublicHeaders        = @"PUBLIC_HEADERS";

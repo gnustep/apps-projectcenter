@@ -74,6 +74,13 @@ static PCFileManager *_mgr = nil;
 
   RELEASE(creators);
   RELEASE(newFilePanel);
+
+  if (addFilesPanel)
+    {
+      RELEASE(addFilesPanel);
+      RELEASE(fileTypePopup);
+      RELEASE(fileTypeAccessaryView);
+    }
   
   [super dealloc];
 }
@@ -354,15 +361,10 @@ static PCFileManager *_mgr = nil;
       [fileTypeAccessaryView sizeToFit];
       [fileTypeAccessaryView setAutoresizingMask:NSViewMinXMargin 
 	                                         | NSViewMaxXMargin];
-      RELEASE(fileTypePopup);
-
       // Panel
       addFilesPanel = [NSOpenPanel openPanel];
       [addFilesPanel setAllowsMultipleSelection:YES];
       [addFilesPanel setDelegate:self];
-      [addFilesPanel setAccessoryView:fileTypeAccessaryView];
-
-      RELEASE(fileTypeAccessaryView);
     }
 }
 
@@ -375,6 +377,8 @@ static PCFileManager *_mgr = nil;
   int            retval;
 
   [self _createAddFilesPanel];
+  [addFilesPanel setAccessoryView:fileTypeAccessaryView];
+
   selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
   if ([selectedCategory isEqualToString:@"Subprojects"])
     {
@@ -444,6 +448,7 @@ static PCFileManager *_mgr = nil;
   
   if ([[filename pathExtension] isEqualToString:@"gorm"])
     {
+      NSLog(@"GORM file: %@", filename);
       isDir = NO;
     }
     
@@ -460,8 +465,10 @@ static PCFileManager *_mgr = nil;
 	  return NO;
 	}
       // File is already in project
+      NSLog(@"file: %@ type: %@ fileTypes: %@", filename, fileType, fileTypes);
       if (![project doesAcceptFile:filename forKey:categoryKey])
 	{
+	  NSLog(@"Don't show: %@", filename);
 	  return NO;
 	}
     }

@@ -58,16 +58,37 @@
   IBOutlet NSButton       *setFieldButton;
   IBOutlet NSButton       *clearFieldButton;
 
-  NSTableView             *docIconsList;
-  NSTableColumn           *docExtColumn;
-  NSTableColumn           *docIconColumn;
-  NSMutableArray          *docIconsItems;
-  IBOutlet NSScrollView   *docIconsScroll;
+  IBOutlet NSButton       *docTypesButton;
 
-  IBOutlet NSButton       *addDocIcon;
-  IBOutlet NSButton       *removeDocIcon;
-               
-  NSMutableDictionary *infoDict;
+  IBOutlet NSPanel        *docTypesPanel;
+  IBOutlet NSButton       *addDocTypeButton;
+  IBOutlet NSButton       *removeDocTypeButton;
+  IBOutlet NSButton       *docBasedAppButton;
+  IBOutlet NSScrollView   *docTypesScroll;
+
+  NSTableView             *docTypesList;
+  NSTableColumn           *typeColumn;       // NSName
+  NSTableColumn           *nameColumn;       // NSHumanReadableName
+  NSTableColumn           *extensionsColumn; // NSUnixExtensions
+  NSTableColumn           *iconColumn;       // NSIcon
+  NSTableColumn           *roleColumn;       // NSRole
+  NSTableColumn           *classColumn;      // NSDocumentClass
+  NSMutableArray          *docTypesItems;
+
+  IBOutlet NSTextField    *docTypeLabel;
+  IBOutlet NSTextField    *docTypeField;
+  IBOutlet NSTextField    *docNameLabel;
+  IBOutlet NSTextField    *docNameField;
+  IBOutlet NSTextField    *docIconLabel;
+  IBOutlet NSTextField    *docIconField;
+  IBOutlet NSTextField    *docExtensionsLabel;
+  IBOutlet NSTextField    *docExtensionsField;
+  IBOutlet NSTextField    *docRoleLabel;
+  IBOutlet NSTextField    *docRoleField;
+  IBOutlet NSTextField    *docClassLabel;
+  IBOutlet NSTextField    *docClassField;
+
+  NSMutableDictionary     *infoDict;
 }
 
 // ----------------------------------------------------------------------------

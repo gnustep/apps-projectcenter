@@ -49,6 +49,8 @@
 - (BOOL)setMainNibWithFileAtPath:(NSString *)path;
 - (void)clearMainNib:(id)sender;
 
+- (void)setDocBasedApp:(id)sender;
+
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView;
 - (id)            tableView: (NSTableView *)aTableView
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
@@ -57,6 +59,8 @@
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
                row:(int)rowIndex;
+	       
+- (void)fillFieldsForRow:(int)rowIndex;
 
 // ----------------------------------------------------------------------------
 // --- Notifications

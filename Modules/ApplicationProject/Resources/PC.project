@@ -1,6 +1,5 @@
 {
     APPLICATIONICON = "";
-    BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = ("AppController.m");
     COMPILEROPTIONS = "";
     CPPOPTIONS = "";

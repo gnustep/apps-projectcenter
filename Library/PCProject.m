@@ -682,6 +682,7 @@ NSString
   while ((key = [keyEnum nextObject]))
     {
       projectFiles = [projectDict objectForKey:key];
+      NSLog(@"KEY: %@ Files: %@ file: %@", key, projectFiles, pFile);
       if ([projectFiles containsObject:pFile])
 	{
 	  return NO;

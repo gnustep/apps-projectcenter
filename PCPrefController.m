@@ -120,6 +120,7 @@ static PCPrefController *_prefCtrllr = nil;
   [preferencesDict setObject:@"YES" forKey:PromptOnQuit];
   [preferencesDict setObject:@"YES" forKey:DeleteCacheWhenQuitting];
   [preferencesDict setObject:@"YES" forKey:FullPathInFilePanels];
+  [preferencesDict setObject:@"/usr/bin/make" forKey:BuildTool];
   [preferencesDict setObject:@"/usr/bin/gdb" forKey:Debugger];
   [preferencesDict setObject:@"ProjectCenter" forKey:Editor];
 
@@ -207,6 +208,8 @@ static PCPrefController *_prefCtrllr = nil;
     ([[preferencesDict objectForKey: FullPathInFilePanels] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
 
+  [buildToolField setStringValue:
+    (val = [preferencesDict objectForKey:BuildTool]) ? val : @"/usr/bin/make"];
   [debuggerField setStringValue:
     (val = [preferencesDict objectForKey: Debugger]) ? val : @"/usr/bin/gdb"];
   [editorField setStringValue:
@@ -654,6 +657,27 @@ static PCPrefController *_prefCtrllr = nil;
 
   [preferencesDict setObject:[def objectForKey:FullPathInFilePanels] 
                       forKey:FullPathInFilePanels];
+}
+
+- (void)setBuildTool:(id)sender
+{
+  NSString *path = [buildToolField stringValue];
+ 
+  if ([path isEqualToString:@""] || !path)
+    {
+      [buildToolField setStringValue:@"/usr/bin/make"];
+      path = [buildToolField stringValue];
+    }
+  else if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path])
+    {
+      [buildToolField selectText:self];
+      NSRunAlertPanel(@"Build Tool not found!",
+		      @"File %@ doesn't exist!",
+      		      @"OK", nil, nil, path);
+    }
+
+  [[NSUserDefaults standardUserDefaults] setObject:path forKey:BuildTool];
+  [preferencesDict setObject:path forKey:BuildTool];
 }
 
 - (void)setDebugger:(id)sender
