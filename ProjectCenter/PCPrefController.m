@@ -457,7 +457,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   
   // Fill in the defaults
   [compilerField setStringValue:(val=[preferencesDict objectForKey:Compiler]) ? val : @""];
-  [debuggerField setStringValue:(val=[preferencesDict objectForKey:Debugger]) ? val : @""];
+  [debuggerField setStringValue:(val=[preferencesDict objectForKey:PDebugger]) ? val : @""];
   [editorField setStringValue:(val=[preferencesDict objectForKey:Editor]) ? val : @""];
   [bundlePathField setStringValue:(val=[preferencesDict objectForKey:BundlePaths]) ? val : @""];
   
@@ -676,8 +676,8 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   NSString *path = [debuggerField stringValue];
   
   if (path) {
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:Debugger];
-    [preferencesDict setObject:path forKey:Debugger];
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:PDebugger];
+    [preferencesDict setObject:path forKey:PDebugger];
   }
 }
 

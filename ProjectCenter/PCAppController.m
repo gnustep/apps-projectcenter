@@ -55,7 +55,7 @@
     [defaults setObject:_bundlePath forKey:BundlePaths];
 
     [defaults setObject:@"/usr/bin/vim" forKey:Editor];
-    [defaults setObject:@"/usr/bin/gdb" forKey:Debugger];
+    [defaults setObject:@"/usr/bin/gdb" forKey:PDebugger];
     [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
 
     [defaults setObject:@"YES" forKey:ExternalEditor];
