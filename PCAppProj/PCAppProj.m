@@ -138,9 +138,6 @@ static PCAppProj *_creator = nil;
         [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] attributes:nil];
         [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"Main" ofType:@"gmodel"];
-        [fm copyPath:_file toPath:[_resourcePath stringByAppendingPathComponent:@"Main.gmodel"] handler:nil];
-
         // The path cannot be in the PC.project file!
         [project setProjectPath:path];
 

@@ -200,4 +200,9 @@
     return @"Project that handles GNUstep/ObjC based applications.";
 }
 
+- (BOOL)isExecutable
+{
+  return YES;
+}
+
 @end
