@@ -30,9 +30,16 @@
 #import <AppKit/AppKit.h>
 
 @class PCProject;
-@class PreferenceController;
-@class ProjectEditor;
-@class ProjectDebugger;
+
+#ifndef GNUSTEP_BASE_VERSION
+@protocol PreferenceController;
+@protocol ProjectEditor;
+@protocol ProjectDebugger;
+#else
+#import <ProjectCenter/PreferenceController.h>
+#import <ProjectCenter/ProjectEditor.h>
+#import <ProjectCenter/ProjectDebugger.h>
+#endif
 
 @protocol Server
 

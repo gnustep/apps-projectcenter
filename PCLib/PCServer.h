@@ -69,9 +69,15 @@ extern NSString *PCProjectBuildDidStopNotification;
 
 @class PCProject;
 
+#ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectEditor;
 @protocol ProjectDebugger;
 @protocol PreferenceController;
+#else
+#import <ProjectCenter/PreferenceController.h>
+#import <ProjectCenter/ProjectEditor.h>
+#import <ProjectCenter/ProjectDebugger.h>
+#endif
 
 @interface PCServer : NSObject <Server>
 {

@@ -116,7 +116,11 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 @class PCProjectEditor;
 @class PCEditorController;
 
+#ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
+#else
+#import <ProjectCenter/ProjectBuilder.h>
+#endif
 
 @interface PCProject : NSObject
 {
