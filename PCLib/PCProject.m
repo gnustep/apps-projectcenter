@@ -646,7 +646,7 @@
     [fileNameField setStringValue:fileName];
 
     // Show the file in the internal editor!
-    e = [editorController editorForFile:p];
+    e = [editorController internalEditorForFile:p];
 
     if( e == nil )
     {

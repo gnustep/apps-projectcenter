@@ -79,6 +79,27 @@
     project = aProject;
 }
 
+- (PCEditor *)internalEditorForFile:(NSString *)path
+{
+    PCEditor *editor;
+
+    if( editor = [editorDict objectForKey:path] )
+    {
+	return editor;
+    }
+    else
+    {
+	editor = [[PCEditor alloc] initWithPath:path];
+
+	[editor setDelegate:self];
+
+	[editorDict setObject:editor forKey:path];
+	//RELEASE(editor);
+
+	return editor;
+    }
+}
+
 - (PCEditor *)editorForFile:(NSString *)path
 {
     NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -89,23 +110,7 @@
     }
     else
     {
-	PCEditor *editor;
-
-	if( editor = [editorDict objectForKey:path] )
-	{
-	    return editor;
-	}
-	else
-	{
-	    editor = [[PCEditor alloc] initWithPath:path];
-
-	    [editor setDelegate:self];
-
-	    [editorDict setObject:editor forKey:path];
-	    //RELEASE(editor);
-
-	    return editor;
-	}
+        [self internalEditorForFile:path];
     }
 }
 

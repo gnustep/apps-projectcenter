@@ -42,6 +42,7 @@
 
 - (void)setProject:(PCProject *)aProject;
 
+- (PCEditor *)internalEditorForFile:(NSString *)path;
 - (PCEditor *)editorForFile:(NSString *)path;
 - (NSArray *)allEditors;
 
