@@ -89,15 +89,17 @@
 //==== Misc...
 //============================================================================
 
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification;
 - (void)applicationDidFinishLaunching:(NSNotification *)notification;
+
 - (BOOL)applicationShouldTerminate:(id)sender;
 - (void)applicationWillTerminate:(NSNotification *)notification;
 
 //============================================================================
 //==== Delegate stuff
 //============================================================================
-
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename;
 
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle;
 

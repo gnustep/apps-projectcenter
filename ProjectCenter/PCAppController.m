@@ -93,24 +93,24 @@
 
 - (void)dealloc
 {
-    if (doConnection) {
-        [doConnection invalidate];
-        [doConnection release];
-    }
-
-    [prefController release];
-    [finder release];
-    [infoController release];
-    [logger release];
-    [projectManager release];
-    [fileManager release];
-    [menuController release];
-
-    [bundleLoader release];
-    [doServer release];
-    [projectTypes release];
-
-    [super dealloc];
+  if (doConnection) {
+    [doConnection invalidate];
+    [doConnection release];
+  }
+  
+  [prefController release];
+  [finder release];
+  [infoController release];
+  [logger release];
+  [projectManager release];
+  [fileManager release];
+  [menuController release];
+  
+  [bundleLoader release];
+  [doServer release];
+  [projectTypes release];
+  
+  [super dealloc];
 }
 
 //============================================================================
@@ -119,12 +119,12 @@
 
 - (id)delegate
 {
-    return delegate;
+  return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  delegate = aDelegate;
 }
 
 //============================================================================
@@ -133,51 +133,63 @@
 
 - (PCBundleLoader *)bundleLoader
 {
-    return bundleLoader;
+  return bundleLoader;
 }
 
 - (PCProjectManager *)projectManager
 {
-    return projectManager;
+  return projectManager;
 }
 
 - (PCPrefController *)prefController
 {
-    return prefController;
+  return prefController;
 }
 
 - (PCServer *)doServer
 {
-    return doServer;
+  return doServer;
 }
 
 - (PCFindController *)finder
 {
-    return finder;
+  return finder;
 }
 
 - (PCLogController *)logger
 {
-    return logger;
+  return logger;
 }
 
 - (NSDictionary *)projectTypes
 {
-    return projectTypes;
+  return projectTypes;
 }
 
 //============================================================================
 //==== Misc...
 //============================================================================
 
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
+{
+  if ([[fileName lastPAthComponent] isEqualToString:@"PC.project"] == NO) {
+    return NO;
+  }
+
+  return [projectManager openProjectAt:fileName];
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification
+{
+  [bundleLoader loadBundles];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
   NSString *h = [[NSProcessInfo processInfo] hostName];
   NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
   [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
-  
-  [bundleLoader loadBundles];
-  
+    
   // The DO server
   doServer = [[PCServer alloc] init];
   
@@ -226,18 +238,6 @@
 //============================================================================
 //==== Delegate stuff
 //============================================================================
-
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-    BOOL	success = NO;
-
-    if (([[filename lastPathComponent] isEqualToString:@"PC.proj"])) {
-        [projectManager openProjectAt:filename];
-        success = YES;
-    }
-
-    return success;
-}
 
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
 {
