@@ -122,7 +122,7 @@
     [matrix setAutoresizingMask: (NSViewMinXMargin | NSViewMaxYMargin)];
     [matrix setTarget:self];
     [matrix setAction:@selector(buttonsPressed:)];
-    [matrix setIntercellSpacing: NSMakeSize(2,2)];
+    [matrix setIntercellSpacing: NSMakeSize(8,2)];
     [_c_view addSubview:matrix];
     RELEASE(matrix);
 

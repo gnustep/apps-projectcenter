@@ -140,7 +140,7 @@ createMenu()
 	             action:@selector(addFile:)
 	      keyEquivalent:@"A"];
   [project addItemWithTitle:@"Save Files..."
-	             action:action
+	             action:@selector(saveFiles:)
 	      keyEquivalent:@"Q"];
   [project addItemWithTitle:@"Remove Files..."
 	             action:@selector(removeFile:)
@@ -264,7 +264,7 @@ createMenu()
   [edit_find addItemWithTitle:@"Find Next" 
                        action:@selector(findNext:)
 		keyEquivalent:@"g"];
-  [edit_find addItemWithTitle:@"Find Previuos" 
+  [edit_find addItemWithTitle:@"Find Previous" 
                        action:@selector(findPrevious:)
 		keyEquivalent:@"d"];
   [edit_find addItemWithTitle:@"Enter Selection" 

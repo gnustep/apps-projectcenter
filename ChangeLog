@@ -1,3 +1,24 @@
+2003-05-08 Serg Stoyan <stoyan@hologr.com>
+
+	* PCMenuController.m:
+	(validateMenuItem:): Update to the current set of menu items.
+	* ProjectCenter_main.m:
+	(createMenu): Set saveFiles: action to "Save Files..." menu item.
+
+	* PCBaseFileTypes/PCBaseFileType.m:
+	(createFileOfType:type:project): Initializing newFile ivar before
+	creating file. Cleanup.
+	
+	* PCLib/PCFileManager+UInterface.m:
+	(_initUI): Set spacing between buttons to 8.
+	* PCLib/PCFileManager.m:
+	(showAddFileWindow): Reformatting.
+	* PCLib/PCProject.m:
+	(save): Removed calling to [self saveAllFiles].
+	* PCLib/PCProjectManager.m:
+	(saveProject): Removed saving all files.
+	(saveFiles): Call [activeProject saveAllFiles] added.
+
 2003-05-07 Serg Stoyan <stoyan@hologr.com>
 
 	* ProjectCenter: Files moved to root directory.

@@ -129,158 +129,182 @@ descr = [NSString stringWithString:@"Generic GSMarkup File.\n\nThis is the inter
   return dict;
 }
 
-- (NSDictionary *)createFileOfType:(NSString *)type path:(NSString *)path project:(PCProject *)aProject
+- (NSDictionary *) createFileOfType:(NSString *)type 
+                               path:(NSString *)path 
+			    project:(PCProject *)aProject
 {
-  NSFileManager *fm = [NSFileManager defaultManager];
-  NSString *_file;
-  NSString *newFile = nil;
+  NSFileManager       *fm = [NSFileManager defaultManager];
+  NSString            *_file;
+  NSString            *newFile = nil;
   NSMutableDictionary *files;
-  
+  NSBundle            *bundle;
+
   // A class and possibly a header
   files = [NSMutableDictionary dictionaryWithCapacity:2];
-  
+
   NSLog(@"<%@ %x>: create %@ at %@",[self class],self,type,path);
-  
-  /*
-   *
-   */
-  
-  if ([type isEqualToString:ObjCClass]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"class" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"m"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"m"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [files setObject:ObjCClass forKey:newFile];
-    
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    
-    // Should a header be created as well?
-    newFile = [path stringByAppendingPathExtension:@"h"];
-    if (NSRunAlertPanel(@"Attention!",
-                        @"Should %@ be created and inserted into the project?",
-			@"Yes",@"No",nil,[newFile lastPathComponent])) 
-    {
-      _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"header" ofType:@"template"];
-      [fm copyPath:_file toPath:newFile handler:nil];
-      
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:ObjCHeader];
-      [files setObject:ObjCHeader forKey:newFile];
-    }
-  }
-  
-  /*
-   *
-   */
-  
-  else if ([type isEqualToString:ObjCNSViewClass]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"nsviewclass" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"m"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"m"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [files setObject:ObjCNSViewClass forKey:newFile];
-    
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    
-    // Should a header be created as well?
-    newFile = [path stringByAppendingPathExtension:@"h"];
-    if (NSRunAlertPanel(@"Attention!",
-                        @"Should %@ be created and inserted into the project?",
-			@"Yes",@"No",nil,[newFile lastPathComponent])) 
-    {
-      _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"nsviewheader" ofType:@"template"];
-      [fm copyPath:_file toPath:newFile handler:nil];
-      
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:ObjCHeader];
-      [files setObject:ObjCHeader forKey:newFile];
-    }
-  }
+
+  bundle = [NSBundle bundleForClass:[self class]];
+  newFile = [path copy];
 
   /*
-   *
+   * Objective-C Class
    */
-  
-  else if ([type isEqualToString:CFile]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cfile" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"c"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"c"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [files setObject:CFile forKey:newFile];
-    
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    
-    // Should a header be created as well?
-    newFile = [path stringByAppendingPathExtension:@"h"];
-    if (NSRunAlertPanel(@"Attention!",@"Should %@ be created and inserted in the project as well?",@"Yes",@"No",nil,[newFile lastPathComponent])) {
-      _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
+  if ([type isEqualToString:ObjCClass]) 
+    {
+      _file = [bundle pathForResource:@"class" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"m"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"m"];
+	}
       [fm copyPath:_file toPath:newFile handler:nil];
-      
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:CHeader];
+      [files setObject:ObjCClass forKey:newFile];
+
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+
+      // Should a header be created as well?
+      newFile = [path stringByAppendingPathExtension:@"h"];
+      if (NSRunAlertPanel(@"Attention!",
+			  @"Should %@ be created and inserted into the project?",
+			  @"Yes",@"No",nil,[newFile lastPathComponent])) 
+	{
+	  _file = [bundle pathForResource:@"header" ofType:@"template"];
+	  [fm copyPath:_file toPath:newFile handler:nil];
+
+	  [self replaceTagsInFileAtPath:newFile 
+	                    withProject:aProject
+			           type:ObjCHeader];
+	  [files setObject:ObjCHeader forKey:newFile];
+	}
+    }
+
+  /*
+   * Objective-C NSView Subclass
+   */
+  else if ([type isEqualToString:ObjCNSViewClass]) 
+    {
+      _file = [bundle pathForResource:@"nsviewclass" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"m"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"m"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [files setObject:ObjCNSViewClass forKey:newFile];
+
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+
+      // Should a header be created as well?
+      newFile = [path stringByAppendingPathExtension:@"h"];
+      if (NSRunAlertPanel(@"Attention!",
+			  @"Should %@ be created and inserted into the project?",
+			  @"Yes",@"No",nil,[newFile lastPathComponent])) 
+	{
+	  _file = [bundle pathForResource:@"nsviewheader" ofType:@"template"];
+	  [fm copyPath:_file toPath:newFile handler:nil];
+
+	  [self replaceTagsInFileAtPath:newFile
+	                    withProject:aProject
+			           type:ObjCHeader];
+	  [files setObject:ObjCHeader forKey:newFile];
+	}
+    }
+
+  /*
+   * C File
+   */
+  else if ([type isEqualToString:CFile]) 
+    {
+      _file = [bundle pathForResource:@"cfile" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"c"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"c"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [files setObject:CFile forKey:newFile];
+
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+
+      // Should a header be created as well?
+      newFile = [path stringByAppendingPathExtension:@"h"];
+      if (NSRunAlertPanel(@"Attention!",
+			  @"Should %@ be created and inserted in the project as well?",
+			  @"Yes",@"No",nil,[newFile lastPathComponent])) {
+	  _file = [bundle pathForResource:@"cheader" ofType:@"template"];
+	  [fm copyPath:_file toPath:newFile handler:nil];
+
+	  [self replaceTagsInFileAtPath:newFile
+	                    withProject:aProject
+			           type:CHeader];
+	  [files setObject:CHeader forKey:newFile];
+      }
+    }
+
+  /*
+   * Objective-C Header
+   */
+  else if ([type isEqualToString:ObjCHeader]) 
+    {
+      _file = [bundle pathForResource:@"header" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"h"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"h"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+      [files setObject:ObjCHeader forKey:newFile];
+    }
+
+  /*
+   * GSMarkup
+   */
+  else if ([type isEqualToString:GSMarkupFile])
+    {
+      _file = [bundle pathForResource:@"gsmarkup" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"gsmarkup"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [files setObject:GSMarkupFile forKey:newFile];
+    }
+
+  /*
+   * C Header
+   */
+  else if ([type isEqualToString:CHeader]) 
+    {
+      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"h"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"h"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
       [files setObject:CHeader forKey:newFile];
     }
-  }
-  
-  /*
-   *
-   */
-  
-  else if ([type isEqualToString:ObjCHeader]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"header" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"h"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"h"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    [files setObject:ObjCHeader forKey:newFile];
-  }
-  
- else if ([type isEqualToString:GSMarkupFile])
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"gsmarkup" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"gsmarkup"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [files setObject:GSMarkupFile forKey:newFile];
-  }
-
-
 
   /*
-   *
+   * Objective-C Protocol
    */
-  
-  else if ([type isEqualToString:CHeader]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"h"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"h"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    [files setObject:CHeader forKey:newFile];
-  }
-
-  /*
-   *
-   */
-  
   else if ([type isEqualToString:ProtocolFile]) 
-  {
-    _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"protocol" ofType:@"template"];
-    if ([[path pathExtension] isEqual: @"h"] == NO)
-      newFile = [path stringByAppendingPathExtension:@"h"];
-    [fm copyPath:_file toPath:newFile handler:nil];
-    [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    [files setObject:ProtocolFile forKey:newFile];
-  }
-  
+    {
+      _file = [bundle pathForResource:@"protocol" ofType:@"template"];
+      if ([[path pathExtension] isEqual: @"h"] == NO)
+	{
+	  newFile = [path stringByAppendingPathExtension:@"h"];
+	}
+      [fm copyPath:_file toPath:newFile handler:nil];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
+      [files setObject:ProtocolFile forKey:newFile];
+    }
+
   /*
    * Notify the browser!
    */
-  
-  [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
-  
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:@"ProjectDictDidChangeNotification"
+                  object:self];
+
   return files;
 }
 

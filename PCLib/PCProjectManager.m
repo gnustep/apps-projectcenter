@@ -317,28 +317,22 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)saveProject
 {
-    BOOL ret;
+  BOOL ret;
 
-    if (![self activeProject]) {
+  if (![self activeProject])
+    {
       return NO;
     }
-  
-    // Save all files that need to be saved
-    ret = [activeProject saveAllFilesIfNeeded];
-    if( ret == NO ) {
-        NSRunAlertPanel(@"Attention!",
-	                @"Couldn't save the files for project %@!", 
-			@"OK",nil,nil,[activeProject projectName]);
-    }
 
-    // Save PC.project and the makefile!
-    ret = [activeProject save];
-    if( ret == NO ) {
-        NSRunAlertPanel(@"Attention!",
-	                @"Couldn't save project %@!", 
-			@"OK",nil,nil,[activeProject projectName]);
+  // Save PC.project and the makefiles!
+  ret = [activeProject save];
+  if( ret == NO )
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Couldn't save project %@!", 
+		      @"OK",nil,nil,[activeProject projectName]);
     }
-    return YES;
+  return YES;
 }
 
 - (BOOL)saveProjectAs:(NSString *)projName
@@ -399,6 +393,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)saveFiles
 {
+  [activeProject saveAllFiles];
 }
 
 - (void)revertToSaved

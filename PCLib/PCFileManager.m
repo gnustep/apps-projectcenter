@@ -103,24 +103,24 @@ static PCFileManager *_mgr = nil;
 - (void)showAddFileWindow
 {
   NSOpenPanel *openPanel;
-  int retval;
+  int         retval;
   
-  PCProject *project = nil;
-  NSString *key = nil;
-  NSString *title = nil;
-  NSArray *types = nil;
+  PCProject   *project = nil;
+  NSString    *key = nil;
+  NSString    *title = nil;
+  NSArray     *types = nil;
 
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
   if (delegate && 
       [delegate respondsToSelector:@selector(fileManagerWillAddFiles:)]) 
-  {
-
-    if (!(project = [delegate fileManagerWillAddFiles:self])) 
     {
-      return;
+
+      if (!(project = [delegate fileManagerWillAddFiles:self])) 
+	{
+	  return;
+	}
     }
-  }
 
   key = [project selectedRootCategory];
 
@@ -135,90 +135,94 @@ static PCFileManager *_mgr = nil;
   [openPanel setCanChooseFiles:YES];
   [openPanel setTitle:title];
 
-  retval = [openPanel runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"] file:nil types:types];
+  retval = [openPanel 
+    runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
+                    file:nil
+		   types:types];
 
   if (retval == NSOKButton) 
-  {
-    NSEnumerator *enumerator;
-    NSString *file;
-    
-    [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-    
-    enumerator = [[openPanel filenames] objectEnumerator];
-    while (file = [enumerator nextObject]) {
-      NSString *otherKey;
-      NSString *ext;
-      BOOL ret = NO;
-      NSString *fn;
-      NSString *fileName;
-      NSString *pth;
+    {
+      NSEnumerator *enumerator;
+      NSString     *file;
 
-      if ([delegate fileManager:self shouldAddFile:file forKey:key]) 
-      {
-        NSFileManager *fm = [NSFileManager defaultManager];
+      [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
 
-	fileName = [file lastPathComponent];
-	pth = [[project projectPath] stringByAppendingPathComponent:fileName];
-	
-	if (![key isEqualToString:PCLibraries]) 
-        {
-	  if (![fm fileExistsAtPath:pth]) 
-          {
-	    [fm copyPath:file toPath:pth handler:nil];
-	  }
-	}
-	[project addFile:pth forKey:key];
-      }
+      enumerator = [[openPanel filenames] objectEnumerator];
+      while (file = [enumerator nextObject])
+	{
+	  NSString *otherKey;
+	  NSString *ext;
+	  NSString *fn;
+	  NSString *fileName;
+	  NSString *pth;
+	  BOOL     ret = NO;
 
-      if ([key isEqualToString:PCClasses]) 
-      {
-	otherKey = PCHeaders;
-	ext = [NSString stringWithString:@"h"];
+	  if ([delegate fileManager:self shouldAddFile:file forKey:key]) 
+	    {
+	      NSFileManager *fm = [NSFileManager defaultManager];
 
-	fn = [file stringByDeletingPathExtension];
-	fn = [fn stringByAppendingPathExtension:ext];
+	      fileName = [file lastPathComponent];
+	      pth = [[project projectPath] stringByAppendingPathComponent:fileName];
 
-	if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) 
-        {
-	  ret = NSRunAlertPanel(@"Adding Header?",
-                                @"Should %@ be added to project %@ as well?",
-                                @"Yes",@"No",nil,fn,[project projectName]);
-	}
-      }
-      else if ([key isEqualToString:PCHeaders]) 
-      {
-	otherKey = PCClasses;
-	ext = [NSString stringWithString:@"m"];
+	      if (![key isEqualToString:PCLibraries]) 
+		{
+		  if (![fm fileExistsAtPath:pth]) 
+		    {
+		      [fm copyPath:file toPath:pth handler:nil];
+		    }
+		}
+	      [project addFile:pth forKey:key];
+	    }
 
-	fn = [file stringByDeletingPathExtension];
-	fn = [fn stringByAppendingPathExtension:ext];
+	  if ([key isEqualToString:PCClasses]) 
+	    {
+	      otherKey = PCHeaders;
+	      ext = [NSString stringWithString:@"h"];
 
-	if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) 
-        {
-	  ret = NSRunAlertPanel(@"Adding Class?",
-                                @"Should %@ be added to project %@ as well?",
-                                @"Yes",@"No",nil,fn,[project projectName]);
-	}
-      }
+	      fn = [file stringByDeletingPathExtension];
+	      fn = [fn stringByAppendingPathExtension:ext];
 
-      if (ret) 
-      {
-	if ([delegate fileManager:self shouldAddFile:fn forKey:otherKey]) 
-        {
-	  NSString *pp = [project projectPath];
+	      if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) 
+		{
+		  ret = NSRunAlertPanel(@"Adding Header?",
+					@"Should %@ be added to project %@ as well?",
+					@"Yes",@"No",nil,fn,[project projectName]);
+		}
+	    }
+	  else if ([key isEqualToString:PCHeaders]) 
+	    {
+	      otherKey = PCClasses;
+	      ext = [NSString stringWithString:@"m"];
 
-	  fileName = [fn lastPathComponent];
-	  pth = [pp stringByAppendingPathComponent:fileName];
+	      fn = [file stringByDeletingPathExtension];
+	      fn = [fn stringByAppendingPathExtension:ext];
 
-          /* Only copy the file if it isn't already there */
-	  if ([pth isEqual: fn] == NO)
-	    [[NSFileManager defaultManager] copyPath:fn toPath:pth handler:nil];
+	      if ([[NSFileManager defaultManager] fileExistsAtPath:fn]) 
+		{
+		  ret = NSRunAlertPanel(@"Adding Class?",
+					@"Should %@ be added to project %@ as well?",
+					@"Yes",@"No",nil,fn,[project projectName]);
+		}
+	    }
 
-	  [project addFile:pth forKey:otherKey];
-	}
+	  if (ret) 
+	    {
+	      if ([delegate fileManager:self shouldAddFile:fn forKey:otherKey]) 
+		{
+		  NSString *pp = [project projectPath];
+
+		  fileName = [fn lastPathComponent];
+		  pth = [pp stringByAppendingPathComponent:fileName];
+
+		  /* Only copy the file if it isn't already there */
+		  if ([pth isEqual: fn] == NO)
+		    [[NSFileManager defaultManager] copyPath:fn toPath:pth handler:nil];
+
+		  [project addFile:pth forKey:otherKey];
+		}
+	    }
       }
     }
-  }
 }
 
 - (void)showNewFileWindow
@@ -232,13 +236,13 @@ static PCFileManager *_mgr = nil;
 - (void)buttonsPressed:(id)sender
 {
   switch ([[sender selectedCell] tag]) 
-  {
-  case 0:
-    break;
-  case 1:
-    [self createFile];
-    break;
-  }
+    {
+    case 0:
+      break;
+    case 1:
+      [self createFile];
+      break;
+    }
   [newFileWindow orderOut:self];
   [newFileName setStringValue:@""];
 }
@@ -263,49 +267,49 @@ static PCFileManager *_mgr = nil;
   NSString *fileName = [newFileName stringValue];
   NSString *fileType = [fileTypePopup titleOfSelectedItem];
   NSString *key = [[creators objectForKey:fileType] objectForKey:@"ProjectKey"];
-  
+
   if (delegate) 
-  {
-    path = [delegate fileManager:self willCreateFile:fileName withKey:key];
-  }
+    {
+      path = [delegate fileManager:self willCreateFile:fileName withKey:key];
+    }
 
 #ifdef DEBUG  
-  NSLog(@"<%@ %x>: creating file at %@",[self class],self,path);
+  NSLog(@"<%@ %x>: creating file at %@", [self class], self, path);
 #endif //DEBUG
 
   // Create file
   if (path) 
-  {
-    NSDictionary *newFiles;
-    id<FileCreator> creator = [[creators objectForKey:fileType] objectForKey:@"Creator"];
-    PCProject *p = [delegate activeProject];
+    {
+      NSDictionary *newFiles;
+      id<FileCreator> creator = [[creators objectForKey:fileType] objectForKey:@"Creator"];
+      PCProject *p = [delegate activeProject];
 
-    if (!creator) 
-    {
-      NSRunAlertPanel(@"Attention!",
-                      @"Could not create %@. The creator is missing!",
-                      @"OK",nil,nil,fileName);
-      return;
+      if (!creator) 
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not create %@. The creator is missing!",
+			  @"OK",nil,nil,fileName);
+	  return;
+	}
+
+      // Do it finally...
+      newFiles = [creator createFileOfType:fileType path:path project:p];
+      if (delegate 
+	  && [delegate respondsToSelector:@selector(fileManager:didCreateFile:withKey:)]) 
+	{
+	  NSEnumerator *enumerator;
+	  NSString *aFile;
+
+	  enumerator = [[newFiles allKeys] objectEnumerator]; // Key: name of file
+	  while (aFile = [enumerator nextObject]) 
+	    {
+	      NSString *theType = [newFiles objectForKey:aFile];
+	      NSString *theKey = [[creators objectForKey:theType] objectForKey:@"ProjectKey"];
+
+	      [delegate fileManager:self didCreateFile:aFile withKey:theKey];
+	    }
+	}
     }
-    
-    // Do it finally...
-    newFiles = [creator createFileOfType:fileType path:path project:p];
-    if (delegate 
-        && [delegate respondsToSelector:@selector(fileManager:didCreateFile:withKey:)]) 
-    {
-      NSEnumerator *enumerator;
-      NSString *aFile;
-      
-      enumerator = [[newFiles allKeys] objectEnumerator]; // Key: name of file
-      while (aFile = [enumerator nextObject]) 
-      {
-	NSString *theType = [newFiles objectForKey:aFile];
-	NSString *theKey = [[creators objectForKey:theType] objectForKey:@"ProjectKey"];
-	
-	[delegate fileManager:self didCreateFile:aFile withKey:theKey];
-      }
-    }
-  }
 }
 
 - (void)registerCreatorsWithObjectsAndKeys:(NSDictionary *)dict
