@@ -30,7 +30,7 @@
 #define ObjCClass	@"ObjC Class"
 #define ObjCHeader	@"ObjC Header"
 #define CFile		@"C File"
-#define CHeaderFile	@"C Header"
+#define CHeader	        @"C Header"
 #define ProtocolFile	@"ObjC Protocol"
 
 @implementation PCBaseFileType
@@ -74,7 +74,7 @@ static NSDictionary *dict = nil;
     
     dict = [[NSDictionary alloc] initWithObjectsAndKeys:
 				   ccDict,CFile,
-				 chDict,CHeaderFile,
+				 chDict,CHeader,
 				 protocolDict,ProtocolFile,
 				 headerDict,ObjCHeader,
 				 classDict,ObjCClass,
@@ -146,8 +146,8 @@ static NSDictionary *dict = nil;
       _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
       [fm copyPath:_file toPath:newFile handler:nil];
       
-      [self replaceTagsInFileAtPath:newFile withProject:aProject type:CHeaderFile];
-      [files setObject:CHeaderFile forKey:newFile];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject type:CHeader];
+      [files setObject:CHeader forKey:newFile];
     }
   }
   
@@ -167,12 +167,12 @@ static NSDictionary *dict = nil;
    *
    */
   
-  else if ([type isEqualToString:CHeaderFile]) {
+  else if ([type isEqualToString:CHeader]) {
     _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"cheader" ofType:@"template"];
     newFile = [path stringByAppendingPathExtension:@"h"];
     [fm copyPath:_file toPath:newFile handler:nil];
     [self replaceTagsInFileAtPath:newFile withProject:aProject type:type];
-    [files setObject:CHeaderFile forKey:newFile];
+    [files setObject:CHeader forKey:newFile];
   }
 
   /*
@@ -217,6 +217,17 @@ static NSDictionary *dict = nil;
   [file replaceCharactersInRange:
 	  [file rangeOfString:@"$DATE$"] withString:date];
 
+    if ([aType isEqualToString:ObjCHeader] || [aType isEqualToString:CHeader]) {
+	NSString *nm = [[aFile stringByDeletingPathExtension] uppercaseString];
+
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
+	[file replaceCharactersInRange:
+	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:nm];
+    }
+
   if ([aType isEqualToString:ObjCClass] || 
       [aType isEqualToString:CFile] ||
       [aType isEqualToString:ProtocolFile] ||
@@ -225,16 +236,6 @@ static NSDictionary *dict = nil;
 
     [file replaceCharactersInRange:
 	    [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
-
-    if ([aType isEqualToString:ObjCHeader] || 
-        [aType isEqualToString:CHeaderFile]) {
-	[file replaceCharactersInRange:
-	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
-	[file replaceCharactersInRange:
-	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
-	[file replaceCharactersInRange:
-	    [file rangeOfString:@"$UCFILENAMESANSEXTENSION$"] withString:name];
-    }
 
     if ([aType isEqualToString:ObjCClass]) {
       [file replaceCharactersInRange:

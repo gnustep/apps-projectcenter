@@ -8,8 +8,8 @@
  * $Id$
  */
 
-#ifndef $UCFILENAMESANSEXTENSION$_H_
-#define $UCFILENAMESANSEXTENSION$_H_
+#ifndef _$UCFILENAMESANSEXTENSION$_H_
+#define _$UCFILENAMESANSEXTENSION$_H_
 
 #import <Foundation/Foundation.h>
 
@@ -20,5 +20,5 @@
 
 @end
 
-#endif // $UCFILENAMESANSEXTENSION$_H_
+#endif // _$UCFILENAMESANSEXTENSION$_H_
 
