@@ -54,9 +54,9 @@ void createMenu()
   NSMenu *project;
   NSMenu *file;
   NSMenu *edit;
-  NSMenu *format;
   NSMenu *fontmenu;
   NSMenu *tools;
+  NSMenu *find;
   NSMenu *services;
   NSMenu *windows;
 
@@ -72,7 +72,6 @@ void createMenu()
   [menu addItemWithTitle:@"Project" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"File" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Edit" action:action keyEquivalent:@""];
-  [menu addItemWithTitle:@"Format" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Tools" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Windows" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Services" action:action keyEquivalent:@""];
@@ -146,25 +145,24 @@ void createMenu()
             keyEquivalent: @"a"];
 
   /*
-   * Format submenu
-   */
-
-  format = [[[NSMenu alloc] init] autorelease];
-  [menu setSubmenu:format forItem:[menu itemWithTitle:@"Format"]];
-  [format addItemWithTitle:@"Fonts" action:NULL keyEquivalent:@""];
-
-  fontmenu = [[[NSMenu alloc] init] autorelease];
-  [format setSubmenu:[[NSFontManager sharedFontManager] fontMenu: YES] forItem:[format itemWithTitle:@"Fonts"]];
-
-  /*
    * Tools submenu
    */
 
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
   [tools addItemWithTitle:@"Build Panel" action:@selector(showBuildPanel:) keyEquivalent:@""];
-  [tools addItemWithTitle:@"Find Panel" action:@selector(showFindPanel:) keyEquivalent:@"F"];
   [tools addItemWithTitle:@"Inspector Panel" action:@selector(showInspector:) keyEquivalent:@""];
+  [tools addItemWithTitle:@"Find" action:action keyEquivalent:@""];
+
+  /*
+   * Find submenu
+   */
+
+  find = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:find forItem:[tools itemWithTitle:@"Find"]];
+  [find addItemWithTitle:@"Find Panel..." action:@selector(showFindPanel:) keyEquivalent:@"f"];
+  [find addItemWithTitle:@"Find Next" action:@selector(findNext:) keyEquivalent:@"g"];
+  [find addItemWithTitle:@"Find Previous" action:@selector(findPrevious:) keyEquivalent:@"d"];
 
   /*
    * Windows submenu

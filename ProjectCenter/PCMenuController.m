@@ -332,6 +332,16 @@
 	if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }
 
+    if ([[menuItem title] isEqualToString:@"Find Next"]) 
+    {
+        if( ![[[PCTextFinder sharedFinder] findPanel] isVisible] ) return NO;
+    }
+
+    if ([[menuItem title] isEqualToString:@"Find Previous"]) 
+    {
+        if( ![[[PCTextFinder sharedFinder] findPanel] isVisible] ) return NO;
+    }
+
     return YES;
 }
 

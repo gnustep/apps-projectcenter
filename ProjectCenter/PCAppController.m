@@ -231,7 +231,7 @@
     if( [poq isEqualToString:@"YES"] )
     {
         if (NSRunAlertPanel(@"Quit!",
-                            @"Do you really want to quit?",
+                            @"Do you really want to quit ProjectCenter?",
                             @"No", @"Yes", nil)) {
             return NO;
         }

@@ -34,6 +34,9 @@
 
 - (void)showInspector:(id)sender;
 - (void)showBuildPanel:(id)sender;
+- (void)showFindPanel:(id)sender;
+- (void)findNext:(id)sender;
+- (void)findPrevious:(id)sender;
 
 - (void)openProject:(id)sender;
 - (void)newProject:(id)sender;

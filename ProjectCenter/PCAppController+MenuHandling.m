@@ -28,7 +28,9 @@
 #import "PCMenuController.h"
 #import "PCPrefController.h"
 #import "PCInfoController.h"
+
 #import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCTextFinder.h>
 
 @implementation PCAppController (MenuHandling)
 
@@ -47,9 +49,24 @@
   [projectManager showInspectorForProject:[projectManager activeProject]];
 }
 
-- (void)showBuildPanel:(id)sender;
+- (void)showBuildPanel:(id)sender
 {
   [[projectManager activeProject] showBuildView:self];
+}
+
+- (void)showFindPanel:(id)sender
+{
+  [[PCTextFinder sharedFinder] showFindPanel:self];
+}
+
+- (void)findNext:(id)sender
+{
+  [[PCTextFinder sharedFinder] findNext:self];
+}
+
+- (void)findPrevious:(id)sender
+{
+  [[PCTextFinder sharedFinder] findPrevious:self];
 }
 
 - (void)openProject:(id)sender
