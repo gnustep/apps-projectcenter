@@ -29,7 +29,6 @@ Resources/LogPanel.gorm \
 Resources/Preferences.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
-Images/ButtonTile.tiff \
 Images/FileC.tiff \
 Images/FileCH.tiff \
 Images/FileH.tiff \
