@@ -216,7 +216,7 @@ static PCFileManager *_mgr = nil;
   // Create file
   if (path) 
     {
-      NSDictionary  *newFiles = nil;;
+      NSDictionary  *newFiles = nil;
       PCFileCreator *creator = nil;
       PCProject     *project = [projectManager activeProject];
       NSEnumerator  *enumerator;
@@ -335,6 +335,7 @@ static PCFileManager *_mgr = nil;
 
       // File type popup
       fileTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
+      [fileTypePopup setRefusesFirstResponder:YES];
       [fileTypePopup setAutoenablesItems:NO];
       [fileTypePopup setTarget:self];
       [fileTypePopup setAction:@selector(filesForAddPopupClicked:)];

@@ -1,9 +1,18 @@
+2004-06-14 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFileManager.m:
+	(createFile): Removed extra ";" in newFiles declaration.
+	
+	* Modules/AggregateProject: Aggregate project type added.
+	
+	* Images/MultiFiles.tiff: added.
+
 2004-06-13 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectBrowser.m:
 	(reloadLastColumn): Reload subprojects list only if subprojects
 	added/removed.
-	
+
 2004-06-12 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
@@ -11,16 +20,16 @@
 	* PCPrefController.m:
 	Fix bugs related to opening legacy projects.
 	
-	* Fixes made, to compile with gcc 3.4.0.
+	* Fixes made to compile with gcc 3.4
 	
 	* Resources/ProjectCenter.gorm:
 	Remove all unimplemented items.
-	
+
 2004-06-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
 	(loadProjectAt:): Fix loading "Gorm" poject.
-	
+
 2004-06-09 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectBrowser.[hm]:
@@ -59,7 +68,7 @@
 	* PCMenuController.m: disable "Tear-Off Editor Size" fields editing
 	if Project Editor is not tear-off or Editor is not "ProjectCenter".
 	Check only first arg of Editor value.
-		
+
 2004-06-01 Serg Stoyan <stoyan255@ukr.net>
 
         * Finished on-the-fly applying "Tear-Off Panels" preferences.

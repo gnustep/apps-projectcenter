@@ -152,6 +152,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   // For "Open Project" and "New Project" panels
   projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
+  [projectTypePopup setRefusesFirstResponder:YES];
   [projectTypePopup setAutoenablesItems:NO];
   [projectTypePopup addItemsWithTitles:
     [[projectTypes allKeys] 

@@ -10,6 +10,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 # Subprojects
 #
 SUBPROJECTS = \
+        AggregateProject   \
         ApplicationProject \
         BundleProject      \
         LibraryProject     \

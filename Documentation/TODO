@@ -19,21 +19,23 @@ ProjectCenter 0.4                                               Owner
 ProjectCenter 0.5
 -----------------
 
-- Redesign Info panel                                           stoyan
-- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
-- ProjectLauncher enhancements (debug)                          stoyan
+- Add more project types                                        stoyan
+- Localization support for projects                             stoyan
+- Add pending files adding/removing                             stoyan
+- Editor enhancements (syntax highlighting, etc.)               stoyan
 - Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
-- Editor enhancements                                           robert
+- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
 
 ProjectCenter 0.6
 -----------------
 
+- Create custom Info panel                                      ???
 - More options for file creation                                ???
-- ProjectCenter localization                                    robert
-- Localization support for GUI based projects                   robert
+- Localization support for GUI based projects                   ???
 - Direct code documentation (using autogsdoc)                   ???
 - Better integration with other tools 
   (Gorm, CodeEditor, EasyDiff)                                  ???
+- ProjectCenter localization                                    ???
 
 ProjectCenter 0.7
 -----------------

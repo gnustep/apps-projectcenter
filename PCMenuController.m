@@ -463,8 +463,14 @@
   if ([menuTitle isEqualToString: @"Project"] 
       && [projectBrowser nameOfSelectedCategory] == nil)
     {
-      if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
       if ([[menuItem title] isEqualToString:@"Add Subproject..."]) return NO;
+      if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && [[projectBrowser nameOfSelectedCategory] 
+         isEqualToString:@"Subprojects"])
+    {
+      if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
     }
   if ([menuTitle isEqualToString: @"Project"] 
       && ![[projectBrowser nameOfSelectedRootCategory] isEqualToString:@"Subprojects"])

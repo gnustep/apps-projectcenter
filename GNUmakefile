@@ -80,6 +80,7 @@ Images/soundSuitcase.tiff \
 Images/soundSuitcaseH.tiff \
 Images/subprojectSuitcase.tiff \
 Images/subprojectSuitcaseH.tiff \
+Modules/AggregateProject/AggregateProject.bundle \
 Modules/ApplicationProject/ApplicationProject.bundle \
 Modules/BundleProject/BundleProject.bundle \
 Modules/LibraryProject/LibraryProject.bundle \

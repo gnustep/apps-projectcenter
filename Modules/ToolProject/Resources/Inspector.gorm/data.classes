@@ -148,8 +148,7 @@
 	Outlets = (
 	    projectAttributesView,
 	    projectTypeField,
-	    projectNameField,
-	    projectLanguageField
+	    projectNameField
 	);
 	Super = NSObject;
     };
