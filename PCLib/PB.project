@@ -1,0 +1,69 @@
+{
+    CURRENTLY_ACTIVE_VERSION = YES; 
+    DEPLOY_WITH_VERSION_NAME = A; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (
+            PCBundleLoader.m, 
+            PCDataSource.m, 
+            PCProjectManager.m, 
+            PCServer.m, 
+            PCProject.m, 
+            PCFileManager.m, 
+            PCBrowserController.m, 
+            PCProjectBuilder.m
+        ); 
+        FRAMEWORKS = (AppKit.framework, Foundation.framework); 
+        H_FILES = (
+            PCBundleLoader.h, 
+            PCDataSource.h, 
+            PCProjectManager.h, 
+            PCServer.h, 
+            PCProject.h, 
+            PCFileManager.h, 
+            PCBrowserController.h, 
+            PreferenceController.h, 
+            ProjectCenter.h, 
+            ProjectDebugger.h, 
+            ProjectEditor.h, 
+            ProjectType.h, 
+            Server.h, 
+            ProjectBuilder.h, 
+            FileCreator.h, 
+            PCProjectBuilder.h
+        ); 
+        OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+        PUBLIC_HEADERS = (
+            PCBundleLoader.h, 
+            PCProjectManager.h, 
+            PCServer.h, 
+            ProjectCenter.h, 
+            ProjectDebugger.h, 
+            ProjectEditor.h, 
+            Server.h, 
+            ProjectType.h, 
+            PreferenceController.h, 
+            PCDataSource.h, 
+            PCProject.h, 
+            ProjectBuilder.h, 
+            FileCreator.h, 
+            PCFileManager.h, 
+            PCBrowserController.h
+        ); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = "$(NEXT_ROOT)/NextDeveloper/Makefiles/pb_makefiles"; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_INSTALLDIR = /usr/local/lib; 
+    NEXTSTEP_PUBLICHEADERSDIR = "/LocalDeveloper/Headers/$(NAME)"; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/NextDeveloper/bin/make; 
+    PDO_UNIX_INSTALLDIR = /usr/local/lib; 
+    PDO_UNIX_PUBLICHEADERSDIR = "/LocalDeveloper/Headers/$(NAME)"; 
+    PROJECTNAME = PCLib; 
+    PROJECTTYPE = Library; 
+    PROJECTVERSION = 2.6; 
+    WINDOWS_BUILDTOOL = $NEXT_ROOT/NextDeveloper/Executables/make; 
+    WINDOWS_INSTALLDIR = "$(HOMEDRIVE)/LocalDeveloper/Libraries"; 
+    WINDOWS_PUBLICHEADERSDIR = "$(HOMEDRIVE)/LocalDeveloper/Headers/$(NAME)"; 
+}

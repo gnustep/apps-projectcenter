@@ -1,0 +1,26 @@
+Installation
+************
+
+This file documents the installation of the GNUstep ProjectCenter.
+
+   Copyright (C) 2000 Philippe C.D. Robert.  You may copy,
+distribute, and modify it freely as long as you preserve this copyright
+notice and permission notice.
+
+Installing `ProjectCenter'
+====================
+
+   The ProjectCenter tool runs on OpenStep 4.2 and GNUstep. It's
+possible it will run on other versions of OPENSTEP, but it has not been
+tried yet.
+
+   Here is a quick-and-dirty example of installation commands:
+
+
+OPENSTEP 4.2:	make; make install 
+
+		(or open the project in PB.app and compile it from there)
+
+GNUstep:	make; make install;
+
+In order to do this successfully you must first install PCLib and the bundles and then the application itself!

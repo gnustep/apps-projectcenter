@@ -1,0 +1,25 @@
+{
+    APPCLASS = PCBaseFileType; 
+    BUNDLE_EXTENSION = bundle; 
+    DYNAMIC_CODE_GEN = YES; 
+    FILESTABLE = {
+        CLASSES = (PCBaseFileType.m); 
+        FRAMEWORKS = (Foundation.framework); 
+        H_FILES = (PCBaseFileType.h); 
+        IMAGES = (FileIcon_.m.tiff, FileIcon_.h.tiff, FileIcon_.c.tiff); 
+        OTHER_LIBS = (PCLib); 
+        OTHER_RESOURCES = (cfile.template, cheader.template, class.template, header.template); 
+        OTHER_SOURCES = (Makefile.preamble, Makefile, Makefile.postamble, m.template, h.template); 
+    }; 
+    LANGUAGE = English; 
+    LOCALIZABLE_FILES = {}; 
+    MAKEFILEDIR = "$(NEXT_ROOT)/NextDeveloper/Makefiles/pb_makefiles"; 
+    NEXTSTEP_BUILDTOOL = /bin/gnumake; 
+    NEXTSTEP_INSTALLDIR = /LocalLibrary/ProjectCenter; 
+    PDO_UNIX_BUILDTOOL = $NEXT_ROOT/NextDeveloper/bin/make; 
+    PROJECTNAME = PCBaseFileTypes; 
+    PROJECTTYPE = "Loadable Bundle"; 
+    PROJECTVERSION = 2.6; 
+    WINDOWS_BUILDTOOL = $NEXT_ROOT/NextDeveloper/Executables/make; 
+    WINDOWS_INSTALLDIR = /MyBundles; 
+}

@@ -1,0 +1,68 @@
+Announcement
+************
+
+What is ProjectCenter?
+======================
+
+   ProjectCenter is an application developed for GNUstep which one day should
+   becoime a full blown development environment. 
+
+   The file `INSTALL' gives instructions for installing the package.
+
+   The GNUstep web site at `http://www.prjectcenter.ch' contains more
+   information.
+
+   ProjectCenter is covered under the GNU Public License.  This means if you 
+   make changes to these programs, you cannot charge a fee, other than
+   distribution fees, for others to use the program. You should read the
+   COPYING file for more information.
+
+How can you help?
+=================
+
+   * Check the bug list at the ProjectCenter web site.  
+     If you can volunteer for any of the todo's, or if you have any useful    
+     comments send email! <info@projectcenter.ch>
+
+   * Give us feedback!  Tell us what you like; tell us what you think
+     could be better.  Send bug reports to <info@projectcenter.ch>.
+
+Machines
+========
+
+   GNUstep ProjectCenter is known to compile on the following machines.
+
+   * OpenStep 4.x/m68k
+
+   * OpenStep 4.x/ix86
+
+   * Linux/GNUstep 0.6.5
+
+Where do I send bug reports?
+============================
+
+   Bug reports can be sent to <info@projectcenter.ch>.
+
+Enjoy!
+Philippe C.D. Robert
+<phr@projectcenter.ch>
+
+Obtaining GNU Software
+======================
+
+   Check out the GNU web site. (`http://www.gnu.org/')
+
+   Check out the GNUstep web site. (`http://www.gnustep.org/')
+
+   Most GNU software is packed using the GNU `gzip' compression program.
+Source code is available on most sites distributing GNU software.
+
+   For information on how to order GNU software on tape, floppy or
+cd-rom, or printed GNU manuals, check the file etc/ORDERS in the GNU
+Emacs distribution or in GNUinfo/ORDERS on prep, or e-mail a request to:
+<gnu@gnu.org>
+
+   By ordering your GNU software from the FSF, you help us continue to
+develop more free software.  Media revenues are our primary source of
+support.  Donations to FSF are deductible on US tax returns.
+

@@ -1,0 +1,11 @@
+/* 
+ * $FILENAME$ created by $USERNAME$ on $DATE$
+ *
+ * Project $PROJECTNAME$
+ *
+ * Created with ProjectCenter - http://www.projectcenter.ch
+ *
+ * $Id$
+ */
+
+#include "$FILENAMESANSEXTENSION$.h"
