@@ -31,27 +31,19 @@ void createMenu();
 
 int main(int argc, const char **argv) 
 {
-  id theApp;
-  PCAppController *controller;
-  id pool = [[NSAutoreleasePool alloc] init];
-  
-#ifndef NX_CURRENT_COMPILER_RELEASE
-  initialize_gnustep_backend();
-#endif
-  
-  theApp = [NSApplication sharedApplication];
+  NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
+  PCAppController   *controller;
+
+  [NSApplication sharedApplication];
 
   createMenu();
-  
-  controller = [[PCAppController alloc] init];
-  [theApp setDelegate:controller];
 
-  [theApp run];
-  
-  [controller release];
-  [pool release];
-  
-  return 0;
+  controller = [[PCAppController alloc] init];
+  [NSApp setDelegate:controller];
+
+  RELEASE(pool);
+
+  return NSApplicationMain (argc, argv);
 }
 
 void createMenu()
