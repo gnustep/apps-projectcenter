@@ -411,9 +411,13 @@
   // File related menu items
   if (([menuTitle isEqualToString: @"File"]))
     {
-      PCEditorController *editor = [[projectManager activeProject] editorController];
-
-      if (![[editor allEditors] count] || editorIsKey == NO)
+      PCEditorController  *ed = [[projectManager activeProject] editorController];
+      PCBrowserController *br = [[projectManager activeProject] browserController];
+      NSArray             *path = [[br pathOfSelectedFile] pathComponents];
+      
+      if (![[ed allEditors] count] || editorIsKey == NO
+	  || ([path count] 
+	      && [[path objectAtIndex: [path count]-1] isEqualToString: @"/"]))
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
@@ -423,7 +427,7 @@
 	  if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
 	}
     }
-
+;
   // Find menu items
   if (editorIsKey == NO && [menuTitle isEqualToString: @"Find"])
     {

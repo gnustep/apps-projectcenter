@@ -136,7 +136,7 @@
   
   [browser setMaxVisibleColumns:4];
   [browser setSeparatesColumns:NO];
-  [browser setAllowsMultipleSelection:NO];
+  [browser setAllowsMultipleSelection:YES];
   
   [[NSNotificationCenter defaultCenter] addObserver:self 
                                        selector:@selector(projectDictDidChange:)

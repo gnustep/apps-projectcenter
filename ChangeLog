@@ -4,6 +4,7 @@
 	(validateMenuItem:): Update to the current set of menu items.
 	* ProjectCenter_main.m:
 	(createMenu): Set saveFiles: action to "Save Files..." menu item.
+	* ProjectCenterInfo.plist: Update authors' e-mails.
 
 	* PCBaseFileTypes/PCBaseFileType.m:
 	(createFileOfType:type:project): Initializing newFile ivar before
@@ -18,6 +19,10 @@
 	* PCLib/PCProjectManager.m:
 	(saveProject): Removed saving all files.
 	(saveFiles): Call [activeProject saveAllFiles] added.
+	* PCLib/PCBrowserController.m:
+	(setBrowser:): Change setAllowsMultipleSelection to YES.
+	* PCLib/PCProject+UInterface.m:
+	(_initUI): Removed setting browser characteristics code.
 
 2003-05-07 Serg Stoyan <stoyan@hologr.com>
 

@@ -55,8 +55,6 @@
   NSBrowser    *history;
 #endif
 
-  browserController = [[PCBrowserController alloc] init];
-
   /*
    * Project Window
    */
@@ -133,11 +131,10 @@
   /*
    * File Browser
    */
+  browserController = [[PCBrowserController alloc] init];
+
   browser = [[NSBrowser alloc] initWithFrame: NSMakeRect (-1,251,562,128)];
   [browser setDelegate: browserController];
-  [browser setMaxVisibleColumns: 4];
-  [browser setAllowsMultipleSelection: NO];
-  [browser setSeparatesColumns: NO];
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser: browser];
