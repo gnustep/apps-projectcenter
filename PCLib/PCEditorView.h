@@ -26,49 +26,28 @@
 
 #import <AppKit/AppKit.h>
 
-@class PCProject;
-
-@interface PCProjectBuilder : NSObject
+@interface PCEditorView : NSTextView
 {
-  NSBox *componentView;
+  NSScanner *scanner;
 
-  NSTextView *logOutput;
-  NSTextView *errorOutput;
-
-  NSString *makePath;
-
-  id buildStatusField;
-  id targetField;
-
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
-
-  NSFileHandle *readHandle;
-  NSFileHandle *errorReadHandle;
+  @private
+  NSRange range;
+  NSArray *_keywords;
 }
 
-- (id)initWithProject:(PCProject *)aProject;
+- (id)initWithFrame:(NSRect)frameRect;
 - (void)dealloc;
 
-- (NSView *)componentView;
+- (void)setString:(NSString *)aString;
 
-- (void)build:(id)sender;
+- (void)colourise:(id)sender;
 
-- (void)logStdOut:(NSNotification *)aNotif;
-- (void)logErrOut:(NSNotification *)aNotif;
+- (void)colouriseKeyword:(NSString *)keyword;
+- (void)colouriseKeywords:(NSArray *)keywords;
 
-- (void)buildDidTerminate:(NSNotification *)aNotif;
-
-@end
-
-@interface PCProjectBuilder (BuildLogging)
-
-- (void)logString:(NSString *)string error:(BOOL)yn;
-- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
-- (void)logData:(NSData *)data error:(BOOL)yn;
+- (void)colouriseStrings;
+- (void)colouriseCharStrings;
+- (void)colouriseComments;
+- (void)colouriseCPPComments;
 
 @end
-
-
-
-

@@ -9,8 +9,8 @@ What is ProjectCenter?
 
    The file `INSTALL' gives instructions for installing the package.
 
-   The GNUstep web site at `http://www.prjectcenter.ch' contains more
-   information.
+   The GNUstep web site at `http://www.projectcenter.ch' contains more
+   up-to-date information.
 
    ProjectCenter is covered under the GNU Public License.  This means if you 
    make changes to these programs, you cannot charge a fee, other than
@@ -32,11 +32,8 @@ Machines
 
    GNUstep ProjectCenter is known to compile on the following machines.
 
-   * OpenStep 4.x/m68k
-
-   * OpenStep 4.x/ix86
-
-   * Linux/GNUstep 0.6.5
+	* Linux x86, GNUstep 0.6.6 or newer
+	* Linux	PPC, GNUstep 0.6.6 or newer
 
 Where do I send bug reports?
 ============================

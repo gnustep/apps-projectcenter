@@ -38,18 +38,15 @@
 + (void)initialize
 {
     NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
-
-#if defined(GNUSTEP)
     NSString	*_bundlePath = @"/usr/GNUstep/Local/Library/ProjectCenter";
-#else
-    NSString	*_bundlePath = @"/LocalLibrary/ProjectCenter";
-#endif
 
     [defaults setObject:_bundlePath forKey:BundlePaths];
 
     [defaults setObject:@"/usr/bin/emacs" forKey:Editor];
     [defaults setObject:@"/usr/bin/gdb" forKey:Debugger];
     [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
+
+    [defaults setObject:@"YES" forKey:ExternalEditor];
 
     [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
@@ -75,23 +72,45 @@
 
         // They are registered by the bundleLoader
         projectTypes = [[NSMutableDictionary alloc] init];
+
+ 	prefController = [[PCPrefController alloc] init];
+	finder = [[PCFindController alloc] init];
+	infoController = [[PCInfoController alloc] init];
+	logger = [[PCLogController alloc] init];
+	projectManager = [[PCProjectManager alloc] init];
+	fileManager = [PCFileManager fileManager];
+	menuController = [[PCMenuController alloc] init];
+
+	[projectManager setDelegate:self];
+	[fileManager setDelegate:projectManager];
+
+	[menuController setAppController:self];
+	[menuController setFileManager:fileManager];
+	[menuController setProjectManager:projectManager];
     }
     return self;
 }
 
 - (void)dealloc
 {
-    if (doConnection) {
-        [doConnection invalidate];
-        [doConnection release];
-    }
-
-    [projectManager release];
-    [bundleLoader release];
-    [doServer release];
-    [projectTypes release];
-
-    [super dealloc];
+  if (doConnection) {
+    [doConnection invalidate];
+    [doConnection release];
+  }
+  
+  [prefController release];
+  [finder release];
+  [infoController release];
+  [logger release];
+  [projectManager release];
+  [fileManager release];
+  [menuController release];
+  
+  [bundleLoader release];
+  [doServer release];
+  [projectTypes release];
+  
+  [super dealloc];
 }
 
 //============================================================================
@@ -100,12 +119,12 @@
 
 - (id)delegate
 {
-    return delegate;
+  return delegate;
 }
 
 - (void)setDelegate:(id)aDelegate
 {
-    delegate = aDelegate;
+  delegate = aDelegate;
 }
 
 //============================================================================
@@ -114,74 +133,83 @@
 
 - (PCBundleLoader *)bundleLoader
 {
-    return bundleLoader;
+  return bundleLoader;
 }
 
 - (PCProjectManager *)projectManager
 {
-    return projectManager;
+  return projectManager;
 }
 
 - (PCPrefController *)prefController
 {
-    return prefController;
+  return prefController;
 }
 
 - (PCServer *)doServer
 {
-    return doServer;
+  return doServer;
 }
 
 - (PCFindController *)finder
 {
-    return finder;
+  return finder;
 }
 
 - (PCLogController *)logger
 {
-    return logger;
+  return logger;
 }
 
 - (NSDictionary *)projectTypes
 {
-    return projectTypes;
+  return projectTypes;
 }
 
 //============================================================================
 //==== Misc...
 //============================================================================
 
+- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
+{
+  if ([[fileName lastPathComponent] isEqualToString:@"PC.project"] == NO) {
+    return NO;
+  }
+
+  return [projectManager openProjectAt:fileName];
+}
+
+- (void)applicationWillFinishLaunching:(NSNotification *)notification
+{
+  [bundleLoader loadBundles];
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-    [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+  NSString *h = [[NSProcessInfo processInfo] hostName];
+  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
+  [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
 
-    [bundleLoader loadBundles];
+  //[bundleLoader loadBundles];
+    
+  // The DO server
+  doServer = [[PCServer alloc] init];
+  
+  NS_DURING
+    
+  doConnection = [[NSConnection alloc] init];
+  [doConnection registerName:connectionName];
+  
+  NS_HANDLER
+    
+  NSRunAlertPanel(@"Warning!",@"Could not register the DO connection %@",@"OK",nil,nil,nil,connectionName);
+  NS_ENDHANDLER
+    
+  [[NSNotificationCenter defaultCenter] addObserver:doServer selector:@selector(connectionDidDie:) name:NSConnectionDidDieNotification object:doConnection];
+  
+  [doConnection setDelegate:doServer];
 
-    // The DO server
-    doServer = [[PCServer alloc] init];
-
-#if defined(GNUSTEP)
-    NS_DURING
-    doConnection = [NSConnection newRegisteringAtName:@"ProjectCenter" withRootObject:doServer];
-    [logger logMessage:@"Successful initialisation of the DO connection 'ProjectCenter'." tag:INFORMATION];
-    NS_HANDLER
-      [logger logMessage:@"Could not initialise the DO connection 'ProjectCenter'!" tag:WARNING];
-    NSRunAlertPanel(@"Warning!",@"Could not register the DO connection 'ProjectCenter'",@"OK",nil,nil,nil);
-    NS_ENDHANDLER
-#else
-    doConnection = [NSConnection defaultConnection];
-    [doConnection setRootObject:doServer];
-    if (![doConnection registerName:@"ProjectCenter"]) {
-        [logger logMessage:@"Could not initialise the DO connection 'ProjectCenter'!" tag:WARNING];
-    }
-    else {
-        [logger logMessage:@"Successful initialisation of the DO connection 'ProjectCenter'." tag:INFORMATION];
-    }
-#endif
-    [[NSNotificationCenter defaultCenter] addObserver:doServer selector:@selector(connectionDidDie:) name:NSConnectionDidDieNotification object:doConnection];
-    [doConnection setDelegate:doServer];
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:PCAppDidInitNotification object:nil];
+  [[NSNotificationCenter defaultCenter] postNotificationName:PCAppDidInitNotification object:nil];
 }
 
 - (BOOL)applicationShouldTerminate:(id)sender
@@ -213,18 +241,6 @@
 //==== Delegate stuff
 //============================================================================
 
-- (BOOL)application:(NSApplication *)theApplication openFile:(NSString *)filename
-{
-    BOOL	success = NO;
-
-    if (([[filename lastPathComponent] isEqualToString:@"PC.proj"])) {
-        [projectManager openProjectAt:filename];
-        success = YES;
-    }
-
-    return success;
-}
-
 - (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
 {
     Class principalClass;
@@ -247,7 +263,7 @@
         [fileManager registerCreatorsWithObjectsAndKeys:[[principalClass sharedCreator] creatorDictionary]];
 
 	// In objc.h there is already th like (char *)name...
-	//        [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
+	// [logger logMessage:[NSString stringWithFormat:@"FileCreator %@ successfully loaded!",(NSString *)[[principalClass sharedCreator] name]] tag:INFORMATION];
 }
 }
 

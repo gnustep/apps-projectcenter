@@ -1,10 +1,30 @@
 {
+  NSIcon = "ProjectCenter.tiff";
+  NSRole = "Editor";
+  NSTypes = (
+    {
+      NSUnixExtensions = ( "project" );
+      NSIcon = "ProjectCenter.tiff";
+    },
+    {
+      NSUnixExtensions = ( "m" );
+      NSIcon = "FileIcon_.m.tiff";
+    },
+    {
+      NSUnixExtensions = ( "h" );
+      NSIcon = "FileIcon_.h.tiff";
+    },
+    {
+      NSUnixExtensions = ( "c" );
+      NSIcon = "FileIcon_.c.tiff";
+    }
+  );
   NOTE = "Automatically generated, do not edit!";
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "ProjectCenter 0.1";
-  FullVersionID = "0.1 pre pre pre pre epsilon";
+  ApplicationRelease = "ProjectCenter 0.2";
+  FullVersionID = "0.2";
   Authors = ("Philippe C.D. Robert <phr@projectcenter.ch>");
   URL = "http://www.projectcenter.ch";
   Copyright = "Copyright (C) 2000 Philippe C.D. Robert";

@@ -25,50 +25,40 @@
 */
 
 #import <AppKit/AppKit.h>
+#import "PCAppController.h"
 
-@class PCProject;
+@interface PCAppController (MenuHandling)
 
-@interface PCProjectBuilder : NSObject
-{
-  NSBox *componentView;
+- (void)showPrefWindow:(id)sender;
+- (void)showInfoPanel:(id)sender;
 
-  NSTextView *logOutput;
-  NSTextView *errorOutput;
+- (void)showInspector:(id)sender;
+- (void)showBuildPanel:(id)sender;
 
-  NSString *makePath;
+- (void)openProject:(id)sender;
+- (void)newProject:(id)sender;
+- (void)saveProject:(id)sender;
+- (void)saveProjectAs:(id)sender;
+- (void)showLoadedProjects:(id)sender;
+- (void)saveFiles:(id)sender;
+- (void)revertToSaved:(id)sender;
 
-  id buildStatusField;
-  id targetField;
+- (void)newSubproject:(id)sender;
+- (void)addSubproject:(id)sender;
+- (void)removeSubproject:(id)sender;
 
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
+- (void)closeProject:(id)sender;
 
-  NSFileHandle *readHandle;
-  NSFileHandle *errorReadHandle;
-}
-
-- (id)initWithProject:(PCProject *)aProject;
-- (void)dealloc;
-
-- (NSView *)componentView;
-
-- (void)build:(id)sender;
-
-- (void)logStdOut:(NSNotification *)aNotif;
-- (void)logErrOut:(NSNotification *)aNotif;
-
-- (void)buildDidTerminate:(NSNotification *)aNotif;
-
-@end
-
-@interface PCProjectBuilder (BuildLogging)
-
-- (void)logString:(NSString *)string error:(BOOL)yn;
-- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
-- (void)logData:(NSData *)data error:(BOOL)yn;
+- (void)newFile:(id)sender;
+- (void)addFile:(id)sender;
+- (void)openFile:(id)sender;
+- (void)saveFile:(id)sender;
+- (void)saveFileAs:(id)sender;
+- (void)revertFile:(id)sender;
+- (void)renameFile:(id)sender;
+- (void)removeFile:(id)sender;
 
 @end
-
 
 
 

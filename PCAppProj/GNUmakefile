@@ -40,9 +40,7 @@ PCAppProj_HEADERS= 		\
 PCAppProj_PRINCIPAL_CLASS = PCAppProj
 
 PCAppProj_RESOURCE_FILES = 	\
-	AppProject.gmodel 	\
 	PC.proj 		\
-	Main.gmodel		\
 	main.m			\
 	AppController.h		\
 	AppController.m		\

@@ -71,6 +71,24 @@
     [projectTypePopup addItemWithTitle:name];
 }
 
+- (void)setAppController:(id)anObject
+{
+  [appController autorelease];
+  appController = [anObject retain];
+}
+
+- (void)setFileManager:(id)anObject
+{
+  [fileManager autorelease];
+  fileManager = [anObject retain];
+}
+
+- (void)setProjectManager:(id)anObject
+{
+  [projectManager autorelease];
+  projectManager = [anObject retain];
+}
+
 //============================================================================
 //==== Menu stuff
 //============================================================================
@@ -243,20 +261,20 @@
 
 - (void)removeFile:(id)sender
 {
-    NSString *file = nil;
-    PCProject *proj = [projectManager activeProject];
-
-    if ((file = [[proj browserController] nameOfSelectedFile])) {
-        int ret;
-
-        ret = NSRunAlertPanel(@"Remove File!",@"Really remove %@ in project %@?",@"Cancel",@"...from Project only",@"...from Project and Disk",file,[proj projectName]);
-
-            if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) {
-                BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
-
-                [projectManager removeFilePermanently:flag];
-            }
-    }    
+  NSString *file = nil;
+  PCProject *proj = [projectManager activeProject];
+  
+  if ((file = [[proj browserController] nameOfSelectedFile])) {
+    int ret;
+    
+    ret = NSRunAlertPanel(@"Remove File!",@"Really remove %@ in project %@?",@"Cancel",@"...from Project only",@"...from Project and Disk",file,[proj projectName]);
+    
+    if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) {
+      BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
+      
+      [projectManager removeFilePermanently:flag];
+    }
+  }    
 }
 
 //============================================================================
