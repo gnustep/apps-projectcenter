@@ -24,6 +24,9 @@
    $Id$
 */
 
+#ifndef __PCDATASOURCE_H
+#define __PCDATASOURCE_H
+
 #include <AppKit/AppKit.h>
 
 /*
@@ -56,3 +59,6 @@
 - (void)tableView:(NSTableView *)aTableView setObjectValue:(id)anObject forTableColumn:(NSTableColumn *)aTableColumn row:(int)rowIndex;
 
 @end
+
+#endif
+

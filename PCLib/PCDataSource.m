@@ -38,7 +38,7 @@
 
 - (void)dealloc
 {
-    [data release];
+    RELEASE(data);
     [super dealloc];
 }
 
@@ -105,3 +105,4 @@
 }
 
 @end
+

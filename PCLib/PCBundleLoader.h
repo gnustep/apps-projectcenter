@@ -28,7 +28,7 @@
 #define _PCBUNDLELOADER_H
 
 /*
- Descriotion:
+ Description:
 
  PCBundleLoader loads all PC bundles from all the paths that are stored in the
  defaults under the key BundlePaths.

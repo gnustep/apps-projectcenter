@@ -85,8 +85,8 @@
 
 - (void)dealloc
 {
-    [loadedBundles release];
-    
+    RELEASE(loadedBundles);
+
     [super dealloc];
 }
 

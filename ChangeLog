@@ -7,7 +7,8 @@
           PCInfoController.h, PCLogController.m, PCLogController.h, 
           PCAppController.h, PCAppController.m, PCFindController.h,
           PCFindController.m, PCMenuController.h, PCMenuController.m,
-          PCPrefController.m, PCPrefController.h
+          PCPrefController.m, PCPrefController.h PCLib/PCBundleLoader.m,
+          PCLib/PCDataSource.h, PCLib/PCDataSource.m
         * Extracting UI creation into category: PCPrefController+UInterface.h,
           PCPrefController+UInterface.m, PCPrefController.m, PCPrefController.h,
           PCLib/PCProjectDebugger+UInterface.h, PCLib/PCProjectDebugger.h,
