@@ -1,0 +1,40 @@
+2000-09-20 10:50  robert
+
+	* AppController.h, AppController.m, PCAppMakefileFactory.m,
+	PCAppProj.m, main.m: enhanced the created app to support GC and an
+	info panel and more ...
+
+2000-09-17 14:14  robert
+
+	* PCAppProject.h, PCAppProject.m: daily work
+
+2000-09-14 10:54  robert
+
+	* AppController.h, AppController.m, AppProject.gmodel, GNUmakefile,
+	Main.gmodel, PC.proj, PCAppMakefileFactory.m, main.m: apps now
+	don't use gmodels anymore
+
+2000-09-03 22:10  robert
+
+	* GNUmakefile.preamble: renamed libPC into libProjectCenter
+
+2000-08-27 21:11  robert
+
+	* Makefile.preamble, PB.project, PCAppProj.h, Makefile, h.template,
+	m.template, Info.table, PCAppProj.m, Makefile.postamble,
+	PCAppProject.h, PCAppProject.m, GNUmakefile.postamble,
+	GNUmakefile.preamble, PC.proj, main.m, PCAppMakefileFactory.h,
+	PCAppMakefileFactory.m, AppProject.gmodel, GNUmakefile,
+	AppController.h, AppController.m, Info-project.plist, Main.gmodel:
+	Initial revision
+
+2000-08-27 21:11  robert
+
+	* Makefile.preamble, PB.project, PCAppProj.h, Makefile, h.template,
+	m.template, Info.table, PCAppProj.m, Makefile.postamble,
+	PCAppProject.h, PCAppProject.m, GNUmakefile.postamble,
+	GNUmakefile.preamble, PC.proj, main.m, PCAppMakefileFactory.h,
+	PCAppMakefileFactory.m, AppProject.gmodel, GNUmakefile,
+	AppController.h, AppController.m, Info-project.plist, Main.gmodel:
+	Initial import
+

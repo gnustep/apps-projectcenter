@@ -1,0 +1,85 @@
+2000-09-20 17:46  robert
+
+	* ProjectCenter_main.m: Added the font panel stuff
+
+2000-09-20 12:35  robert
+
+	* PCPrefController.m: some more work on the preferences
+
+2000-09-17 16:40  robert
+
+	* PCPrefController.h, PCPrefController.m: Basic preferences
+	handling
+
+2000-09-17 14:12  robert
+
+	* GNUmakefile, Info-project.plist, PCAppController+MenuHandling.h,
+	PCAppController+MenuHandling.m, PCAppController.m,
+	PCMenuController.m, ProjectCenter_main.m, ProjectCentre_build.tiff,
+	ProjectCentre_find.tiff, ProjectCentre_prefs.tiff,
+	ProjectCentre_settings.tiff, ProjectCentre_uml.tiff: Updated some
+	images, fixed some bugs and enhanced the featurelist...
+
+2000-09-14 11:04  robert
+
+	* PCAppController.m: another minor flaw
+
+2000-09-14 10:28  robert
+
+	* PCAppController.m: fixed some bugs introduced by removing the
+	gmodel
+
+2000-09-13 12:45  robert
+
+	* GNUmakefile, PCAppController+MenuHandling.h,
+	PCAppController+MenuHandling.m, PCAppController.h,
+	PCAppController.m, PCMenuController.h, PCMenuController.m,
+	ProjectCenter_main.m, English.lproj/ProjectCenter.gmodel: removed
+	the gmodels completely from ProjectCenter.app
+
+2000-09-03 21:59  robert
+
+	* GNUmakefile.preamble, PC.project, PCAppController.m: minor stuff
+
+2000-09-03 21:15  robert
+
+	* PCAppController.m: New DO code
+
+2000-08-27 21:12  robert
+
+	* Makefile.preamble, PB.project, h.template, m.template, Makefile,
+	ProjectCenter_main.m, Makefile.postamble, PCAppController.h,
+	PCAppController.m, PCPrefController.h, PCPrefController.m,
+	PCFindController.h, PCFindController.m, PCInfoController.h,
+	PCInfoController.m, PCLogController.h, PCLogController.m,
+	PCMenuController.h, ProjectCenter.tiff, PCMenuController.m,
+	GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble,
+	PC.project, FileIcon_.m.tiff, ProjectCentre_documentation.tiff,
+	ProjectCentre_cvs.tiff, ProjectCentre_prefs.tiff,
+	ProjectCenter.app.tiff, FileIcon_rtf.tiff,
+	ProjectCentre_files.tiff, FileIcon_.c.tiff,
+	ProjectCentre_clean.tiff, ProjectCentre_find.tiff,
+	FileIcon_.h.tiff, Info-project.plist, ProjectCentre_add.tiff,
+	ProjectCentre_build.tiff, ProjectCentre_run.tiff,
+	ProjectCentre_uml.tiff, English.lproj/ProjectCenter.gmodel: Initial
+	revision
+
+2000-08-27 21:12  robert
+
+	* Makefile.preamble, PB.project, h.template, m.template, Makefile,
+	ProjectCenter_main.m, Makefile.postamble, PCAppController.h,
+	PCAppController.m, PCPrefController.h, PCPrefController.m,
+	PCFindController.h, PCFindController.m, PCInfoController.h,
+	PCInfoController.m, PCLogController.h, PCLogController.m,
+	PCMenuController.h, ProjectCenter.tiff, PCMenuController.m,
+	GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble,
+	PC.project, FileIcon_.m.tiff, ProjectCentre_documentation.tiff,
+	ProjectCentre_cvs.tiff, ProjectCentre_prefs.tiff,
+	ProjectCenter.app.tiff, FileIcon_rtf.tiff,
+	ProjectCentre_files.tiff, FileIcon_.c.tiff,
+	ProjectCentre_clean.tiff, ProjectCentre_find.tiff,
+	FileIcon_.h.tiff, Info-project.plist, ProjectCentre_add.tiff,
+	ProjectCentre_build.tiff, ProjectCentre_run.tiff,
+	ProjectCentre_uml.tiff, English.lproj/ProjectCenter.gmodel: Initial
+	import
+
