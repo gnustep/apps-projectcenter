@@ -20,43 +20,6 @@
 
 @implementation PCProject (ComponentHandling)
 
-- (void)topButtonsPressed:(id)sender
-{
-  switch ([[sender selectedCell] tag]) 
-  {
-  case BUILD_TAG:
-    [self showBuildView:self];
-    break;
-  case LAUNCH_TAG:
-    if ([self isExecutable])
-      {
-	[self showRunView:self];
-      }
-    else
-      {
-	NSRunAlertPanel(@"Attention!",
-	  		@"This project is not executable!",
-	    		@"OK",nil,nil);
-      }
-    break;
-  case EDITOR_TAG:
-    [self showEditorView:self];
-    break;
-  case FILES_TAG:
-    break;
-  case FIND_TAG:
-    break;
-  case INSPECTOR_TAG:
-    [self showInspector:self];
-    break;
-/*  case PREFS_TAG:
-    [self showBuildTargetPanel:self];
-    break;*/
-  default:
-    break;
-  }
-}
-
 - (void)showBuildView:(id)sender
 {
   NSView *view = nil;
@@ -121,6 +84,14 @@
   NSView *view = nil;
   BOOL   separate = NO;
   
+  if ([self isExecutable] == NO)
+  {
+    NSRunAlertPanel(@"Attention!",
+                    @"This project is not executable!",
+                    @"OK",nil,nil);
+    return;
+  }
+
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
               objectForKey: SeparateLauncher] isEqualToString: @"YES"])
     {

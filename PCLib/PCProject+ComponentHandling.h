@@ -18,7 +18,6 @@
 
 @interface PCProject (ComponentHandling)
 
-- (void)topButtonsPressed:(id)sender;
 - (void)showBuildView:(id)sender;
 - (void)showRunView:(id)sender;
 - (void)showEditorView:(id)sender;
