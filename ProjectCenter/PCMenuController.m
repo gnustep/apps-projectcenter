@@ -152,18 +152,28 @@
 - (void)newProject:(id)sender
 {
     NSSavePanel *sp;
-    int 	runResult;
+    int 	 runResult;
+    NSString    *dir = nil;
 
     sp = [NSSavePanel savePanel];
 
     [sp setTitle:@"Create new project..."];
     [sp setAccessoryView:projectTypeAccessaryView];
 
-    runResult = [sp runModalForDirectory:NSHomeDirectory() file:@""];
+    dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];
+    if( !dir )
+    {
+        dir = NSHomeDirectory();
+    }
+
+    runResult = [sp runModalForDirectory:dir file:@""];
     if (runResult == NSOKButton) 
     {
         NSString *projectType = [projectTypePopup titleOfSelectedItem];
         NSString *className = [[appController projectTypes] objectForKey:projectType];
+
+        [[NSUserDefaults standardUserDefaults] setObject:[sp directory] 
+	                                          forKey:@"LastNewDirectory"];
 
         if (![projectManager createProjectOfType:className path:[sp filename]])
 	{
