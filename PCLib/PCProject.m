@@ -171,7 +171,10 @@
   [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  // Status
+  /*
+   * Status
+   */
+
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,296,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
@@ -183,7 +186,10 @@
 				   NSViewMinYMargin)];
   [_c_view addSubview:[textField autorelease]];
 
-  // Status message
+  /*
+   * Status message
+   */
+
   buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,296,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
@@ -196,7 +202,10 @@
 					  NSViewMinYMargin)];
   [_c_view addSubview:[buildStatusField autorelease]];
 
-  // Target
+  /*
+   * Target
+   */
+
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,272,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
@@ -208,7 +217,10 @@
 				   NSViewMinYMargin)];
   [_c_view addSubview:[textField autorelease]];
 
-  // Target message
+  /*
+   * Target message
+   */
+
   targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,272,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
@@ -222,39 +234,19 @@
   [_c_view addSubview:[targetField autorelease]];
 
   /*
-   * Build Panel
+   * Build Options Panel
    *
    */
 
-  _w_frame = NSMakeRect(100,100,272,104);
+  _w_frame = NSMakeRect(100,100,272,80);
   buildTargetPanel = [[NSWindow alloc] initWithContentRect:_w_frame styleMask:style backing:NSBackingStoreBuffered defer:NO];
   [buildTargetPanel setDelegate:self];
   [buildTargetPanel setReleasedWhenClosed:NO];
   [buildTargetPanel setTitle:@"Build Options"];
   _c_view = [buildTargetPanel contentView];
 
-  buildTargetPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(72,24,184,20)];
-  [buildTargetPopup addItemWithTitle:@"Default"];
-  [buildTargetPopup addItemWithTitle:@"Debug"];
-  [buildTargetPopup addItemWithTitle:@"Profile"];
-  [buildTargetPopup addItemWithTitle:@"Install"];
-  [buildTargetPopup autorelease];
-  [buildTargetPopup setTarget:self];
-  [buildTargetPopup setAction:@selector(setTarget:)];
-  [_c_view addSubview:buildTargetPopup];
-
-  // Target (popup)
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,24,56,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Target:"];
-  [_c_view addSubview:[textField autorelease]];
-
   // Host
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,48,56,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,24,56,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -264,7 +256,7 @@
   [_c_view addSubview:[textField autorelease]];
 
   // Host message
-  buildTargetHostField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,48,184,21)];
+  buildTargetHostField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,184,21)];
   [buildTargetHostField setAlignment: NSLeftTextAlignment];
   [buildTargetHostField setBordered: NO];
   [buildTargetHostField setEditable: YES];
@@ -277,7 +269,7 @@
   [_c_view addSubview:[buildTargetHostField autorelease]];
 
   // Args
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,68,60,21)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,44,60,21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -287,7 +279,7 @@
   [_c_view addSubview:[textField autorelease]];
 
   // Args message
-  buildTargetArgsField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,68,184,21)];
+  buildTargetArgsField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,44,184,21)];
   [buildTargetArgsField setAlignment: NSLeftTextAlignment];
   [buildTargetArgsField setBordered: NO];
   [buildTargetArgsField setEditable: YES];
@@ -314,11 +306,7 @@
 - (id)init
 {
     if ((self = [super init])) {
-        _target = defaultTarget;
-
 	buildOptions = [[NSMutableDictionary alloc] init];
-	[buildOptions setObject:TARGET_MAKE forKey:BUILD_KEY];
-
         [self _initUI];
     }
     return self;
@@ -733,13 +721,6 @@
     [buildTargetPanel center];
   }
   [buildTargetPanel makeKeyAndOrderFront:self];
-}
-
-- (void)setTarget:(id)sender
-{
-  _target = [buildTargetPopup indexOfSelectedItem];
-
-  [buildOptions setObject:[NSNumber numberWithInt:_target] forKey:BUILD_KEY];
 }
 
 - (void)setHost:(id)sender

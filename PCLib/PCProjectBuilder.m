@@ -106,7 +106,7 @@
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView2 autorelease];
 
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,264)] autorelease];  
+  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,288)] autorelease];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
@@ -115,41 +115,51 @@
   [_c_view addSubview:split];
 
   /*
-   * Buttons
+   * 5 build Buttons
    */
 
-  _w_frame = NSMakeRect(8,268,144,48);
+  _w_frame = NSMakeRect(8,292,244,24);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell
                                numberOfRows: 1
-                            numberOfColumns: 3] autorelease];
+                            numberOfColumns: 5] autorelease];
+  [matrix setIntercellSpacing:NSMakeSize(1,1)];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [matrix setTarget:self];
+  [matrix setAction:@selector(build:)];
   [_c_view addSubview:matrix];
 
   button = [matrix cellAtRow:0 column:0];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_build.tiff")];
+  [button setTag:0];
+  [button setImagePosition:NSNoImage];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(build:)];
+  [button setTitle:@"Build"];
 
   button = [matrix cellAtRow:0 column:1];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_clean.tiff")];
+  [button setTag:1];
+  [button setImagePosition:NSNoImage];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(clean:)];
+  [button setTitle:@"Clean"];
 
   button = [matrix cellAtRow:0 column:2];
-  [button setImagePosition:NSImageOnly];
-  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
-  [button setTarget:self];
-  [button setAction:@selector(showBuildTarget:)];
+  [button setTag:2];
+  [button setImagePosition:NSNoImage];
   [button setButtonType:NSMomentaryPushButton];
-  [button setTarget:self];
-  [button setAction:@selector(install:)];
+  [button setTitle:@"Debug"];
+
+  button = [matrix cellAtRow:0 column:3];
+  [button setTag:3];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Profile"];
+
+  button = [matrix cellAtRow:0 column:4];
+  [button setTag:4];
+  [button setImagePosition:NSNoImage];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Install"];
 }
 
 @end
@@ -222,42 +232,49 @@ static PCProjectBuilder *_builder;
   makeTask = [[NSTask alloc] init];
 
   optionDict = [currentProject buildOptions];
+  args = [NSMutableArray array];
 
-  if ((tg = [optionDict objectForKey:BUILD_KEY])) {
-    if ([tg isEqualToString:TARGET_MAKE_DEBUG]) {
-      args = [NSMutableArray array];
-      [args addObject:@"debug=yes"];
-      [makeTask setArguments:args];
-    }
-    else if ([tg isEqualToString:TARGET_MAKE_PROFILE]) {
-      args = [NSMutableArray array];
-      [args addObject:@"profile=YES"];
-      [args addObject:@"static=YES"];
-      [makeTask setArguments:args];
-    }
-
-    [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
-    [makeTask setLaunchPath:makePath];
-
-    [makeTask setStandardOutput:logPipe];
-    [makeTask setStandardError:logPipe];
-
-    [makeTask launch];
-
-    /*
-     * This is just a quick hack for now...
-     */
-
-    while ((inData = [readHandle availableData]) && [inData length]) {
-      output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
-      [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
-      [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
-      [output release];
-    }
-    
-    [makeTask waitUntilExit];
-    [makeTask autorelease];
+  switch ([[sender selectedCell] tag]) {
+  case 0:
+    break;
+  case 1:
+    [args addObject:@"clean"];
+    break;
+  case 2:
+    [args addObject:@"debug=yes"];
+    break;
+  case 3:
+    [args addObject:@"profile=yes"];
+    [args addObject:@"static=yes"];
+    break;
+  case 4:
+    [args addObject:@"install"];
+    break;
   }
+
+  [makeTask setArguments:args];
+
+  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [makeTask setLaunchPath:makePath];
+  
+  [makeTask setStandardOutput:logPipe];
+  [makeTask setStandardError:logPipe];
+  
+  [makeTask launch];
+  
+  /*
+   * This is just a quick hack for now...
+   */
+  
+  while ((inData = [readHandle availableData]) && [inData length]) {
+    output = [[NSString alloc] initWithData:inData encoding:NSASCIIStringEncoding];      
+    [logOutput setString:[NSString stringWithFormat:@"%@%@\n", [logOutput string], output]];
+    [logOutput scrollRangeToVisible:NSMakeRange([[logOutput textStorage] length], 0)];
+    [output release];
+  }
+  
+  [makeTask waitUntilExit];
+  [makeTask autorelease];
 }
 
 - (void)clean:(id)sender

@@ -32,7 +32,6 @@
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
 #endif
 
-#define BUILD_KEY           @"BuildKey"
 #define BUILD_ARGS_KEY      @"BuildArgsKey"
 #define BUILD_HOST_KEY      @"BuildHostKey"
 
@@ -59,13 +58,6 @@
 #define TOUCHED_PATHS		(1 << 13)
 
 typedef int PCProjInfoBits;
-
-typedef enum {
-    defaultTarget = 0,
-    debug,
-    profile,
-    install
-} btarget;
 
 //===========================================================================================
 // ==== Project keys
@@ -108,7 +100,6 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id buildTargetPanel;
     id buildTargetHostField;
     id buildTargetArgsField;
-    id buildTargetPopup;
     
     id buildStatusField;
     id targetField;
@@ -122,7 +113,6 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
     @private
     BOOL _needsReleasing;
-    btarget _target;
 }
 
 //===========================================================================================
@@ -224,7 +214,6 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (id)updatedFilesView;
 
 - (void)showBuildTargetPanel:(id)sender;
-- (void)setTarget:(id)sender;
 - (void)setHost:(id)sender;
 - (void)setArguments:(id)sender;
 
