@@ -25,8 +25,6 @@
 
 - (void)appendString:(NSString *)aString;
 
-- (void)appendApplication;
-
 - (void)appendHeaders:(NSArray *)array;
 - (void)appendClasses:(NSArray *)array;
 - (void)appendCFiles:(NSArray *)array;
@@ -34,11 +32,7 @@
 - (void)appendResources;
 - (void)appendResourceItems:(NSArray *)array;
 
-- (void)appendInstallDir:(NSString*)dir;
-- (void)appendAppIcon:(NSString*)icn;
-
 - (void)appendSubprojects:(NSArray*)array;
-- (void)appendGuiLibraries:(NSArray*)array;
 
 - (void)appendTailForApp;
 - (void)appendTailForLibrary;
@@ -47,6 +41,24 @@
 - (void)appendTailForGormApp;
 
 - (NSData *)encodedMakefile;
+
+@end
+
+@interface PCMakefileFactory (ApplicationProject)
+
+- (void)appendApplication;
+- (void)appendAppIcon:(NSString*)icn;
+- (void)appendGuiLibraries:(NSArray*)array;
+- (void)appendInstallDir:(NSString*)dir;
+
+@end
+
+@interface PCMakefileFactory (BundleProject)
+
+- (void)appendBundle;
+- (void)appendPrincipalClass:(NSString *)cname;
+- (void)appendBundleInstallDir:(NSString*)dir;
+- (void)appendLibraries:(NSArray*)array;
 
 @end
 

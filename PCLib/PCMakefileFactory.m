@@ -17,6 +17,7 @@
 #define COMMENT_SUBPROJECTS @"\n\n#\n# Subprojects\n#\n\n"
 #define COMMENT_APP         @"\n\n#\n# Main application\n#\n\n"
 #define COMMENT_LIBRARIES   @"\n\n#\n# Additional libraries\n#\n\n"
+#define COMMENT_BUNDLE      @"\n\n#\n# Bundle\n#\n\n"
 
 @implementation PCMakefileFactory
 
@@ -63,14 +64,6 @@ static PCMakefileFactory *_factory = nil;
     NSAssert( aString, @"No valid string!");
 
     [mfile appendString:aString];
-}
-
-- (void)appendApplication
-{
-    [self appendString:COMMENT_APP];
-
-    [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
-    [self appendString:[NSString stringWithFormat:@"APP_NAME=%@\n",pnme]];
 }
 
 - (void)appendHeaders:(NSArray *)array
@@ -140,18 +133,6 @@ static PCMakefileFactory *_factory = nil;
     }
 }
 
-- (void)appendInstallDir:(NSString*)dir
-{
-    [self appendString:
-             [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
-}
-
-- (void)appendAppIcon:(NSString*)icn
-{
-    [self appendString:
-             [NSString stringWithFormat:@"%@_APPLICATION_ICON=%@\n",pnme, icn]];
-}
-
 - (void)appendSubprojects:(NSArray*)array
 {
     [self appendString:COMMENT_SUBPROJECTS];
@@ -166,27 +147,6 @@ static PCMakefileFactory *_factory = nil;
         }
     }
 
-}
-
-- (void)appendGuiLibraries:(NSArray*)array
-{
-    [self appendString:COMMENT_LIBRARIES];
-    [self appendString:@"ADDITIONAL_GUI_LIBS += "];
-
-    if( array && [array count] )
-    {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
-
-        while (tmp = [enumerator nextObject]) 
-        {
-          if (![tmp isEqualToString:@"gnustep-base"] &&
-              ![tmp isEqualToString:@"gnustep-gui"]) 
-          {
-            [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-          }
-        }
-    }
 }
 
 - (void)appendTailForApp
@@ -212,7 +172,12 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendTailForBundle
 {
-    [self appendString:@""];
+    [self appendString:@"\n\n"];
+
+    [self appendString:@"-include GNUmakefile.preamble\n"];
+    [self appendString:@"-include GNUmakefile.local\n"];
+    [self appendString:@"include $(GNUSTEP_MAKEFILES)/bundle.make\n"];
+    [self appendString:@"-include GNUmakefile.postamble\n"];
 }
 
 - (void)appendTailForGormApp
@@ -228,3 +193,99 @@ static PCMakefileFactory *_factory = nil;
 }
 
 @end
+
+@implementation PCMakefileFactory (ApplicationProject)
+
+- (void)appendApplication
+{
+    [self appendString:COMMENT_APP];
+
+    [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
+    [self appendString:[NSString stringWithFormat:@"APP_NAME=%@\n",pnme]];
+}
+
+- (void)appendAppIcon:(NSString*)icn
+{
+    [self appendString:
+             [NSString stringWithFormat:@"%@_APPLICATION_ICON=%@\n",pnme, icn]];
+}
+
+- (void)appendGuiLibraries:(NSArray*)array
+{
+    [self appendString:COMMENT_LIBRARIES];
+    [self appendString:@"ADDITIONAL_GUI_LIBS += "];
+
+    if( array && [array count] )
+    {
+        NSString     *tmp;
+        NSEnumerator *enumerator = [array objectEnumerator];
+
+        while (tmp = [enumerator nextObject]) 
+        {
+          if (![tmp isEqualToString:@"gnustep-base"] &&
+              ![tmp isEqualToString:@"gnustep-gui"]) 
+          {
+            [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+          }
+        }
+    }
+}
+
+- (void)appendInstallDir:(NSString*)dir
+{
+    [self appendString:
+             [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
+}
+
+@end
+
+@implementation PCMakefileFactory (BundleProject)
+
+- (void)appendBundle
+{
+    [self appendString:COMMENT_BUNDLE];
+
+    [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
+    [self appendString:[NSString stringWithFormat:@"BUNDLE_NAME=%@\n",pnme]];
+    [self appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION=.bundle\n"]];
+
+}
+
+- (void)appendPrincipalClass:(NSString *)cname
+{
+    [self appendString:
+             [NSString stringWithFormat:@"%@_PRINCIPAL_CLASS=%@\n",pnme,cname]];
+
+}
+
+- (void)appendBundleInstallDir:(NSString*)dir
+{
+    [self appendString:
+                    [NSString stringWithFormat:@"BUNDLE_INSTALL_DIR=%@\n",dir]];
+}
+
+- (void)appendLibraries:(NSArray*)array
+{
+    [self appendString:COMMENT_LIBRARIES];
+
+    [self appendString:
+              [NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",pnme]];
+
+    if( array && [array count] )
+    {
+        NSString     *tmp;
+        NSEnumerator *enumerator = [array objectEnumerator];
+
+        while (tmp = [enumerator nextObject]) 
+        {
+          if (![tmp isEqualToString:@"gnustep-base"] &&
+              ![tmp isEqualToString:@"gnustep-gui"]) 
+          {
+            [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+          }
+        }
+    }
+}
+
+@end
+
