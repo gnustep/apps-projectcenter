@@ -1,3 +1,9 @@
+2003-09-14  Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* PCGormProj/baseInterface.*: Removed.
+	* PCGormProj/BaseInterface.gorm: Added as new base interface,
+	the old model file had some issues.
+
 2003-09-06  Fred Kiefer <FredKiefer@gmx.de>
 
         * PCLib/GNUMakefile.preamble

@@ -136,13 +136,9 @@ static PCGormProj *_creator = nil;
         [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
 
         gormTemplatePath = [path stringByAppendingPathComponent: [[path lastPathComponent] stringByAppendingString: @".gorm"]];
-        [fm createDirectoryAtPath:gormTemplatePath attributes:nil];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"baseInterface" ofType:@"gorm"];
-        [fm copyPath:_file toPath:[gormTemplatePath stringByAppendingPathComponent:@"objects.gorm"] handler:nil];
-
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"baseInterface" ofType:@"classes"];
-        [fm copyPath:_file toPath:[gormTemplatePath stringByAppendingPathComponent:@"data.classes"] handler:nil];
+	_file = [[NSBundle bundleForClass:[self class]] pathForResource:@"BaseInterface" ofType:@"gorm"];
+        [fm copyPath:_file toPath:gormTemplatePath handler:nil];
 
         // Resources
         _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];

@@ -38,8 +38,7 @@ PCGormProj_LIBRARIES_DEPEND_UPON += -lProjectCenter
 PCGormProj_RESOURCE_FILES= \
 PC.proj \
 main.m \
-baseInterface.classes \
-baseInterface.gorm
+BaseInterface.gorm
 
 
 #
