@@ -59,7 +59,7 @@ void createMenu()
 
   menu = [[NSMenu alloc] initWithTitle:APP_NAME];
 
-  [menu addItemWithTitle:@"Info" action:action keyEquivalent:@""];
+  [menu addItemWithTitle:@"Info" action:@selector(orderFrontStandardInfoPanel:) keyEquivalent:@""];
   [menu addItemWithTitle:@"Edit" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Windows" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Services" action:action keyEquivalent:@""];

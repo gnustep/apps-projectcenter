@@ -65,7 +65,7 @@ static NSDictionary *infoDict = nil;
 - (void)showPrefPanel:(id)sender
 {
 }
-
+/*
 - (void)showInfoPanel:(id)sender
 {
   if (!infoDict) {
@@ -78,5 +78,5 @@ static NSDictionary *infoDict = nil;
 
   [[NSApplication sharedApplication] orderFrontStandardInfoPanelWithOptions:infoDict];
 }
-
+*/
 @end

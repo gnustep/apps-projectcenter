@@ -28,6 +28,6 @@
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
 
 - (void)showPrefPanel:(id)sender;
-- (void)showInfoPanel:(id)sender;
+//- (void)showInfoPanel:(id)sender;
 
 @end

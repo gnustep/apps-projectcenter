@@ -80,6 +80,7 @@ static PCAppProj *_creator = nil;
         NSString *_resourcePath;
         NSMutableDictionary *dict;
         NSDictionary *infoDict;
+	NSString *plistFileName;
 
         project = [[[PCAppProject alloc] init] autorelease];
 
@@ -105,7 +106,8 @@ static PCAppProj *_creator = nil;
 				   @"",@"URL",
 				   @"Copyright (C) 200x by ...",@"Copyright",
 				   @"Released under ...",@"CopyrightDescription", nil];
-	[infoDict writeToFile:[path stringByAppendingPathComponent:@"Info-project.plist"] atomically:YES];
+	plistFileName = [NSString stringWithFormat:@"%@Info.plist",[path lastPathComponent]];
+	[infoDict writeToFile:[path stringByAppendingPathComponent:plistFileName] atomically:YES];
         
         // Copy the project files to the provided path
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];
