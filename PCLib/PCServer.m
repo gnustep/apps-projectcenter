@@ -40,100 +40,15 @@
   if ((self = [super init])) 
   {
     clients = [[NSMutableArray alloc] init];
-    editors = [[NSMutableDictionary alloc] init];
-
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileShouldBeOpened:) name:FileShouldOpenNotification object:nil];
   }
   return self;
 }
 
 - (void)dealloc
 {
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-  RELEASE(editors);
   RELEASE(clients);
 
   [super dealloc];
-}
-
-//----------------------------------------------------------------------------
-// Miscellaneous
-//----------------------------------------------------------------------------
-
-- (void)fileShouldBeOpened:(NSNotification *)aNotif
-{
-  NSString *file = [[aNotif userInfo] objectForKey:@"FilePathKey"];
-
-  if ([[[NSUserDefaults standardUserDefaults] objectForKey:ExternalEditor] isEqualToString:@"YES"]) {
-    [self openFileInExternalEditor:file];
-  }
-  else {
-    [self openFileInInternalEditor:file];
-  }
-}
-
-- (void)openFileInExternalEditor:(NSString *)file
-{
-  NSTask *editorTask;
-  NSMutableArray *args;
-  NSUserDefaults *udef = [NSUserDefaults standardUserDefaults];
-  NSString *editor = [udef objectForKey:Editor];
-
-  args = [NSMutableArray arrayWithArray:
-                                    [editor componentsSeparatedByString: @" "]];
-
-  editorTask = [[[NSTask alloc] init] autorelease];
-  [editorTask setLaunchPath:[args objectAtIndex: 0]];
-  [args removeObjectAtIndex: 0];
-  [args addObject:file];
-  [editorTask setArguments:args];
-
-  [editorTask launch];
-}
-
-- (void)openFileInInternalEditor:(NSString *)file
-{
-  PCEditor *editor = nil;
-
-  if((editor = [editors objectForKey:file]))
-  {
-    [editor show];
-  }
-  else
-  {
-    editor = [[PCEditor alloc] initWithPath:file];
-
-    [editor setDelegate:self];
-    [editors setObject:editor forKey:file];
-    [editor show];
-
-    RELEASE(editor);
-  }
-}
-
-- (void)closeEditorForFile:(NSString *)file
-{
-  PCEditor *editor;
-
-  if((editor = [editors objectForKey:file]))
-  {
-      [editor close];
-      [editors removeObjectForKey:file];
-  }
-}
-
-- (void)closeAllEditors
-{
-    NSEnumerator *enumerator = [editors keyEnumerator];
-    PCEditor *editor;
-
-    while((editor = [enumerator nextObject]))
-    {
-        [editor close];
-    }
-
-    [editors removeAllObjects];
 }
 
 //----------------------------------------------------------------------------

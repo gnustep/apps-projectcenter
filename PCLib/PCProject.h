@@ -106,6 +106,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 @class PCProjectBuilder;
 @class PCProjectDebugger;
+@class PCEditorController;
 
 @interface PCProject : NSObject
 {
@@ -116,6 +117,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
     PCProjectBuilder *projectBuilder;
     PCProjectDebugger *projectDebugger;
+    PCEditorController *editorController;
     NSBox *box;
 
     id projectAttributeInspectorView;
@@ -166,6 +168,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 - (NSWindow *)projectWindow;
 
 - (Class)principalClass;
+
+- (PCEditorController*)editorController;
 
 //=============================================================================
 // ==== Delegate and manager

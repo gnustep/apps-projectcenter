@@ -56,6 +56,3 @@
 - (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column;
 
 @end
-
-extern NSString *FileShouldOpenNotification;
-

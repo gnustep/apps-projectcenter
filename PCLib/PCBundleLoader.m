@@ -45,18 +45,21 @@
     NSLog([NSString stringWithFormat:@"Loading bundle %@...",path]);
 #endif// DEBUG
 
-    if ((bundle = [NSBundle bundleWithPath:path])) {
+    if ((bundle = [NSBundle bundleWithPath:path])) 
+    {
         [loadedBundles addObject:bundle];
 
 #ifdef DEBUG
         NSLog([NSString stringWithFormat:@"Bundle %@ successfully loaded!",path]);
 #endif// DEBUG
 
-        if (delegate && [delegate respondsToSelector:@selector(bundleLoader: didLoadBundle:)]) {
+        if (delegate && [delegate respondsToSelector:@selector(bundleLoader: didLoadBundle:)]) 
+	{
             [delegate bundleLoader:self didLoadBundle:bundle];
         }
     }
-    else {
+    else 
+    {
         NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
     }
 }
@@ -101,14 +104,17 @@
     NSArray		*dir;
     NSString 		*path = [[NSUserDefaults standardUserDefaults] objectForKey:BundlePaths];
 
-    if (!path || [path isEqualToString:@""]) {
+    if (!path || [path isEqualToString:@""]) 
+    {
       NSDictionary *env = [[NSProcessInfo processInfo] environment];
       NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
       
-      if (prefix && ![prefix isEqualToString:@""]) {
+      if (prefix && ![prefix isEqualToString:@""]) 
+      {
 	path =[prefix stringByAppendingPathComponent:@"Library/ProjectCenter"];
       }
-      else {
+      else 
+      {
 	path = [NSString stringWithString:@"/usr/GNUstep/System/Library/ProjectCenter"];
       }
       
@@ -116,22 +122,29 @@
       [[NSUserDefaults standardUserDefaults] synchronize];
     }
 
-    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) {
-      [NSException raise:@"PCBundleLoaderPathException" format:@"No valid bundle path specified:\n%@",path];
+    if (![[NSFileManager defaultManager] fileExistsAtPath:path]) 
+    {
+      [NSException raise:@"PCBundleLoaderPathException" 
+                  format:@"No valid bundle path specified:\n%@",path];
       return;
     }
 #ifdef DEBUG
-    else {
+    else 
+    {
       NSLog([NSString stringWithFormat:@"Loading bundles at %@",path]);
     }
 #endif// DEBUG
 
     dir = [[NSFileManager defaultManager] directoryContentsAtPath:path];
     enumerator = [dir objectEnumerator];
-    while (bundleName = [enumerator nextObject]) {
-        if ([[bundleName pathExtension] isEqualToString:@"bundle"]) {
-            NSString *fullPath = [NSString stringWithFormat:@"%@/%@",path,bundleName];
-            
+
+    while (bundleName = [enumerator nextObject]) 
+    {
+        if ([[bundleName pathExtension] isEqualToString:@"bundle"]) 
+	{
+            NSString *fullPath;
+	    
+	    fullPath = [NSString stringWithFormat:@"%@/%@",path,bundleName];
             [self loadAdditionalBundlesAt:fullPath];
         }
     }

@@ -63,6 +63,8 @@
   [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   [window setContentView:scrollView];
+  [window setDelegate:self];
+
   RELEASE(scrollView);
 }
 
@@ -113,6 +115,11 @@
     return window;
 }
 
+- (NSString *)path
+{
+    return path;
+}
+
 - (void)setEmbedded:(BOOL)yn
 {
     isEmbedded = yn;
@@ -136,13 +143,40 @@
 
 - (void)close
 {
-    NSLog(@"Closing editor for file %@",path);
+    if( isEmbedded == NO && [window isDocumentEdited] )
+    {
+        BOOL ret;
+
+        [window makeKeyAndOrderFront:self];
+
+	ret = NSRunAlertPanel(@"Edited File!",
+	                      @"Should the file be saved before closing?",
+			      @"Yes",@"No",nil);
+
+	if( ret == YES )
+	{
+	    // SAVE
+	}
+
+        [window setDocumentEdited:NO];
+    }
+    else if( isEmbedded )
+    {
+    }
+
+    [window performClose:self];
+	
+    if( delegate && [delegate respondsToSelector:@selector(editorDidClose:)] )
+    {
+        [delegate editorDidClose:self];
+    }
 }
 
 - (void)windowWillClose:(NSNotification *)aNotif
 {
     if( [[aNotif object] isEqual:window] )
     {
+        [self close];
     }
 }
 

@@ -50,4 +50,6 @@
 - (void)colouriseComments;
 - (void)colouriseCPPComments;
 
+- (void)keyDown: (NSEvent *)anEvent;
+
 @end

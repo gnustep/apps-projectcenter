@@ -41,7 +41,8 @@ static BOOL isInitialised = NO;
 
 - (id)initWithFrame:(NSRect)frameRect
 {
-  if ((self = [super initWithFrame:frameRect])) {
+  if ((self = [super initWithFrame:frameRect])) 
+  {
 
     /*
      * Should move that to initialize...
@@ -355,6 +356,16 @@ static BOOL isInitialised = NO;
   while ((object = [enumerator nextObject])) {
     [self colouriseKeyword:object];
   }
+}
+
+- (void)keyDown: (NSEvent *)anEvent
+{
+    if( [[self window] isDocumentEdited] == NO )
+    {
+	[[self window] setDocumentEdited:YES];
+    }
+
+    [super keyDown:anEvent];
 }
 
 @end

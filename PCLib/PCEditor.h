@@ -36,11 +36,18 @@
 - (BOOL)isEmbedded;
 
 - (NSWindow *)editorWindow;
+- (NSString *)path;
 
 - (void)show;
 - (void)close;
 
 - (void)windowWillClose:(NSNotification *)aNotif;
+
+@end
+
+@interface NSObject (PCEditorDelegate )
+
+- (void)editorDidClose:(id)sender;
 
 @end
 

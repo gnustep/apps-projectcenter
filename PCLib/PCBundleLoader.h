@@ -31,6 +31,7 @@
  defaults under the key BundlePaths.
 
  */
+
 #import <AppKit/AppKit.h>
 
 #import "PreferenceController.h"
@@ -59,17 +60,6 @@
 
 - (NSArray *)loadedBundles;
     // Returns all loaded ProjectCenter bundles.
-
-//----------------------------------------------------------------------------
-// BundleLoader 
-//----------------------------------------------------------------------------
-
-- (BOOL)registerProjectSubmenu:(NSMenu *)menu;
-- (BOOL)registerFileSubmenu:(NSMenu *)menu;
-- (BOOL)registerToolsSubmenu:(NSMenu *)menu;
-- (BOOL)registerPrefController:(id<PreferenceController>)prefs;
-- (BOOL)registerEditor:(id<ProjectEditor>)anEditor;
-- (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger;
 
 @end
 

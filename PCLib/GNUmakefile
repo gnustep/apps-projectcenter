@@ -61,7 +61,8 @@ ProjectEditor.h \
 ProjectType.h \
 Server.h \
 PCSplitView.h \
-PCEditor.h 
+PCEditor.h \
+PCEditorController.h 
 
 #
 
@@ -80,7 +81,8 @@ PCProjectDebugger.m \
 PCProjectManager.m \
 PCServer.m \
 PCSplitView.m \
-PCEditor.m 
+PCEditor.m \
+PCEditorController.m 
 
 #
 

@@ -25,6 +25,7 @@
 */
 
 #import "PCProjectManager.h"
+#import "PCEditorController.h"
 #import "ProjectCenter.h"
 
 #if defined(GNUSTEP)
@@ -130,8 +131,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)dealloc
 {
-    [rootBuildPath release];
-    [loadedProjects release];
+    RELEASE(rootBuildPath);
+    RELEASE(loadedProjects);
 
     if( [saveTimer isValid] )
     {
@@ -142,9 +143,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   
     if (_needsReleasing) 
     {
-      [inspector release];
-      [inspectorView release];
-      [inspectorPopup release];
+      RELEASE(inspector);
+      RELEASE(inspectorView);
+      RELEASE(inspectorPopup);
     }
   
     [super dealloc];
@@ -265,12 +266,14 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {    
-  if (delegate && [delegate respondsToSelector:@selector(projectTypes)]) {
-    NSDictionary	*builders = [delegate projectTypes];
-    NSEnumerator 	*enumerator = [builders keyEnumerator];
-    NSString 	*builderKey;
+  if (delegate && [delegate respondsToSelector:@selector(projectTypes)]) 
+  {
+    NSDictionary *builders = [delegate projectTypes];
+    NSEnumerator *enumerator = [builders keyEnumerator];
+    NSString 	 *builderKey;
     
-    while (builderKey = [enumerator nextObject]) {
+    while (builderKey = [enumerator nextObject]) 
+    {
       id<ProjectType>	concretBuilder;
       PCProject		*project;
       
@@ -280,19 +283,17 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       
       concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
       
-      if ((project = [concretBuilder openProjectAt:aPath])) {
+      if ((project = [concretBuilder openProjectAt:aPath])) 
+      {
 	[[project projectWindow] center];
 
 	return project;
       }
     }
   }
-#ifdef DEBUG
-  else {
-    NSLog(@"No project manager delegate available!");
-  }
-#endif // DEBUG
-  
+
+  NSRunAlertPanel(@"Loading Project Failed!",@"Could not load project '%@'!",@"OK",nil,nil,aPath); 
+
   return nil;
 }
 
@@ -466,7 +467,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     key = [path stringByAppendingPathComponent:projectName];
     key = [key stringByAppendingPathExtension:@"pcproj"];
   
-    currentProject = [[loadedProjects objectForKey:key] retain];
+    currentProject = RETAIN( [loadedProjects objectForKey:key] );
 
     if( !currentProject )
     {
@@ -482,7 +483,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	[inspector performClose:self];
     }
 
-    AUTORELEASE(currentProject);
+    AUTORELEASE( currentProject );
 }
 
 - (void)closeProject
@@ -498,11 +499,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
     BOOL isDir;
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:path,@"FilePathKey", nil];
 
-    if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir) 
+    if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir)
     {
-	[[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
+	[PCEditorController openFileInEditor:path];
+
 	return YES;
     }
 

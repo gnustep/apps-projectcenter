@@ -28,8 +28,6 @@
 #import "PCProject.h"
 #import "PCFileManager.h"
 
-NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
-
 @implementation PCBrowserController
 
 - (void)dealloc
@@ -52,33 +50,36 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 
 - (void)doubleClick:(id)sender
 {
-  if ([sender selectedColumn] != 0) {
+  if ([sender selectedColumn] != 0) 
+  {
     NSString *category = [[[browser path] componentsSeparatedByString:@"/"] objectAtIndex:1];
     NSString *k = [[project rootCategories] objectForKey:category];
 
     if ([k isEqualToString:PCClasses] || 
 	[k isEqualToString:PCHeaders] || 
-	[k isEqualToString:PCOtherSources]) {
+	[k isEqualToString:PCOtherSources]) 
+    {
       NSString *projectPath = [project projectPath];
       NSString *fn = [self nameOfSelectedFile];
       NSString *file = [projectPath stringByAppendingPathComponent:fn];
-      NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:
-					file,@"FilePathKey",nil];
       
-      [[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
+      [[[project editorController] editorForFile:file] show];
     }
-    else {
+    else 
+    {
       NSString *fi;
       NSString *sf = [self nameOfSelectedFile];
 
       fi = [[project projectPath] stringByAppendingPathComponent:sf];
 
-      if([[NSWorkspace sharedWorkspace] openFile:fi] == NO) {
+      if([[NSWorkspace sharedWorkspace] openFile:fi] == NO) 
+      {
 	NSRunAlertPanel(@"Attention!",@"Could not open %@.",@"OK",nil,nil,fi);
       }
     }
   }
-  else {
+  else 
+  {
     [[PCFileManager fileManager] showAddFileWindow];
   }
 }

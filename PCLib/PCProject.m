@@ -28,6 +28,7 @@
 #import "ProjectCenter.h"
 #import "PCProjectBuilder.h"
 #import "PCSplitView.h"
+#import "PCEditorController.h"
 
 #if defined(GNUSTEP)
 #import <AppKit/IMLoading.h>
@@ -399,15 +400,19 @@
 
 @implementation PCProject
 
-//===========================================================================================
+//==============================================================================
 // ==== Init and free
-//===========================================================================================
+//==============================================================================
 
 - (id)init
 {
-    if ((self = [super init])) {
+    if ((self = [super init])) 
+    {
 	buildOptions = [[NSMutableDictionary alloc] init];
         [self _initUI];
+
+	editorController = [[PCEditorController alloc] init];
+	[editorController setProject:self];
     }
     return self;
 }
@@ -416,7 +421,8 @@
 {
     NSAssert(dict,@"No valid project dictionary!");
     
-    if ((self = [self init])) {
+    if ((self = [self init])) 
+    {
         if ([[path lastPathComponent] isEqualToString:@"PC.project"]) {
             projectPath = [[path stringByDeletingLastPathComponent] copy];
         }
@@ -466,13 +472,14 @@
   RELEASE(changeFileNameButton);
  
   RELEASE(box);
+  RELEASE(editorController);
 
   [super dealloc];
 }
 
-//===========================================================================================
+//==============================================================================
 // ==== Accessor methods
-//===========================================================================================
+//==============================================================================
 
 - (id)browserController
 {
@@ -534,9 +541,14 @@
     return [self class];
 }
 
-//===========================================================================================
+- (PCEditorController*)editorController
+{
+    return editorController;
+}
+
+//==============================================================================
 // ==== Delegate and manager
-//===========================================================================================
+//==============================================================================
 
 - (id)delegate
 {
@@ -548,7 +560,7 @@
     delegate = aDelegate;
 }
 
-- (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder
+- (void)setProjectBuilder:(id<ProjectBuilder,NSObject>)aBuilder
 {
     AUTORELEASE(projectManager);
     projectManager = RETAIN(aBuilder);
@@ -559,9 +571,9 @@
     return projectManager;
 }
 
-//===========================================================================================
+//==============================================================================
 // ==== To be overriden
-//===========================================================================================
+//==============================================================================
 
 - (Class)builderClass
 {
@@ -655,7 +667,7 @@
   
     if ([type isEqualToString:PCLibraries]) {
         [newFile deleteCharactersInRange:NSMakeRange(0,3)];
-        newFile = [newFile stringByDeletingPathExtension];
+        newFile = (NSMutableString*)[newFile stringByDeletingPathExtension];
     }
   
     if ([files containsObject:newFile]) {
@@ -807,7 +819,6 @@
 - (BOOL)save
 {
     BOOL ret = NO;
-//NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
     NSString *file = [[projectPath stringByAppendingPathComponent:projectName] stringByAppendingPathExtension:@"pcproj"];
     NSString *backup = [file stringByAppendingPathExtension:@"backup"];
     NSFileManager *fm = [NSFileManager defaultManager];
@@ -1237,17 +1248,22 @@
 {
   id object = [aNotification object];
   
-  if (object == buildTargetPanel) {
+  if (object == buildTargetPanel) 
+  {
   }
-  else if (object == [self projectWindow]) {
-    if ([[self projectWindow] isDocumentEdited]) {
+  else if (object == [self projectWindow]) 
+  {
+    if ([[self projectWindow] isDocumentEdited]) 
+    {
       if (NSRunAlertPanel(@"Project changed!",
-			  @"The project %@ has unsaved files! Should they be saved before closing?",
+			  @"The project %@ has been edited! Should it be saved before closing?",
 			  @"Yes", @"No", nil,[self projectName])) 
       {
 	[self save];
       }
     }
+
+    [editorController closeAllEditors];
     
     // The PCProjectController is our delegate!
     [[NSNotificationCenter defaultCenter] removeObserver:browserController];
