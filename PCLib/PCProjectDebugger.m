@@ -66,9 +66,15 @@
    *
    */
 
-  stdOut = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,80)];
-  [stdOut setMaxSize:NSMakeSize(1e7, 1e7)];
-  // [stdOut setMinSize:NSMakeSize(516, 48)];
+  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
+
+  [scrollView1 setHasHorizontalScroller: NO];
+  [scrollView1 setHasVerticalScroller: YES];
+  [scrollView1 setBorderType: NSBezelBorder];
+  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  stdOut = [[NSTextView alloc] initWithFrame:[[scrollView1 contentView]frame]];
+
   [stdOut setRichText:NO];
   [stdOut setEditable:NO];
   [stdOut setSelectable:YES];
@@ -79,21 +85,21 @@
 				      alpha:1.0]];
   [[stdOut textContainer] setWidthTracksTextView:YES];
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,92)];
   [scrollView1 setDocumentView:stdOut];
-  [[stdOut textContainer] setContainerSize:NSMakeSize([scrollView1 contentSize].width,1e7)];
-  [scrollView1 setHasHorizontalScroller: NO];
-  [scrollView1 setHasVerticalScroller: YES];
-  [scrollView1 setBorderType: NSBezelBorder];
-  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
   /*
    *
    */
 
-  stdError = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,32)];
-  [stdError setMaxSize:NSMakeSize(1e7, 1e7)];
-  //[stdError setMinSize:NSMakeSize(516, 48)];
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,276)];
+
+  [scrollView2 setHasHorizontalScroller:NO];
+  [scrollView2 setHasVerticalScroller:YES];
+  [scrollView2 setBorderType: NSBezelBorder];
+  [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+  stdError = [[NSTextView alloc] initWithFrame:[[scrollView2 contentView] frame]];
+
   [stdError setRichText:NO];
   [stdError setEditable:NO];
   [stdError setSelectable:YES];
@@ -101,13 +107,7 @@
   [stdError setBackgroundColor:[NSColor whiteColor]];
   [[stdError textContainer] setWidthTracksTextView:YES];
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,540,46)];
   [scrollView2 setDocumentView:stdError];
-  [[stdError textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
-  [scrollView2 setHasHorizontalScroller:NO];
-  [scrollView2 setHasVerticalScroller:YES];
-  [scrollView2 setBorderType: NSBezelBorder];
-  [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
   split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
