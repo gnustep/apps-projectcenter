@@ -51,13 +51,34 @@ static NSDictionary *dict = nil;
     _creator = [[[self class] alloc] init];
     
     // Setting up the dictionary needed for registration!
-    classDict = [NSDictionary dictionaryWithObjectsAndKeys:_creator,@"Creator",PCClasses,@"ProjectKey",nil];
-    headerDict = [NSDictionary dictionaryWithObjectsAndKeys:_creator,@"Creator",PCHeaders,@"ProjectKey",nil];
-    ccDict = [NSDictionary dictionaryWithObjectsAndKeys:_creator,@"Creator",PCOtherSources,@"ProjectKey",nil];
-    chDict = [NSDictionary dictionaryWithObjectsAndKeys:_creator,@"Creator",PCHeaders,@"ProjectKey",nil];
-    protocolDict = [NSDictionary dictionaryWithObjectsAndKeys:_creator,@"Creator",PCHeaders,@"ProjectKey",nil];
+    classDict = [NSDictionary dictionaryWithObjectsAndKeys:
+				_creator,@"Creator",
+			      PCClasses,@"ProjectKey",
+			      nil];
+    headerDict =[NSDictionary dictionaryWithObjectsAndKeys:
+				_creator,@"Creator",
+			      PCHeaders,@"ProjectKey",
+			      nil];
+    ccDict = [NSDictionary dictionaryWithObjectsAndKeys:
+			     _creator,@"Creator",
+			   PCOtherSources,@"ProjectKey",
+			   nil];
+    chDict = [NSDictionary dictionaryWithObjectsAndKeys:
+			     _creator,@"Creator",
+			   PCHeaders,@"ProjectKey",
+			   nil];
+    protocolDict = [NSDictionary dictionaryWithObjectsAndKeys:
+				   _creator,@"Creator",
+				 PCHeaders,@"ProjectKey",
+				 nil];
     
-    dict = [[NSDictionary alloc] initWithObjectsAndKeys:classDict,ObjCClass,headerDict,ObjCHeader,ccDict,CFile,chDict,CHeaderFile,protocolDict,ProtocolFile,nil];
+    dict = [[NSDictionary alloc] initWithObjectsAndKeys:
+				   ccDict,CFile,
+				 chDict,CHeaderFile,
+				 protocolDict,ProtocolFile,
+				 headerDict,ObjCHeader,
+				 classDict,ObjCClass,
+				 nil];
   }
   return _creator;
 }
