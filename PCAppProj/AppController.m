@@ -8,7 +8,7 @@
  * $Id$
  */
 
-#import "AppController.h"
+#include "AppController.h"
 
 @implementation AppController
 
