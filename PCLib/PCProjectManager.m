@@ -199,7 +199,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       id<ProjectType>	concretBuilder;
       PCProject		*project;
       
+#ifdef DEBUG
       NSLog([NSString stringWithFormat:@"Builders %@ for key %@",[builders description],builderKey]);
+#endif DEBUG
       
       concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
       
@@ -210,9 +212,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
       }
     }
   }
+#ifdef DEBUG
   else {
-        NSLog(@"No project manager delegate available!");
+    NSLog(@"No project manager delegate available!");
   }
+#endif DEBUG
   
   return nil;
 }
@@ -222,24 +226,28 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     BOOL isDir = NO;
 
     if ([loadedProjects objectForKey:aPath]) {
-        NSLog([NSString stringWithFormat:@"Project %@ is already loaded!",aPath]);
-        return NO;
+#ifdef DEBUG
+      NSLog([NSString stringWithFormat:@"Project %@ is already loaded!",aPath]);
+#endif DEBUG
+      return NO;
     }
     
     if ([[NSFileManager defaultManager] fileExistsAtPath:aPath isDirectory:&isDir] && !isDir) {
-        PCProject *project = [self loadProjectAt:aPath];
-        
-        if (!project) {
-            NSLog(@"Couldn't instantiate the project...");
-            return NO;
-        }
-
-        [project setProjectBuilder:self];
-        [loadedProjects setObject:project forKey:aPath];
-        [self setActiveProject:project];
-        [project setDelegate:self];
-
-        return YES;
+      PCProject *project = [self loadProjectAt:aPath];
+      
+      if (!project) {
+#ifdef DEBUG
+	NSLog(@"Couldn't instantiate the project...");
+#endif DEBUG
+	return NO;
+      }
+      
+      [project setProjectBuilder:self];
+      [loadedProjects setObject:project forKey:aPath];
+      [self setActiveProject:project];
+      [project setDelegate:self];
+      
+      return YES;
     }
     return NO;
 }
@@ -419,15 +427,17 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (NSString *)fileManager:(id)sender willCreateFile:(NSString *)aFile withKey:(NSString *)key
 {
-    NSString *path = nil;
+  NSString *path = nil;
+  
+#ifdef DEBUG
+  NSLog(@"%@ %x: will create file %@ for key %@.",[self class],self,aFile,key);
+  #endif DEBUG
 
-    NSLog(@"<%@ %x>: will create file %@ for key %@",[self class],self,aFile,key);
-
-    if ([activeProject doesAcceptFile:aFile forKey:key] ) {
-        path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
-    }
-    
-    return path;
+  if ([activeProject doesAcceptFile:aFile forKey:key] ) {
+    path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
+  }
+  
+  return path;
 }
 
 - (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key
