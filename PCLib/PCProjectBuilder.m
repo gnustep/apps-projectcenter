@@ -120,7 +120,7 @@
    * 5 build Buttons
    */
 
-  _w_frame = NSMakeRect(0,194,244,44);
+  _w_frame = NSMakeRect(0,194,224,44);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell

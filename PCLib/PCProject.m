@@ -82,6 +82,24 @@
   [box setBorderType:NSNoBorder];
   [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,200,500,21)];
+  [textField setAlignment: NSLeftTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Welcome to the GNUstep ProjectCenter!"];
+  [box addSubview:[textField autorelease]];
+
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,178,500,21)];
+  [textField setAlignment: NSLeftTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"\tPlease report all bugs or other issues you don't like to phr@projectcenter.ch!"];
+  [box addSubview:[textField autorelease]];
+
   _c_view = [projectWindow contentView];
   [_c_view addSubview:browser];
   [_c_view addSubview:box];
