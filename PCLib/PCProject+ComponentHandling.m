@@ -20,16 +20,16 @@
 {
   switch ([[sender selectedCell] tag]) 
   {
-  case 0:
+  case BUILD_TAG:
     [self showBuildView:self];
     break;
-  case 1:
+  case SETTINGS_TAG:
     [self showInspector:self];
     break;
-  case 2:
+  case PREFS_TAG:
     [self showBuildTargetPanel:self];
     break;
-  case 3:
+  case LAUNCH_TAG:
     if ([self isExecutable]) {
 	[self showRunView:self];
     }
@@ -39,7 +39,7 @@
                       @"OK",nil,nil);
     }
     break;
-  case 4:
+  case EDITOR_TAG:
     [self showEditorView:self];
     break;
   default:
@@ -105,6 +105,15 @@
 - (void)showInspector:(id)sender
 {
     [projectManager showInspectorForProject:self];
+}
+
+- (void)runSelectedTarget:(id)sender
+{
+  if (!projectDebugger) {
+    projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
+  }
+
+  [projectDebugger run:sender];
 }
 
 - (id)updatedAttributeView

@@ -150,9 +150,12 @@ void createMenu()
 
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
-  [tools addItemWithTitle:@"Build Panel" action:@selector(showBuildPanel:) keyEquivalent:@""];
+  [tools addItemWithTitle:@"Launch Panel" action:@selector(showRunPanel:) keyEquivalent:@"L"];
+  [tools addItemWithTitle:@"Build Panel" action:@selector(showBuildPanel:) keyEquivalent:@"B"];
+  [tools addItemWithTitle:@"Editor Panel" action:@selector(showEditorPanel:) keyEquivalent:@"E"];
   [tools addItemWithTitle:@"Inspector Panel" action:@selector(showInspector:) keyEquivalent:@""];
   [tools addItemWithTitle:@"Find" action:action keyEquivalent:@""];
+  [tools addItemWithTitle:@"Run..." action:@selector(runTarget:) keyEquivalent:@"r"];
 
   /*
    * Find submenu

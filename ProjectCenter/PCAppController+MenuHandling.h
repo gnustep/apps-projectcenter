@@ -33,7 +33,11 @@
 - (void)showInfoPanel:(id)sender;
 
 - (void)showInspector:(id)sender;
+- (void)showEditorPanel:(id)sender;
+- (void)showRunPanel:(id)sender;
 - (void)showBuildPanel:(id)sender;
+- (void)runTarget:(id)sender;
+
 - (void)showFindPanel:(id)sender;
 - (void)findNext:(id)sender;
 - (void)findPrevious:(id)sender;

@@ -50,9 +50,24 @@
   [projectManager showInspectorForProject:[projectManager activeProject]];
 }
 
+- (void)showEditorPanel:(id)sender
+{
+  [[projectManager activeProject] showEditorView:self];
+}
+
+- (void)showRunPanel:(id)sender
+{
+  [[projectManager activeProject] showRunView:self];
+}
+
 - (void)showBuildPanel:(id)sender
 {
   [[projectManager activeProject] showBuildView:self];
+}
+
+- (void)runTarget:(id)sender
+{
+  [[projectManager activeProject] runSelectedTarget:self];
 }
 
 - (void)showFindPanel:(id)sender

@@ -32,10 +32,6 @@
 #import "PCSplitView.h"
 #import "PCEditorController.h"
 
-#if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
-#endif
-
 @interface PCProject (CreateUI)
 
 - (void)_initUI;
@@ -136,38 +132,38 @@
   RELEASE(matrix);
 
   button = [matrix cellAtRow:0 column:0];
-  [button setTag:0];
+  [button setTag:BUILD_TAG];
   [button setImagePosition:NSImageAbove];
   [button setTitle:@"Build"];
   [button setImage:IMAGE(@"ProjectCentre_build")];
   [button setButtonType:NSMomentaryPushButton];
 
   button = [matrix cellAtRow:0 column:1];
-  [button setTag:1];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Settings"];
-  [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
-
-  button = [matrix cellAtRow:0 column:2];
-  [button setTag:2];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Options"];
-  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
-
-  button = [matrix cellAtRow:0 column:3];
-  [button setTag:3];
+  [button setTag:LAUNCH_TAG];
   [button setImagePosition:NSImageAbove];
   [button setTitle:@"Run"];
   [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:4];
-  [button setTag:4];
+  button = [matrix cellAtRow:0 column:2];
+  [button setTag:SETTINGS_TAG];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Settings"];
+  [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
+  [button setButtonType:NSMomentaryPushButton];
+
+  button = [matrix cellAtRow:0 column:3];
+  [button setTag:EDITOR_TAG];
   [button setImagePosition:NSImageAbove];
   [button setTitle:@"Editor"];
   [button setImage:IMAGE(@"ProjectCentre_files.tiff")];
+  [button setButtonType:NSMomentaryPushButton];
+
+  button = [matrix cellAtRow:0 column:4];
+  [button setTag:PREFS_TAG];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Options"];
+  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   /*

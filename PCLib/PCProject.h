@@ -49,6 +49,12 @@
 #define TARGET_MAKE_CLEAN   @"MakeClean"
 #define TARGET_MAKE_RPM     @"MakeRPM"
 
+#define BUILD_TAG    0
+#define SETTINGS_TAG 1
+#define PREFS_TAG    2
+#define LAUNCH_TAG   3
+#define EDITOR_TAG   4
+
 //=============================================================================
 // ==== Not used yet
 //=============================================================================

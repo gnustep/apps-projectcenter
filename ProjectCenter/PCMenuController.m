@@ -322,6 +322,14 @@
         if ([[menuItem title] isEqualToString:@"Close"]) return NO;
         if ([[menuItem title] isEqualToString:@"Save..."]) return NO;
         if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
+
+	// Embedded Project Views
+        if ([[menuItem title] isEqualToString:@"Inspector Panel"]) return NO;
+        if ([[menuItem title] isEqualToString:@"Launch Panel"]) return NO;
+        if ([[menuItem title] isEqualToString:@"Build Panel"]) return NO;
+        if ([[menuItem title] isEqualToString:@"Editor Panel"]) return NO;
+
+        if ([[menuItem title] isEqualToString:@"Run..."]) return NO;
     }
 
     // File related menu items

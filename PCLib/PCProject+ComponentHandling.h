@@ -20,6 +20,8 @@
 - (void)showRunView:(id)sender;
 - (void)showEditorView:(id)sender;
 
+- (void)runSelectedTarget:(id)sender;
+
 - (void)showInspector:(id)sender;
 
 - (id)updatedAttributeView;
