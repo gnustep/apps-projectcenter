@@ -21,11 +21,11 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # Bundle
 #
 
-PACKAGE_NAME=PCRenaissanceProj
-BUNDLE_NAME=PCRenaissanceProj
-BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter
-PCRenaissanceProj_PRINCIPAL_CLASS=PCRenaissanceProj
+PACKAGE_NAME = PCRenaissanceProj
+BUNDLE_NAME = PCRenaissanceProj
+BUNDLE_EXTENSION = .bundle
+BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
+PCRenaissanceProj_PRINCIPAL_CLASS = PCRenaissanceProj
 
 
 #

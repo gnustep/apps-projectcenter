@@ -1,0 +1,161 @@
+2003-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* GNUmakefile: Set BUNDLE_INSTALL_DIR to GNUSTEP_SYSTEM_ROOT.
+
+	* .h, .m: Replace #import with #include and add #ifndefs.
+
+	* h.template and m.template removed.
+
+2002-11-27 15:45  probert
+
+        * Mac OS X port using Cocoa
+
+2002-06-01 15:56  probert
+
+	* GNUmakefile, PCToolProj.pcproj: Installation into
+	GNUSPTE_INSTALLATION_DIR
+
+2002-04-26 05:12  fedor
+
+	* ChangeLog, PCToolProject.m: removed bunches of duplicate calls,
+	retains and releases.
+
+2002-03-25 20:37  probert
+
+	* ChangeLog: ChangeLog updates
+
+2002-03-01 16:32  probert
+
+	* GNUmakefile, PCToolMakefileFactory.h, PCToolMakefileFactory.m,
+	PCToolProj.pcproj, PCToolProject.m: This project now uses the
+	makefile factory too.
+
+2002-01-07 16:05  probert
+
+	* ChangeLog: Updated all ChangeLog files (using cvs2cl.pl)
+
+2002-01-07 16:01  probert
+
+	* GNUmakefile, PCToolProj.pcproj: Added libProjectCenter to the
+	bundle's library link settings.
+
+2002-01-07 10:37  probert
+
+	* PC.project, PCToolProj.m, PCToolProj.pcproj: ProjectCenter now
+	stores the project files under PROJECTNAME.pcproj to avoid name
+	clashes.
+
+2002-01-02 18:51  probert
+
+	* PC.proj, PC.project: Changed the build tool entry to
+	/usr/bin/make in all project files and templates.
+
+2002-01-02 17:33  probert
+
+	* PCToolMakefileFactory.m: Libraries, Gorm apps and tools use the
+	install path now, too.
+
+2002-01-02 17:05  probert
+
+	* GNUmakefile, PC.proj, PC.project: The inspector now handles the
+	installation path and other settings. Furthermore it does not save
+	changes automatically but marks the project as being edited.  Upon
+	'save' the project file and GNUmakefile are being saved, not
+	before! In addition the various PC* bundles are now maintained by
+	ProjectCenter itself.  The installation path for ProjectCenter.app
+	is corrected to the SYSTEM ROOT as well.
+
+2002-01-02 13:13  probert
+
+	* GNUmakefile, PC.proj: All bundles and libProjectCenter are now
+	installed under GNUSTEP_SYSTEM_ROOT.  Also the PC.proj templates
+	have now a correct install path default value.
+
+2002-01-01 18:27  probert
+
+	* PC.proj, PCToolProject.h, PCToolProject.m: ProjectCenter now
+	validates project dictionaries and updates them if requested.  I
+	also added new keys tp the PC.project files in order to be able to
+	generate valid *.spec.in files needed when building RPMs.
+
+2001-12-29 16:37  probert
+
+	* ChangeLog: Removed the toplevel ChangeLog, updated the ChangeLogs
+	in the subdirectories and raised the version number to 0.2.6.
+
+2001-12-29 15:07  probert
+
+	* PCToolProject.m: Cleaned up the writeMakefile method
+
+2001-08-03 16:23  probert
+
+	* PCToolMakefileFactory.h, PCToolMakefileFactory.m, PCToolProj.h,
+	PCToolProj.m, PCToolProject.h, PCToolProject.m: New version - now
+	copyrighted by the FSF
+
+2001-08-01 14:35  probert
+
+	* GNUmakefile, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCToolMakefileFactory.m: New copyright information and minor
+	template additions
+
+2001-07-01 21:01  probert
+
+	* GNUmakefile, GNUmakefile.preamble: Applied patch from Adam Fedor
+
+2001-01-14 18:54  robert
+
+	* ChangeLog: Updated the ChangeLogs
+
+2001-01-14 17:10  robert
+
+	* PCToolProject.m: Added the supporting files category
+
+2001-01-10 15:19  robert
+
+	* PCToolMakefileFactory.m: inclusion of PACKAGE_NAME
+
+2000-11-10 19:27  robert
+
+	* PCToolProject.h, PCToolProject.m: some daily work...
+
+2000-11-10 15:09  robert
+
+	* ChangeLog: changelog for 0.2
+
+2000-11-04 13:41  robert
+
+	* PCToolProject.h, PCToolProject.m: The project type is executable
+
+2000-10-15 20:29  robert
+
+	* PCToolProject.m: some code improvements regarding the inspector
+
+2000-10-11 15:15  robert
+
+	* PCToolProject.m: daily work
+
+2000-09-22 11:24  robert
+
+	* PCToolMakefileFactory.m: Fix in the makefile generation section
+
+2000-09-03 22:10  robert
+
+	* GNUmakefile.preamble: renamed libPC into libProjectCenter
+
+2000-08-27 21:13  robert
+
+	* PCToolProj.h, PCToolProj.m, h.template, m.template, Info.table,
+	PCToolProject.m, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCToolProject.h, main.m, PCToolMakefileFactory.m, GNUmakefile,
+	Info-project.plist, PC.proj, PCToolMakefileFactory.h: Initial
+	revision
+
+2000-08-27 21:13  robert
+
+	* PCToolProj.h, PCToolProj.m, h.template, m.template, Info.table,
+	PCToolProject.m, GNUmakefile.postamble, GNUmakefile.preamble,
+	PCToolProject.h, main.m, PCToolMakefileFactory.m, GNUmakefile,
+	Info-project.plist, PC.proj, PCToolMakefileFactory.h: Initial
+	import
+
