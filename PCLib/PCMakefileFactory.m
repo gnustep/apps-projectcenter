@@ -19,6 +19,7 @@
 #define COMMENT_LIBRARIES   @"\n\n#\n# Additional libraries\n#\n\n"
 #define COMMENT_BUNDLE      @"\n\n#\n# Bundle\n#\n\n"
 #define COMMENT_LIBRARY     @"\n\n#\n# Library\n#\n\n"
+#define COMMENT_TOOL        @"\n\n#\n# Tool\n#\n\n"
 
 @implementation PCMakefileFactory
 
@@ -118,6 +119,12 @@ static PCMakefileFactory *_factory = nil;
     }
 }
 
+- (void)appendInstallDir:(NSString*)dir
+{
+    [self appendString:
+             [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
+}
+
 - (void)appendResources
 {
     [self appendString:COMMENT_RESOURCES];
@@ -179,7 +186,13 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendTailForTool
 {
-    [self appendString:@""];
+    [self appendString:@"\n\n"];
+
+    [self appendString:@"-include GNUmakefile.preamble\n"];
+    [self appendString:@"-include GNUmakefile.local\n"];
+    [self appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
+    [self appendString:@"include $(GNUSTEP_MAKEFILES)/tool.make\n"];
+    [self appendString:@"-include GNUmakefile.postamble\n"];
 }
 
 - (void)appendTailForBundle
@@ -241,12 +254,6 @@ static PCMakefileFactory *_factory = nil;
           }
         }
     }
-}
-
-- (void)appendInstallDir:(NSString*)dir
-{
-    [self appendString:
-             [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
 }
 
 @end
@@ -406,6 +413,46 @@ static PCMakefileFactory *_factory = nil;
         while (tmp = [enumerator nextObject])
         {
             [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
+        }
+    }
+}
+
+@end
+
+@implementation PCMakefileFactory (ToolProject)
+
+- (void)appendTool
+{
+    [self appendString:COMMENT_TOOL];
+
+    [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
+    [self appendString:[NSString stringWithFormat:@"TOOL_NAME=%@\n",pnme]];
+
+}
+
+- (void)appendToolIcon:(NSString*)icn
+{
+    [self appendString:
+                    [NSString stringWithFormat:@"%@_TOOL_ICON=%@\n",pnme, icn]];
+}
+
+- (void)appendToolLibraries:(NSArray*)array
+{
+    [self appendString:COMMENT_LIBRARIES];
+
+    [self appendString:[NSString stringWithFormat:@"%@_TOOL_LIBS += ",pnme]];
+
+    if( array && [array count] )
+    {
+        NSString     *tmp;
+        NSEnumerator *enumerator = [array objectEnumerator];
+
+        while (tmp = [enumerator nextObject]) 
+        {
+          if (![tmp isEqualToString:@"gnustep-base"])
+          {
+            [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+          }
         }
     }
 }

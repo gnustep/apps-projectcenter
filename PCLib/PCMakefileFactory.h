@@ -29,6 +29,8 @@
 - (void)appendClasses:(NSArray *)array;
 - (void)appendCFiles:(NSArray *)array;
 
+- (void)appendInstallDir:(NSString*)dir;
+
 - (void)appendResources;
 - (void)appendResourceItems:(NSArray *)array;
 
@@ -49,7 +51,6 @@
 - (void)appendApplication;
 - (void)appendAppIcon:(NSString*)icn;
 - (void)appendGuiLibraries:(NSArray*)array;
-- (void)appendInstallDir:(NSString*)dir;
 
 @end
 
@@ -70,6 +71,14 @@
 - (void)appendLibraryHeaders:(NSArray*)array;
 - (void)appendLibraryClasses:(NSArray *)array;
 - (void)appendLibraryCFiles:(NSArray *)array;
+
+@end
+
+@interface PCMakefileFactory (ToolProject)
+
+- (void)appendTool;
+- (void)appendToolIcon:(NSString*)icn;
+- (void)appendToolLibraries:(NSArray*)array;
 
 @end
 
