@@ -52,6 +52,7 @@ static NSDictionary *infoDict = nil;
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
+  return YES;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification
