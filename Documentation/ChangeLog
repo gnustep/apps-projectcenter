@@ -17,6 +17,9 @@
 	* Library/PCProjectBrowser.m:
 	(doubleClick:): Don't try to open libraries.
 
+	* Modules/ApplicationProject/Resources/Main.gorm: Connect delegate to
+	AppController (bug #11478).
+
 2004-12-24 Serg Stoyan <stoyan255@ukr.net>
 
 	* "Build Tool" setting from Project Inspector was moved to PC 

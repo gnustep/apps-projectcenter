@@ -324,6 +324,13 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       [docClassField setTextColor:[NSColor blackColor]];
       [docClassField setEditable:YES];
 
+      [nameColumn setIdentifier:@"NSHumanReadableName"];
+      [[nameColumn headerCell] setStringValue:@"Name"];
+      [docTypesList addTableColumn:roleColumn];
+      [docTypesList addTableColumn:classColumn];
+      RELEASE(roleColumn);
+      RELEASE(classColumn);
+      
       if (![docBased isEqualToString:@"YES"])
 	{
 	  [self setProjectDictObject:@"YES" 
@@ -354,7 +361,11 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       [docClassField setEditable:NO];
 
       // Columns
-      [docTypesList removeTableColumn:nameColumn];
+//      [docTypesList removeTableColumn:nameColumn];
+      [nameColumn setIdentifier:@"NSIcon"];
+      [[nameColumn headerCell] setStringValue:@"Icon"];
+      RETAIN(roleColumn);
+      RETAIN(classColumn);
       [docTypesList removeTableColumn:roleColumn];
       [docTypesList removeTableColumn:classColumn];
       
