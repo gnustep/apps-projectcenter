@@ -1,7 +1,7 @@
 ANNOUNCE
 ************
 
-This is version 0.4.1 of ProjectCenter. This is a bugfix version.
+This is version 0.4.2 of ProjectCenter. This is a urgent bugfix version.
 
 What is ProjectCenter?
 ======================
@@ -15,20 +15,10 @@ What is ProjectCenter?
    distribution fees, for others to use the program. You should read the
    Documentation/COPYING file for more information.
 
-Noteworthy changes in version `0.4.1'.
+Noteworthy changes in version `0.4.2'.
 ======================================
 
-   * Fixes in file and subprojects handling.
-
-   * Improvements and fixes in file selection dialog.
-
-   * Rewritten toolips code for buttons. Made it NSView compatible
-     (ready for incorporation into NSView code).
-
-   * All .gorm files updated with latest GORM.
-
-   * Added support for document-based applications (added "Document Types" 
-     panel into Project Inspector).
+   * Removing root build directory was disabled.
 
 
 How can I get support for this software?
