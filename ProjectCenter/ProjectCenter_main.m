@@ -50,18 +50,36 @@ int main(int argc, const char **argv)
   return NSApplicationMain (argc, argv);
 }
 
-void createMenu()
+void 
+createMenu()
 {
   NSMenu *menu;
   NSMenu *info;
-  NSMenu *subprojects;
+  
   NSMenu *project;
+  NSMenu *subprojects;
+  
   NSMenu *file;
+  NSMenu *file_view;
+  
   NSMenu *edit;
+  NSMenu *edit_find;
+  NSMenu *edit_undo;
+  NSMenu *edit_indent;
+  
+  NSMenu *format;
+  NSMenu *format_font;
+  NSMenu *format_text;
+  
   NSMenu *tools;
-  NSMenu *find;
-  NSMenu *services;
+  NSMenu *tools_build;
+  NSMenu *tools_find;
+  NSMenu *tools_files;
+  NSMenu *tools_launcher;
+  NSMenu *tools_indexer;
+
   NSMenu *windows;
+  NSMenu *services;
 
   SEL action = @selector(method:);
 
@@ -75,12 +93,14 @@ void createMenu()
   [menu addItemWithTitle:@"Project" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"File" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Edit" action:action keyEquivalent:@""];
+  [menu addItemWithTitle:@"Format" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Tools" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Windows" action:action keyEquivalent:@""];
+  [menu addItemWithTitle:@"Print..." action:action keyEquivalent:@"p"];
   [menu addItemWithTitle:@"Services" action:action keyEquivalent:@""];
   [menu addItemWithTitle:@"Hide" action:@selector(hide:) keyEquivalent:@"h"];
   [menu addItemWithTitle:@"Quit" action:@selector(terminate:)
-		keyEquivalent:@"q"];
+                          keyEquivalent:@"q"];
 
   /*
    * Info submenu
@@ -89,11 +109,14 @@ void createMenu()
   info = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:info forItem:[menu itemWithTitle:@"Info"]];
   [info addItemWithTitle:@"Info Panel..." 
-	          action:@selector(showInfoPanel:) keyEquivalent:@""];
-  [info addItemWithTitle:@"Preferences" 
-	          action:@selector(showPrefWindow:) keyEquivalent:@""];
+	          action:@selector(showInfoPanel:)
+	   keyEquivalent:@""];
+  [info addItemWithTitle:@"Preferences..." 
+	          action:@selector(showPrefWindow:)
+	   keyEquivalent:@""];
   [info addItemWithTitle:@"Help" 
-	          action:action keyEquivalent:@"?"];
+	          action:action
+	   keyEquivalent:@"?"];
 
   /*
    * Project submenu
@@ -101,18 +124,33 @@ void createMenu()
 
   project = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:project forItem:[menu itemWithTitle:@"Project"]];
-  [project addItemWithTitle:@"Open" 
-	             action:@selector(openProject:) keyEquivalent:@"o"];
-  [project addItemWithTitle:@"New"
-	             action:@selector(newProject:) keyEquivalent:@"n"];
-  [project addItemWithTitle:@"Save..."
-	             action:@selector(saveProject:) keyEquivalent:@"s"];
+  [project addItemWithTitle:@"Open..." 
+	             action:@selector(openProject:)
+	      keyEquivalent:@"O"];
+  [project addItemWithTitle:@"New..."
+	             action:@selector(newProject:)
+	      keyEquivalent:@"N"];
+  [project addItemWithTitle:@"Save"
+	             action:@selector(saveProject:) 
+	      keyEquivalent:@"S"];
   [project addItemWithTitle:@"Save As..."
-	             action:@selector(saveProjectAs:) keyEquivalent:@"S"];
+	             action:@selector(saveProjectAs:)
+	      keyEquivalent:@""];
+  [project addItemWithTitle:@"Add Files..."
+	             action:@selector(addFile:)
+	      keyEquivalent:@"A"];
+  [project addItemWithTitle:@"Save Files..."
+	             action:action
+	      keyEquivalent:@"Q"];
+  [project addItemWithTitle:@"Remove Files..."
+	             action:@selector(removeFile:)
+	      keyEquivalent:@"r"];
   [project addItemWithTitle:@"Subprojects"
-	             action:action keyEquivalent:@""];
+	             action:action
+	      keyEquivalent:@""];
   [project addItemWithTitle:@"Close"
-	             action:@selector(closeProject:) keyEquivalent:@""];
+	             action:@selector(closeProject:)
+	      keyEquivalent:@""];
 
   subprojects = [[[NSMenu alloc] init] autorelease];
   [project setSubmenu:subprojects
@@ -130,23 +168,54 @@ void createMenu()
   /*
    * File submenu
    */
-
   file = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:file forItem:[menu itemWithTitle:@"File"]];
-  [file addItemWithTitle:@"Open File"
-                  action:@selector(openFile:) keyEquivalent:@"O"];
-  [file addItemWithTitle:@"Add File"
-                  action:@selector(addFile:) keyEquivalent:@"A"];
+  [file addItemWithTitle:@"Open..."
+                  action:@selector(openFile:)
+	   keyEquivalent:@"o"];
   [file addItemWithTitle:@"New in Project"
-                  action:@selector(newFile:) keyEquivalent:@"N"];
-  [file addItemWithTitle:@"Remove File"
-                  action:@selector(removeFile:) keyEquivalent:@""];
-  [file addItemWithTitle:@"Save File"
-                  action:@selector(saveFile:) keyEquivalent:@""];
-  [file addItemWithTitle:@"Revert"
-                  action:@selector(revertFile:) keyEquivalent:@""];
+                  action:@selector(newFile:)
+	   keyEquivalent:@"n"];
+  [file addItemWithTitle:@"Save"
+                  action:@selector(saveFile:)
+	   keyEquivalent:@"s"];
+  [file addItemWithTitle:@"Save As..."
+                  action:@selector(saveFile:)
+	   keyEquivalent:@""];
+  [file addItemWithTitle:@"Save To..."
+                  action:action
+	   keyEquivalent:@""];
+  [file addItemWithTitle:@"Revert to Saved"
+                  action:@selector(revertFile:)
+	   keyEquivalent:@"u"];
+  [file addItemWithTitle:@"Close"
+                  action:action
+	   keyEquivalent:@"W"];
+  [file addItemWithTitle:@"View"
+                  action:action
+	   keyEquivalent:@""];
+  [file addItemWithTitle:@"Open Quickly..."
+                  action:action
+	   keyEquivalent:@"D"];
   [file addItemWithTitle:@"Rename"
-                  action:@selector(renameFile:) keyEquivalent:@""];
+                  action:@selector(renameFile:)
+	   keyEquivalent:@""];
+  [file addItemWithTitle:@"New Untitled"
+                  action:action
+	   keyEquivalent:@""];
+		  
+  file_view = [[[NSMenu alloc] init] autorelease];
+  [file setSubmenu:file_view
+           forItem:[file itemWithTitle:@"View"]];
+  [file_view addItemWithTitle:@"Split"
+                       action:action
+		keyEquivalent:@"2"];
+  [file_view addItemWithTitle:@"Maximize"
+                       action:action
+		keyEquivalent:@"1"];
+  [file_view addItemWithTitle:@"Tear Off"
+                       action:action
+		keyEquivalent:@"T"];
 
   /*
    * Edit submenu
@@ -154,57 +223,273 @@ void createMenu()
 
   edit = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:edit forItem:[menu itemWithTitle:@"Edit"]];
-  [edit addItemWithTitle: @"Cut" 
-                  action: @selector(cut:) 
-           keyEquivalent: @"x"];
-  [edit addItemWithTitle: @"Copy" 
-                  action: @selector(copy:) 
-           keyEquivalent: @"c"];
-  [edit addItemWithTitle: @"Paste" 
-                  action: @selector(paste:) 
-           keyEquivalent: @"v"];
-  [edit addItemWithTitle: @"Delete" 
-                  action: @selector(delete:) 
-           keyEquivalent: @""];
-  [edit addItemWithTitle: @"Select All" 
-                  action: @selector(selectAll:) 
-           keyEquivalent: @"a"];
+  [edit addItemWithTitle:@"Cut" 
+                  action:@selector(cut:)
+	   keyEquivalent:@"x"];
+  [edit addItemWithTitle:@"Copy" 
+                  action:@selector(copy:)
+	   keyEquivalent:@"c"];
+  [edit addItemWithTitle:@"Paste" 
+                  action:@selector(paste:)
+	   keyEquivalent:@"v"];
+  [edit addItemWithTitle:@"Delete" 
+                  action:@selector(delete:)
+	   keyEquivalent:@""];
+  [edit addItemWithTitle:@"Select All" 
+                  action:@selector(selectAll:)
+	   keyEquivalent:@"a"];
+  [edit addItemWithTitle:@"Find" 
+                  action:action
+	   keyEquivalent:@""];
+  [edit addItemWithTitle:@"Undo" 
+                  action:action
+	   keyEquivalent:@""];
+  [edit addItemWithTitle:@"Indentation" 
+                  action:action
+	   keyEquivalent:@""];
+  [edit addItemWithTitle:@"Spelling..." 
+                  action:action
+	   keyEquivalent:@""];
+  [edit addItemWithTitle:@"Check Spelling" 
+                  action:action
+	   keyEquivalent:@";"];
 
+  // Find
+  edit_find = [[[NSMenu alloc] init] autorelease];
+  [edit setSubmenu:edit_find
+           forItem:[edit itemWithTitle:@"Find"]];
+  [edit_find addItemWithTitle:@"Find Panel..." 
+                       action:@selector(showFindPanel:) 
+		keyEquivalent:@"f"];
+  [edit_find addItemWithTitle:@"Find Next" 
+                       action:@selector(findNext:)
+		keyEquivalent:@"g"];
+  [edit_find addItemWithTitle:@"Find Previuos" 
+                       action:@selector(findPrevious:)
+		keyEquivalent:@"d"];
+  [edit_find addItemWithTitle:@"Enter Selection" 
+                       action:action
+		keyEquivalent:@"e"];
+  [edit_find addItemWithTitle:@"Jump to Selection" 
+                       action:action
+		keyEquivalent:@"j"];
+  [edit_find addItemWithTitle:@"Line Number..." 
+                       action:action
+		keyEquivalent:@"I"];
+  [edit_find addItemWithTitle:@"Man Page" 
+                       action:action
+		keyEquivalent:@"M"];
+
+  // Undo
+  edit_undo = [[[NSMenu alloc] init] autorelease];
+  [edit setSubmenu:edit_undo
+           forItem:[edit itemWithTitle:@"Undo"]];
+  [edit_undo addItemWithTitle:@"Undo" 
+                       action:action
+		keyEquivalent:@"z"];
+  [edit_undo addItemWithTitle:@"Redo" 
+                       action:action
+		keyEquivalent:@"Z"];
+  [edit_undo addItemWithTitle:@"Undo Region" 
+                       action:action
+		keyEquivalent:@""];
+
+  // Indentation
+  edit_indent = [[[NSMenu alloc] init] autorelease];
+  [edit setSubmenu:edit_indent
+           forItem:[edit itemWithTitle:@"Indentation"]];
+  [edit_indent addItemWithTitle:@"Indent" 
+                         action:action
+		  keyEquivalent:@"i"];
+  [edit_indent addItemWithTitle:@"Shift Left" 
+                         action:action
+		  keyEquivalent:@"["];
+  [edit_indent addItemWithTitle:@"Shift Right" 
+                         action:action
+		  keyEquivalent:@"]"];
+  [edit_indent addItemWithTitle:@"Compress Whitesapce" 
+                         action:action
+		  keyEquivalent:@"{"];
+  [edit_indent addItemWithTitle:@"Expand Message Expression" 
+                         action:action
+		  keyEquivalent:@"}"];
+
+  /*
+   * Format submenu
+   */
+  format = [[[NSMenu alloc] init] autorelease];
+  [menu setSubmenu:format 
+           forItem:[menu itemWithTitle:@"Format"]];
+  [format addItemWithTitle:@"Font" 
+	            action:action
+	     keyEquivalent:@""];
+  [format addItemWithTitle:@"Text" 
+	            action:action
+	     keyEquivalent:@""];
+  [format addItemWithTitle:@"Make Rich Text" 
+	            action:action
+	     keyEquivalent:@"R"];
+  [format addItemWithTitle:@"Show All Characters" 
+	            action:action
+	     keyEquivalent:@""];
+  [format addItemWithTitle:@"Page Layout..." 
+	            action:action
+	     keyEquivalent:@"P"];
+
+  // Font
+  [format setSubmenu:[[NSFontManager sharedFontManager] fontMenu: YES]
+             forItem:[format itemWithTitle:@"Font"]];
+  // Text
+  format_text = [[[NSMenu alloc] init] autorelease];
+  [format setSubmenu:format_text
+             forItem:[format itemWithTitle:@"Text"]];
+  [format_text addItemWithTitle:@"Align Left" 
+	                 action:action
+		  keyEquivalent:@""];
+  [format_text addItemWithTitle:@"Center" 
+	                 action:action
+		  keyEquivalent:@""];
+  [format_text addItemWithTitle:@"Align Right" 
+	                 action:action
+		  keyEquivalent:@""];
+  [format_text addItemWithTitle:@"Show Ruler" 
+	                 action:action
+		  keyEquivalent:@""];
+  [format_text addItemWithTitle:@"Copy Ruler" 
+	                 action:action
+		  keyEquivalent:@""];
+  [format_text addItemWithTitle:@"Paste Ruler" 
+	                 action:action
+		  keyEquivalent:@""];
+  
   /*
    * Tools submenu
    */
 
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
-  [tools addItemWithTitle:@"Launch Panel"
-	 action:@selector(showRunPanel:) keyEquivalent:@"L"];
-  [tools addItemWithTitle:@"Build Panel"
-	 action:@selector(showBuildPanel:) keyEquivalent:@"B"];
-  [tools addItemWithTitle:@"Editor Panel"
-	 action:@selector(showEditorPanel:) keyEquivalent:@"E"];
-  [tools addItemWithTitle:@"Inspector Panel"
-	 action:@selector(showInspector:) keyEquivalent:@""];
-  [tools addItemWithTitle:@"Find"
-	 action:action keyEquivalent:@""];
-  [tools addItemWithTitle:@"Fonts"
-	 action:NULL keyEquivalent:@""];
-  [tools setSubmenu:[[NSFontManager sharedFontManager] fontMenu: YES]
-	 forItem:[tools itemWithTitle:@"Fonts"]];
-  [tools addItemWithTitle:@"Run..."
-	 action:@selector(runTarget:) keyEquivalent:@"r"];
+  [tools addItemWithTitle:@"Hide Tool Bar"
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Inspector..."
+	           action:@selector(showInspector:)
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Loaded Projects..."
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Project Build"
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Project Find"
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Loaded Files"
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Launcher"
+	           action:action
+	    keyEquivalent:@""];
+  [tools addItemWithTitle:@"Indexer"
+	           action:action
+	    keyEquivalent:@""];
 
-  /*
-   * Find submenu
-   */
+  // Project Build
+  tools_build = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:tools_build
+            forItem:[tools itemWithTitle:@"Project Build"]];
+  [tools_build addItemWithTitle:@"Show Panel..." 
+                         action:@selector(showBuildPanel:) 
+		  keyEquivalent:@""];
+  [tools_build addItemWithTitle:@"Build" 
+                         action:action
+		  keyEquivalent:@"B"];
+  [tools_build addItemWithTitle:@"Stop Build" 
+                         action:action
+		  keyEquivalent:@"/"];
+  [tools_build addItemWithTitle:@"Clean" 
+                         action:action
+		  keyEquivalent:@""];
+  [tools_build addItemWithTitle:@"Next Error" 
+                         action:action
+		  keyEquivalent:@">"];
+  [tools_build addItemWithTitle:@"Previous Error" 
+                         action:action
+		  keyEquivalent:@"<"];
 
-  find = [[[NSMenu alloc] init] autorelease];
-  [tools setSubmenu:find forItem:[tools itemWithTitle:@"Find"]];
-  [find addItemWithTitle:@"Find Panel..."
-	action:@selector(showFindPanel:) keyEquivalent:@"f"];
-  [find addItemWithTitle:@"Find Next"
-	action:@selector(findNext:) keyEquivalent:@"g"];
-  [find addItemWithTitle:@"Find Previous"
-	action:@selector(findPrevious:) keyEquivalent:@"d"];
+  // Project Find
+  tools_find = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:tools_find
+            forItem:[tools itemWithTitle:@"Project Find"]];
+  [tools_find addItemWithTitle:@"Show Panel..." 
+                        action:action
+		 keyEquivalent:@"F"];
+  [tools_find addItemWithTitle:@"Find References" 
+                        action:action
+		 keyEquivalent:@"0"];
+  [tools_find addItemWithTitle:@"Find Definitions" 
+                        action:action
+		 keyEquivalent:@"9"];
+  [tools_find addItemWithTitle:@"Find Text" 
+                        action:action
+		 keyEquivalent:@"8"];
+  [tools_find addItemWithTitle:@"Find Regular Expr" 
+                        action:action
+		 keyEquivalent:@"7"];
+  [tools_find addItemWithTitle:@"Next match" 
+                        action:action
+		 keyEquivalent:@""];
+  [tools_find addItemWithTitle:@"Previuos match" 
+                        action:action
+		 keyEquivalent:@""];
+
+  // Loaded Files
+  tools_files = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:tools_files
+            forItem:[tools itemWithTitle:@"Loaded Files"]];
+  [tools_files addItemWithTitle:@"Show Panel..." 
+                         action:action
+	 	  keyEquivalent:@"L"];
+  [tools_files addItemWithTitle:@"Sort by Time Viewed" 
+                         action:action
+	 	  keyEquivalent:@""];
+  [tools_files addItemWithTitle:@"Sort by Name" 
+                         action:action
+	 	  keyEquivalent:@""];
+  [tools_files addItemWithTitle:@"Next File" 
+                         action:action
+	 	  keyEquivalent:@"+"];
+  [tools_files addItemWithTitle:@"Previuos File" 
+                         action:action
+	 	  keyEquivalent:@"_"];
+  // Launcher
+  tools_launcher = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:tools_launcher
+            forItem:[tools itemWithTitle:@"Launcher"]];
+  [tools_launcher addItemWithTitle:@"Show Panel..." 
+                           action:@selector(showRunPanel:)
+	 	    keyEquivalent:@""];
+  [tools_launcher addItemWithTitle:@"Run" 
+                           action:@selector(runTarget:)
+	 	    keyEquivalent:@""];
+  [tools_launcher addItemWithTitle:@"Debug" 
+                           action:action
+	 	    keyEquivalent:@""];
+  // Indexer
+  tools_indexer = [[[NSMenu alloc] init] autorelease];
+  [tools setSubmenu:tools_indexer
+            forItem:[tools itemWithTitle:@"Indexer"]];
+  [tools_indexer addItemWithTitle:@"Show Panel..." 
+                           action:action
+	 	    keyEquivalent:@""];
+  [tools_indexer addItemWithTitle:@"Purge Indices" 
+                           action:action
+	 	    keyEquivalent:@""];
+  [tools_indexer addItemWithTitle:@"Index Subproject" 
+                           action:action
+	 	    keyEquivalent:@"|"];
+  [tools_indexer addItemWithTitle:@"Index File" 
+                           action:action
+	 	    keyEquivalent:@"*"];
 
   /*
    * Windows submenu
@@ -212,15 +497,15 @@ void createMenu()
 
   windows = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:windows forItem:[menu itemWithTitle:@"Windows"]];
-  [windows addItemWithTitle:@"Arrange"
-		   action:@selector(arrangeInFront:)
-		   keyEquivalent:@""];
-  [windows addItemWithTitle:@"Miniaturize"
-		   action:@selector(performMiniaturize:)
-		   keyEquivalent:@"m"];
-  [windows addItemWithTitle:@"Close"
-		   action:@selector(performClose:)
-		   keyEquivalent:@"w"];
+  [windows addItemWithTitle:@"Arrange in Front"
+		     action:@selector(arrangeInFront:)
+	      keyEquivalent:@""];
+  [windows addItemWithTitle:@"Miniaturize Window"
+		     action:@selector(performMiniaturize:)
+	      keyEquivalent:@"m"];
+  [windows addItemWithTitle:@"Close Window"
+		     action:@selector(performClose:)
+	      keyEquivalent:@"w"];
 
   /*
    * Services submenu
@@ -229,7 +514,8 @@ void createMenu()
   services = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:services forItem:[menu itemWithTitle:@"Services"]];
 
-  [[NSApplication sharedApplication] setMainMenu:menu];
+  [[NSApplication sharedApplication] setWindowsMenu: windows];
   [[NSApplication sharedApplication] setServicesMenu: services];
+  [[NSApplication sharedApplication] setMainMenu:menu];
 }
 
