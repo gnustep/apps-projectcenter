@@ -42,8 +42,7 @@
 - (void)_initUI
 {
   NSView *_c_view;
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
-                       NSResizableWindowMask;
+  unsigned int style = NSTitledWindowMask | NSClosableWindowMask;
   NSRect _w_frame;
   NSBox *line;
   NSBox *v;
@@ -63,6 +62,7 @@
   [prefWindow setMinSize:NSMakeSize(268,365)];
   [prefWindow setTitle:@"Preferences"];
   [prefWindow setDelegate:self];
+  [prefWindow setReleasedWhenClosed:NO];
   _c_view = [prefWindow contentView];
 
   prefPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(72,328,120,20)];
@@ -117,7 +117,7 @@
   [prefMiscView setBorderType:NSNoBorder];
 
   v = [[[NSBox alloc] init] autorelease];
-  [v setTitle:@"External Editor"];
+  [v setTitle:@"External Tools"];
   [v setFrameFromContentFrame:NSMakeRect(16,184,228,96)];
   [prefMiscView addSubview:v];
 
@@ -134,7 +134,7 @@
   [textField setStringValue:@"Editor:"];
   [v addSubview:[textField autorelease]];
 
-  editorField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,184,21)];
+  editorField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,144,21)];
   [editorField setAlignment: NSLeftTextAlignment];
   [editorField setBordered: NO];
   [editorField setEditable: YES];
@@ -157,7 +157,7 @@
   [textField setStringValue:@"Compiler:"];
   [v addSubview:[textField autorelease]];
 
-  compilerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,48,184,21)];
+  compilerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,48,144,21)];
   [compilerField setAlignment: NSLeftTextAlignment];
   [compilerField setBordered: NO];
   [compilerField setEditable: YES];
@@ -180,7 +180,7 @@
   [textField setStringValue:@"Debugger:"];
   [v addSubview:[textField autorelease]];
 
-  debuggerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,72,184,21)];
+  debuggerField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,72,144,21)];
   [debuggerField setAlignment: NSLeftTextAlignment];
   [debuggerField setBordered: NO];
   [debuggerField setEditable: YES];
@@ -190,12 +190,34 @@
   [debuggerField setAction:@selector(setDebugger:)];
   [v addSubview:[debuggerField autorelease]];
 
+  /*
+   * Bundles Box
+   */
+
   v = [[[NSBox alloc] init] autorelease];
-  [v setTitle:@"Bundles"];
-  [v setFrameFromContentFrame:NSMakeRect(16,120,228,24)];
+  [v setTitle:@"Bundle Path"];
+  [v setFrameFromContentFrame:NSMakeRect(16,96,228,48)];
   [prefMiscView addSubview:v];
 
-  useExternalEditor = [[[NSButton alloc] initWithFrame:NSMakeRect(32,60,144,15)] autorelease];
+  /*
+   * Bundle path
+   */
+
+  bundlePathField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,24,212,21)];
+  [bundlePathField setAlignment: NSLeftTextAlignment];
+  [bundlePathField setBordered: NO];
+  [bundlePathField setEditable: YES];
+  [bundlePathField setBezeled: YES];
+  [bundlePathField setDrawsBackground: YES];
+  [bundlePathField setTarget:self];
+  [bundlePathField setAction:@selector(setBundlePath:)];
+  [v addSubview:[bundlePathField autorelease]];
+
+  /*
+   * Some buttons
+   */
+
+  useExternalEditor = [[[NSButton alloc] initWithFrame:NSMakeRect(32,24,204,15)] autorelease];
   [useExternalEditor setTitle:@"use external Editor"];
   [useExternalEditor setButtonType:NSSwitchButton];
   [useExternalEditor setBordered:NO];
@@ -203,15 +225,17 @@
   [useExternalEditor setAction:@selector(setUseExternalEditor:)];
   [useExternalEditor setContinuous:NO];
   [prefMiscView addSubview:useExternalEditor];
+  [useExternalEditor sizeToFit];
 
-  b = [[[NSButton alloc] initWithFrame:NSMakeRect(32,80,144,15)] autorelease];
+  b = [[[NSButton alloc] initWithFrame:NSMakeRect(32,44,204,15)] autorelease];
   [b setTitle:@"Prompt when quitting"];
   [b setButtonType:NSSwitchButton];
   [b setBordered:NO];
   [b setTarget:self];
-  //  [b setAction:@selector(setPromptOnClean:)];
+  // [b setAction:@selector()];
   [b setContinuous:NO];
   [prefMiscView addSubview:b];
+  [b sizeToFit];
 
   /*
    * Saving view
@@ -300,7 +324,7 @@
     [bundlePathField setStringValue:(val=[preferencesDict objectForKey:BundlePaths]) ? val : @""];
 
     [useExternalEditor setState:([[preferencesDict objectForKey:ExternalEditor] isEqualToString:@"YES"])?NSOnState:NSOffState];
-    
+
     // The popup and selected view
     [prefPopup removeAllItems];
     [prefPopup addItemWithTitle:@"Building"];
@@ -423,14 +447,12 @@
 
 - (void)setBundlePath:(id)sender
 {
-    NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"bundle",nil]];
-
-    if (path) {
-        [bundlePathField setStringValue:path];
-
-        [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
-        [preferencesDict setObject:path forKey:BundlePaths];
-    }
+  NSString *path = [bundlePathField stringValue];
+  
+  if (path) {
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
+    [preferencesDict setObject:path forKey:BundlePaths];
+  }
 }
 
 - (void)promptWhenQuitting:(id)sender
