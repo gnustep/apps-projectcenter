@@ -199,6 +199,9 @@
 
       rootCategories = [[NSDictionary 
 	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
+
+      appClassField = nil;
+      appImageField = nil;
     }
 
   return self;

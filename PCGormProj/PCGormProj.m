@@ -136,7 +136,8 @@ static PCGormProj *_creator = nil;
         [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
 
         // Copy the gorm wrapper
-        gormTemplatePath = [path stringByAppendingPathComponent: @"BaseInterface.gorm"];
+        //gormTemplatePath = [path stringByAppendingPathComponent: @"BaseInterface.gorm"];
+        gormTemplatePath = [path stringByAppendingPathComponent: [NSString stringWithFormat: @"%@.gorm", [path lastPathComponent]]];
 	_file = [[NSBundle bundleForClass:[self class]] pathForResource:@"BaseInterface" ofType:@"gorm"];
         [fm copyPath:_file toPath:gormTemplatePath handler:nil];
 

@@ -318,6 +318,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     
     [self setActiveProject:project];
     [project setDelegate:self];
+    [self saveProject];
     
     return YES;
 }

@@ -188,6 +188,7 @@
       dir = NSHomeDirectory();
     }
 
+  [projectTypePopup selectItemAtIndex:0];
   runResult = [sp runModalForDirectory:dir file:@""];
   if (runResult == NSOKButton) 
     {

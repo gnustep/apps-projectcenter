@@ -114,6 +114,7 @@
       rootCategories = [[NSDictionary 
 	dictionaryWithObjects:rootObjects forKeys:rootKeys] retain];
 
+      principalClassField = nil;
     }
 
   return self;
