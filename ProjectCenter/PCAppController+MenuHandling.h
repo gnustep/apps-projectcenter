@@ -25,37 +25,15 @@
 */
 
 #import <AppKit/AppKit.h>
+#import "PCAppController.h"
 
-@class PCProjectManager;
-@class PCFileManager;
-@class PCAppController;
+@interface PCAppController (MenuHandling)
 
-@interface PCMenuController : NSObject
-{
-  PCProjectManager *projectManager;
-  PCFileManager	   *fileManager;
-  PCAppController  *appController;
-  
-  NSBox		        *projectTypeAccessaryView;
-  id			projectTypePopup;
-}
+- (void)showPrefWindow:(id)sender;
+- (void)showInfoPanel:(id)sender;
 
-//============================================================================
-//==== Init and free
-//============================================================================
-
-- (id)init;
-- (void)dealloc;
-
-- (void)setAppController:(id)anObject;
-- (void)setFileManager:(id)anObject;
-- (void)setProjectManager:(id)anObject;
-
-//============================================================================
-//==== Menu stuff
-//============================================================================
-
-- (void)addProjectTypeNamed:(NSString *)name;
+//- (void)showLoadedProjects:(id)sender;
+- (void)showInspector:(id)sender;
 
 - (void)openProject:(id)sender;
 - (void)newProject:(id)sender;
@@ -79,11 +57,5 @@
 - (void)revertFile:(id)sender;
 - (void)renameFile:(id)sender;
 - (void)removeFile:(id)sender;
-
-//============================================================================
-//==== Delegate stuff
-//============================================================================
-
-- (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem;
 
 @end

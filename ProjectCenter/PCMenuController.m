@@ -71,6 +71,24 @@
     [projectTypePopup addItemWithTitle:name];
 }
 
+- (void)setAppController:(id)anObject
+{
+  [appController autorelease];
+  appController = [anObject retain];
+}
+
+- (void)setFileManager:(id)anObject
+{
+  [fileManager autorelease];
+  fileManager = [anObject retain];
+}
+
+- (void)setProjectManager:(id)anObject
+{
+  [projectManager autorelease];
+  projectManager = [anObject retain];
+}
+
 //============================================================================
 //==== Menu stuff
 //============================================================================

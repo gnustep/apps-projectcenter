@@ -70,6 +70,15 @@
 
         // They are registered by the bundleLoader
         projectTypes = [[NSMutableDictionary alloc] init];
+
+ 	prefController = [[PCPrefController alloc] init];
+	finder = [[PCFindController alloc] init];
+	infoController = [[PCInfoController alloc] init];
+	logger = [[PCLogController alloc] init];
+	projectManager = [[PCProjectManager alloc] init];
+	fileManager = [[PCFileManager alloc] init];
+	menuController = [[PCMenuController alloc] init];
+
     }
     return self;
 }
@@ -81,7 +90,14 @@
         [doConnection release];
     }
 
+    [prefController release];
+    [finder release];
+    [infoController release];
+    [logger release];
     [projectManager release];
+    [fileManager release];
+    [menuController release];
+
     [bundleLoader release];
     [doServer release];
     [projectTypes release];
