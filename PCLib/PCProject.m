@@ -600,29 +600,43 @@
 
 - (void)addFile:(NSString *)file forKey:(NSString *)type
 {
-    NSMutableArray *files = [NSMutableArray arrayWithArray:[projectDict objectForKey:type]];
-    NSMutableString *newFile = [NSMutableString stringWithString:[file lastPathComponent]];
+  [self addFile:file forKey:type copy:NO];
+}
 
-    if ([type isEqualToString:PCLibraries]) {
-      [newFile deleteCharactersInRange:NSMakeRange(0,3)];
-      newFile = [newFile stringByDeletingPathExtension];
-    }
-
-    if ([files containsObject:newFile]) {
-        NSRunAlertPanel(@"Attention!",@"The file %@ is already part of this project!",@"OK",nil,nil,newFile);
-        return;
-    }
-
+- (void)addFile:(NSString *)file forKey:(NSString *)type copy:(BOOL)yn
+{
+  NSMutableArray *files = [NSMutableArray arrayWithArray:[projectDict objectForKey:type]];
+  NSMutableString *newFile = [NSMutableString stringWithString:[file lastPathComponent]];
+  
+  if ([type isEqualToString:PCLibraries]) {
+    [newFile deleteCharactersInRange:NSMakeRange(0,3)];
+    newFile = [newFile stringByDeletingPathExtension];
+  }
+  
+  if ([files containsObject:newFile]) {
+    NSRunAlertPanel(@"Attention!",@"The file %@ is already part of this project!",@"OK",nil,nil,newFile);
+    return;
+  }
+  
 #ifdef DEBUG
-    NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
+  NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
 #endif DEBUG
+  
+  // Add the new file
+  [files addObject:newFile];
+  [projectDict setObject:files forKey:type];
+  
+  // Synchronise the makefile!
+  [self writeMakefile];
+  
+  if (yn) {
+    NSFileManager *manager = [NSFileManager defaultManager];
+    NSString *destination = [[self projectPath] stringByAppendingPathComponent:newFile];
     
-    // Add the new file
-    [files addObject:newFile];
-    [projectDict setObject:files forKey:type];
-    
-    // Synchronise the makefile!
-    [self writeMakefile];
+    if (![manager copyPath:file toPath:destination handler:nil]) {
+      NSRunAlertPanel(@"Attention!",@"The file %@ could not be copied to %@!",@"OK",nil,nil,newFile,destination);
+    }
+  }
 }
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key

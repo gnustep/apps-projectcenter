@@ -188,6 +188,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     // Returns YES if type is a valid key and file is not contained in the project already
 
 - (void)addFile:(NSString *)file forKey:(NSString *)key;
+- (void)addFile:(NSString *)file forKey:(NSString *)key copy:(BOOL)yn;
+
 - (void)removeFile:(NSString *)file forKey:(NSString *)key;
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn;
 - (void)renameFile:(NSString *)aFile;

@@ -133,7 +133,7 @@
 
   scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];
   [scrollView setDocumentView:textView];
-  [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
+  //[textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
   [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
   [scrollView setHasHorizontalScroller: YES];
   [scrollView setHasVerticalScroller: YES];
