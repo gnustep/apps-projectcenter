@@ -140,6 +140,13 @@
 	);
 	Super = NSObject;
     };
+    PCFileNameField = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTextField;
+    };
     PCProjectInspector = {
 	Actions = (
 	);

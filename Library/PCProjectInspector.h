@@ -28,6 +28,12 @@
 @class PCProjectManager;
 @class PCProjectBrowser;
 
+@interface PCFileNameField : NSTextField
+{
+}
+
+@end
+
 @interface PCProjectInspector : NSObject
 {
   PCProjectManager *projectManager;
@@ -81,9 +87,9 @@
   IBOutlet NSButton       *authorDown;
 
   // File Attributes
-  IBOutlet NSBox          *fileAttributesView;
-  IBOutlet NSImageView    *fileIconView;
-  IBOutlet NSTextField    *fileNameField;
+  IBOutlet NSBox           *fileAttributesView;
+  IBOutlet NSImageView     *fileIconView;
+  IBOutlet PCFileNameField *fileNameField;
 }
 
 // ============================================================================

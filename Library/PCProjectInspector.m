@@ -29,6 +29,53 @@
 #include "PCProjectWindow.h"
 #include "PCProjectInspector.h"
 
+@implementation PCFileNameField
+
+- (void)setEditableField:(BOOL)yn
+{
+  NSRect frame = [self frame];
+
+  if (yn == YES)
+    {
+      frame.size.width += 4;
+      frame.origin.x -= 4;
+      [self setFrame:frame];
+      
+      [self setBordered:YES];
+      [self setBackgroundColor:[NSColor whiteColor]];
+      [self setEditable:YES];
+    }
+  else
+    {
+      frame.size.width -= 4;
+      frame.origin.x += 4;
+      [self setFrame:frame];
+
+      [self setBordered:NO];
+      [self setBackgroundColor:[NSColor lightGrayColor]];
+      [self setDrawsBackground:YES];
+      [self setEditable:NO];
+    }
+}
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+  NSLog(@"PCFileNameField mouseDown");
+  
+  [self setEditableField:YES];
+
+  [super mouseDown:theEvent];
+}
+
+- (void)textDidEndEditing:(NSNotification *)aNotification
+{
+  NSLog(@"PCFileNameField textDidEndEditing");
+  [self setEditableField:NO];
+  [super textDidEndEditing:aNotification];
+}
+
+@end
+
 @implementation PCProjectInspector
 
 // ============================================================================

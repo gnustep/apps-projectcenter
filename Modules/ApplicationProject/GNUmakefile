@@ -30,8 +30,9 @@ Templates/main.m \
 Templates/PC.project \
 Templates/GNUmakefile.preamble \
 Templates/GNUmakefile.postamble \
-Templates/objects.gorm \
-Templates/data.classes
+Templates/Main.gorm
+#Templates/objects.gorm \
+#Templates/data.classes
 
 #
 # Header files

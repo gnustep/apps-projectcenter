@@ -695,33 +695,31 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
   if (anObject == appImageField)
     {
-//      NSLog(@"Application Icon get focus");
-
       file = [appImageField stringValue];
 
-      if ([file isEqualToString:@""]) return;
-
-      path = [self dirForCategory:PCImages];
-      path = [path stringByAppendingPathComponent:file];
-
-      [self setIconViewImage:[[NSImage alloc] initWithContentsOfFile:path]];
+      if (![file isEqualToString:@""])
+	{
+	  path = [self dirForCategory:PCImages];
+	  path = [path stringByAppendingPathComponent:file];
+	  [self setIconViewImage:[[NSImage alloc]
+          initWithContentsOfFile:path]];
+	}
       activeTextField = appImageField;
     }
   else if (anObject == helpFileField)
     {
-//      NSLog(@"Help File get focus");
       activeTextField = helpFileField;
     }
   else if (anObject == mainNIBField)
     {
-//      NSLog(@"Main Interface File get focus");
-
       file = [mainNIBField stringValue];
       
-      if ([file isEqualToString:@""]) return;
-
-      path = [projectPath stringByAppendingPathComponent:file];
-      [self setIconViewImage:[[NSWorkspace sharedWorkspace] iconForFile:path]];
+      if (![file isEqualToString:@""])
+	{
+	  path = [projectPath stringByAppendingPathComponent:file];
+	  [self setIconViewImage:[[NSWorkspace sharedWorkspace]
+	             iconForFile:path]];
+	}
       activeTextField = mainNIBField;
     }
 

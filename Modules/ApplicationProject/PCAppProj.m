@@ -125,22 +125,14 @@ static PCAppProj *_creator = nil;
       [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"]
 	             attributes:nil];
 
-      // Gorm files
+      // Main NIB
       mainNibFile = [path stringByAppendingPathComponent:
 	[NSString stringWithFormat:@"%@.gorm", [path lastPathComponent]]];
-      [fm createDirectoryAtPath:mainNibFile attributes:nil];
 
-      _file = [projBundle pathForResource:@"objects" ofType:@"gorm"];
-      [fm copyPath:_file
-            toPath:[mainNibFile stringByAppendingPathComponent:@"objects.gorm"]
-	   handler:nil];
-      _file = [projBundle pathForResource:@"data" ofType:@"classes"];
-      [fm copyPath:_file
-            toPath:[mainNibFile stringByAppendingPathComponent:@"data.classes"]
-	   handler:nil];
+      _file = [projBundle pathForResource:@"Main" ofType:@"gorm"];
+      [fm copyPath:_file toPath:mainNibFile handler:nil];
       [projectDict setObject:[mainNibFile lastPathComponent]
 	              forKey:PCMainInterfaceFile];
-      
       [projectDict 
 	setObject:[NSArray arrayWithObject:[mainNibFile lastPathComponent]]
 	   forKey:PCInterfaces];
