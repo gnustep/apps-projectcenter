@@ -31,6 +31,6 @@
   FullVersionID = "0.3.2";
   Authors = ("Philippe C.D. Robert <probert@siggraph.org>");
   URL = "http://www.gnustep.org";
-  Copyright = "Copyright (C) 1999 - 2002 Free Software Foundation";
+  Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
   CopyrightDescription = "Released under the GNU General Public License 2.0";
 }
