@@ -28,6 +28,19 @@
 
 #import "ProjectBuilder.h"
 
+#ifndef IMAGE
+#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#endif
+
+#define BUILD_ARGS_KEY      @"BuildArgsKey"
+#define BUILD_HOST_KEY      @"BuildHostKey"
+
+#define TARGET_MAKE         @"Make"
+#define TARGET_MAKE_DEBUG   @"MakeDebug"
+#define TARGET_MAKE_PROFILE @"MakeProfile"
+#define TARGET_MAKE_INSTALL @"MakeInstall"
+#define TARGET_MAKE_CLEAN   @"MakeClean"
+
 #define TOUCHED_NOTHING		(0)
 #define TOUCHED_EVERYTHING	(1 << 0)
 #define TOUCHED_PROJECT_NAME	(1 << 1)
@@ -45,13 +58,6 @@
 #define TOUCHED_PATHS		(1 << 13)
 
 typedef int PCProjInfoBits;
-
-typedef enum {
-    defaultTarget = 0,
-    debug,
-    profile,
-    install
-} btarget;
 
 //===========================================================================================
 // ==== Project keys
@@ -78,34 +84,43 @@ static NSString * const PCMainGModelFile = @"MAININTERFACE";
 static NSString * const PCPackageName = @"PACKAGE_NAME";
 static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
+@class PCProjectBuilder;
+@class PCProjectDebugger;
+
 @interface PCProject : NSObject
 {
     id projectWindow;
     id delegate;
-    id projectBuilder;
+    id projectManager;
     id browserController;
 
-    id textView;
+    PCProjectBuilder *projectBuilder;
+    PCProjectDebugger *projectDebugger;
+    NSBox *box;
 
     id projectAttributeInspectorView;
+    NSTextField *installPathField;
+    NSTextField *toolField;
+    NSTextField *ccOptField;
+    NSTextField *ldOptField;
+
     id projectProjectInspectorView;
+    NSTextField *projectTypeField;
+
     id projectFileInspectorView;
+    NSTextField *fileNameField;
+    NSButton *changeFileNameButton;
     
     id buildTargetPanel;
-    id buildTargetPopup;
+    id buildTargetHostField;
+    id buildTargetArgsField;
     
-    id buildStatusField;
-    id targetField;
-
     NSString *projectName;
     NSString *projectPath;
     NSMutableDictionary *projectDict;
 
-    NSDictionary *rootCategories;	// Needs to be initialised by subclasses!
-
-    @private
-    BOOL _needsReleasing;
-    btarget _buildTarget;
+    NSDictionary *rootCategories; // Needs to be initialised by subclasses!
+    NSMutableDictionary *buildOptions;
 }
 
 //===========================================================================================
@@ -122,6 +137,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 //===========================================================================================
 
 - (id)browserController;
+- (NSString *)selectedRootCategory;
+
+- (NSArray *)fileExtensionsForCategory:(NSString *)key;
 
 - (void)setProjectName:(NSString *)aName;
 - (NSString *)projectName;
@@ -156,11 +174,14 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (NSString *)projectDescription;
     // Returns a string describing the project type
 
-- (id)textView;
+- (BOOL)isExecutable;
+    // Returns NO by default.
 
 //===========================================================================================
 // ==== Miscellaneous
 //===========================================================================================
+
+- (void)browserDidSelectFileNamed:(NSString *)fileName;
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
     // Returns YES if type is a valid key and file is not contained in the project already
@@ -168,6 +189,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)addFile:(NSString *)file forKey:(NSString *)key;
 - (void)removeFile:(NSString *)file forKey:(NSString *)key;
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn;
+- (void)renameFile:(NSString *)aFile;
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict;
 - (NSDictionary *)projectDict;
@@ -198,18 +220,21 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
 @interface PCProject (ProjectBuilding)
 
+- (void)topButtonsPressed:(id)sender;
+- (void)showBuildView:(id)sender;
+- (void)showRunView:(id)sender;
+
 - (void)showInspector:(id)sender;
+
 - (id)updatedAttributeView;
 - (id)updatedProjectView;
 - (id)updatedFilesView;
 
 - (void)showBuildTargetPanel:(id)sender;
-- (void)setTarget:(id)sender;
 - (void)setHost:(id)sender;
 - (void)setArguments:(id)sender;
 
-- (void)build:(id)sender;
-- (void)clean:(id)sender;
+- (NSDictionary *)buildOptions;
 
 @end
 

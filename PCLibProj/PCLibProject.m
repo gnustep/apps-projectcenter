@@ -43,31 +43,7 @@
 
 - (void)_initUI
 {
-  // Always call super!!!
   [super _initUI];
-
-  projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setTitlePosition:NSAtTop];
-  [projectAttributeInspectorView setBorderType:NSGrooveBorder];
-  //    [projectAttributeInspectorView addSubview:projectTypePopup];
-  [projectAttributeInspectorView sizeToFit];
-  [projectAttributeInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setTitlePosition:NSAtTop];
-  [projectProjectInspectorView setBorderType:NSGrooveBorder];
-  //    [projectProjectInspectorView addSubview:projectTypePopup];
-  [projectProjectInspectorView sizeToFit];
-  [projectProjectInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setTitlePosition:NSAtTop];
-  [projectFileInspectorView setBorderType:NSGrooveBorder];
-  //    [projectFileInspectorView addSubview:projectTypePopup];
-  [projectFileInspectorView sizeToFit];
-  [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
-
-  _needsAdditionalReleasing = YES;
 }
 
 @end
@@ -80,34 +56,27 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-        rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:PCClasses,@"Classes",PCHeaders,@"Headers",PCOtherSources,@"Other Sources",PCOtherResources,@"Other Resources", PCSubprojects, @"Subprojects", PCLibraries, @"Libraries",PCDocuFiles,@"Documentation",nil] retain];
-
-        _needsAdditionalReleasing = NO;
-
-#if defined(GNUSTEP)
-        [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"LibProject.nib" owner:self]) {
-	  [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load LibProject.gmodel" userInfo:nil] raise];
-	  return nil;
-        }
-#endif
-    }
-    return self;
+  if ((self = [super init])) {
+    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+				      PCSubprojects, @"Subprojects", 
+				    PCLibraries, @"Libraries",
+				    PCDocuFiles,@"Documentation",
+				    PCOtherResources,@"Other Resources", 
+				    PCOtherSources,@"Other Sources",
+				    PCHeaders,@"Headers",
+				    PCClasses,@"Classes",
+				    nil] retain];
+    
+    [self _initUI];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [rootCategories release];
-
-    if (_needsAdditionalReleasing) {
-        [projectAttributeInspectorView release];
-        [projectProjectInspectorView release];
-        [projectFileInspectorView release];
-    }
-
-    [super dealloc];
+  [rootCategories release];
+  
+  [super dealloc];
 }
 
 //----------------------------------------------------------------------------
@@ -117,7 +86,7 @@
 - (BOOL)writeMakefile
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *makefile = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *makefile = [[self projectPath] stringByAppendingPathComponent:@"GNUmakefile"];
     NSData *content;
 
     if (![super writeMakefile]) {

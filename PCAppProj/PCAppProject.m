@@ -43,31 +43,63 @@
 
 - (void)_initUI
 {
-  // Always call super!!!
+  NSTextField *textField;
+  NSRect frame = {{84,120}, {80, 80}};
+  NSBox *box;
+
   [super _initUI];
 
-  projectAttributeInspectorView = [[NSBox alloc] init];
-  [projectAttributeInspectorView setTitlePosition:NSAtTop];
-  [projectAttributeInspectorView setBorderType:NSGrooveBorder];
-  //    [projectAttributeInspectorView addSubview:projectTypePopup];
-  [projectAttributeInspectorView sizeToFit];
-  [projectAttributeInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectProjectInspectorView = [[NSBox alloc] init];
-  [projectProjectInspectorView setTitlePosition:NSAtTop];
-  [projectProjectInspectorView setBorderType:NSGrooveBorder];
-  //    [projectProjectInspectorView addSubview:projectTypePopup];
-  [projectProjectInspectorView sizeToFit];
-  [projectProjectInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  projectFileInspectorView = [[NSBox alloc] init];
-  [projectFileInspectorView setTitlePosition:NSAtTop];
-  [projectFileInspectorView setBorderType:NSGrooveBorder];
-  //    [projectFileInspectorView addSubview:projectTypePopup];
-  [projectFileInspectorView sizeToFit];
-  [projectFileInspectorView setAutoresizingMask:NSViewWidthSizable];
-  
-  _needsAdditionalReleasing = YES;
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,256,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"App class:"];
+  [projectProjectInspectorView addSubview:[textField autorelease]];
+
+  appClassField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
+  [appClassField setAlignment: NSLeftTextAlignment];
+  [appClassField setBordered: YES];
+  [appClassField setEditable: YES];
+  [appClassField setBezeled: YES];
+  [appClassField setDrawsBackground: YES];
+  [appClassField setStringValue:@""];
+  [projectProjectInspectorView addSubview:appClassField];
+
+  textField =[[NSTextField alloc] initWithFrame:NSMakeRect(16,204,64,21)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"App icon:"];
+  [projectProjectInspectorView addSubview:[textField autorelease]];
+
+  appImageField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
+  [appImageField setAlignment: NSLeftTextAlignment];
+  [appImageField setBordered: YES];
+  [appImageField setEditable: YES];
+  [appImageField setBezeled: YES];
+  [appImageField setDrawsBackground: YES];
+  [appImageField setStringValue:@""];
+  [projectProjectInspectorView addSubview:appImageField];
+
+  setAppIconButton =[[NSButton alloc] initWithFrame:NSMakeRect(180,180,80,21)];
+  [setAppIconButton setTitle:@"Set..."];
+  [setAppIconButton setTarget:self];
+  [setAppIconButton setAction:@selector(setAppIcon:)];
+  [projectProjectInspectorView addSubview:setAppIconButton];
+
+  box = [[NSBox alloc] init];
+  [box setFrame:frame];
+  [box setTitlePosition:NSNoTitle];
+  //[box setBorderType:NSNoBorder];
+  [projectProjectInspectorView addSubview:box];
+  AUTORELEASE(box);
+
+  appIconView = [[NSImageView alloc] initWithFrame:frame];
+  [box addSubview:appIconView];
 }
 
 @end
@@ -80,42 +112,33 @@
 
 - (id)init
 {
-    if ((self = [super init])) {
-      rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+  if ((self = [super init])) {
+    rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
 				      PCGModels,@"Interfaces",
-				      PCImages,@"Images",
-				      PCOtherResources,@"Other Resources",
-				      PCSubprojects,@"Subprojects",
-				      PCLibraries,@"Libraries",
-				      PCDocuFiles,@"Documentation",
-				      PCOtherSources,@"Other Sources",
-				      PCHeaders,@"Headers",
-				      PCClasses,@"Classes",
-				      nil] retain];
+				    PCImages,@"Images",
+				    PCOtherResources,@"Other Resources",
+				    PCSubprojects,@"Subprojects",
+				    PCLibraries,@"Libraries",
+				    PCDocuFiles,@"Documentation",
+				    PCOtherSources,@"Other Sources",
+				    PCHeaders,@"Headers",
+				    PCClasses,@"Classes",
+				    nil] retain];
 
-#if defined(GNUSTEP)
-        [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"AppProject.nib" owner:self]) {
-            [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load AppProject.gmodel" userInfo:nil] raise];
-            return nil;
-        }
-#endif
-    }
-    return self;
+    [self _initUI];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [rootCategories release];
+  [rootCategories release];
+  [appClassField release];
+  [appImageField release];
+  [setAppIconButton release];
+  [appIconView release];
 
-    if (_needsAdditionalReleasing) {
-        [projectAttributeInspectorView release];
-        [projectProjectInspectorView release];
-        [projectFileInspectorView release];
-    }
-    
-    [super dealloc];
+  [super dealloc];
 }
 
 //----------------------------------------------------------------------------
@@ -175,6 +198,11 @@
 - (NSString *)projectDescription
 {
     return @"Project that handles GNUstep/ObjC based applications.";
+}
+
+- (BOOL)isExecutable
+{
+  return YES;
 }
 
 @end
