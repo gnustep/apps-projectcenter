@@ -81,18 +81,17 @@
 - (id)init
 {
     if ((self = [super init])) {
-        rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:PCClasses,@"Classes",PCHeaders,@"Headers",PCOtherSources,@"Other Sources",PCOtherResources,@"Other Resources", PCSubprojects, @"Subprojects", PCLibraries, @"Libraries",PCDocuFiles,@"Documentation",nil] retain];
+        rootCategories = [[NSDictionary dictionaryWithObjectsAndKeys:
+					PCSubprojects, @"Subprojects", 
+					PCLibraries, @"Libraries",
+					PCDocuFiles,@"Documentation",
+					PCOtherResources,@"Other Resources", 
+					PCOtherSources,@"Other Sources",
+					PCHeaders,@"Headers",
+					PCClasses,@"Classes",
+					nil] retain];
 
-        _needsAdditionalReleasing = NO;
-
-#if defined(GNUSTEP)
         [self _initUI];
-#else
-        if(![NSBundle loadNibNamed:@"LibProject.nib" owner:self]) {
-	  [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load LibProject.gmodel" userInfo:nil] raise];
-	  return nil;
-        }
-#endif
     }
     return self;
 }
@@ -101,11 +100,9 @@
 {
     [rootCategories release];
 
-    if (_needsAdditionalReleasing) {
-        [projectAttributeInspectorView release];
-        [projectProjectInspectorView release];
-        [projectFileInspectorView release];
-    }
+    [projectAttributeInspectorView release];
+    [projectProjectInspectorView release];
+    [projectFileInspectorView release];
 
     [super dealloc];
 }
