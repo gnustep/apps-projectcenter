@@ -636,18 +636,36 @@ NSString
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
 {
-  NSArray  *projectFiles = [projectDict objectForKey:type];
-  NSString *pFile = [self projectFileFromFile:file forKey:type];
+  NSString      *pFile = [self projectFileFromFile:file forKey:type];
+  NSArray       *sourceKeys = [self sourceFileKeys];
+  NSArray       *resourceKeys = [self resourceFileKeys];
+  NSEnumerator  *keyEnum = nil;
+  NSString      *key = nil;
+  NSArray       *projectFiles = nil;
 
-  if ([[projectDict allKeys] containsObject:type])
+  if ([sourceKeys containsObject:type])
     {
-      if (![projectFiles containsObject:pFile])
+      keyEnum = [sourceKeys objectEnumerator];
+    }
+  else if ([resourceKeys containsObject:type])
+    {
+      keyEnum = [resourceKeys objectEnumerator];
+    }
+  else
+    {
+      return YES;
+    }
+
+  while (key = [keyEnum nextObject])
+    {
+      projectFiles = [projectDict objectForKey:key];
+      if ([projectFiles containsObject:pFile])
 	{
-	  return YES;
+	  return NO;
 	}
     }
 
-  return NO;
+  return YES;
 }
 
 - (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key

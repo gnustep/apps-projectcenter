@@ -440,27 +440,32 @@ static PCFileManager *_mgr = nil;
   NSString      *fileType = nil;
   NSString      *categoryKey = nil;
 
-  if (sender == addFilesPanel
-      && [fileManager fileExistsAtPath:filename isDirectory:&isDir]
-      && !isDir)
-      {
-	project = [projectManager activeProject];
-	fileType = [fileTypePopup titleOfSelectedItem];
-	categoryKey = [project keyForCategory:fileType];
-	fileTypes = [project fileTypesForCategoryKey:categoryKey];
-	// Wrong file extension
-	if (fileTypes 
-	    && ![fileTypes containsObject:[filename pathExtension]])
-	  {
-	    return NO;
-	  }
-	// File is already in project
-	if (![project doesAcceptFile:filename forKey:categoryKey])
-	  {
-	    return NO;
-	  }
-      }
+  [fileManager fileExistsAtPath:filename isDirectory:&isDir];
+  
+  if ([[filename pathExtension] isEqualToString:@"gorm"])
+    {
+      isDir = NO;
+    }
     
+  if (sender == addFilesPanel && !isDir)
+    {
+      project = [projectManager activeProject];
+      fileType = [fileTypePopup titleOfSelectedItem];
+      categoryKey = [project keyForCategory:fileType];
+      fileTypes = [project fileTypesForCategoryKey:categoryKey];
+      // Wrong file extension
+      if (fileTypes 
+	  && ![fileTypes containsObject:[filename pathExtension]])
+	{
+	  return NO;
+	}
+      // File is already in project
+      if (![project doesAcceptFile:filename forKey:categoryKey])
+	{
+	  return NO;
+	}
+    }
+
   return YES;
 }
 

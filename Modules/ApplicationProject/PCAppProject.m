@@ -101,7 +101,9 @@
 
 - (void)dealloc
 {
+#idef DEVELOPMENT
   NSLog (@"PCAppProject: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -148,7 +150,8 @@
 - (NSArray *)sourceFileKeys
 {
   return [NSArray arrayWithObjects:
-    PCClasses, PCHeaders, PCOtherSources, nil];
+    PCClasses, PCHeaders, PCOtherSources, 
+    PCSupportingFiles, PCSubprojects, nil];
 }
 
 - (NSArray *)resourceFileKeys
@@ -160,8 +163,7 @@
 - (NSArray *)otherKeys
 {
   return [NSArray arrayWithObjects:
-    PCDocuFiles, PCLibraries, PCSubprojects, PCSupportingFiles, PCNonProject, 
-    nil];
+    PCLibraries, PCNonProject, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes

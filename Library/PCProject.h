@@ -125,7 +125,9 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (void)setLocalizableFile:(NSString *)file public:(BOOL)yn;
 
 - (NSArray *)buildTargets;
+// Files placed into /
 - (NSArray *)sourceFileKeys;
+// Files placed into /Resources or /Language.lproj
 - (NSArray *)resourceFileKeys;
 - (NSArray *)otherKeys;
 - (NSArray *)allowableSubprojectTypes;

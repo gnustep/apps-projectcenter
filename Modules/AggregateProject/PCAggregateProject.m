@@ -81,10 +81,16 @@
   return @"Project that contains subprojects.";
 }
 
+- (NSArray *)sourceFileKeys
+{
+  return [NSArray arrayWithObjects:
+    PCSupportingFiles, PCSubprojects, nil];
+}
+
 - (NSArray *)otherKeys
 {
   return [NSArray arrayWithObjects:
-    PCSubprojects, PCSupportingFiles, PCNonProject, nil];
+    PCNonProject, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes

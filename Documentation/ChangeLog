@@ -1,3 +1,15 @@
+2004-06-22 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFileManager.m:
+	(panel:shouldShowFilename:): Treat .gorm dirs not as dirs.
+	
+	* Library/PCProject.m:
+	(doesAcceptFile:forKey:): Check existance of file in
+	sourceFileKeys and resourceFileKeys.
+	
+	* Modules/*: Made cleanup in sourceFileKeys, resourceFileKeys and
+	otherKeys methods.
+	
 2004-06-21 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFileManager.m: 

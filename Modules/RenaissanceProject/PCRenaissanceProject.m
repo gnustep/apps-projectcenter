@@ -147,20 +147,20 @@
 - (NSArray *)sourceFileKeys
 {
   return [NSArray arrayWithObjects:
-    PCClasses, PCHeaders, PCOtherSources, nil];
+    PCClasses, PCHeaders, PCOtherSources, 
+    PCSupportingFiles, PCSubprojects, nil];
 }
 
 - (NSArray *)resourceFileKeys
 {
   return [NSArray arrayWithObjects:
-    PCInterfaces, PCImages, PCOtherResources, nil];
+    PCInterfaces, PCImages, PCOtherResources, PCDocuFiles, nil];
 }
 
 - (NSArray *)otherKeys
 {
   return [NSArray arrayWithObjects:
-    PCDocuFiles, PCLibraries, PCSubprojects, PCSupportingFiles, PCNonProject,
-    nil];
+    PCLibraries, PCNonProject, nil];
 }
 
 - (NSArray *)allowableSubprojectTypes
