@@ -63,6 +63,7 @@
   [prefWindow setTitle:@"Preferences"];
   [prefWindow setDelegate:self];
   [prefWindow setReleasedWhenClosed:NO];
+  [prefWindow setFrameAutosaveName:@"Preferences"];
   _c_view = [prefWindow contentView];
 
   prefPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(72,328,120,20)];
@@ -347,7 +348,7 @@
   [useExternalEditor setState:([[preferencesDict objectForKey:ExternalEditor] isEqualToString:@"YES"])?NSOnState:NSOffState];
 
   if (![prefWindow isVisible]) { 
-    [prefWindow center];
+    [prefWindow setFrameUsingName:@"Preferences"];
   }
   [prefWindow makeKeyAndOrderFront:self];
 }
