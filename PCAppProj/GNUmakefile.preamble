@@ -52,7 +52,7 @@ ADDITIONAL_CFLAGS +=
 ADDITIONAL_INCLUDE_DIRS +=
 
 # Additional LDFLAGS to pass to the linker
-ADDITIONAL_LDFLAGS += -lPC
+ADDITIONAL_LDFLAGS += -lProjectCenter
 
 # Additional library directories the linker should search
 ADDITIONAL_LIB_DIRS +=

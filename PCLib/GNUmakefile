@@ -36,7 +36,7 @@ PACKAGE_NAME = PCLib
 LIBRARY_VAR = PCLIB
 
 # The library to be compiled
-LIBRARY_NAME=libPC
+LIBRARY_NAME=libProjectCenter
 
 PCLIB_INSTALL_PREFIX=$(GNUSTEP_LOCAL_ROOT)
 
@@ -46,7 +46,7 @@ FILE_AUTHORS = 			\
 
 # The source files
 
-libPC_MFILES = 			\
+libProjectCenter_MFILES = 	\
 	PCBrowserController.m 	\
 	PCBundleLoader.m 	\
 	PCDataSource.m 		\
@@ -56,9 +56,9 @@ libPC_MFILES = 			\
 	PCProjectManager.m 	\
 	PCServer.m
 
-libPC_CFILES = 
+libProjectCenter_CFILES = 
 
-libPC_HFILES = 			\
+libProjectCenter_HFILES = 	\
 	FileCreator.h 		\
 	PCBrowserController.h 	\
 	PCBundleLoader.h 	\
@@ -76,18 +76,18 @@ libPC_HFILES = 			\
 	ProjectType.h 		\
 	Server.h
 
-HEADERS_INSTALL = $(libPC_HFILES)
+HEADERS_INSTALL = $(libProjectCenter_HFILES)
 
 # The Objective-C source files to be compiled
-libPC_OBJC_FILES 		= $(libPC_MFILES)
+libProjectCenter_OBJC_FILES 			= $(libProjectCenter_MFILES)
 
 # The C source files to be compiled
-libPC_C_FILES 			= $(libPC_CFILES)
+libProjectCenter_C_FILES 			= $(libProjectCenter_CFILES)
 
 # The headers
-libPC_HEADER_FILES_DIR 		= .
-libPC_HEADER_FILES_INSTALL_DIR 	= /ProjectCenter
-libPC_HEADER_FILES 		= $(libPC_HFILES)
+libProjectCenter_HEADER_FILES_DIR 		= .
+libProjectCenter_HEADER_FILES_INSTALL_DIR 	= /ProjectCenter
+libProjectCenter_HEADER_FILES 			= $(libProjectCenter_HFILES)
 
 -include GNUmakefile.preamble
 
