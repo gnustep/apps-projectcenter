@@ -25,16 +25,34 @@
 
     if([[ud objectForKey:ExternalEditor] isEqualToString:@"YES"])
     {
-        NSTask *editorTask;
+        NSTask         *editorTask;
 	NSMutableArray *args;
-	NSString *editor = [ud objectForKey:Editor];
-	NSArray *ea = [editor componentsSeparatedByString: @" "];
+	NSString       *editor = [ud objectForKey:Editor];
+	NSString       *app;
+	NSArray        *ea = [editor componentsSeparatedByString: @" "];
 
 	args = [NSMutableArray arrayWithArray:ea];
+	app = [args objectAtIndex: 0];
+
+	if( [[app pathExtension] isEqualToString:@"app"] )
+	{
+	    BOOL ret = [[NSWorkspace sharedWorkspace] openFile:path 
+	                                       withApplication:app];
+
+	    if( ret == NO )
+	    {
+	        NSLog(@"Could not open %@ using %@",path,app);
+	    }
+
+            return;
+	}
+
 	editorTask = [[NSTask alloc] init];
-	[editorTask setLaunchPath:[args objectAtIndex: 0]];
+
+	[editorTask setLaunchPath:app];
 	[args removeObjectAtIndex: 0];
 	[args addObject:path];
+
 	[editorTask setArguments:args];
 
 	AUTORELEASE( editorTask );
