@@ -276,7 +276,7 @@
   toolField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,256,176,21)];
   [toolField setAlignment: NSLeftTextAlignment];
   [toolField setBordered: YES];
-  [toolField setEditable: NO];
+  [toolField setEditable: YES];
   [toolField setBezeled: YES];
   [toolField setDrawsBackground: YES];
   [toolField setStringValue:@""];
@@ -962,6 +962,13 @@
     else if ( sender == toolField )
     {
         [projectDict setObject:newEntry forKey:PCBuildTool];
+
+	if( ![[NSFileManager defaultManager] isExecutableFileAtPath:newEntry] )
+	{
+            NSRunAlertPanel(@"Build Tool Error!",
+                            @"No valid executable found at '%@'!",
+                            @"OK",nil,nil,newEntry);
+	}
     }
     else if ( sender == ccOptField )
     {

@@ -280,13 +280,20 @@
 
 - (id)initWithProject:(PCProject *)aProject
 {
-  NSAssert(aProject,@"No project specified!");
+    NSAssert(aProject,@"No project specified!");
 
-  if ((self = [super init])) {
-    makePath = [[NSString stringWithString:@"/usr/bin/make"] retain];
-    currentProject = aProject;
-  }
-  return self;
+    if ((self = [super init])) {
+        makePath = [[aProject projectDict] objectForKey:PCBuildTool];
+
+	if( [makePath isEqualToString:@""] )
+	{
+	    makePath = [NSString stringWithString:@"/usr/bin/make"];
+        }
+
+	RETAIN(makePath);
+	currentProject = aProject;
+    }
+    return self;
 }
 
 - (void)dealloc
