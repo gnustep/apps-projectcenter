@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2003 Free Software Foundation
 
    Author: Philippe C.D. Robert <probert@siggraph.org>
 
@@ -24,15 +24,16 @@
    $Id$
 */
 
-#ifndef _PCFINDCONTROLLER_H
-#define _PCFINDCONTROLLER_H
+#ifndef __PCPREFCONTROLLER_UINTERFACE_H
+#define __PCPREFCONTROLLER_UINTERFACE_H
 
-#include <AppKit/AppKit.h>
+#include "PCPrefController.h"
 
-@interface PCFindController : NSObject
-{
-}
+@interface PCPrefController (UInterface)
+
+- (void)_initUI;
 
 @end
 
 #endif
+
