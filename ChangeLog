@@ -10,6 +10,7 @@
           PCPrefController.m, PCPrefController.h
         * Extracting UI creation into category: PCPrefController+UInterface.h,
           PCPrefController+UInterface.m, PCPrefController.m, PCPrefController.h
+        * Disabling unused menu entries using defines: ProjectCenter_main.m
 
 2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
 
