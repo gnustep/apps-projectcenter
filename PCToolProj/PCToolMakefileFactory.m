@@ -84,7 +84,7 @@ static PCToolMakefileFactory *_factory = nil;
     [string appendString:@"# Additional libraries\n"];
     [string appendString:@"#\n\n"];
 
-    [string appendString:[NSString stringWithFormat:@"%@_ADDITIONAL_TOOL_LIBS += ",prName]];
+    [string appendString:[NSString stringWithFormat:@"%@_TOOL_LIBS += ",prName]];
 
     if ([[prDict objectForKey:PCLibraries] count]) {
         enumerator = [[prDict objectForKey:PCLibraries] objectEnumerator];

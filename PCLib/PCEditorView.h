@@ -26,34 +26,28 @@
 
 #import <AppKit/AppKit.h>
 
-#import "PCProject.h"
-#import "PreferenceController.h"
-#import "ProjectEditor.h"
-#import "ProjectDebugger.h"
+@interface PCEditorView : NSTextView
+{
+  NSScanner *scanner;
 
-@protocol Server
+  @private
+  NSRange range;
+  NSArray *_keywords;
+}
 
-- (BOOL)registerProjectSubmenu:(NSMenu *)menu;
-- (BOOL)registerFileSubmenu:(NSMenu *)menu;
-- (BOOL)registerToolsSubmenu:(NSMenu *)menu;
-- (BOOL)registerPrefController:(id<PreferenceController>)prefs;
-- (BOOL)registerEditor:(id<ProjectEditor>)anEditor;
-- (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger;
+- (id)initWithFrame:(NSRect)frameRect;
+- (void)dealloc;
 
-- (PCProject *)activeProject;
-- (NSString*)pathToActiveProject;
+- (void)setString:(NSString *)aString;
 
-- (id)activeFile;
-- (NSString*)pathToActiveFile;
+- (void)colourise:(id)sender;
 
-- (NSArray*)selectedFiles;
-- (NSArray*)touchedFiles;
-// Returns array of paths of files that are "unsaved" or nil if none.
+- (void)colouriseKeyword:(NSString *)keyword;
+- (void)colouriseKeywords:(NSArray *)keywords;
 
-- (BOOL)queryTouchedFiles;
-     // Prompts user to save all files and projects with dirtied buffers.
-
-- (BOOL)addFileAt:(NSString*)filePath toProject:(PCProject *)projectPath;
-- (BOOL)removeFileFromProject:(PCProject *)filePath;
+- (void)colouriseStrings;
+- (void)colouriseCharStrings;
+- (void)colouriseComments;
+- (void)colouriseCPPComments;
 
 @end

@@ -103,11 +103,14 @@ static PCLibProj *_creator = nil;
         [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
 
         // Resources
+	/*
         _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
         [fm createDirectoryAtPath:_resourcePath attributes:nil];
+	*/
+
         [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"Version" ofType:@""];
-        [fm copyPath:_file toPath:[_resourcePath stringByAppendingPathComponent:@"Version"] handler:nil];
+        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"Version"] handler:nil];
 
         // The path cannot be in the PC.project file!
         [project setProjectPath:path];

@@ -1,0 +1,65 @@
+2000-09-20 17:46  robert
+
+	* GNUmakefile, PCBrowserController.m, PCEditorView.h,
+	PCEditorView.m, PCProject.h, PCProject.m, PCServer.m,
+	ProjectCenter.h: Added a first editor with syntax highlighting
+
+2000-09-20 11:59  robert
+
+	* PCProjectBuilder.m: daily work
+
+2000-09-20 11:53  robert
+
+	* PCProject.m, PCProjectBuilder.m: minor UI changes (scrollers in
+	scrollviews)
+
+2000-09-19 17:39  robert
+
+	* PCProject.m, PCProjectBuilder.m: sizeToCells was missing ...
+
+2000-09-17 16:40  robert
+
+	* PCProject.h, PCProject.m, PCProjectBuilder.m: Basic preferences
+	handling
+
+2000-09-17 14:13  robert
+
+	* PCBrowserController.h, PCBrowserController.m, PCFileManager.h,
+	PCFileManager.m, PCProject.h, PCProject.m, PCProjectBuilder.h,
+	PCProjectBuilder.m, PCProjectManager.h, PCProjectManager.m,
+	PCServer.h, PCServer.m, ProjectCenter.h, Server.h: Implemented a
+	first 'editor', UI enhancements and other nice things
+
+2000-09-03 22:10  robert
+
+	* GNUmakefile: renamed libPC into libProjectCenter
+
+2000-08-28 21:04  robert
+
+	* PCBrowserController.m, PCFileManager.h: The class and header
+	files are now being displayed
+
+2000-08-27 21:12  robert
+
+	* Makefile.preamble, PB.project, h.template, m.template, Makefile,
+	Makefile.postamble, ProjectEditor.h, Server.h, PCServer.h,
+	PCServer.m, ProjectCenter.h, ProjectDebugger.h, ProjectType.h,
+	PCProjectManager.m, PCProjectManager.h, PCBundleLoader.h,
+	PCBundleLoader.m, PreferenceController.h, ProjectBuilder.h,
+	PCBrowserController.h, PCDataSource.h, PCDataSource.m, PCProject.h,
+	PCFileManager.h, PCProject.m, PCFileManager.m, FileCreator.h,
+	GNUmakefile, GNUmakefile.preamble, PCBrowserController.m,
+	PCProjectBuilder.h, PCProjectBuilder.m: Initial revision
+
+2000-08-27 21:12  robert
+
+	* Makefile.preamble, PB.project, h.template, m.template, Makefile,
+	Makefile.postamble, ProjectEditor.h, Server.h, PCServer.h,
+	PCServer.m, ProjectCenter.h, ProjectDebugger.h, ProjectType.h,
+	PCProjectManager.m, PCProjectManager.h, PCBundleLoader.h,
+	PCBundleLoader.m, PreferenceController.h, ProjectBuilder.h,
+	PCBrowserController.h, PCDataSource.h, PCDataSource.m, PCProject.h,
+	PCFileManager.h, PCProject.m, PCFileManager.m, FileCreator.h,
+	GNUmakefile, GNUmakefile.preamble, PCBrowserController.m,
+	PCProjectBuilder.h, PCProjectBuilder.m: Initial import
+

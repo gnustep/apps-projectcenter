@@ -31,6 +31,8 @@
 #import <AppKit/IMLoading.h>
 #endif
 
+NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
+
 @interface PCProjectManager (CreateUI)
 
 - (void)_initUI;
@@ -42,8 +44,7 @@
 - (void)_initUI
 {
   NSView *_c_view;
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
-                       NSResizableWindowMask;
+  unsigned int style = NSTitledWindowMask | NSClosableWindowMask;
   NSRect _w_frame;
   NSBox *line;
 
@@ -59,9 +60,12 @@
                                               defer:NO];
   [inspector setMinSize:NSMakeSize(280,384)];
   [inspector setTitle:@"Inspector"];
+  [inspector setReleasedWhenClosed:NO];
+  [inspector setFrameAutosaveName:@"Inspector"];
   _c_view = [inspector contentView];
 
-  inspectorPopup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(80,352,128,20)];
+  _w_frame = NSMakeRect(80,352,128,20);
+  inspectorPopup = [[NSPopUpButton alloc] initWithFrame:_w_frame];
   [inspectorPopup addItemWithTitle:@"None"];
   [inspectorPopup setTarget:self];
   [inspectorPopup setAction:@selector(inspectorPopupDidChange:)];
@@ -69,12 +73,12 @@
 
   line = [[[NSBox alloc] init] autorelease];
   [line setTitlePosition:NSNoTitle];
-  [line setFrameFromContentFrame:NSMakeRect(0,336,280,2)];
+  [line setFrame:NSMakeRect(0,336,280,2)];
   [_c_view addSubview:line];
 
   inspectorView = [[NSBox alloc] init];
   [inspectorView setTitlePosition:NSNoTitle];
-  [inspectorView setFrameFromContentFrame:NSMakeRect(2,2,276,330)];
+  [inspectorView setFrame:NSMakeRect(-2,-2,284,334)];
   [inspectorView setBorderType:NSNoBorder];
   [_c_view addSubview:inspectorView];
 	
@@ -155,18 +159,20 @@
 
 - (void)setActiveProject:(PCProject *)aProject
 {
-    if (aProject != activeProject) {
-        activeProject = aProject;
+  if (aProject != activeProject) {
+    activeProject = aProject;
 
-        //~ Is this needed?
-        if (activeProject) {
-	  [[activeProject projectWindow] makeKeyAndOrderFront:self];
-        }
-
-        if ([inspector isVisible]) {
-            [self inspectorPopupDidChange:inspectorPopup];
-        }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ActiveProjectDidChangeNotification object:activeProject];
+    
+    //~ Is this needed?
+    if (activeProject) {
+      [[activeProject projectWindow] makeKeyAndOrderFront:self];
     }
+    
+    if ([inspector isVisible]) {
+      [self inspectorPopupDidChange:inspectorPopup];
+    }
+  }
 }
 
 - (void)saveAllProjects
@@ -198,6 +204,8 @@
       concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
       
       if ((project = [concretBuilder openProjectAt:aPath])) {
+	[[project projectWindow] center];
+
 	return project;
       }
     }
@@ -250,6 +258,8 @@
         return NO;
     }
 
+    [[project projectWindow] center];
+
     [project setProjectBuilder:self];
     [loadedProjects setObject:project forKey:aPath];
     [self setActiveProject:project];
@@ -271,38 +281,31 @@
 
 - (void)inspectorPopupDidChange:(id)sender
 {
-    NSView *view = nil;
-
-    if (![self activeProject]) {
-        return;
-    }
-    
-    switch([sender indexOfSelectedItem]) {
-        case 0:
-            view = [[[self activeProject] updatedAttributeView] retain];
-            break;
-        case 1:
-            view = [[[self activeProject] updatedProjectView] retain];
-            break;
-        case 2:
-            view = [[[self activeProject] updatedFilesView] retain];
-            break;
-    }
-    [(NSBox *)inspectorView setContentView:view];
-    [inspectorView display];
+  NSView *view = nil;
+  
+  if (![self activeProject]) {
+    return;
+  }
+  
+  switch([sender indexOfSelectedItem]) {
+  case 0:
+    view = [[[self activeProject] updatedAttributeView] retain];
+    break;
+  case 1:
+    view = [[[self activeProject] updatedProjectView] retain];
+    break;
+  case 2:
+    view = [[[self activeProject] updatedFilesView] retain];
+    break;
+  }
+  [(NSBox *)inspectorView setContentView:view];
+  [inspectorView display];
 }
 
 - (void)showInspectorForProject:(PCProject *)aProject
 {
   if (!inspectorPopup) {
-#if defined(GNUSTEP)
     [self _initUI];
-#else
-    if(![NSBundle loadNibNamed:@"Inspector.nib" owner:self]) {
-      [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load Inspector.gmodel" userInfo:nil] raise];
-      return nil;
-    }
-#endif
     
     [inspectorPopup removeAllItems];
     [inspectorPopup addItemWithTitle:@"Build Attributes"];
@@ -311,6 +314,10 @@
   }
   
   [self inspectorPopupDidChange:inspectorPopup];  
+
+  if (![inspector isVisible]) {
+    [inspector setFrameUsingName:@"Inspector"];
+  }
   [inspector makeKeyAndOrderFront:self];
 }
 
@@ -340,23 +347,23 @@
 
 - (void)closeProject:(PCProject *)aProject
 {
-    PCProject	*currentProject;
-    NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
-
-    currentProject = [[loadedProjects objectForKey:key] retain];
+  PCProject	*currentProject;
+  NSString 	*key = [[aProject projectPath] stringByAppendingPathComponent:@"PC.project"];
+  
+  currentProject = [[loadedProjects objectForKey:key] retain];
     
-    // Remove it from the loaded projects!
-    [loadedProjects removeObjectForKey:key];
-    [self setActiveProject:[[loadedProjects allValues] lastObject]];
+  // Remove it from the loaded projects!
+  [loadedProjects removeObjectForKey:key];
+  [self setActiveProject:[[loadedProjects allValues] lastObject]];
 
-    [currentProject autorelease];
-    
-    //~ Should I activate another project here?!
+  [currentProject autorelease];
+  
+  //~ Should I activate another project here?!
 }
 
 - (void)closeProject
 {
-    [[[self activeProject] projectWindow] performClose:self];
+  [[[self activeProject] projectWindow] performClose:self];
 }
 
 // ===========================================================================
@@ -365,20 +372,18 @@
 
 - (BOOL)openFile:(NSString *)path
 {
-    id<ProjectEditor> editor = [[[delegate prefController] preferencesDict] objectForKey:Editor];
+  BOOL isDir;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:
+				    path,@"FilePathKey",
+				  nil];
 
-    if (!editor) {
-    }
+  if ([fm fileExistsAtPath:path isDirectory:&isDir] && !isDir) {
+    [[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
+    return YES;
+  }
 
-    [editor openFile:path];
-}
-
-- (BOOL)addFile:(NSString *)path
-{
-}
-
-- (BOOL)newFile:(NSString *)path
-{
+  return NO;
 }
 
 - (BOOL)saveFile
@@ -460,3 +465,5 @@
 
 
 @end
+
+

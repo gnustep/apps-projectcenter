@@ -26,60 +26,70 @@
 
 #import "PCBrowserController.h"
 #import "PCProject.h"
+#import "PCFileManager.h"
+
+NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
 
 @implementation PCBrowserController
 
 - (void)dealloc
 {
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
     
-    [super dealloc];
+  [super dealloc];
 }
 
 - (void)click:(id)sender
 {
-  NSTextView *pTextView;
-
   if ([[sender selectedCell] isLeaf]) {
+    NSString *ltitle = [[sender selectedCell] stringValue];
     NSString *ctitle = [[sender selectedCellInColumn:0] stringValue];
-    NSString *text = [NSString stringWithFormat:@"Display File %@",[[sender selectedCell] stringValue]
-];
-    pTextView = [project textView];
+    NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
+
+    [project browserDidSelectFileNamed:ltitle];
 
     if ([ctitle isEqualToString:@"Classes"]) {
-      [pTextView setString:text];
-    }
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
 
+      [project editSelectedFile:f];
+    }
+    else if ([ctitle isEqualToString:@"Headers"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [project editSelectedFile:f];
+    }
+    else if ([ctitle isEqualToString:@"Other Sources"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [project editSelectedFile:f];
+    }
+    else if ([ctitle isEqualToString:@"Other Resources"]) {
+      NSString *f = [NSString stringWithContentsOfFile:ctitlef];
+
+      [project editSelectedFile:f];
+    }
   }
 }
 
 - (void)doubleClick:(id)sender
 {
-#warning No subproject support here yet!
-    /*
-    if ([sender selectedColumn] == 0) {
-        // Ask the project about the valid file types
-        //NSArray *types = [project typesForKeyPath:[sender pathToColumn:0]];
-        NSOpenPanel	*openPanel;
-        int		retval;
-        NSArray 	*types;
+  if ([sender selectedColumn] != 0) {
+    NSString *category = [[[browser path] componentsSeparatedByString:@"/"] objectAtIndex:1];
+    NSString *k = [[project rootCategories] objectForKey:category];
 
-        openPanel = [NSOpenPanel openPanel];
-        [openPanel setAllowsMultipleSelection:NO];
-        [openPanel setCanChooseDirectories:NO];
-        [openPanel setCanChooseFiles:YES];
-
-        if ((retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:types])) {
-            NSString *key = [project projectKeyForKeyPath:[sender path]];
-            
-            [project addFile:[[openPanel filenames] objectAtIndex:0] forKey:key];
-
-            [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] forKey:@"LastOpenDirectory"];            
-        }
+    if ([k isEqualToString:PCClasses] || [k isEqualToString:PCHeaders] || [k isEqualToString:PCOtherSources]) {
+      NSString *projectPath = [project projectPath];
+      NSString *fn = [self nameOfSelectedFile];
+      NSString *file = [projectPath stringByAppendingPathComponent:fn];
+      NSDictionary *ui =[NSDictionary dictionaryWithObjectsAndKeys:
+					file,@"FilePathKey",nil];
+      
+      [[NSNotificationCenter defaultCenter] postNotificationName:FileShouldOpenNotification object:self userInfo:ui];
     }
-    else {
-    }
-     */
+  }
+  else {
+    [[PCFileManager fileManager] showAddFileWindow];
+  }
 }
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
@@ -101,14 +111,7 @@
 
 - (NSString *)pathOfSelectedFile
 {
-  NSString *path = nil;
-  
-  // Doesn't work with subprojects!
-  if ([browser selectedColumn] != 0) {
-    path = [browser path];
-  }
-  
-  return path;
+  return [browser path];
 }
 
 - (void)setBrowser:(NSBrowser *)aBrowser
@@ -146,14 +149,14 @@
     int		count = [files count];
     
     if (count == 0) {
-      NSLog(@"<%@ %x>: create rows for column aborted - 0 files!",[self class],self);
+      NSLog(@"<%@ %x>: create rows for column in %@ (%x) aborted - 0 files!",[self class],self,[project class],project);
       return;
     }
 
 #ifdef DEBUG
     NSLog(@"<%@ %x>: create rows for column %d in %x",[self class],self,column,sender);
 #endif DEBUG
-
+    
     for (i = 0; i < count; ++i) {
       NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
       id cell;

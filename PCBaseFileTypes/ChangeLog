@@ -1,0 +1,19 @@
+2000-09-13 12:45  robert
+
+	* PCBaseFileType.m: removed the gmodels completely from
+	ProjectCenter.app
+
+2000-08-27 21:12  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project,
+	PCBaseFileType.h, PCBaseFileType.m, FileIcon_.m.tiff,
+	FileIcon_.h.tiff, FileIcon_.c.tiff, GNUmakefile, cfile.template,
+	cheader.template, class.template, header.template: Initial revision
+
+2000-08-27 21:12  robert
+
+	* Makefile, Makefile.postamble, Makefile.preamble, PB.project,
+	PCBaseFileType.h, PCBaseFileType.m, FileIcon_.m.tiff,
+	FileIcon_.h.tiff, FileIcon_.c.tiff, GNUmakefile, cfile.template,
+	cheader.template, class.template, header.template: Initial import
+

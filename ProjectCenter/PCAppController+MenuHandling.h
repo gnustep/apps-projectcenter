@@ -25,35 +25,40 @@
 */
 
 #import <AppKit/AppKit.h>
+#import "PCAppController.h"
 
-#import "PCProject.h"
-#import "PreferenceController.h"
-#import "ProjectEditor.h"
-#import "ProjectDebugger.h"
+@interface PCAppController (MenuHandling)
 
-@protocol Server
+- (void)showPrefWindow:(id)sender;
+- (void)showInfoPanel:(id)sender;
 
-- (BOOL)registerProjectSubmenu:(NSMenu *)menu;
-- (BOOL)registerFileSubmenu:(NSMenu *)menu;
-- (BOOL)registerToolsSubmenu:(NSMenu *)menu;
-- (BOOL)registerPrefController:(id<PreferenceController>)prefs;
-- (BOOL)registerEditor:(id<ProjectEditor>)anEditor;
-- (BOOL)registerDebugger:(id<ProjectDebugger>)aDebugger;
+- (void)showInspector:(id)sender;
+- (void)showBuildPanel:(id)sender;
 
-- (PCProject *)activeProject;
-- (NSString*)pathToActiveProject;
+- (void)openProject:(id)sender;
+- (void)newProject:(id)sender;
+- (void)saveProject:(id)sender;
+- (void)saveProjectAs:(id)sender;
+- (void)showLoadedProjects:(id)sender;
+- (void)saveFiles:(id)sender;
+- (void)revertToSaved:(id)sender;
 
-- (id)activeFile;
-- (NSString*)pathToActiveFile;
+- (void)newSubproject:(id)sender;
+- (void)addSubproject:(id)sender;
+- (void)removeSubproject:(id)sender;
 
-- (NSArray*)selectedFiles;
-- (NSArray*)touchedFiles;
-// Returns array of paths of files that are "unsaved" or nil if none.
+- (void)closeProject:(id)sender;
 
-- (BOOL)queryTouchedFiles;
-     // Prompts user to save all files and projects with dirtied buffers.
-
-- (BOOL)addFileAt:(NSString*)filePath toProject:(PCProject *)projectPath;
-- (BOOL)removeFileFromProject:(PCProject *)filePath;
+- (void)newFile:(id)sender;
+- (void)addFile:(id)sender;
+- (void)openFile:(id)sender;
+- (void)saveFile:(id)sender;
+- (void)saveFileAs:(id)sender;
+- (void)revertFile:(id)sender;
+- (void)renameFile:(id)sender;
+- (void)removeFile:(id)sender;
 
 @end
+
+
+
