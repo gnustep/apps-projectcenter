@@ -72,7 +72,8 @@
 - (id) initWithProject: (PCProject *)aProject;
 - (void) dealloc;
 
-- (NSPanel *) buildPanelCreate: (BOOL)create;
+- (NSPanel *) createBuildPanel;
+- (NSPanel *) buildPanel;
 - (NSView *) componentView;
 
 - (void) build: (id)sender;

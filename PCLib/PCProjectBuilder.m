@@ -65,6 +65,7 @@
   [buildPanel setMinSize: NSMakeSize(440, 322)];
   [buildPanel setFrameAutosaveName: @"ProjectBuilder"];
   [buildPanel setReleasedWhenClosed: NO];
+  [buildPanel setHidesOnDeactivate: NO];
   [buildPanel setTitle: [NSString stringWithFormat: 
                          @"%@ - Project Build", [currentProject projectName]]];
 
@@ -436,13 +437,18 @@
   [super dealloc];
 }
 
-- (NSPanel *) buildPanelCreate: (BOOL)create
+- (NSPanel *) createBuildPanel
 {
-  if (!buildPanel && create)
+  if (!buildPanel)
     {
       [self _createBuildPanel];
     }
 
+  return buildPanel;
+}
+
+- (NSPanel *) buildPanel
+{
   return buildPanel;
 }
 
