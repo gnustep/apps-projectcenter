@@ -28,12 +28,14 @@ ProjectCenter 0.6
 - ProjectBuilder enhancements                                       ???
 - ProjectLauncher enhancements                                      ???
 - Initial support for integrated debugging                          ???
+- More options for file creation                                    ???
 
 ProjectCenter 0.7
 -----------------
 
 - Optimised support for integrated debugging                        ???
 - More project customisation possibilities                          ???
+- CVS integration                                                   ???
 
 ProjectCenter 0.8
 -----------------
