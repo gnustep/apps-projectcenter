@@ -69,9 +69,9 @@
   logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
   [logOutput setVerticallyResizable:YES];
-  [logOutput setHorizontallyResizable:YES];
+  [logOutput setHorizontallyResizable:NO];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  //[logOutput setBackgroundColor:[NSColor whiteColor]];
+  [logOutput setBackgroundColor:[NSColor lightGrayColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
 
   scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
@@ -91,7 +91,7 @@
   textView2 = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [textView2 setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView2 setVerticallyResizable:YES];
-  [textView2 setHorizontallyResizable:YES];
+  [textView2 setHorizontallyResizable:NO];
   [textView2 setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView2 setBackgroundColor:[NSColor whiteColor]];
   [[textView2 textContainer] setWidthTracksTextView:YES];
@@ -100,8 +100,8 @@
   [scrollView2 setDocumentView:textView2];
   [textView2 setMinSize:NSMakeSize(0.0,[scrollView2 contentSize].height)];
   [[textView2 textContainer] setContainerSize:NSMakeSize([scrollView2 contentSize].width,1e7)];
-  [scrollView2 setHasHorizontalScroller: YES];
-  [scrollView2 setHasVerticalScroller: YES];
+  [scrollView2 setHasHorizontalScroller:NO];
+  [scrollView2 setHasVerticalScroller:YES];
   [scrollView2 setBorderType: NSBezelBorder];
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView2 autorelease];
