@@ -57,7 +57,8 @@ ProjectCentre_find.tiff \
 ProjectCentre_prefs.tiff \
 ProjectCentre_run.tiff \
 ProjectCentre_settings.tiff \
-ProjectCentre_uml.tiff 
+ProjectCentre_uml.tiff \
+ProjectCenter_dist.tiff 
 
 #
 
