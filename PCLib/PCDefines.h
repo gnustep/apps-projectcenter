@@ -31,6 +31,7 @@
 #define SuccessSound                    @"SuccessSound"
 #define FailureSound                    @"FailureSound"
 #define ExternalEditor                  @"ExternalEditor"
+#define TabBehaviour                    @"TabBehaviour"
 
 #define PCAppDidInitNotification        @"PCAppDidInit"
 #define PCAppWillTerminateNotification  @"PCAppWillTerminate"
