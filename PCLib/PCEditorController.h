@@ -11,7 +11,7 @@
 #ifndef _PCEDITORCONTROLLER_H_
 #define _PCEDITORCONTROLLER_H_
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class PCProject;
 @class PCEditor;

@@ -27,14 +27,14 @@
 #ifndef _PCPROJECTMANAGER_H
 #define _PCPROJECTMANAGER_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @class PCProject;
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
 #else
-#import <ProjectCenter/ProjectBuilder.h>
+#include <ProjectCenter/ProjectBuilder.h>
 #endif
 
 @interface PCProjectManager : NSObject <ProjectBuilder>

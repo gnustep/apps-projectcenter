@@ -35,7 +35,7 @@
  remains open for future extensions!
 */
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class PCProject;
 

@@ -24,11 +24,11 @@
    $Id$
 */
 
-#import "PCServer.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "PCBrowserController.h"
-#import "PCEditor.h"
+#include "PCServer.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "PCBrowserController.h"
+#include "PCEditor.h"
 
 @implementation PCServer
 

@@ -11,7 +11,7 @@
 #ifndef _PCMAKEFILEFACTORY_H_
 #define _PCMAKEFILEFACTORY_H_
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @interface PCMakefileFactory : NSObject
 {

@@ -24,16 +24,16 @@
    $Id$
 */
 
-#import "PCFileManager.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "PCServer.h"
-#import "FileCreator.h"
+#include "PCFileManager.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "PCServer.h"
+#include "FileCreator.h"
 
-#import "PCFileManager+UInterface.h"
+#include "PCFileManager+UInterface.h"
 
 #if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
+#include <AppKit/IMLoading.h>
 #endif
 
 @implementation PCFileManager

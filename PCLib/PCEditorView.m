@@ -24,9 +24,9 @@
    $Id$
 */
 
-#import "PCEditorView.h"
-#import "PCEditor.h"
-#import "PCEditorView+Highlighting.h"
+#include "PCEditorView.h"
+#include "PCEditor.h"
+#include "PCEditorView+Highlighting.h"
 
 @implementation PCEditorView
 

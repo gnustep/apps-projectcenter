@@ -24,12 +24,12 @@
    $Id$
 */
 
-#import "PCProjectDebugger.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "PCProjectManager.h"
+#include "PCProjectDebugger.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "PCProjectManager.h"
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]

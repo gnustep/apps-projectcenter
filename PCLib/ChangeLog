@@ -1,3 +1,18 @@
+2003-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* Replace all occurrences of #import with #include and make 
+	needed #ifndefs
+
+	* PCProject+UInterface.m:
+	(_initUI): Set browser maximum visible colums to 4. Load placeholder
+	editor view. Move "Build Options" into PCProjectBulder.m. Cleanup.
+	title to 
+	
+	* PCProjectBuilder.m: Make it separate panel.
+	(_createComponentView): Install and Options buttons added. Move
+	target popup into _createOptionsPanel.
+	(_createOptionsPanel): Added.
+	
 2003-01-25 Daniel Luederwald <das_flip@gmx.de>
 
 	* PCBrowserController.m: Add gsmarkup to editable files.

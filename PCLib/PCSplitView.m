@@ -8,13 +8,13 @@
  * $Id$
  */
 
-#import "PCSplitView.h"
+#include "PCSplitView.h"
 
 @implementation PCSplitView
 
 - (float)dividerThickness
 {
-    return 12.0f;
+    return 8.0f;
 }
 
 - (void)drawDividerInRect:(NSRect)aRect

@@ -11,7 +11,7 @@
 #ifndef _PCHISTORYCONTROLLER_H_
 #define _PCHISTORYCONTROLLER_H_
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @class PCProject;
 

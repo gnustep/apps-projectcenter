@@ -27,7 +27,7 @@
 #ifndef _PROJECT_BUILDER_PROTO_H
 #define _PROJECT_BUILDER_PROTO_H
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class PCProject;
 

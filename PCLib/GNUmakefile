@@ -10,6 +10,7 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 include Version
+GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
 
 #

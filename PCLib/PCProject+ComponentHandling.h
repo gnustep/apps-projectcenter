@@ -11,10 +11,10 @@
 #ifndef _PCPROJECT_COMPONENTHANDLING_H_
 #define _PCPROJECT_COMPONENTHANDLING_H_
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 // HACK!
-#import "PCProject.h"
+#include "PCProject.h"
 
 @interface PCProject (ComponentHandling)
 

@@ -11,7 +11,7 @@
 #ifndef _PCTEXTFINDER_H_
 #define _PCTEXTFINDER_H_
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface PCTextFinder : NSObject
 {

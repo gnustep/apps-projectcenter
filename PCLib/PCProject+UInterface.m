@@ -24,11 +24,12 @@
    $Id$
 */
 
-#import "PCProject+UInterface.h"
-#import "PCSplitView.h"
-#import "PCHistoryController.h"
-#import "PCBrowserController.h"
-#import "PCDefines.h"
+#include "PCProject+UInterface.h"
+#include "PCProject+ComponentHandling.h"
+#include "PCSplitView.h"
+#include "PCHistoryController.h"
+#include "PCBrowserController.h"
+#include "PCDefines.h"
 
 #define ENABLE_HISTORY
 
@@ -36,16 +37,19 @@
 
 - (void)_initUI
 {
-  NSView *_c_view;
-  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
-                       NSMiniaturizableWindowMask | NSResizableWindowMask;
-  NSBrowser *browser;
-  NSRect rect;
-  NSMatrix* matrix;
-  NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
-  id textField;
-  id button;
-  PCSplitView *split;
+  NSView       *_c_view;
+  unsigned int style = NSTitledWindowMask 
+                     | NSClosableWindowMask
+		     | NSMiniaturizableWindowMask
+		     | NSResizableWindowMask;
+  NSBrowser    *browser;
+  NSRect       rect;
+  NSMatrix     *matrix;
+  NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  id           textField;
+  id           button;
+  PCSplitView  *split;
+  PCSplitView  *v_split;
 
 #ifdef ENABLE_HISTORY
   NSBrowser *history;
@@ -55,42 +59,70 @@
 
   /*
    * Project Window
-   *
    */
 
-  rect = NSMakeRect(100,100,560,440);
-  projectWindow = [[NSWindow alloc] initWithContentRect:rect
-                                              styleMask:style
-                                                backing:NSBackingStoreBuffered
-                                                  defer:YES];
-  [projectWindow setDelegate:self];
-  [projectWindow setMinSize:NSMakeSize(560,448)];
+  rect = NSMakeRect (100,100,560,440);
+  projectWindow = [[NSWindow alloc] 
+    initWithContentRect: rect
+              styleMask: style
+                backing: NSBackingStoreBuffered
+                  defer: YES];
+  [projectWindow setDelegate: self];
+  [projectWindow setMinSize: NSMakeSize (560,448)];
 
-  browser = [[NSBrowser alloc] initWithFrame:NSMakeRect(-1,251,562,128)];
-  [browser setDelegate:browserController];
-  [browser setMaxVisibleColumns:3];
-  [browser setAllowsMultipleSelection:NO];
-  [browser setHasHorizontalScroller:YES];
+  /*
+   * File Browser
+   */
+
+  browser = [[NSBrowser alloc] initWithFrame: NSMakeRect (-1,251,562,128)];
+  [browser setDelegate: browserController];
+  [browser setMaxVisibleColumns: 4];
+  [browser setAllowsMultipleSelection: NO];
+  [browser setSeparatesColumns: NO];
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
-  [browserController setBrowser:browser];
-  [browserController setProject:self];
- 
-  box = [[NSBox alloc] initWithFrame:NSMakeRect (-1,-1,562,252)];
-  [box setTitlePosition:NSNoTitle];
-  [box setBorderType:NSNoBorder];
+  [browserController setBrowser: browser];
+  [browserController setProject: self];
+
+#ifdef ENABLE_HISTORY
+  historyController = [[PCHistoryController alloc] initWithProject:self];
+
+//  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,232,60)];
+  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,0,60)];
+
+  [history setDelegate:historyController];
+  [history setMaxVisibleColumns:1];
+  [history setAllowsMultipleSelection:NO];
+  [history setHasHorizontalScroller:NO];
+  [history setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
+
+  [historyController setBrowser:history];
+
+//  [_c_view addSubview:history];
+//  RELEASE(history);
+#endif
+
+  rect = [[projectWindow contentView] frame];
+  rect.size.width -= 16;
+  rect.size.height /= 2;
+  v_split = [[PCSplitView alloc] initWithFrame: rect];
+  [v_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  [v_split setVertical: YES];
+
+  [v_split addSubview: browser];
+  [v_split addSubview: history];
+  [v_split adjustSubviews];
+
+//--------------------------------------------------------------------------
+  // Box
+  box = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
+  [box setTitlePosition: NSNoTitle];
+  [box setBorderType: NSNoBorder];
   [box setContentViewMargins: NSMakeSize(0.0,0.0)];
   [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,200,500,21)];
-  [textField setAlignment: NSLeftTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Welcome to ProjectCenter.app"];
-  [box addSubview:textField];
-  RELEASE(textField);
+  // Editor in the Box
+  [self showEditorView: self];
 
   rect = [[projectWindow contentView] frame];
   rect.size.height -= 76;
@@ -98,11 +130,13 @@
   rect.origin.x += 8;
   split = [[PCSplitView alloc] initWithFrame:rect];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+ 
 
   _c_view = [projectWindow contentView];
 
-  [split addSubview:browser];
-  [split addSubview:box];
+//  [split addSubview: browser];
+  [split addSubview: v_split];
+  [split addSubview: box];
   [split adjustSubviews];
   [_c_view addSubview:split];
 
@@ -110,142 +144,63 @@
   RELEASE(browser);
 
   /*
-   * File Browser
-   */
-
-#ifdef ENABLE_HISTORY
-  historyController = [[PCHistoryController alloc] initWithProject:self];
-
-  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,232,60)];
-
-  [history setDelegate:historyController];
-  [history setMaxVisibleColumns:1];
-  [history setAllowsMultipleSelection:NO];
-  [history setHasHorizontalScroller:NO];
-  [history setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
-  
-  [historyController setBrowser:history];
-
-  [_c_view addSubview:history];
-  RELEASE(history);
-#endif
-  /*
    * Left button matrix
    */
 
   rect = NSMakeRect(8,372,300,60);
   matrix = [[NSMatrix alloc] initWithFrame: rect
-			     mode: NSHighlightModeMatrix
-			     prototype: buttonCell
-			     numberOfRows: 1
-			     numberOfColumns: 5];
-  [matrix setTarget:self];
-  [matrix setAction:@selector(topButtonsPressed:)];
-  [matrix setSelectionByRect:YES];
+                                      mode: NSHighlightModeMatrix
+                                 prototype: buttonCell
+                              numberOfRows: 1
+                           numberOfColumns: 5];
+  [matrix setTarget: self];
+  [matrix setAction: @selector (topButtonsPressed:)];
+  [matrix setSelectionByRect: YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [_c_view addSubview:matrix];
-  RELEASE(matrix);
+  [_c_view addSubview: matrix];
+  RELEASE (matrix);
 
-  button = [matrix cellAtRow:0 column:0];
-  [button setTag:BUILD_TAG];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Build"];
-  [button setImage:IMAGE(@"ProjectCentre_build")];
-  [button setButtonType:NSMomentaryPushButton];
+  button = [matrix cellAtRow: 0 column: 0];
+  [button setTag: BUILD_TAG];
+  [button setImagePosition: NSImageAbove];
+  [button setTitle: @"Build"];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_make")];
+  [button setButtonType: NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:1];
-  [button setTag:LAUNCH_TAG];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Run"];
-  [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
+  button = [matrix cellAtRow: 0 column: 1];
+  [button setTag: LAUNCH_TAG];
+  [button setImagePosition: NSImageAbove];
+  [button setTitle: @"Run"];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE (@"ProjectCenter_run")];
+  [button setButtonType: NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:2];
-  [button setTag:SETTINGS_TAG];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Settings"];
-  [button setImage:IMAGE(@"ProjectCentre_settings.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
+  button = [matrix cellAtRow: 0 column: 2];
+  [button setTag: SETTINGS_TAG];
+  [button setImagePosition: NSImageAbove];
+  [button setTitle: @"Inspector"];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE (@"ProjectCenter_settings")];
+  [button setButtonType: NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:3];
-  [button setTag:EDITOR_TAG];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Editor"];
-  [button setImage:IMAGE(@"ProjectCentre_files.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
+  button = [matrix cellAtRow: 0 column: 3];
+  [button setTag: EDITOR_TAG];
+  [button setImagePosition: NSImageAbove];
+  [button setTitle: @"Editor"];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE(@"ProjectCenter_files")];
+  [button setButtonType: NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:4];
-  [button setTag:PREFS_TAG];
-  [button setImagePosition:NSImageAbove];
-  [button setTitle:@"Options"];
-  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
-  [button setButtonType:NSMomentaryPushButton];
+  button = [matrix cellAtRow: 0 column: 4];
+  [button setTag: PREFS_TAG];
+  [button setImagePosition: NSImageAbove];
+  [button setTitle: @"Options"];
+  [button setFont: [NSFont systemFontOfSize: 10.0]];
+  [button setImage: IMAGE (@"ProjectCenter_prefs")];
+  [button setButtonType: NSMomentaryPushButton];
 
   [matrix sizeToCells];
-
-  /*
-   * Build Options Panel
-   *
-   */
-
-  rect = NSMakeRect(100,100,272,80);
-  style = NSTitledWindowMask | NSClosableWindowMask;
-  buildTargetPanel = [[NSWindow alloc] initWithContentRect:rect 
-				       styleMask:style 
-				       backing:NSBackingStoreBuffered 
-				       defer:YES];
-  [buildTargetPanel setDelegate:self];
-  [buildTargetPanel setReleasedWhenClosed:NO];
-  [buildTargetPanel setTitle:@"Build Options"];
-  _c_view = [buildTargetPanel contentView];
-
-  // Host
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,24,56,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Host:"];
-  [_c_view addSubview:textField];
-  RELEASE(textField);
-
-  // Host message
-  buildTargetHostField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,24,184,21)];
-  [buildTargetHostField setAlignment: NSLeftTextAlignment];
-  [buildTargetHostField setBordered: NO];
-  [buildTargetHostField setEditable: YES];
-  [buildTargetHostField setBezeled: YES];
-  [buildTargetHostField setDrawsBackground: YES];
-  [buildTargetHostField setStringValue:@"localhost"];
-  [buildTargetHostField setDelegate:self];
-  [buildTargetHostField setTarget:self];
-  [buildTargetHostField setAction:@selector(setHost:)];
-  [_c_view addSubview:buildTargetHostField];
-
-  // Args
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(12,44,60,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Arguments:"];
-  [_c_view addSubview:textField];
-  RELEASE(textField);
-
-  // Args message
-  buildTargetArgsField = [[NSTextField alloc] initWithFrame:NSMakeRect(72,44,184,21)];
-  [buildTargetArgsField setAlignment: NSLeftTextAlignment];
-  [buildTargetArgsField setBordered: NO];
-  [buildTargetArgsField setEditable: YES];
-  [buildTargetArgsField setBezeled: YES];
-  [buildTargetArgsField setDrawsBackground: YES];
-  [buildTargetArgsField setStringValue:@""];
-  [buildTargetArgsField setDelegate:self];
-  [buildTargetArgsField setTarget:self];
-  [buildTargetArgsField setAction:@selector(setArguments:)];
-  [_c_view addSubview:buildTargetArgsField];
 
   /*
    * Model the standard inspector UI
@@ -334,7 +289,7 @@
   ldOptField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,204,176,21)];
   [ldOptField setAlignment: NSLeftTextAlignment];
   [ldOptField setBordered: YES];
-  [ldOptField setEditable: YES];
+  [ldOptField setEditable: NO];
   [ldOptField setBezeled: YES];
   [ldOptField setDrawsBackground: YES];
   [ldOptField setStringValue:@""];
@@ -408,9 +363,9 @@
    */
 
   [browser loadColumnZero];
-  
+
 #ifdef ENABLE_HISTORY
-  [history loadColumnZero];
+  //  [history loadColumnZero];
 #endif
 }
 

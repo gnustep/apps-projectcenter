@@ -8,15 +8,15 @@
  * $Id$
  */
 
-#import "PCProject+ComponentHandling.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "ProjectComponent.h"
-#import "PCProjectBuilder.h"
-#import "PCProjectDebugger.h"
-#import "PCProjectEditor.h"
-#import "PCProjectManager.h"
-#import "PCEditor.h"
+#include "PCProject+ComponentHandling.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "ProjectComponent.h"
+#include "PCProjectBuilder.h"
+#include "PCProjectDebugger.h"
+#include "PCProjectEditor.h"
+#include "PCProjectManager.h"
+#include "PCEditor.h"
 
 @implementation PCProject (ComponentHandling)
 
@@ -34,14 +34,16 @@
     [self showBuildTargetPanel:self];
     break;
   case LAUNCH_TAG:
-    if ([self isExecutable]) {
+    if ([self isExecutable])
+      {
 	[self showRunView:self];
-    }
-    else {
-      NSRunAlertPanel(@"Attention!",
-                      @"This project is not executable!",
-                      @"OK",nil,nil);
-    }
+      }
+    else
+      {
+	NSRunAlertPanel(@"Attention!",
+	  		@"This project is not executable!",
+	    		@"OK",nil,nil);
+      }
     break;
   case EDITOR_TAG:
     [self showEditorView:self];
@@ -55,19 +57,24 @@
 {
   NSView *view = nil;
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName: PCEditorDidResignKeyNotification
+                  object: self];
 
   editorIsActive = NO;
 
-  if (!projectBuilder) {
-    projectBuilder = [[PCProjectBuilder alloc] initWithProject:self];
-  }
+  if (!projectBuilder)
+    {
+      projectBuilder = [[PCProjectBuilder alloc] initWithProject: self];
+    }
 
-  view = [[projectBuilder componentView] retain];
+//  view = [[projectBuilder componentView] retain];
 
-  [box setContentView:view];
+  [projectBuilder orderFront];
+
+/*  [box setContentView:view];
   [box sizeToFit];
-  [box display];
+  [box display];*/
 }
 
 - (void)showRunView:(id)sender

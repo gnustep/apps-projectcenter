@@ -9,13 +9,13 @@
  * $Id$
  */
 
-#import "PCEditor.h"
-#import "PCDefines.h"
-#import "PCEditorView.h"
-#import "ProjectComponent.h"
-#import "PCProjectEditor.h"
+#include "PCEditor.h"
+#include "PCDefines.h"
+#include "PCEditorView.h"
+#include "ProjectComponent.h"
+#include "PCProjectEditor.h"
 
-#import "PCEditor+UInterface.h"
+#include "PCEditor+UInterface.h"
 
 NSString *PCEditorDidBecomeKeyNotification=@"PCEditorDidBecomeKeyNotification";
 NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";

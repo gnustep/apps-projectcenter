@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCProjectManager.h"
+#include "PCProjectManager.h"
 
 @interface PCProjectManager (UInterface)
 

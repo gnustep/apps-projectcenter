@@ -8,8 +8,8 @@
  * $Id$
  */
 
-#import "PCMakefileFactory.h"
-#import "PCDefines.h"
+#include "PCMakefileFactory.h"
+#include "PCDefines.h"
 
 #define COMMENT_HEADERS     @"\n\n#\n# Header files\n#\n\n"
 #define COMMENT_RESOURCES   @"\n\n#\n# Resource files\n#\n\n"

@@ -27,7 +27,7 @@
 #ifndef _PCFILEMANAGER_H
 #define _PCFILEMANAGER_H
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @interface PCFileManager : NSObject
 {

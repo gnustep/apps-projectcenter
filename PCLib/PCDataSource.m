@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCDataSource.h"
+#include "PCDataSource.h"
 
 @implementation PCDataSource
 

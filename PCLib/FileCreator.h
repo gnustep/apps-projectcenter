@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class PCProject;
 

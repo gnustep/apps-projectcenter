@@ -27,12 +27,12 @@
 #ifndef _PCSERVER_H
 #define _PCSERVER_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol Server;
 #else
-#import <ProjectCenter/Server.h>
+#include <ProjectCenter/Server.h>
 #endif
 
 extern NSString *PCProjectWillOpenNotification;
@@ -74,9 +74,9 @@ extern NSString *PCProjectBuildDidStopNotification;
 @protocol ProjectDebugger;
 @protocol PreferenceController;
 #else
-#import <ProjectCenter/PreferenceController.h>
-#import <ProjectCenter/ProjectEditor.h>
-#import <ProjectCenter/ProjectDebugger.h>
+#include <ProjectCenter/PreferenceController.h>
+#include <ProjectCenter/ProjectEditor.h>
+#include <ProjectCenter/ProjectDebugger.h>
 #endif
 
 @interface PCServer : NSObject <Server>

@@ -24,11 +24,11 @@
    $Id$
 */
 
-#import "PCBundleLoader.h"
-#import "PCDefines.h"
-#import "PreferenceController.h"
-#import "ProjectEditor.h"
-#import "ProjectDebugger.h"
+#include "PCBundleLoader.h"
+#include "PCDefines.h"
+#include "PreferenceController.h"
+#include "ProjectEditor.h"
+#include "ProjectDebugger.h"
 
 @interface PCBundleLoader (PrivateLoader)
 

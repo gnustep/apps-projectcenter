@@ -14,10 +14,10 @@
  *
  */
 
-#import "PCTextFinder.h"
-#import "PCDefines.h"
+#include "PCTextFinder.h"
+#include "PCDefines.h"
 
-#import "PCTextFinder+UInterface.h"
+#include "PCTextFinder+UInterface.h"
 
 #define Forward YES
 #define Backward NO

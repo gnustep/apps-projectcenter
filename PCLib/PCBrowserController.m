@@ -24,9 +24,9 @@
    $Id$
 */
 
-#import "PCBrowserController.h"
-#import "PCProject.h"
-#import "PCFileManager.h"
+#include "PCBrowserController.h"
+#include "PCProject.h"
+#include "PCFileManager.h"
 
 @implementation PCBrowserController
 
@@ -134,7 +134,8 @@
   [browser setAction:@selector(click:)];
   [browser setDoubleAction:@selector(doubleClick:)];
   
-  [browser setMaxVisibleColumns:3];
+  [browser setMaxVisibleColumns:4];
+  [browser setSeparatesColumns:NO];
   [browser setAllowsMultipleSelection:NO];
   
   [[NSNotificationCenter defaultCenter] addObserver:self 

@@ -27,50 +27,56 @@
 #ifndef _PCPROJECTBUILDER_H
 #define _PCPROJECTBUILDER_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectComponent;
 #else
-#import <ProjectCenter/ProjectComponent.h>
+#include <ProjectCenter/ProjectComponent.h>
 #endif
 
 @class PCProject;
 
 @interface PCProjectBuilder : NSObject <ProjectComponent>
 {
-  NSBox *componentView;
+  NSPanel       *buildPanel;
+  NSBox         *componentView;
   NSPopUpButton *popup;
+  
+  NSPanel       *optionsPanel;
+  NSTextField   *buildTargetHostField;
+  NSTextField   *buildTargetArgsField;
 
-  NSTextView *logOutput;
-  NSTextView *errorOutput;
+  NSTextView    *logOutput;
+  NSTextView    *errorOutput;
 
-  NSString *makePath;
+  NSString      *makePath;
 
-  id buildStatusField;
-  id targetField;
+  id            buildStatusField;
+  id            targetField;
 
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
+  PCProject     *currentProject;
+  NSDictionary  *currentOptions;
 
-  NSFileHandle *readHandle;
-  NSFileHandle *errorReadHandle;
+  NSFileHandle  *readHandle;
+  NSFileHandle  *errorReadHandle;
 }
 
-- (id)initWithProject:(PCProject *)aProject;
-- (void)dealloc;
+- (id) initWithProject:(PCProject *)aProject;
+- (void) dealloc;
+- (void) orderFront;
 
-- (NSView *)componentView;
+- (NSView *) componentView;
 
-- (void)build:(id)sender;
-- (void)popupChanged:(id)sender;
+- (void) build: (id)sender;
+- (void) popupChanged: (id)sender;
 
-- (void)logStdOut:(NSNotification *)aNotif;
-- (void)logErrOut:(NSNotification *)aNotif;
+- (void) logStdOut: (NSNotification *)aNotif;
+- (void) logErrOut: (NSNotification *)aNotif;
 
-- (void)buildDidTerminate:(NSNotification *)aNotif;
+- (void) buildDidTerminate: (NSNotification *)aNotif;
 
-- (void)copyPackageTo:(NSString *)path;
+- (void) copyPackageTo: (NSString *)path;
 
 @end
 

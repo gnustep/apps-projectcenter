@@ -27,7 +27,7 @@
 #ifndef _PCEDITORVIEW_HIGHLIGHTING_H
 #define _PCEDITORVIEW_HIGHLIGHTING_H
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class PCEditorView;
 

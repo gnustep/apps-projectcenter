@@ -27,7 +27,7 @@
 #ifndef _PCPROJECT_H
 #define _PCPROJECT_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
@@ -120,7 +120,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectBuilder;
 #else
-#import <ProjectCenter/ProjectBuilder.h>
+#include <ProjectCenter/ProjectBuilder.h>
 #endif
 
 @interface PCProject : NSObject

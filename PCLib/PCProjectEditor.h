@@ -11,7 +11,7 @@
 #ifndef _PCPROJECTEDITOR_H_
 #define _PCPROJECTEDITOR_H_
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @class NSBox;
 @class NSView;
@@ -22,7 +22,7 @@
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectComponent;
 #else
-#import <ProjectCenter/ProjectComponent.h>
+#include <ProjectCenter/ProjectComponent.h>
 #endif
 
 @interface PCProjectEditor : NSObject <ProjectComponent>

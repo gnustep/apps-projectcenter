@@ -27,7 +27,7 @@
 #ifndef _SERVER_PROTO_H
 #define _SERVER_PROTO_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @class PCProject;
 
@@ -36,9 +36,9 @@
 @protocol ProjectEditor;
 @protocol ProjectDebugger;
 #else
-#import <ProjectCenter/PreferenceController.h>
-#import <ProjectCenter/ProjectEditor.h>
-#import <ProjectCenter/ProjectDebugger.h>
+#include <ProjectCenter/PreferenceController.h>
+#include <ProjectCenter/ProjectEditor.h>
+#include <ProjectCenter/ProjectDebugger.h>
 #endif
 
 @protocol Server

@@ -24,19 +24,19 @@
    $Id$
 */
 
-#import "PCProject.h"
-#import "PCDefines.h"
-#import "ProjectBuilder.h"
-#import "PCProject+ComponentHandling.h"
-#import "PCProjectBuilder.h"
-#import "PCProjectEditor.h"
-#import "PCProjectDebugger.h"
-#import "PCEditor.h"
-#import "PCEditorController.h"
-#import "PCHistoryController.h"
-#import "PCBrowserController.h"
+#include "PCProject.h"
+#include "PCDefines.h"
+#include "ProjectBuilder.h"
+#include "PCProject+ComponentHandling.h"
+#include "PCProjectBuilder.h"
+#include "PCProjectEditor.h"
+#include "PCProjectDebugger.h"
+#include "PCEditor.h"
+#include "PCEditorController.h"
+#include "PCHistoryController.h"
+#include "PCBrowserController.h"
 
-#import "PCProject+UInterface.h"
+#include "PCProject+UInterface.h"
 
 @implementation PCProject
 
@@ -462,7 +462,9 @@
     projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
 
     [self setProjectName:[projectDict objectForKey:PCProjectName]];
-    [projectWindow setTitle:[NSString stringWithFormat:@"%@ - %@",projectName,projectPath]];
+    [projectWindow setTitle:[NSString stringWithFormat: @"%@ - %@", 
+      projectName, 
+      [projectPath stringByAbbreviatingWithTildeInPath]]];
 
     // Update the interface
     [self updateValuesFromProjectDict];

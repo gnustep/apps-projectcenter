@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCTextFinder.h"
+#include "PCTextFinder.h"
 
 @interface PCTextFinder (UInterface)
 

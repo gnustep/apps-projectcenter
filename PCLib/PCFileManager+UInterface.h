@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "PCFileManager.h"
+#include "PCFileManager.h"
 
 @interface PCFileManager (UInterface)
 

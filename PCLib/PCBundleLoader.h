@@ -35,7 +35,7 @@
 
  */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface PCBundleLoader : NSObject
 {

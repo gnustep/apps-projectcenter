@@ -8,11 +8,11 @@
  * $Id$
  */
 
-#import "PCEditorController.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "PCEditor.h"
-#import "PCProject+ComponentHandling.h"
+#include "PCEditorController.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "PCEditor.h"
+#include "PCProject+ComponentHandling.h"
 
 @implementation PCEditorController
 

@@ -24,7 +24,7 @@
    $Id$
 */
 
-#import "$FILENAMESANSEXTENSION$.h"
+#include "$FILENAMESANSEXTENSION$.h"
 
 @implementation $FILENAMESANSEXTENSION$
 

@@ -1,3 +1,4 @@
+
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
@@ -27,33 +28,33 @@
 #ifndef _PROJECTCENTER_H
 #define _PROJECTCENTER_H
 
-#import <ProjectCenter/PCBundleLoader.h>
-#import <ProjectCenter/PCDataSource.h>
-#import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCHistoryController.h>
-#import <ProjectCenter/PCProjectEditor.h>
-#import <ProjectCenter/PCProjectManager.h>
-#import <ProjectCenter/PCServer.h>
-#import <ProjectCenter/PCProject.h>
-#import <ProjectCenter/PCProject+ComponentHandling.h>
-#import <ProjectCenter/PCProjectBuilder.h>
-#import <ProjectCenter/PCProjectDebugger.h>
-#import <ProjectCenter/PCFileManager.h>
-#import <ProjectCenter/PCBrowserController.h>
-#import <ProjectCenter/ProjectDebugger.h>
-#import <ProjectCenter/ProjectEditor.h>
-#import <ProjectCenter/ProjectType.h>
-#import <ProjectCenter/Server.h>
-#import <ProjectCenter/ProjectComponent.h>
-#import <ProjectCenter/PreferenceController.h>
-#import <ProjectCenter/ProjectBuilder.h>
-#import <ProjectCenter/FileCreator.h>
-#import <ProjectCenter/PCEditor.h>
-#import <ProjectCenter/PCEditorController.h>
-#import <ProjectCenter/PCEditorView.h>
-#import <ProjectCenter/PCEditorView+Highlighting.h>
-#import <ProjectCenter/PCTextFinder.h>
-#import <ProjectCenter/PCMakefileFactory.h>
+#include <ProjectCenter/PCBundleLoader.h>
+#include <ProjectCenter/PCDataSource.h>
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCHistoryController.h>
+#include <ProjectCenter/PCProjectEditor.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCServer.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProject+ComponentHandling.h>
+#include <ProjectCenter/PCProjectBuilder.h>
+#include <ProjectCenter/PCProjectDebugger.h>
+#include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCBrowserController.h>
+#include <ProjectCenter/ProjectDebugger.h>
+#include <ProjectCenter/ProjectEditor.h>
+#include <ProjectCenter/ProjectType.h>
+#include <ProjectCenter/Server.h>
+#include <ProjectCenter/ProjectComponent.h>
+#include <ProjectCenter/PreferenceController.h>
+#include <ProjectCenter/ProjectBuilder.h>
+#include <ProjectCenter/FileCreator.h>
+#include <ProjectCenter/PCEditor.h>
+#include <ProjectCenter/PCEditorController.h>
+#include <ProjectCenter/PCEditorView.h>
+#include <ProjectCenter/PCEditorView+Highlighting.h>
+#include <ProjectCenter/PCTextFinder.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
 #endif
 

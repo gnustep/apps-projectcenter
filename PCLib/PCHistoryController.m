@@ -8,9 +8,9 @@
  * $Id$
  */
 
-#import "PCHistoryController.h"
-#import "PCDefines.h"
-#import "PCProject.h"
+#include "PCHistoryController.h"
+#include "PCDefines.h"
+#include "PCProject.h"
 
 @implementation PCHistoryController
 

@@ -24,12 +24,12 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
 @protocol ProjectComponent;
 #else
-#import <ProjectCenter/ProjectComponent.h>
+#include <ProjectCenter/ProjectComponent.h>
 #endif
 
 @class PCProject;

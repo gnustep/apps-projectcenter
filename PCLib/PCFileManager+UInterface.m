@@ -24,10 +24,10 @@
    $Id$
 */
 
-#import "PCFileManager+UInterface.h"
-#import "PCDefines.h"
+#include "PCFileManager+UInterface.h"
+#include "PCDefines.h"
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @implementation PCFileManager (UInterface)
 

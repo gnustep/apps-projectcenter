@@ -24,20 +24,20 @@
    $Id$
 */
 
-#import "PCProjectManager.h"
-#import "PCDefines.h"
-#import "PCProject.h"
-#import "PCServer.h"
-#import "PCEditorController.h"
-#import "ProjectComponent.h"
-#import "ProjectType.h"
-#import "PCProject+ComponentHandling.h"
-#import "ProjectBuilder.h"
+#include "PCProjectManager.h"
+#include "PCDefines.h"
+#include "PCProject.h"
+#include "PCServer.h"
+#include "PCEditorController.h"
+#include "ProjectComponent.h"
+#include "ProjectType.h"
+#include "PCProject+ComponentHandling.h"
+#include "ProjectBuilder.h"
 
-#import "PCProjectManager+UInterface.h"
+#include "PCProjectManager+UInterface.h"
 
 #if defined(GNUSTEP)
-#import <AppKit/IMLoading.h>
+#include <AppKit/IMLoading.h>
 #endif
 
 #define SavePeriodDCN @"SavePeriodDidChangeNotification"

@@ -27,7 +27,7 @@
 #ifndef _PCEDITORVIEW_H
 #define _PCEDITORVIEW_H
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @class PCEditor;
 

@@ -24,8 +24,8 @@
    $Id$
 */
 
-#import "PCProjectManager+UInterface.h"
-#import "PCDefines.h"
+#include "PCProjectManager+UInterface.h"
+#include "PCDefines.h"
 
 @implementation PCProjectManager (UInterface)
 
