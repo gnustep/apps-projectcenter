@@ -24,8 +24,11 @@
    $Id$
 */
 
-#import <AppKit/AppKit.h>
-#import <ProjectCenter/FileCreator.h>
+#ifndef _PCBASEFILETYPE_H
+#define _PCBASEFILETYPE_H
+
+#include <AppKit/AppKit.h>
+#include <ProjectCenter/FileCreator.h>
 
 @class PCProject;
 
@@ -46,4 +49,4 @@
 
 @end
 
-
+#endif

@@ -1,3 +1,11 @@
+2003-04-21 Serg Stoyan <stoyan@hologr.com>
+
+	* GNUmakefile: Set BUNDLE_INSTALL_DIR to GNUSTEP_SYSTEM_ROOT.
+
+	* .h, .m: Replace #import with #include and add #ifndefs.
+	
+	* tiffs removed.
+	
 2003-01-25  Daniel Luederwald <das_flip@gmx.de>
 
 	* GNUmakefile (PCBaseFileTypes_RESOURCE_FILES): New type gsmarkup.

@@ -24,8 +24,8 @@
    $Id$
 */
 
-#import "PCBaseFileType.h"
-#import <ProjectCenter/PCProject.h>
+#include "PCBaseFileType.h"
+#include <ProjectCenter/PCProject.h>
 
 #define ObjCNSViewClass	@"Objective-C NSView Subclass"
 #define ObjCClass	@"Objective-C Class"
