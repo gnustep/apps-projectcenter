@@ -25,6 +25,7 @@
 */
 
 #import "PCProjectBuilder.h"
+#import "PCDefines.h"
 #import "PCProject.h"
 #import "PCProject+ComponentHandling.h"
 #import "PCProjectManager.h"
@@ -307,7 +308,6 @@
 
 - (void)build:(id)sender
 {
-    NSString *tg = nil;
     NSTask *makeTask;
     NSMutableArray *args;
     NSPipe *logPipe;

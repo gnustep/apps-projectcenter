@@ -30,7 +30,7 @@
 #import <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
-#protocol ProjectComponent;
+@protocol ProjectComponent;
 #else
 #import <ProjectCenter/ProjectComponent.h>
 #endif

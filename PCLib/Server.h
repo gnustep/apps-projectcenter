@@ -29,10 +29,10 @@
 
 #import <AppKit/AppKit.h>
 
-#import "PCProject.h"
-#import "PreferenceController.h"
-#import "ProjectEditor.h"
-#import "ProjectDebugger.h"
+@class PCProject;
+@class PreferenceController;
+@class ProjectEditor;
+@class ProjectDebugger;
 
 @protocol Server
 

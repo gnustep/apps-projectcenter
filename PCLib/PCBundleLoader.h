@@ -37,9 +37,9 @@
 
 #import <AppKit/AppKit.h>
 
-#import "PreferenceController.h"
-#import "ProjectEditor.h"
-#import "ProjectDebugger.h"
+@class PreferenceController;
+@class ProjectEditor;
+@class ProjectDebugger;
 
 @interface PCBundleLoader : NSObject
 {

@@ -25,9 +25,10 @@
 */
 
 #import "PCProject.h"
+#import "PCDefines.h"
+#import "ProjectBuilder.h"
 #import "PCBrowserController.h"
 #import "PCProject+ComponentHandling.h"
-
 #import "PCProjectBuilder.h"
 #import "PCProjectEditor.h"
 #import "PCProjectDebugger.h"
@@ -57,8 +58,6 @@
   NSMatrix* matrix;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id textField;
-  id textView;
-  id scrollView;
   id button;
   PCSplitView *split;
 
@@ -774,7 +773,6 @@
 - (BOOL)removeSelectedFilePermanently:(BOOL)yn
 {
     NSString *file = [browserController nameOfSelectedFile];
-    NSMutableArray *array;
     NSString *key;
     NSString *otherKey;
     NSString *ext;

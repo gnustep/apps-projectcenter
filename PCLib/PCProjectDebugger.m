@@ -61,7 +61,6 @@ enum {
   NSRect _w_frame;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id button;
-  id textField;
   NSBox *box;
 
   componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];

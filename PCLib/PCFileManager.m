@@ -29,6 +29,7 @@
 #import "PCProject.h"
 #import "PCServer.h"
 #import "FileCreator.h"
+
 #import <AppKit/AppKit.h>
 
 #if defined(GNUSTEP)
@@ -250,9 +251,6 @@ static PCFileManager *_mgr = nil;
   NSOpenPanel *openPanel;
   int retval;
   
-  NSMutableArray *validTypes = nil;
-  NSDictionary *categories = nil;
-
   PCProject *project = nil;
   NSString *key = nil;
   NSString *title = nil;

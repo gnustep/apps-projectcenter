@@ -29,8 +29,6 @@
 
 #import <AppKit/AppKit.h>
 
-#import "ProjectBuilder.h"
-
 #ifndef IMAGE
 #define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
 #endif
@@ -117,6 +115,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 @class PCProjectDebugger;
 @class PCProjectEditor;
 @class PCEditorController;
+
+@protocol ProjectBuilder;
 
 @interface PCProject : NSObject
 {

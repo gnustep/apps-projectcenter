@@ -9,9 +9,13 @@
  */
 
 #import "PCProject+ComponentHandling.h"
+#import "PCDefines.h"
+#import "PCProject.h"
+#import "ProjectComponent.h"
 #import "PCProjectBuilder.h"
 #import "PCProjectDebugger.h"
 #import "PCProjectEditor.h"
+#import "PCProjectManager.h"
 #import "PCEditor.h"
 
 @implementation PCProject (ComponentHandling)

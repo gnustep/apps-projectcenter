@@ -14,10 +14,7 @@
 #define PC_EXTERN       extern
 #define PRIVATE_EXTERN  __private_extern__
 
-//#define BUNDLE_PATH   @"/LocalDeveloper/ProjectCenter/Bundles"
-
 #define Editor                          @"Editor"
-#define Debugger                        @"Debugger"
 #define Compiler                        @"Compiler"
 #define PromptOnClean                   @"PromtOnClean"
 #define PromptOnQuit                    @"PromtOnQuit"

@@ -29,8 +29,13 @@
 
 #import <AppKit/AppKit.h>
 
-#import "PCProject.h"
-#import "ProjectBuilder.h"
+@class PCProject;
+
+#ifndef GNUSTEP_BASE_VERSION
+@protocol ProjectBuilder;
+#else
+#import <ProjectCenter/ProjectBuilder.h>
+#endif
 
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {

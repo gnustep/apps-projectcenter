@@ -25,7 +25,12 @@
 */
 
 #import <AppKit/AppKit.h>
-#import "ProjectComponent.h"
+
+#ifndef GNUSTEP_BASE_VERSION
+@protocol ProjectComponent;
+#else
+#import <ProjectCenter/ProjectComponent.h>
+#endif
 
 @class PCProject;
 

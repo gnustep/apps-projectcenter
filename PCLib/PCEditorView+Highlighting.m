@@ -106,7 +106,6 @@ static NSFont *editorFont = nil;
 
 - (void)colouriseCharStrings
 {
-  NSRange tmpRange;
   BOOL foundRange;
   id aDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			     cStringColor,NSForegroundColorAttributeName,
@@ -155,7 +154,6 @@ static NSFont *editorFont = nil;
 {
   NSRange tmpRange;
   BOOL foundRange;
-  id anObject;
   id aDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			     commentColor,NSForegroundColorAttributeName,
 			   @"CommentCodeType", @"PCCodeTypeAttributeName", 
@@ -202,7 +200,6 @@ static NSFont *editorFont = nil;
 {
   NSRange tmpRange;
   BOOL foundRange;
-  id anObject;
   id aDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			    cppCommentColor, NSForegroundColorAttributeName,
 			   @"CommentCodeType", @"PCCodeTypeAttributeName", nil ];
@@ -243,8 +240,6 @@ static NSFont *editorFont = nil;
 - (void)colouriseKeyword:(NSString *)keyword
 {
   NSRange tmpRange;
-  BOOL foundRange;
-  id anObject;
   
   id keywordDict = [NSDictionary dictionaryWithObjectsAndKeys:
 				   keywordColor,NSForegroundColorAttributeName,

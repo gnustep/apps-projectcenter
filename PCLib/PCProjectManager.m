@@ -32,6 +32,7 @@
 #import "ProjectComponent.h"
 #import "ProjectType.h"
 #import "PCProject+ComponentHandling.h"
+#import "ProjectBuilder.h"
 
 #if defined(GNUSTEP)
 #import <AppKit/IMLoading.h>
@@ -395,6 +396,8 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     NSRunAlertPanel(@"Attention!",
                 @"This feature is not yet implemented!", 
 		@"OK",nil,nil);
+                
+    return YES;
 }
 
 - (void)inspectorPopupDidChange:(id)sender
@@ -454,10 +457,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)newSubproject
 {
+    return NO;
 }
 
 - (BOOL)addSubprojectAt:(NSString *)path
 {
+    return NO;
 }
 
 - (void)removeSubproject
@@ -597,7 +602,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     if ([key isEqualToString:PCLibraries]) 
     {
 	[fn deleteCharactersInRange:NSMakeRange(1,3)];
-	fn = [fn stringByDeletingPathExtension];
+	fn = (NSMutableString *)[fn stringByDeletingPathExtension];
     }
   
     if ([[[activeProject projectDict] objectForKey:key] containsObject:fn]) 

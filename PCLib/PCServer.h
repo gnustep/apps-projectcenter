@@ -30,12 +30,10 @@
 #import <AppKit/AppKit.h>
 
 #ifndef GNUSTEP_BASE_VERSION
-#protocol Server;
+@protocol Server;
 #else
 #import <ProjectCenter/Server.h>
 #endif
-
-@class PCProject;
 
 extern NSString *PCProjectWillOpenNotification;
 extern NSString *PCProjectDidOpenNotification;
@@ -68,6 +66,12 @@ extern NSString *PCProjectBuildDidBeginNotification;
 extern NSString *PCProjectBuildDidSucceedNotification;
 extern NSString *PCProjectBuildDidFailNotification;
 extern NSString *PCProjectBuildDidStopNotification;
+
+@class PCProject;
+
+@protocol ProjectEditor;
+@protocol ProjectDebugger;
+@protocol PreferenceController;
 
 @interface PCServer : NSObject <Server>
 {
