@@ -331,7 +331,7 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendLibraryInstallDir:(NSString*)dir
 {
-    [self appendString:[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
+    //[self appendString:[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",dir]];
     [self appendString:[NSString stringWithFormat:@"%@_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)\n",[pnme uppercaseString]]];
     [self appendString:[NSString stringWithFormat:@"%@_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)\n",[pnme uppercaseString]]];
 }

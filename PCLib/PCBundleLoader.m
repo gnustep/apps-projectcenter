@@ -107,7 +107,7 @@
     if (!path || [path isEqualToString:@""]) 
     {
       NSDictionary *env = [[NSProcessInfo processInfo] environment];
-      NSString *prefix = [env objectForKey:@"GNUSTEP_SYSTEM_ROOT"];
+      NSString *prefix = [env objectForKey:@"GNUSTEP_INSTALLATION_DIR"];
       
       if (prefix && ![prefix isEqualToString:@""]) 
       {
@@ -115,7 +115,7 @@
       }
       else 
       {
-	path = [NSString stringWithString:@"/usr/GNUstep/System/Library/ProjectCenter"];
+	path = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
       }
       
       [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
@@ -134,6 +134,8 @@
       NSLog([NSString stringWithFormat:@"Loading bundles at %@",path]);
     }
 #endif// DEBUG
+
+      NSLog([NSString stringWithFormat:@"Loading bundles at %@",path]);
 
     dir = [[NSFileManager defaultManager] directoryContentsAtPath:path];
     enumerator = [dir objectEnumerator];

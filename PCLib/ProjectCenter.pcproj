@@ -60,7 +60,7 @@
 	PCHistoryController.h,
 	PCMakefileFactory.h
     );
-    INSTALLDIR = "$(GNUSTEP_SYSTEM_ROOT)";
+    INSTALLDIR = "$(GNUSTEP_INSTALLATION_DIR)";
     LANGUAGE = English;
     LAST_EDITING = "";
     LIBRARIES = (
