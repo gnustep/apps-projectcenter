@@ -7,6 +7,9 @@
 	
 	* Fixes made, to compile with gcc 3.4.0.
 	
+	* Resources/ProjectCenter.gorm:
+	Remove all unimplemented items.
+	
 2004-06-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:

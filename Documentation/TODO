@@ -11,7 +11,7 @@ ProjectCenter 0.4                                               Owner
 + Finish Project Inspector                                      stoyan
 + Inspector UI using Gorm                                       stoyan
 + File creation (File->New in project) cleanup and finishing    stoyan
-- Initial suprojects support                                    stoyan
++ Initial suprojects support                                    stoyan
 + Finish support of external editors                            stoyan
 + Preferences enhancements and UI using Gorm                    stoyan
 + Remember project windows and panels in PC.project             stoyan
