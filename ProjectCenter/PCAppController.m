@@ -183,7 +183,8 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
-  if ([[fileName lastPathComponent] isEqualToString:@"PC.project"] == NO) {
+  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == NO) 
+  {
     return NO;
   }
 
