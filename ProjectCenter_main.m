@@ -195,9 +195,11 @@ createMenu()
   [file addItemWithTitle:@"Open Quickly..."
                   action:@selector(fileOpenQuickly:)
 	   keyEquivalent:@"D"];
+#endif
   [file addItemWithTitle:@"Rename"
                   action:@selector(fileRename:)
 	   keyEquivalent:@""];
+#ifdef ENABLE_ALL_FILE_OPERATIONS
   [file addItemWithTitle:@"New Untitled"
                   action:@selector(fileNewUntitled:)
 	   keyEquivalent:@""];

@@ -302,8 +302,11 @@ NSString
 - (NSString *)selectedRootCategoryKey
 {
   NSString *_path = [[self projectBrowser] pathOfSelectedFile];
+  NSString *key = [self keyForCategoryPath:_path];
 
-  return [self keyForCategoryPath:_path];
+  NSLog(@"PCProject: selected category: %@. key: %@", _path, key);
+
+  return key;
 }
 
 - (void)setProjectDictObject:(id)object forKey:(NSString *)key
@@ -917,16 +920,32 @@ NSString
 
 - (NSString *)categoryForCategoryPath:(NSString *)categoryPath
 {
-  return [[categoryPath componentsSeparatedByString:@"/"] objectAtIndex:1];
+  NSString *category = nil;
+  
+  if (![categoryPath isEqualToString:@"/"] 
+      && ![categoryPath isEqualToString:@""])
+    {
+      category = [[categoryPath componentsSeparatedByString:@"/"] 
+	objectAtIndex:1];
+    }
+
+  return category;
 }
 
 - (NSString *)keyForCategoryPath:(NSString *)categoryPath
 {
   NSString *category = nil;
+  NSString *key = nil;
+
+  if (![categoryPath isEqualToString:@"/"] 
+      && ![categoryPath isEqualToString:@""])
+    {
+      category = 
+	[[categoryPath componentsSeparatedByString:@"/"] objectAtIndex:1];
+      key = [self keyForCategory:category];
+    }
   
-  category = [[categoryPath componentsSeparatedByString:@"/"] objectAtIndex:1];
-  
-  return [self keyForCategory:category];
+  return key;
 }
 
 @end

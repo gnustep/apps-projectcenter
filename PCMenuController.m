@@ -237,15 +237,12 @@
 
 - (void)fileRename:(id)sender
 {
-/*  NSString *proj = nil;
-
   // Show Inspector panel with "File Attributes" section
+  [projectManager renameFile];
 
-  [projectManager renameFileTo:proj];*/
-
-  NSRunAlertPanel(@"PCMenuController: Sorry!",
+/*  NSRunAlertPanel(@"PCMenuController: Sorry!",
 		  @"This feature is not finished yet",
-		  @"OK",nil,nil);
+		  @"OK",nil,nil);*/
 }
 
 - (void)fileNewUntitled:(id)sender
@@ -400,8 +397,11 @@
 	  if ([[menuItem title] isEqualToString:@"Save To..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Revert to Saved"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Close"]) return NO;
-	  if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
 	}
+    }
+  if ([[aProject projectBrowser] nameOfSelectedFile] == nil)
+    {
+      if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }
 
   // Find menu items

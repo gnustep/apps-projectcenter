@@ -172,7 +172,6 @@
 //
 // ==== "Add Files..." panel
 //
-
 - (void)_createAddFilesPanel
 {
   if (addFilesPanel == nil)
@@ -185,7 +184,7 @@
       [fileTypePopup setAutoenablesItems:NO];
       [fileTypePopup setTarget:self];
       [fileTypePopup setAction:@selector(filesForAddPopupClicked:)];
-      [fileTypePopup addItemsWithTitles:[project rootKeys]];
+      [fileTypePopup addItemsWithTitles:[project rootCategories]];
       [fileTypePopup selectItemAtIndex:0];
 
       fileTypeAccessaryView = [[NSBox alloc] init];
@@ -253,12 +252,12 @@
 // If file name already in project -- don't show it! 
 - (BOOL)panel:(id)sender shouldShowFilename:(NSString *)filename
 {
+  NSFileManager *fileManager = [NSFileManager defaultManager];
   PCProject     *project = [projectManager activeProject];
   NSArray       *fileTypes = nil;
-  NSFileManager *fileManager = [NSFileManager defaultManager];
-  BOOL          isDir;
   NSString      *fileType = nil;
   NSString      *categoryKey = nil;
+  BOOL          isDir;
 
 //  NSLog(@"Panel should show %@", filename);
   if ([fileManager fileExistsAtPath:filename isDirectory:&isDir] && isDir)
@@ -278,17 +277,16 @@
       return YES;
     }
   
-  categoryKey = [project keyForCategoryPath:
-    [NSString stringWithFormat:@"/%@",fileType]];
-  
+  categoryKey = [project keyForCategory:fileType];
+
   fileTypes = [project fileTypesForCategoryKey:categoryKey];
-  if (fileTypes == nil);
+  if (fileTypes == nil)
     {
       NSLog(@"Project file types is nil! Category: %@", categoryKey);
       return YES;
     }
 
-  NSLog(@"%@ : %@", fileTypes, [filename pathExtension]);
+//  NSLog(@"%@ : %@", fileTypes, [filename pathExtension]);
   if (fileTypes && [fileTypes containsObject:[filename pathExtension]])
     {
       NSString *filePath;

@@ -115,6 +115,7 @@
 // ============================================================================
 - (void)inspectorPopupDidChange:(id)sender;
 - (void)changeCommonProjectEntry:(id)sender;
+- (void)selectSectionWithTitle:(NSString *)sectionTitle;
 
 // ============================================================================
 // ==== Notifications
@@ -149,8 +150,8 @@
 // ============================================================================
 - (void)createFileAttributes;
 
+- (void)beginFileRename;
 - (void)browserDidSetPath:(NSNotification *)aNotif;
-
 - (void)setFANameAndIcon:(PCProjectBrowser *)browser;
 
 @end

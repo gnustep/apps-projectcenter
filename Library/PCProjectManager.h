@@ -179,7 +179,7 @@ extern NSString *ActiveProjectDidChangeNotification;
 - (BOOL)saveFileAs:(NSString *)path;
 - (BOOL)saveFileTo;
 - (BOOL)revertFileToSaved;
-- (BOOL)renameFileTo:(NSString *)path;
+- (BOOL)renameFile;
 - (void)closeFile;
 
 // ============================================================================

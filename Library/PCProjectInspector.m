@@ -49,7 +49,6 @@
       [self setBordered:YES];
       [self setBackgroundColor:[NSColor whiteColor]];
       [self setEditable:YES];
-      [self selectText:nil];
       [self setNeedsDisplay:YES];
       [[self superview] setNeedsDisplay:YES];
     }
@@ -279,6 +278,12 @@
     {
       [project setProjectDictObject:newEntry forKey:PCURL];
     }
+}
+
+- (void)selectSectionWithTitle:(NSString *)sectionTitle
+{
+  [inspectorPopup selectItemWithTitle:sectionTitle];
+  [self inspectorPopupDidChange:inspectorPopup];
 }
 
 // ============================================================================
@@ -680,9 +685,10 @@
          object:inspectorPanel];
 }
 
-- (void)browserDidSetPath:(NSNotification *)aNotif
+- (void)beginFileRename
 {
-  [self setFANameAndIcon:[aNotif object]];
+  [fileNameField setEditableField:YES];
+  [inspectorPanel makeFirstResponder:fileNameField];
 }
 
 - (void)setFANameAndIcon:(PCProjectBrowser *)browser
@@ -724,6 +730,12 @@
     {
       [fileNameField setStringValue:fileName];
     }
+}
+
+// --- Notifications
+- (void)browserDidSetPath:(NSNotification *)aNotif
+{
+  [self setFANameAndIcon:[aNotif object]];
 }
 
 - (void)panelDidResignKey:(NSNotification *)aNotif

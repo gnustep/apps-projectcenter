@@ -139,9 +139,9 @@
   return [NSString stringWithString:@"openapp"];
 }
 
-- (NSArray *)fileTypesForCategoryKeyy:(NSString *)key 
+- (NSArray *)fileTypesForCategoryKey:(NSString *)key 
 {
-//  NSLog(@"Category: %@", category);
+//  NSLog(@"fileTypesForCategoryKey: %@", key);
 
   if ([key isEqualToString:PCClasses])
     {

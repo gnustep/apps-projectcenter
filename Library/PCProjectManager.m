@@ -222,7 +222,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)showProjectInspector:(id)sender
 {
-  [[[self projectInspector] panel] orderFront:self];
+  [[[self projectInspector] panel] makeKeyAndOrderFront:self];
 }
 
 - (NSPanel *)historyPanel
@@ -528,13 +528,6 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   categoryKey = [activeProject selectedRootCategoryKey];
   fileTypes = [activeProject fileTypesForCategoryKey:categoryKey];
 
-/*  [fileTypePopup removeAllItems];
-  [fileTypePopup addItemsWithTitles:[activeProject rootKeys]];
-  // Order Open panel and return selected files
-  files = [fileManager filesForOpenOfType:fileTypes
-                                 multiple:YES
-				    title:@"Add files"
-				  accView:fileTypeAccessaryView];*/
   files = [fileManager filesForAdd];
 
   // No files was selected 
@@ -742,15 +735,20 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return [[activeProject projectEditor] revertFileToSaved];
 }
 
+- (BOOL)renameFile
+{
+  [self showProjectInspector:self];
+  [projectInspector selectSectionWithTitle:@"File Attributes"];
+  [projectInspector beginFileRename];
+
+  return YES;
+}
+
 - (void)closeFile
 {
   return [[activeProject projectEditor] closeActiveEditor:self];
 }
 
-- (BOOL)renameFileTo:(NSString *)path
-{
-  return YES;
-}
 
 // Project menu
 // ============================================================================
