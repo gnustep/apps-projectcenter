@@ -55,7 +55,7 @@ PCLogError(id sender, NSString* format, ...);
 
 + (PCLogController *)sharedLogController;
 
-- (void)showLogPanel;
+- (void)showPanel;
 - (void)logMessage:(NSString *)message withTag:(int)tag sender:(id)sender;
 - (void)putMessageOnScreen:(NSAttributedString *)message;
 

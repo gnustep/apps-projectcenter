@@ -1,7 +1,8 @@
 TODO
 ****
 
-This is the GNUstep ProjectCenter TODO list. 
+This is the GNUstep ProjectCenter TODO list. "+" means that this task
+is done.
 Feel free to propose changes to this list or make suggestions!
 
 ProjectCenter 0.4									Owner
@@ -57,6 +58,6 @@ ProjectCenter 0.9
 ProjectCenter 1.0
 -----------------
 
-  Version 1.0 is aimed at stabilising and optimising existing features. There
-  will not be any new features since 0.9.
+  Version 1.0 is aimed at stabilising and optimising existing 
+features. There will not be any new features since 0.9.
 

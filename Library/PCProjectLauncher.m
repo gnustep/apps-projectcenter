@@ -206,89 +206,76 @@ enum {
 
 - (void)debug:(id)sender
 {
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-      objectForKey:ExternalDebugger] isEqualToString: @"YES"])
-    {
-      NSString                   *dp = [currentProject projectName];
-      NSString                   *fp = nil;
-      NSString                   *pn = nil;
-      NSString                   *gdbPath;
-      NSArray                    *args;
-      NSTask                     *task;
-      NSDistantObject <Terminal> *terminal;
+  NSString                   *dp = [currentProject projectName];
+  NSString                   *fp = nil;
+  NSString                   *pn = nil;
+  NSString                   *gdbPath;
+  NSArray                    *args;
+  NSTask                     *task;
+  NSDistantObject <Terminal> *terminal;
 
-      /* Get the Terminal application */
-      terminal = (NSDistantObject<Terminal> *)[NSConnection 
-	rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
+  /* Get the Terminal application */
+  terminal = (NSDistantObject<Terminal> *)[NSConnection 
+    rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
 
-      pn = [dp stringByAppendingPathExtension:@"debug"];
+  pn = [dp stringByAppendingPathExtension:@"debug"];
 
-      if (terminal == nil)
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Terminal.app is not running! Please\nlaunch it before debugging %@",
-			  @"Abort",nil,nil,pn);
-	  [debugButton setState:NSOffState];
-	  return;
-	}
-
-      fp = [[NSFileManager defaultManager] currentDirectoryPath];
-      dp = [fp stringByAppendingPathComponent:dp];
-      fp = [dp stringByAppendingPathComponent:pn];
-
-      task = [[NSTask alloc] init];
-      [task setLaunchPath:fp];
-      fp = [task validatedLaunchPath];
-      RELEASE(task);
-
-      if (fp == nil)
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"No executable found in %@!",
-			  @"Abort",nil,nil,dp);
-	  [debugButton setState:NSOffState];
-	  return;
-	}
-
-      task = [[NSTask alloc] init];
-
-      dp = [[NSUserDefaults standardUserDefaults] objectForKey:PDebugger];
-      if (dp == nil)
-	{
-	  dp = [NSString stringWithString:@"/usr/bin/gdb"];
-	}
-
-      if ([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Invalid debugger specified: %@!",
-			  @"Abort",nil,nil,dp);
-	  RELEASE(task);
-	  [debugButton setState:NSOffState];
-	  return;
-	}
-
-      [task setLaunchPath:dp];
-      gdbPath = [task validatedLaunchPath];
-      RELEASE(task);
-
-      args = [NSArray arrayWithObjects:
-	gdbPath,
-      @"--args",
-      AUTORELEASE(fp),
-      nil];
-
-      [terminal terminalRunProgram: AUTORELEASE(gdbPath)
-	withArguments: args
-	inDirectory: nil
-	properties: nil];
-    }
-  else
+  if (terminal == nil)
     {
       NSRunAlertPanel(@"Attention!",
-		      @"Integrated debugging is not yet available...",
-		      @"OK",nil,nil);
+		      @"Terminal.app is not running! Please\nlaunch it before debugging %@",
+		      @"Abort",nil,nil,pn);
+      [debugButton setState:NSOffState];
+      return;
     }
+
+  fp = [[NSFileManager defaultManager] currentDirectoryPath];
+  dp = [fp stringByAppendingPathComponent:dp];
+  fp = [dp stringByAppendingPathComponent:pn];
+
+  task = [[NSTask alloc] init];
+  [task setLaunchPath:fp];
+  fp = [task validatedLaunchPath];
+  RELEASE(task);
+
+  if (fp == nil)
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"No executable found in %@!",
+		      @"Abort",nil,nil,dp);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+  task = [[NSTask alloc] init];
+
+  dp = [[NSUserDefaults standardUserDefaults] objectForKey:Debugger];
+  if (dp == nil)
+    {
+      dp = [NSString stringWithString:@"/usr/bin/gdb"];
+    }
+
+  if ([[NSFileManager defaultManager] isExecutableFileAtPath:dp] == NO)
+    {
+      NSRunAlertPanel(@"Attention!",
+		      @"Invalid debugger specified: %@!",
+		      @"Abort",nil,nil,dp);
+      RELEASE(task);
+      [debugButton setState:NSOffState];
+      return;
+    }
+
+  [task setLaunchPath:dp];
+  gdbPath = [task validatedLaunchPath];
+  RELEASE(task);
+
+  args = [NSArray arrayWithObjects: gdbPath, @"--args", AUTORELEASE(fp), nil];
+
+  [terminal terminalRunProgram:AUTORELEASE(gdbPath)
+                 withArguments:args
+                   inDirectory:nil
+                    properties:nil];
+
   [debugButton setState:NSOffState];
 }
 

@@ -43,7 +43,7 @@
   if ((self = [super init]))
     {
       infoController = [[PCInfoController alloc] init];
-      prefController = [[PCPrefController alloc] init];
+      prefController = [PCPrefController sharedPCPreferences];
       logController  = [PCLogController sharedLogController];
       
       projectManager = [[PCProjectManager alloc] init];
@@ -142,6 +142,11 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
   NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
+
+  if ([[prefController objectForKey:DisplayLog] isEqualToString:@"YES"])
+    {
+      [logController showPanel];
+    }
 
   [logController 
     logMessage:@"Loading additional subsystems..." withTag:INFO sender:self];

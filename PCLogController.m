@@ -130,7 +130,7 @@ static PCLogController *_logCtrllr = nil;
   RELEASE(textAttributes);
 }
 
-- (void)showLogPanel
+- (void)showPanel
 {
   [panel orderFront:self];
 }

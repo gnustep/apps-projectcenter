@@ -146,14 +146,21 @@
 	    "setSuccessSound:",
 	    "setFailureSound:",
 	    "setPromptOnClean:",
-	    "setSaveAutomatically:",
 	    "setKeepBackup:",
 	    "setSaveOnQuit:",
 	    "setSavePeriod:",
 	    "setDisplayPanels:",
-	    "promptWhenQuitting:",
+	    "setPromptWhenQuit:",
 	    "setDebugger:",
-	    "setEditor:"
+	    "setEditor:",
+	    "setTabBehaviour:",
+	    "setTabSpaces:",
+	    "setRootBuildDir:",
+	    "setDeleteCache:",
+	    "setFullPathInFilePanels:",
+	    "setRememberWindows:",
+	    "setEditorSize:",
+	    "setDisplayLog:"
 	);
 	Outlets = (
 	    panel,
@@ -169,7 +176,6 @@
 	    keyBindingsView,
 	    miscView,
 	    saveOnQuit,
-	    saveAutomatically,
 	    keepBackup,
 	    autosaveSlider,
 	    autosaveField,
@@ -179,7 +185,18 @@
 	    separateLoadedFiles,
 	    promptWhenQuit,
 	    debuggerField,
-	    editorField
+	    editorField,
+	    interfaceView,
+	    deleteCache,
+	    fullPathInFilePanels,
+	    rememberWindows,
+	    tabMatrix,
+	    tabSpacesField,
+	    rootBuildDirField,
+	    rootBuildDirButton,
+	    editorColumnsField,
+	    editorLinesField,
+	    displayLog
 	);
 	Super = NSObject;
     };

@@ -60,8 +60,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if ((self = [super init]))
     {
       NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-      SEL            sall = @selector(saveAllProjectsIfNeeded);
-      SEL            spdc = @selector(resetSaveTimer:);
       NSTimeInterval interval = [[defs objectForKey:AutoSavePeriod] intValue];
 
       [self loadProjectTypeBunldes];
@@ -74,18 +72,19 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  rootBuildPath = [NSTemporaryDirectory() copy];
 	}
 
-      if ( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] )
+      if (interval > 0)
 	{
-	  saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
-	                                               target:self
-	                                             selector:sall
-	                                             userInfo:nil
-	                                              repeats:YES];
+	  saveTimer = [NSTimer 
+	    scheduledTimerWithTimeInterval:interval
+	                            target:self
+	                          selector:@selector(saveAllProjectsIfNeeded)
+	                          userInfo:nil
+	                           repeats:YES];
 	}
 
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
-	   selector:spdc 
+	   selector:@selector(resetSaveTimer:)
 	       name:SavePeriodDCN 
 	     object:nil];
 
@@ -191,19 +190,20 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)resetSaveTimer:(NSNotification *)notif
 {
-    NSTimeInterval interval = [[notif object] intValue];
-    SEL sall = @selector(saveAllProjectsIfNeeded);
+  NSTimeInterval interval = [[notif object] intValue];
+  SEL            sall = @selector(saveAllProjectsIfNeeded);
 
-    if( [saveTimer isValid] ) 
+  if ([saveTimer isValid])
     {
-        [saveTimer invalidate];
+      [saveTimer invalidate];
     }
   
-    saveTimer = [NSTimer scheduledTimerWithTimeInterval:interval
-						 target:self
-					       selector:sall
-					       userInfo:nil
-						repeats:YES];
+    saveTimer = [NSTimer 
+      scheduledTimerWithTimeInterval:interval
+                              target:self
+                            selector:sall
+                            userInfo:nil
+                             repeats:YES];
 }
 
 // ============================================================================
@@ -343,16 +343,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-  if ([[defs objectForKey:AutoSave] isEqualToString:@"YES"])
+  // If this method was called not by NSTimer, check if we should save projects
+  if ([[defs objectForKey:AutoSavePeriod] intValue] > 0)
     {
       [self saveAllProjects];
     }
-  else 
+
+  if ([saveTimer isValid])
     {
-      if ([saveTimer isValid])
-	{
-	  [saveTimer invalidate];
-	}
+      [saveTimer invalidate];
     }
 }
 

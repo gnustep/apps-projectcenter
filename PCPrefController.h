@@ -39,59 +39,77 @@
   IBOutlet NSButton      *setSuccessButton;
   IBOutlet NSTextField   *failureField;
   IBOutlet NSButton      *setFailureButton;
+  IBOutlet NSTextField   *rootBuildDirField;
+  IBOutlet NSButton      *rootBuildDirButton;
   IBOutlet NSButton      *promptOnClean;
 
   IBOutlet NSBox         *savingView;
   IBOutlet NSButton      *saveOnQuit;
-  IBOutlet NSButton      *saveAutomatically;
   IBOutlet NSButton      *keepBackup;
   IBOutlet NSSlider      *autosaveSlider;
   IBOutlet NSTextField   *autosaveField;
   
   IBOutlet NSBox         *keyBindingsView;
+  IBOutlet NSMatrix      *tabMatrix;
+  IBOutlet NSButton      *tabSpacesField;
   
   IBOutlet NSBox         *miscView;
+  IBOutlet NSButton      *promptWhenQuit;
+  IBOutlet NSButton      *deleteCache;
+  IBOutlet NSButton      *fullPathInFilePanels;
+  IBOutlet NSTextField   *debuggerField;
+  IBOutlet NSTextField   *editorField;
+
+  IBOutlet NSBox         *interfaceView;
   IBOutlet NSButton      *separateBuilder;
   IBOutlet NSButton      *separateLauncher;
   IBOutlet NSButton      *separateEditor;
   IBOutlet NSButton      *separateLoadedFiles;
-  IBOutlet NSButton      *promptWhenQuit;
-  IBOutlet NSTextField   *debuggerField;
-  IBOutlet NSTextField   *editorField;
+  IBOutlet NSTextField   *editorLinesField;
+  IBOutlet NSTextField   *editorColumnsField;
+  IBOutlet NSButton      *rememberWindows;
+  IBOutlet NSButton      *displayLog;
   
   IBOutlet NSBox         *bundlesView;
   IBOutlet NSTextField   *bundlePathField;
   
-  NSMutableDictionary *preferencesDict;
+  NSMutableDictionary    *preferencesDict;
 }
 
 + (PCPrefController *)sharedPCPreferences;
 
 - (id)init;
 - (void)dealloc;
-
-- (void)showPanel:(id)sender;
 - (void)loadPrefernces;
+
+- (NSDictionary *)preferencesDict;
+- (id)objectForKey:(NSString *)key;
+- (NSString *)selectFileWithTypes:(NSArray *)types;
+- (void)showPanel:(id)sender;
 
 - (void)popupChanged:(id)sender;
 
 - (void)setSuccessSound:(id)sender;
 - (void)setFailureSound:(id)sender;
+- (void)setRootBuildDir:(id)sender;
 - (void)setPromptOnClean:(id)sender;
 
-- (void)setSaveAutomatically:(id)sender;
-- (void)setKeepBackup:(id)sender;
 - (void)setSaveOnQuit:(id)sender;
+- (void)setKeepBackup:(id)sender;
 - (void)setSavePeriod:(id)sender;
 
-- (void)promptWhenQuitting:(id)sender;
+- (void)setPromptWhenQuit:(id)sender;
+- (void)setDeleteCache:(id)sender;
+- (void)setFullPathInFilePanels:(id)sender;
 - (void)setDebugger:(id)sender;
 - (void)setEditor:(id)sender;
+
+- (void)setDisplayPanels:(id)sender;
+- (void)setEditorSize:(id)sender;
+- (void)setRememberWindows:(id)sender;
+- (void)setDisplayLog:(id)sender;
+
 - (void)setBundlePath:(id)sender;
-
-- (NSDictionary *)preferencesDict;
-
-- (NSString *)selectFileWithTypes:(NSArray *)types;
 
 @end
 

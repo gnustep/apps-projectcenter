@@ -89,7 +89,7 @@
 
 - (void)showLogPanel:(id)sender
 {
-  [[appController logController] showLogPanel];
+  [[appController logController] showPanel];
 }
 
 // Project

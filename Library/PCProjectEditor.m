@@ -89,12 +89,12 @@ NSString *PCEditorDidResignActiveNotification =
 + (PCEditor *)openFileInEditor:(NSString *)path
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *editor = [ud objectForKey:Editor];
 
-  if ([[ud objectForKey:ExternalEditor] isEqualToString:@"YES"])
+  if (![editor isEqualToString:@"ProjectCenter"])
     {
       NSTask         *editorTask;
       NSMutableArray *args;
-      NSString       *editor = [ud objectForKey:Editor];
       NSString       *app;
       NSArray        *ea = [editor componentsSeparatedByString: @" "];
 
