@@ -24,41 +24,41 @@
    $Id$
 */
 
-#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
+#import "PCAppController.h"
 
-@class PCProject;
+@interface PCAppController (MenuHandling)
 
-@class NSWindow;
-@class NSTextView;
+- (void)showPrefWindow:(id)sender;
+- (void)showInfoPanel:(id)sender;
 
-@interface PCProjectBuilder : NSObject
-{
-  NSWindow *buildWindow;
+- (void)showInspector:(id)sender;
+- (void)showBuildPanel:(id)sender;
 
-  NSTextView *logOutput;
+- (void)openProject:(id)sender;
+- (void)newProject:(id)sender;
+- (void)saveProject:(id)sender;
+- (void)saveProjectAs:(id)sender;
+- (void)showLoadedProjects:(id)sender;
+- (void)saveFiles:(id)sender;
+- (void)revertToSaved:(id)sender;
 
-  NSMutableDictionary *buildTasks;
-  NSString *makePath;
+- (void)newSubproject:(id)sender;
+- (void)addSubproject:(id)sender;
+- (void)removeSubproject:(id)sender;
 
-  PCProject *currentProject;
-  NSDictionary *currentOptions;
-}
+- (void)closeProject:(id)sender;
 
-+ (id)sharedBuilder;
-
-- (id)init;
-- (void)dealloc;
-
-- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
-
-- (void)build:(id)sender;
-- (void)clean:(id)sender;
-- (void)install:(id)sender;
-
-- (void)projectDidChange:(NSNotification *)aNotif;
+- (void)newFile:(id)sender;
+- (void)addFile:(id)sender;
+- (void)openFile:(id)sender;
+- (void)saveFile:(id)sender;
+- (void)saveFileAs:(id)sender;
+- (void)revertFile:(id)sender;
+- (void)renameFile:(id)sender;
+- (void)removeFile:(id)sender;
 
 @end
-
 
 
 

@@ -42,6 +42,7 @@
 #define BundlePaths			@"BundlePaths"
 #define SuccessSound			@"SuccessSound"
 #define FailureSound			@"FailureSound"
+#define ExternalEditor                  @"ExternalEditor"
 
 #define PCAppDidInitNotification	@"PCAppDidInit"
 #define PCAppWillTerminateNotification	@"PCAppWillTerminate"

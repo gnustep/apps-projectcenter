@@ -194,6 +194,7 @@ static NSDictionary *dict = nil;
 	      [file rangeOfString:@"$FILENAMESANSEXTENSION$"] withString:name];
     }
   }
+
   [file writeToFile:newFile atomically:YES];
   [file autorelease];
 }

@@ -50,7 +50,7 @@
 - (NSArray*)touchedFiles;
 // Returns array of paths of files that are "unsaved" or nil if none.
 
-- (BOOL)querTouchedFiles;
+- (BOOL)queryTouchedFiles;
      // Prompts user to save all files and projects with dirtied buffers.
 
 - (BOOL)addFileAt:(NSString*)filePath toProject:(PCProject *)projectPath;

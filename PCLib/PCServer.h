@@ -64,10 +64,27 @@ extern NSString *PCProjectBuildDidStopNotification;
 @interface PCServer : NSObject <Server>
 {
     NSMutableArray *clients;
+    NSMutableArray *openDocuments;
 }
+
+//----------------------------------------------------------------------------
+// Init and free
+//----------------------------------------------------------------------------
 
 - (id)init;
 - (void)dealloc;
+
+//----------------------------------------------------------------------------
+// Miscellaneous
+//----------------------------------------------------------------------------
+
+- (void)fileShouldBeOpened:(NSNotification *)aNotif;
+
+- (void)openFileInExternalEditor:(NSString *)file;
+- (void)openFileInInternalEditor:(NSString *)file;
+
+- (NSWindow *)editorForFile:(NSString *)aFile;
+- (void)windowDidClose:(NSNotification *)aNotif;
 
 //----------------------------------------------------------------------------
 // Server
@@ -90,7 +107,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 - (NSArray*)touchedFiles;
 // Both methods return full paths!
 
-- (BOOL)querTouchedFiles;
+- (BOOL)queryTouchedFiles;
      // Prompts user to save all files and projects with dirtied buffers.
 
 - (BOOL)addFileAt:(NSString*)filePath toProject:(PCProject *)projectPath;
