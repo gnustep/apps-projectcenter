@@ -26,6 +26,7 @@
 
 #import "PCProjectBuilder.h"
 #import "PCProject.h"
+#import "PCProjectManager.h"
 
 #import <AppKit/AppKit.h>
 
@@ -44,11 +45,12 @@
                        NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSSplitView *split;
   NSScrollView *scrollView1; 
-
   NSScrollView *scrollView2; 
   NSTextView *textView2;
-
+  NSMatrix* matrix;
   NSRect _w_frame;
+  NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  id button;
 
   /*
    * Build Window
@@ -69,7 +71,7 @@
   [logOutput setVerticallyResizable:YES];
   [logOutput setHorizontallyResizable:YES];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [logOutput setBackgroundColor:[NSColor whiteColor]];
+  //[logOutput setBackgroundColor:[NSColor whiteColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
 
   scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
@@ -111,6 +113,43 @@
 
   _c_view = [buildWindow contentView];
   [_c_view addSubview:split];
+
+  /*
+   * Buttons
+   */
+
+  _w_frame = NSMakeRect(8,268,144,48);
+  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
+                                       mode: NSHighlightModeMatrix
+                                  prototype: buttonCell
+                               numberOfRows: 1
+                            numberOfColumns: 3] autorelease];
+  [matrix setSelectionByRect:YES];
+  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [_c_view addSubview:matrix];
+
+  button = [matrix cellAtRow:0 column:0];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCentre_build.tiff")];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTarget:self];
+  [button setAction:@selector(build:)];
+
+  button = [matrix cellAtRow:0 column:1];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCentre_clean.tiff")];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTarget:self];
+  [button setAction:@selector(clean:)];
+
+  button = [matrix cellAtRow:0 column:2];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
+  [button setTarget:self];
+  [button setAction:@selector(showBuildTarget:)];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTarget:self];
+  [button setAction:@selector(install:)];
 }
 
 @end
@@ -133,12 +172,16 @@ static PCProjectBuilder *_builder;
     [self _initUI];
     makePath = [[NSString stringWithString:@"/usr/bin/make"] retain];
     buildTasks = [[NSMutableDictionary dictionary] retain];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(projectDidChange:) name:ActiveProjectDidChangeNotification object:nil];
   }
   return self;
 }
 
 - (void)dealloc
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   [buildWindow release];
   [makePath release];
   [buildTasks release];
@@ -146,9 +189,21 @@ static PCProjectBuilder *_builder;
   [super dealloc];
 }
 
-- (BOOL)buildProject:(PCProject *)aProject options:(NSDictionary *)optionDict
+- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
 {
-  BOOL ret = NO;
+  if (![buildWindow isVisible]) {
+    [buildWindow center];
+  }
+  [buildWindow makeKeyAndOrderFront:self];
+
+  currentProject = proj;
+  currentOptions = options;
+
+  [buildWindow setTitle:[proj projectName]];
+}
+
+- (void)build:(id)sender
+{
   NSString *tg = nil;
   NSTask *makeTask;
   NSMutableArray *args;
@@ -156,13 +211,17 @@ static PCProjectBuilder *_builder;
   NSPipe *logPipe;
   NSFileHandle *readHandle;
   NSData  *inData = nil;
+  NSDictionary *optionDict;
+
+  if (!currentProject) {
+    return;
+  }
 
   logPipe = [NSPipe pipe];
   readHandle = [logPipe fileHandleForReading];
-  
-  NSAssert(aProject,@"No project provided!");
-
   makeTask = [[NSTask alloc] init];
+
+  optionDict = [currentProject buildOptions];
 
   if ((tg = [optionDict objectForKey:BUILD_KEY])) {
     if ([tg isEqualToString:TARGET_MAKE_DEBUG]) {
@@ -176,27 +235,12 @@ static PCProjectBuilder *_builder;
       [args addObject:@"static=YES"];
       [makeTask setArguments:args];
     }
-    else if ([tg isEqualToString:TARGET_MAKE_INSTALL]) {
-      args = [NSMutableArray array];
-      [args addObject:@"install"];
-      [makeTask setArguments:args];
-    }
-    else if ([tg isEqualToString:TARGET_MAKE_CLEAN]) {
-      args = [NSMutableArray array];
-      [args addObject:@"clean"];
-      [makeTask setArguments:args];
-    }
 
-    [makeTask setCurrentDirectoryPath:[aProject projectPath]];
+    [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
     [makeTask setLaunchPath:makePath];
 
     [makeTask setStandardOutput:logPipe];
     [makeTask setStandardError:logPipe];
-
-    if (![buildWindow isVisible]) {
-      [buildWindow center];
-      [buildWindow makeKeyAndOrderFront:self];
-    }
 
     [makeTask launch];
 
@@ -212,17 +256,30 @@ static PCProjectBuilder *_builder;
     }
     
     [makeTask waitUntilExit];
-
-    ret = [makeTask terminationStatus];
-
-#ifdef DEBUG
-    NSLog(@"Task terminated %@...",(ret)?@"successfully":@"not successfully");
-#endif DEBUG
-
     [makeTask autorelease];
   }
-  
-  return ret;
+}
+
+- (void)clean:(id)sender
+{
+}
+
+- (void)install:(id)sender
+{
+}
+
+- (void)projectDidChange:(NSNotification *)aNotif
+{
+  PCProject *project = [aNotif object];
+
+  if (project) {
+    currentProject = project;
+    [buildWindow setTitle:[project projectName]];
+  }
+  else {
+    currentProject = nil;
+    [buildWindow orderOut:self];
+  }
 }
 
 @end

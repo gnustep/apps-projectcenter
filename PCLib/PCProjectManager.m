@@ -31,6 +31,8 @@
 #import <AppKit/IMLoading.h>
 #endif
 
+NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
+
 @interface PCProjectManager (CreateUI)
 
 - (void)_initUI;
@@ -155,18 +157,20 @@
 
 - (void)setActiveProject:(PCProject *)aProject
 {
-    if (aProject != activeProject) {
-        activeProject = aProject;
+  if (aProject != activeProject) {
+    activeProject = aProject;
 
-        //~ Is this needed?
-        if (activeProject) {
-	  [[activeProject projectWindow] makeKeyAndOrderFront:self];
-        }
-
-        if ([inspector isVisible]) {
-            [self inspectorPopupDidChange:inspectorPopup];
-        }
+    [[NSNotificationCenter defaultCenter] postNotificationName:ActiveProjectDidChangeNotification object:activeProject];
+    
+    //~ Is this needed?
+    if (activeProject) {
+      [[activeProject projectWindow] makeKeyAndOrderFront:self];
     }
+    
+    if ([inspector isVisible]) {
+      [self inspectorPopupDidChange:inspectorPopup];
+    }
+  }
 }
 
 - (void)saveAllProjects
@@ -198,6 +202,8 @@
       concretBuilder = [NSClassFromString([builders objectForKey:builderKey]) sharedCreator];
       
       if ((project = [concretBuilder openProjectAt:aPath])) {
+	[[project projectWindow] center];
+
 	return project;
       }
     }
@@ -250,6 +256,8 @@
         return NO;
     }
 
+    [[project projectWindow] center];
+
     [project setProjectBuilder:self];
     [loadedProjects setObject:project forKey:aPath];
     [self setActiveProject:project];
@@ -271,38 +279,31 @@
 
 - (void)inspectorPopupDidChange:(id)sender
 {
-    NSView *view = nil;
-
-    if (![self activeProject]) {
-        return;
-    }
-    
-    switch([sender indexOfSelectedItem]) {
-        case 0:
-            view = [[[self activeProject] updatedAttributeView] retain];
-            break;
-        case 1:
-            view = [[[self activeProject] updatedProjectView] retain];
-            break;
-        case 2:
-            view = [[[self activeProject] updatedFilesView] retain];
-            break;
-    }
-    [(NSBox *)inspectorView setContentView:view];
-    [inspectorView display];
+  NSView *view = nil;
+  
+  if (![self activeProject]) {
+    return;
+  }
+  
+  switch([sender indexOfSelectedItem]) {
+  case 0:
+    view = [[[self activeProject] updatedAttributeView] retain];
+    break;
+  case 1:
+    view = [[[self activeProject] updatedProjectView] retain];
+    break;
+  case 2:
+    view = [[[self activeProject] updatedFilesView] retain];
+    break;
+  }
+  [(NSBox *)inspectorView setContentView:view];
+  [inspectorView display];
 }
 
 - (void)showInspectorForProject:(PCProject *)aProject
 {
   if (!inspectorPopup) {
-#if defined(GNUSTEP)
     [self _initUI];
-#else
-    if(![NSBundle loadNibNamed:@"Inspector.nib" owner:self]) {
-      [[NSException exceptionWithName:NIB_NOT_FOUND_EXCEPTION reason:@"Could not load Inspector.gmodel" userInfo:nil] raise];
-      return nil;
-    }
-#endif
     
     [inspectorPopup removeAllItems];
     [inspectorPopup addItemWithTitle:@"Build Attributes"];
@@ -460,3 +461,5 @@
 
 
 @end
+
+

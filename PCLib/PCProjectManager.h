@@ -167,3 +167,7 @@
 - (BOOL)projectManager:(id)sender shouldOpenProject:(PCProject *)aProject;
 
 @end
+
+extern NSString *ActiveProjectDidChangeNotification;
+
+

@@ -26,22 +26,134 @@
 
 #import "PCServer.h"
 #import "ProjectCenter.h"
+#import "PCBrowserController.h"
 
 @implementation PCServer
 
+//----------------------------------------------------------------------------
+// Init and free
+//----------------------------------------------------------------------------
+
 - (id)init
 {
-    if ((self = [super init])) {
-        clients = [[NSMutableArray alloc] init];
-    }
-    return self;
+  if ((self = [super init])) {
+    clients = [[NSMutableArray alloc] init];
+    openDocuments = [[NSMutableArray alloc] init];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(fileShouldBeOpened:) name:FileShouldOpenNotification object:nil];
+  }
+  return self;
 }
 
 - (void)dealloc
 {
-    [clients release];
-    [super dealloc];
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  [openDocuments release];
+  [clients release];
+
+  [super dealloc];
 }
+
+//----------------------------------------------------------------------------
+// Miscellaneous
+//----------------------------------------------------------------------------
+
+- (void)fileShouldBeOpened:(NSNotification *)aNotif
+{
+  NSString *file = [[aNotif userInfo] objectForKey:@"FilePathKey"];
+
+  if ([[[NSUserDefaults standardUserDefaults] objectForKey:ExternalEditor] isEqualToString:@"YES"]) {
+    [self openFileInExternalEditor:file];
+  }
+  else {
+    [self openFileInInternalEditor:file];
+  }
+}
+
+- (void)openFileInExternalEditor:(NSString *)file
+{
+  NSTask *editorTask;
+  NSMutableArray *args = [NSMutableArray array];
+  NSUserDefaults *udef = [NSUserDefaults standardUserDefaults];
+  NSString *editor = [udef objectForKey:Editor];
+
+  editorTask = [[[NSTask alloc] init] autorelease];
+  [editorTask setLaunchPath:editor];  
+
+  [args addObject:file];
+  [editorTask setArguments:args];
+
+  [editorTask launch];
+}
+
+- (void)openFileInInternalEditor:(NSString *)file
+{
+  NSWindow *editorWindow = [self editorForFile:file];
+
+  [editorWindow setDelegate:self];
+  [editorWindow center];
+  [editorWindow makeKeyAndOrderFront:self];
+
+  [openDocuments addObject:editorWindow];
+}
+
+- (NSWindow *)editorForFile:(NSString *)aFile
+{
+  unsigned int style = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask;
+  NSRect rect = NSMakeRect(100,100,512,320);
+  NSWindow *window = [[NSWindow alloc] initWithContentRect:rect
+				       styleMask:style
+				       backing:NSBackingStoreBuffered
+				       defer:NO];
+  NSTextView *textView;
+  NSScrollView *scrollView;
+
+  NSString *text = [NSString stringWithContentsOfFile:aFile];
+
+  [window setMinSize:NSMakeSize(512,320)];
+  [window setTitle:[aFile lastPathComponent]];
+
+  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,498,306)];
+  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [textView setVerticallyResizable:YES];
+  [textView setHorizontallyResizable:YES];
+  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [textView setBackgroundColor:[NSColor whiteColor]];
+  [[textView textContainer] setWidthTracksTextView:YES];
+  [textView autorelease];
+
+  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];
+  [scrollView setDocumentView:textView];
+  [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
+  [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
+  [scrollView setHasHorizontalScroller: YES];
+  [scrollView setHasVerticalScroller: YES];
+  [scrollView setBorderType: NSBezelBorder];
+  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  [scrollView autorelease];
+
+  [[window contentView] addSubview:scrollView];
+
+  /*
+   * Will be replaced when a real editor is available...
+   */
+
+  [textView setText:text];
+
+  return [window autorelease];
+}
+
+- (void)windowDidClose:(NSNotification *)aNotif
+{
+  NSWindow *window = [aNotif object];
+
+  [openDocuments removeObject:window];
+}
+
+//----------------------------------------------------------------------------
+// Server
+//----------------------------------------------------------------------------
 
 - (BOOL)registerProjectSubmenu:(NSMenu *)menu
 {
@@ -91,7 +203,7 @@
 {
 }
 
-- (BOOL)querTouchedFiles
+- (BOOL)queryTouchedFiles
 {
 }
 

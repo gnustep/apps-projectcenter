@@ -28,6 +28,20 @@
 
 #import "ProjectBuilder.h"
 
+#ifndef IMAGE
+#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#endif
+
+#define BUILD_KEY           @"BuildKey"
+#define BUILD_ARGS_KEY      @"BuildArgsKey"
+#define BUILD_HOST_KEY      @"BuildHostKey"
+
+#define TARGET_MAKE         @"Make"
+#define TARGET_MAKE_DEBUG   @"MakeDebug"
+#define TARGET_MAKE_PROFILE @"MakeProfile"
+#define TARGET_MAKE_INSTALL @"MakeInstall"
+#define TARGET_MAKE_CLEAN   @"MakeClean"
+
 #define TOUCHED_NOTHING		(0)
 #define TOUCHED_EVERYTHING	(1 << 0)
 #define TOUCHED_PROJECT_NAME	(1 << 1)
@@ -82,7 +96,7 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 {
     id projectWindow;
     id delegate;
-    id projectBuilder;
+    id projectManager;
     id browserController;
 
     id textView;
@@ -92,6 +106,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id projectFileInspectorView;
     
     id buildTargetPanel;
+    id buildTargetHostField;
+    id buildTargetArgsField;
     id buildTargetPopup;
     
     id buildStatusField;
@@ -102,10 +118,11 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     NSMutableDictionary *projectDict;
 
     NSDictionary *rootCategories;	// Needs to be initialised by subclasses!
+    NSMutableDictionary *buildOptions;
 
     @private
     BOOL _needsReleasing;
-    btarget _buildTarget;
+    btarget _target;
 }
 
 //===========================================================================================
@@ -122,6 +139,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 //===========================================================================================
 
 - (id)browserController;
+- (NSString *)selectedRootCategory;
+
+- (NSArray *)fileExtensionsForCategory:(NSString *)key;
 
 - (void)setProjectName:(NSString *)aName;
 - (NSString *)projectName;
@@ -209,7 +229,8 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)setArguments:(id)sender;
 
 - (void)build:(id)sender;
-- (void)clean:(id)sender;
+
+- (NSDictionary *)buildOptions;
 
 @end
 
@@ -226,5 +247,11 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeMain:(NSNotification *)aNotification;
 - (void)windowWillClose:(NSNotification *)aNotification;
+
+@end
+
+@interface PCProject (TextDelegate)
+
+- (void)textDidEndEditing:(NSNotification *)aNotification;
 
 @end

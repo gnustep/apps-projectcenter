@@ -32,15 +32,16 @@
     id fileTypePopup;
     id newFileName;
 
-    id delegate;
-
-    id fileTypeAccessaryView;
-    id addFileTypePopup;
+    id delegate;                    // PCProjectManager
 
     NSMutableDictionary	*creators;
-
-    BOOL _needsAdditionalReleasing;
 }
+
+//===========================================================================================
+// ==== Class methods
+//===========================================================================================
+
++ (PCFileManager *)fileManager;
 
 //===========================================================================================
 // ==== Init and free
@@ -62,7 +63,6 @@
 // ==== File stuff
 // ===========================================================================
 
-- (void)fileTypePopupChanged:(id)sender;
 - (void)showAddFileWindow;
 
 - (void)showNewFileWindow;

@@ -28,15 +28,6 @@
 
 @class PCProject;
 
-#define BUILD_KEY           @"BuildKey"
-#define BUILD_OPTIONS_KEY   @"BuildOptionsKey"
-
-#define TARGET_MAKE         @"Make"
-#define TARGET_MAKE_DEBUG   @"MakeDebug"
-#define TARGET_MAKE_PROFILE @"MakeProfile"
-#define TARGET_MAKE_INSTALL @"MakeInstall"
-#define TARGET_MAKE_CLEAN   @"MakeClean"
-
 @class NSWindow;
 @class NSTextView;
 
@@ -48,6 +39,9 @@
 
   NSMutableDictionary *buildTasks;
   NSString *makePath;
+
+  PCProject *currentProject;
+  NSDictionary *currentOptions;
 }
 
 + (id)sharedBuilder;
@@ -55,6 +49,16 @@
 - (id)init;
 - (void)dealloc;
 
-- (BOOL)buildProject:(PCProject *)aProject options:(NSDictionary *)optionDict;
+- (void)showPanelWithProject:(PCProject *)proj options:(NSDictionary *)options;
+
+- (void)build:(id)sender;
+- (void)clean:(id)sender;
+- (void)install:(id)sender;
+
+- (void)projectDidChange:(NSNotification *)aNotif;
 
 @end
+
+
+
+
