@@ -222,15 +222,14 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
     NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-    if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) {
-	NSRunAlertPanel(@"Save All", 
-	                @"Going to save all projects!", 
-			@"OK",nil,nil);
-
+    if( [[defs objectForKey:AutoSave] isEqualToString:@"YES"] ) 
+    {
         [self saveAllProjects];
     }
-    else {
-        if( [saveTimer isValid] ) {
+    else 
+    {
+        if( [saveTimer isValid] ) 
+	{
 	    [saveTimer invalidate];
 	}
     }
