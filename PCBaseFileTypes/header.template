@@ -11,7 +11,7 @@
 #ifndef _$UCFILENAMESANSEXTENSION$_H_
 #define _$UCFILENAMESANSEXTENSION$_H_
 
-#import <Foundation/Foundation.h>
+#include <Foundation/Foundation.h>
 
 @interface $FILENAMESANSEXTENSION$ : NSObject
 {
