@@ -1,4 +1,26 @@
 {
+    Controller = {
+	Actions = (
+	    "toggleToolbar:",
+	    "setFirstItemLabel:",
+	    "setSecondItemImage:",
+	    "newItem:",
+	    "newWindow:",
+	    "popUpMenuSizeChanged:",
+	    "popUpMenuDisplayChanged:"
+	);
+	Outlets = (
+	    newItemName,
+	    toolbarButton,
+	    firstItemSwitch,
+	    popUpField,
+	    sliderField,
+	    window,
+	    popUpMenuSize,
+	    popUpMenuDisplay
+	);
+	Super = NSObject;
+    };
     FirstResponder = {
 	Actions = (
 	    "activateContextHelpMode:",
@@ -138,7 +160,14 @@
 	    "useStandardKerning:",
 	    "useStandardLigatures:",
 	    "yank:",
-	    "zoom:"
+	    "zoom:",
+	    "toggleToolbar:",
+	    "setFirstItemLabel:",
+	    "setSecondItemImage:",
+	    "newItem:",
+	    "newWindow:",
+	    "popUpMenuSizeChanged:",
+	    "popUpMenuDisplayChanged:"
 	);
 	Super = NSObject;
     };
