@@ -9,7 +9,7 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-
+include ../pcproj_bundle.make
 
 #
 # Subprojects
@@ -23,8 +23,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = PCAppProj
 BUNDLE_NAME = PCAppProj
-BUNDLE_EXTENSION = .bundle
-BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
 PCAppProj_PRINCIPAL_CLASS = PCAppProj
 
 

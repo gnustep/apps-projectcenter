@@ -35,14 +35,14 @@ PACKAGE_NAME = ProjectCenter
 
 SUBPROJECTS = 			\
 	PCLib			\
+	ProjectCenter		\
 	PCAppProj		\
 	PCGormProj		\
 	PCBundleProj		\
 	PCToolProj		\
 	PCLibProj		\
 	PCBaseFileTypes		\
-	PCRenaissanceProj	\
-	ProjectCenter
+	PCRenaissanceProj
 
 -include GNUMakefile.preamble
 

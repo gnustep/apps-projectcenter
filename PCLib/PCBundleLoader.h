@@ -54,11 +54,12 @@
 - (id)delegate;
 - (void)setDelegate:(id)aDelegate;
 
-- (void)loadBundles;
 // Load all bundles found in the BundlePaths
+- (void)loadBundles;
+- (void)loadBundlesAtPath: (NSString *)path;
 
+// Returns all loaded ProjectCenter bundles.
 - (NSArray *)loadedBundles;
-    // Returns all loaded ProjectCenter bundles.
 
 @end
 

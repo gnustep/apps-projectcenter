@@ -9,7 +9,7 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-
+include ../pcproj_bundle.make
 
 #
 # Subprojects
@@ -23,8 +23,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 PACKAGE_NAME = PCBaseFileTypes
 BUNDLE_NAME = PCBaseFileTypes
-BUNDLE_EXTENSION = .bundle
-BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
 PCBaseFileTypes_PRINCIPAL_CLASS = PCBaseFileType
 
 
