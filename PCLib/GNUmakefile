@@ -45,6 +45,7 @@ libProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 #
 
 libProjectCenter_HEADER_FILES= \
+PCButton.h \
 PCBrowserController.h \
 PCBundleLoader.h \
 PCDataSource.h \
@@ -85,6 +86,7 @@ PCTextFinder+UInterface.h
 #
 
 libProjectCenter_OBJC_FILES= \
+PCButton.m \
 PCBrowserController.m \
 PCBundleLoader.m \
 PCDataSource.m \

@@ -36,12 +36,16 @@
 #endif
 
 @class PCProject;
+@class PCButton;
 
 @interface PCProjectBuilder : NSObject <ProjectComponent>
 {
   NSPanel         *buildPanel;
   NSBox           *componentView;
-  NSMatrix        *matrix;
+  PCButton        *buildButton;
+  PCButton        *cleanButton;
+  PCButton        *installButton;
+  PCButton        *optionsButton;
   NSPopUpButton   *popup;
   
   NSPanel         *optionsPanel;
@@ -75,6 +79,7 @@
 - (NSPanel *) createBuildPanel;
 - (NSPanel *) buildPanel;
 - (NSView *) componentView;
+- (void) setTooltips;
 
 - (void) build: (id)sender;
 - (void) popupChanged: (id)sender;

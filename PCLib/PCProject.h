@@ -47,11 +47,12 @@
 #define TARGET_MAKE_CLEAN   @"MakeClean"
 #define TARGET_MAKE_RPM     @"MakeRPM"
 
-#define BUILD_TAG    0
-#define SETTINGS_TAG 1
-#define PREFS_TAG    2
-#define LAUNCH_TAG   3
-#define EDITOR_TAG   4
+#define BUILD_TAG     0
+#define LAUNCH_TAG    1
+#define EDITOR_TAG    2
+#define FILES_TAG     3
+#define FIND_TAG      4
+#define INSPECTOR_TAG 5
 
 //=============================================================================
 // ==== Not used yet
@@ -138,6 +139,9 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     PCProjectEditor    *projectEditor;
     PCEditorController *editorController;
     NSBox *box;
+
+    NSButton           *fileIcon;
+    NSTextField        *fileIconTitle;
 
     id          projectAttributeInspectorView;
     NSTextField *installPathField;

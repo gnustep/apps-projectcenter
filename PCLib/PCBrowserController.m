@@ -29,6 +29,8 @@
 #include "PCProject.h"
 #include "PCFileManager.h"
 
+NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
+
 @implementation PCBrowserController
 
 - (void)dealloc
@@ -54,6 +56,10 @@
 	  [project browserDidClickFile:ltitle category:category];
 	}
     }
+
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName: PCBrowserDidSetPathNotification 
+                  object: self];
 }
 
 - (void)doubleClick:(id)sender
@@ -181,6 +187,7 @@
 {
   NSArray  *comp = [NSArray arrayWithObjects: @"/",category,@"/",file,nil];
   NSString *path = [NSString pathWithComponents:comp];
+  BOOL     result;
 
   int      selectedColumn;
   NSMatrix *columnMatrix = nil;
@@ -197,8 +204,14 @@
       [columnMatrix deselectAllCells];
     }
   // End of workaround
+  
+  result = [browser setPath:path];
+  
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCBrowserDidSetPathNotification 
+                  object:self];
 
-  return [browser setPath:path];
+  return result;
 }
 
 @end

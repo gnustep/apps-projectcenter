@@ -46,6 +46,7 @@ ADDITIONAL_GUI_LIBS += -lProjectCenter
 
 ProjectCenter_RESOURCE_FILES = \
 ProjectCenterInfo.plist \
+Images/ButtonTile.tiff \
 Images/FileIcon_.c.tiff \
 Images/FileIcon_.h.tiff \
 Images/FileIcon_.m.tiff \

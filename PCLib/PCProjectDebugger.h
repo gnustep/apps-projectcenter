@@ -33,6 +33,7 @@
 #endif
 
 @class PCProject;
+@class PCButton;
 
 @interface PCProjectDebugger : NSObject <ProjectComponent>
 {
@@ -40,7 +41,8 @@
   NSBox         *componentView;
   NSPopUpButton *popup;
 
-  NSButton      *runButton;
+  PCButton      *runButton;
+  PCButton      *debugButton;
 
   PCProject     *currentProject;    // Not retained!
   NSDictionary  *currentOptions; // Not retained!
@@ -50,7 +52,7 @@
 
   NSFileHandle  *readHandle;
   NSFileHandle  *errorReadHandle;
-  NSTask        *task;
+  NSTask        *launchTask;
 
   int           debugTarget;
 }
@@ -61,6 +63,7 @@
 - (NSPanel *) createLaunchPanel;
 - (NSPanel *) launchPanel;
 - (NSView *) componentView;
+- (void)setTooltips;
 
 - (void)popupChanged:(id)sender;
 

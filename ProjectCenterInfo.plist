@@ -30,13 +30,14 @@
   ApplicationRelease = "0.3.2";
   FullVersionID = "ProjectCenter 0.3.2";
   Authors = (
-    "Serg Stoyan <stoyan@on.com.ua>",
-    "David Ayers <d.ayers@inode.at>",
-    "Richard Frith-Macdonald <rfm@gnu.org>",
-    "Nicola Pero  <n.pero@mi.flashnet.it>",
-    "Pierre-Yves Rivaille  <pyrivail@ens-lyon.fr>",
+    "Philippe C.D. Robert <probert@siggraph.org>",
     "Adam Fedor <fedor@gnu.org>",
-    "Philippe C.D. Robert <probert@siggraph.org>");
+    "Pierre-Yves Rivaille  <pyrivail@ens-lyon.fr>",
+    "Nicola Pero  <n.pero@mi.flashnet.it>",
+    "Richard Frith-Macdonald <rfm@gnu.org>",
+    "David Ayers <d.ayers@inode.at>",
+    "Serg Stoyan <stoyan@on.com.ua>");
+
   URL = "http://www.gnustep.org";
   Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
   CopyrightDescription = "Released under the GNU General Public License 2.0";

@@ -30,6 +30,7 @@
 #include "PCProject+ComponentHandling.h"
 #include "PCProjectManager.h"
 #include "PCSplitView.h"
+#include "PCButton.h"
 
 #include <AppKit/AppKit.h>
 
@@ -80,11 +81,7 @@
   NSSplitView  *split;
   NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
-  NSRect       _w_frame;
-  NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
-  id           button;
   id           textField;
-
 
   componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8, -1, 464, 322)];
   [componentView setTitlePosition: NSNoTitle];
@@ -96,54 +93,48 @@
   /*
    * 4 build Buttons
    */
-  _w_frame = NSMakeRect(0, 270, 176, 44);
-  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
-                                      mode: NSHighlightModeMatrix
-				 prototype: buttonCell
-			      numberOfRows: 1
-			   numberOfColumns: 4];
-  [matrix sizeToCells];
-  [matrix setSelectionByRect: YES];
-  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [matrix setTarget: self];
-  [matrix setAction: @selector (topButtonPressed:)];
-  [componentView addSubview: matrix];
-
-  button = [matrix cellAtRow: 0 column: 0];
-  [button setTag: 0];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_make")];
-  [button setAlternateImage: IMAGE(@"Stop")];
-  [button setButtonType: NSToggleButton];
-  [button setTitle: @"Build"];
-
-  button = [matrix cellAtRow: 0 column: 1];
-  [button setTag: 1];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_clean")];
-  [button setAlternateImage: IMAGE(@"Stop")];
-  [button setButtonType: NSToggleButton];
-  [button setTitle: @"Clean"];
-
-  button = [matrix cellAtRow: 0 column: 2];
-  [button setTag: 2];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_install")];
-  [button setAlternateImage: IMAGE(@"Stop")];
-  [button setButtonType: NSToggleButton];
-  [button setTitle: @"Install"];
+  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,264,50,50)];
+  [buildButton setTitle: @"Build"];
+  [buildButton setImage: IMAGE(@"ProjectCenter_make")];
+  [buildButton setAlternateImage: IMAGE(@"Stop")];
+  [buildButton setTarget: self];
+  [buildButton setAction: @selector(startBuild:)];
+  [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [buildButton setButtonType: NSToggleButton];
+  [componentView addSubview: buildButton];
+  RELEASE (buildButton);
   
-  button = [matrix cellAtRow: 0 column: 3];
-  [button setTag: 3];
-  [button setImagePosition: NSImageOnly];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_prefs")];
-  [button setAlternateImage: IMAGE(@"Stop")];
-  [button setButtonType: NSToggleButton];
-  [button setTitle: @"Options"];
+  cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(50,264,50,50)];
+  [cleanButton setTitle: @"Clean"];
+  [cleanButton setImage: IMAGE(@"ProjectCenter_clean")];
+  [cleanButton setAlternateImage: IMAGE(@"Stop")];
+  [cleanButton setTarget: self];
+  [cleanButton setAction: @selector(startClean:)];
+  [cleanButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [cleanButton setButtonType: NSToggleButton];
+  [componentView addSubview: cleanButton];
+  RELEASE (cleanButton);
+
+  installButton = [[PCButton alloc] initWithFrame: NSMakeRect(100,264,50,50)];
+  [installButton setTitle: @"Install"];
+  [installButton setImage: IMAGE(@"ProjectCenter_install")];
+  [installButton setAlternateImage: IMAGE(@"Stop")];
+  [installButton setTarget: self];
+  [installButton setAction: @selector(startInstall:)];
+  [installButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [installButton setButtonType: NSToggleButton];
+  [componentView addSubview: installButton];
+  RELEASE (installButton);
+
+  optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(150,264,50,50)];
+  [optionsButton setTitle: @"Options"];
+  [optionsButton setImage: IMAGE(@"ProjectCenter_prefs")];
+  [optionsButton setTarget: self];
+  [optionsButton setAction: @selector(showOptionsPanel:)];
+  [optionsButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [optionsButton setButtonType: NSMomentaryPushButton];
+  [componentView addSubview: optionsButton];
+  RELEASE (optionsButton);
 
   /*
    *  Error and Log output
@@ -224,7 +215,7 @@
    * Target
    */
   textField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (188, 293, 48, 21)];
+    initWithFrame: NSMakeRect (200, 293, 48, 21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setBezeled: NO];
@@ -234,14 +225,13 @@
   [textField setStringValue:@"Target:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [componentView addSubview: textField];
-
   RELEASE(textField);
 
   /*
    * Target message
    */
   targetField = [[NSTextField alloc] 
-    initWithFrame:NSMakeRect(239, 293, 220, 21)];
+    initWithFrame:NSMakeRect(251, 293, 220, 21)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -253,32 +243,30 @@
 				     NSViewWidthSizable | 
 				     NSViewMinYMargin)];
   [componentView addSubview:targetField];
-
   RELEASE (targetField);
 
   /*
    * Status
    */
   textField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (188, 270, 48, 21)];
+    initWithFrame: NSMakeRect (200, 270, 48, 21)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setSelectable: NO];
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
+//  [textField setBackgroundColor: [NSColor darkGrayColor]];
   [textField setStringValue:@"Status:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [componentView addSubview:textField];
-
   RELEASE(textField);
 
   /*
    * Status message
    */
-
   buildStatusField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (239, 270, 220, 21)];
+    initWithFrame: NSMakeRect (251, 270, 220, 21)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
   [buildStatusField setEditable: NO];
@@ -290,9 +278,7 @@
 					  NSViewWidthSizable | 
 					  NSViewMinYMargin)];
   [componentView addSubview: buildStatusField];
-
   RELEASE(buildStatusField);
-
 }
 
 - (void) _createOptionsPanel
@@ -427,7 +413,6 @@
 
 - (void) dealloc
 {
-  [matrix release];
   [buildTarget release];
   [buildArgs release];
   [makePath release];
@@ -458,6 +443,14 @@
     }
 
   return componentView;
+}
+
+- (void)setTooltips
+{
+  [buildButton setShowTooltip:YES];
+  [cleanButton setShowTooltip:YES];
+  [installButton setShowTooltip:YES];
+  [optionsButton setShowTooltip:YES];
 }
 
 - (void) topButtonPressed: (id)sender
@@ -543,7 +536,92 @@
     }
 }
 
-- (void) build: (id)sender
+
+- (void)startBuild:(id)sender
+{
+  NSString *tFString = [targetField stringValue];
+  NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
+
+  if (makeTask && [makeTask isRunning])
+    {
+      [makeTask terminate];
+      return;
+    }
+
+  [buildTarget setString: [tFArray objectAtIndex: 0]];
+
+  // Set build arguments
+  if ([buildTarget isEqualToString: @"Debug"])
+    {
+      [buildArgs addObject: @"debug=yes"];
+    }
+  else if ([buildTarget isEqualToString: @"Profile"])
+    {
+      [buildArgs addObject: @"profile=yes"];
+      [buildArgs addObject: @"static=yes"];
+    }
+  else if ([buildTarget isEqualToString: @"Tarball"])
+    {
+      [buildArgs addObject: @"dist"];
+    }
+  else if ([buildTarget isEqualToString: @"RPM"])
+    {
+      [buildArgs addObject: @"rpm"];
+      postProcess = @selector (copyPackageTo:);
+    }
+
+  statusString = [NSString stringWithString: @"Building..."];
+  [buildTarget setString: @"Build"];
+  [cleanButton setEnabled:NO];
+  [installButton setEnabled:NO];
+  [self build: self];
+}
+
+- (void)startClean:(id)sender
+{
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+      objectForKey: PromptOnClean] isEqualToString: @"YES"])
+    {
+      if (NSRunAlertPanel(@"Clean Project?",
+			  @"Do you really want to clean project '%@'?",
+			  @"Yes",
+			  @"No",
+			  nil,
+			  [currentProject projectName])
+	  == NSAlertAlternateReturn)
+	{
+	  return;
+	}
+    }
+  [buildTarget setString: @"Clean"];
+  statusString = [NSString stringWithString: @"Cleaning..."];
+  [buildArgs addObject: @"distclean"];
+  [buildButton setEnabled:NO];
+  [installButton setEnabled:NO];
+  [self build: self];
+}
+
+- (void)startInstall:(id)sender
+{
+  [buildTarget setString: @"Install"];
+  statusString = [NSString stringWithString: @"Installing..."];
+  [buildArgs addObject: @"install"];
+  [buildButton setEnabled:NO];
+  [cleanButton setEnabled:NO];
+  [self build: self];
+}
+
+- (void)showOptionsPanel:(id)sender
+{
+  if (!optionsPanel)
+    {
+      [self _createOptionsPanel];
+    }
+  [optionsPanel orderFront: nil];
+}
+
+
+- (void)build:(id)sender
 {
   NSPipe              *logPipe;
   NSPipe              *errorPipe;
@@ -575,10 +653,12 @@
 
   // Prepearing to building
   logPipe = [NSPipe pipe];
-  readHandle = [[logPipe fileHandleForReading] retain];
+//  readHandle = [[logPipe fileHandleForReading] retain];
+  readHandle = [logPipe fileHandleForReading];
 
   errorPipe = [NSPipe pipe];
-  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+//  errorReadHandle = [[errorPipe fileHandleForReading] retain];
+  errorReadHandle = [errorPipe fileHandleForReading];
 
   [readHandle waitForDataInBackgroundAndNotify];
   [errorReadHandle waitForDataInBackgroundAndNotify];
@@ -605,7 +685,7 @@
   [logOutput setString: @""];
   [errorOutput setString: @""];
 
-  [NSThread detachNewThreadSelector: @selector (make:)
+  [NSThread detachNewThreadSelector: @selector(make:)
                            toTarget: self
                          withObject: data];
 
@@ -617,45 +697,72 @@
   return;
 }
 
-- (void)buildDidTerminate: (NSNotification *)aNotif
+- (void)buildDidTerminate:(NSNotification *)aNotif
 {
   int status = [[aNotif object] terminationStatus];
 
-  [NOTIFICATION_CENTER removeObserver: self 
-                                 name: NSFileHandleDataAvailableNotification
-			       object: readHandle];
-
-  [NOTIFICATION_CENTER removeObserver: self 
-                                 name: NSFileHandleDataAvailableNotification
-			       object: errorReadHandle];
-
-  [NOTIFICATION_CENTER removeObserver: self 
-                                 name: NSTaskDidTerminateNotification 
-			       object: makeTask];
-  RELEASE (readHandle);
-  RELEASE (errorReadHandle);
-
-  if (status == 0)
+  if ([aNotif object] == makeTask)
     {
-      [self logString: [NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] error: NO newLine: NO];
-      [buildStatusField setStringValue: [NSString stringWithFormat: 
-	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
-      [[matrix selectedCell] setState: NSOffState];
-      [matrix setNeedsDisplay: YES];
-    } 
-  else
-    {
-      [self logString: [NSString stringWithFormat: @"=== %@ terminated!", buildTarget] error: NO newLine: NO];
-      [buildStatusField setStringValue: [NSString stringWithFormat: 
-	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
+      [NOTIFICATION_CENTER removeObserver: self 
+	name: NSFileHandleDataAvailableNotification
+	object: readHandle];
+
+      [NOTIFICATION_CENTER removeObserver: self 
+	name: NSFileHandleDataAvailableNotification
+	object: errorReadHandle];
+
+      [NOTIFICATION_CENTER removeObserver: self 
+	name: NSTaskDidTerminateNotification 
+	object: makeTask];
+      //  RELEASE (readHandle);
+      //  RELEASE (errorReadHandle);
+
+      NSLog (@"Observers removed!");
+
+      if (status == 0)
+	{
+	  [self logString: 
+	    [NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
+	    error: NO
+	    newLine: NO];
+	  [buildStatusField setStringValue: [NSString stringWithFormat: @"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
+	} 
+      else
+	{
+	  [self logString: [NSString stringWithFormat: @"=== %@ terminated!", buildTarget] error: NO newLine: NO];
+	  [buildStatusField setStringValue: [NSString stringWithFormat: 
+	    @"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
+	}
+
+      // Rstore buttons state
+      if ([buildTarget isEqualToString: @"Build"])
+	{
+	  [buildButton setState: NSOffState];
+	  [cleanButton setEnabled:YES];
+	  [installButton setEnabled:YES];
+	}
+      else if ([buildTarget isEqualToString: @"Clean"])
+	{
+	  [cleanButton setState: NSOffState];
+	  [buildButton setEnabled:YES];
+	  [installButton setEnabled:YES];
+	}
+      else if ([buildTarget isEqualToString: @"Install"])
+	{
+	  [installButton setState: NSOffState];
+	  [buildButton setEnabled:YES];
+	  [cleanButton setEnabled:YES];
+	}
+
+      [buildArgs removeAllObjects];
+      [buildTarget setString: @"Default"];
+
+      /*  RELEASE (makeTask);
+	  makeTask = nil;*/
     }
-
-  [buildArgs removeAllObjects];
-  [buildTarget setString: @"Default"];
-  makeTask = nil;
 }
 
-- (void)popupChanged: (id)sender
+- (void)popupChanged:(id)sender
 {
   NSString *target = [targetField stringValue];
 
@@ -668,7 +775,7 @@
 
 }
 
-- (void)logStdOut: (NSNotification *)aNotif
+- (void)logStdOut:(NSNotification *)aNotif
 {
   NSData *data;
 
@@ -680,7 +787,7 @@
   [readHandle waitForDataInBackgroundAndNotifyForModes: nil];
 }
 
-- (void)logErrOut: (NSNotification *)aNotif
+- (void)logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
 
@@ -755,7 +862,7 @@
 
 @implementation PCProjectBuilder (BuildThread)
 
-- (void) make: (NSDictionary *)data
+- (void)make:(NSDictionary *)data
 {
   NSAutoreleasePool *pool = [[NSAutoreleasePool alloc] init];
   

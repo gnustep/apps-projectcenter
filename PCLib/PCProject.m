@@ -165,8 +165,9 @@
 
 - (void)setProjectName:(NSString *)aName
 {
-    AUTORELEASE(projectName);
-    projectName = [aName copy];
+  AUTORELEASE(projectName);
+  projectName = [aName copy];
+  [fileIconTitle setStringValue:projectName];
 }
 
 - (NSString *)projectName

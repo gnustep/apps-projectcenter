@@ -29,6 +29,8 @@
 
 #include <AppKit/AppKit.h>
 
+extern NSString *PCBrowserDidSetPathNotification;
+
 @class PCProject;
 
 @interface PCBrowserController : NSObject

@@ -28,6 +28,7 @@
 #include "PCDefines.h"
 #include "PCProject.h"
 #include "PCProjectManager.h"
+#include "PCButton.h"
 
 #include <AppKit/AppKit.h>
 
@@ -77,12 +78,7 @@ enum {
 
 - (void)_createComponentView
 {
-  NSScrollView *scrollView; 
-  NSMatrix     *matrix;
-  NSRect       _w_frame;
-  NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
-  id           button;
-
+  NSScrollView       *scrollView; 
   NSString           *string;
   NSAttributedString *attributedString;
 
@@ -95,37 +91,29 @@ enum {
   /*
    * Top buttons
    */
-  _w_frame = NSMakeRect(0, 270, 88, 44);
-  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
-			              mode: NSHighlightModeMatrix
-			         prototype: buttonCell
-			      numberOfRows: 1
-			   numberOfColumns: 2];
-  [matrix sizeToCells];
-  [matrix setSelectionByRect: YES];
-  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [matrix setTarget: self];
-  [componentView addSubview: matrix];
+//  _w_frame = NSMakeRect(0, 270, 88, 44);
 
-  RELEASE(matrix);
-
-  runButton = [matrix cellAtRow:0 column:0];
-  [runButton setTag: 0];
-  [runButton setImagePosition: NSImageOnly];
-  [runButton setImage: IMAGE(@"ProjectCenter_run")];
-  [runButton setAlternateImage: IMAGE(@"ProjectCenter_run")];
-  [runButton setButtonType: NSMomentaryPushButton];
+  runButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,264,50,50)];
   [runButton setTitle: @"Run"];
+  [runButton setImage: IMAGE(@"ProjectCenter_run")];
+  [runButton setAlternateImage: IMAGE(@"Stop")];
+  [runButton setTarget: self];
   [runButton setAction: @selector(run:)];
+  [runButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [runButton setButtonType: NSToggleButton];
+  [componentView addSubview: runButton];
+  RELEASE (runButton);
 
-  button = [matrix cellAtRow:0 column:1];
-  [button setTag: 1];
-  [button setImagePosition: NSImageOnly];
-  [button setImage: IMAGE(@"ProjectCenter_debug")];
-  [button setAlternateImage: IMAGE(@"ProjectCenter_debug")];
-  [button setButtonType: NSMomentaryPushButton];
-  [button setTitle: @"Debug"];
-  [button setAction: @selector(debug:)];
+  debugButton = [[PCButton alloc] initWithFrame: NSMakeRect(50,264,50,50)];
+  [debugButton setTitle: @"Debug"];
+  [debugButton setImage: IMAGE(@"ProjectCenter_debug")];
+  [debugButton setAlternateImage: IMAGE(@"Stop")];
+  [debugButton setTarget: self];
+  [debugButton setAction: @selector(debug:)];
+  [debugButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [debugButton setButtonType: NSToggleButton];
+  [componentView addSubview: debugButton];
+  RELEASE (debugButton);
 
   /*
    *
@@ -231,6 +219,12 @@ enum {
   return componentView;
 }
 
+- (void)setTooltips
+{
+  [runButton setShowTooltip:YES];
+  [debugButton setShowTooltip:YES];
+}
+
 - (void)popupChanged:(id)sender
 {
   switch ([sender indexOfSelectedItem])
@@ -266,8 +260,8 @@ enum {
   RELEASE(errorReadHandle);
   errorReadHandle = [[errorPipe fileHandleForReading] retain];
 
-  RELEASE(task);
-  task = [[NSTask alloc] init];
+  RELEASE(launchTask);
+  launchTask = [[NSTask alloc] init];
 
   args = [[NSMutableArray alloc] init];
 
@@ -329,16 +323,16 @@ enum {
   [NOTIFICATION_CENTER addObserver:self
 		       selector: @selector(buildDidTerminate:)
 		       name: NSTaskDidTerminateNotification
-		       object:task];  
+		       object:launchTask];  
   
-  [task setArguments:args];  
+  [launchTask setArguments:args];  
   RELEASE(args);
 
-  [task setCurrentDirectoryPath:[currentProject projectPath]];
-  [task setLaunchPath:openPath];
+  [launchTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [launchTask setLaunchPath:openPath];
   
-  [task setStandardOutput:logPipe];
-  [task setStandardError:errorPipe];
+  [launchTask setStandardOutput:logPipe];
+  [launchTask setStandardError:errorPipe];
 
   [stdOut setString:@""];
   [readHandle waitForDataInBackgroundAndNotify];
@@ -351,12 +345,12 @@ enum {
    *
    */
 
-  [task launch];
+  [launchTask launch];
 }
 
 - (void)buildDidTerminate:(NSNotification *)aNotif
 {
-  if ([aNotif object] == task) {
+  if ([aNotif object] == launchTask) {
 
     /*
      * Clean up...
@@ -373,10 +367,10 @@ enum {
 
     [NOTIFICATION_CENTER removeObserver:self 
 			 name:NSTaskDidTerminateNotification 
-			 object:task];
+			 object:launchTask];
 
-    RELEASE(task);
-    task = nil;
+    RELEASE(launchTask);
+    launchTask = nil;
 
     [runButton setNextState];
     [componentView display];

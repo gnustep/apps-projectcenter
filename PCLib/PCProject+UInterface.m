@@ -31,6 +31,8 @@
 #include "PCBrowserController.h"
 #include "PCDefines.h"
 
+#include "PCButton.h"
+
 #undef ENABLE_HISTORY
 
 @implementation PCProject (UInterface)
@@ -44,10 +46,13 @@
 		     | NSResizableWindowMask;
   NSBrowser    *browser;
   NSRect       rect;
-  NSMatrix     *matrix;
-  NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  PCButton     *buildButton;
+  PCButton     *launchButton;
+  PCButton     *editorButton;
+  PCButton     *loadedFilesButton;
+  PCButton     *findButton;
+  PCButton     *inspectorButton;
   id           textField;
-  id           button;
   PCSplitView  *split;
 
 #ifdef ENABLE_HISTORY
@@ -70,62 +75,114 @@
   _c_view = [projectWindow contentView];
 
   /*
-   * Left button matrix
+   * Tool bar
    */
-  rect = NSMakeRect(8,380,300,60);
-  matrix = [[NSMatrix alloc] initWithFrame: rect
-                                      mode: NSHighlightModeMatrix
-                                 prototype: buttonCell
-                              numberOfRows: 1
-                           numberOfColumns: 5];
-  [matrix setTarget: self];
-  [matrix setAction: @selector (topButtonsPressed:)];
-  [matrix setSelectionByRect: YES];
-  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [_c_view addSubview: matrix];
-  RELEASE (matrix);
+  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,390,50,50)];
+  [buildButton setTitle: @"Build"];
+//  [buildButton setImage: IMAGE(@"Build")];
+  [buildButton setImage: IMAGE(@"ProjectCenter_make")];
+  [buildButton setTarget: self];
+  [buildButton setAction: @selector(showBuildView:)];
+  [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [buildButton setButtonType: NSMomentaryPushButton];
+  [_c_view addSubview: buildButton];
+  [buildButton setShowTooltip:YES];
+  RELEASE (buildButton);
+  
+  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(58,390,50,50)];
+  [launchButton setTitle: @"Launch"];
+//  [launchButton setImage: IMAGE(@"Run")];
+  [launchButton setImage: IMAGE(@"ProjectCenter_run")];
+  [launchButton setTarget: self];
+  [launchButton setAction: @selector(showRunView:)];
+  [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [launchButton setButtonType: NSMomentaryPushButton];
+  [_c_view addSubview: launchButton];
+  [launchButton setShowTooltip:YES];
+  RELEASE (launchButton);
+  
+  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(108,390,50,50)];
+  [editorButton setTitle: @"Editor"];
+//  [editorButton setImage: IMAGE(@"Editor")];
+  [editorButton setImage: IMAGE(@"ProjectCenter_files")];
+  [editorButton setTarget: self];
+  [editorButton setAction: @selector(showEditorView:)];
+  [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [editorButton setButtonType: NSMomentaryPushButton];
+  [_c_view addSubview: editorButton];
+  [editorButton setShowTooltip:YES];
+  RELEASE (editorButton);
 
-  button = [matrix cellAtRow: 0 column: 0];
-  [button setTag: BUILD_TAG];
-  [button setImagePosition: NSImageAbove];
-  [button setTitle: @"Build"];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_make")];
-  [button setButtonType: NSMomentaryPushButton];
+  loadedFilesButton = [[PCButton alloc] initWithFrame: NSMakeRect(158,390,50,50)];
+  [loadedFilesButton setTitle: @"Loaded Files"];
+//  [loadedFilesButton setImage: IMAGE(@"Files")];
+  [loadedFilesButton setImage: IMAGE(@"ProjectCenter_files")];
+  [loadedFilesButton setTarget: self];
+  [loadedFilesButton setAction: @selector(showLoadedFilesView:)];
+  [loadedFilesButton setAutoresizingMask: (NSViewMaxXMargin 
+					   | NSViewMinYMargin)];
+  [loadedFilesButton setButtonType: NSMomentaryPushButton];
+//  [loadedFilesButton setEnabled:NO];
+  [_c_view addSubview: loadedFilesButton];
+  [loadedFilesButton setShowTooltip:YES];
+  RELEASE (loadedFilesButton);
 
-  button = [matrix cellAtRow: 0 column: 1];
-  [button setTag: LAUNCH_TAG];
-  [button setImagePosition: NSImageAbove];
-  [button setTitle: @"Run"];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE (@"ProjectCenter_run")];
-  [button setButtonType: NSMomentaryPushButton];
+  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(208,390,50,50)];
+  [findButton setTitle: @"Project Find"];
+//  [findButton setImage: IMAGE(@"Find")];
+  [findButton setImage: IMAGE(@"ProjectCenter_find")];
+  [findButton setTarget: self];
+  [findButton setAction: @selector(showFindView:)];
+  [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [findButton setButtonType: NSMomentaryPushButton];
+//  [findButton setEnabled:NO];
+  [_c_view addSubview: findButton];
+  [findButton setShowTooltip:YES];
+  RELEASE (findButton);
+  
+  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(258,390,50,50)];
+  [inspectorButton setTitle: @"Inspector"];
+//  [inspectorButton setImage: IMAGE(@"Inspector")];
+  [inspectorButton setImage: IMAGE(@"ProjectCenter_settings")];
+  [inspectorButton setTarget: self];
+  [inspectorButton setAction: @selector(showInspector:)];
+  [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [inspectorButton setButtonType: NSMomentaryPushButton];
+  [_c_view addSubview: inspectorButton];
+  [inspectorButton setShowTooltip:YES];
+  RELEASE (inspectorButton);
+  
 
-  button = [matrix cellAtRow: 0 column: 2];
-  [button setTag: SETTINGS_TAG];
-  [button setImagePosition: NSImageAbove];
-  [button setTitle: @"Inspector"];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE (@"ProjectCenter_settings")];
-  [button setButtonType: NSMomentaryPushButton];
+  /*
+   * File icon and title
+   */
+  fileIcon = [[NSButton alloc] initWithFrame: NSMakeRect (504,391,48,48)];
+  [fileIcon setBordered:NO];
+  [fileIcon setEnabled:NO];
+  [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
+  [fileIcon setImagePosition: NSImageOnly];
+  [fileIcon setImage: IMAGE (@"projectSuitcase")];
+  [_c_view addSubview: fileIcon];
+  RELEASE (fileIcon);
 
-  button = [matrix cellAtRow: 0 column: 3];
-  [button setTag: EDITOR_TAG];
-  [button setImagePosition: NSImageAbove];
-  [button setTitle: @"Editor"];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE(@"ProjectCenter_files")];
-  [button setButtonType: NSMomentaryPushButton];
+  fileIconTitle = [[NSTextField alloc]
+    initWithFrame: NSMakeRect (316,395,180,21)];
+  [fileIconTitle setAutoresizingMask: (NSViewMinXMargin 
+				       | NSViewMinYMargin 
+				       | NSViewWidthSizable)];
+  [fileIconTitle setEditable:NO];
+  [fileIconTitle setSelectable:NO];
+  [fileIconTitle setDrawsBackground: NO];
+  [fileIconTitle setAlignment:NSRightTextAlignment];
+  [fileIconTitle setBezeled:NO];
+  [_c_view addSubview: fileIconTitle];
+  RELEASE (fileIconTitle);
 
-  button = [matrix cellAtRow: 0 column: 4];
-  [button setTag: PREFS_TAG];
-  [button setImagePosition: NSImageAbove];
-  [button setTitle: @"Options"];
-  [button setFont: [NSFont systemFontOfSize: 10.0]];
-  [button setImage: IMAGE (@"ProjectCenter_prefs")];
-  [button setButtonType: NSMomentaryPushButton];
-
-  [matrix sizeToCells];
+  [[NSNotificationCenter defaultCenter] 
+    addObserver: self
+       selector: @selector (setFileIcon:)
+           name: PCBrowserDidSetPathNotification
+         object: nil];
 
 
   /*
@@ -177,7 +234,7 @@
   [self showEditorView: self];
 
   rect = [[projectWindow contentView] frame];
-  rect.size.height -= 76;
+  rect.size.height -= 62;
   rect.size.width -= 16;
   rect.origin.x += 8;
   rect.origin.y = -2;
@@ -365,4 +422,89 @@
   [projectFileInspectorView addSubview:changeFileNameButton];
 }
 
+- (void)setFileIcon:(NSNotification *)notification
+{
+  id       object = [notification object];
+  NSString *path = [object pathOfSelectedFile];
+  NSArray  *pathComps = [path pathComponents];
+  NSString *lastComp = [path lastPathComponent];
+  NSString *extension = [[lastComp componentsSeparatedByString:@"."] lastObject];
+ 
+//  NSLog (@"PCP+UI %i -- %@", [pathComps count], path);
+
+  // Should be provided by PC*Proj bundles
+  if ([[object selectedFiles] count] > 1
+      && [pathComps count] > 2)
+    {
+      [fileIcon setImage: IMAGE (@"MultipleSelection")];
+    }
+  else if ([lastComp isEqualToString: @"/"])
+    {
+      [fileIcon setImage: IMAGE (@"projectSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Classes"])
+    {
+      [fileIcon setImage: IMAGE (@"classSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Headers"])
+    {
+      [fileIcon setImage: IMAGE (@"headerSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Other Sources"])
+    {
+      [fileIcon setImage: IMAGE (@"genericSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Interfaces"])
+    {
+      [fileIcon setImage: IMAGE (@"nibSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Images"])
+    {
+      [fileIcon setImage: IMAGE (@"iconSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Other Resources"])
+    {
+      [fileIcon setImage: IMAGE (@"otherSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Subprojects"])
+    {
+      [fileIcon setImage: IMAGE (@"subprojectSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Documentation"])
+    {
+      [fileIcon setImage: IMAGE (@"helpSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Supporting Files"])
+    {
+      [fileIcon setImage: IMAGE (@"genericSuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Libraries"])
+    {
+      [fileIcon setImage: IMAGE (@"librarySuitcase")];
+    }
+  else if ([lastComp isEqualToString: @"Non Project Files"])
+    {
+      [fileIcon setImage: IMAGE (@"projectSuitcase")];
+    }
+  else 
+    {
+      [fileIcon 
+	setImage: [[NSWorkspace sharedWorkspace] iconForFileType:extension]];
+    }
+
+  // Set title
+  if ([[object selectedFiles] count] > 1
+      && [pathComps count] > 2)
+    {
+      [fileIconTitle setStringValue:
+	[NSString stringWithFormat: 
+	@"%i files", [[object selectedFiles] count]]];
+    }
+  else
+    {
+      [fileIconTitle setStringValue:lastComp];
+    }
+}
+
 @end
+

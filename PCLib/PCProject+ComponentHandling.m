@@ -27,12 +27,6 @@
   case BUILD_TAG:
     [self showBuildView:self];
     break;
-  case SETTINGS_TAG:
-    [self showInspector:self];
-    break;
-  case PREFS_TAG:
-    [self showBuildTargetPanel:self];
-    break;
   case LAUNCH_TAG:
     if ([self isExecutable])
       {
@@ -48,6 +42,16 @@
   case EDITOR_TAG:
     [self showEditorView:self];
     break;
+  case FILES_TAG:
+    break;
+  case FIND_TAG:
+    break;
+  case INSPECTOR_TAG:
+    [self showInspector:self];
+    break;
+/*  case PREFS_TAG:
+    [self showBuildTargetPanel:self];
+    break;*/
   default:
     break;
   }
@@ -109,6 +113,7 @@
       [box setContentView: view];
       [box display];
     }
+  [projectBuilder setTooltips];
 }
 
 - (void)showRunView:(id)sender
@@ -165,6 +170,7 @@
       [box setContentView: view];
       [box display];
     }
+  [projectDebugger setTooltips];
 }
 
 - (void)showEditorView:(id)sender
