@@ -56,7 +56,6 @@
 
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;
-- (void)appendLibraries:(PCMakefileFactory*)mff;
 - (void)appendPublicHeaders:(PCMakefileFactory *)mff;
 - (void)appendTail:(PCMakefileFactory *)mff;
 

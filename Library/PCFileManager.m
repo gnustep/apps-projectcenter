@@ -189,7 +189,7 @@ static PCFileManager *_mgr = nil;
 - (BOOL)copyFile:(NSString *)file toFile:(NSString *)toFile
 {
   NSFileManager *fm = [NSFileManager defaultManager];
-  NSString      *directory = nil;
+  NSString      *directoryPath = nil;
 
   if (!file)
     {
@@ -198,8 +198,8 @@ static PCFileManager *_mgr = nil;
 
   if (![fm fileExistsAtPath:toFile]) 
     {
-      directory = [toFile stringByDeletingLastPathComponent];
-      if ([self createDirectoriesIfNeededAtPath:directory] == NO)
+      directoryPath = [toFile stringByDeletingLastPathComponent];
+      if ([self createDirectoriesIfNeededAtPath:directoryPath] == NO)
 	{
 	  return NO;
 	}
@@ -254,12 +254,45 @@ static PCFileManager *_mgr = nil;
   return YES;
 }
 
-- (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory
+- (BOOL)removeDirectoriesIfEmptyAtPath:(NSString *)path
 {
-  NSEnumerator  *filesEnum = nil;
-  NSString      *file = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
+
+  while ([[fm directoryContentsAtPath:path] count] == 0)
+    {
+      if ([fm removeFileAtPath:path handler:nil] == NO)
+	{
+	  return NO;
+	}
+      path = [path stringByDeletingLastPathComponent];
+    }
+
+  return YES;
+}
+
+- (BOOL)removeFile:(NSString *)file fromDirectory:(NSString *)directory
+{
   NSString      *path = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
+  
+  if (!file)
+    {
+      return NO;
+    }
+
+  path = [directory stringByAppendingPathComponent:file];
+  if (![fm removeFileAtPath:path handler:nil])
+    {
+      return NO;
+    }
+
+  return YES;
+}
+
+- (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory
+{
+  NSEnumerator *filesEnum = nil;
+  NSString     *file = nil;
 
   if (!files)
     {
@@ -269,12 +302,12 @@ static PCFileManager *_mgr = nil;
   filesEnum = [files objectEnumerator];
   while ((file = [filesEnum nextObject]))
     {
-      path = [directory stringByAppendingPathComponent:file];
-      if (![fm removeFileAtPath:path handler:nil])
+      if ([self removeFile:file fromDirectory:directory] == NO)
 	{
 	  return NO;
 	}
     }
+
   return YES;
 }
 

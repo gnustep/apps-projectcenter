@@ -100,9 +100,13 @@ static PCAppProj *_creator = nil;
 
   // Copy the project files to the provided path
   _file = [projBundle pathForResource:@"main" ofType:@"m"];
-  _2file = [path stringByAppendingPathComponent:@"main.m"];
+  _2file = [path stringByAppendingPathComponent:
+    [NSString stringWithFormat:@"%@_main.m", projectName]];
   [pcfm copyFile:_file toFile:_2file];
   [pcfc replaceTagsInFileAtPath:_2file withProject:project];
+  [projectDict 
+    setObject:[NSArray arrayWithObjects:[_2file lastPathComponent],nil]
+       forKey:PCOtherSources];
 
   _file = [projBundle pathForResource:@"AppController" ofType:@"m"];
   _2file = [path stringByAppendingPathComponent:@"AppController.m"];
@@ -118,6 +122,8 @@ static PCAppProj *_creator = nil;
   [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
   // Resources
+  // By default resources located at Resources subdir until Info-gnustep.plist
+  // will remain not licalisable file. In the future it should be English.lproj.
   _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
 
   // Main NIB

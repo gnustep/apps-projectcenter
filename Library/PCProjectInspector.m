@@ -212,7 +212,7 @@
   switch([sender indexOfSelectedItem]) 
     {
     case 0:
-      [inspectorView setContentView:buildAttributesView];
+      [inspectorView setContentView: buildAttributesView];
       break;
     case 1:
       [inspectorView setContentView: projectAttributesView];
@@ -221,7 +221,7 @@
       [inspectorView setContentView: projectDescriptionView];
       break;
     case 3:
-      [inspectorView setContentView:fileAttributesView];
+      [inspectorView setContentView: fileAttributesView];
       break;
     }
 

@@ -44,6 +44,7 @@
 
 - (void)appendString:(NSString *)aString;
 
+- (void)appendLibraries:(NSArray *)array;
 - (void)appendHeaders:(NSArray *)array;
 - (void)appendHeaders:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendClasses:(NSArray *)array;

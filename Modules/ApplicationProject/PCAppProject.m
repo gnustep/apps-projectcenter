@@ -418,6 +418,9 @@
   // Head (Application)
   [self appendHead:mf];
 
+  // Libraries depend upon
+  [mf appendLibraries:[projectDict objectForKey:PCLibraries]];
+
   // Subprojects
   if ([[projectDict objectForKey:PCSubprojects] count] > 0)
     {

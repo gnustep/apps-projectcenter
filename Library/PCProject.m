@@ -994,7 +994,7 @@ NSString
   [self writeMakefile];
 
   // Also notify on dictionary changes. Update the interface and so on.
-  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+//  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   return YES;
 }

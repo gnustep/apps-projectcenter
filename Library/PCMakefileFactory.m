@@ -30,7 +30,7 @@
 #define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
 #define COMMENT_RESOURCES    @"\n\n#\n# Resource files\n#\n"
 #define COMMENT_CLASSES      @"\n\n#\n# Class files\n#\n"
-#define COMMENT_CFILES       @"\n\n#\n# C files\n#\n"
+#define COMMENT_CFILES       @"\n\n#\n# Other sources\n#\n"
 #define COMMENT_SUBPROJECTS  @"\n\n#\n# Subprojects\n#\n"
 #define COMMENT_APP          @"\n\n#\n# Main application\n#\n"
 #define COMMENT_LIBRARIES    @"\n\n#\n# Additional libraries\n#\n"
@@ -196,13 +196,44 @@ static PCMakefileFactory *_factory = nil;
   [mfile appendString:aString];
 }
 
+- (void)appendLibraries:(NSArray *)array
+{
+  NSMutableArray *libs = [NSMutableArray arrayWithArray:array];
+  NSString       *lib = nil;
+  NSEnumerator   *enumerator = nil;
+
+  [libs removeObject:@"gnustep-base"];
+  [libs removeObject:@"gnustep-gui"];
+
+  if (libs == nil || [libs count] == 0)
+    {
+      return;
+    }
+
+  [self appendString:@"\n\n#\n# Libraries\n#\n"];
+  [self appendString:
+    [NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",pnme]];
+
+  enumerator = [libs objectEnumerator];
+  while ((lib = [enumerator nextObject])) 
+    {
+      [self appendString:[NSString stringWithFormat:@"-l%@ ",lib]];
+    }
+}
+
 - (void)appendHeaders:(NSArray *)array
 {
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendHeaders:array forTarget:pnme];
 }
 
 - (void)appendHeaders:(NSArray *)array forTarget:(NSString *)target
 {
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendString:COMMENT_HEADERS];
   [self appendString:
     [NSString stringWithFormat:@"%@_HEADER_FILES = \\\n", target]];
@@ -212,11 +243,17 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendClasses:(NSArray *)array
 {
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendClasses:array forTarget:pnme];
 }
 
 - (void)appendClasses:(NSArray *)array forTarget:(NSString *)target
 {
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendString:COMMENT_CLASSES];
   [self appendString:
     [NSString stringWithFormat:@"%@_OBJC_FILES = \\\n",target]];
@@ -226,44 +263,68 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendOtherSources:(NSArray *)array
 {
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendOtherSources: array forTarget: pnme];
 }
 
 - (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target
 {
   NSMutableArray *marray = nil;
+  NSMutableArray *oarray = nil;
   NSEnumerator   *oenum;
   NSString       *file;
   
-  [self appendString:COMMENT_CFILES];
-  [self appendString:[NSString stringWithFormat:@"%@_C_FILES = ", target]];
-  if ( array == nil || [array count] == 0)
+  if (array == nil || [array count] == 0)
     return;
-  
-  /* Other Sources can have both m files and c files (possibly others?).  */
+
+  // Other Sources can have both .m files and non .m files
   oenum = [array objectEnumerator];
   while ((file = [oenum nextObject]))
     {
       if ([file hasSuffix: @".m"])
 	{
 	  if (marray == nil)
-	    marray = [NSMutableArray arrayWithCapacity: 2];
+	    {
+	      marray = [NSMutableArray array];
+	    }
 	  [marray addObject: file];
 	}
-      else /* if ([f hasSuffix: @".c"]) */
+      else // non .m file
 	{
-	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",file]];
+	  if (oarray == nil)
+	    {
+	      oarray = [NSMutableArray array];
+	    }
+	  [oarray addObject: file];
 	}
     }
 
-  [self appendString: @"\n\n"];
-  [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES += ",pnme]];
-  if ( marray )
+  [self appendString:COMMENT_CFILES];
+
+  // Add other sources if any
+  if (oarray && [oarray count] != 0)
     {
-      NSString     *file;
-      NSEnumerator *enumerator = [marray objectEnumerator];
+      oenum = [oarray objectEnumerator];
 	
-      while ( (file = [enumerator nextObject]) ) 
+      [self appendString:[NSString stringWithFormat:@"%@_C_FILES = ", target]];
+  
+      while ((file = [oenum nextObject])) 
+	{
+	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",file]];
+	}
+      [self appendString: @"\n\n"];
+    }
+
+  // Add .m files if any
+  if (marray && [marray count] != 0)
+    {
+      oenum = [marray objectEnumerator];
+	
+      [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES += ",pnme]];
+
+      while ((file = [oenum nextObject])) 
 	{
 	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ", file]];
 	}
@@ -279,10 +340,8 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendResourceItems:(NSArray *)array
 {
-  if ([array count] <= 0)
-    {
-      return;
-    }
+  if (array == nil || [array count] <= 0)
+    return;
 
   [self appendString:@"\\\n"];
   [self appendString:[array componentsJoinedByString:@" \\\n"]];
@@ -295,19 +354,20 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendSubprojects:(NSArray*)array
 {
+  NSString     *tmp = nil;
+  NSEnumerator *enumerator = nil;
+
+  if (array == nil || [array count] == 0)
+    return;
+
   [self appendString:COMMENT_SUBPROJECTS];
   [self appendString:@"SUBPROJECTS = "];
 
-  if (array && [array count]) 
+  enumerator = [array objectEnumerator];
+  while ((tmp = [enumerator nextObject]))
     {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-
-      while ((tmp = [enumerator nextObject]))
-	{
-	  tmp = [tmp stringByAppendingPathExtension:@"subproj"];
-	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-	}
+      tmp = [tmp stringByAppendingPathExtension:@"subproj"];
+      [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
     }
 }
 

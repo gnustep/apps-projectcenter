@@ -20,7 +20,7 @@
     INSTALLDIR = "$(HOME)/GNUstep";
     OBJC_COMPILEROPTIONS = "";
     OTHER_RESOURCES = ();
-    OTHER_SOURCES = ("main.m");
+    OTHER_SOURCES = ("");
     PRINCIPAL_CLASS = "NSApplication";
     PROJECT_AUTHORS = ();
     PROJECT_CREATOR = "";

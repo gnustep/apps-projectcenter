@@ -229,8 +229,8 @@
   // Head
   [self appendHead:mf];
 
-  // Libraries
-  [self appendLibraries:mf];
+  // Libraries depend upon
+  [mf appendLibraries:[projectDict objectForKey:PCLibraries]];
 
   // Subprojects
   if ([[projectDict objectForKey:PCSubprojects] count] > 0)
@@ -307,31 +307,6 @@
       [mff appendString:
 	[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
         installDir]];
-    }
-}
-
-- (void)appendLibraries:(PCMakefileFactory *)mff
-{
-  NSArray *libs = [projectDict objectForKey:PCLibraries];
-
-  [mff appendString:@"\n#\n# Libraries\n#\n"];
-
-  [mff 
-    appendString:[NSString stringWithFormat:@"%@_TOOL_LIBS += ",projectName]];
-
-  if (libs && [libs count])
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [libs objectEnumerator];
-
-      while ((tmp = [enumerator nextObject])) 
-	{
-	  if (![tmp isEqualToString:@"gnustep-base"] &&
-	      ![tmp isEqualToString:@"gnustep-gui"]) 
-	    {
-	      [mff appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-	    }
-	}
     }
 }
 

@@ -91,7 +91,13 @@
 // Calls copyFile:intoDirectory in cycle
 - (BOOL)copyFiles:(NSArray *)files intoDirectory:(NSString *)directory;
 
-// Return NO if removing of any file failed
+// If directory is empty remove it recursively
+- (BOOL)removeDirectoriesIfEmptyAtPath:(NSString *)path;
+
+// Remove file at path
+- (BOOL)removeFile:(NSString *)file fromDirectory:(NSString *)directory;
+
+// Remove array of files from directory
 - (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory;
 
 - (void)createFile;

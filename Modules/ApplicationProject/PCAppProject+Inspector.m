@@ -63,7 +63,8 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   // Languages
   [projectLanguagePB removeAllItems];
   [projectLanguagePB 
-    addItemsWithTitles:[projectDict objectForKey:PCUserLanguages]];
+    addItemsWithTitles:[NSUserDefaults userLanguages]];
+//    addItemsWithTitles:[projectDict objectForKey:PCUserLanguages]];
   [projectLanguagePB 
     selectItemWithTitle:[projectDict objectForKey:PCLanguage]];
   
@@ -111,7 +112,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   NSLog(@"set current language to %@", [sender titleOfSelectedItem]);
   [self setProjectDictObject:[sender titleOfSelectedItem]
                       forKey:PCLanguage
-		      notify:YES];
+		      notify:NO];
 }
 
 - (void)setAppClass:(id)sender

@@ -1,5 +1,10 @@
 2005-01-23 Serg Stoyan <stoyan255@ukr.net>
 
+	* Move appendLibraries: from project modules into PCMakefileFactory.m
+	
+	* Include into GNUmakefile only public headers for Framework and 
+	Library project types.
+	
 	* Project type bundles now have .project suffix.
 	
 	* Library/PCBundleLoader.[hm]:

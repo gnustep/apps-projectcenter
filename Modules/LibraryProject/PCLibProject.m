@@ -216,8 +216,8 @@
   // Head
   [self appendHead:mf];
 
-  // Libraries
-  [self appendLibraries:mf];
+  // Libraries depend upon
+  [mf appendLibraries:[projectDict objectForKey:PCLibraries]];
 
   // Subprojects
   if ([[projectDict objectForKey:PCSubprojects] count] > 0)
@@ -252,8 +252,6 @@
   [self appendPublicHeaders:mf];
   
   // For compiling
-  [mf appendHeaders:[projectDict objectForKey:PCHeaders]
-          forTarget:[NSString stringWithFormat:@"lib%@",projectName]];
   [mf appendClasses:[projectDict objectForKey:PCClasses]
           forTarget:[NSString stringWithFormat:@"lib%@",projectName]];
   [mf appendOtherSources:[projectDict objectForKey:PCOtherSources]
@@ -277,7 +275,7 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
-  [mff appendString:@"\n#\n# Bundle\n#\n"];
+  [mff appendString:@"\n#\n# Library\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
     [projectDict objectForKey:PCRelease]]];
   [mff appendString:[NSString stringWithFormat:@"PACKAGE_NAME = %@\n",
@@ -292,31 +290,6 @@
     @"lib%@_HEADER_FILES_INSTALL_DIR = /%@\n", projectName, projectName]];
 }
 
-- (void)appendLibraries:(PCMakefileFactory *)mff
-{
-  NSArray *libs = [projectDict objectForKey:PCLibraries];
-
-  [mff appendString:@"\n#\n# Libraries\n#\n"];
-
-  [mff appendString:
-    [NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",projectName]];
-
-  if (libs && [libs count])
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [libs objectEnumerator];
-
-      while ((tmp = [enumerator nextObject])) 
-	{
-	  if (![tmp isEqualToString:@"gnustep-base"] &&
-	      ![tmp isEqualToString:@"gnustep-gui"]) 
-	    {
-	      [mff appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-	    }
-	}
-    }
-}
-
 - (void)appendPublicHeaders:(PCMakefileFactory *)mff
 {
   NSArray *array = [projectDict objectForKey:PCPublicHeaders];
@@ -326,7 +299,7 @@
       return;
     }
 
-  [mff appendString:@"\n#\n# Public headers (will be installed)\n#\n"];
+  [mff appendString:@"\n\n#\n# Public headers (will be installed)\n#\n"];
 
   [mff appendString:[NSString stringWithFormat:@"%@_HEADERS = ", 
                      projectName]];
