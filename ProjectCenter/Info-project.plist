@@ -1,4 +1,24 @@
 {
+  NSIcon = "ProjectCenter.tiff";
+  NSRole = "Editor";
+  NSTypes = (
+    {
+      NSUnixExtensions = ( "project" );
+      NSIcon = "ProjectCenter.tiff";
+    },
+    {
+      NSUnixExtensions = ( "m" );
+      NSIcon = "FileIcon_.m.tiff";
+    },
+    {
+      NSUnixExtensions = ( "h" );
+      NSIcon = "FileIcon_.h.tiff";
+    },
+    {
+      NSUnixExtensions = ( "c" );
+      NSIcon = "FileIcon_.c.tiff";
+    }
+  );
   NOTE = "Automatically generated, do not edit!";
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
