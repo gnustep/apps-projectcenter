@@ -88,26 +88,19 @@
 - (BOOL)writeMakefile
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *makefile = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
-    NSData *content;
+    NSData   *mfd;
+    NSString *mf = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
 
-    if (![super writeMakefile]) {
-        NSLog(@"<%@ %x>: Couldn't update PC.project...",[self class],self);
-    }
+    // Save the project file
+    [super writeMakefile];
+   
+    if (mfd = [[PCToolMakefileFactory sharedFactory] makefileForProject:self]) {
+        if ([mfd writeToFile:mf atomically:YES]) {
+            return YES;
+        }
+    }   
     
-    if (![fm movePath:makefile toPath:[projectPath stringByAppendingPathComponent:@"GNUmakefile~"] handler:nil]) {
-        NSLog(@"Couldn't write a backup GNUmakefile...");
-    }
-
-    if (!(content = [[PCToolMakefileFactory sharedFactory] makefileForProject:self])) {
-        NSLog([NSString stringWithFormat:@"Couldn't build the GNUmakefile %@!",makefile]);
-        return NO;
-    }
-    if (![content writeToFile:makefile atomically:YES]) {
-        NSLog([NSString stringWithFormat:@"Couldn't write the GNUmakefile %@!",makefile]);
-        return NO;
-    }
-    return YES;
+    return NO;
 }
 
 - (BOOL)isValidDictionary:(NSDictionary *)aDict
