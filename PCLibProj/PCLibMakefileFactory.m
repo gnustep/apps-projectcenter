@@ -85,8 +85,9 @@ static PCLibMakefileFactory *_factory = nil;
     // Install path
     [string appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_DIR=.\n",libName]];
     [string appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_INSTALL_DIR=/%@\n",libName,prName]];
-    [string appendString:[NSString stringWithFormat:@"%@_INSTALLATION_DIR=$(GNUSTEP_LOCAL_ROOT)\n",[prName uppercaseString]]];
-    [string appendString:[NSString stringWithFormat:@"%@_INSTALL_PREFIX=$(GNUSTEP_LOCAL_ROOT)\n",[prName uppercaseString]]];
+    [string appendString:[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR=%@\n",[prDict objectForKey:PCInstallDir]]];
+    [string appendString:[NSString stringWithFormat:@"%@_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)\n",[prName uppercaseString]]];
+    [string appendString:[NSString stringWithFormat:@"%@_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)\n",[prName uppercaseString]]];
     [string appendString:@"ADDITIONAL_INCLUDE_DIRS = -I..\n"];
     [string appendString:@"srcdir = .\n"];
 
