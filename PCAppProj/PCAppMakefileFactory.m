@@ -76,6 +76,7 @@ static PCAppMakefileFactory *_factory = nil;
     [string appendString:@"# Main application\n"];
     [string appendString:@"#\n\n"];
 
+    [string appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",prName]];
     [string appendString:[NSString stringWithFormat:@"APP_NAME=%@\n",prName]];
     // [string appendString:[NSString stringWithFormat:@"%@_PRINCIPAL_CLASS=%@\n",prName,[prDict objectForKey:PCPrincipalClass]]];
     //[string appendString:[NSString stringWithFormat:@"%@_MAIN_MODEL_FILE=%@\n",prName,[prDict objectForKey:PCMainGModelFile]]];
