@@ -28,7 +28,9 @@
     LANGUAGE = English;
     LAST_EDITING = "";
     LIBRARIES = (
-	gnustep-base
+	gnustep-base,
+	gnustep-gui,
+	ProjectCenter
     );
     LINKEROPTIONS = "";
     MAININTERFACE = "";

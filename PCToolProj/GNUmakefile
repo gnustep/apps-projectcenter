@@ -28,7 +28,7 @@ PCToolProj_PRINCIPAL_CLASS=PCToolProj
 # Additional libraries
 #
 
-PCToolProj_LIBRARIES_DEPEND_UPON += 
+PCToolProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 

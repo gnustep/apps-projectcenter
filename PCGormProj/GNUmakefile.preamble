@@ -59,7 +59,8 @@ ADDITIONAL_LIB_DIRS += -L../PCLib/$(GNUSTEP_OBJ_DIR)
 
 ADDITIONAL_TOOL_LIBS +=
 
-PCAppProj_BUNDLE_LIBS = -lProjectCenter
+# Not needed anymore, now managed by ProjectCenter
+#PCGormProj_BUNDLE_LIBS = -lProjectCenter
 
 
 #

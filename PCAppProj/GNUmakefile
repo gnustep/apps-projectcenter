@@ -28,7 +28,7 @@ PCAppProj_PRINCIPAL_CLASS=PCAppProj
 # Additional libraries
 #
 
-PCAppProj_LIBRARIES_DEPEND_UPON += 
+PCAppProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 

@@ -28,7 +28,7 @@ PCBundleProj_PRINCIPAL_CLASS=PCBundleProj
 # Additional libraries
 #
 
-PCBundleProj_LIBRARIES_DEPEND_UPON += 
+PCBundleProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 

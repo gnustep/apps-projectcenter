@@ -28,7 +28,7 @@ PCGormProj_PRINCIPAL_CLASS=PCGormProj
 # Additional libraries
 #
 
-PCGormProj_LIBRARIES_DEPEND_UPON += 
+PCGormProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 

@@ -28,7 +28,7 @@ PCBaseFileTypes_PRINCIPAL_CLASS=PCBaseFileType
 # Additional libraries
 #
 
-PCBaseFileTypes_LIBRARIES_DEPEND_UPON += 
+PCBaseFileTypes_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 
