@@ -82,6 +82,7 @@ Modules/ApplicationProject/Application.project \
 Modules/BundleProject/Bundle.project \
 Modules/FrameworkProject/Framework.project \
 Modules/LibraryProject/Library.project \
+Modules/ResourceSetProject/ResourceSet.project \
 Modules/ToolProject/Tool.project
 
 #

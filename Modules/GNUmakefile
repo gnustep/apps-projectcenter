@@ -15,6 +15,7 @@ SUBPROJECTS = \
         BundleProject      \
 	FrameworkProject   \
         LibraryProject     \
+	ResourceSetProject \
         ToolProject        
 #	ObjCParser
 

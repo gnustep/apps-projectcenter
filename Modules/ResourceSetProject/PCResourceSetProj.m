@@ -1,12 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2004 Free Software Foundation
 
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
-
-   Description: creates new project of the type Bundle!
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -25,15 +22,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCFileCreator.h>
+#include "ProjectCenter/PCFileCreator.h"
 #include "ProjectCenter/PCMakefileFactory.h"
 
-#include "PCBundleProj.h"
-#include "PCBundleProject.h"
+#include "PCResourceSetProj.h"
+#include "PCResourceSetProject.h"
 
-@implementation PCBundleProj
+@implementation PCResourceSetProj
 
-static PCBundleProj *_creator = nil;
+static PCResourceSetProj *_creator = nil;
 
 //----------------------------------------------------------------------------
 // ProjectType
@@ -51,34 +48,29 @@ static PCBundleProj *_creator = nil;
 
 - (Class)projectClass
 {
-  return [PCBundleProject class];
+  return [PCResourceSetProject class];
 }
 
 - (NSString *)projectTypeName
 {
-  return @"Loadable Bundle";
+  return @"Resource Set";
 }
 
 - (PCProject *)createProjectAt:(NSString *)path
 {
-  PCBundleProject *project = nil;
-  NSFileManager   *fm = [NSFileManager defaultManager];
+  PCResourceSetProject *project = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
   NSAssert(path,@"No valid project path provided!");
 
   if ([fm createDirectoryAtPath:path attributes:nil])
     {
-      NSBundle            *projectBundle = nil;
-      NSMutableDictionary *projectDict = nil;
-      NSString            *projectName = nil;
       NSString            *_file = nil;
-      NSString            *_2file = nil;
-//      NSString            *_lresourcePath;
-      NSString            *_resourcePath;
-      PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
+      NSMutableDictionary *projectDict = nil;
+      NSBundle            *projectBundle = nil;
+      NSString            *projectName = nil;
 
-      project = [[[PCBundleProject alloc] init] autorelease];
-
+      project = [[[PCResourceSetProject alloc] init] autorelease];
       projectBundle = [NSBundle bundleForClass:[self class]];
 
       _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
@@ -92,7 +84,6 @@ static PCBundleProj *_creator = nil;
 	}
       [projectDict setObject:projectName forKey:PCProjectName];
       [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
-      [projectDict setObject:projectName forKey:PCPrincipalClass];
       [projectDict setObject:[[NSCalendarDate date] description]
 	              forKey:PCCreationDate];
       [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
@@ -101,33 +92,11 @@ static PCBundleProj *_creator = nil;
       [project setProjectPath:path];
       [project setProjectName:projectName];
 
-      // Copy the project files to the provided path
-      
-      // $PROJECTNAME$.m
-      _file = [NSString stringWithFormat:@"%@", projectName];
-      _2file = [NSString stringWithFormat:@"%@.m", projectName];
-      [pcfc createFileOfType:ObjCClass 
-	                path:[path stringByAppendingPathComponent:_file]
-		     project:project];
-      [projectDict setObject:[NSArray arrayWithObjects:_2file,nil]
-	              forKey:PCClasses];
-
-      // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
-      _file = [NSString stringWithFormat:@"%@.h", projectName];
-      [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
-	              forKey:PCHeaders];
-
       // GNUmakefile.postamble
       [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
-      // Resources
-/*      _lresourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-      [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
-      _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
-      [fm createDirectoryAtPath:_resourcePath attributes:nil];
-
       // Set the new dictionary - this causes the GNUmakefile to be written
-      if (![project assignProjectDict:projectDict])
+      if(![project assignProjectDict:projectDict])
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Could not load %@!",
@@ -144,12 +113,15 @@ static PCBundleProj *_creator = nil;
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
-  NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-  NSString     *pPath = [path stringByDeletingLastPathComponent];
+  NSDictionary       *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  NSString           *pPath = [path stringByDeletingLastPathComponent];
+  PCResourceSetProject *project = nil;
 
-  return [[[PCBundleProject alloc] 
-    initWithProjectDictionary:dict
+  project = [[[PCResourceSetProject alloc] 
+    initWithProjectDictionary:dict 
                          path:pPath] autorelease];
+
+  return project;
 }
 
 @end
