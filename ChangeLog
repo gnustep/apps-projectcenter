@@ -1,4 +1,9 @@
 
+2003-07-10 Philippe C.D. Robert <probert@siggraph.org>
+
+        * Disabled unused menu entries: ProjectCenter_main.m
+        * Some spelling corrections: PCMenuController.m
+
 2003-07-05 Philippe C.D. Robert <probert@siggraph.org>
 
         * Uppercase key for interface category lookup: PCFileManager.m

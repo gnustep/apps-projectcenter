@@ -426,7 +426,7 @@
 - (void)fileOpenQuickly:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
@@ -439,14 +439,14 @@
   [projectManager renameFileTo:proj];*/
 
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 
 - (void)fileNewUntitled:(id)sender
 {
   NSRunAlertPanel(@"PCMenuController: Sorry!",
-		  @"This feature not finished yet",
+		  @"This feature is not finished yet",
 		  @"OK",nil,nil);
 }
 

@@ -62,7 +62,9 @@ createMenu()
 #endif
   
   NSMenu *file;
+#ifdef ENABLE_ALL_FILE_OPERATIONS
   NSMenu *file_view;
+#endif
   
   NSMenu *edit;
   NSMenu *edit_find;
@@ -204,6 +206,7 @@ createMenu()
   [file addItemWithTitle:@"Close"
                   action:@selector(fileClose:)
 	   keyEquivalent:@"W"];
+#ifdef ENABLE_ALL_FILE_OPERATIONS
   [file addItemWithTitle:@"View"
                   action:action
 	   keyEquivalent:@""];
@@ -229,6 +232,7 @@ createMenu()
   [file_view addItemWithTitle:@"Tear Off"
                        action:action
 		keyEquivalent:@"T"];
+#endif
 
   /*
    * Edit submenu
