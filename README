@@ -2,58 +2,27 @@
     ProjectCenter 
     =============
 
-    This is ProjectCenter, the GNUstep IDE. ProjectCenter is part of the
-    GNUstep project and is copyrighted by the Free Softare Foundation.
-
-    ProjectCenter is released under the GPL - see file 'COPYING' for details.
+    This is ProjectCenter, the GNUstep IDE which is part of the GNUstep 
+    project and is copyrighted by the Free Softare Foundation. ProjectCenter 
+    is released under the GPL - see 'COPYING' for the details.
     
-    Read the NEWS file for the latest user visible changes. Read the INSTALL
-    file for installation instructions.
+    Further information can be found on the GNUstep site at www.gnustep.org
+    on the ProjectCenter page 
 
+        http://www.gnustep.org/developers/ProjectCenter.html
 
-    Status
-    ------
+    For the installation instructions read the INSTALL file.
+    For a list of upcoming and/or planned features read the TODO file. 
+    For a list of changes in released versions read the ANNOUNCE file. 
+    
+    The main author of ProjectCenter is Philippe C.D. Robert, but others
+    have contributed a lot to the current state of the project: 
 
-    A lot is still not done and not even designed. As for the moment the
-    application can be used for creating and managing projects of different
-    kinds, such as GORM applications, libraries, tools and so on.
+    Code - Pierre-Yves Rivaille
+	   Nicola Perot
+           Richard Frith-Macdonald
+           Adam Fedor
+           Serg Stoyan
 
-    What still needs a lot of effort:
+    UI   - Many of the icons have been created by Andrew Lindsay
 
-    o Code editing/external editor support
-    o Debugging support
-    o Code 'wizards' 
-    o UML case tool?!
-    o Overall code improvements and bug fixes!!!
-    o ... and a lot more!
-
-
-    ProjectCenter.app on Mac OS X
-    -----------------------------
-
-    It is possible to compile and run ProjectCenter on Mac OS X 10.2 using 
-    Cocoa. But since the application relies on the GNUstep makefile package 
-    it will not be really useable (yet). 
-
-    Installation: - Compile PCLib and install it in ~/Library/Frameworks/
-                  - Compile ProjectCenter.app and install it at the usual place
-                  - Compile all bundles and install them where appropriate
-                  - Run ProjectCenter.app and set the bundle path in the 
-                    preferences panel
-                  - Restart ProjectCenter.app - that's it!
-
-    Known issues: - The GUI is hardcoded therefore it is not adopted to Mac OS X
-                    metrics.
-
-
-    Acknowledgements
-    ----------------
-
-    Icons     - Many are created by Andrew Lindsay.
-
-    Code      - Pierre-Yves Rivaille
-	        Nicola Perot
-                Richard Frith-Macdonald
-                Adam Fedor
-
-    And all I have forgotten...

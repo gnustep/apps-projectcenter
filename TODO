@@ -1,0 +1,53 @@
+TODO
+****
+
+This is the GNUstep ProjectCenter TODO list. 
+Feel free to propose changes to this list or make suggestions!
+
+ProjectCenter 0.4                                                   Owner
+-----------------                                                   ------
+
+- ProjectCenter localisation                                        robert
+- Editor enhancements                                               robert
+- Project Inspector completion                                      serg
+- UI using Gorm and overal code cleanup                             ??? (all)
+- Initial user documentation                                        ???
+
+ProjectCenter 0.5
+-----------------
+
+- Initial support for subprojects                                   robert
+- Localisation support for GUI based projects                       robert
+- Review and cleanup of PC project bundles/templates                robert
+- Direct code documentation (using autogsdoc)                       ???
+- Better integration with other tools (Gorm, CodeEditor, EasyDiff)  ???
+
+ProjectCenter 0.6
+-----------------
+
+- ProjectBuilder enhancements                                       ???
+- ProjectLauncher enhancements                                      ???
+- Initial support for integrated debugging                          ???
+
+ProjectCenter 0.7
+-----------------
+
+- Optimised support for integrated debugging                        ???
+- More project customisation possibilities                          ???
+
+ProjectCenter 0.8
+-----------------
+
+- An initial project wide find feature                              ???
+
+ProjectCenter 0.9
+-----------------
+
+- An initial class browser/documentation feature                    ???
+
+ProjectCenter 1.0
+-----------------
+
+  Version 1.0 is aimed at stabilising and optimising existing features. There
+  will not be any new features since 0.9.
+

@@ -1,43 +1,27 @@
 Installation
 ************
 
-This file documents the installation of the GNUstep ProjectCenter.
-
-It was written by Philippe C.D. Robert with the help of many others.
-Since version 0.2.5 it is copyrighted by the Free Software Foundation.  
-
-You may copy, distribute, and modify it freely as long as you preserve this 
-copyright notice and permission notice.
+This file documents the installation of the GNUstep ProjectCenter application.
 
 Installing `ProjectCenter'
 =========================
 
-ProjectCenter requires GNUstep to be installed. Make sure that you have an
-up to date version on your system installed! 
+ProjectCenter requires GNUstep core to be installed. Make sure that you have 
+the latest released version installed.
 
-In order to use apps built with ProjectCenter, you will need at least a 
-version not older than from October 2000.
+Here is the quick way of building and installing ProjectCenter:
 
-Here is a quick-and-dirty example of installation commands:
+    cd ProjectCenter;
+    make;
+    make install;
 
-GNUstep:	
-		cd ProjectCenter
-		make install
-
-		If you want to do make; make install, make sure that you
-		first make; make install PCLib, and *then* the rest of the
-		sources!
-
-In order to do this successfully you must first install PCLib and the bundles and then the application itself!
+By default ProjectCenter gets installed under GNUSTEP_SYSTEM_ROOT.
 
 Important!
 ==========
 
-o ProjectCenter now installs into GNUSTEP_INSTALLATION_DIR. Be sure to have the 
-  correct privileges when installing it!
-
-o When ProjectCenter fails to launch due to a missing bundle path, you can set 
+  When ProjectCenter fails to launch due to a missing bundle path, you can set 
   it using GNUstep's defaults tool ie. to:
 
-  defaults write ProjectCenter BundlePaths /usr/GNUstep/Local/Library/ProjectCenter
+  defaults write ProjectCenter BundlePaths /TheProperPath/Library/ProjectCenter
 

@@ -1,47 +1,42 @@
 Announcement
 ************
 
+This is version 0.3.5 of ProjectCenter.
+
 What is ProjectCenter?
 ======================
 
-   ProjectCenter is an application developed for GNUstep which one day should
-   becoime a full blown development environment. 
-
-   The file `INSTALL' gives instructions for installing the package.
-
-   The GNUstep web site at http://www.gnustep.org/developers/ProjectCenter.html
-   contains more up-to-date information.
+   ProjectCenter is a clone of the NEXTSTEP ProjectBuilder application for
+   GNUstep.
 
    ProjectCenter is covered under the GNU Public License.  This means if you 
    make changes to these programs, you cannot charge a fee, other than
    distribution fees, for others to use the program. You should read the
    COPYING file for more information.
 
-How can you help?
-=================
+Noteworthy changes in version `0.3.5'.
+======================================
 
-   * Check the bug list at the ProjectCenter web site.  
-     If you can volunteer for any of the todo's, or if you have any useful    
-     comments send email! <phr@3dkit.org>
+   Many features have been polished and stabilised, see ChangeLog for the
+   complete list of changes. 
 
-   * Give us feedback!  Tell us what you like; tell us what you think
-     could be better.  Send bug reports to <phr@3dkit.org>.
+How can I get support for this software?
+========================================
 
-Machines
-========
+   You may wish to use the GNUstep discussion mailing list for general
+questions and discussion.  Look at the GNUstep Web Pages for more
+information regarding GNUstep resources <http://www.gnustep.org/>
 
-   GNUstep ProjectCenter is known to compile on the following machines.
+Where can you get it?  How can you compile it?
+==============================================
 
-	* Linux x86, GNUstep 0.6.9 or newer
-	* Linux	PPC, GNUstep 0.6.9 or newer
+   You can download sources and rpms (for some machines) from
+   ftp://ftp.gnustep.org/pub/gnustep/dev-apps/.
 
 Where do I send bug reports?
 ============================
 
-   Bug reports can be sent to <phr@3dkit.org>.
-
-Enjoy!
-Philippe C.D. Robert
+   Bug reports can be sent to <bug-gnustep@gnu.org>.
 
 Obtaining GNU Software
 ======================
@@ -51,14 +46,14 @@ Obtaining GNU Software
    Check out the GNUstep web site. (`http://www.gnustep.org/')
 
    Most GNU software is packed using the GNU `gzip' compression program.
-Source code is available on most sites distributing GNU software.
+   Source code is available on most sites distributing GNU software.
 
    For information on how to order GNU software on tape, floppy or
-cd-rom, or printed GNU manuals, check the file etc/ORDERS in the GNU
-Emacs distribution or in GNUinfo/ORDERS on prep, or e-mail a request to:
-<gnu@gnu.org>
+   cd-rom, or printed GNU manuals, check the file etc/ORDERS in the GNU
+   Emacs distribution or in GNUinfo/ORDERS on prep, or e-mail a request to:
+   <gnu@gnu.org>
 
    By ordering your GNU software from the FSF, you help us continue to
-develop more free software.  Media revenues are our primary source of
-support.  Donations to FSF are deductible on US tax returns.
+   develop more free software.  Media revenues are our primary source of
+   support.  Donations to FSF are deductible on US tax returns.
 
