@@ -371,12 +371,12 @@
   [prefInterfaceView setTitlePosition: NSNoTitle];
   [prefInterfaceView setBorderType: NSNoBorder];
 
-  v = [[NSBox alloc] initWithFrame: NSMakeRect (5,208,254,102)];
+  v = [[NSBox alloc] initWithFrame: NSMakeRect (5,187,254,123)];
   [v setTitle: @"Display as separate panel..."];
   [prefInterfaceView addSubview: v];
   RELEASE(v);
 
-  separateBuilder = [[NSButton alloc] initWithFrame: NSMakeRect (48,48,124,21)];
+  separateBuilder = [[NSButton alloc] initWithFrame: NSMakeRect (48,69,124,21)];
   [separateBuilder setTitle: @"Project Builder"];
   [separateBuilder setButtonType: NSSwitchButton];
   [separateBuilder setBordered: NO];
@@ -387,7 +387,7 @@
   [v addSubview: separateBuilder];
   RELEASE(separateBuilder);
 
-  separateLauncher = [[NSButton alloc] initWithFrame: NSMakeRect(48,27,124,21)];
+  separateLauncher = [[NSButton alloc] initWithFrame: NSMakeRect(48,48,124,21)];
   [separateLauncher setTitle: @"Project Launcher"];
   [separateLauncher setButtonType: NSSwitchButton];
   [separateLauncher setBordered: NO];
@@ -398,7 +398,7 @@
   [v addSubview: separateLauncher];
   RELEASE(separateLauncher);
 
-  separateEditor = [[NSButton alloc] initWithFrame: NSMakeRect(48,6,124,21)];
+  separateEditor = [[NSButton alloc] initWithFrame: NSMakeRect(48,27,124,21)];
   [separateEditor setTitle: @"Project Editor"];
   [separateEditor setButtonType: NSSwitchButton];
   [separateEditor setBordered: NO];
@@ -409,8 +409,19 @@
   [v addSubview: separateEditor];
   RELEASE(separateEditor);
 
+  separateHistory = [[NSButton alloc] initWithFrame: NSMakeRect(48,6,124,21)];
+  [separateHistory setTitle: @"Project History"];
+  [separateHistory setButtonType: NSSwitchButton];
+  [separateHistory setBordered: NO];
+  [separateHistory setRefusesFirstResponder: YES];
+  [separateHistory setTarget: self];
+  [separateHistory setAction: @selector (setDisplayPanels:)];
+  [separateHistory setContinuous: NO];
+  [v addSubview: separateHistory];
+  RELEASE(separateHistory);
+
   // Some buttons
-  v = [[NSBox alloc] initWithFrame: NSMakeRect(5,100,254,98)];
+  v = [[NSBox alloc] initWithFrame: NSMakeRect(5,79,254,98)];
   [v setTitle: @"Misc"];
   [prefInterfaceView addSubview: v];
   RELEASE(v);
