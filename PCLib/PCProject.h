@@ -101,18 +101,12 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     id buildTargetHostField;
     id buildTargetArgsField;
     
-    id buildStatusField;
-    id targetField;
-
     NSString *projectName;
     NSString *projectPath;
     NSMutableDictionary *projectDict;
 
     NSDictionary *rootCategories;	// Needs to be initialised by subclasses!
     NSMutableDictionary *buildOptions;
-
-    @private
-    BOOL _needsReleasing;
 }
 
 //===========================================================================================

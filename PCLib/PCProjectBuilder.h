@@ -40,6 +40,9 @@
   NSMutableDictionary *buildTasks;
   NSString *makePath;
 
+  id buildStatusField;
+  id targetField;
+
   PCProject *currentProject;
   NSDictionary *currentOptions;
 }

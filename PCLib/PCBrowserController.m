@@ -142,14 +142,14 @@ NSString *FileShouldOpenNotification = @"FileShouldOpenNotification";
     int		count = [files count];
     
     if (count == 0) {
-      NSLog(@"<%@ %x>: create rows for column aborted - 0 files!",[self class],self);
+      NSLog(@"<%@ %x>: create rows for column in %@ (%x) aborted - 0 files!",[self class],self,[project class],project);
       return;
     }
 
 #ifdef DEBUG
     NSLog(@"<%@ %x>: create rows for column %d in %x",[self class],self,column,sender);
 #endif DEBUG
-
+    
     for (i = 0; i < count; ++i) {
       NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
       id cell;

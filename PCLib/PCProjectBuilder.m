@@ -51,6 +51,7 @@
   NSRect _w_frame;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id button;
+  id textField;
 
   /*
    * Build Window
@@ -106,7 +107,7 @@
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView2 autorelease];
 
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,288)] autorelease];  
+  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,264)] autorelease];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
@@ -118,7 +119,7 @@
    * 5 build Buttons
    */
 
-  _w_frame = NSMakeRect(8,292,244,24);
+  _w_frame = NSMakeRect(8,272,244,44);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell
@@ -160,6 +161,68 @@
   [button setImagePosition:NSNoImage];
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Install"];
+
+  /*
+   * Status
+   */
+
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,296,48,15)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setEditable: NO];
+  [textField setBezeled: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Status:"];
+  [textField setAutoresizingMask: (NSViewMaxXMargin | 
+				   NSViewMinYMargin)];
+  [_c_view addSubview:[textField autorelease]];
+
+  /*
+   * Status message
+   */
+
+  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,296,104,15)];
+  [buildStatusField setAlignment: NSLeftTextAlignment];
+  [buildStatusField setBordered: NO];
+  [buildStatusField setEditable: NO];
+  [buildStatusField setBezeled: NO];
+  [buildStatusField setDrawsBackground: NO];
+  [buildStatusField setStringValue:@"waiting..."];
+  [buildStatusField setAutoresizingMask: (NSViewMaxXMargin | 
+					  NSViewWidthSizable | 
+					  NSViewMinYMargin)];
+  [_c_view addSubview:[buildStatusField autorelease]];
+
+  /*
+   * Target
+   */
+
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,272,48,15)];
+  [textField setAlignment: NSRightTextAlignment];
+  [textField setBordered: NO];
+  [textField setBezeled: NO];
+  [textField setEditable: NO];
+  [textField setDrawsBackground: NO];
+  [textField setStringValue:@"Target:"];
+  [textField setAutoresizingMask: (NSViewMaxXMargin | 
+				   NSViewMinYMargin)];
+  [_c_view addSubview:[textField autorelease]];
+
+  /*
+   * Target message
+   */
+
+  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,272,104,15)];
+  [targetField setAlignment: NSLeftTextAlignment];
+  [targetField setBordered: NO];
+  [targetField setEditable: NO];
+  [targetField setBezeled: NO];
+  [targetField setDrawsBackground: NO];
+  [targetField setStringValue:@"Default..."];
+  [targetField setAutoresizingMask: (NSViewMaxXMargin | 
+				     NSViewWidthSizable | 
+				     NSViewMinYMargin)];
+  [_c_view addSubview:[targetField autorelease]];
 }
 
 @end

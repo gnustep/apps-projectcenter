@@ -61,7 +61,7 @@
    *
    */
 
-  _w_frame = NSMakeRect(100,100,512,320);
+  _w_frame = NSMakeRect(100,100,560,360);
   projectWindow = [[NSWindow alloc] initWithContentRect:_w_frame
                                               styleMask:style
                                                 backing:NSBackingStoreBuffered
@@ -69,7 +69,7 @@
   [projectWindow setDelegate:self];
   [projectWindow setMinSize:NSMakeSize(512,320)];
 
-  browser = [[[NSBrowser alloc] initWithFrame:NSMakeRect(30,30,280,400)] autorelease];
+  browser = [[[NSBrowser alloc] initWithFrame:NSMakeRect(30,30,288,128)] autorelease];
   [browser setDelegate:browserController];
   [browser setMaxVisibleColumns:3];
   [browser setAllowsMultipleSelection:NO];
@@ -77,8 +77,7 @@
   [browserController setBrowser:browser];
   [browserController setProject:self];
 
-  //  textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
-  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
+  textView = [[PCEditorView alloc] initWithFrame:NSMakeRect(0,0,520,168)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setRichText:NO];
   [textView setEditable:YES];
@@ -89,7 +88,7 @@
   [textView setBackgroundColor:[NSColor whiteColor]];
   [[textView textContainer] setWidthTracksTextView:YES];
 
-  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,496,92)];
+  scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,0,544,172)];
   [scrollView setDocumentView:textView];
   [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
   [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
@@ -99,7 +98,7 @@
   [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [scrollView autorelease];
 
-  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,496,264)] autorelease];  
+  split = [[[NSSplitView alloc] initWithFrame:NSMakeRect(8,0,544,304)] autorelease];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: browser];
   [split addSubview: scrollView];
@@ -107,13 +106,16 @@
   _c_view = [projectWindow contentView];
   [_c_view addSubview:split];
 
-  // Left button matrix
-  _w_frame = NSMakeRect(8,268,144,48);
+  /*
+   * Left button matrix
+   */
+
+  _w_frame = NSMakeRect(8,308,330,48);
   matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
                                        mode: NSHighlightModeMatrix
                                   prototype: buttonCell
                                numberOfRows: 1
-                            numberOfColumns: 3] autorelease];
+                            numberOfColumns: 7] autorelease];
   [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -136,105 +138,29 @@
   button = [matrix cellAtRow:0 column:2];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_prefs.tiff")];
-  [button setTarget:self];
-  [button setAction:@selector(showBuildTarget:)];
   [button setButtonType:NSMomentaryPushButton];
   [button setTarget:self];
   [button setAction:@selector(showBuildTargetPanel:)];
 
-  // Right button matrix
-  _w_frame = NSMakeRect(304,268,192,48);
-  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
-                                       mode: NSHighlightModeMatrix
-                                  prototype: buttonCell
-                               numberOfRows: 1
-                            numberOfColumns: 4] autorelease];
-  [matrix sizeToCells];
-  [matrix setSelectionByRect:YES];
-  [matrix setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
-  [_c_view addSubview:matrix];
-
-  button = [matrix cellAtRow:0 column:0];
+  button = [matrix cellAtRow:0 column:3];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:1];
+  button = [matrix cellAtRow:0 column:4];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_uml.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:2];
+  button = [matrix cellAtRow:0 column:5];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_documentation.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
-  button = [matrix cellAtRow:0 column:3];
+  button = [matrix cellAtRow:0 column:6];
   [button setImagePosition:NSImageOnly];
   [button setImage:IMAGE(@"ProjectCentre_find.tiff")];
   [button setButtonType:NSMomentaryPushButton];
-
-  /*
-   * Status
-   */
-
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,296,48,15)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Status:"];
-  [textField setAutoresizingMask: (NSViewMaxXMargin | 
-				   NSViewMinYMargin)];
-  [_c_view addSubview:[textField autorelease]];
-
-  /*
-   * Status message
-   */
-
-  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,296,104,15)];
-  [buildStatusField setAlignment: NSLeftTextAlignment];
-  [buildStatusField setBordered: NO];
-  [buildStatusField setEditable: NO];
-  [buildStatusField setBezeled: NO];
-  [buildStatusField setDrawsBackground: NO];
-  [buildStatusField setStringValue:@"waiting..."];
-  [buildStatusField setAutoresizingMask: (NSViewMaxXMargin | 
-					  NSViewWidthSizable | 
-					  NSViewMinYMargin)];
-  [_c_view addSubview:[buildStatusField autorelease]];
-
-  /*
-   * Target
-   */
-
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(152,272,48,15)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setBezeled: NO];
-  [textField setEditable: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Target:"];
-  [textField setAutoresizingMask: (NSViewMaxXMargin | 
-				   NSViewMinYMargin)];
-  [_c_view addSubview:[textField autorelease]];
-
-  /*
-   * Target message
-   */
-
-  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(204,272,104,15)];
-  [targetField setAlignment: NSLeftTextAlignment];
-  [targetField setBordered: NO];
-  [targetField setEditable: NO];
-  [targetField setBezeled: NO];
-  [targetField setDrawsBackground: NO];
-  [targetField setStringValue:@"Default..."];
-  [targetField setAutoresizingMask: (NSViewMaxXMargin | 
-				     NSViewWidthSizable | 
-				     NSViewMinYMargin)];
-  [_c_view addSubview:[targetField autorelease]];
 
   /*
    * Build Options Panel
@@ -513,7 +439,7 @@
 
 - (void)structureEditedFile:(id)sender
 {
-  [textView structure:self];
+  //  [textView structure:self];
 }
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
