@@ -60,7 +60,8 @@ Images/ProjectCenter_profile.tiff \
 Images/ProjectCenter_rpm.tiff \
 Images/ProjectCenter_run.tiff \
 Images/ProjectCenter_settings.tiff \
-Images/ProjectCenter_uml.tiff
+Images/ProjectCenter_uml.tiff \
+Images/Stop.tiff
 
 #
 # Header files
