@@ -46,6 +46,8 @@
 
     if ([self isEditableCategory:category])
     {
+	[[NSNotificationCenter defaultCenter] postNotificationName:@"FileBecomesEditedNotification" object:ltitle];
+	
 	[project browserDidClickFile:ltitle category:category];
     }
   }
@@ -118,8 +120,7 @@
 
 - (void)setBrowser:(NSBrowser *)aBrowser
 {
-  [browser autorelease];
-  browser = [aBrowser retain];
+  browser = aBrowser;
   
   [browser setTitled:NO];
 
@@ -138,8 +139,7 @@
 
 - (void)setProject:(PCProject *)aProj
 {
-  AUTORELEASE(project);
-  project = RETAIN(aProj);
+  project = aProj;
 }
 
 @end
@@ -153,18 +153,10 @@
     int 	i;
     int		count = [files count];
     
-    if (count == 0) {
-#ifdef DEBUG
-      NSLog(@"<%@ %x>: create rows for column in %@ (%x) aborted - 0 files!",[self class],self,[project class],project);
-#endif
-      return;
-    }
+    if( sender != browser ) return;
 
-#ifdef DEBUG
-    NSLog(@"<%@ %x>: create rows for column %d in %x",[self class],self,column,sender);
-#endif //DEBUG
-    
-    for (i = 0; i < count; ++i) {
+    for (i = 0; i < count; ++i) 
+    {
       NSMutableString *keyPath = [NSMutableString stringWithString:pathToCol];
       id cell;
       
@@ -182,9 +174,6 @@
 
 - (void)browser:(NSBrowser *)sender willDisplayCell:(id)cell atRow:(int)row column:(int)column
 {
-#ifdef DEBUG
-  NSLog(@"<%@ %x>: browser %x will display %@ %x at %d,%d",[self class],self,sender,[cell class],cell,row,column);
-#endif //DEBUG
 }
 
 - (BOOL)browser:(NSBrowser *)sender selectCellWithString:(NSString *)title inColumn:(int)column

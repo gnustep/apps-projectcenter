@@ -31,6 +31,7 @@
 #import "PCProjectBuilder.h"
 #import "PCSplitView.h"
 #import "PCEditorController.h"
+#import "PCHistoryController.h"
 
 @interface PCProject (CreateUI)
 
@@ -46,6 +47,7 @@
   unsigned int style = NSTitledWindowMask | NSClosableWindowMask | 
                        NSMiniaturizableWindowMask | NSResizableWindowMask;
   NSBrowser *browser;
+  NSBrowser *history;
   NSRect rect;
   NSMatrix* matrix;
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
@@ -77,7 +79,6 @@
   [browser setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
 
   [browserController setBrowser:browser];
-  rect.size.height -= 64;
   [browserController setProject:self];
  
   box = [[NSBox alloc] initWithFrame:NSMakeRect (-1,-1,562,252)];
@@ -109,9 +110,28 @@
   [split addSubview:box];
   [split adjustSubviews];
   [_c_view addSubview:split];
-  RELEASE(split);
 
+  RELEASE(split);
   RELEASE(browser);
+
+  /*
+   * File Browser
+   */
+
+  historyController = [[PCHistoryController alloc] initWithProject:self];
+
+  history = [[NSBrowser alloc] initWithFrame:NSMakeRect(320,372,232,60)];
+
+  [history setDelegate:historyController];
+  [history setMaxVisibleColumns:1];
+  [history setAllowsMultipleSelection:NO];
+  [history setHasHorizontalScroller:NO];
+  [history setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
+  
+  [historyController setBrowser:history];
+
+  [_c_view addSubview:history];
+  RELEASE(history);
 
   /*
    * Left button matrix
@@ -391,6 +411,7 @@
    */
 
   [browser loadColumnZero];
+  [history loadColumnZero];
 }
 
 @end
@@ -447,6 +468,7 @@
   if( projectDebugger) RELEASE(projectDebugger);
   if( projectEditor)   RELEASE(projectEditor);
   
+  RELEASE(historyController);
   RELEASE(browserController);
   RELEASE(projectWindow);
 

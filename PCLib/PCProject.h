@@ -124,6 +124,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     id delegate;
     id projectManager;
     id browserController;
+    id historyController;
 
     PCProjectBuilder   *projectBuilder;
     PCProjectDebugger  *projectDebugger;
