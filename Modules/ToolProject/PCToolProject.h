@@ -20,18 +20,15 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
- Description:
+   Description:
 
- This is the project type 'Tool' for GNUstep. You never should create 
- it yourself but use PCToolProj for doing this. Otherwise needed files don't 
- get copied to the right place.
-
- */
+   This is the project type 'Tool' for GNUstep. You never should create 
+   it yourself but use PCToolProj for doing this. Otherwise needed files don't 
+   get copied to the right place.
+*/
  
 #ifndef _PCTOOLPROJECT_H
 #define _PCTOOLPROJECT_H
@@ -39,8 +36,16 @@
 #include <AppKit/AppKit.h>
 #include <ProjectCenter/PCProject.h>
 
+@class PCMakefileFactory;
+
 @interface PCToolProject : PCProject
 {
+  IBOutlet NSBox       *projectAttributesView;
+  IBOutlet NSTextField *projectTypeField;
+  IBOutlet NSTextField *projectNameField;
+  IBOutlet NSTextField *projectLanguageField;
+
+  NSMutableDictionary  *infoDict;
 }
 
 //----------------------------------------------------------------------------
@@ -48,25 +53,28 @@
 //----------------------------------------------------------------------------
 
 - (id)init;
+- (void)assignInfoDict:(NSMutableDictionary *)dict;
+- (void)loadInfoFileAtPath:(NSString *)path;
 - (void)dealloc;
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+@end
 
-- (Class)builderClass;
+@interface PCToolProject (GeneratedFiles)
+
+- (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key;
+- (BOOL)writeInfoFile;
 
 - (BOOL)writeMakefile;
+- (void)appendHead:(PCMakefileFactory *)mff;
+- (void)appendLibraries:(PCMakefileFactory*)mff;
+- (void)appendTail:(PCMakefileFactory *)mff;
 
-- (NSArray *)sourceFileKeys;
-- (NSArray *)resourceFileKeys;
-- (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
-- (NSString *)projectDescription;
+@end
 
-- (BOOL)isExecutable;
+@interface PCToolProject (Inspector)
 
-- (void)updateValuesFromProjectDict;
+- (NSView *)projectAttributesView;
+- (void)updateInspectorValues:(NSNotification *)aNotif;
 
 @end
 

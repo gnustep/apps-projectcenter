@@ -12,12 +12,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 
 #
-# Subprojects
-#
-
-
-
-#
 # Bundle
 #
 
@@ -37,9 +31,9 @@ ToolProject_LIBRARIES_DEPEND_UPON += -lProjectCenter
 #
 
 ToolProject_RESOURCE_FILES= \
-Info-project.plist \
-PC.proj \
-main.m 
+Resources/PC.project \
+Resources/main.m \
+Resources/Inspector.gorm
 
 #
 # Header files

@@ -20,23 +20,21 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
- Description:
+   Description:
 
- PCToolProj creates new project of the type Application!
-
+   PCToolProj creates new project of the type Tool!
 */
+
+#include "ProjectCenter/PCMakefileFactory.h"
 
 #include "PCToolProj.h"
 #include "PCToolProject.h"
 
 @implementation PCToolProj
 
-static NSString *_projTypeName = @"Tool";
 static PCToolProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -45,97 +43,122 @@ static PCToolProj *_creator = nil;
 
 + (id)sharedCreator
 {
-    if (!_creator) {
-        _creator = [[[self class] alloc] init];
+  if (!_creator)
+    {
+      _creator = [[[self class] alloc] init];
     }
-    return _creator;
+
+  return _creator;
 }
 
 - (Class)projectClass
 {
-    return [PCToolProject class];
+  return [PCToolProject class];
 }
 
 - (NSString *)projectTypeName
 {
-  return _projTypeName;
-}
-
-- (NSDictionary *)typeTable
-{
-    NSString *_path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info" ofType:@"table"];
-
-    return [NSDictionary dictionaryWithContentsOfFile:_path];
+  return @"Tool";
 }
 
 - (PCProject *)createProjectAt:(NSString *)path
 {
-    PCToolProject *project = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
+  PCToolProject *project = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-    NSAssert(path,@"No valid project path provided!");
+  NSAssert(path,@"No valid project path provided!");
 
-    if ([fm createDirectoryAtPath:path attributes:nil]) {
-        NSString *_file;
-        NSString *_resourcePath;
-        NSMutableDictionary *dict;
-        NSString *projectFile;
+  if ([fm createDirectoryAtPath:path attributes:nil])
+    {
+      NSString            *_file = nil;
+      NSString            *_2file = nil;
+//      NSString            *_resourcePath;
+      NSMutableDictionary *projectDict = nil;
+      NSBundle            *projectBundle = nil;
+      NSMutableDictionary *infoDict = nil;
 
-        project = [[[PCToolProject alloc] init] autorelease];
+      project = [[[PCToolProject alloc] init] autorelease];
+      projectBundle = [NSBundle bundleForClass:[self class]];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
-        dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+      _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+      projectDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
 
-        // Customise the project
-        [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[self projectTypeName] forKey:PCProjectType];
+      // Customise the project
+      [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
+      [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+      [project setProjectName:[path lastPathComponent]];
 
-        // Save the project to disc
-	projectFile = [NSString stringWithString:[path lastPathComponent]];
-	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
-	[dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
-				               atomically:YES];
-        
-        // Copy the project files to the provided path
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"] handler:nil];
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"preamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] handler:nil];
+      // Copy the project files to the provided path
+       // GNUmakefile.postamble
+      [[PCMakefileFactory sharedFactory] createPostambleForProject:project];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
+      _file = [projectBundle pathForResource:@"main" ofType:@"m"];
+      _2file = [path stringByAppendingPathComponent:@"main.m"];
+      [fm copyPath:_file toPath:_2file handler:nil];
 
-        // Resources
-        _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-        [fm createDirectoryAtPath:_resourcePath attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Images"] attributes:nil];
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
+      // Resources
+/*      _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+      [fm createDirectoryAtPath:_resourcePath attributes:nil];*/
+      _2file = [path stringByAppendingPathComponent:@"Images"];
+      [fm createDirectoryAtPath:_2file attributes:nil];
+      _2file = [path stringByAppendingPathComponent:@"Documentation"];
+      [fm createDirectoryAtPath:_2file attributes:nil];
 
-        // The path cannot be in the PC.project file!
-        [project setProjectPath:path];
+            // Create the Info-gnustep.plist
+      infoDict = [NSDictionary dictionaryWithObjectsAndKeys:
+        @"Generated by ProjectCenter, do not edit", @"!",
+        [path lastPathComponent], @"ToolName",
+        @"", @"ToolDescription",
+        @"", @"ToolIcon",
+        @"0.1", @"ToolRelease",
+        @"0.1", @"FullVersionID",
+        [NSArray array], @"Authors",
+        @"", @"URL",
+        @"Copyright (C) 200x by ...", @"Copyright",
+        @"Released under...", @"CopyrightDescription",
+        nil];
 
-        // Set the new dictionary - this causes the GNUmakefile to be written
-        if(![project assignProjectDict:dict]) {
-            NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
-            return nil;
-        }
+      [infoDict
+        writeToFile:[path stringByAppendingPathComponent:@"Info-gnustep.plist"]
+         atomically:YES];
+
+      [projectDict
+        setObject:[NSArray arrayWithObjects:@"Info-gnustep.plist",nil]
+           forKey:PCOtherResources];
+
+      [project assignInfoDict:(NSMutableDictionary *)infoDict];
+
+      // Set the new dictionary - this causes the GNUmakefile to be written
+      if(![project assignProjectDict:projectDict])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not load %@!",
+			  @"OK",nil,nil,path);
+	  return nil;
+	}
+
+      // Save the project to disc
+      [project save];
     }
-    return project;
+
+  return project;
 }
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    id obj;
+  NSDictionary  *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  NSString      *pPath = [path stringByDeletingLastPathComponent];
+  PCToolProject *project = nil;
 
-    NSLog(@"<%@ %x>: opening project at %@",[self class],self,path);
+  project = [[[PCToolProject alloc] 
+    initWithProjectDictionary:dict 
+                         path:pPath] autorelease];
 
-    obj = [dict objectForKey:PCProjectBuilderClass];    
-    if ([obj isEqualToString:@"PCToolProj"]) {
-      return [[[PCToolProject alloc] initWithProjectDictionary:dict path:[path stringByDeletingLastPathComponent]] autorelease];
-    }
-    return nil;
+  [project loadInfoFileAtPath:[path stringByDeletingLastPathComponent]];
+
+  return project;
 }
 
 @end
