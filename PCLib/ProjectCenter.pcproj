@@ -78,7 +78,7 @@
 	"gnustep-base"
     );
     LINKEROPTIONS = "";
-    MAKEFILEDIR = "$(GNUSTEP_SYSTEM_ROOT)/Makefiles";
+    MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)";
     OTHER_FILES = (
     );
     OTHER_RESOURCES = (

@@ -1,3 +1,12 @@
+2003-04-27  Adam Fedor  <fedor@gnu.org>
+
+	* PCAppProj/PCAppProj.pcproj, PCBaseFileTypes/PCBaseFileTypes.pcproj,
+	PCBundleProj/PCBundleProj.pcproj, PCGormProj/PCGormProj.pcproj,
+	PCLib/ProjectCenter.pcproj, PCLibProj/PCLibProj.pcproj,
+	PCRenaissanceProj/PCRenaissanceProj.pcproj, 
+	PCToolProj/PCToolProj.pcproj, ProjectCenter/ProjectCenter.pcproj:
+	Change $(GNUSTEP_SYSTEM_ROOT)/Makefiles to $(GNUSTEP_MAKEFILES)
+
 2003-04-23 Serg Stoyan <stoyan@hologr.com>
 
 	* PCLib/PCDefines.h: SeparateBuilder, SeparateLauncher,

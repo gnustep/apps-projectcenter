@@ -49,7 +49,7 @@
 	<key>MAININTERFACE</key>
 	<string></string>
 	<key>MAKEFILEDIR</key>
-	<string>$(GNUSTEP_SYSTEM_ROOT)/Makefiles</string>
+	<string>$(GNUSTEP_MAKEFILES)</string>
 	<key>OTHER_FILES</key>
 	<array/>
 	<key>OTHER_RESOURCES</key>

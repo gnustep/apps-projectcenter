@@ -29,8 +29,8 @@
 
 #include <ProjectCenter/ProjectCenter.h>
 
-#define REL_LIB_PC @"Library/ProjectCenter"
-#define ABS_LIB_PC @"/usr/GNUstep/Local/Library/ProjectCenter"
+#define REL_LIB_PC @"Library/ApplicationSupport/ProjectCenter"
+#define ABS_LIB_PC @"/usr/GNUstep/Local/Library/ApplicationSupport/ProjectCenter"
 
 @implementation PCAppController
 
