@@ -148,13 +148,13 @@ static PCFileManager *_mgr = nil;
       [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
 
       enumerator = [[openPanel filenames] objectEnumerator];
-      while (file = [enumerator nextObject])
+      while ((file = [enumerator nextObject]))
 	{
-	  NSString *otherKey;
-	  NSString *ext;
-	  NSString *fn;
-	  NSString *fileName;
-	  NSString *pth;
+	  NSString *otherKey = nil;
+	  NSString *ext = nil;
+	  NSString *fn = nil;
+	  NSString *fileName = nil;
+	  NSString *pth = nil;
 	  BOOL     ret = NO;
 
 	  if ([delegate fileManager:self shouldAddFile:file forKey:key]) 
@@ -301,7 +301,7 @@ static PCFileManager *_mgr = nil;
 	  NSString *aFile;
 
 	  enumerator = [[newFiles allKeys] objectEnumerator]; // Key: name of file
-	  while (aFile = [enumerator nextObject]) 
+	  while ((aFile = [enumerator nextObject])) 
 	    {
 	      NSString *theType = [newFiles objectForKey:aFile];
 	      NSString *theKey = [[creators objectForKey:theType] objectForKey:@"ProjectKey"];
@@ -321,7 +321,7 @@ static PCFileManager *_mgr = nil;
   NSLog(@"<%@ %x>: Registering creators...",[self class],self);
 #endif //DEBUG
 
-  while (type = [enumerator nextObject]) 
+  while ((type = [enumerator nextObject])) 
   {
     NSDictionary *cd = [dict objectForKey:type];
     id creator = [cd objectForKey:@"Creator"];

@@ -407,7 +407,7 @@
 
   key = [self projectKeyForKeyPath:[browserController pathOfSelectedFile]];
 
-  while (file = [files nextObject])
+  while ((file = [files nextObject]))
     {
       [self removeFile:file forKey:key];
 
