@@ -80,9 +80,9 @@
   textView = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,472,88)];
   [textView setMaxSize:NSMakeSize(1e7, 1e7)];
   [textView setRichText:NO];
+  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setVerticallyResizable:YES];
   [textView setHorizontallyResizable:YES];
-  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setBackgroundColor:[NSColor whiteColor]];
   [[textView textContainer] setWidthTracksTextView:YES];
 
@@ -90,7 +90,7 @@
   [scrollView setDocumentView:textView];
   [textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
   [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
-  [scrollView setHasHorizontalScroller: YES];
+  [scrollView setHasHorizontalScroller: NO];
   [scrollView setHasVerticalScroller: YES];
   [scrollView setBorderType: NSBezelBorder];
   [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];

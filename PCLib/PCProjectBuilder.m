@@ -78,7 +78,7 @@
   [scrollView1 setDocumentView:logOutput];
   [logOutput setMinSize:NSMakeSize(0.0,[scrollView1 contentSize].height)];
   [[logOutput textContainer] setContainerSize:NSMakeSize([scrollView1 contentSize].width,1e7)];
-  [scrollView1 setHasHorizontalScroller: YES];
+  [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
   [scrollView1 setBorderType: NSBezelBorder];
   [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
