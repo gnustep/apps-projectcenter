@@ -93,9 +93,10 @@
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  if (browser) {
-    [browser loadColumnZero];
-  }
+    if (browser) 
+    {
+        [browser reloadColumn:[browser lastColumn]];
+    }
 }
 
 - (NSString *)nameOfSelectedFile

@@ -725,6 +725,8 @@
 			    @"OK",nil,nil,newFile,destination);
         }
     }
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
 }
 
 - (void)removeFile:(NSString *)file forKey:(NSString *)key
