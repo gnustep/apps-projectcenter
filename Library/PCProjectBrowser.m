@@ -78,37 +78,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 }
 
 // ============================================================================
-// ==== Accessor methods
+// ==== Accessory methods
 // ============================================================================
 
 - (NSView *)view
 {
   return browser;
-}
-
-// This is responsibility of PC*Project classes
-- (BOOL)isEditableCategory:(NSString *)category  file:(NSString *)title
-{
-  NSString *key = [project keyForCategory:category];
-
-  if ([key isEqualToString:PCClasses]
-      || [key isEqualToString:PCHeaders]
-      || [key isEqualToString:PCSupportingFiles]
-      || [key isEqualToString:PCDocuFiles]
-      || [key isEqualToString:PCOtherSources]
-      || [key isEqualToString:PCOtherResources]
-      || [key isEqualToString:PCNonProject]) 
-    {
-      return YES;
-    }
-
-  if ([key isEqualToString:PCGSMarkupFiles]
-      && [[title pathExtension] isEqual: @"gorm"] == NO)
-    {
-      return YES;
-    }
-
-  return NO;
 }
 
 - (NSString *)nameOfSelectedFile
@@ -183,13 +158,18 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)click:(id)sender
 {
+  if (sender != browser)
+    {
+      return;
+    }
+    
   if ([[sender selectedCell] isLeaf] && [[self selectedFiles] count] == 1)
     {
       NSString *category = [[sender selectedCellInColumn:0] stringValue];
       NSString *fn = [[sender selectedCell] stringValue];
       NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
 
-      if ([self isEditableCategory:category file:fn])
+      if ([project isEditableCategory:category])
 	{
 	  [[project projectEditor] editorForFile:fp
 	                                category:category
@@ -204,13 +184,18 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)doubleClick:(id)sender
 {
+  if (sender != browser)
+    {
+      return;
+    }
+
   if ([[sender selectedCell] isLeaf]) 
     {
       NSString *category = [[sender selectedCellInColumn:0] stringValue];
       NSString *fn = [[sender selectedCell] stringValue];
       NSString *fp = [[project projectPath] stringByAppendingPathComponent:fn];
 
-      if ([self isEditableCategory:category file: fn])
+      if ([project isEditableCategory:category])
 	{
 	  [[project projectEditor] editorForFile:fp
 	                                category:category
@@ -235,21 +220,17 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
 {
-  if (browser) 
+  if (browser && ([aNotif object] == project))
     {
       NSString *browserPath = [browser path];
-      NSString *path = nil;
       NSString *slctdCategory = [project selectedRootCategory];
  
       if (slctdCategory && browserPath && ![browserPath isEqualToString:@"/"])
 	{
-	  path = [[browserPath componentsSeparatedByString:@"/"] 
-	    objectAtIndex:1];
-
 	  if ([[[project projectEditor] allEditors] count] == 0
-	      && [self isEditableCategory:slctdCategory file:nil])
+	      && [project isEditableCategory:slctdCategory])
 	    {
-	      [self setPathForFile:nil category:path];
+	      [self setPathForFile:nil category:slctdCategory];
 	    }
 	}
 
@@ -263,15 +244,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column inMatrix:(NSMatrix *)matrix
 {
-  NSString *pathToCol = [sender pathToColumn:column];
-  NSArray  *files = [project contentAtCategoryPath:pathToCol];
-  int      i;
-  int      count = [files count];
+  NSString *pathToCol = nil;
+  NSArray  *files = nil;
+  int      i = 0;
+  int      count = 0;
 
   if (sender != browser)
     {
       return;
     }
+
+  pathToCol = [sender pathToColumn:column];
+  files = [project contentAtCategoryPath:pathToCol];
+  count = [files count];
 
   for (i = 0; i < count; ++i) 
     {

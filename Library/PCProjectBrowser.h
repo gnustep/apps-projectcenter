@@ -45,11 +45,10 @@ extern NSString *PCBrowserDidSetPathNotification;
 - (void)dealloc;
 
 // ============================================================================
-// ==== Accessor methods
+// ==== Accessory methods
 // ============================================================================
 - (NSView *)view;
 
-- (BOOL)isEditableCategory:(NSString *)category file: (NSString *)title;
 - (NSString *)nameOfSelectedFile;
 - (NSString *)pathOfSelectedFile;
 - (NSArray *)selectedFiles;

@@ -20,16 +20,14 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
- Description:
+   Description:
 
- This is the project type 'Application' for GNUstep. You never should create it yourself but
- use PCLibProj for doing this. Otherwise needed files don't get copied to the right place.
-
+   This is the project type 'Library' for GNUstep. You never should create it 
+   yourself but use PCLibProj for doing this. Otherwise needed files don't get 
+   copied to the right place.
  */
  
 #ifndef _PCLIBPROJECT_H
@@ -38,8 +36,14 @@
 #include <AppKit/AppKit.h>
 #include <ProjectCenter/PCProject.h>
 
+@class PCMakefileFactory;
+
 @interface PCLibProject : PCProject
 {
+  IBOutlet NSBox       *projectAttributesView;
+  IBOutlet NSTextField *projectTypeField;
+  IBOutlet NSTextField *projectNameField;
+  IBOutlet NSTextField *projectLanguageField;
 }
 
 //----------------------------------------------------------------------------
@@ -49,22 +53,23 @@
 - (id)init;
 - (void)dealloc;
 
-//----------------------------------------------------------------------------
-// Project
-//----------------------------------------------------------------------------
+@end
 
-- (Class)builderClass;
+@interface PCLibProject (GeneratedFiles)
 
 - (BOOL)writeMakefile;
-
-- (NSArray *)sourceFileKeys;
-- (NSArray *)resourceFileKeys;
-- (NSArray *)otherKeys;
-- (NSArray *)buildTargets;
-- (NSString *)projectDescription;
-
-- (void)updateValuesFromProjectDict;
+- (void)appendHead:(PCMakefileFactory *)mff;
+- (void)appendLibraries:(PCMakefileFactory*)mff;
+- (void)appendTail:(PCMakefileFactory *)mff;
 
 @end
+
+@interface PCLibProject (Inspector)
+
+- (NSView *)projectAttributesView;
+- (void)updateInspectorValues:(NSNotification *)aNotif;
+
+@end
+
 
 #endif

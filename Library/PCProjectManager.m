@@ -48,7 +48,7 @@
 
 #define SavePeriodDCN @"SavePeriodDidChangeNotification"
 
-NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
+NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 @implementation PCProjectManager
 
@@ -308,7 +308,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	    [activeProject projectName]);
 
       [[NSNotificationCenter defaultCenter]
-	postNotificationName:ActiveProjectDidChangeNotification
+	postNotificationName:PCActiveProjectDidChangeNotification
 	              object:activeProject];
     }
 }
@@ -355,21 +355,41 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {
-  NSDictionary    *projectFile = nil;
-  NSString        *projectTypeName = nil;
-  NSString        *projectClassName = nil;
-  id<ProjectType> projectCreator;
-  PCProject       *project = nil;
+  NSMutableDictionary *projectFile = nil;
+  NSString            *projectTypeName = nil;
+  NSString            *projectClassName = nil;
+  id<ProjectType>     projectCreator;
+  PCProject           *project = nil;
 
-  projectFile = [NSDictionary dictionaryWithContentsOfFile:aPath];
+  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
+  
   // For compatibility with 0.3.x projects
   projectClassName = [projectFile objectForKey:PCProjectBuilderClass];
+  
   if (projectClassName == nil)
     {
       projectTypeName = [projectFile objectForKey:PCProjectType];
       projectClassName = [[delegate projectTypes]objectForKey:projectTypeName];
     }
+    
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
+
+   if (projectTypeName == nil)
+    {
+      NSString *pPath = nil;
+
+      pPath = [[aPath stringByDeletingLastPathComponent]
+        stringByAppendingPathComponent:@"PC.project"];
+
+      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
+
+      [projectFile removeObjectForKey:PCProjectBuilderClass];
+      projectTypeName = [projectCreator projectTypeName];
+      [projectFile setObject:projectTypeName forKey:PCProjectType];
+      [projectFile writeToFile:pPath atomically:YES];
+
+      aPath = pPath;
+    }
 
   if ((project = [projectCreator openProjectAt:aPath])) 
     {

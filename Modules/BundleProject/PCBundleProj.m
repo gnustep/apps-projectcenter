@@ -26,7 +26,6 @@
    $Id$
 */
 
-#include <Foundation/NSString.h>
 #include <ProjectCenter/PCFileCreator.h>
 
 #include "PCBundleProj.h"
@@ -70,10 +69,10 @@ static PCBundleProj *_creator = nil;
   if ([fm createDirectoryAtPath:path attributes:nil])
     {
       NSBundle            *projectBundle;
+      NSMutableDictionary *projectDict;
       NSString            *_file;
       NSString            *_2file;
 //      NSString            *_resourcePath;
-      NSMutableDictionary *projectDict;
       PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
 
       project = [[[PCBundleProject alloc] init] autorelease];
@@ -90,14 +89,6 @@ static PCBundleProj *_creator = nil;
       [projectDict setObject:[path lastPathComponent] forKey:PCPrincipalClass];
 
       // Copy the project files to the provided path
-      _file = [projectBundle pathForResource:@"GNUmakefile" 
-                                      ofType:@"postamble"];
-      _2file = [path stringByAppendingPathComponent:@"GNUmakefile.postamble"];
-      [fm copyPath:_file toPath:_2file handler:nil];
-
-      _file = [projectBundle pathForResource:@"GNUmakefile" ofType:@"preamble"];
-      _2file = [path stringByAppendingPathComponent:@"GNUmakefile.preamble"];
-      [fm copyPath:_file toPath:_2file handler:nil];
       
       // $PROJECTNAME$.m
       _file = [NSString stringWithFormat:@"%@", [path lastPathComponent]];
@@ -140,15 +131,18 @@ static PCBundleProj *_creator = nil;
 	writeToFile:[path stringByAppendingPathComponent:@"PC.project"]
 	 atomically:YES];
     }
+
   return project;
 }
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
   NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  NSString     *pPath = [path stringByDeletingLastPathComponent];
 
-  return [[[PCBundleProject alloc] initWithProjectDictionary:dict
-    path:[path stringByDeletingLastPathComponent]] autorelease];
+  return [[[PCBundleProject alloc] 
+    initWithProjectDictionary:dict
+                         path:pPath] autorelease];
 }
 
 @end

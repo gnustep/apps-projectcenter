@@ -4,8 +4,6 @@
  * Project ProjectCenter
  *
  * Created with ProjectCenter - http://www.gnustep.org
- *
- * $Id$
  */
 
 #include "PCDefines.h"
@@ -281,22 +279,6 @@ static PCMakefileFactory *_factory = nil;
 }
 
 // Should be removed
-- (void)appendTailForLibrary
-{
-  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-  NSString *hinst;
-
-  [self appendString:@"\n\n"];
-
-  hinst = [NSString stringWithFormat:@"HEADERS_INSTALL = $(%@_HEADER_FILES)\n\n",libnme];
-  [self appendString:hinst];
-
-  [self appendString:@"-include GNUmakefile.preamble\n"];
-  [self appendString:@"-include GNUmakefile.local\n"];
-  [self appendString:@"include $(GNUSTEP_MAKEFILES)/library.make\n"];
-  [self appendString:@"-include GNUmakefile.postamble\n"];
-}
-
 - (void)appendTailForTool
 {
   [self appendString:@"\n\n"];
@@ -306,77 +288,6 @@ static PCMakefileFactory *_factory = nil;
   [self appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
   [self appendString:@"include $(GNUSTEP_MAKEFILES)/tool.make\n"];
   [self appendString:@"-include GNUmakefile.postamble\n"];
-}
-
-@end
-
-@implementation PCMakefileFactory (LibraryProject)
-
-- (void)appendLibrary
-{
-  NSString *libnme;
-
-  [self appendString:COMMENT_LIBRARY];
-
-  [self appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",pnme]];
-  [self appendString:[NSString stringWithFormat:@"LIBRARY_VAR=%@\n",[pnme uppercaseString]]];
-
-  libnme = [NSString stringWithFormat:@"lib%@",pnme];
-  [self appendString:[NSString stringWithFormat:@"LIBRARY_NAME=%@\n",libnme]];
-
-  [self appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_DIR=.\n",libnme]];
-  [self appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_INSTALL_DIR=/%@\n",libnme,pnme]];
-
-  [self appendString:@"ADDITIONAL_INCLUDE_DIRS = -I..\n"];
-  [self appendString:@"srcdir = .\n"];
-}
-
-- (void)appendLibraryInstallDir:(NSString*)dir
-{
-  [self appendString:[NSString stringWithFormat:@"%@_INSTALLATION_DIR=$(GNUSTEP_INSTALLATION_DIR)\n",[pnme uppercaseString]]];
-  [self appendString:[NSString stringWithFormat:@"%@_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)\n",[pnme uppercaseString]]];
-}
-
-- (void)appendLibraryLibraries:(NSArray*)array
-{
-  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-
-  [self appendString:COMMENT_LIBRARIES];
-
-  [self appendString:
-    [NSString stringWithFormat:@"%@_LIBRARIES_DEPEND_UPON += ",libnme]];
-
-  if( array && [array count] )
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-
-      while ((tmp = [enumerator nextObject]))
-	{
-	  if (![tmp isEqualToString:@"gnustep-base"])
-	    {
-	      [self appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-	    }
-	}
-    }
-}
-
-- (void)appendLibraryHeaders:(NSArray*)array
-{
-  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-  [self appendHeaders: array forTarget: libnme];
-}
-
-- (void)appendLibraryClasses:(NSArray *)array
-{
-  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-  [self appendClasses: array forTarget: libnme];
-}
-
-- (void)appendLibraryOtherSources:(NSArray *)array
-{
-  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-  [self appendOtherSources: array forTarget: libnme];
 }
 
 @end

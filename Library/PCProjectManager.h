@@ -47,7 +47,7 @@
 #include <ProjectCenter/ProjectDelegate.h>
 #endif
 
-extern NSString *ActiveProjectDidChangeNotification;
+extern NSString *PCActiveProjectDidChangeNotification;
 
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {

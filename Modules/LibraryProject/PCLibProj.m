@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 /*
@@ -31,12 +29,13 @@
 
 */
 
+#include <ProjectCenter/PCFileCreator.h>
+
 #include "PCLibProj.h"
 #include "PCLibProject.h"
 
 @implementation PCLibProj
 
-static NSString *_projTypeName = @"Library";
 static PCLibProj *_creator = nil;
 
 //----------------------------------------------------------------------------
@@ -45,97 +44,113 @@ static PCLibProj *_creator = nil;
 
 + (id)sharedCreator
 {
-    if (!_creator) {
-        _creator = [[[self class] alloc] init];
+  if (!_creator)
+    {
+      _creator = [[[self class] alloc] init];
     }
-    return _creator;
+
+  return _creator;
 }
 
 - (Class)projectClass
 {
-    return [PCLibProject class];
+  return [PCLibProject class];
 }
 
 - (NSString *)projectTypeName
 {
-    return _projTypeName;
-}
-
-- (NSDictionary *)typeTable
-{
-    NSString *_path = [[NSBundle bundleForClass:[self class]] pathForResource:@"Info" ofType:@"table"];
-
-    return [NSDictionary dictionaryWithContentsOfFile:_path];
+  return @"Library";
 }
 
 - (PCProject *)createProjectAt:(NSString *)path
 {
-    PCLibProject *project = nil;
-    NSFileManager *fm = [NSFileManager defaultManager];
+  PCLibProject  *project = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-    NSAssert(path,@"No valid project path provided!");
+  NSAssert(path,@"No valid project path provided!");
 
-    if ([fm createDirectoryAtPath:path attributes:nil]) {
-        NSString *_file;
-        //NSString *_resourcePath;
-        NSMutableDictionary *dict;
-        NSString *projectFile;
+  if ([fm createDirectoryAtPath:path attributes:nil])
+    {
+      NSBundle            *projectBundle = nil;
+      NSMutableDictionary *projectDict;
+      NSString            *_file = nil;
+      NSString            *_2file = nil;
+//      NSString            *_resourcePath;
+      PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
 
-        project = [[[PCLibProject alloc] init] autorelease];
+      project = [[[PCLibProject alloc] init] autorelease];
+      projectBundle = [NSBundle bundleForClass:[self class]];
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"PC" ofType:@"proj"];
-        dict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-                
-        // Customise the project
-        [dict setObject:[path lastPathComponent] forKey:PCProjectName];
-        [dict setObject:[self projectTypeName] forKey:PCProjectType];
+      _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+      projectDict = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
 
-        // Save the project to disc
-	projectFile = [NSString stringWithString:[path lastPathComponent]];
-	projectFile = [projectFile stringByAppendingPathExtension:@"pcproj"];
-	[dict writeToFile:[path stringByAppendingPathComponent:projectFile] 
-				               atomically:YES];
+      // Customise the project
+      [project setProjectName:[path lastPathComponent]];
+      [projectDict setObject:[path lastPathComponent] forKey:PCProjectName];
+      [projectDict setObject:[self projectTypeName] forKey:PCProjectType];
 
-        // Copy the project files to the provided path
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"postamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.postamble"] handler:nil];
-        
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"GNUmakefile" ofType:@"preamble"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"GNUmakefile.preamble"] handler:nil];
+      // Copy the project files to the provided path
 
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
+      // $PROJECTNAME$.m
+      _file = [NSString stringWithFormat:@"%@", [path lastPathComponent]];
+      _2file = [NSString stringWithFormat:@"%@.m", [path lastPathComponent]];
+      [pcfc createFileOfType:ObjCClass 
+	                path:[path stringByAppendingPathComponent:_file]
+		     project:project];
+      [projectDict setObject:[NSArray arrayWithObjects:_2file,nil]
+	              forKey:PCClasses];
 
-        // Resources
-	/*
-        _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
-        [fm createDirectoryAtPath:_resourcePath attributes:nil];
-	*/
+      // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
+      _file = [NSString stringWithFormat:@"%@.h", [path lastPathComponent]];
+      [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+	              forKey:PCHeaders];
 
-        [fm createDirectoryAtPath:[path stringByAppendingPathComponent:@"Documentation"] attributes:nil];
-        _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"Version" ofType:@""];
-        [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"Version"] handler:nil];
+      // Resources
+      /*
+	 _resourcePath = [path stringByAppendingPathComponent:@"English.lproj"];
+	 [fm createDirectoryAtPath:_resourcePath attributes:nil];
+       */
+      _file = [path stringByAppendingPathComponent:@"Images"];
+      [fm createDirectoryAtPath:_file attributes:nil];
+      _file = [path stringByAppendingPathComponent:@"Documentation"];
+      [fm createDirectoryAtPath:_file attributes:nil];
 
-        // The path cannot be in the PC.project file!
-        [project setProjectPath:path];
+      _file = [projectBundle pathForResource:@"Version" ofType:@""];
+      _2file = [path stringByAppendingPathComponent:@"Version"];
+      [fm copyPath:_file toPath:_2file handler:nil];
 
-        // Set the new dictionary - this causes the GNUmakefile to be written to disc
-        if(![project assignProjectDict:dict]) {
-            NSRunAlertPanel(@"Attention!",@"Could not load %@!",@"OK",nil,nil,path);
-            return nil;
-        }
+      // The path cannot be in the PC.project file!
+      [project setProjectPath:path];
+
+      // Set the new dictionary - this causes the GNUmakefile 
+      // to be written to disc
+      if (![project assignProjectDict:projectDict])
+	{
+	  NSRunAlertPanel(@"Attention!",
+			  @"Could not load %@!",
+			  @"OK",nil,nil,path);
+	  return nil;
+	}
+
+      // Save the project to disc
+      [projectDict
+	writeToFile:[path stringByAppendingPathComponent:@"PC.project"] 
+         atomically:YES];
+
     }
-    return project;
+
+  return project;
 }
 
 - (PCProject *)openProjectAt:(NSString *)path
 {
-    NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-    
-    if ([[dict objectForKey:PCProjectBuilderClass] isEqualToString:@"PCLibProj"]) {
-        return [[[PCLibProject alloc] initWithProjectDictionary:dict path:[path stringByDeletingLastPathComponent]] autorelease];
-    }
-    return nil;
+  NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  NSString     *pPath = [path stringByDeletingLastPathComponent];
+
+  return [[[PCLibProject alloc] initWithProjectDictionary:dict 
+                                                     path:pPath] autorelease];
+
+  return nil;
 }
 
 @end

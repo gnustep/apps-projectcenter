@@ -311,6 +311,14 @@ NSString
 
 - (void)setProjectDictObject:(id)object forKey:(NSString *)key
 {
+  id currentObject = [projectDict objectForKey:key];
+
+  if ([object isKindOfClass:[NSString class]]
+      && [currentObject isEqualToString:object])
+    {
+      return;
+    }
+
   [projectDict setObject:object forKey:key];
 
   [[NSNotificationCenter defaultCenter] 
@@ -348,6 +356,25 @@ NSString
 // ============================================================================
 // ==== To be overriden
 // ============================================================================
+
+- (BOOL)isEditableCategory:(NSString *)category
+{
+  NSString *key = [self keyForCategory:category];
+
+  if ([key isEqualToString:PCClasses]
+      || [key isEqualToString:PCHeaders]
+      || [key isEqualToString:PCSupportingFiles]
+      || [key isEqualToString:PCDocuFiles]
+      || [key isEqualToString:PCOtherSources]
+      || [key isEqualToString:PCOtherResources]
+      || [key isEqualToString:PCNonProject]
+      || [key isEqualToString:PCGSMarkupFiles]) 
+    {
+      return YES;
+    }
+
+  return NO;
+}
 
 // TEMP! For compatibility with old PC*Project subclasses
 - (void)updateValuesFromProjectDict
@@ -585,6 +612,7 @@ NSString
   [self addFiles:[NSArray arrayWithObjects:toFile,nil] 
           forKey:selectedCategoryKey];
 
+  NSLog(@"PCproject: move %@ to %@", fromPath, toPath);
   [fm movePath:fromPath toPath:toPath handler:nil];
 
   [projectBrowser setPathForFile:toFile category:selectedCategory];

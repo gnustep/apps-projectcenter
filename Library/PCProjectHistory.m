@@ -192,6 +192,11 @@
 
 - (int)numberOfRowsInTableView: (NSTableView *)aTableView
 {
+  if (aTableView != filesList)
+    {
+      return 0;
+    }
+  
   return [editedFiles count];
 }
 
@@ -199,6 +204,11 @@
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
                         row: (int)rowIndex
 {
+  if (aTableView != filesList)
+    {
+      return nil;
+    }
+
   return [editedFiles objectAtIndex: rowIndex];
 }
 

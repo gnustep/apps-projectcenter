@@ -12,12 +12,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 
 #
-# Subprojects
-#
-
-
-
-#
 # Bundle
 #
 
@@ -37,8 +31,9 @@ LibraryProject_LIBRARIES_DEPEND_UPON += -lProjectCenter
 #
 
 LibraryProject_RESOURCE_FILES= \
-PC.proj \
-Version 
+Resources/PC.project \
+Resources/Version \
+Resources/Inspector.gorm
 
 #
 # Header files
@@ -64,3 +59,4 @@ LibraryProject_C_FILES=
 
 include ../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
+

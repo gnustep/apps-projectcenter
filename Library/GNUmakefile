@@ -119,6 +119,7 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/class.template \
   Resources/gsmarkup.template \
   Resources/header.template \
+  Resources/postamble.template \
   Resources/protocol.template
 
 -include GNUmakefile.preamble

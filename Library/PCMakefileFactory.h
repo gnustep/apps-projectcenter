@@ -36,24 +36,11 @@
 - (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target;
 - (void)appendResources;
 - (void)appendResourceItems:(NSArray *)array;
-
 - (void)appendSubprojects:(NSArray*)array;
 
 - (NSData *)encodedMakefile;
 
-- (void)appendTailForLibrary;
 - (void)appendTailForTool;
-
-@end
-
-@interface PCMakefileFactory (LibraryProject)
-
-- (void)appendLibrary;
-- (void)appendLibraryInstallDir:(NSString*)dir;
-- (void)appendLibraryLibraries:(NSArray*)array;
-- (void)appendLibraryHeaders:(NSArray*)array;
-- (void)appendLibraryClasses:(NSArray *)array;
-- (void)appendLibraryOtherSources:(NSArray *)array;
 
 @end
 

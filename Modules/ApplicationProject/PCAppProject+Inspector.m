@@ -51,30 +51,6 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 - (void)createProjectAttributes
 {
-/*  if (projectAttributesView)
-    {
-      return;
-    }*/
-
-  // Icons, Main NIB file, Help file
-/*  _iconsBox = [[NSBox alloc] init];
-  [_iconsBox setFrame:NSMakeRect(6,6,290,259)];
-  [_iconsBox setContentViewMargins:NSMakeSize(4.0, 4.0)];
-  [_iconsBox setTitlePosition:NSNoTitle];
-  [projectAttributesView addSubview:_iconsBox];*/
-
-  // Icon view
-/*  _iconViewBox = [[NSBox alloc] initWithFrame:NSMakeRect(220,189,56,56)];
-  [_iconViewBox setTitlePosition:NSNoTitle];
-  [_iconViewBox setBorderType:NSBezelBorder];
-  [_iconViewBox setContentViewMargins:NSMakeSize(2.0, 2.0)];
-  [_iconsBox addSubview:_iconViewBox];
-  RELEASE(_iconViewBox);
-  
-  iconView = [[NSImageView alloc] initWithFrame:NSMakeRect(220,0,56,56)];
-  [_iconViewBox addSubview:iconView];
-  RELEASE(iconView);*/
-
   // TFs Buttons
   [setFieldButton setRefusesFirstResponder:YES];
   [clearFieldButton setRefusesFirstResponder:YES];

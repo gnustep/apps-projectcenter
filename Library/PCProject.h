@@ -115,6 +115,8 @@ extern NSString *PCProjectDictDidSaveNotification;
 // ==== To be overriden!
 // ===========================================================================
 
+- (BOOL)isEditableCategory:(NSString *)category;
+
 // TEMP! For compatibility with old PC*Project subclasses
 - (void)updateValuesFromProjectDict;
 

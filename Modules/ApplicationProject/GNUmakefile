@@ -27,8 +27,6 @@ Resources/AppController.h \
 Resources/AppController.m \
 Resources/main.m \
 Resources/PC.project \
-Resources/GNUmakefile.preamble \
-Resources/GNUmakefile.postamble \
 Resources/Main.gorm \
 Resources/Inspector.gorm
 

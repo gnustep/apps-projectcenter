@@ -255,7 +255,7 @@
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self
 	   selector:@selector(activeProjectDidChange:)
-	       name:ActiveProjectDidChangeNotification
+	       name:PCActiveProjectDidChangeNotification
 	     object:project];
     }
   

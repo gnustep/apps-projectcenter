@@ -40,31 +40,33 @@
 {
   if ((self = [super init]))
     {
-      rootKeys = [[NSArray arrayWithObjects: PCClasses,
-						PCHeaders,
-						PCOtherSources,
-						PCInterfaces,
-						PCImages,
-						PCOtherResources,
-						PCSubprojects,
-						PCDocuFiles,
-						PCSupportingFiles,
-						PCLibraries,
-						PCNonProject,
-						nil] retain];
+      rootKeys = [[NSArray arrayWithObjects:
+	PCClasses,
+	PCHeaders,
+	PCOtherSources,
+	PCInterfaces,
+	PCImages,
+	PCOtherResources,
+	PCSubprojects,
+	PCDocuFiles,
+	PCSupportingFiles,
+	PCLibraries,
+	PCNonProject,
+	nil] retain];
 
-      rootCategories = [[NSArray arrayWithObjects: @"Classes",
-					     @"Headers",
-					     @"Other Sources",
-					     @"Interfaces",
-					     @"Images",
-					     @"Other Resources",
-					     @"Subprojects",
-					     @"Documentation",
-					     @"Supporting Files",
-					     @"Libraries",
-					     @"Non Project Files",
-					     nil] retain];
+      rootCategories = [[NSArray arrayWithObjects:
+	@"Classes",
+	@"Headers",
+	@"Other Sources",
+	@"Interfaces",
+	@"Images",
+	@"Other Resources",
+	@"Subprojects",
+	@"Documentation",
+	@"Supporting Files",
+	@"Libraries",
+	@"Non Project Files",
+	nil] retain];
 
       rootEntries = [[NSDictionary 
 	dictionaryWithObjects:rootCategories forKeys:rootKeys] retain];

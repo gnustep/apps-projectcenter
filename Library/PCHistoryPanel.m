@@ -62,7 +62,7 @@
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
        selector:@selector(activeProjectDidChange:)
-           name:ActiveProjectDidChangeNotification
+           name:PCActiveProjectDidChangeNotification
          object:nil];
 
   if (![self setFrameUsingName: @"LoadedFiles"])

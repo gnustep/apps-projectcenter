@@ -17,7 +17,6 @@
     LANGUAGE = "English"; 
     LAST_EDITING = ""; 
     LIBRARIES = ("gnustep-base","gnustep-gui"); 
-    MAININTERFACE = ""; 
     MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)"; 
     INSTALLDIR = "$(HOME)/GNUstep/Library/Bundles";
     OBJC_COMPILEROPTIONS = "";

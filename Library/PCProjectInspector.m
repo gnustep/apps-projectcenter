@@ -69,7 +69,7 @@
 - (void)mouseDown:(NSEvent *)theEvent
 {
   [self setEditableField:YES];
-//  [super mouseDown:theEvent];
+  [super mouseDown:theEvent];
 }
 
 - (BOOL)textShouldSetEditable
@@ -109,7 +109,7 @@
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
        selector:@selector(activeProjectDidChange:)
-           name:ActiveProjectDidChangeNotification
+           name:PCActiveProjectDidChangeNotification
          object:nil];
 
   [self inspectorPopupDidChange:inspectorPopup];
@@ -226,7 +226,8 @@
   NSString *newEntry = [sender stringValue];
 
   // Build Atributes
-  if (sender == installPathField)
+  if (sender == installPathField
+      && ![[[project projectDict] objectForKey:PCInstallDir] isEqualToString:newEntry])
     {
       [project setProjectDictObject:newEntry forKey:PCInstallDir];
     }

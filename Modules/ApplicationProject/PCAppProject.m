@@ -316,6 +316,10 @@
 	  success = YES;
 	}
     }
+  else if ([super renameFile:ff toFile:tf] == YES)
+    {
+      success = YES;
+    }
     
   [projectBrowser setPathForFile:toFile 
                         category:[self categoryForKey:key]];
