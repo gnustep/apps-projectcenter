@@ -82,11 +82,12 @@
       NSPanel *panel;
       NSRect  panelFrame;
 
-      panel = [projectBuilder buildPanelCreate: YES];
+      panel = [projectBuilder createBuildPanel];
       panelFrame = [NSPanel contentRectForFrameRect: [panel frame]
                                           styleMask: [panel styleMask]];
       panelFrame.origin.x = 8;
       panelFrame.origin.y = -2;
+      panelFrame.size.height += 2;
       panelFrame.size.width -= 16;
       [view setFrame: panelFrame];
      
@@ -99,7 +100,7 @@
     }
   else
     {
-      NSPanel *panel = [projectBuilder buildPanelCreate: NO];
+      NSPanel *panel = [projectBuilder buildPanel];
 
       if (panel)
 	{
@@ -113,19 +114,57 @@
 - (void)showRunView:(id)sender
 {
   NSView *view = nil;
+  BOOL   separate = NO;
+  
+  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey: SeparateLauncher] isEqualToString: @"YES"])
+    {
+      separate = YES;
+    }
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName: PCEditorDidResignKeyNotification
+                  object: self];
 
   editorIsActive = NO;
 
-  if (!projectDebugger) {
-    projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
-  }
+  if (!projectDebugger)
+    {
+      projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
+    }
 
   view = [[projectDebugger componentView] retain];
 
-  [box setContentView:view];
-  [box display];
+  if (separate)
+    {
+      NSPanel *panel = [projectDebugger createLaunchPanel];;
+      NSRect  frame = [NSPanel contentRectForFrameRect: [panel frame]
+                                             styleMask: [panel styleMask]];
+
+      frame.origin.x = 8;
+      frame.origin.y = -2;
+      frame.size.height += 2;
+      frame.size.width -= 16;
+      [view setFrame: frame];
+     
+      if ([box contentView] == view)
+	{
+	  [self showEditorView: self];
+	}
+      [[panel contentView] addSubview: view];
+      [panel orderFront: nil];
+    }
+  else
+    {
+      NSPanel *panel = [projectDebugger launchPanel];
+
+      if (panel)
+	{
+	  [panel close];
+	}
+      [box setContentView: view];
+      [box display];
+    }
 }
 
 - (void)showEditorView:(id)sender
