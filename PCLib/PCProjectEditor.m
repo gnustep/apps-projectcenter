@@ -89,7 +89,7 @@
 
 - (void)dealloc
 {
-    RELEASE(componentView);
+    if( componentView ) RELEASE(componentView);
 
     [super dealloc];
 }
@@ -109,11 +109,9 @@
     NSRect frame;
 
     editor = ev;
-
-    frame = [[scrollView contentView] frame];
-
     [scrollView setDocumentView:editor];
 
+    frame = [[scrollView contentView] frame];
     frame.size = NSMakeSize([scrollView contentSize].width,1e7);
     [[editor textContainer] setContainerSize:frame.size];
 

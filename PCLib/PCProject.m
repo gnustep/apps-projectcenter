@@ -447,9 +447,9 @@
   RELEASE(projectDict);
   RELEASE(projectManager);
 
-  if( projectBuilder) RELEASE(projectBuilder);
+  if( projectBuilder)  RELEASE(projectBuilder);
   if( projectDebugger) RELEASE(projectDebugger);
-  if( projectEditor) RELEASE(projectEditor);
+  if( projectEditor)   RELEASE(projectEditor);
   
   RELEASE(browserController);
   RELEASE(projectWindow);
@@ -1177,10 +1177,7 @@
 {
   id object = [aNotification object];
   
-  if (object == buildTargetPanel) 
-  {
-  }
-  else if (object == [self projectWindow]) 
+  if (object == [self projectWindow]) 
   {
     if ([[self projectWindow] isDocumentEdited]) 
     {
@@ -1193,7 +1190,10 @@
     }
 
     [editorController closeAllEditors];
-    
+
+    // HACK to avoid crash upon close...
+    [self showBuildView:self];
+
     // The PCProjectController is our delegate!
     [[NSNotificationCenter defaultCenter] removeObserver:browserController];
     [projectManager closeProject:self];

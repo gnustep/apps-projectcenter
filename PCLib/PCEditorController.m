@@ -64,6 +64,7 @@
 
 - (void)dealloc
 {
+    [editorDict removeAllObjects];
     RELEASE( editorDict );
 
     [super dealloc];
@@ -122,7 +123,6 @@
     while(( key = [enumerator nextObject] ))
     {
         editor = [editorDict objectForKey:key];
-
 	[editor close];
 	[[editor editorWindow] performClose:self];
     }

@@ -404,6 +404,7 @@ static BOOL isInitialised = NO;
 
 - (void)keyDown:(NSEvent *)anEvent
 {
+    /*
     NSString *chars = [anEvent charactersIgnoringModifiers];
     int modifiers = [anEvent modifierFlags];
 
@@ -412,6 +413,7 @@ static BOOL isInitialised = NO;
 	[editor saveFile];
 	return;
     }
+    */
 
     [super keyDown:anEvent];
 }

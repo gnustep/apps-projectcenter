@@ -219,8 +219,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 	}
 
 	ret = NSRunAlertPanel(@"Edited File!",
-	                      @"Should the file be saved before closing?",
-			      @"Yes",@"No",nil);
+	                      @"Should '%@' be saved before closing?",
+			      @"Yes",@"No",nil,path);
 
 	if( ret == YES )
 	{
@@ -234,7 +234,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 	    }
 	}
 
-        [window setDocumentEdited:NO];
+        [self setIsEdited:NO];
     }
 
     if( delegate && [delegate respondsToSelector:@selector(editorDidClose:)] )

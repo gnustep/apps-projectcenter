@@ -473,7 +473,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     {
         return;
     }
-    
+
     // Remove it from the loaded projects!
     [loadedProjects removeObjectForKey:key];
     [self setActiveProject:[[loadedProjects allValues] lastObject]];
