@@ -1,3 +1,8 @@
+2004-06-11 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectManager.[m]:
+	(loadProjectAt:): Fix loading "Gorm" poject.
+	
 2004-06-09 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectBrowser.[hm]:

@@ -404,6 +404,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   
   // For compatibility with 0.3.x projects
   projectClassName = [projectFile objectForKey:PCProjectBuilderClass];
+  // Gorm project type doesn't exists anymore
+  if ([projectClassName isEqualToString:@"PCGormProj"])
+    {
+      projectTypeName = [NSString stringWithString:@"Application"];;
+      projectClassName = [projectTypes objectForKey:projectTypeName];
+    }
   
   if (projectClassName == nil)
     {
