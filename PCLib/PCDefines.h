@@ -15,6 +15,7 @@
 #define PRIVATE_EXTERN  __private_extern__
 
 #define Editor                          @"Editor"
+#define PDebugger                       @"Debugger"
 #define Compiler                        @"Compiler"
 #define PromptOnClean                   @"PromtOnClean"
 #define PromptOnQuit                    @"PromtOnQuit"

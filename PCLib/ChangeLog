@@ -1,3 +1,8 @@
+2002-11-24  Philippe C.D. Robert  <probert@siggraph.org>
+
+	* Fixing import statements in most headers and source files preparing 
+	a Mac OS X port.
+
 2002-11-04  Adam Fedor  <fedor@gnu.org>
 
 	* PCFileManager.m (-showAddFileWindow): Only copy file if it isn't
