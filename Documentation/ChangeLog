@@ -8,6 +8,8 @@
 	
 	* Update all GORM files with latest CVS GORM version.
 	
+	* Resources/Preferences.gorm: Fix Auto-Save slider.
+	
 2004-07-14 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCButton.m: PCButtonCell removed.
