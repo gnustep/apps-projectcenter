@@ -26,7 +26,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 BUNDLE_NAME 			= PCBaseFileTypes
 BUNDLE_EXTENSION		=.bundle
 PCBaseFileTypes_PRINCIPAL_CLASS	= PCBaseFileType
-BUNDLE_INSTALL_DIR		=$(GNUSTEP_LOCAL_ROOT)/Library/ProjectCenter/
+BUNDLE_INSTALL_DIR		=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter/
 
 PCBaseFileTypes_OBJC_FILES = 		\
 	PCBaseFileType.m

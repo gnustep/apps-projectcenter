@@ -58,7 +58,7 @@ ADDITIONAL_TOOL_LIBS +=
 #
 
 # Additional directories to be created during installation
-ADDITIONAL_INSTALL_DIRS = $(PCLIB_INSTALL_PREFIX)/Headers/ProjectCenter
+#ADDITIONAL_INSTALL_DIRS = $(PCLIB_INSTALL_PREFIX)/Headers/ProjectCenter
 
 #
 # Local configuration

@@ -22,8 +22,7 @@
 #  Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 #
 
-# Install into the system root by default
-PCLIB_INSTALLATION_DIR = $(GNUSTEP_LOCAL_ROOT)
+PCLIB_INSTALLATION_DIR = $(GNUSTEP_INSTALLATION_DIR)
 GNUSTEP_MAKEFILES = $(GNUSTEP_SYSTEM_ROOT)/Makefiles
 
 include $(GNUSTEP_MAKEFILES)/common.make
@@ -38,7 +37,7 @@ LIBRARY_VAR = PCLIB
 # The library to be compiled
 LIBRARY_NAME=libProjectCenter
 
-PCLIB_INSTALL_PREFIX=$(GNUSTEP_LOCAL_ROOT)
+PCLIB_INSTALL_PREFIX=$(GNUSTEP_INSTALLATION_DIR)
 
 # Grep for these names to build the legally-required "AUTHORS" file.
 FILE_AUTHORS = 			\
@@ -97,5 +96,4 @@ libProjectCenter_HEADER_FILES 			= $(libProjectCenter_HFILES)
 
 include $(GNUSTEP_MAKEFILES)/library.make
 
-
-
+-include GNUmakefile.postamble

@@ -25,7 +25,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 
 BUNDLE_NAME = PCLibProj
 BUNDLE_EXTENSION=.bundle
-BUNDLE_INSTALL_DIR=$(GNUSTEP_LOCAL_ROOT)/Library/ProjectCenter/
+BUNDLE_INSTALL_DIR=$(GNUSTEP_INSTALLATION_DIR)/Library/ProjectCenter/
 
 PCLibProj_OBJC_FILES = 		\
 	PCLibProj.m 		\
