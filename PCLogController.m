@@ -3,7 +3,7 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@3dkit.org>
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -32,17 +32,21 @@
 {
     NSString *_log;
 
-    switch (tag) {
+    switch (tag) 
+    {
         case 0:
             _log = [NSString stringWithFormat:@"Information from <%@: %x - %x>: %@",[self class],self,[NSThread currentThread],message];
             break;
+
         case 1:
             _log = [NSString stringWithFormat:@"Warning from <%@: %x - %x>: %@",[self class],self,[NSThread currentThread],message];
             break;
+
         default:
             break;
     }
     
+    // Later we redirect this to our own output.
     NSLog(message);
 }
 
