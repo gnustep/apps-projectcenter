@@ -1,3 +1,8 @@
+
+2003-07-04 Philippe C.D. Robert <probert@siggraph.org>
+
+        * Updated TODO, ANNOUNCE, README and INSTALL files
+
 2003-07-04 Serg Stoyan <stoyan@hologr.com>
 
 	* PCAppController.m: Change REL_LIB_PC and ABS_LIB_PC to 	ApplicationSupport dir.
