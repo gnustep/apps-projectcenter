@@ -38,12 +38,7 @@
 + (void)initialize
 {
     NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
-
-#if defined(GNUSTEP)
     NSString	*_bundlePath = @"/usr/GNUstep/Local/Library/ProjectCenter";
-#else
-    NSString	*_bundlePath = @"/LocalLibrary/ProjectCenter";
-#endif
 
     [defaults setObject:_bundlePath forKey:BundlePaths];
 
