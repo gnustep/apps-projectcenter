@@ -68,6 +68,10 @@
 - (id)init;
 - (void)dealloc;
 
+- (BOOL)respondsToSelector:(SEL)aSelector; 
+- (void)forwardInvocation:(NSInvocation *)anInvocation;
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
+
 //============================================================================
 //==== Delegate
 //============================================================================

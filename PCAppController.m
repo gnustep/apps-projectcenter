@@ -141,16 +141,16 @@
   delegate = aDelegate;
 }
 
-- (BOOL)respondsToSelector: (SEL)aSelector
+- (BOOL)respondsToSelector:(SEL)aSelector
 {
-  if (![super respondsToSelector: aSelector])
-    {
-      return [menuController respondsToSelector: aSelector];
-    }
+  if (![super respondsToSelector:aSelector])
+  {
+    return [menuController respondsToSelector:aSelector];
+  }
   else
-    {
-      return YES;
-    }
+  {
+    return YES;
+  }
 }
                             
 - (void)forwardInvocation:(NSInvocation *)anInvocation
@@ -165,6 +165,19 @@
     {
       [super forwardInvocation: anInvocation];
     }
+}
+
+- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
+{
+  NSMethodSignature *sig;
+
+  sig = [super methodSignatureForSelector:aSelector];
+  if (sig == nil)
+  {
+    sig = [menuController methodSignatureForSelector:aSelector];
+  }
+
+  return sig;
 }
 
 //============================================================================

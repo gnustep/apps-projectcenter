@@ -2,6 +2,7 @@
 2003-08-01 Philippe C.D. Robert <probert@siggraph.org>
 
         * Removed -Werror: GNUMakefile.preamble, GNUMakefile.bundles
+        * Added -methodSignatureForSelector: PCAppController.[hm]
 
 2003-07-10 Philippe C.D. Robert <probert@siggraph.org>
 
