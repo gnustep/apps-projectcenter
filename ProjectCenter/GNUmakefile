@@ -21,9 +21,9 @@ include $(GNUSTEP_MAKEFILES)/common.make
 # Main application
 #
 
-PACKAGE_NAME=ProjectCenter
-APP_NAME=ProjectCenter
-ProjectCenter_APPLICATION_ICON=ProjectCenter.app.tiff
+PACKAGE_NAME = ProjectCenter
+APP_NAME = ProjectCenter
+ProjectCenter_APPLICATION_ICON = ProjectCenter.tiff
 
 
 #
@@ -38,30 +38,29 @@ ADDITIONAL_GUI_LIBS += -lProjectCenter
 
 ProjectCenter_RESOURCE_FILES= \
 ProjectCenterInfo.plist \
-FileIcon_.c.tiff \
-FileIcon_.h.tiff \
-FileIcon_.m.tiff \
-FileIcon_rtf.tiff \
-ProjectCenter.app.tiff \
-ProjectCenter.tiff \
-ProjectCenter_clean.tiff \
-ProjectCenter_debug.tiff \
-ProjectCenter_install.tiff \
-ProjectCenter_make.tiff \
-ProjectCenter_profile.tiff \
-ProjectCenter_rpm.tiff \
-ProjectCentre_add.tiff \
-ProjectCentre_build.tiff \
-ProjectCentre_clean.tiff \
-ProjectCentre_cvs.tiff \
-ProjectCentre_documentation.tiff \
-ProjectCentre_files.tiff \
-ProjectCentre_find.tiff \
-ProjectCentre_prefs.tiff \
-ProjectCentre_run.tiff \
-ProjectCentre_settings.tiff \
-ProjectCentre_uml.tiff \
-ProjectCenter_dist.tiff 
+Images/FileIcon_.c.tiff \
+Images/FileIcon_.h.tiff \
+Images/FileIcon_.m.tiff \
+Images/FileIcon_rtf.tiff \
+Images/ProjectCenter.tiff \
+Images/ProjectCenter_add.tiff \
+Images/ProjectCenter_build.tiff \
+Images/ProjectCenter_clean.tiff \
+Images/ProjectCenter_cvs.tiff \
+Images/ProjectCenter_debug.tiff \
+Images/ProjectCenter_dist.tiff \
+Images/ProjectCenter_documentation.tiff \
+Images/ProjectCenter_files.tiff \
+Images/ProjectCenter_find.tiff \
+Images/ProjectCenter_install.tiff \
+Images/ProjectCenter_make.tiff \
+Images/ProjectCenter_prefs.tiff \
+Images/ProjectCenter_profile.tiff \
+Images/ProjectCenter_rpm.tiff \
+Images/ProjectCenter_run.tiff \
+Images/ProjectCenter_settings.tiff \
+Images/ProjectCenter_uml.tiff \
+
 
 #
 # Header files
