@@ -28,4 +28,16 @@
 {
 }
 
+- (void)applicationDidFinishLaunching:(NSNotification *)notif
+{
+}
+
+- (void)showPrefPanel:(id)sender
+{
+}
+
+- (void)showInfoPanel:(id)sender
+{
+}
+
 @end
