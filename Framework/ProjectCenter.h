@@ -54,7 +54,6 @@
 #include <ProjectCenter/ProjectComponent.h>
 #include <ProjectCenter/PreferenceController.h>
 #include <ProjectCenter/ProjectBuilder.h>
-#include <ProjectCenter/FileCreator.h>
 
 #endif
 

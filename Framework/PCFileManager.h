@@ -29,6 +29,8 @@
 
 #include <Foundation/Foundation.h>
 
+@class PCProject;
+
 @interface PCFileManager : NSObject
 {
     id newFileWindow;
@@ -68,7 +70,14 @@
 // ==== File stuff
 // ===========================================================================
 
-- (void)showAddFileWindow;
+// Shows NSOpenPanel and return selected files if any
+- (NSMutableArray *)selectFilesOfType:(NSArray *)types multiple:(BOOL)yn;
+
+// Return NO if coping of any file failed
+- (BOOL)copyFiles:(NSArray *)files intoDirectory:(NSString *)directory;
+
+// Return NO if removing of any file failed
+- (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory;
 
 - (void)showNewFileWindow;
 - (void)buttonsPressed:(id)sender;
@@ -76,23 +85,20 @@
 
 - (void)createFile;
 
-- (void)registerCreatorsWithObjectsAndKeys:(NSDictionary *)dict;
+- (void)registerCreators;
 
 @end
 
 @interface  NSObject (FileManagerDelegates)
 
-- (NSString *)fileManager:(id)sender willCreateFile:(NSString *)aFile withKey:(NSString *)key;
-    // Returns the correct, full path - or nil!
+// Returns the correct, full path - or nil!
+- (NSString *)fileManager:(id)sender
+           willCreateFile:(NSString *)aFile
+	          withKey:(NSString *)key;
 
-- (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key;
-
-- (id)fileManagerWillAddFiles:(id)sender;
-    // Is invoked to get the currently active project!
-
-- (BOOL)fileManager:(id)sender shouldAddFile:(NSString *)file forKey:(NSString *)key;
-- (void)fileManager:(id)sender didAddFile:(NSString *)file forKey:(NSString *)key;
-
+- (void)fileManager:(id)sender
+      didCreateFile:(NSString *)aFile
+            withKey:(NSString *)key;
 @end
 
 #endif

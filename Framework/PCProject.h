@@ -83,7 +83,7 @@ typedef int PCProjInfoBits;
 static NSString * const PCClasses             = @"CLASS_FILES";
 static NSString * const PCHeaders             = @"HEADER_FILES";
 static NSString * const PCOtherSources        = @"OTHER_SOURCES";
-static NSString * const PCGModels             = @"INTERFACES";
+static NSString * const PCInterfaces          = @"INTERFACES";
 static NSString * const PCImages              = @"IMAGES";
 static NSString * const PCOtherResources      = @"OTHER_RESOURCES";
 static NSString * const PCSubprojects         = @"SUBPROJECTS";
@@ -191,8 +191,6 @@ extern NSString *ProjectDictDidSaveNotification;
 - (PCProjectEditor *)projectEditor;
 - (PCEditorController *)editorController;
 
-- (NSArray *)fileExtensionsForCategory:(NSString *)key;
-
 - (NSString *)projectName;
 - (void)setProjectName:(NSString *)aName;
 - (BOOL)isProjectChanged;
@@ -217,6 +215,9 @@ extern NSString *ProjectDictDidSaveNotification;
 // Subclasses need to call this before their customised implementation!
 - (BOOL)writeMakefile;
 
+- (NSArray *)fileTypesForCategory:(NSString *)category;
+- (NSString *)dirForCategory:(NSString *)category;
+
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
 - (NSArray *)otherKeys;
@@ -235,15 +236,18 @@ extern NSString *ProjectDictDidSaveNotification;
 - (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c;
 - (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c;
 
+// Remove path from "file" and handle special cases like libraries
+- (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type;
+
 // Returns YES if type is a valid key and file is not contained in the 
 // project already
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
 
-- (void)addFile:(NSString *)file forKey:(NSString *)key;
-- (void)addFile:(NSString *)file forKey:(NSString *)key copy:(BOOL)yn;
+- (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key;
+- (void)addFiles:(NSArray *)files forKey:(NSString *)key;
 
-- (void)removeFile:(NSString *)file forKey:(NSString *)key;
-- (BOOL)removeSelectedFilesPermanently:(BOOL)yn;
+- (void)removeFiles:(NSArray *)files forKey:(NSString *)key;
+
 - (void)renameFile:(NSString *)aFile;
 
 - (BOOL)assignProjectDict:(NSDictionary *)aDict;

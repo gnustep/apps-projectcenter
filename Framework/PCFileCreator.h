@@ -1,9 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000-2002 Free Software Foundation
+   Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Author: Philippe C.D. Robert <phr@3dkit.org>
 
    This file is part of GNUstep.
 
@@ -24,21 +24,32 @@
    $Id$
 */
 
-#include <Foundation/Foundation.h>
+#ifndef _PCFileCreator_h
+#define _PCFileCreator_h
+
+#include <AppKit/AppKit.h>
 
 @class PCProject;
 
-@protocol FileCreator
+@interface PCFileCreator : NSObject
+{
+  NSMutableString *file;
+}
 
 + (id)sharedCreator;
 
 - (NSString *)name;
 - (NSDictionary *)creatorDictionary;
-    // Object is the creator and key is the type of the file to be created
 
-- (NSDictionary *)createFileOfType:(NSString *)type path:(NSString *)path project:(PCProject *)aProject;
-    // Creates the file and returns a dictionary containing the full path of it as the key and the type as object (and perhaps other files that have been added during this process!); including path extensions etc!
+// The implementation needs some heavy cleanup!
+- (NSDictionary *)createFileOfType:(NSString *)type
+                              path:(NSString *)path
+			   project:(PCProject *)aProject;
+
+- (void)replaceTagsInFileAtPath:(NSString *)newFile
+                    withProject:(PCProject *)aProject
+		           type:(NSString *)aType;
 
 @end
 
-
+#endif

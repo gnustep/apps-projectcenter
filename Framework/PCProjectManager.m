@@ -26,6 +26,7 @@
 
 #include "PCDefines.h"
 
+#include "PCFileManager.h"
 #include "PCProjectManager.h"
 #include "PCHistoryPanel.h"
 #include "PCBuildPanel.h"
@@ -83,12 +84,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	                                       selector:spdc 
 	                                           name:SavePeriodDCN 
 	                                         object:nil];
-/*      projectInspector = nil;
-      buildPan = nil;
-      projectDebugger = nil;
-      projectHistory = nil;
-      projectFinder = nil;*/
 
+      fileManager = [PCFileManager fileManager];
+      [fileManager setDelegate:self];
+      
       _needsReleasing = NO;
     }
 
@@ -139,6 +138,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
+- (PCFileManager *)fileManager
+{
+  return fileManager;
+}
+
 - (PCProjectInspector *)projectInspector
 {
   if (!projectInspector)
@@ -163,6 +167,15 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
     }
 
   return historyPanel;
+}
+
+- (void)showProjectHistory:(id)sender
+{
+  if (![[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
+              objectForKey: SeparateBuilder] isEqualToString: @"YES"])
+    {
+      [[activeProject projectWindow] showProjectHistory:self];
+    }
 }
 
 - (NSPanel *)buildPanel
@@ -273,6 +286,11 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 // ==== Project actions
 // ============================================================================
 
+- (NSString *)projectNameAtPath:(NSString *)aPath
+{
+  return [[aPath stringByDeletingLastPathComponent] lastPathComponent];
+}
+
 - (PCProject *)loadProjectAt:(NSString *)aPath
 {
   NSDictionary    *projectFile;
@@ -301,13 +319,16 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (BOOL)openProjectAt:(NSString *)aPath
 {
-  BOOL isDir = NO;
+  BOOL     isDir = NO;
+  NSString *projectName = nil;
 
-  if ([loadedProjects objectForKey:aPath]) 
+  projectName = [self projectNameAtPath:aPath];
+
+  if ([loadedProjects objectForKey:projectName]) 
     {
       NSRunAlertPanel(@"Attention!",
 		      @"Project '%@' has already been opened!", 
-		      @"OK",nil,nil,aPath);
+		      @"OK",nil,nil,projectName);
       return NO;
     }
 
@@ -322,7 +343,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 	}
 
       [project setProjectManager:self];
-      [loadedProjects setObject:project forKey:aPath];
+      [loadedProjects setObject:project forKey:projectName];
       [self setActiveProject:project];
 
       [project validateProjectDict];
@@ -352,9 +373,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
   [project setProjectManager:self];
 
-  aPath = [aPath stringByAppendingPathComponent: [aPath lastPathComponent]];
-  aPath = [aPath stringByAppendingPathExtension: @"pcproj"];
-  [loadedProjects setObject:project forKey:aPath];
+  [loadedProjects setObject:project forKey:[self projectNameAtPath:aPath]];
 
   [self setActiveProject:project];
 
@@ -388,6 +407,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
 }
 
+// subprojects
 - (BOOL)newSubproject
 {
     return NO;
@@ -401,18 +421,14 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 - (void)removeSubproject
 {
 }
+//
 
 - (void)closeProject:(PCProject *)aProject
 {
   PCProject *currentProject = nil;
-  NSString  *path = [aProject projectPath];
-  NSString  *projectName = [path lastPathComponent];
-  NSString  *key;
+  NSString  *projectName = [aProject projectName];
 
-  key = [path stringByAppendingPathComponent:projectName];
-  key = [key stringByAppendingPathExtension:@"pcproj"];
-
-  currentProject = RETAIN([loadedProjects objectForKey:key]);
+  currentProject = RETAIN([loadedProjects objectForKey:projectName]);
   if (!currentProject)
     {
       return;
@@ -420,7 +436,7 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
   // Remove it from the loaded projects! This is the only place it
   // is retained, so it should dealloc after this.
-  [loadedProjects removeObjectForKey:key];
+  [loadedProjects removeObjectForKey:projectName];
 
   if ([loadedProjects count] == 0)
     {
@@ -440,16 +456,16 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)closeProject
 {
-  [[[self activeProject] projectWindow] performClose:self];
+  [[activeProject projectWindow] performClose:self];
 }
 
 // ============================================================================
 // ==== File actions
 // ============================================================================
 
-- (BOOL)saveAllFiles
+- (void)newFile
 {
-  return [[activeProject editorController] saveAllFiles];
+  [fileManager showNewFileWindow];
 }
 
 - (BOOL)saveFile
@@ -482,83 +498,109 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
   return YES;
 }
 
-- (BOOL)removeFilesPermanently:(BOOL)yn
+// Project menu
+- (BOOL)addProjectFiles
 {
+  NSString       *category = nil;
+  NSString       *directory = nil;
+  NSArray        *fileTypes = nil;
+  NSMutableArray *files = nil;
+
+  category = [activeProject selectedRootCategory];
+  directory = [activeProject dirForCategory:category];
+  fileTypes = [activeProject fileTypesForCategory:category];
+
+  // Order Open panel and return selected files
+  files = [fileManager selectFilesOfType:fileTypes multiple:YES];
+
+  // No files was selected 
+  if (!files)
+    {
+      return NO;
+    }
+
+  // Copy and add files
+  [activeProject addAndCopyFiles:files forKey:category];
+
+  return YES;
+}
+
+- (BOOL)saveProjectFiles
+{
+  return [[activeProject editorController] saveAllFiles];
+}
+
+- (BOOL)removeProjectFiles
+{
+  NSArray  *files = nil;
+  NSString *category = nil;
+  NSString *directory = nil;
+
   if (!activeProject)
     {
       return NO;
     }
 
-  return [activeProject removeSelectedFilesPermanently:yn];
+  files = [[activeProject projectBrowser] selectedFiles];
+  category = [activeProject selectedRootCategory];
+  directory = [activeProject dirForCategory:category];
+
+  if (files)
+    {
+      int ret;
+
+      ret = NSRunAlertPanel(@"Remove",
+			    @"Remove files...",
+			    @"Cancel",
+			    @"...from Project only",
+			    @"...from Project and Disk");
+
+      if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
+	{
+	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
+
+	  if (flag 
+	      && ![fileManager removeFiles:files fromDirectory:directory])
+	    {
+	      NSRunAlertPanel(@"Alert",
+			      @"Error removing files from project %@!",
+			      @"OK", nil, nil, [activeProject projectName]);
+	      return NO;
+	    }
+
+	  [activeProject removeFiles:files forKey:category];
+	}
+    }
+
+  return YES;
 }
 
 @end
 
 @implementation  PCProjectManager (FileManagerDelegates)
 
-- (NSString *)fileManager:(id)sender willCreateFile:(NSString *)aFile withKey:(NSString *)key
+// willCreateFile
+- (NSString *)fileManager:(id)sender
+           willCreateFile:(NSString *)aFile
+	          withKey:(NSString *)key
 {
-    NSString *path = nil;
-  
-#ifdef DEBUG
-    NSLog(@"%@ %x: will create file %@ for key %@",[self class],self,aFile,key);
-#endif // DEBUG
+  NSString *path = nil;
 
-    if ([activeProject doesAcceptFile:aFile forKey:key] ) 
+  if ([activeProject doesAcceptFile:aFile forKey:key]) 
     {
-	path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
+      path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
     }
 
-    return path;
+  return path;
 }
 
-- (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key
+// didCreateFiles
+- (void)fileManager:(id)sender
+      didCreateFile:(NSString *)aFile
+            withKey:(NSString *)key
 {
-#ifdef DEBUG
-    NSLog(@"%@ %x: did create file %@ for key %@",[self class],self,aFile,key);
-#endif // DEBUG
-
-    [activeProject addFile:aFile forKey:key];
-}
-
-- (id)fileManagerWillAddFiles:(id)sender
-{
-    return activeProject;
-}
-
-- (BOOL)fileManager:(id)sender shouldAddFile:(NSString *)file forKey:(NSString *)key
-{
-    NSMutableString *fn = [NSMutableString stringWithString:[file lastPathComponent]];
-
-#ifdef DEBUG
-    NSLog(@"%@ %x: should add file %@ for key %@",[self class],self,file,key);
-#endif // DEBUG
-  
-    if ([key isEqualToString:PCLibraries]) 
-    {
-	[fn deleteCharactersInRange:NSMakeRange(1,3)];
-	fn = (NSMutableString *)[fn stringByDeletingPathExtension];
-    }
-  
-    if ([[[activeProject projectDict] objectForKey:key] containsObject:fn]) 
-    {
-	NSRunAlertPanel(@"Attention!",
-	                @"The file %@ is already part of project %@!",
-			@"OK",nil,nil,fn,[activeProject projectName]);
-	return NO;
-    }
-    return YES;
-}
-
-- (void)fileManager:(id)sender didAddFile:(NSString *)file forKey:(NSString *)key
-{
-#ifdef DEBUG
-    NSLog(@"%@ %x: did add file %@ for key %@",[self class],self,file,key);
-#endif // DEBUG
-
-    [activeProject addFile:file forKey:key];
+  [activeProject addFiles:[NSArray arrayWithObject:aFile] forKey:key];
 }
 
 @end
-
 

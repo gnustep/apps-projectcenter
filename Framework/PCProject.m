@@ -24,6 +24,7 @@
    $Id$
 */
 
+#include "PCFileManager.h"
 #include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCDefines.h"
@@ -111,7 +112,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 - (void)close
 {
   [editorController closeAllEditors];
-
   [projectManager closeProject:self];
 }
 
@@ -194,36 +194,6 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   NSString *_path = [[self projectBrowser] pathOfSelectedFile];
 
   return [self projectKeyForKeyPath:_path];
-}
-
-- (NSArray *)fileExtensionsForCategory:(NSString *)key
-{
-  if ([key isEqualToString:PCGModels]) {
-    return [NSArray arrayWithObjects:@"gmodel",@"gorm",nil];
-  }
-  if ([key isEqualToString:PCGSMarkupFiles]) {
-    return [NSArray arrayWithObjects:@"gsmarkup",nil];
-  }
-  else if ([key isEqualToString:PCClasses]) {
-    return [NSArray arrayWithObjects:@"m",nil];
-  }
-  else if ([key isEqualToString:PCHeaders]) {
-    return [NSArray arrayWithObjects:@"h",nil];
-  }
-  else if ([key isEqualToString:PCOtherSources]) {
-    return [NSArray arrayWithObjects:@"c",@"C",nil];
-  }
-  else if ([key isEqualToString:PCLibraries]) {
-    return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
-  }
-  else if ([key isEqualToString:PCSubprojects]) {
-    return [NSArray arrayWithObjects:@"subproj",nil];
-  }
-  else if ([key isEqualToString:PCImages]) {
-    return [NSImage imageFileTypes];
-  }
-
-  return nil;
 }
 
 - (void)setProjectName:(NSString *)aName
@@ -310,6 +280,16 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
   return YES;
 }
 
+- (NSArray *)fileTypesForCategory:(NSString *)category
+{
+  return nil;
+}
+
+- (NSString *)dirForCategory:(NSString *)category
+{
+  return projectPath;
+}
+
 - (NSArray *)sourceFileKeys
 {
   return nil;
@@ -381,177 +361,121 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
     }
 }
 
-- (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
+- (NSString *)projectFileFromFile:(NSString *)file forKey:(NSString *)type
 {
-    if ([[projectDict allKeys] containsObject:type]) {
-        NSArray *files = [projectDict objectForKey:type];
+  NSMutableString *projectFile = nil;
 
-        if (![files containsObject:file]) {
-            return YES;
-        }
-    }
-    
-    return NO;
-}
-
-- (void)addFile:(NSString *)file forKey:(NSString *)type
-{
-    [self addFile:file forKey:type copy:NO];
-}
-
-- (void)addFile:(NSString *)file forKey:(NSString *)type copy:(BOOL)yn
-{
-  NSArray         *types = [projectDict objectForKey:type];
-  NSMutableArray  *files = [NSMutableArray arrayWithArray:types];
-  NSString        *lpc = [file lastPathComponent];
-  NSMutableString *newFile = [NSMutableString stringWithString:lpc];
+  projectFile = [NSMutableString stringWithString:[file lastPathComponent]];
 
   if ([type isEqualToString:PCLibraries])
     {
-      [newFile deleteCharactersInRange:NSMakeRange(0,3)];
-      newFile = (NSMutableString*)[newFile stringByDeletingPathExtension];
+      [projectFile deleteCharactersInRange:NSMakeRange(0,3)];
+      projectFile = 
+	(NSMutableString*)[projectFile stringByDeletingPathExtension];
     }
 
-  if ([files containsObject:newFile])
+  return projectFile;
+}
+
+- (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
+{
+  NSArray  *projectFiles = [projectDict objectForKey:type];
+  NSString *pFile = [self projectFileFromFile:file forKey:type];
+
+  if ([[projectDict allKeys] containsObject:type])
     {
-      NSRunAlertPanel(@"Attention!",
-		      @"The file %@ is already part of this project!",
-		      @"OK",nil,nil,newFile);
-      return;
-    }
-
-#ifdef DEBUG
-  NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
-#endif// DEBUG
-
-  // Add the new file
-  [files addObject:newFile];
-  [projectDict setObject:files forKey:type];
-
-  if (yn)
-    {
-      NSFileManager *manager = [NSFileManager defaultManager];
-      NSString *destination = [[self projectPath] 
-	                        stringByAppendingPathComponent:newFile];
-
-      if (![manager copyPath:file toPath:destination handler:nil])
+      if (![projectFiles containsObject:pFile])
 	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"The file %@ could not be copied to %@!",
-			  @"OK",nil,nil,newFile,destination);
+	  return YES;
 	}
     }
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
-                  object:self];
+  return NO;
 }
 
-- (void)removeFile:(NSString *)file forKey:(NSString *)key
+- (BOOL)addAndCopyFiles:(NSArray *)files forKey:(NSString *)key
 {
-  NSMutableArray  *array;
-  NSMutableString *filePath;
+  NSEnumerator   *fileEnum = [files objectEnumerator];
+  NSString       *file = nil;
+  NSMutableArray *fileList = [[files mutableCopy] autorelease];
+  PCFileManager  *fileManager = [projectManager fileManager];
+  NSString       *directory = [self dirForCategory:key];
 
-  if (!file || !key)
+  // Validate files
+  while ((file = [fileEnum nextObject]))
     {
-      return;
+      if (![self doesAcceptFile:file forKey:key])
+	{
+	  [fileList removeObject:file];
+	}
     }
 
-  // Close editor
-  filePath = [[NSMutableString alloc] initWithString:projectPath];
-  [filePath appendString:@"/"];
-  [filePath appendString:file];
-  [editorController closeEditorForFile:filePath];
-  [filePath release];
-
-  array = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
-  [array removeObject:file];
-  [projectDict setObject:array forKey:key];
-
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:ProjectDictDidChangeNotification
-                  object:self];
-}
-
-- (BOOL)removeSelectedFilesPermanently:(BOOL)yn
-{
-  NSEnumerator *files = [[[self projectBrowser] selectedFiles] objectEnumerator];
-  NSString *file = nil;
-  NSString *key = nil;
-  NSString *otherKey = nil;
-  NSString *ext = nil;
-  NSString *fn = nil;
-  BOOL     ret = NO;
-
-  if (!files)
+  // Copy files
+  if (![fileManager copyFiles:fileList intoDirectory:directory])
     {
+      NSRunAlertPanel(@"Alert",
+		      @"Error adding files to project %@!",
+		      @"OK", nil, nil, projectName);
       return NO;
     }
 
-  key = [self projectKeyForKeyPath:[[self projectBrowser] pathOfSelectedFile]];
+  // Add files to project
+  [self addFiles:fileList forKey:key];
+  
+  return YES;
+}
 
-  while ((file = [files nextObject]))
+- (void)addFiles:(NSArray *)files forKey:(NSString *)type
+{
+  NSEnumerator   *enumerator = nil;
+  NSString       *file = nil;
+  NSString       *pFile = nil;
+  NSArray        *types = [projectDict objectForKey:type];
+  NSMutableArray *projectFiles = [NSMutableArray arrayWithArray:types];
+
+  enumerator = [files objectEnumerator];
+  while ((file = [enumerator nextObject]))
     {
-      [self removeFile:file forKey:key];
-
-      if ([key isEqualToString:PCClasses])
-	{
-	  otherKey = PCHeaders;
-	  ext = [NSString stringWithString:@"h"];
-
-	  fn = [file stringByDeletingPathExtension];
-	  fn = [fn stringByAppendingPathExtension:ext];
-
-	  if ([self doesAcceptFile:fn forKey:otherKey] == NO)
-	    {
-	      ret = NSRunAlertPanel(@"Removing Header?",
-				    @"Should %@ be removed from the project %@ as well?",
-				    @"Yes", @"No", nil, 
-				    fn, [self projectName]);
-	    }
-	}
-      else if ([key isEqualToString:PCHeaders])
-	{
-	  otherKey = PCClasses;
-	  ext = [NSString stringWithString:@"m"];
-
-	  fn = [file stringByDeletingPathExtension];
-	  fn = [fn stringByAppendingPathExtension:ext];
-
-	  if ([self doesAcceptFile:fn forKey:otherKey] == NO)
-	    {
-	      ret = NSRunAlertPanel(@"Removing Class?",
-				    @"Should %@ be removed from the project %@ as well?",
-				    @"Yes", @"No", nil,
-				    fn, [self projectName]);
-	    }
-	}
-
-      if (ret)
-	{
-	  [self removeFile:fn forKey:otherKey];
-	}
-
-      // Remove the file permanently?!
-      if (yn)
-	{
-	  NSString *pth = [projectPath stringByAppendingPathComponent:file];
-
-	  [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
-
-	  if (ret)
-	    {
-	      pth = [projectPath stringByAppendingPathComponent:fn];
-	      [[NSFileManager defaultManager] removeFileAtPath:pth handler:nil];
-	    }
-	}
+      pFile = [self projectFileFromFile:file forKey:type];
+      [projectFiles addObject:pFile];
     }
+
+  [projectDict setObject:projectFiles forKey:type];
 
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:ProjectDictDidChangeNotification
                   object:self];
+}
 
-  return YES;
+- (void)removeFiles:(NSArray *)files forKey:(NSString *)key
+{
+  NSEnumerator   *enumerator = nil;
+  NSString       *filePath = nil;
+  NSString       *file = nil;
+  NSMutableArray *projectFiles = nil;
+
+  if (!files || !key)
+    {
+      return;
+    }
+
+  // Remove files from project
+  projectFiles = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
+  enumerator = [files objectEnumerator];
+  while ((file = [enumerator nextObject]))
+    {
+      [projectFiles removeObject:file];
+
+      // Close editor
+      filePath = [projectPath stringByAppendingPathComponent:file];
+      [editorController closeEditorForFile:filePath];
+    }
+
+  [projectDict setObject:projectFiles forKey:key];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:ProjectDictDidChangeNotification
+                  object:self];
 }
 
 - (void)renameFile:(NSString *)aFile
@@ -600,8 +524,7 @@ NSString *ProjectDictDidSaveNotification = @"ProjectDictDidSaveNotification";
 
 - (BOOL)save
 {
-  NSString *file = [[projectPath stringByAppendingPathComponent:projectName] 
-                    stringByAppendingPathExtension:@"pcproj"];
+  NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
   NSString       *backup = [file stringByAppendingPathExtension:@"backup"];
   NSFileManager  *fm = [NSFileManager defaultManager];
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];

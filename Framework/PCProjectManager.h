@@ -29,6 +29,7 @@
 
 #include <AppKit/AppKit.h>
 
+@class PCFileManager;
 @class PCProject;
 @class PCProjectInspector;
 @class PCProjectBuilder;
@@ -50,6 +51,7 @@ extern NSString *ActiveProjectDidChangeNotification;
 {
   id                  delegate;
 
+  PCFileManager       *fileManager;
   PCProjectInspector  *projectInspector;
   
   NSPanel             *buildPanel;
@@ -84,9 +86,11 @@ extern NSString *ActiveProjectDidChangeNotification;
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
+- (PCFileManager *)fileManager;
 - (PCProjectInspector *)projectInspector;
 - (void)showProjectInspector:(id)sender;
 - (NSPanel *)historyPanel;
+- (void)showProjectHistory:(id)sender;
 - (NSPanel *)buildPanel;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;
@@ -118,6 +122,10 @@ extern NSString *ActiveProjectDidChangeNotification;
 // ==== Project actions
 // ============================================================================
 
+// Before project is loaded fetch project's name from project path
+// Change this to remove dependency from project path
+- (NSString *)projectNameAtPath:(NSString *)aPath;
+
 // Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
 
@@ -139,7 +147,6 @@ extern NSString *ActiveProjectDidChangeNotification;
 
 - (BOOL)saveProjectAs:(NSString *)projName;
 
-// Reverts the currently active project
 - (void)revertToSaved;
 
 - (BOOL)newSubproject;
@@ -147,22 +154,23 @@ extern NSString *ActiveProjectDidChangeNotification;
 - (void)removeSubproject;
 
 - (void)closeProject:(PCProject *)aProject;
-// Closes the currently active project
 - (void)closeProject;
 
 // ============================================================================
 // ==== File actions
 // ============================================================================
 
-- (BOOL)saveAllFiles;
+- (void)newFile;
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)path;
 - (BOOL)saveFileTo:(NSString *)path;
 - (BOOL)revertFileToSaved;
+- (BOOL)renameFileTo:(NSString *)path;
 - (void)closeFile;
 
-- (BOOL)renameFileTo:(NSString *)path;
-- (BOOL)removeFilesPermanently:(BOOL)yn;
+- (BOOL)addProjectFiles;
+- (BOOL)saveProjectFiles;
+- (BOOL)removeProjectFiles;
 
 @end
 
@@ -177,18 +185,6 @@ extern NSString *ActiveProjectDidChangeNotification;
 - (void)fileManager:(id)sender 
       didCreateFile:(NSString *)aFile
             withKey:(NSString *)key;
-
-// Returns the active project
-- (id)fileManagerWillAddFiles:(id)sender;
-
-- (BOOL)fileManager:(id)sender 
-      shouldAddFile:(NSString *)file
-             forKey:(NSString *)key;
-
-// Adds the file to the project and update the makefile!
-- (void)fileManager:(id)sender 
-         didAddFile:(NSString *)file
-	     forKey:(NSString *)key;
 
 @end
 

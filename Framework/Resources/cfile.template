@@ -1,0 +1,9 @@
+/* 
+ * $FILENAME$ created by $USERNAME$ on $DATE$
+ *
+ * Project name: $PROJECTNAME$
+ *
+ * Created with ProjectCenter - http://www.gnustep.org
+ */
+
+#include "$FILENAMESANSEXTENSION$.h"

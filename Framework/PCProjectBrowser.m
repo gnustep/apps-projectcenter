@@ -23,6 +23,7 @@
 */
 
 #include "PCFileManager.h"
+#include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCEditorController.h"
 #include "PCProjectBrowser.h"
@@ -214,7 +215,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
   else 
     {
-      [[PCFileManager fileManager] showAddFileWindow];
+      [[project projectManager] addProjectFiles];
     }
 }
 
