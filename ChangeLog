@@ -1,3 +1,8 @@
+2003-11-08  Serg Stoyan <stoyan@on.com.ua>
+
+	* Fix segfault when closing Gorm and Renaissance projects (pathc by
+	NeXT <chunsj@embian.com>)
+	
 2003-10-10  Serg Stoyan <stoyan@on.com.ua>
 
 	* Version 0.3.6
