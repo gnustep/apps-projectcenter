@@ -341,7 +341,6 @@ enum {
      * Clean up...
      *
      */
-    
     [NOTIFICATION_CENTER removeObserver:self 
 			 name:NSFileHandleDataAvailableNotification
 			 object:readHandle];

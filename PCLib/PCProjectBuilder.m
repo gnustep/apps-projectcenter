@@ -571,11 +571,9 @@
 
   // Prepearing to building
   logPipe = [NSPipe pipe];
-//  readHandle = [[logPipe fileHandleForReading] retain];
   readHandle = [logPipe fileHandleForReading];
 
   errorPipe = [NSPipe pipe];
-//  errorReadHandle = [[errorPipe fileHandleForReading] retain];
   errorReadHandle = [errorPipe fileHandleForReading];
 
   [readHandle waitForDataInBackgroundAndNotify];
@@ -607,75 +605,68 @@
                            toTarget: self
                          withObject: data];
 
-  [NOTIFICATION_CENTER addObserver: self
-                          selector: @selector (buildDidTerminate:)
-			      name: NSTaskDidTerminateNotification
-			    object: makeTask];
-
   return;
 }
 
-- (void)buildDidTerminate:(NSNotification *)aNotif
+- (void)buildDidTerminate
 {
-  int status = [[aNotif object] terminationStatus];
+  int status = [makeTask terminationStatus];
 
-  if ([aNotif object] == makeTask)
+  [NOTIFICATION_CENTER removeObserver: self 
+                                 name: NSFileHandleDataAvailableNotification
+                               object: readHandle];
+
+  [NOTIFICATION_CENTER removeObserver: self 
+                                 name: NSFileHandleDataAvailableNotification
+                               object: errorReadHandle];
+
+  RELEASE (readHandle);
+  RELEASE (errorReadHandle);
+
+  if (status == 0)
     {
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSFileHandleDataAvailableNotification
-	                           object: readHandle];
-
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSFileHandleDataAvailableNotification
- 	                           object: errorReadHandle];
-
-      [NOTIFICATION_CENTER removeObserver: self 
-	                             name: NSTaskDidTerminateNotification 
-	                           object: makeTask];
-      //  RELEASE (readHandle);
-      //  RELEASE (errorReadHandle);
-
-      if (status == 0)
-	{
-	  [self logString: 
-	    [NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
-	    error: NO
-	    newLine: NO];
-	  [buildStatusField setStringValue: [NSString stringWithFormat: @"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
-	} 
-      else
-	{
-	  [self logString: [NSString stringWithFormat: @"=== %@ terminated!", buildTarget] error: NO newLine: NO];
-	  [buildStatusField setStringValue: [NSString stringWithFormat: 
-	    @"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
-	}
-
-      // Rstore buttons state
-      if ([buildTarget isEqualToString: @"Build"])
-	{
-	  [buildButton setState: NSOffState];
-	  [cleanButton setEnabled:YES];
-	  [installButton setEnabled:YES];
-	}
-      else if ([buildTarget isEqualToString: @"Clean"])
-	{
-	  [cleanButton setState: NSOffState];
-	  [buildButton setEnabled:YES];
-	  [installButton setEnabled:YES];
-	}
-      else if ([buildTarget isEqualToString: @"Install"])
-	{
-	  [installButton setState: NSOffState];
-	  [buildButton setEnabled:YES];
-	  [cleanButton setEnabled:YES];
-	}
-
-      [buildArgs removeAllObjects];
-      [buildTarget setString: @"Default"];
-
-      /*  RELEASE (makeTask);*/
-      makeTask = nil;
+      [self logString: 
+	[NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
+	error: NO newLine: NO];
+      [buildStatusField setStringValue: 
+	[NSString stringWithFormat: 
+	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
+    } 
+  else
+    {
+      [self logString: 
+	[NSString stringWithFormat: @"=== %@ terminated!", buildTarget]
+	error: NO newLine: NO];
+      [buildStatusField setStringValue: 
+	[NSString stringWithFormat: 
+	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
     }
+
+  // Rstore buttons state
+  if ([buildTarget isEqualToString: @"Build"])
+    {
+      [buildButton setState: NSOffState];
+      [cleanButton setEnabled: YES];
+      [installButton setEnabled: YES];
+    }
+  else if ([buildTarget isEqualToString: @"Clean"])
+    {
+      [cleanButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [installButton setEnabled: YES];
+    }
+  else if ([buildTarget isEqualToString: @"Install"])
+    {
+      [installButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [cleanButton setEnabled: YES];
+    }
+
+  [buildArgs removeAllObjects];
+  [buildTarget setString: @"Default"];
+
+  RELEASE(makeTask);
+  makeTask = nil;
 }
 
 - (void)popupChanged:(id)sender
@@ -798,6 +789,8 @@
       [self performSelector: postProcess];
       postProcess = NULL;
     }
+
+  [self buildDidTerminate];
 
   [pool release];
 }

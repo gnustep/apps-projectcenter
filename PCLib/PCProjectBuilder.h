@@ -87,8 +87,7 @@
 - (void) logStdOut: (NSNotification *)aNotif;
 - (void) logErrOut: (NSNotification *)aNotif;
 
-- (void) buildDidTerminate: (NSNotification *)aNotif;
-//- (void) buildDidTerminate: (int)status;
+- (void) buildDidTerminate;
 
 - (void) copyPackageTo: (NSString *)path;
 
