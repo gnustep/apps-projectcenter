@@ -46,6 +46,7 @@ ProjectCenter_debug.tiff \
 ProjectCenter_install.tiff \
 ProjectCenter_make.tiff \
 ProjectCenter_profile.tiff \
+ProjectCenter_rpm.tiff \
 ProjectCentre_add.tiff \
 ProjectCentre_build.tiff \
 ProjectCentre_clean.tiff \
