@@ -1,0 +1,8 @@
+Sat Jan 19 09:46:17 2002  Nicola Pero  <n.pero@mi.flashnet.it>
+
+	* ChangeLog: Added again, to record changes in top level files.
+	* GNUmakefile (GNUSTEP_MAKEFILES): Do not define.
+	(Version): Use -include instead of include to make it compile
+	since this file is missing (Reported by Dan Pascu
+	<dan@services.iiruc.ro>).
+
