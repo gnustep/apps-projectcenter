@@ -637,7 +637,7 @@
 // ==== File Handling
 //=============================================================================
 
-- (void)browserDidSelectFileNamed:(NSString *)fileName
+- (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c
 {
     NSString *p = [[self projectPath] stringByAppendingPathComponent:fileName];
     PCEditor *e;
@@ -658,6 +658,18 @@
     [e showInProjectEditor:projectEditor];
 
     [projectWindow makeFirstResponder:[projectEditor editorView]];
+}
+
+- (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c
+{
+    PCEditor *e;
+
+    e = [editorController editorForFile:fileName];
+
+    if( e )
+    {
+	[e show];
+    }
 }
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type

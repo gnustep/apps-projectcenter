@@ -212,7 +212,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 // ==== File Handling
 //=============================================================================
 
-- (void)browserDidSelectFileNamed:(NSString *)fileName;
+- (void)browserDidClickFile:(NSString *)fileName category:(NSString*)c;
+- (void)browserDidDblClickFile:(NSString *)fileName category:(NSString*)c;
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)key;
     // Returns YES if type is a valid key and file is not contained in the project already

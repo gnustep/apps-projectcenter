@@ -25,8 +25,6 @@
 */
 
 #import "PCBrowserController.h"
-#import "PCEditorController.h"
-#import "PCEditor.h"
 #import "PCProject.h"
 #import "PCFileManager.h"
 
@@ -43,48 +41,54 @@
 {
   if ([[sender selectedCell] isLeaf]) 
   {
-    NSString *ltitle = [[sender selectedCell] stringValue];
-    NSString *ctitle = [[sender selectedCellInColumn:0] stringValue];
-    NSString *ctitlef = [[project projectPath] stringByAppendingPathComponent:ltitle];
+    NSString *ltitle   = [[sender selectedCell] stringValue];
+    NSString *category = [[sender selectedCellInColumn:0] stringValue];
 
-    [project browserDidSelectFileNamed:ltitle];
+    if ([self isEditableCategory:category])
+    {
+	[project browserDidClickFile:ltitle category:category];
+    }
   }
 }
 
 - (void)doubleClick:(id)sender
 {
-  if ([sender selectedColumn] != 0) 
+  if ([[sender selectedCell] isLeaf]) 
   {
-    NSString *category = [[[browser path] componentsSeparatedByString:@"/"] objectAtIndex:1];
-    NSString *k = [[project rootCategories] objectForKey:category];
+    NSString *category = [[sender selectedCellInColumn:0] stringValue];
+    NSString *fn = [self nameOfSelectedFile];
+    NSString *f = [[project projectPath] stringByAppendingPathComponent:fn];
 
-    if ([k isEqualToString:PCClasses] || 
-	[k isEqualToString:PCHeaders] || 
-	[k isEqualToString:PCOtherSources]) 
+    if ([self isEditableCategory:category])
     {
-      NSString *projectPath = [project projectPath];
-      NSString *fn = [self nameOfSelectedFile];
-      NSString *file = [projectPath stringByAppendingPathComponent:fn];
-      
-      [[[project editorController] editorForFile:file] show];
+      [project browserDidDblClickFile:f category:category];
     }
-    else 
+    else if([[NSWorkspace sharedWorkspace] openFile:f] == NO) 
     {
-      NSString *fi;
-      NSString *sf = [self nameOfSelectedFile];
-
-      fi = [[project projectPath] stringByAppendingPathComponent:sf];
-
-      if([[NSWorkspace sharedWorkspace] openFile:fi] == NO) 
-      {
-	NSRunAlertPanel(@"Attention!",@"Could not open %@.",@"OK",nil,nil,fi);
-      }
+	NSRunAlertPanel(@"Attention!",@"Could not open %@.",@"OK",nil,nil,f);
     }
   }
   else 
   {
     [[PCFileManager fileManager] showAddFileWindow];
   }
+}
+
+- (BOOL)isEditableCategory:(NSString *)category
+{
+    NSString *k = [[project rootCategories] objectForKey:category];
+
+    if ([k isEqualToString:PCClasses] || 
+	[k isEqualToString:PCHeaders] || 
+	[k isEqualToString:PCOtherResources] || 
+	[k isEqualToString:PCSupportingFiles] || 
+	[k isEqualToString:PCDocuFiles] || 
+	[k isEqualToString:PCOtherSources]) 
+    {
+        return YES;
+    }
+
+    return NO;
 }
 
 - (void)projectDictDidChange:(NSNotification *)aNotif
@@ -133,8 +137,8 @@
 
 - (void)setProject:(PCProject *)aProj
 {
-  [project autorelease];
-  project = [aProj retain];
+  AUTORELEASE(project);
+  project = RETAIN(aProj);
 }
 
 @end

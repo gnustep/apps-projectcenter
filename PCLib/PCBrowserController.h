@@ -42,6 +42,8 @@
 - (void)click:(id)sender;
 - (void)doubleClick:(id)sender;
 
+- (BOOL)isEditableCategory:(NSString *)category;
+
 - (void)projectDictDidChange:(NSNotification *)aNotif;
 
 - (NSString *)nameOfSelectedFile;
