@@ -54,8 +54,6 @@ static NSFont *editorFont = nil;
 	editorFont = RETAIN([NSFont userFixedPitchFontOfSize:12]);
 #undef CALIBRATED_COL
     }
-
-    [super initialize];
 }
 
 - (void)colouriseStrings
