@@ -308,6 +308,11 @@
   [ldOptField setStringValue:@""];
   [projectAttributeInspectorView addSubview:ldOptField];
 
+  /*
+   * Project View
+   *
+   */
+
   projectProjectInspectorView = [[NSBox alloc] init];
   [projectProjectInspectorView setFrame:NSMakeRect(-2,-2,284,334)];
   [projectProjectInspectorView setTitlePosition:NSNoTitle];
@@ -323,7 +328,7 @@
   [textField setStringValue:@"Type:"];
   [projectProjectInspectorView addSubview:[textField autorelease]];
 
-  projectTypeField =[[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
+  projectTypeField = [[NSTextField alloc] initWithFrame:NSMakeRect(84,280,176,21)];
   [projectTypeField setAlignment: NSLeftTextAlignment];
   [projectTypeField setBordered: NO];
   [projectTypeField setEditable: NO];
@@ -571,9 +576,9 @@
   return NO;
 }
 
-//===========================================================================================
-// ==== Miscellaneous
-//===========================================================================================
+//=============================================================================
+// ==== File Handling
+//=============================================================================
 
 - (void)browserDidSelectFileNamed:(NSString *)fileName
 {
@@ -608,7 +613,9 @@
         return;
     }
 
+#ifdef DEBUG
     NSLog(@"<%@ %x>: adding file %@ for key %@",[self class],self,newFile,type);
+#endif DEBUG
     
     // Add the new file
     [files addObject:newFile];
@@ -707,11 +714,11 @@
     projectDict = [[NSMutableDictionary alloc] initWithDictionary:aDict];
 
     [self setProjectName:[projectDict objectForKey:PCProjectName]];
-
     [projectWindow setTitle:[NSString stringWithFormat:@"%@ - %@",projectName,projectPath]];
 
-    // Update the GNUmakefile!
+    // Update the GNUmakefile and the interface
     [self writeMakefile];
+    [self updateValuesFromProjectDict];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:@"ProjectDictDidChangeNotification" object:self];
 
@@ -759,6 +766,10 @@
 {
 }
 
+//=============================================================================
+// ==== Subprojects
+//=============================================================================
+
 - (NSArray *)subprojects
 {
     return [projectDict objectForKey:PCSubprojects];
@@ -788,6 +799,16 @@
 
 - (BOOL)isSubProject
 {
+  return NO;
+}
+
+//=============================================================================
+// ==== Project Handling
+//=============================================================================
+
+- (void)updateValuesFromProjectDict
+{
+  [projectTypeField setStringValue:[projectDict objectForKey:PCProjType]];
 }
 
 @end

@@ -430,7 +430,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)fileManager:(id)sender didCreateFile:(NSString *)aFile withKey:(NSString *)key
 {
+#ifdef DEBUG
     NSLog(@"<%@ %x>: did create file %@ for key %@",[self class],self,aFile,key);
+#endif DEBUG
+
     [activeProject addFile:aFile forKey:key];
 }
 
@@ -443,7 +446,9 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 {
   NSMutableString *fn = [NSMutableString stringWithString:[file lastPathComponent]];
 
+#ifdef DEBUG
   NSLog(@"<%@ %x>: should add file %@ for key %@",[self class],self,file,key);
+#endif DEBUG
   
   if ([key isEqualToString:PCLibraries]) {
     [fn deleteCharactersInRange:NSMakeRange(1,3)];
@@ -459,7 +464,10 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 
 - (void)fileManager:(id)sender didAddFile:(NSString *)file forKey:(NSString *)key
 {
+#ifdef DEBUG
   NSLog(@"<%@ %x>: did add file %@ for key %@",[self class],self,file,key);
+#endif DEBUG
+
   [activeProject addFile:file forKey:key];
 }
 

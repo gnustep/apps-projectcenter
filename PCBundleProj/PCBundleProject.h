@@ -62,5 +62,7 @@
 - (NSArray *)buildTargets;
 - (NSString *)projectDescription;
 
+- (void)updateValuesFromProjectDict;
+
 @end
 

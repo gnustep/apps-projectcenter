@@ -160,4 +160,11 @@
   return @"GNUstep Objective-C bundle project";
 }
 
+- (void)updateValuesFromProjectDict
+{
+  [super updateValuesFromProjectDict];
+
+  [principalClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
+}
+
 @end

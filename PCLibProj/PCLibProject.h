@@ -37,8 +37,6 @@
 
 @interface PCLibProject : PCProject
 {
-    @private
-    BOOL _needsAdditionalReleasing;
 }
 
 //----------------------------------------------------------------------------
@@ -61,5 +59,7 @@
 - (NSArray *)otherKeys;
 - (NSArray *)buildTargets;
 - (NSString *)projectDescription;
+
+- (void)updateValuesFromProjectDict;
 
 @end

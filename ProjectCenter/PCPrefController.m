@@ -58,11 +58,12 @@
   prefWindow = [[NSWindow alloc] initWithContentRect:_w_frame
                                            styleMask:style
                                              backing:NSBackingStoreBuffered
-                                               defer:NO];
+                                               defer:YES];
   [prefWindow setMinSize:NSMakeSize(268,365)];
   [prefWindow setTitle:@"Preferences"];
   [prefWindow setDelegate:self];
   [prefWindow setReleasedWhenClosed:NO];
+  [prefWindow center];
   [prefWindow setFrameAutosaveName:@"Preferences"];
   _c_view = [prefWindow contentView];
 

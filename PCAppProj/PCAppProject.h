@@ -68,4 +68,6 @@
 
 - (BOOL)isExecutable;
 
+- (void)updateValuesFromProjectDict;
+
 @end

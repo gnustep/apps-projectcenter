@@ -138,4 +138,11 @@
     return @"Project that handles GNUstep/ObjC based libraries.";
 }
 
+- (void)updateValuesFromProjectDict
+{
+  [super updateValuesFromProjectDict];
+
+  //[appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
+}
+
 @end

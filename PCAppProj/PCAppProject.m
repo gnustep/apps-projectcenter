@@ -45,7 +45,7 @@
 {
   NSTextField *textField;
   NSRect frame = {{84,120}, {80, 80}};
-  NSBox *box;
+  NSBox *_box;
 
   [super _initUI];
 
@@ -91,15 +91,15 @@
   [setAppIconButton setAction:@selector(setAppIcon:)];
   [projectProjectInspectorView addSubview:setAppIconButton];
 
-  box = [[NSBox alloc] init];
-  [box setFrame:frame];
-  [box setTitlePosition:NSNoTitle];
-  //[box setBorderType:NSNoBorder];
-  [projectProjectInspectorView addSubview:box];
-  AUTORELEASE(box);
+  _box = [[NSBox alloc] init];
+  [_box setFrame:frame];
+  [_box setTitlePosition:NSNoTitle];
+  //[_box setBorderType:NSNoBorder];
+  [projectProjectInspectorView addSubview:_box];
+  AUTORELEASE(_box);
 
   appIconView = [[NSImageView alloc] initWithFrame:frame];
-  [box addSubview:appIconView];
+  [_box addSubview:appIconView];
 }
 
 @end
@@ -203,6 +203,14 @@
 - (BOOL)isExecutable
 {
   return YES;
+}
+
+- (void)updateValuesFromProjectDict
+{
+  [super updateValuesFromProjectDict];
+
+  [appClassField setStringValue:[projectDict objectForKey:PCAppClass]];
+  [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
 }
 
 @end

@@ -38,8 +38,6 @@
 
 @interface PCToolProject : PCProject
 {
-    @private
-    BOOL _needsAdditionalReleasing;
 }
 
 //----------------------------------------------------------------------------
@@ -64,6 +62,8 @@
 - (NSString *)projectDescription;
 
 - (BOOL)isExecutable;
+
+- (void)updateValuesFromProjectDict;
 
 @end
 

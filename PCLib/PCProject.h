@@ -59,9 +59,9 @@
 
 typedef int PCProjInfoBits;
 
-//===========================================================================================
+//=============================================================================
 // ==== Project keys
-//===========================================================================================
+//=============================================================================
 
 static NSString * const PCClasses = @"CLASS_FILES";
 static NSString * const PCHeaders = @"HEADER_FILES";
@@ -78,6 +78,7 @@ static NSString * const PCProjectName = @"PROJECT_NAME";
 static NSString * const PCProjType = @"PROJECT_TYPE";
 static NSString * const PCPrincipalClass = @"PRINCIPAL_CLASS";
 static NSString * const PCAppIcon = @"APPLICATIONICON";
+static NSString * const PCAppClass = @"APPCLASS";
 static NSString * const PCToolIcon = @"TOOLICON";
 static NSString * const PCProjectBuilderClass = @"PROJECT_BUILDER";
 static NSString * const PCMainGModelFile = @"MAININTERFACE";
@@ -123,18 +124,18 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
     NSMutableDictionary *buildOptions;
 }
 
-//===========================================================================================
+//=============================================================================
 // ==== Init and free
-//===========================================================================================
+//=============================================================================
 
 - (id)init;
 - (id)initWithProjectDictionary:(NSDictionary *)dict path:(NSString *)path;
 
 - (void)dealloc;
 
-//===========================================================================================
+//=============================================================================
 // ==== Accessor methods
-//===========================================================================================
+//=============================================================================
 
 - (id)browserController;
 - (NSString *)selectedRootCategory;
@@ -147,9 +148,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 
 - (Class)principalClass;
 
-//===========================================================================================
+//=============================================================================
 // ==== Delegate and manager
-//===========================================================================================
+//=============================================================================
 
 - (id)delegate;
 - (void)setDelegate:(id)aDelegate;
@@ -157,9 +158,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)setProjectBuilder:(id<ProjectBuilder>)aBuilder;
 - (id<ProjectBuilder>)projectBuilder;
 
-//===========================================================================================
+//=============================================================================
 // ==== To be overriden!
-//===========================================================================================
+//=============================================================================
 
 - (BOOL)writeMakefile;
     // Writes the PC.project file to disc. Subclasses need to call this before doing sth else!
@@ -177,9 +178,9 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (BOOL)isExecutable;
     // Returns NO by default.
 
-//===========================================================================================
-// ==== Miscellaneous
-//===========================================================================================
+//=============================================================================
+// ==== File Handling
+//=============================================================================
 
 - (void)browserDidSelectFileNamed:(NSString *)fileName;
 
@@ -207,6 +208,10 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (BOOL)saveAllFilesIfNeeded;
     // Saves all the files that need to be saved.
 
+//=============================================================================
+// ==== Subprojects
+//=============================================================================
+
 - (NSArray *)subprojects;
 - (void)addSubproject:(PCProject *)aSubproject;
 - (PCProject *)superProject;
@@ -215,6 +220,12 @@ static NSString * const PCLibraryVar = @"LIBRARY_VAR";
 - (void)removeSubproject:(PCProject *)aSubproject;
 
 - (BOOL)isSubProject;
+
+//=============================================================================
+// ==== Project Handling
+//=============================================================================
+
+- (void)updateValuesFromProjectDict;
 
 @end
 
