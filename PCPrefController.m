@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 
@@ -20,71 +21,70 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #include "PCPrefController.h"
-#include "PCPrefController+UInterface.h"
 #include <ProjectCenter/ProjectCenter.h>
 
-NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
+#include "PCLogController.h"
 
 @implementation PCPrefController
 
+// ===========================================================================
+// ==== Class methods
+// ===========================================================================
+
+static PCPrefController *_prefCtrllr = nil;
+  
++ (PCPrefController *)sharedPCPreferences
+{
+  if (!_prefCtrllr)
+    {
+      _prefCtrllr = [[PCPrefController alloc] init];
+    }
+  
+  return _prefCtrllr;
+}
+
+//
 - (id)init
 {
-  if ((self = [super init])) {
-    NSDictionary *prefs;
+  NSDictionary *prefs = nil;
+
+  if (!(self = [super init]))
+    {
+      return nil;
+    }
     
-    // The prefs from the defaults
-    prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-    preferencesDict = [[NSMutableDictionary alloc] initWithDictionary:prefs];
-  }
+  // The prefs from the defaults
+  prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
+  preferencesDict = [[NSMutableDictionary alloc] initWithDictionary:prefs];
+
   return self;
 }
 
 - (void)dealloc
 {
+  NSLog(@"PCPrefController: dealloc");
+  
   RELEASE(preferencesDict);
   
-  RELEASE(prefWindow);
+  RELEASE(panel);
 
-  RELEASE(prefBuildingView);
-  RELEASE(prefMiscView);
-  RELEASE(prefEditingView);
-  RELEASE(prefSavingView);
+  RELEASE(buildingView);
+  RELEASE(savingView);
+  RELEASE(keyBindingsView);
+  RELEASE(miscView);
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 
   [super dealloc];
 }
 
-- (void) showPrefWindow: (id)sender
+- (void)loadPrefernces
 {
-  NSDictionary *prefs;
-  NSString     *val;
-
-  if (!prefWindow)
-    {
-      id view;
-
-      [self _initUI];
-
-      // The popup and selected view
-      [prefPopup removeAllItems];
-      [prefPopup addItemWithTitle: @"Building"];
-      [prefPopup addItemWithTitle: @"Saving"];
-      [prefPopup addItemWithTitle: @"Editing"];
-      [prefPopup addItemWithTitle: @"Miscellaneous"];
-      [prefPopup addItemWithTitle: @"Interface"];
-
-      [prefPopup selectItemWithTitle: @"Building"];
-
-      view = [prefBuildingView retain];
-      [(NSBox *)prefEmptyView setContentView: view];
-      [prefEmptyView display]; 
-    }
+  NSDictionary *prefs = nil;
+  NSString     *val = nil;
 
   prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
   [preferencesDict addEntriesFromDictionary: prefs];
@@ -102,50 +102,58 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     ([[preferencesDict objectForKey: PromptOnClean] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 
+  [rootBuildDirField setStringValue: 
+    (val = [preferencesDict objectForKey:RootBuildDirectory]) ? val : @""];
+
   // Saving
   [saveOnQuit setState:
     ([[preferencesDict objectForKey: SaveOnQuit] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
      
-  [saveAutomatically setState:
-    ([[preferencesDict objectForKey: AutoSave] 
-     isEqualToString: @"YES"]) ? NSOnState : NSOffState];
-
   [keepBackup setState:
     ([[preferencesDict objectForKey: KeepBackup] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 
-  [autoSaveField setStringValue:
+  [autosaveField setStringValue:
     (val = [preferencesDict objectForKey: AutoSavePeriod]) ? val : @"120"];
+  [autosaveSlider setFloatValue:[[autosaveField stringValue] floatValue]];
 
-  // Editing
-  if([[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Tab"])
+  // Key Bindings
+  val = [preferencesDict objectForKey:TabBehaviour];
+  [tabMatrix deselectAllCells];
+  if ([val isEqualToString:@"Tab"])
     {
-      [tabMatrix selectCellAtRow: 0 column: 0];
+      [tabMatrix selectCellAtRow:0 column:0];
     }
-  else if([[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Sp2"])
+  else if ([val isEqualToString:@"IndentAlways"])
     {
-      [tabMatrix selectCellAtRow: 1 column: 0];
+      [tabMatrix selectCellAtRow:1 column:0];
     }
-  else if([[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Sp4"])
+  else if ([val isEqualToString:@"IndentAtBeginning"])
     {
-      [tabMatrix selectCellAtRow: 0 column: 1];
+      [tabMatrix selectCellAtRow:2 column:0];
     }
-  else if([[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Sp8"])
+  else if ([val isEqualToString:@"Spaces"])
     {
-      [tabMatrix selectCellAtRow: 1 column: 1];
+      [tabMatrix selectCellAtRow:3 column:0];
     }
 
   // Miscellaneous
-  [compilerField setStringValue:
-    (val = [preferencesDict objectForKey: Compiler]) ? val : @""];
+  [promptWhenQuit setState:
+    ([[preferencesDict objectForKey: PromptOnQuit] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+  [deleteCache setState:
+    ([[preferencesDict objectForKey: DeleteCacheWhenQuitting] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+  [fullPathInFilePanels setState:
+    ([[preferencesDict objectForKey: FullPathInFilePanels] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
   [debuggerField setStringValue:
-    (val = [preferencesDict objectForKey: PDebugger]) ? val : @""];
+    (val = [preferencesDict objectForKey: Debugger]) ? val : @"/usr/bin/gdb"];
   [editorField setStringValue:
-    (val = [preferencesDict objectForKey: Editor]) ? val : @""];
-  [bundlePathField setStringValue:
-    (val = [preferencesDict objectForKey: BundlePaths]) ? val : @""];
-  
+    (val = [preferencesDict objectForKey: Editor]) ? val : @"ProjectCenter"];
+ 
   // Interface
   [separateBuilder setState:
     ([[preferencesDict objectForKey: SeparateBuilder] 
@@ -156,25 +164,138 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [separateEditor setState:
     ([[preferencesDict objectForKey: SeparateEditor] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-
-  [promptWhenQuit setState:
-    ([[preferencesDict objectForKey: PromptOnQuit] 
+  [separateLoadedFiles setState:
+    ([[preferencesDict objectForKey: SeparateLoadedFiles] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-  [useExternalEditor setState:
-    ([[preferencesDict objectForKey: ExternalEditor] 
-     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-  [useExternalDebugger setState:
-    ([[preferencesDict objectForKey: ExternalDebugger] 
-     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-
-
-  if (![prefWindow isVisible])
-    { 
-      [prefWindow setFrameUsingName: @"Preferences"];
+     
+  [editorLinesField setStringValue:
+    (val = [preferencesDict objectForKey: EditorLines]) ? val : @"30"];
+  [editorColumnsField setStringValue:
+    (val = [preferencesDict objectForKey: EditorColumns]) ? val : @"80"];
+  if ([separateEditor state] == NSOffState 
+      || ![[editorField stringValue] isEqualToString:@"ProjectCenter"])
+    {
+      [self setEditorSizeEnabled:NO];
     }
-  [prefWindow makeKeyAndOrderFront: self];
+     
+  [rememberWindows setState:
+    ([[preferencesDict objectForKey: RememberWindows] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+  [displayLog setState:
+    ([[preferencesDict objectForKey:DisplayLog] 
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  // Bundles
+/*  [bundlePathField setStringValue:
+    (val = [preferencesDict objectForKey: BundlePaths]) ? val : @""];*/
 }
 
+- (void)awakeFromNib
+{
+  NSArray *tabMatrixCells = nil;
+  int     i;
+  
+  [promptOnClean setRefusesFirstResponder:YES];
+  
+  [saveOnQuit setRefusesFirstResponder:YES];
+  [keepBackup setRefusesFirstResponder:YES];
+
+  tabMatrixCells = [tabMatrix cells];
+
+  for (i = 0; i < [tabMatrixCells count]; i++)
+    {
+      [[tabMatrixCells objectAtIndex:i] setRefusesFirstResponder:YES];
+    }
+
+  [promptWhenQuit setRefusesFirstResponder:YES];
+  [deleteCache setRefusesFirstResponder:YES];
+  [fullPathInFilePanels setRefusesFirstResponder:YES];
+
+  [separateBuilder setRefusesFirstResponder:YES];
+  [separateLauncher setRefusesFirstResponder:YES];
+  [separateEditor setRefusesFirstResponder:YES];
+  [separateLoadedFiles setRefusesFirstResponder:YES];
+
+  [rememberWindows setRefusesFirstResponder:YES];
+  [displayLog setRefusesFirstResponder:YES];
+}
+
+// Accessory
+- (NSDictionary *)preferencesDict
+{
+  return preferencesDict;
+}
+
+- (id)objectForKey:(NSString *)key
+{
+  return [preferencesDict objectForKey:key];
+}
+
+- (NSString *)selectFileWithTypes:(NSArray *)types
+{
+  NSUserDefaults   *def = [NSUserDefaults standardUserDefaults];
+  NSString 	   *file = nil;
+  NSOpenPanel	   *openPanel;
+  int		    retval;
+
+  openPanel = [NSOpenPanel openPanel];
+  [openPanel setAllowsMultipleSelection:NO];
+  [openPanel setCanChooseDirectories:YES];
+  [openPanel setCanChooseFiles:YES];
+
+  retval = [openPanel 
+    runModalForDirectory:[def objectForKey:@"LastOpenDirectory"]
+                    file:nil
+		   types:types];
+
+  if (retval == NSOKButton) 
+    {
+      [def setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+      file = [[openPanel filenames] objectAtIndex:0];
+
+    }
+
+  return file;
+}
+
+- (void)showPanel:(id)sender
+{
+  if (panel == nil 
+      && [NSBundle loadNibNamed:@"Preferences" owner:self] == NO)
+    {
+      PCLogError(self, @"error loading NIB file!");
+      return;
+    }
+
+  [panel setFrameAutosaveName:@"Preferences"];
+  if (![panel setFrameUsingName: @"Preferences"])
+    {
+      [panel center];
+    }
+  RETAIN(buildingView);
+  RETAIN(savingView);
+  RETAIN(keyBindingsView);
+  RETAIN(miscView);
+  RETAIN(interfaceView);
+
+  // The popup and selected view
+  [popupButton removeAllItems];
+  [popupButton addItemWithTitle:@"Building"];
+  [popupButton addItemWithTitle:@"Saving"];
+  [popupButton addItemWithTitle:@"Key Bindings"];
+  [popupButton addItemWithTitle:@"Miscellaneous"];
+  [popupButton addItemWithTitle:@"Interface"];
+
+  [popupButton selectItemWithTitle:@"Building"];
+  [self popupChanged:popupButton];
+
+  // Load saved prefs
+  [self loadPrefernces];
+
+  [panel orderFront:self];
+}
+
+//
 - (void)popupChanged:(id)sender
 {
   NSView *view = nil;
@@ -182,98 +303,142 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   switch ([sender indexOfSelectedItem]) 
     {
     case 0:
-      view = prefBuildingView;
+      view = buildingView;
       break;
     case 1:
-      view = prefSavingView;
+      view = savingView;
       break;
     case 2:
-      view = prefEditingView;
+      view = keyBindingsView;
       break;
     case 3:
-      view = prefMiscView;
+      view = miscView;
       break;
     case 4:
-      view = prefInterfaceView;
+      view = interfaceView;
       break;
     }
 
-  [(NSBox *)prefEmptyView setContentView:view];
-  [prefEmptyView display];
+  [sectionsView setContentView:view];
+  [sectionsView display];
 }
 
+// Building
 - (void)setSuccessSound:(id)sender
 {
-  NSArray *types = [NSArray arrayWithObjects:@"snd",@"au",nil];
+  NSArray *types = [NSArray arrayWithObjects:@"snd",@"au",@"wav",nil];
   NSString *path = [self selectFileWithTypes:types];
-  
-  if (path) {
-    [successField setStringValue: path];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:SuccessSound];
-    [preferencesDict setObject:path forKey:SuccessSound];
-  }
+
+  if (path)
+    {
+      [successField setStringValue: path];
+
+      [[NSUserDefaults standardUserDefaults] setObject:path
+	                                        forKey:SuccessSound];
+      [preferencesDict setObject:path forKey:SuccessSound];
+    }
 }
 
 - (void)setFailureSound:(id)sender
 {
-  NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
-  
-  if (path) {
-    [failureField setStringValue:path];
-    
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:FailureSound];
-    [preferencesDict setObject:path forKey:FailureSound];
-  }
+  NSArray  *types = [NSArray arrayWithObjects:@"snd",@"au",@"wav",nil];
+  NSString *path = [self selectFileWithTypes:types];
+
+  if (path)
+    {
+      [failureField setStringValue:path];
+
+      [[NSUserDefaults standardUserDefaults] setObject:path
+	                                        forKey:FailureSound];
+      [preferencesDict setObject:path forKey:FailureSound];
+    }
+}
+
+- (void)setRootBuildDir:(id)sender
+{
+  NSArray  *types = nil;
+  NSString *path = [self selectFileWithTypes:types];
+
+  if (path)
+    {
+      [rootBuildDirField setStringValue:path];
+      [[NSUserDefaults standardUserDefaults] setObject:path
+	                                        forKey:RootBuildDirectory];
+      [preferencesDict setObject:path forKey:RootBuildDirectory];
+    }
 }
 
 - (void)setPromptOnClean:(id)sender
 {
-  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+  NSUserDefaults *def = nil;
 
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:PromptOnClean];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:PromptOnClean];
-    break;
-  }
+  if (promptOnClean == nil)
+    {// HACK!!! need to be fixed in GNUstep
+      promptOnClean = sender;
+      return;
+    }
+
+  def = [NSUserDefaults standardUserDefaults];
+  switch ([sender state])
+    {
+    case NSOffState:
+      [def setObject:@"NO" forKey:PromptOnClean];
+      break;
+    case NSOnState:
+      [def setObject:@"YES" forKey:PromptOnClean];
+      break;
+    }
   [def synchronize];
 
   [preferencesDict setObject:[def objectForKey:PromptOnClean] 
                       forKey:PromptOnClean];
 }
 
-- (void)setSaveAutomatically:(id)sender
+// Saving
+- (void)setSaveOnQuit:(id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:AutoSave];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:AutoSave];
-    break;
-  }
+  if (saveOnQuit == nil)
+    { // HACK!!!
+      saveOnQuit = sender;
+      return;
+    }
+
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:SaveOnQuit];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:SaveOnQuit];
+      break;
+    }
   [def synchronize];
 
-  [preferencesDict setObject:[def objectForKey:AutoSave] forKey:AutoSave];
+  [preferencesDict setObject:[def objectForKey:SaveOnQuit] 
+                      forKey:SaveOnQuit];
 }
 
 - (void)setKeepBackup:(id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:KeepBackup];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:KeepBackup];
-    break;
-  }
+  if (keepBackup == nil)
+    { // HACK!!!
+      keepBackup = sender;
+      return;
+    }
+    
+  switch ([[sender selectedCell] state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:KeepBackup];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:KeepBackup];
+      break;
+    }
   [def synchronize];
 
   [preferencesDict setObject:[def objectForKey:KeepBackup] 
@@ -282,161 +447,219 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
 
 - (void)setSavePeriod:(id)sender
 {
-  NSString *periodString = [autoSaveField stringValue];
+  NSString *periodString = nil;
   
-  if (periodString == nil || [periodString isEqualToString:@""]) {
-      periodString = [NSString stringWithString:@"300"];
-  }
+  if (sender == autosaveSlider)
+    {
+      [autosaveField setIntValue:[sender intValue]];
+    }
+  else if (sender == autosaveField)
+    {
+      if ([autosaveField floatValue] < [autosaveSlider minValue])
+	{
+	  [autosaveField setFloatValue:[autosaveSlider minValue]];
+	}
+      else if ([autosaveField floatValue] > [autosaveSlider maxValue])
+	{
+	  [autosaveField setFloatValue:[autosaveSlider maxValue]];
+	}
+      [autosaveSlider setFloatValue:[autosaveField floatValue]];
+    }
+
+  periodString = [autosaveField stringValue];
 
   [[NSUserDefaults standardUserDefaults] setObject:periodString 
                                             forKey:AutoSavePeriod];
   [preferencesDict setObject:periodString forKey:AutoSavePeriod];
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:SavePeriodDidChangeNotification object:periodString];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCSavePeriodDidChangeNotification
+                  object:periodString];
 }
 
-- (void)setSaveOnQuit:(id)sender
+// Key bindings
+- (void)setTabBehaviour:(id)sender
+{
+  id       cell = [sender selectedCell];
+  NSString *tabBehaviour = nil;
+
+  PCLogInfo(self, @"setTabBehaviour: %@", [cell title]);
+
+  if ([[cell title] isEqualToString:@"Insert Tab"])
+    {
+      tabBehaviour = [NSString stringWithString:@"Tab"];
+    }
+  else if ([[cell title] isEqualToString:@"Indent only at beginning of line"])
+    {
+      tabBehaviour = [NSString stringWithString:@"IndentAtBeginning"];
+    }
+  else if ([[cell title] isEqualToString:@"Indent always"])
+    {
+      tabBehaviour = [NSString stringWithString:@"IndentAlways"];
+    }
+  else if ([[cell title] isEqualToString:@"Insert spaces"])
+    {
+      tabBehaviour = [NSString stringWithString:@"Spaces"];
+      [tabSpacesField setEnabled:YES];
+      [tabSpacesField becomeFirstResponder];
+    }
+    
+  [[NSUserDefaults standardUserDefaults] setObject:tabBehaviour
+                                            forKey:TabBehaviour];
+  [preferencesDict setObject:tabBehaviour forKey:TabBehaviour];
+}
+
+- (void)setTabSpaces:(id)sender
+{
+  if ([[tabSpacesField stringValue] isEqualToString:@""])
+    {
+      [tabSpacesField setStringValue:@"2"];
+    }
+    
+  [[NSUserDefaults standardUserDefaults] 
+      setObject:[tabSpacesField stringValue]
+         forKey:TabSpaces];
+  [preferencesDict setObject:[tabSpacesField stringValue] forKey:TabSpaces];
+}
+
+// Miscellaneous
+- (void)setPromptWhenQuit:(id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:SaveOnQuit];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:SaveOnQuit];
-    break;
-  }
-  [def synchronize];
+  if (promptWhenQuit == nil)
+    {
+      promptWhenQuit = sender;
+      return;
+    }
 
-  [preferencesDict setObject:[def objectForKey:SaveOnQuit] 
-                      forKey:SaveOnQuit];
-}
-
-- (void)setUseExternalEditor:(id)sender
-{
-  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:ExternalEditor];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:ExternalEditor];
-    break;
-  }
-  [def synchronize];
-
-  [preferencesDict setObject:[def objectForKey:ExternalEditor] 
-                      forKey:ExternalEditor];
-}
-
-- (void)setUseExternalDebugger:(id)sender
-{
-  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:ExternalDebugger];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:ExternalDebugger];
-    break;
-  }
-  [def synchronize];
-
-  [preferencesDict setObject:[def objectForKey:ExternalDebugger] 
-                      forKey:ExternalDebugger];
-}
-
-- (void)setEditor:(id)sender
-{
-  NSString *path = [editorField stringValue];
-  
-  if (path) {
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:Editor];
-    [preferencesDict setObject:path forKey:Editor];
-  }
-}
-
-- (void)setCompiler:(id)sender
-{
-  NSString *path = [compilerField stringValue];
-
-  if (path) {
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:Compiler];
-    [preferencesDict setObject:path forKey:Compiler];
-  }
-}
-
-- (void)setDebugger:(id)sender
-{
-  NSString *path = [debuggerField stringValue];
-  
-  if (path) {
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:PDebugger];
-    [preferencesDict setObject:path forKey:PDebugger];
-  }
-}
-
-- (void)setBundlePath:(id)sender
-{
-  NSString *path = [bundlePathField stringValue];
-  
-  if (path) {
-    [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
-    [preferencesDict setObject:path forKey:BundlePaths];
-  }
-}
-
-- (void)promptWhenQuitting:(id)sender
-{
-  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-
-  switch ([[sender selectedCell] state]) {
-  case 0:
-    [def setObject:@"NO" forKey:PromptOnQuit];
-    break;
-  case 1:
-    [def setObject:@"YES" forKey:PromptOnQuit];
-    break;
-  }
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:PromptOnQuit];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:PromptOnQuit];
+      break;
+    }
   [def synchronize];
 
   [preferencesDict setObject:[def objectForKey:PromptOnQuit] 
                       forKey:PromptOnQuit];
 }
 
-- (void)setTabBehaviour:(id)sender
+- (void)setDeleteCache:(id)sender
 {
-    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
 
-    switch ([[sender selectedCell] tag]) 
+  if (deleteCache == nil)
     {
-        case 0:
-//            [PCEditorView setTabBehaviour:PCTabTab];
-	    [def setObject:@"Tab" forKey:TabBehaviour];
-            break;
-        case 1:
-//            [PCEditorView setTabBehaviour:PCTab2Sp];
-	    [def setObject:@"Sp2" forKey:TabBehaviour];
-            break;
-        case 2:
-//            [PCEditorView setTabBehaviour:PCTab4Sp];
-	    [def setObject:@"Sp4" forKey:TabBehaviour];
-            break;
-        case 3:
-//            [PCEditorView setTabBehaviour:PCTab8Sp];
-	    [def setObject:@"Sp8" forKey:TabBehaviour];
-            break;
+      deleteCache = sender;
+      return;
     }
-    [def synchronize];
 
-    [preferencesDict setObject:[def objectForKey:TabBehaviour] 
-                        forKey:TabBehaviour];
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:DeleteCacheWhenQuitting];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:DeleteCacheWhenQuitting];
+      break;
+    }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:DeleteCacheWhenQuitting] 
+                      forKey:DeleteCacheWhenQuitting];
 }
 
-- (void)setDisplayPanels: (id)sender
+- (void)setFullPathInFilePanels:(id)sender
+{
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  if (fullPathInFilePanels == nil)
+    {
+      fullPathInFilePanels = sender;
+      return;
+    }
+
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:FullPathInFilePanels];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:FullPathInFilePanels];
+      break;
+    }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:FullPathInFilePanels] 
+                      forKey:FullPathInFilePanels];
+}
+
+- (void)setDebugger:(id)sender
+{
+  NSString *path = [debuggerField stringValue];
+ 
+  if ([path isEqualToString:@""] || !path)
+    {
+      [debuggerField setStringValue:@"/usr/bin/gdb"];
+      path = [debuggerField stringValue];
+    }
+  else if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path])
+    {
+      [debuggerField selectText:self];
+      NSRunAlertPanel(@"Debugger not found!",
+		      @"File %@ doesn't exist!",
+      		      @"OK", nil, nil, path);
+    }
+
+  [[NSUserDefaults standardUserDefaults] setObject:path forKey:Debugger];
+  [preferencesDict setObject:path forKey:Debugger];
+}
+
+- (void)setEditor:(id)sender
+{
+  NSString      *path = [editorField stringValue];
+  NSString      *editorPath = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  
+  [separateEditor setEnabled:YES];
+  [self setEditorSizeEnabled:YES];
+  
+  editorPath = [[path componentsSeparatedByString:@" "] objectAtIndex:0];
+  if ([path isEqualToString:@""] || !path)
+    {
+      [editorField setStringValue:@"ProjectCenter"];
+      path = [editorField stringValue];
+    }
+  else if (![path isEqualToString:@"ProjectCenter"])
+    {
+      if (![fm fileExistsAtPath:editorPath])
+	{
+	  [editorField selectText:self];
+	  NSRunAlertPanel(@"Editor not found!",
+	    		  @"File %@ doesn't exist!",
+	    		  @"Close", nil, nil, path);
+	}
+      else if (![fm isExecutableFileAtPath:editorPath])
+	{
+	  [editorField selectText:self];
+	  NSRunAlertPanel(@"Editor file error!",
+	    		  @"File %@ exist but is not executable!",
+	    		  @"Close", nil, nil, path);
+	}
+      [separateEditor setEnabled:NO];
+      [self setEditorSizeEnabled:NO];
+    }
+    
+  [[NSUserDefaults standardUserDefaults] setObject:path forKey:Editor];
+  [preferencesDict setObject:path forKey:Editor];
+}
+
+// Interface
+- (void)setDisplayPanels:(id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
   NSString       *key = nil;
@@ -453,6 +676,10 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     {
       key = [NSString stringWithString: SeparateEditor];
     }
+  else if (sender == separateLoadedFiles)
+    {
+      key = [NSString stringWithString: SeparateLoadedFiles];
+    }
 
   switch ([sender state])
     {
@@ -465,36 +692,127 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     }
   [def synchronize];
 
-  [preferencesDict setObject: [def objectForKey: key] 
-                      forKey: key];
-}
-
-- (NSDictionary *)preferencesDict
-{
-    return preferencesDict;
-}
-
-- (NSString *)selectFileWithTypes:(NSArray *)types
-{
-    NSString 	   *file = nil;
-    NSOpenPanel	   *openPanel;
-    int		    retval;
-    NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
-
-    openPanel = [NSOpenPanel openPanel];
-    [openPanel setAllowsMultipleSelection:NO];
-    [openPanel setCanChooseDirectories:YES];
-    [openPanel setCanChooseFiles:YES];
-
-    retval = [openPanel runModalForDirectory:[def objectForKey:@"LastOpenDirectory"] file:nil types:types];
-
-    if (retval == NSOKButton) 
+  if (sender == separateEditor)
     {
-	[def setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-	file = [[openPanel filenames] objectAtIndex:0];
-	
+      if ([sender state] == NSOffState)
+	{
+	  [self setEditorSizeEnabled:NO];
+	}
+      else
+	{
+	  [self setEditorSizeEnabled:YES];
+	}
+      [sender becomeFirstResponder];
     }
-    return file;
+
+  [preferencesDict setObject:[def objectForKey:key] 
+                      forKey:key];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCPreferencesDidChangeNotification
+                  object:self];
+}
+
+- (void)setEditorSize:(id)sender
+{
+  NSString *val = nil;
+  NSString *key = nil;
+  
+  if (sender == editorLinesField)
+    {
+      key = EditorLines;
+      val = [editorLinesField stringValue];
+    }
+  else if (sender == editorColumnsField)
+    {
+      key = EditorColumns;
+      val = [editorColumnsField stringValue];
+    }
+  [[NSUserDefaults standardUserDefaults] setObject:val forKey:key];
+  [preferencesDict setObject:val forKey:key];
+}
+
+- (void)setEditorSizeEnabled:(BOOL)yn
+{
+  if (yn)
+    {
+      [editorLinesField setEnabled:YES];
+      [editorLinesField setTextColor:[NSColor blackColor]];
+      [editorLinesField setEditable:YES];
+      [editorColumnsField setEnabled:YES];
+      [editorColumnsField setTextColor:[NSColor blackColor]];
+      [editorColumnsField setEditable:YES];
+    }
+  else
+    {
+      [editorLinesField setEnabled:NO];
+      [editorLinesField setTextColor:[NSColor darkGrayColor]];
+      [editorLinesField setEditable:NO];
+      [editorColumnsField setEnabled:NO];
+      [editorColumnsField setTextColor:[NSColor darkGrayColor]];
+      [editorColumnsField setEditable:NO];
+    }
+}
+
+- (void)setRememberWindows:(id)sender
+{
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  if (rememberWindows == nil)
+    {
+      rememberWindows = sender;
+      return;
+    }
+
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:RememberWindows];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:RememberWindows];
+      break;
+    }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:RememberWindows] 
+                      forKey:RememberWindows];
+}
+
+- (void)setDisplayLog:(id)sender
+{
+  NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
+  if (displayLog == nil)
+    {
+      displayLog = sender;
+      return;
+    }
+
+  switch ([sender state])
+    {
+    case 0:
+      [def setObject:@"NO" forKey:DisplayLog];
+      break;
+    case 1:
+      [def setObject:@"YES" forKey:DisplayLog];
+      break;
+    }
+  [def synchronize];
+
+  [preferencesDict setObject:[def objectForKey:DisplayLog] 
+                      forKey:DisplayLog];
+}
+
+// Bundles
+- (void)setBundlePath:(id)sender
+{
+  NSString *path = [bundlePathField stringValue];
+
+  if (path)
+    {
+      [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
+      [preferencesDict setObject:path forKey:BundlePaths];
+    }
 }
 
 @end

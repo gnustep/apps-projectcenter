@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 
@@ -20,8 +21,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #ifndef _PCPREFCONTROLLER_H
@@ -29,78 +28,94 @@
 
 #include <AppKit/AppKit.h>
 
+#define PCSavePeriodDidChangeNotification @"PCSavePeriodDidChangeNotification"
+#define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"
+
 @interface PCPrefController : NSObject
 {
-  id prefWindow;
-  id prefPopup;
-  
-  id prefEmptyView;
-  id prefBuildingView;
-  id prefMiscView;
-  id prefEditingView;
-  id prefSavingView;
-  id prefInterfaceView;
-  
-  id tabMatrix;
+  IBOutlet NSPanel       *panel;
+  IBOutlet NSPopUpButton *popupButton;
+  IBOutlet NSBox         *sectionsView;
 
-  id successField;
-  id failureField;
-  
-  id autoSaveField;
-  id saveAutomatically;
-  id keepBackup;
-  id saveOnQuit;
+  IBOutlet NSBox         *buildingView;
+  IBOutlet NSTextField   *successField;
+  IBOutlet NSButton      *setSuccessButton;
+  IBOutlet NSTextField   *failureField;
+  IBOutlet NSButton      *setFailureButton;
+  IBOutlet NSTextField   *rootBuildDirField;
+  IBOutlet NSButton      *rootBuildDirButton;
+  IBOutlet NSButton      *promptOnClean;
 
-  id useExternalEditor;
-  id useExternalDebugger;
-  id promptWhenQuit;
-  id promptOnClean;
+  IBOutlet NSBox         *savingView;
+  IBOutlet NSButton      *saveOnQuit;
+  IBOutlet NSButton      *keepBackup;
+  IBOutlet NSSlider      *autosaveSlider;
+  IBOutlet NSTextField   *autosaveField;
   
-  id editorField;
-  id debuggerField;
-  id compilerField;
-  id bundlePathField;
+  IBOutlet NSBox         *keyBindingsView;
+  IBOutlet NSMatrix      *tabMatrix;
+  IBOutlet NSButton      *tabSpacesField;
   
-  id separateBuilder;
-  id separateLauncher;
-  id separateEditor;
+  IBOutlet NSBox         *miscView;
+  IBOutlet NSButton      *promptWhenQuit;
+  IBOutlet NSButton      *deleteCache;
+  IBOutlet NSButton      *fullPathInFilePanels;
+  IBOutlet NSTextField   *debuggerField;
+  IBOutlet NSTextField   *editorField;
+
+  IBOutlet NSBox         *interfaceView;
+  IBOutlet NSButton      *separateBuilder;
+  IBOutlet NSButton      *separateLauncher;
+  IBOutlet NSButton      *separateEditor;
+  IBOutlet NSButton      *separateLoadedFiles;
+  IBOutlet NSTextField   *editorLinesField;
+  IBOutlet NSTextField   *editorColumnsField;
+  IBOutlet NSButton      *rememberWindows;
+  IBOutlet NSButton      *displayLog;
   
-  NSMutableDictionary *preferencesDict;
+  IBOutlet NSBox         *bundlesView;
+  IBOutlet NSTextField   *bundlePathField;
+  
+  NSMutableDictionary    *preferencesDict;
 }
+
++ (PCPrefController *)sharedPCPreferences;
 
 - (id)init;
 - (void)dealloc;
+- (void)loadPrefernces;
 
-- (void)showPrefWindow:(id)sender;
+- (NSDictionary *)preferencesDict;
+- (id)objectForKey:(NSString *)key;
+- (NSString *)selectFileWithTypes:(NSArray *)types;
+- (void)showPanel:(id)sender;
+
 - (void)popupChanged:(id)sender;
 
 - (void)setSuccessSound:(id)sender;
 - (void)setFailureSound:(id)sender;
+- (void)setRootBuildDir:(id)sender;
 - (void)setPromptOnClean:(id)sender;
 
-- (void)setSaveAutomatically:(id)sender;
+- (void)setSaveOnQuit:(id)sender;
 - (void)setKeepBackup:(id)sender;
 - (void)setSavePeriod:(id)sender;
-- (void)setSaveOnQuit:(id)sender;
 
-- (void)setUseExternalEditor:(id)sender;
-- (void)setUseExternalDebugger:(id)sender;
-
-- (void)setEditor:(id)sender;
-- (void)setCompiler:(id)sender;
+- (void)setPromptWhenQuit:(id)sender;
+- (void)setDeleteCache:(id)sender;
+- (void)setFullPathInFilePanels:(id)sender;
 - (void)setDebugger:(id)sender;
+- (void)setEditor:(id)sender;
+
+- (void)setDisplayPanels:(id)sender;
+- (void)setEditorSize:(id)sender;
+- (void)setEditorSizeEnabled:(BOOL)yn;
+- (void)setRememberWindows:(id)sender;
+- (void)setDisplayLog:(id)sender;
+
 - (void)setBundlePath:(id)sender;
-- (void)promptWhenQuitting:(id)sender;
-
-- (void)setTabBehaviour:(id)sender;
-
-- (NSDictionary *)preferencesDict;
-
-- (NSString *)selectFileWithTypes:(NSArray *)types;
 
 @end
-
-extern NSString *SavePeriodDidChangeNotification;
 
 #endif
 

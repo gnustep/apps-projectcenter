@@ -1,0 +1,87 @@
+2004-06-09 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectBrowser.[hm]:
+	(pathOfSelectedFile): renamed to pathToSelectedFile.
+	(nameOfSelectedCategory): implemented. Use it insetead PCProject's
+	-categoryForCategoryPath.
+	(pathToSelectedCategory): implemented.
+	(setPathForFile:category:): removed.
+	(reloadLastColumn): implemented.
+	
+	* Modules/ApplicationProject/PCAppProject.m:
+	 (renameFile:toFile:): remove calling of PCProjectBrowser's 
+	 setPathForFile:category.
+	 
+	* Modules/RenaissanceProject/ PCRenaissanceProject.m:
+	(renameFile:toFile:): ditto.
+	
+	* Library/PCLoadedFilesPanel.m:
+	* Library/PCBuildPanel.m:
+	* Library/PCLaunchPanel.m:
+	(activeProjectDidChange:): return if root project wasn't changed.
+	
+	* Library/PCProject.m:
+	(setProjectmanager:): don't set project components for subproject.
+
+
+2004-06-02 Serg Stoyan <stoyan255@ukr.net>
+
+        * Library/PCProjectManager (openProjectAt:): get project name from 
+	PC.project file instead of directory name. So project name and 
+	directory name may differ.
+
+	* Library/PCProjectLauncher.m (debug:): Debug application using 
+	full path instead of "~/Application".
+	
+	* PCMenuController.m: disable "Tear-Off Editor Size" fields editing
+	if Project Editor is not tear-off or Editor is not "ProjectCenter".
+	Check only first arg of Editor value.
+		
+2004-06-01 Serg Stoyan <stoyan255@ukr.net>
+
+        * Finished on-the-fly applying "Tear-Off Panels" preferences.
+	
+	* Implemented remembering windows and panels visibility on project
+	opening.
+	
+	* Various PCProject fixes.
+	
+	* Remove PC.project.backup if preference "Keep Project Backup File"
+	is not set.
+
+2004-05-27 Serg Stoyan <stoyan255@ukr.net>
+
+        * Finished support of external editors.
+
+2004-05-10 Serg Stoyan <stoyan@on.com.ua>
+
+	* Preferences interface created using GORM.
+	* Resources/Prefernces.gorm: added.
+	* PCPrefController+UInterface.[hm]: removed.
+
+2004-05-08 Serg Stoyan <stoyan@on.com.ua>
+
+	* Start new ChangeLog. Old ChangeLog resides in 
+	  Documentation/ChangeLog-1 new in Documentation/ChangeLog.
+
+	* Summary of changes:
+	  - massive overall refactoring and cleanup. Directory layout
+	    of PC changed;
+	  - ProjectWindow: implemented toolbar(hide/show); menu entry
+	    implemented;
+	  - ProjectInspector: PC*Project's parts moved into PC*Projects;
+	    more or less finished;
+	  - ProjectBuilder: switch from NSThread to NSTask method of
+	    executing tasks; "Build", "Stop Build", "Clean" menu entries
+	    implemented;
+	  - ProjectLauncher: ditto; finished all related menu entries;
+	  - LoadedFiles: Fully implemented;
+	  - LogController: implemented; made use it;
+	  - initial subprojects support added;
+	  - more stability around the whole ProjectCenter;
+	  - GORMified parts of PC now is: PC main menu, ProjectInspector,
+	    "File->New in Project" panel, "Project-> New Subproject" 
+	    panel.
+	  - "File->Rename" implemented;
+	  - ProjectCenter library now framework.
+	    

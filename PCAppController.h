@@ -3,7 +3,8 @@
 
    Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <probert@siggraph.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
+            Serg Stoyan <stoyan@on.com.ua>
 
    This file is part of GNUstep.
 
@@ -20,8 +21,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #ifndef _PCAPPCONTROLLER_H
@@ -29,34 +28,25 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCPrefController.h"
-#include "PCFindController.h"
-#include "PCInfoController.h"
-#include "PCLogController.h"
-
-@class PCBundleLoader;
 @class PCServer;
 @class PCProjectManager;
 @class PCFileManager;
 @class PCMenuController;
+@class PCInfoController;
+@class PCPrefController;
+@class PCLogController;
 
 @interface PCAppController : NSObject
 {
-  PCPrefController *prefController;
-  PCFindController *finder;
-  PCInfoController *infoController;
-  PCLogController  *logger;
   PCProjectManager *projectManager;
-  PCFileManager    *fileManager;
-  PCMenuController *menuController;
+  IBOutlet id      menuController;
   
-  PCBundleLoader   *bundleLoader;
+  PCInfoController *infoController;
+  PCPrefController *prefController;
+  PCLogController  *logController;
+
   PCServer         *doServer;
   NSConnection     *doConnection;
-  
-  id		   delegate;
-  
-  NSMutableDictionary *projectTypes;
 }
 
 //============================================================================
@@ -68,34 +58,20 @@
 - (id)init;
 - (void)dealloc;
 
-- (BOOL)respondsToSelector:(SEL)aSelector; 
-- (void)forwardInvocation:(NSInvocation *)anInvocation;
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
-
 //============================================================================
-//==== Delegate
+//==== Accessory methods
 //============================================================================
 
-- (id)delegate;
-- (void)setDelegate:(id)aDelegate;
-
-//============================================================================
-//==== Bundle Management
-//============================================================================
-
-- (PCBundleLoader *)bundleLoader;
 - (PCProjectManager *)projectManager;
+- (PCMenuController *)menuController;
 - (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
-- (PCMenuController *)menuController;
-- (PCServer *)doServer;
-- (PCFindController *)finder;
-- (PCLogController *)logger;
+- (PCLogController *)logController;
 
-- (NSDictionary *)projectTypes;
+- (PCServer *)doServer;
 
 //============================================================================
-//==== Misc...
+//==== Application
 //============================================================================
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
@@ -105,19 +81,6 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender;
 - (void)applicationWillTerminate:(NSNotification *)notification;
-
-//============================================================================
-//==== Delegate stuff
-//============================================================================
-
-- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle;
-
-@end
-
-@interface PCAppController (ProjectRegistration)
-
-- (BOOL)registerProjectCreator:(NSString *)className forKey:(NSString *)aKey;
-// Returns YES upon successfully registering a new projecttype.
 
 @end
 

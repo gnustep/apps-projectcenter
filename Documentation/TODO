@@ -1,0 +1,62 @@
+TODO
+****
+
+This is the GNUstep ProjectCenter TODO list. "+" means that this task
+is done. Feel free to propose changes to this list or make suggestions!
+
+ProjectCenter 0.4                                               Owner
+-----------------                                               ------
+
++ Review and cleanup of PC project bundles/templates            stoyan
++ Finish Project Inspector                                      stoyan
++ Inspector UI using Gorm                                       stoyan
++ File creation (File->New in project) cleanup and finishing    stoyan
+- Initial suprojects support                                    stoyan
++ Finish support of external editors                            stoyan
++ Preferences enhancements and UI using Gorm                    stoyan
++ Remember project windows and panels in PC.project             stoyan
+
+ProjectCenter 0.5
+-----------------
+
+- Redesign Info panel                                           stoyan
+- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
+- ProjectLauncher enhancements (debug)                          stoyan
+- Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
+- Editor enhancements                                           robert
+
+ProjectCenter 0.6
+-----------------
+
+- More options for file creation                                ???
+- ProjectCenter localization                                    robert
+- Localization support for GUI based projects                   robert
+- Direct code documentation (using autogsdoc)                   ???
+- Better integration with other tools 
+  (Gorm, CodeEditor, EasyDiff)                                  ???
+
+ProjectCenter 0.7
+-----------------
+
+- Initial user documentation                                    ???
+- Initial support for integrated debugging                      ???
+- Optimised support for integrated debugging                    ???
+- More project customisation possibilities                      ???
+- CVS integration                                               ???
+
+ProjectCenter 0.8
+-----------------
+
+- An initial project wide find feature                          ???
+
+ProjectCenter 0.9
+-----------------
+
+- An initial class browser/documentation feature                ???
+
+ProjectCenter 1.0
+-----------------
+
+  Version 1.0 is aimed at stabilising and optimising existing 
+features. There will not be any new features since 0.9.
+

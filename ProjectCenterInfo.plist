@@ -1,43 +1,45 @@
 {
-  NSIcon = "ProjectCenter.tiff";
-  NSRole = "Editor";
-  NSTypes = (
-    {
-      NSUnixExtensions = ( "project" );
-      NSIcon = "ProjectCenter.tiff";
-    },
-    {
-      NSUnixExtensions = ( "pcproj" );
-      NSIcon = "ProjectCenter.tiff";
-    },
-    {
-      NSUnixExtensions = ( "m" );
-      NSIcon = "FileIcon_.m.tiff";
-    },
-    {
-      NSUnixExtensions = ( "h" );
-      NSIcon = "FileIcon_.h.tiff";
-    },
-    {
-      NSUnixExtensions = ( "c" );
-      NSIcon = "FileIcon_.c.tiff";
-    }
-  );
   NOTE = "Automatically generated, do not edit!";
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep IDE";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.3.5";
-  FullVersionID = "ProjectCenter 0.3.5";
+  ApplicationRelease = "0.4.0";
+  FullVersionID = "ProjectCenter 0.4.0";
   Authors = (
-    "Philippe C.D. Robert <probert@siggraph.org>",
-    "Serg Stoyan <stoyan@on.com.ua>",
-    "David Ayers <d.ayers@inode.at>",
-    "Richard Frith-Macdonald <rfm@gnu.org>",
-    "Nicola Pero  <n.pero@mi.flashnet.it>",
-    "Pierre-Yves Rivaille  <pyrivail@ens-lyon.fr>",
-    "Adam Fedor <fedor@gnu.org>");
-
+    "Philippe C.D. Robert",
+    "Serg Stoyan",
+    "David Ayers",
+    "Richard Frith-Macdonald",
+    "Nicola Pero",
+    "Pierre-Yves Rivaille",
+    "Adam Fedor");
+  NSIcon = "ProjectCenter.tiff";
+  NSExecutable = ProjectCenter;
+  NSMainNibFile = ProjectCenter.gorm;
+  NSPrincipalClass = NSApplication;
+  NSRole = "Editor";
+  NSTypes = (
+    {
+      NSUnixExtensions = ( "project" );
+      NSIcon = "FileProject.tiff";
+    },
+    {
+      NSUnixExtensions = ( "pcproj" );
+      NSIcon = "FileProject.tiff";
+    },
+    {
+      NSUnixExtensions = ( "m" );
+      NSIcon = "FileM.tiff";
+    },
+    {
+      NSUnixExtensions = ( "h" );
+      NSIcon = "FileH.tiff";
+    },
+    {
+      NSUnixExtensions = ( "c" );
+      NSIcon = "FileC.tiff";
+    }
+  );
   URL = "See http://www.gnustep.org/";
   Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
   CopyrightDescription = "Released under the GNU General Public License 2.0";

@@ -20,97 +20,55 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
-#include "PCMenuController.h"
-
-#include <ProjectCenter/ProjectCenter.h>
 #include "PCAppController.h"
+#include "PCMenuController.h"
+#include "PCInfoController.h"
+#include "PCPrefController.h"
+#include "PCLogController.h"
+#include <ProjectCenter/ProjectCenter.h>
 
 @implementation PCMenuController
 
 - (id)init
 {
   if ((self = [super init])) 
-  {
-      NSRect fr = NSMakeRect(20,30,160,20);
+    {
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidBecomeActive:)
+	       name:PCEditorDidBecomeActiveNotification 
+	     object:nil];
 
-      [[NSNotificationCenter defaultCenter] addObserver:self 
-	selector:@selector(editorDidBecomeKey:)
-	name:PCEditorDidBecomeKeyNotification 
-	object:nil];
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidResignActive:)
+	       name:PCEditorDidResignActiveNotification 
+	     object:nil];
 
-      [[NSNotificationCenter defaultCenter] addObserver:self 
-	selector:@selector(editorDidResignKey:)
-	name:PCEditorDidResignKeyNotification 
-	object:nil];
-
-      editorIsKey = NO;
-
-      projectTypeAccessaryView = [[NSBox alloc] init];
-      projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
-      [projectTypePopup setAutoenablesItems: NO];
-      [projectTypePopup addItemWithTitle:@"No type available!"];
-
-      [projectTypeAccessaryView setTitle:@"Project Types"];
-      [projectTypeAccessaryView setTitlePosition:NSAtTop];
-      [projectTypeAccessaryView setBorderType:NSGrooveBorder];
-      [projectTypeAccessaryView addSubview:projectTypePopup];
-      [projectTypeAccessaryView sizeToFit];
-      [projectTypeAccessaryView setAutoresizingMask:
-	NSViewMinXMargin | NSViewMaxXMargin];
-
-      RELEASE(projectTypePopup);
-  }
+      editorIsActive = NO;
+    }
 
   return self;
 }
 
 - (void)dealloc
 {
+  NSLog(@"PCMenuController: dealloc");
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-  RELEASE(projectTypeAccessaryView);
 
   [super dealloc];
 }
 
-- (void)addProjectTypeNamed:(NSString *)name
-{
-    static BOOL _firstItem = YES;
-
-    if (_firstItem) 
-    {
-        _firstItem = NO;
-        [projectTypePopup removeItemWithTitle:@"No type available!"];
-    }
-
-    [projectTypePopup addItemWithTitle:name];
-    [projectTypePopup sizeToFit];
-    [projectTypeAccessaryView sizeToFit];
-}
-
 - (void)setAppController:(id)anObject
 {
-  [appController autorelease];
   appController = anObject;
-  RETAIN(appController);
-}
-
-- (void)setFileManager:(id)anObject
-{
-  [fileManager autorelease];
-  fileManager = anObject;
-  RETAIN(fileManager);
 }
 
 - (void)setProjectManager:(id)anObject
 {
-  [projectManager autorelease];
   projectManager = anObject;
-  RETAIN(projectManager);
 }
 
 //============================================================================
@@ -120,7 +78,7 @@
 // Info
 - (void)showPrefWindow:(id)sender
 {
-  [[[NSApp delegate] prefController] showPrefWindow:sender];
+  [[[NSApp delegate] prefController] showPanel:sender];
 }
 
 - (void)showInfoPanel:(id)sender
@@ -130,81 +88,23 @@
 
 - (void)showEditorPanel:(id)sender
 {
-  [[projectManager activeProject] showEditorView:self];
+  [[[projectManager rootActiveProject] projectWindow] showProjectEditor:self];
+}
+
+- (void)showLogPanel:(id)sender
+{
+  [[appController logController] showPanel];
 }
 
 // Project
 - (void)projectOpen:(id)sender
 {
-  NSString 	*projPath;
-  NSOpenPanel	*openPanel;
-  int		retval;
-
-  openPanel = [NSOpenPanel openPanel];
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setCanChooseDirectories:NO];
-  [openPanel setCanChooseFiles:YES];
-
-  retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:[NSArray arrayWithObjects:@"project",@"pcproj",nil]];
-
-  if (retval == NSOKButton) 
-    {
-      BOOL isDir;
-
-      [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
-	forKey:@"LastOpenDirectory"];
-
-      projPath = [[openPanel filenames] objectAtIndex:0];
-
-      if ([[NSFileManager defaultManager] fileExistsAtPath:projPath 
-	  isDirectory:&isDir] && !isDir)
-	{
-	  if (![projectManager openProjectAt:projPath]) 
-	    {
-	      NSRunAlertPanel(@"Attention!",
-			      @"Couldn't open %@!",
-			      @"OK",nil,nil,
-			      [projPath stringByDeletingLastPathComponent]);
-	    }
-	}
-    }
+  [projectManager openProject];
 }
 
 - (void)projectNew:(id)sender
 {
-  NSSavePanel *sp;
-  int 	 runResult;
-  NSString    *dir = nil;
-
-  sp = [NSSavePanel savePanel];
-
-  [sp setTitle:@"Create new project..."];
-  [sp setAccessoryView:nil];
-  [sp setAccessoryView:projectTypeAccessaryView];
-
-  dir = [[NSUserDefaults standardUserDefaults] objectForKey:@"LastNewDirectory"];
-  if( !dir )
-    {
-      dir = NSHomeDirectory();
-    }
-
-  [projectTypePopup selectItemAtIndex:0];
-  runResult = [sp runModalForDirectory:dir file:@""];
-  if (runResult == NSOKButton) 
-    {
-      NSString *projectType = [projectTypePopup titleOfSelectedItem];
-      NSString *className = [[appController projectTypes] objectForKey:projectType];
-
-      [[NSUserDefaults standardUserDefaults] setObject:[sp directory] 
-	forKey:@"LastNewDirectory"];
-
-      if (![projectManager createProjectOfType:className path:[sp filename]])
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Failed to create %@!",
-			  @"OK",nil,nil,[sp filename]);
-	}
-    }
+  [projectManager newProject];
 }
 
 - (void)projectSave:(id)sender
@@ -212,57 +112,19 @@
   [projectManager saveProject];
 }
 
-- (void)projectSaveAs:(id)sender
-{
-  NSString    *proj = nil;
-
-  // Show save panel
-  NSRunAlertPanel(@"Attention!",
-		  @"This feature is not yet implemented!", 
-		  @"OK",nil,nil);
-
-  [projectManager saveProjectAs:proj];
-}
-
 - (void)projectAddFiles:(id)sender
 {
-  [fileManager showAddFileWindow];
+  [projectManager addProjectFiles];
 }
 
 - (void)projectSaveFiles:(id)sender
 {
-  [projectManager saveAllFiles];
+  [projectManager saveProjectFiles];
 }
 
 - (void)projectRemoveFiles:(id)sender
 {
-  NSString  *fileName = nil;
-  PCProject *proj = [projectManager activeProject];
-  NSArray   *files = [[proj browserController] selectedFiles];
-
-  if ((fileName = [[proj browserController] nameOfSelectedFile]))
-  {
-      int ret;
-
-      ret = NSRunAlertPanel(@"Remove File!",
-			    @"Really remove %@ in project %@?",
-			    @"Cancel",
-			    @"...from Project only",
-			    @"...from Project and Disk",
-			    files, [proj projectName]);
-
-      if (ret == NSAlertAlternateReturn || ret == NSAlertOtherReturn) 
-      {
-	  BOOL flag = (ret == NSAlertOtherReturn) ? YES : NO;
-
-	  [projectManager removeFilesPermanently:flag];
-       }
-  }
-}
-
-- (void)projectRevertToSaved:(id)sender
-{
-  [projectManager revertToSaved];
+  [projectManager removeProjectFiles];
 }
 
 - (void)projectClose:(id)sender
@@ -278,61 +140,18 @@
 
 - (void)subprojectAdd:(id)sender
 {
-  NSString *proj = nil;
-
-  // Show open panel
-
-  [projectManager addSubprojectAt:proj];
-}
-
-- (void)subprojectRemove:(id)sender
-{
-  [projectManager removeSubproject];
+  [projectManager addSubproject];
 }
 
 // File
 - (void)fileOpen:(id)sender
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString 	 *filePath;
-  NSOpenPanel	 *openPanel;
-  int		 retval;
-
-  openPanel = [NSOpenPanel openPanel];
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setCanChooseDirectories:NO];
-  [openPanel setCanChooseFiles:YES];
-
-  retval = [openPanel 
-    runModalForDirectory:[ud objectForKey:@"LastOpenDirectory"]
-                    file:nil
-                   types:nil];
-
-  if (retval == NSOKButton)
-    {
-      BOOL isDir;
-      NSFileManager *fm = [NSFileManager defaultManager];
-
-      [ud setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
-
-      filePath = [[openPanel filenames] objectAtIndex:0];
-
-      if (![fm fileExistsAtPath:filePath isDirectory:&isDir] && !isDir)
-      {
-	  NSRunAlertPanel(@"Attention!",
-			  @"Couldn't open %@!",
-			  @"OK",nil,nil,filePath);
-      }
-      else
-      {
-	  [PCEditorController openFileInEditor:filePath];
-      }
-  }
+  [projectManager openFile];
 }
 
 - (void)fileNew:(id)sender
 {
-  [fileManager showNewFileWindow];
+  [projectManager newFile];
 }
 
 - (void)fileSave:(id)sender
@@ -340,7 +159,6 @@
   [projectManager saveFile];
 }
 
-// Not finished
 - (void)fileSaveAs:(id)sender
 {
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -351,7 +169,7 @@
   int		 retval = NSOKButton;
 
   oldFilePath = 
-    [[[[projectManager activeProject] editorController] activeEditor] path];
+    [[[[projectManager rootActiveProject] projectEditor] activeEditor] path];
 
   [savePanel setTitle: @"Save As..."];
   while (![directory isEqualToString: [projectManager projectPath]] 
@@ -378,40 +196,26 @@
       else
 	{
 	  PCProject *project = [projectManager activeProject];
-	  NSString  *category = [[[project rootCategories] allKeysForObject:PCNonProject] objectAtIndex:0];
+	  NSString  *categoryPath =  nil;
+
+	  categoryPath = [NSString stringWithString:@"/"];
+	  categoryPath = [categoryPath stringByAppendingPathComponent:
+	    [[project rootEntries] objectForKey:PCNonProject]];
 
 	  [projectManager closeFile];
-	  [project addFile:newFilePath forKey:PCNonProject];
-	  [project browserDidClickFile:[newFilePath lastPathComponent]
-	                      category:category];
+	  [project addFiles:[NSArray arrayWithObject:newFilePath]
+	             forKey:PCNonProject];
+	  [[project projectEditor] editorForFile:newFilePath
+	                            categoryPath:categoryPath
+				        windowed:NO];
 	}
     }
 }
 
+
 - (void)fileSaveTo:(id)sender
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString 	 *filePath = [projectManager selectedFileName];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
-  int		 retval;
-
-  [savePanel setTitle: @"Save To..."];
-  retval = [savePanel runModalForDirectory:[projectManager projectPath]
-                                      file:filePath];
-
-  if (retval == NSOKButton)
-    {
-      [ud setObject:[savePanel directory] forKey:@"LastOpenDirectory"];
-
-      filePath = [savePanel filename];
-		  
-      if (![projectManager saveFileTo:filePath]) 
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Couldn't save file to\n%@!",
-			  @"OK",nil,nil,filePath);
-	}
-    }
+  [projectManager saveFileTo];
 }
 
 - (void)fileRevertToSaved:(id)sender
@@ -433,15 +237,12 @@
 
 - (void)fileRename:(id)sender
 {
-/*  NSString *proj = nil;
-
   // Show Inspector panel with "File Attributes" section
+  [projectManager renameFile];
 
-  [projectManager renameFileTo:proj];*/
-
-  NSRunAlertPanel(@"PCMenuController: Sorry!",
+/*  NSRunAlertPanel(@"PCMenuController: Sorry!",
 		  @"This feature is not finished yet",
-		  @"OK",nil,nil);
+		  @"OK",nil,nil);*/
 }
 
 - (void)fileNewUntitled:(id)sender
@@ -451,7 +252,7 @@
 		  @"OK",nil,nil);
 }
 
-// Edit
+// Edit. PCProjectEditor have to provide this menu and functionality
 - (void)findShowPanel:(id)sender
 {
   [[PCTextFinder sharedFinder] showFindPanel:self];
@@ -468,24 +269,91 @@
 }
 
 // Tools
+
+- (void)toggleToolbar:(id)sender
+{
+  [[[projectManager rootActiveProject] projectWindow] toggleToolbar];
+
+  if ([[sender title] isEqualToString:@"Hide Tool Bar"])
+    {
+      [sender setTitle:@"Show Tool Bar"];
+    }
+  else
+    {
+      [sender setTitle:@"Hide Tool Bar"];
+    }
+}
+
 - (void)showInspector:(id)sender
 {
-  [projectManager showInspectorForProject:[projectManager activeProject]];
+  [projectManager showProjectInspector:self];
 }
 
-- (void)showRunPanel:(id)sender
-{
-  [[projectManager activeProject] showRunView:self];
-}
-
+// Build Panel
 - (void)showBuildPanel:(id)sender
 {
-  [[projectManager activeProject] showBuildView:self];
+  [[[projectManager rootActiveProject] projectWindow] showProjectBuild:self];
+}
+
+- (void)executeBuild:(id)sender
+{
+  [self showBuildPanel:self];
+  [[[projectManager rootActiveProject] projectBuilder] performStartBuild];
+}
+
+- (void)stopBuild:(id)sender
+{
+  [[[projectManager rootActiveProject] projectBuilder] performStopBuild];
+}
+
+- (void)startClean:(id)sender
+{
+  [self showBuildPanel:self];
+  [[[projectManager rootActiveProject] projectBuilder] performStartClean];
+}
+
+// Loaded Files
+- (void)showLoadedFilesPanel:(id)sender
+{
+  [projectManager showProjectLoadedFiles:self];
+}
+
+- (void)loadedFilesSortByTime:(id)sender
+{
+  [[[projectManager rootActiveProject] projectLoadedFiles] setSortByTime];
+}
+
+- (void)loadedFilesSortByName:(id)sender
+{
+  [[[projectManager rootActiveProject] projectLoadedFiles] setSortByName];
+}
+
+- (void)loadedFilesNextFile:(id)sender
+{
+  [[[projectManager rootActiveProject] projectLoadedFiles] selectNextFile];
+}
+
+- (void)loadedFilesPreviousFile:(id)sender
+{
+  [[[projectManager rootActiveProject] projectLoadedFiles] selectPreviousFile];
+}
+
+// Launch Panel
+- (void)showLaunchPanel:(id)sender
+{
+  [[[projectManager rootActiveProject] projectWindow] showProjectLaunch:self];
 }
 
 - (void)runTarget:(id)sender
 {
-  [[projectManager activeProject] runSelectedTarget:self];
+  [self showLaunchPanel:self];
+  [[[projectManager rootActiveProject] projectLauncher] performRun];
+}
+
+- (void)debugTarget:(id)sender
+{
+  [self showLaunchPanel:self];
+  [[[projectManager rootActiveProject] projectLauncher] performDebug];
 }
 
 //============================================================================
@@ -494,9 +362,10 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem
 {
-  NSString    *menuTitle = [[menuItem menu] title];
-  PCProject   *aProject = [projectManager activeProject];
-  NSResponder *firstResponder = [[NSApp keyWindow] firstResponder];
+  NSString         *menuTitle = [[menuItem menu] title];
+  PCProject        *aProject = [projectManager activeProject];
+  PCProjectEditor  *projectEditor = [aProject projectEditor];
+  PCProjectBrowser *projectBrowser = [aProject projectBrowser];
 
   if ([[projectManager loadedProjects] count] == 0) 
     {
@@ -504,10 +373,13 @@
       if ([menuTitle isEqualToString: @"Project"])
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
-	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save Files..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+	  if ([[menuItem title] isEqualToString:@"New Subproject..."]) 
+	    return NO;
+	  if ([[menuItem title] isEqualToString:@"Add Subproject..."]) 
+	    return NO;
 	  if ([[menuItem title] isEqualToString:@"Close"]) return NO;
 	}
 
@@ -530,6 +402,7 @@
 	{
 	  if ([[menuItem title] isEqualToString:@"Inspector..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Show Tool Bar"]) return NO;
 	}
       if ([menuTitle isEqualToString: @"Project Build"])
 	{
@@ -576,28 +449,47 @@
 
   // Project related menu items
   if ([menuTitle isEqualToString: @"Project"] 
-      && [aProject selectedRootCategory] == nil)
+      && [projectBrowser nameOfSelectedFile] == nil
+      && [projectBrowser selectedFiles] == nil)
+    {
+      if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && [[projectEditor allEditors] count] == 0)
+    {
+      if ([[menuItem title] isEqualToString:@"Save Files..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && [projectBrowser nameOfSelectedCategory] == nil)
     {
       if ([[menuItem title] isEqualToString:@"Add Files..."]) return NO;
-      if ([[menuItem title] isEqualToString:@"Remove Files..."]) return NO;
+      if ([[menuItem title] isEqualToString:@"Add Subproject..."]) return NO;
+    }
+  if ([menuTitle isEqualToString: @"Project"] 
+      && ![[projectBrowser nameOfSelectedRootCategory] isEqualToString:@"Subprojects"])
+    {
+      if ([[menuItem title] isEqualToString:@"Add Subproject..."]) return NO;
     }
 
   // File related menu items
   if (([menuTitle isEqualToString: @"File"]))
     {
-      if (![[firstResponder className] isEqualToString: @"PCEditorView"])
+      if (!editorIsActive)
 	{
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save As..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save To..."]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Revert to Saved"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Close"]) return NO;
-	  if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
 	}
+    }
+  if ([projectBrowser nameOfSelectedFile] == nil)
+    {
+      if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }
 
   // Find menu items
-  if (editorIsKey == NO && [menuTitle isEqualToString: @"Find"])
+  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
     {
       if (![[[PCTextFinder sharedFinder] findPanel] isVisible])
 	{
@@ -610,17 +502,70 @@
       if ([[menuItem title] isEqualToString:@"Man Page"]) return NO;
     }
 
+  // Toolbar
+  if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]
+      && ![[[projectManager activeProject] projectWindow] isToolbarVisible])
+    {
+      [menuItem setTitle:@"Show Tool Bar"];
+    }
+  if ([[menuItem title] isEqualToString:@"Show Tool Bar"]
+      && [[[projectManager activeProject] projectWindow] isToolbarVisible])
+    {
+      [menuItem setTitle:@"Hide Tool Bar"];
+    }
+    
+  // Project Build related
+  if (([menuTitle isEqualToString: @"Project Build"]))
+    {
+      if ([[[projectManager activeProject] projectBuilder] isBuilding]
+	  || [[[projectManager activeProject] projectBuilder] isCleaning])
+	{
+	  if ([[menuItem title] isEqualToString:@"Build"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Clean"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Next error"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Previous error"]) return NO;
+	}
+      else
+	{
+	  if ([[menuItem title] isEqualToString:@"Stop Build"]) return NO;
+	}
+    }
+    
+  // Project Launcher related
+  if (([menuTitle isEqualToString: @"Launcher"]))
+    {
+      if ([[[projectManager activeProject] projectLauncher] isRunning]
+	  || [[[projectManager activeProject] projectLauncher] isDebugging])
+	{
+	  if ([[menuItem title] isEqualToString:@"Run"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Debug"]) return NO;
+	}
+    }
+    
+  // Loaded Files related
+  if (([menuTitle isEqualToString: @"Loaded Files"]))
+    {
+      if ([[[aProject projectLoadedFiles] editedFilesRep] count] <= 0)
+	{
+	  if ([[menuItem title] isEqualToString:@"Sort by Time Viewed"])
+	    return NO;
+	  if ([[menuItem title] isEqualToString:@"Sort by Name"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Next File"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Previous File"]) return NO;
+	}
+    }
+
   return YES;
 }
 
-- (void)editorDidResignKey:(NSNotification *)aNotification
+- (void)editorDidResignActive:(NSNotification *)aNotif
 {
-    editorIsKey = NO;
+  editorIsActive = NO;
 }
 
-- (void)editorDidBecomeKey:(NSNotification *)aNotification
+- (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
-  editorIsKey = YES;
+  editorIsActive = YES;
 }
 
 @end

@@ -20,8 +20,6 @@
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
-
-   $Id$
 */
 
 #ifndef _PCMENUCONTROLLER_H
@@ -36,13 +34,9 @@
 @interface PCMenuController : NSObject
 {
   PCProjectManager *projectManager;
-  PCFileManager	   *fileManager;
   PCAppController  *appController;
-  
-  NSBox	*projectTypeAccessaryView;
-  id    projectTypePopup;
 
-  BOOL  editorIsKey;
+  BOOL             editorIsActive;
 }
 
 //============================================================================
@@ -53,34 +47,29 @@
 - (void)dealloc;
 
 - (void)setAppController:(id)anObject;
-- (void)setFileManager:(id)anObject;
 - (void)setProjectManager:(id)anObject;
 
 //============================================================================
 //==== Menu stuff
 //============================================================================
 
-- (void)addProjectTypeNamed:(NSString *)name;
-
 // Info
 - (void)showInfoPanel:(id)sender;
 - (void)showPrefWindow:(id)sender;
+- (void)showLogPanel:(id)sender;
 
 // Project
 - (void)projectOpen:(id)sender;
 - (void)projectNew:(id)sender;
 - (void)projectSave:(id)sender;
-- (void)projectSaveAs:(id)sender;
 - (void)projectAddFiles:(id)sender;
 - (void)projectSaveFiles:(id)sender;
 - (void)projectRemoveFiles:(id)sender;
-- (void)projectRevertToSaved:(id)sender;
 - (void)projectClose:(id)sender;
 
 // Subproject
 - (void)subprojectNew:(id)sender;
 - (void)subprojectAdd:(id)sender;
-- (void)subprojectRemove:(id)sender;
 
 // File
 - (void)fileNew:(id)sender;
@@ -102,9 +91,21 @@
 // Tools
 - (void)showInspector:(id)sender;
 - (void)showEditorPanel:(id)sender;
-- (void)showRunPanel:(id)sender;
+// Project Build
 - (void)showBuildPanel:(id)sender;
+- (void)executeBuild:(id)sender;
+- (void)stopBuild:(id)sender;
+- (void)startClean:(id)sender;
+// Loaded Files
+- (void)showLoadedFilesPanel:(id)sender;
+- (void)loadedFilesSortByTime:(id)sender;
+- (void)loadedFilesSortByName:(id)sender;
+- (void)loadedFilesNextFile:(id)sender;
+- (void)loadedFilesPreviousFile:(id)sender;
+// Launcher
+- (void)showLaunchPanel:(id)sender;
 - (void)runTarget:(id)sender;
+- (void)debugTarget:(id)sender;
 
 //============================================================================
 //==== Delegate stuff
@@ -112,8 +113,8 @@
 
 - (BOOL)validateMenuItem:(id <NSMenuItem>)menuItem;
 
-- (void)editorDidResignKey:(NSNotification *)aNotification;
-- (void)editorDidBecomeKey:(NSNotification *)aNotification;
+- (void)editorDidBecomeActive:(NSNotification *)aNotif;
+- (void)editorDidResignActive:(NSNotification *)aNotif;
 
 @end
 
