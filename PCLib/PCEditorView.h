@@ -36,15 +36,24 @@
   NSRange range;
   NSArray *_keywords;
   PCEditor *editor;
+  BOOL shouldHighlight;
 }
 
-- (id)initWithFrame:(NSRect)frameRect;
+- (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer*)tc;
 - (void)dealloc;
 
 - (void)setEditor:(PCEditor *)anEditor;
 - (void)setString:(NSString *)aString;
 
-- (void)colourise:(id)sender;
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
+
+- (void)setShouldHighlight:(BOOL)yn;
+- (BOOL)shouldHighlight;
+
+- (void)insertText:(id)aString;
+
+- (void)highlightText;
+- (void)highlightTextInRange:(NSRange)range;
 
 - (void)colouriseKeyword:(NSString *)keyword;
 - (void)colouriseKeywords:(NSArray *)keywords;

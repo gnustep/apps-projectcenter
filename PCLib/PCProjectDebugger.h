@@ -25,10 +25,11 @@
 */
 
 #import <AppKit/AppKit.h>
+#import <ProjectCenter/ProjectComponent.h>
 
 @class PCProject;
 
-@interface PCProjectDebugger : NSObject
+@interface PCProjectDebugger : NSObject <ProjectComponent>
 {
   NSBox *componentView;
 

@@ -14,16 +14,19 @@
 #import <AppKit/AppKit.h>
 
 @class PCEditorView;
+@class PCProjectEditor;
 
 @interface PCEditor : NSObject
 {
-    PCEditorView *view;
-    NSWindow     *window;
+    PCEditorView    *iView;
+    PCEditorView    *eView;
+    NSTextStorage   *storage;
+    NSWindow        *window;
     NSMutableString *path;
 
     id delegate;
 
-    BOOL isEmbedded;
+    BOOL isEdited;
 }
 
 - (id)initWithPath:(NSString*)file;
@@ -32,12 +35,12 @@
 - (void)setDelegate:(id)aDelegate;
 - (id)delegate;
 
-- (void)setEmbedded:(BOOL)yn;
-- (BOOL)isEmbedded;
-
 - (NSWindow *)editorWindow;
 - (NSString *)path;
 
+- (void)setIsEdited:(BOOL)yn;
+
+- (void)showInProjectEditor:(PCProjectEditor *)pe;
 - (void)show;
 - (void)close;
 

@@ -40,10 +40,11 @@ static NSColor *cStringColor = nil;
 static NSFont *editorFont = nil;
 static BOOL isInitialised = NO;
 
-- (id)initWithFrame:(NSRect)frameRect
+- (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer*)tc
 {
-  if ((self = [super initWithFrame:frameRect])) 
+  if ((self = [super initWithFrame:frameRect textContainer:tc])) 
   {
+    shouldHighlight = NO;
 
     /*
      * Should move that to initialize...
@@ -96,29 +97,65 @@ static BOOL isInitialised = NO;
 
 - (void)setString:(NSString *)aString
 {
-  [scanner autorelease];
-  scanner = [[NSScanner alloc] initWithString:aString];
+    [scanner autorelease];
+    scanner = [[NSScanner alloc] initWithString:aString];
 
-  [super setString:aString];
+    [super setString:aString];
 #ifdef COLOURISE
-  [self colourise:self];
+    if( shouldHighlight )
+    {
+	[self highlightText];
+    }
 #endif //COLOURISE
 }
 
-- (void)colourise:(id)sender
+- (BOOL)acceptsFirstMouse:(NSEvent *)theEvent
 {
-  NSRange      aRange;
+    return YES;
+}
+
+- (void)setShouldHighlight:(BOOL)yn
+{
+    shouldHighlight = yn;
+}
+
+- (BOOL)shouldHighlight
+{
+    return shouldHighlight;
+}
+
+- (void)insertText:(id)aString
+{
+    NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
+
+    [super insertText:aString];
+
+    if( shouldHighlight )
+    {
+	[[self textStorage] invalidateAttributesInRange:txtRange];
+	[self highlightTextInRange:txtRange];
+    }
+}
+
+- (void)highlightText
+{
+    NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
+
+    [self highlightTextInRange:txtRange];
+}
+
+- (void)highlightTextInRange:(NSRange)txtRange
+{
   NSDictionary *aDict;
   NSArray      *keywords;
 
-  aRange = NSMakeRange(0,[_textStorage length]);  
   aDict = [NSDictionary dictionaryWithObjectsAndKeys:
 			  editorFont, NSFontAttributeName,
 			@"UnknownCodeType", @"PCCodeTypeAttributeName",
 			nil];
   
   [_textStorage beginEditing];  
-  [_textStorage setAttributes:aDict range:aRange];
+  [_textStorage setAttributes:aDict range:txtRange];
   
   // Scan the CodeType first...
 
@@ -373,14 +410,7 @@ static BOOL isInitialised = NO;
     if(([chars lossyCString][0] == 's') && (modifiers & NSCommandKeyMask))
     {
 	[editor saveFile];
-
 	return;
-    }
-
-    // Only if not embedded - FIXME!
-    if( [[self window] isDocumentEdited] == NO )
-    {
-	[[self window] setDocumentEdited:YES];
     }
 
     [super keyDown:anEvent];

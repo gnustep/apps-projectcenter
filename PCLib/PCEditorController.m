@@ -124,11 +124,7 @@
         editor = [editorDict objectForKey:key];
 
 	[editor close];
-
-	if( [editor isEmbedded] == NO )
-	{
-	    [[editor editorWindow] performClose:self];
-	}
+	[[editor editorWindow] performClose:self];
     }
     [editorDict removeAllObjects];
 }
@@ -156,7 +152,8 @@
         editor = [editorDict objectForKey:key];
 	window = [editor editorWindow];
 
-	if( [window isKeyWindow] && [window isMainWindow] )
+	if( [window isKeyWindow] && [window isMainWindow] ||
+	    [project isEditorActive] && [[project projectWindow] isKeyWindow])
 	{
 	    return [editor saveFile];
 	}
@@ -177,7 +174,8 @@
         editor = [editorDict objectForKey:key];
 	window = [editor editorWindow];
 
-	if( [window isKeyWindow] && [window isMainWindow] )
+	if( [window isKeyWindow] && [window isMainWindow] ||
+	    [project isEditorActive] && [[project projectWindow] isKeyWindow])
 	{
 	    return [editor revertFile];
 	}

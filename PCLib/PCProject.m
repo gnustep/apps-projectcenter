@@ -25,6 +25,8 @@
 */
 
 #import "PCProject.h"
+#import "PCProject+ComponentHandling.h"
+
 #import "ProjectCenter.h"
 #import "PCProjectBuilder.h"
 #import "PCSplitView.h"
@@ -88,49 +90,6 @@
   [box setContentViewMargins: NSMakeSize(0.0,0.0)];
   [box setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
 
-/*
-  rect = [box frame];
-  rect.origin.x = -1;
-  rect.origin.y = -1;
-  rect.size.width += 2;
-	  
-  scrollView = [[NSScrollView alloc] initWithFrame:rect];
-	      
-  rect.origin.x = 0;
-  rect.origin.y = 0;
-  rect.size.height -= 24;
-  rect.size.width -= 4;
-
-  textView = [[NSTextView alloc] initWithFrame:rect];
-  [textView setText:@"This is a test"];
-  [textView setDrawsBackground:YES];
-
-  [textView setMinSize: NSMakeSize (0, 0)];
-  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
-  [textView setRichText:NO];
-  [textView setEditable:YES];
-  [textView setSelectable:YES];
-  [textView setVerticallyResizable:YES];
-  [textView setHorizontallyResizable:NO];
-  [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [textView setBackgroundColor:[NSColor whiteColor]];
-  [[textView textContainer] setWidthTracksTextView:YES];
-
-  [scrollView setDocumentView:textView];
-  [box addSubview:scrollView];
-
-  rect.size = NSMakeSize([scrollView contentSize].width,1e7);
-  [[textView textContainer] setContainerSize:rect.size];
-  
-  [scrollView setHasHorizontalScroller: YES];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
-  [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-
-  RELEASE(textView);
-  RELEASE(scrollView);
-*/
-
   textField = [[NSTextField alloc] initWithFrame:NSMakeRect(16,200,500,21)];
   [textField setAlignment: NSLeftTextAlignment];
   [textField setBordered: NO];
@@ -162,12 +121,12 @@
    * Left button matrix
    */
 
-  rect = NSMakeRect(8,372,240,60);
+  rect = NSMakeRect(8,372,300,60);
   matrix = [[NSMatrix alloc] initWithFrame: rect
 			     mode: NSHighlightModeMatrix
 			     prototype: buttonCell
 			     numberOfRows: 1
-			     numberOfColumns: 4];
+			     numberOfColumns: 5];
   [matrix sizeToCells];
   [matrix setTarget:self];
   [matrix setAction:@selector(topButtonsPressed:)];
@@ -202,6 +161,13 @@
   [button setImagePosition:NSImageAbove];
   [button setTitle:@"Run"];
   [button setImage:IMAGE(@"ProjectCentre_run.tiff")];
+  [button setButtonType:NSMomentaryPushButton];
+
+  button = [matrix cellAtRow:0 column:4];
+  [button setTag:4];
+  [button setImagePosition:NSImageAbove];
+  [button setTitle:@"Editor"];
+  [button setImage:IMAGE(@"ProjectCentre_files.tiff")];
   [button setButtonType:NSMomentaryPushButton];
 
   /*
@@ -443,6 +409,8 @@
 {
     if ((self = [super init])) 
     {
+        editorIsActive = NO;
+
 	buildOptions = [[NSMutableDictionary alloc] init];
         [self _initUI];
 
@@ -672,7 +640,17 @@
 
 - (void)browserDidSelectFileNamed:(NSString *)fileName
 {
+    NSString *p = [[self projectPath] stringByAppendingPathComponent:fileName];
+    PCEditor *e;
+
+    // Set the name in the inspector
     [fileNameField setStringValue:fileName];
+
+    // Show the file in the internal editor!
+    e = [editorController editorForFile:p];
+    [e showInProjectEditor:projectEditor];
+    [self showEditorView:self];
+    [projectWindow makeFirstResponder:[projectEditor editorView]];
 }
 
 - (BOOL)doesAcceptFile:(NSString *)file forKey:(NSString *)type
@@ -1116,117 +1094,8 @@
 
 @end
 
-@implementation PCProject (ProjectBuilding)
-
-- (void)topButtonsPressed:(id)sender
-{
-  switch ([[sender selectedCell] tag]) {
-  case 0:
-    [self showBuildView:self];
-    break;
-  case 1:
-    [self showInspector:self];
-    break;
-  case 2:
-    [self showBuildTargetPanel:self];
-    break;
-  case 3:
-    if ([self isExecutable]) {
-      [self showRunView:self];
-    }
-    else {
-      NSRunAlertPanel(@"Attention!",
-                      @"This project type is not executable!",
-		      @"OK",nil,nil);
-    }
-    break;
-  case 4:
-  case 5:
-  case 6:
-    NSRunAlertPanel(@"Help!",@"This feature is not yet implemented! Please contact me if you are interested in volunteering.",@"Of course!",nil,nil);
-    break;
-  default:
-    break;
-  }
-}
-
-- (void)showBuildView:(id)sender
-{
-  NSView *view = nil;
-
-  if (!projectBuilder) {
-    projectBuilder = [[PCProjectBuilder alloc] initWithProject:self];
-  }
-
-  view = [[projectBuilder componentView] retain];
-  
-  [box setContentView:view];
-  [box sizeToFit];
-  [box display];
-}
-
-- (void)showRunView:(id)sender
-{
-  NSView *view = nil;
-
-  if (!projectDebugger) {
-    projectDebugger = [[PCProjectDebugger alloc] initWithProject:self];
-  }
-
-  view = [[projectDebugger componentView] retain];
-  
-  [box setContentView:view];
-  [box display];
-}
-
-- (void)showInspector:(id)sender
-{
-    [projectManager showInspectorForProject:self];
-}
-
-- (id)updatedAttributeView
-{
-    return projectAttributeInspectorView;
-}
-
-- (id)updatedProjectView
-{
-    return projectProjectInspectorView;
-}
-
-- (id)updatedFilesView
-{
-    return projectFileInspectorView;
-}
-
-- (void)showBuildTargetPanel:(id)sender
-{
-    if (![buildTargetPanel isVisible]) 
-    {
-	[buildTargetPanel center];
-    }
-
-    [buildTargetPanel makeKeyAndOrderFront:self];
-}
-
-- (void)setHost:(id)sender
-{
-    NSString *host = [buildTargetHostField stringValue];
-    [buildOptions setObject:host forKey:BUILD_HOST_KEY];
-}
-
-- (void)setArguments:(id)sender
-{
-    NSString *args = [buildTargetArgsField stringValue];
-    [buildOptions setObject:args forKey:BUILD_ARGS_KEY];
-}
-
-- (NSDictionary *)buildOptions
-{
-    return (NSDictionary *)buildOptions;
-}
-
-@end
+//=============================================================================
+//=============================================================================
 
 @implementation PCProject (ProjectKeyPaths)
 
@@ -1274,8 +1143,21 @@
 
 @implementation PCProject (ProjectWindowDelegate)
 
+- (void)windowDidResignKey:(NSNotification *)aNotification
+{
+    if( editorIsActive )
+    {
+	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidResignKeyNotification object:self];
+    }
+}
+
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
+    if( editorIsActive )
+    {
+	[[NSNotificationCenter defaultCenter] postNotificationName:PCEditorDidBecomeKeyNotification object:self];
+    }
+
     [projectManager setActiveProject:self];
 }
 

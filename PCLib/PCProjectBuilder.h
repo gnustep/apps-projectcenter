@@ -28,10 +28,11 @@
 #define _PCPROJECTBUILDER_H
 
 #import <AppKit/AppKit.h>
+#import <ProjectCenter/ProjectComponent.h>
 
 @class PCProject;
 
-@interface PCProjectBuilder : NSObject
+@interface PCProjectBuilder : NSObject <ProjectComponent>
 {
   NSBox *componentView;
   NSPopUpButton *popup;

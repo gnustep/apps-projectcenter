@@ -30,9 +30,11 @@
 #import <ProjectCenter/PCBundleLoader.h>
 #import <ProjectCenter/PCDataSource.h>
 #import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectEditor.h>
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCServer.h>
 #import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProject+ComponentHandling.h>
 #import <ProjectCenter/PCProjectBuilder.h>
 #import <ProjectCenter/PCProjectDebugger.h>
 #import <ProjectCenter/PCFileManager.h>
@@ -41,6 +43,7 @@
 #import <ProjectCenter/ProjectEditor.h>
 #import <ProjectCenter/ProjectType.h>
 #import <ProjectCenter/Server.h>
+#import <ProjectCenter/ProjectComponent.h>
 #import <ProjectCenter/PreferenceController.h>
 #import <ProjectCenter/ProjectBuilder.h>
 #import <ProjectCenter/FileCreator.h>

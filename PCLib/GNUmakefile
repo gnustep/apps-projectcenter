@@ -64,7 +64,10 @@ PCSplitView.h \
 PCEditor.h \
 PCEditorController.h \
 PCDefines.h \
-PCTextFinder.h 
+PCTextFinder.h \
+PCProjectEditor.h \
+ProjectComponent.h \
+PCProject+ComponentHandling.h 
 
 #
 
@@ -85,7 +88,9 @@ PCServer.m \
 PCSplitView.m \
 PCEditor.m \
 PCEditorController.m \
-PCTextFinder.m 
+PCTextFinder.m \
+PCProjectEditor.m \
+PCProject+ComponentHandling.m 
 
 #
 

@@ -26,6 +26,7 @@
 
 #import "PCProjectBuilder.h"
 #import "PCProject.h"
+#import "PCProject+ComponentHandling.h"
 #import "PCProjectManager.h"
 
 #import <AppKit/AppKit.h>

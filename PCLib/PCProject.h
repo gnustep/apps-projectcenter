@@ -109,6 +109,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 @class PCProjectBuilder;
 @class PCProjectDebugger;
+@class PCProjectEditor;
 @class PCEditorController;
 
 @interface PCProject : NSObject
@@ -118,8 +119,9 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
     id projectManager;
     id browserController;
 
-    PCProjectBuilder *projectBuilder;
-    PCProjectDebugger *projectDebugger;
+    PCProjectBuilder   *projectBuilder;
+    PCProjectDebugger  *projectDebugger;
+    PCProjectEditor    *projectEditor;
     PCEditorController *editorController;
     NSBox *box;
 
@@ -146,6 +148,8 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
     NSDictionary *rootCategories; // Needs to be initialised by subclasses!
     NSMutableDictionary *buildOptions;
+
+    BOOL editorIsActive;
 }
 
 //=============================================================================
@@ -272,26 +276,6 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 @end
 
-@interface PCProject (ProjectBuilding)
-
-- (void)topButtonsPressed:(id)sender;
-- (void)showBuildView:(id)sender;
-- (void)showRunView:(id)sender;
-
-- (void)showInspector:(id)sender;
-
-- (id)updatedAttributeView;
-- (id)updatedProjectView;
-- (id)updatedFilesView;
-
-- (void)showBuildTargetPanel:(id)sender;
-- (void)setHost:(id)sender;
-- (void)setArguments:(id)sender;
-
-- (NSDictionary *)buildOptions;
-
-@end
-
 @interface PCProject (ProjectKeyPaths)
 
 - (NSArray *)contentAtKeyPath:(NSString *)keyPath;
@@ -302,6 +286,7 @@ static NSString * const PCBuildTool           = @"BUILDTOOL";
 
 @interface PCProject (ProjectWindowDelegate)
 
+- (void)windowDidResignKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeKey:(NSNotification *)aNotification;
 - (void)windowDidBecomeMain:(NSNotification *)aNotification;
 - (void)windowWillClose:(NSNotification *)aNotification;

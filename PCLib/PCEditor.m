@@ -10,6 +10,7 @@
 
 #import "PCEditor.h"
 #import "PCEditorView.h"
+#import "PCProjectEditor.h"
 
 NSString *PCEditorDidBecomeKeyNotification=@"PCEditorDidBecomeKeyNotification";
 NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
@@ -25,6 +26,8 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 - (void)_initUI
 {
   NSScrollView *scrollView;
+  NSLayoutManager *lm;
+  NSTextContainer *tc;
   unsigned int style = NSTitledWindowMask
                        | NSClosableWindowMask
                        | NSMiniaturizableWindowMask
@@ -47,30 +50,65 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   scrollView = [[NSScrollView alloc] initWithFrame:rect];
 
+  // Now the text editing stuff
+  storage = [[NSTextStorage alloc] init];
+  
+  lm = [[NSLayoutManager alloc] init];
+  [storage addLayoutManager:lm];
+  RELEASE(lm);
+
   rect.origin.x = 0;
   rect.origin.y = 0;
   rect.size.height -= 24;
   rect.size.width -= 4;
 
-  view = [[PCEditorView alloc] initWithFrame:rect];
-  [view setEditor:self];
+  tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
+  [lm addTextContainer:tc];
+  RELEASE(tc);
 
-  [view setMinSize: NSMakeSize (0, 0)];
-  [view setMaxSize:NSMakeSize(1e7, 1e7)];
-  [view setRichText:NO];
-  [view setEditable:YES];
-  [view setSelectable:YES];
-  [view setVerticallyResizable:YES];
-  [view setHorizontallyResizable:NO];
-  [view setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [view setBackgroundColor:[NSColor whiteColor]];
-  [[view textContainer] setWidthTracksTextView:YES];
+  iView = [[PCEditorView alloc] initWithFrame:rect
+                                textContainer:tc];
+  [iView setEditor:self];
 
-  [scrollView setDocumentView:view];
-  RELEASE(view);
+  [iView setMinSize:NSMakeSize (0, 0)];
+  [iView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [iView setRichText:NO];
+  [iView setEditable:YES];
+  [iView setSelectable:YES];
+  [iView setVerticallyResizable:YES];
+  [iView setHorizontallyResizable:NO];
+  [iView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [iView setBackgroundColor:[NSColor whiteColor]];
+  [[iView textContainer] setWidthTracksTextView:YES];
+
+  lm = [[NSLayoutManager alloc] init];
+  [storage addLayoutManager:lm];
+  RELEASE(lm);
+
+  tc = [[NSTextContainer alloc] initWithContainerSize:rect.size];
+  [lm addTextContainer:tc];
+  RELEASE(tc);
+
+  eView = [[PCEditorView alloc] initWithFrame:rect
+                                textContainer:tc];
+  [eView setEditor:self];
+
+  [eView setMinSize: NSMakeSize (0, 0)];
+  [eView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [eView setRichText:NO];
+  [eView setEditable:YES];
+  [eView setSelectable:YES];
+  [eView setVerticallyResizable:YES];
+  [eView setHorizontallyResizable:NO];
+  [eView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  [eView setBackgroundColor:[NSColor whiteColor]];
+  [[eView textContainer] setWidthTracksTextView:YES];
+
+  [scrollView setDocumentView:eView];
+  RELEASE(eView);
 
   rect.size = NSMakeSize([scrollView contentSize].width,1e7);
-  [[view textContainer] setContainerSize:rect.size];
+  [[eView textContainer] setContainerSize:rect.size];
 
   [scrollView setHasHorizontalScroller: YES];
   [scrollView setHasVerticalScroller: YES];
@@ -79,7 +117,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
   [window setContentView:scrollView];
   [window setDelegate:self];
-  [window makeFirstResponder:view];
+  [window makeFirstResponder:eView];
 
   RELEASE(scrollView);
 }
@@ -92,22 +130,30 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 {
     if((self = [super init]))
     {
-        NSString *text = [NSString stringWithContentsOfFile:file];
+        NSString *t = [NSString stringWithContentsOfFile:file];
+	NSAttributedString *as = [[NSAttributedString alloc] initWithString:t];
 
-        // Should take that from preferences!
-	isEmbedded = NO;
+	isEdited = NO;
+	path = [file copy];
 
         [self _initUI];
 
 	[window setTitle:file];
-        [view setText:text];
+	[storage setAttributedString:as];
+	RELEASE(as);
 
-	path = [file copy];
+	[iView setNeedsDisplay:YES];
+	[eView setNeedsDisplay:YES];
 
 	[[NSNotificationCenter defaultCenter] addObserver:self 
 	                                      selector:@selector(textDidChange:)
 				              name:NSTextDidChangeNotification
-				              object:view];
+				              object:eView];
+
+	[[NSNotificationCenter defaultCenter] addObserver:self 
+	                                      selector:@selector(textDidChange:)
+				              name:NSTextDidChangeNotification
+				              object:iView];
     }
     return self;
 }
@@ -118,6 +164,9 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
     RELEASE(window);
     RELEASE(path);
+
+    RELEASE(iView);
+    RELEASE(storage);
 
     [super dealloc];
 }
@@ -142,34 +191,32 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
     return path;
 }
 
-- (void)setEmbedded:(BOOL)yn
+- (void)setIsEdited:(BOOL)yn
 {
-    isEmbedded = yn;
+    [window setDocumentEdited:yn];
+    isEdited = yn;
 }
 
-- (BOOL)isEmbedded
+- (void)showInProjectEditor:(PCProjectEditor *)pe
 {
-    return isEmbedded;
+    [pe setEditorView:iView];
 }
 
 - (void)show
 {
-    if( isEmbedded == NO )
-    {
-	[window makeKeyAndOrderFront:self];
-    }
-    else
-    {
-    }
+    [window makeKeyAndOrderFront:self];
 }
 
 - (void)close
 {
-    if( isEmbedded == NO && [window isDocumentEdited] )
+    if( isEdited )
     {
         BOOL ret;
 
-        [window makeKeyAndOrderFront:self];
+        if( [window isVisible] )
+	{
+	    [window makeKeyAndOrderFront:self];
+	}
 
 	ret = NSRunAlertPanel(@"Edited File!",
 	                      @"Should the file be saved before closing?",
@@ -189,9 +236,6 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
         [window setDocumentEdited:NO];
     }
-    else if( isEmbedded )
-    {
-    }
 
     if( delegate && [delegate respondsToSelector:@selector(editorDidClose:)] )
     {
@@ -201,24 +245,25 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (BOOL)saveFile
 {
-    if( isEmbedded == NO )
-    {
-	[window setDocumentEdited:NO];
-    }
+    [self setIsEdited:NO];
 
-    return [[view text] writeToFile:path atomically:YES];
+    // Operate on the text storage!
+    return [[storage string] writeToFile:path atomically:YES];
 }
 
 - (BOOL)revertFile
 {
     NSString *text = [NSString stringWithContentsOfFile:path];
+    NSAttributedString *as = [[NSAttributedString alloc] initWithString:text];
 
-    [view setText:text];
+    [self setIsEdited:NO];
 
-    if( isEmbedded == NO )
-    {
-	[window setDocumentEdited:NO];
-    }
+    // Operate on the text storage!
+    [storage setAttributedString:as];
+    RELEASE(as);
+
+    [iView setNeedsDisplay:YES];
+    [eView setNeedsDisplay:YES];
 }
 
 - (void)windowWillClose:(NSNotification *)aNotification
@@ -247,7 +292,7 @@ NSString *PCEditorDidResignKeyNotification=@"PCEditorDidResignKeyNotification";
 
 - (void)textDidChange:(NSNotification *)aNotification
 {
-    [window setDocumentEdited:YES];
+    [self setIsEdited:YES];
 }
 
 @end
