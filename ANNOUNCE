@@ -9,8 +9,8 @@ What is ProjectCenter?
 
    The file `INSTALL' gives instructions for installing the package.
 
-   The GNUstep web site at `http://www.projectcenter.ch' contains more
-   up-to-date information.
+   The GNUstep web site at http://www.gnustep.org/developers/ProjectCenter.html
+   contains more up-to-date information.
 
    ProjectCenter is covered under the GNU Public License.  This means if you 
    make changes to these programs, you cannot charge a fee, other than
@@ -22,10 +22,10 @@ How can you help?
 
    * Check the bug list at the ProjectCenter web site.  
      If you can volunteer for any of the todo's, or if you have any useful    
-     comments send email! <info@projectcenter.ch>
+     comments send email! <phr@3dkit.org>
 
    * Give us feedback!  Tell us what you like; tell us what you think
-     could be better.  Send bug reports to <info@projectcenter.ch>.
+     could be better.  Send bug reports to <phr@3dkit.org>.
 
 Machines
 ========
@@ -38,11 +38,10 @@ Machines
 Where do I send bug reports?
 ============================
 
-   Bug reports can be sent to <info@projectcenter.ch>.
+   Bug reports can be sent to <phr@3dkit.org>.
 
 Enjoy!
 Philippe C.D. Robert
-<phr@projectcenter.ch>
 
 Obtaining GNU Software
 ======================
