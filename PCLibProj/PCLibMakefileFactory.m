@@ -85,6 +85,7 @@ static PCLibMakefileFactory *_factory = nil;
     // Install path
     [string appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_DIR=.\n",libName]];
     [string appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_INSTALL_DIR=/%@\n",libName,prName]];
+    [string appendString:[NSString stringWithFormat:@"%@_INSTALLATION_DIR=$(GNUSTEP_LOCAL_ROOT)\n",[prName uppercaseString]]];
     [string appendString:[NSString stringWithFormat:@"%@_INSTALL_PREFIX=$(GNUSTEP_LOCAL_ROOT)\n",[prName uppercaseString]]];
     [string appendString:@"ADDITIONAL_INCLUDE_DIRS = -I..\n"];
     [string appendString:@"srcdir = .\n"];
@@ -108,7 +109,7 @@ static PCLibMakefileFactory *_factory = nil;
     [string appendString:@"# Header files\n"];
     [string appendString:@"#\n\n"];
 
-    [string appendString:[NSString stringWithFormat:@"%@_HEADERS= ",libName]];
+    [string appendString:[NSString stringWithFormat:@"%@_HEADER_FILES= ",libName]];
 
     enumerator = [[prDict objectForKey:PCHeaders] objectEnumerator];
     while (tmp = [enumerator nextObject]) {
@@ -138,6 +139,8 @@ static PCLibMakefileFactory *_factory = nil;
     }
 
     [string appendString:@"\n\n"];
+
+    [string appendFormat:@"HEADERS_INSTALL = $(%@_HEADER_FILES)\n\n",libName];
 
     [string appendString:@"-include GNUmakefile.preamble\n"];
     [string appendString:@"-include GNUmakefile.local\n"];

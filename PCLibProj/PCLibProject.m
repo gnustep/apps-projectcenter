@@ -117,7 +117,7 @@
 - (BOOL)writeMakefile
 {
     NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *makefile = [projectPath stringByAppendingPathComponent:@"GNUmakefile"];
+    NSString *makefile = [[self projectPath] stringByAppendingPathComponent:@"GNUmakefile"];
     NSData *content;
 
     if (![super writeMakefile]) {
