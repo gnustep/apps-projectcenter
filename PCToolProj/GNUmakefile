@@ -9,10 +9,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
-#
 
+
+#
 # Subprojects
 #
+
+
 
 #
 # Bundle
@@ -23,15 +26,15 @@ BUNDLE_NAME=PCToolProj
 BUNDLE_EXTENSION=.bundle
 BUNDLE_INSTALL_DIR=$(GNUSTEP_SYSTEM_ROOT)/Library/ProjectCenter
 PCToolProj_PRINCIPAL_CLASS=PCToolProj
-#
 
+
+#
 # Additional libraries
 #
 
 PCToolProj_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
-
 # Resource files
 #
 
@@ -41,27 +44,22 @@ PC.proj \
 main.m 
 
 #
-
 # Header files
 #
 
 PCToolProj_HEADERS= \
-PCToolMakefileFactory.h \
 PCToolProj.h \
 PCToolProject.h 
 
 #
-
 # Class files
 #
 
 PCToolProj_OBJC_FILES= \
-PCToolMakefileFactory.m \
 PCToolProj.m \
 PCToolProject.m 
 
 #
-
 # C files
 #
 

@@ -4,7 +4,6 @@
     APPLICATIONICON = "";
     BUILDTOOL = "/usr/bin/make";
     CLASS_FILES = (
-	PCToolMakefileFactory.m,
 	PCToolProj.m,
 	PCToolProject.m
     );
@@ -16,7 +15,6 @@
     FRAMEWORKS = (
     );
     HEADER_FILES = (
-	PCToolMakefileFactory.h,
 	PCToolProj.h,
 	PCToolProject.h
     );
