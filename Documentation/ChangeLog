@@ -1,3 +1,10 @@
+2005-01-26 Serg Stoyan <stoyan255@ukr.net>
+
+	* Release 0.4.2
+
+	* PCAppController.m:
+	(applicationWillTerminate:): Disable removal of BuilRoot.
+
 2005-01-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.1

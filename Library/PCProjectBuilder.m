@@ -649,8 +649,6 @@
       return;
     }
 
-  NSLog(@"task did terminate");
-
 //  [NOTIFICATION_CENTER removeObserver:self];
 
   [NOTIFICATION_CENTER removeObserver:self 

@@ -214,13 +214,15 @@
   NSLog (@"--- Application WILL terminate");
 #endif
 
-  if ([[[NSUserDefaults standardUserDefaults] 
+// It's broken. Disable it until support for GNUSTEP_BUILD_DIR will 
+// be implemented
+/*  if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
       [[NSFileManager defaultManager] 
 	removeFileAtPath:[projectManager rootBuildPath]
 	         handler:nil];
-    }
+    }*/
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 
