@@ -254,15 +254,25 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)reloadLastColumn
 {
-  int      column = [browser lastColumn];
-  NSString *category = [self nameOfSelectedCategory];
-  int      selectedColumn = [browser selectedColumn];
-  NSMatrix *colMatrix = [browser matrixInColumn:selectedColumn];
-  int      rowCount = 0, colCount = 0, spCount = 0;
+  int       column = [browser lastColumn];
+  NSString  *category = [self nameOfSelectedCategory];
+  int       selectedColumn = [browser selectedColumn];
+  NSMatrix  *colMatrix = [browser matrixInColumn:selectedColumn];
+  int       rowCount = 0, colCount = 0, spCount = 0;
   PCProject *activeProject = [[project projectManager] activeProject];
+  NSString  *selCellTitle = [[browser selectedCell] stringValue];
 
-  [colMatrix getNumberOfRows:&rowCount columns:&colCount];
-  spCount = [[[activeProject projectDict] objectForKey:PCSubprojects] count];
+  if ([category isEqualToString:@"Subprojects"]
+      && ![selCellTitle isEqualToString:@"Subprojects"])
+    { // /Subprojects/Name selected
+      if ([selCellTitle isEqualToString:[activeProject projectName]])
+	{
+	  activeProject = [activeProject superProject];
+	}
+      [colMatrix getNumberOfRows:&rowCount columns:&colCount];
+      spCount = [[[activeProject projectDict] 
+	objectForKey:PCSubprojects] count];
+    }
 
   if ([category isEqualToString:@"Subprojects"] && rowCount != spCount
       && ![[[browser selectedCell] stringValue] isEqualToString:@"Subprojects"])
