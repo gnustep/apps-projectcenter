@@ -4,7 +4,7 @@
    Copyright (C) 2001 Free Software Foundation
    Copyright (C) 2001 Pierre-Yves Rivaille
 
-   Authors: Philippe C.D. Robert <phr@3dkit.org>
+   Authors: Philippe C.D. Robert <probert@siggraph.org>
             Pierre-Yves Rivaille <pyrivail@ens-lyon.fr>
 
    This file is part of GNUstep.
@@ -135,8 +135,8 @@ static PCGormProj *_creator = nil;
         _file = [[NSBundle bundleForClass:[self class]] pathForResource:@"main" ofType:@"m"];
         [fm copyPath:_file toPath:[path stringByAppendingPathComponent:@"main.m"] handler:nil];
 
-        gormTemplatePath = [path stringByAppendingPathComponent: [[path lastPathComponent] stringByAppendingString: @".gorm"]];
-
+        // Copy the gorm wrapper
+        gormTemplatePath = [path stringByAppendingPathComponent: @"BaseInterface.gorm"];
 	_file = [[NSBundle bundleForClass:[self class]] pathForResource:@"BaseInterface" ofType:@"gorm"];
         [fm copyPath:_file toPath:gormTemplatePath handler:nil];
 
