@@ -47,7 +47,7 @@
 #define TabBehaviour                    @"TabBehaviour"
 #define SeparateBuilder			@"SeparateBuilder"
 #define SeparateLauncher		@"SeparateLauncher"
-#define SeparateHistory                 @"SeparateHistory"
+#define SeparateLoadedFiles             @"SeparateLoadedFiles"
 #define SeparateEditor			@"SeparateEditor"
 
 #define PCAppDidInitNotification        @"PCAppDidInit"

@@ -25,6 +25,7 @@ SUBPROJECTS = \
 # Resource files
 #
 ProjectCenter_RESOURCE_FILES = \
+Resources/ProjectCenter.gorm \
 ProjectCenterInfo.plist \
 Images/ProjectCenter.tiff \
 Images/ButtonTile.tiff \
@@ -89,7 +90,6 @@ Modules/ToolProject/ToolProject.bundle
 #
 ProjectCenter_HEADERS = \
 PCAppController.h \
-PCFindController.h \
 PCInfoController.h \
 PCLogController.h \
 PCMenuController.h \
@@ -101,7 +101,6 @@ PCPrefController+UInterface.h
 #
 ProjectCenter_OBJC_FILES = \
 PCAppController.m \
-PCFindController.m \
 PCInfoController.m \
 PCLogController.m \
 PCMenuController.m \

@@ -1,6 +1,6 @@
                        +- PCProjectInspector
                        |
-                       +- PCHistoryPanel
+                       +- PCLoadedFilesPanel
                        |
                        +- PCBuildPanel
                        |
@@ -16,7 +16,7 @@ PCMenuController/      |   ||
                        |   |
                        |   +- PCProjectBrowser
                        |   |
-                       |   +- PCProjectHistory
+                       |   +- PCProjectLoadedFiles
                        |   |
                        |   +- PCProjectBuilder
                        |   |

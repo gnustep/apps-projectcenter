@@ -43,7 +43,7 @@ ProjectCenter_HEADER_FILES = \
   PCProjectManager.h \
   PCBuildPanel.h \
   PCLaunchPanel.h \
-  PCHistoryPanel.h \
+  PCLoadedFilesPanel.h \
   PCProject.h \
   PCProject+ComponentHandling.h \
   PCProjectWindow.h \
@@ -53,7 +53,7 @@ ProjectCenter_HEADER_FILES = \
   PCProjectEditor.h \
   \
   PCProjectBrowser.h \
-  PCProjectHistory.h \
+  PCProjectLoadedFiles.h \
   \
   PCEditor.h \
   PCEditorView.h \
@@ -77,7 +77,6 @@ ProjectCenter_HEADER_FILES = \
 ProjectCenter_OBJC_FILES = \
   PCBundleLoader.m \
   PCFileManager.m \
-  PCFileManager+UInterface.m \
   PCFileCreator.m \
   PCServer.m \
   PCMakefileFactory.m \
@@ -87,7 +86,7 @@ ProjectCenter_OBJC_FILES = \
   PCProjectManager.m \
   PCBuildPanel.m \
   PCLaunchPanel.m \
-  PCHistoryPanel.m \
+  PCLoadedFilesPanel.m \
   PCProject.m \
   PCProject+ComponentHandling.m \
   PCProjectWindow.m \
@@ -97,7 +96,7 @@ ProjectCenter_OBJC_FILES = \
   PCProjectEditor.m \
   \
   PCProjectBrowser.m \
-  PCProjectHistory.m \
+  PCProjectLoadedFiles.m \
   \
   PCEditor.m \
   PCEditorView.m \

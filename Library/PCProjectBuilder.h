@@ -68,6 +68,9 @@
 
   NSFileHandle    *readHandle;
   NSFileHandle    *errorReadHandle;
+
+  BOOL            _isBuilding;
+  BOOL            _isCleaning;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -76,6 +79,17 @@
 - (NSView *)componentView;
 - (void)setTooltips;
 
+// --- Accessory
+- (BOOL)isBuilding;
+- (BOOL)isCleaning;
+- (void)performStartBuild;
+- (void)performStartClean;
+- (void)performStopBuild;
+
+// --- Actions
+- (void)startBuild:(id)sender;
+- (BOOL)stopBuild:(id)sender;
+- (void)startClean:(id)sender;
 - (void)build:(id)sender;
 //- (void)buildDidTerminate;
 

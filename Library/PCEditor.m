@@ -162,13 +162,20 @@
 
       if (categoryPath) // category == nil if we're non project editor
 	{
-	  [self _createInternalView];
+	  NSDictionary *prefsDict = nil;
 
-	  [[NSNotificationCenter defaultCenter]
-	    addObserver:self 
-	       selector:@selector(textDidChange:)
-	           name:NSTextDidChangeNotification
-	         object:_intEditorView];
+	  prefsDict = [[[projectEditor project] projectManager] 
+	    preferencesDict];
+	  if (![[prefsDict objectForKey:@"SeparateEditor"] 
+	      isEqualToString:@"YES"])
+	    {
+	      [self _createInternalView];
+    	      [[NSNotificationCenter defaultCenter]
+     		addObserver:self 
+	           selector:@selector(textDidChange:)
+	               name:NSTextDidChangeNotification
+	             object:_intEditorView];
+	    }
 	}
 
       [[NSNotificationCenter defaultCenter]
@@ -353,7 +360,7 @@
       // Inform about closing
       [[NSNotificationCenter defaultCenter] 
 	postNotificationName:PCEditorDidCloseNotification
-	object:self];
+	              object:self];
 
       return YES;
     }

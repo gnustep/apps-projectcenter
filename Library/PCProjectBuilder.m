@@ -374,6 +374,8 @@
       buildArgs = [[NSMutableArray array] retain];
       postProcess = NULL;
       makeTask = nil;
+      _isBuilding = NO;
+      _isCleaning = NO;
     }
 
   return self;
@@ -407,18 +409,53 @@
   [optionsButton setShowTooltip:NO];
 }
 
+// --- Accessory
+- (BOOL)isBuilding
+{
+  return _isBuilding;
+}
 
+- (BOOL)isCleaning
+{
+  return _isCleaning;
+}
+
+- (void)performStartBuild
+{
+  if (!_isBuilding && !_isCleaning)
+    {
+      [buildButton performClick:self];
+    }
+}
+
+- (void)performStartClean
+{
+  if (!_isCleaning && !_isBuilding)
+    {
+      [cleanButton performClick:self];
+    }
+}
+
+- (void)performStopBuild
+{
+  if (_isBuilding)
+    {
+      [buildButton performClick:self];
+    }
+  else if (_isCleaning)
+    {
+      [cleanButton performClick:self];
+    }
+}
+
+// --- Actions
 - (void)startBuild:(id)sender
 {
   NSString *tFString = [targetField stringValue];
   NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
 
-  // [makeTask isRunning] doesn't work here.
-  // "waitpid 7045, result -1, error No child processes" is printed.
-  if (makeTask)
-    {
-      NSLog(@"task will terminate");
-      [makeTask terminate];
+  if ([self stopBuild:self] == YES)
+    {// We've just stopped build process
       return;
     }
 
@@ -449,6 +486,21 @@
   [cleanButton setEnabled:NO];
   [installButton setEnabled:NO];
   [self build: self];
+  _isBuilding = YES;
+}
+
+- (BOOL)stopBuild:(id)sender
+{
+  // [makeTask isRunning] doesn't work here.
+  // "waitpid 7045, result -1, error No child processes" is printed.
+  if (makeTask)
+    {
+      NSLog(@"task will terminate");
+      [makeTask terminate];
+      return YES;
+    }
+
+  return NO;
 }
 
 - (void)startClean:(id)sender
@@ -474,6 +526,7 @@
   [buildButton setEnabled:NO];
   [installButton setEnabled:NO];
   [self build: self];
+  _isCleaning = YES;
 }
 
 - (void)startInstall:(id)sender
@@ -634,6 +687,9 @@
       [self performSelector: postProcess];
       postProcess = NULL;
     }
+
+  _isBuilding = NO;
+  _isCleaning = NO;
 }
 
 - (void)popupChanged:(id)sender
@@ -660,7 +716,6 @@
 
   [readHandle waitForDataInBackgroundAndNotifyForModes: nil];
 }
-
 
 - (void)logErrOut:(NSNotification *)aNotif
 {

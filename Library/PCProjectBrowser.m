@@ -130,6 +130,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [columnMatrix deselectAllCells];
     }
 
+  NSLog(@"NSPB {setPath}: %@", path);
+
   return [browser setPath:path];
 }
 
@@ -183,6 +185,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       NSString  *fileName = [[sender selectedCell] stringValue];
       PCProject *sp = nil;
       NSString  *filePath = nil;
+      NSDictionary *prefsDict = nil;
 
       if ((sp = [project activeSubproject]) != nil)
 	{
@@ -195,13 +198,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	    stringByAppendingPathComponent:fileName];
 	}
 
+      NSLog(@"NSPB {click:} category: %@ filePath: %@", category, filePath);
 
       if ([project isEditableCategory:category] 
 	  || [sp isEditableCategory:category])
 	{
-	  [[project projectEditor] editorForFile:filePath
-	                            categoryPath:[browser path]
-					windowed:NO];
+	  prefsDict = [[project projectManager] preferencesDict];
+	  if (![[prefsDict objectForKey:@"SeparateEditor"] 
+	      isEqualToString:@"YES"])
+	    {
+	      [[project projectEditor] editorForFile:filePath
+		                        categoryPath:[browser path]
+					    windowed:NO];
+	    }
 	}
     }
 

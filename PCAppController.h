@@ -28,7 +28,6 @@
 #include <AppKit/AppKit.h>
 
 #include "PCPrefController.h"
-#include "PCFindController.h"
 #include "PCInfoController.h"
 #include "PCLogController.h"
 
@@ -39,18 +38,17 @@
 
 @interface PCAppController : NSObject
 {
-  PCInfoController *infoController;
-  PCPrefController *prefController;
-  PCFindController *finder;
-  PCLogController  *logger;
+  id		   delegate;
 
   PCProjectManager *projectManager;
-  PCMenuController *menuController;
+  IBOutlet id      menuController;
   
+  PCInfoController *infoController;
+  PCPrefController *prefController;
+  PCLogController  *logController;
+
   PCServer         *doServer;
   NSConnection     *doConnection;
-  
-  id		   delegate;
 }
 
 //============================================================================
@@ -61,10 +59,6 @@
 
 - (id)init;
 - (void)dealloc;
-
-- (BOOL)respondsToSelector:(SEL)aSelector; 
-- (void)forwardInvocation:(NSInvocation *)anInvocation;
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector;
 
 //============================================================================
 //==== Delegate
@@ -78,12 +72,11 @@
 //============================================================================
 
 - (PCProjectManager *)projectManager;
+- (PCMenuController *)menuController;
 - (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
-- (PCMenuController *)menuController;
+- (PCLogController *)logController;
 - (PCServer *)doServer;
-- (PCFindController *)finder;
-- (PCLogController *)logger;
 
 //============================================================================
 //==== Application

@@ -91,11 +91,21 @@
 // Tools
 - (void)showInspector:(id)sender;
 - (void)showEditorPanel:(id)sender;
-// Build Panel
+// Project Build
 - (void)showBuildPanel:(id)sender;
-// Launch Panel
+- (void)executeBuild:(id)sender;
+- (void)stopBuild:(id)sender;
+- (void)startClean:(id)sender;
+// Loaded Files
+- (void)showLoadedFilesPanel:(id)sender;
+- (void)loadedFilesSortByTime:(id)sender;
+- (void)loadedFilesSortByName:(id)sender;
+- (void)loadedFilesNextFile:(id)sender;
+- (void)loadedFilesPreviousFile:(id)sender;
+// Launcher
 - (void)showLaunchPanel:(id)sender;
 - (void)runTarget:(id)sender;
+- (void)debugTarget:(id)sender;
 
 //============================================================================
 //==== Delegate stuff

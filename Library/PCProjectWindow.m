@@ -33,7 +33,7 @@
 #include "PCButton.h"
 
 #include "PCProjectBrowser.h"
-#include "PCProjectHistory.h"
+#include "PCProjectLoadedFiles.h"
 #include "PCProjectInspector.h"
 
 #include "PCProjectWindow.h"
@@ -51,7 +51,10 @@
                      | NSClosableWindowMask
 		     | NSMiniaturizableWindowMask
 		     | NSResizableWindowMask;
-  NSRect      rect;
+  NSRect       rect;
+  NSRect       tmpRect;
+  NSDictionary *prefsDict = nil;
+  NSView       *browserView = nil;
 
   /*
    * Project Window
@@ -62,14 +65,28 @@
                                                 backing: NSBackingStoreBuffered
                                                   defer: YES];
   [projectWindow setDelegate: self];
-  [projectWindow setMinSize: NSMakeSize (560,448)];
+  [projectWindow setMinSize: NSMakeSize (560,290)];
   [projectWindow setMiniwindowImage: IMAGE(@"FileProject")];
   _c_view = [projectWindow contentView];
 
   /*
    * Toolbar
    */
-  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,397,43,43)];
+  tmpRect = rect;
+  rect.size.width -= 16;
+  rect.size.height = 48;
+  rect.origin.x = 8;
+  rect.origin.y = 391;
+  toolbarView = [[NSBox alloc] initWithFrame:rect];
+  [toolbarView setTitlePosition:NSNoTitle];
+  [toolbarView setBorderType:NSNoBorder];
+  [toolbarView setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
+  [toolbarView setContentViewMargins: NSMakeSize(0.0,0.0)];
+  [_c_view addSubview:toolbarView];
+  RELEASE(toolbarView);
+  
+//  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(8,397,43,43)];
+  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,5,43,43)];
   [buildButton setRefusesFirstResponder:YES];
   [buildButton setTitle: @"Build"];
   [buildButton setImage: IMAGE(@"Build")];
@@ -77,11 +94,13 @@
   [buildButton setAction: @selector(showProjectBuild:)];
   [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [buildButton setButtonType: NSMomentaryPushButton];
-  [_c_view addSubview: buildButton];
+//  [_c_view addSubview: buildButton];
+  [toolbarView addSubview: buildButton];
   [buildButton setShowTooltip:YES];
   RELEASE (buildButton);
   
-  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(52,397,43,43)];
+//  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(52,397,43,43)];
+  launchButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,5,43,43)];
   [launchButton setRefusesFirstResponder:YES];
   [launchButton setTitle: @"Launch/Debug"];
   [launchButton setImage: IMAGE(@"Run")];
@@ -89,11 +108,13 @@
   [launchButton setAction: @selector(showProjectLaunch:)];
   [launchButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [launchButton setButtonType: NSMomentaryPushButton];
-  [_c_view addSubview: launchButton];
+//  [_c_view addSubview: launchButton];
+  [toolbarView addSubview: launchButton];
   [launchButton setShowTooltip:YES];
   RELEASE (launchButton);
   
-  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(96,397,43,43)];
+//  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(96,397,43,43)];
+  editorButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,5,43,43)];
   [editorButton setRefusesFirstResponder:YES];
   [editorButton setTitle: @"Editor"];
   [editorButton setImage: IMAGE(@"Editor")];
@@ -101,11 +122,13 @@
   [editorButton setAction: @selector(showProjectEditor:)];
   [editorButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [editorButton setButtonType: NSMomentaryPushButton];
-  [_c_view addSubview: editorButton];
+//  [_c_view addSubview: editorButton];
+  [toolbarView addSubview: editorButton];
   [editorButton setShowTooltip:YES];
   RELEASE (editorButton);
 
-  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(140,397,43,43)];
+//  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(140,397,43,43)];
+  findButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,5,43,43)];
   [findButton setRefusesFirstResponder:YES];
   [findButton setTitle: @"Find"];
   [findButton setImage: IMAGE(@"Find")];
@@ -113,11 +136,13 @@
   [findButton setAction: @selector(showFindView:)];
   [findButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [findButton setButtonType: NSMomentaryPushButton];
-  [_c_view addSubview: findButton];
+//  [_c_view addSubview: findButton];
+  [toolbarView addSubview: findButton];
   [findButton setShowTooltip:YES];
   RELEASE (findButton);
   
-  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(184,397,43,43)];
+//  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(184,397,43,43)];
+  inspectorButton = [[PCButton alloc] initWithFrame: NSMakeRect(176,5,43,43)];
   [inspectorButton setRefusesFirstResponder:YES];
   [inspectorButton setTitle: @"Inspector"];
   [inspectorButton setImage: IMAGE(@"Inspector")];
@@ -125,7 +150,8 @@
   [inspectorButton setAction: @selector(showInspector:)];
   [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
   [inspectorButton setButtonType: NSMomentaryPushButton];
-  [_c_view addSubview: inspectorButton];
+//  [_c_view addSubview: inspectorButton];
+  [toolbarView addSubview: inspectorButton];
   [inspectorButton setShowTooltip:YES];
   RELEASE (inspectorButton);
   
@@ -133,15 +159,18 @@
   /*
    * File icon and title
    */
-  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (504,391,48,48)];
+//  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (504,391,48,48)];
+  fileIcon = [[NSImageView alloc] initWithFrame: NSMakeRect (496,0,48,48)];
   [fileIcon setRefusesFirstResponder:YES];
   [fileIcon setAutoresizingMask: (NSViewMinXMargin | NSViewMinYMargin)];
   [fileIcon setImage: IMAGE (@"projectSuitcase")];
-  [_c_view addSubview: fileIcon];
+//  [_c_view addSubview: fileIcon];
+  [toolbarView addSubview: fileIcon];
   RELEASE (fileIcon);
 
   fileIconTitle = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (316,395,180,21)];
+//    initWithFrame: NSMakeRect (316,395,180,21)];
+    initWithFrame: NSMakeRect (308,4,180,21)];
   [fileIconTitle setAutoresizingMask: (NSViewMinXMargin 
 				       | NSViewMinYMargin 
 				       | NSViewWidthSizable)];
@@ -150,60 +179,118 @@
   [fileIconTitle setDrawsBackground: NO];
   [fileIconTitle setAlignment:NSRightTextAlignment];
   [fileIconTitle setBezeled:NO];
-  [_c_view addSubview: fileIconTitle];
+//  [_c_view addSubview: fileIconTitle];
+  [toolbarView addSubview: fileIconTitle];
   RELEASE (fileIconTitle);
 
 
+  prefsDict = [[project projectManager] preferencesDict];
   /*
    * Hosrizontal split view
+   * Create only if at least one subview (Editor, Builder, Launcher)
    */
-  rect = [[projectWindow contentView] frame];
-  rect.size.height -= 62;
-  rect.size.width -= 16;
-  rect.origin.x += 8;
-  rect.origin.y = -2;
-  h_split = [[PCSplitView alloc] initWithFrame:rect];
-  [h_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+  if (![[prefsDict objectForKey:@"SeparateEditor"] isEqualToString:@"YES"]
+      || ![[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"]
+      || ![[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"]
+      )
+    {
+      rect = [[projectWindow contentView] frame];
+      rect.size.height -= 62;
+      rect.size.width -= 16;
+      rect.origin.x += 8;
+      rect.origin.y = -2;
+      h_split = [[PCSplitView alloc] initWithFrame:rect];
+      [h_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
+    }
 
-  rect = [[projectWindow contentView] frame];
-  rect.size.height = 130;
-  v_split = [[PCSplitView alloc] initWithFrame: rect];
-  [v_split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [v_split setVertical: YES];
+  /*
+   * Vertical split view
+   */
+/*  if (![[prefsDict objectForKey:@"SeparateLoadedFiles"] isEqualToString:@"YES"])
+    {*/
+      rect = [[projectWindow contentView] frame];
+      if (h_split)
+	{
+	  rect.size.height = 130;
+	}
+      else
+	{
+	  rect.size.height -= 64;
+	  rect.size.width -= 16;
+	  rect.origin.x += 8;
+	  rect.origin.y = 0;
+	}
+      v_split = [[PCSplitView alloc] initWithFrame:rect];
+      [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+      [v_split setVertical:YES];
+//    }
 
   /*
    * File Browser
    */
-  [v_split addSubview: [[project projectBrowser] view]];
+  browserView = [[project projectBrowser] view];
+  if (v_split)
+    {
+      [v_split addSubview:browserView];
+    }
+  else if (h_split)
+    {
+      [h_split addSubview:browserView];
+    }
+/*  else
+    {
+      rect = [[projectWindow contentView] frame];
+      rect.size.height -= 60;
+      rect.size.width -= 16;
+      rect.origin.x += 8;
+      rect.origin.y = 0;
+      [browserView setAutoresizingMask:
+	NSViewWidthSizable | NSViewHeightSizable];
+      [browserView setFrame:rect];
+      [_c_view addSubview:[[project projectBrowser] view]];
+    }*/
   
   /*
-   * History
+   * LoadedFiles
    * If it's separate panel nothing happened
    */
-  [self showProjectHistory:self];
+  [self showProjectLoadedFiles:self];
 
-  [v_split adjustSubviews];
-  [h_split addSubview:v_split];
-  RELEASE(v_split);
+  if (v_split && h_split)
+    {
+      [v_split adjustSubviews];
+      [h_split addSubview:v_split];
+      RELEASE(v_split);
+    }
+  else if (v_split && !h_split)
+    {
+      [v_split adjustSubviews];
+      [_c_view addSubview:v_split];
+      RELEASE(v_split);
+    }
 
   /*
    * Custom view
-   * View where non-separated Builder, Debugger, Editor goes.
+   * View where non-separated Builder, Launcher, Editor goes.
    */ 
-  customView = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
-  [customView setTitlePosition: NSNoTitle];
-  [customView setBorderType: NSNoBorder];
-  [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
-  [customView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
+  if (h_split)
+    {
+      customView = [[NSBox alloc] initWithFrame: NSMakeRect (-1,-1,562,252)];
+      [customView setTitlePosition: NSNoTitle];
+      [customView setBorderType: NSNoBorder];
+      [customView setContentViewMargins: NSMakeSize(0.0,0.0)];
+      [customView setAutoresizingMask:
+	NSViewWidthSizable | NSViewHeightSizable];
 
-  // Editor in the Box
-  [customView setContentView:[[project projectEditor] componentView]];
+      // Editor in the Box
+      [customView setContentView:[[project projectEditor] componentView]];
 
-  [h_split addSubview:customView];
-  RELEASE(customView);
-  [h_split adjustSubviews];
-  [_c_view addSubview:h_split];
-  RELEASE(h_split);
+      [h_split addSubview:customView];
+      RELEASE(customView);
+      [h_split adjustSubviews];
+      [_c_view addSubview:h_split];
+      RELEASE(h_split);
+    }
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -214,6 +301,7 @@
       NSString     *windowFrame;
 
       project = owner;
+      _isToolbarVisible = YES;
 
       [self _initUI];
       [projectWindow setFrameAutosaveName: @"ProjectWindow"];
@@ -230,6 +318,8 @@
 	{
 	  [projectWindow center];
 	}
+
+      [self setTitle];
 
       // Browser
       [[NSNotificationCenter defaultCenter] 
@@ -260,6 +350,13 @@
     }
   
   return self;
+}
+
+- (void)setTitle
+{
+  [projectWindow setTitle: [NSString stringWithFormat: @"%@ - %@", 
+  [project projectName],
+  [[project projectPath] stringByAbbreviatingWithTildeInPath]]];
 }
 
 - (void)dealloc
@@ -417,12 +514,12 @@
 // ==== Actions
 // ============================================================================
 
-- (void)showProjectHistory:(id)sender
+- (void)showProjectLoadedFiles:(id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateHistory] isEqualToString: @"NO"])
+              objectForKey: SeparateLoadedFiles] isEqualToString: @"NO"])
     {
-      [v_split addSubview: [[project projectHistory] componentView]];
+      [v_split addSubview: [[project projectLoadedFiles] componentView]];
     }
 }
 
@@ -508,6 +605,87 @@
   [self makeFirstResponder:firstResponder];
 }
 
+- (BOOL)isToolbarVisible
+{
+  return _isToolbarVisible;
+}
+
+- (void)toggleToolbar
+{
+  NSRect rect;
+  NSView *cView = [projectWindow contentView];
+      
+
+  if (_isToolbarVisible)
+    {
+      RETAIN(toolbarView);
+      [toolbarView removeFromSuperview];
+      if (h_split)
+	{
+	  rect = [h_split frame];
+	  rect.size.height += 48;
+
+	  // Hack. NSBrowser resizes incorrectly without removing/adding
+	  // from/to superview
+	  RETAIN(h_split);
+	  [h_split removeFromSuperview];
+	  [h_split setFrame:rect];
+	  [cView addSubview:h_split];
+	  RELEASE(h_split);
+	}
+      else if (v_split)
+	{
+	  rect = [v_split frame];
+	  rect.size.height += 48;
+
+	  // Hack. See above
+	  RETAIN(v_split);
+	  [v_split removeFromSuperview];
+	  [v_split setFrame:rect];
+	  [cView addSubview:v_split];
+	  RELEASE(v_split);
+	}
+      _isToolbarVisible = NO;
+    }
+  else
+    {
+      rect = [cView frame];
+      rect.origin.x = 8;
+      rect.origin.y = rect.size.height - 57;
+      rect.size.width -= 16;
+      rect.size.height = 48;
+      [toolbarView setFrame:rect];
+
+      [cView addSubview:toolbarView];
+      RELEASE(toolbarView);
+      if (h_split)
+	{
+	  rect = [h_split frame];
+	  rect.size.height -= 48;
+
+	  // Hack. See above
+	  RETAIN(h_split);
+	  [h_split removeFromSuperview];
+	  [h_split setFrame:rect];
+	  [cView addSubview:h_split];
+	  RELEASE(h_split);
+	}
+      else if (v_split)
+	{
+	  rect = [v_split frame];
+	  rect.size.height -= 48;
+
+	  // Hack. See above
+	  RETAIN(v_split);
+	  [v_split removeFromSuperview];
+	  [v_split setFrame:rect];
+	  [cView addSubview:v_split];
+	  RELEASE(v_split);
+	}
+      _isToolbarVisible = YES;
+    }
+}
+
 // ============================================================================
 // ==== Notifications
 // ============================================================================
@@ -522,9 +700,7 @@
       return;
     }
 
-  [projectWindow setTitle: [NSString stringWithFormat: @"%@ - %@", 
-  [project projectName],
-  [[project projectPath] stringByAbbreviatingWithTildeInPath]]];
+  [self setTitle];
 
   // TODO: if window isn't visible and "edited" attribute set, after ordering
   // out window doesn't show broken close button. Fix it in GNUstep.
@@ -611,7 +787,7 @@
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
   firstResponder = aResponder;
-//  [projectWindow makeFirstResponder:firstResponder];
+  [projectWindow makeFirstResponder:firstResponder];
   if (![projectWindow isKeyWindow])
     {
       [self makeKeyWindow];

@@ -39,13 +39,11 @@
 @interface PCProjectLauncher : NSObject <ProjectComponent>
 {
   NSBox         *componentView;
-  NSPopUpButton *popup;
-
   PCButton      *runButton;
   PCButton      *debugButton;
 
   PCProject     *currentProject;    // Not retained!
-  NSDictionary  *currentOptions; // Not retained!
+  NSDictionary  *currentOptions;    // Not retained!
 
   NSTextView    *stdOut;
   NSDictionary  *textAttributes;
@@ -54,7 +52,8 @@
   NSFileHandle  *errorReadHandle;
   NSTask        *launchTask;
 
-  int           debugTarget;
+  BOOL          _isRunning;
+  BOOL          _isDebugging;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -63,11 +62,13 @@
 - (NSView *) componentView;
 - (void)setTooltips;
 
-- (void)popupChanged:(id)sender;
+- (BOOL)isRunning;
+- (BOOL)isDebugging;
+- (void)performRun;
+- (void)performDebug;
 
 - (void)debug:(id)sender;
 - (void)run:(id)sender;
-
 - (void)runDidTerminate:(NSNotification *)aNotif;
 
 - (void)logStdOut:(NSNotification *)aNotif;

@@ -1,5 +1,22 @@
 {
+  NOTE = "Automatically generated, do not edit!";
+  ApplicationName = "ProjectCenter";
+  ApplicationDescription = "GNUstep IDE";
+  ApplicationIcon = "ProjectCenter.tiff";
+  ApplicationRelease = "0.4.0";
+  FullVersionID = "ProjectCenter 0.4.0";
+  Authors = (
+    "Philippe C.D. Robert",
+    "Serg Stoyan",
+    "David Ayers",
+    "Richard Frith-Macdonald",
+    "Nicola Pero",
+    "Pierre-Yves Rivaille",
+    "Adam Fedor");
   NSIcon = "ProjectCenter.tiff";
+  NSExecutable = ProjectCenter;
+  NSMainNibFile = ProjectCenter.gorm;
+  NSPrincipalClass = NSApplication;
   NSRole = "Editor";
   NSTypes = (
     {
@@ -23,21 +40,6 @@
       NSIcon = "FileC.tiff";
     }
   );
-  NOTE = "Automatically generated, do not edit!";
-  ApplicationName = "ProjectCenter";
-  ApplicationDescription = "GNUstep IDE";
-  ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.4.0";
-  FullVersionID = "ProjectCenter 0.4.0";
-  Authors = (
-    "Philippe C.D. Robert",
-    "Serg Stoyan",
-    "David Ayers",
-    "Richard Frith-Macdonald",
-    "Nicola Pero",
-    "Pierre-Yves Rivaille",
-    "Adam Fedor");
-
   URL = "See http://www.gnustep.org/";
   Copyright = "Copyright (C) 1999 - 2003 Free Software Foundation";
   CopyrightDescription = "Released under the GNU General Public License 2.0";

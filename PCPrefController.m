@@ -154,8 +154,8 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [separateEditor setState:
     ([[preferencesDict objectForKey: SeparateEditor] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-  [separateHistory setState:
-    ([[preferencesDict objectForKey: SeparateHistory] 
+  [separateLoadedFiles setState:
+    ([[preferencesDict objectForKey: SeparateLoadedFiles] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
 
   [promptWhenQuit setState:
@@ -454,9 +454,9 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     {
       key = [NSString stringWithString: SeparateEditor];
     }
-  else if (sender == separateHistory)
+  else if (sender == separateLoadedFiles)
     {
-      key = [NSString stringWithString: SeparateHistory];
+      key = [NSString stringWithString: SeparateLoadedFiles];
     }
 
   switch ([sender state])

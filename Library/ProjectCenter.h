@@ -30,7 +30,7 @@
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectWindow.h>
 #include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectHistory.h>
+#include <ProjectCenter/PCProjectLoadedFiles.h>
 #include <ProjectCenter/PCProjectEditor.h>
 #include <ProjectCenter/PCProjectManager.h>
 #include <ProjectCenter/PCProjectBuilder.h>

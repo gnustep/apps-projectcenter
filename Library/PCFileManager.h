@@ -89,4 +89,17 @@
 
 @end
 
+@interface PCFileManager (UInterface)
+
+- (void)showNewFilePanel;
+- (void)closeNewFilePanel:(id)sender;
+- (void)createFile:(id)sender;
+- (void)newFilePopupChanged:(id)sender;
+
+- (void)_createAddFilesPanel;
+- (NSMutableArray *)filesForAdd;
+- (void)filesForAddPopupClicked:(id)sender;
+
+@end
+
 #endif

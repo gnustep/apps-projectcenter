@@ -151,7 +151,7 @@
     }
   else if ([key isEqualToString:PCOtherSources])
     {
-      return [NSArray arrayWithObjects:@"c",@"C",nil];
+      return [NSArray arrayWithObjects:@"c",@"C",@"m",nil];
     }
   else if ([key isEqualToString:PCInterfaces])
     {

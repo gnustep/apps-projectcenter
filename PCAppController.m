@@ -61,7 +61,7 @@
   [defaults setObject:@"YES" forKey:ExternalEditor];
   [defaults setObject:@"YES" forKey:ExternalDebugger];
 
-  [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
+  [defaults setObject:[NSString stringWithFormat:@"%@/PCBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
   [defaults setObject:@"YES" forKey:SaveOnQuit];
   [defaults setObject:@"YES" forKey:PromptOnClean];
@@ -81,15 +81,11 @@
     {
       infoController = [[PCInfoController alloc] init];
       prefController = [[PCPrefController alloc] init];
-      finder         = [[PCFindController alloc] init];
-      logger         = [[PCLogController alloc] init];
+      logController  = [[PCLogController alloc] init];
       
       projectManager = [[PCProjectManager alloc] init];
       [projectManager setDelegate:self];
-
-      menuController = [[PCMenuController alloc] init];
-      [menuController setAppController:self];
-      [menuController setProjectManager:projectManager];
+      [projectManager setPrefController:prefController];
     }
 
   return self;
@@ -98,6 +94,12 @@
 - (void)dealloc
 {
   [super dealloc];
+}
+
+- (void)awakeFromNib
+{
+  [menuController setAppController:self];
+  [menuController setProjectManager:projectManager];
 }
 
 //============================================================================
@@ -114,48 +116,19 @@
   delegate = aDelegate;
 }
 
-- (BOOL)respondsToSelector:(SEL)aSelector
-{
-  if (![super respondsToSelector:aSelector])
-    {
-      return [menuController respondsToSelector:aSelector];
-    }
-  else
-    {
-      return YES;
-    }
-}
-                            
-- (void)forwardInvocation:(NSInvocation *)anInvocation
-{
-  SEL aSelector = [anInvocation selector];
-
-  if ([menuController respondsToSelector:aSelector])
-    {   
-      [anInvocation invokeWithTarget:menuController];
-    }
-  else
-    {
-      [super forwardInvocation:anInvocation];
-    }
-}
-
-- (NSMethodSignature *)methodSignatureForSelector:(SEL)aSelector
-{
-  NSMethodSignature *sig;
-
-  sig = [super methodSignatureForSelector:aSelector];
-  if (sig == nil)
-    {
-      sig = [menuController methodSignatureForSelector:aSelector];
-    }
-
-  return sig;
-}
-
 //============================================================================
 //==== Bundle Management
 //============================================================================
+
+- (PCProjectManager *)projectManager
+{
+  return projectManager;
+}
+
+- (PCMenuController *)menuController
+{
+  return menuController;
+}
 
 - (PCInfoController *)infoController
 {
@@ -167,29 +140,14 @@
   return prefController;
 }
 
+- (PCLogController *)logController
+{
+  return logController;
+}
+
 - (PCServer *)doServer
 {
   return doServer;
-}
-
-- (PCFindController *)finder
-{
-  return finder;
-}
-
-- (PCLogController *)logger
-{
-  return logger;
-}
-
-- (PCProjectManager *)projectManager
-{
-  return projectManager;
-}
-
-- (PCMenuController *)menuController
-{
-  return menuController;
 }
 
 //============================================================================
@@ -223,7 +181,8 @@
   NSString *h = [[NSProcessInfo processInfo] hostName];
   NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter:%@",h];
 
-  [logger logMessage:@"Loading additional subsystems..." tag:INFORMATION];
+  [logController 
+    logMessage:@"Loading additional subsystems..." tag:INFORMATION];
 
   doServer = [[PCServer alloc] init];
   
@@ -245,7 +204,9 @@
   
   [doConnection setDelegate:doServer];
 
-  [[NSNotificationCenter defaultCenter] postNotificationName:PCAppDidInitNotification object:nil];
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCAppDidInitNotification
+                  object:nil];
 }
 
 - (BOOL)applicationShouldTerminate:(id)sender
@@ -309,9 +270,8 @@
     }
 
   RELEASE(prefController);
-  RELEASE(finder);
   RELEASE(infoController);
-  RELEASE(logger);
+  RELEASE(logController);
   RELEASE(projectManager);
   RELEASE(menuController);
 

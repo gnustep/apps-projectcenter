@@ -29,7 +29,7 @@
 
 @class PCProject;
 @class PCProjectBrowser;
-@class PCProjectHistory;
+@class PCProjectLoadedFiles;
 @class PCButton;
 @class PCSplitView;
 
@@ -38,6 +38,7 @@
   PCProject   *project;
 
   NSWindow    *projectWindow;
+  NSBox       *toolbarView;
   PCButton    *buildButton;
   PCButton    *launchButton;
   PCButton    *editorButton;
@@ -52,6 +53,8 @@
 
   NSBox       *customView;
   NSResponder *firstResponder;
+
+  BOOL        _isToolbarVisible;
 }
 
 // ============================================================================
@@ -61,6 +64,7 @@
 // Will go into gorm file
 - (void)_initUI;
 - (id)initWithProject:(PCProject *)owner;
+- (void)setTitle;
 - (void)setFileIcon:(NSNotification *)notification;
 
 // ============================================================================
@@ -77,10 +81,12 @@
 // ============================================================================
 // ==== Actions
 // ============================================================================
-- (void)showProjectHistory:(id)sender;
+- (void)showProjectLoadedFiles:(id)sender;
 - (void)showProjectBuild:(id)sender;
 - (void)showProjectLaunch:(id)sender;
 - (void)showProjectEditor:(id)sender;
+- (BOOL)isToolbarVisible;
+- (void)toggleToolbar;
 
 // ============================================================================
 // ==== Notifications

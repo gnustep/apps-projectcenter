@@ -9,7 +9,6 @@
  */
 
 #include "PCDefines.h"
-#include "PCProject.h"
 #include "PCProjectWindow.h"
 #include "PCProjectBrowser.h"
 #include "PCProjectEditor.h"
@@ -204,6 +203,10 @@ NSString *PCEditorDidResignActiveNotification =
   return componentView;
 }
 
+- (PCProject *)project
+{
+  return project;
+}
 
 // ===========================================================================
 // ==== Project and Editor handling

@@ -62,7 +62,7 @@
   id separateBuilder;
   id separateLauncher;
   id separateEditor;
-  id separateHistory;
+  id separateLoadedFiles;
   
   NSMutableDictionary *preferencesDict;
 }

@@ -142,7 +142,6 @@ enum {
       NSFont *font = [NSFont userFixedPitchFontOfSize: 10.0];
 
       currentProject = aProject;
-      debugTarget = DEBUG_DEFAULT_TARGET;
 
       textAttributes = 
 	[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
@@ -177,18 +176,29 @@ enum {
   [debugButton setShowTooltip:YES];
 }
 
-- (void)popupChanged:(id)sender
+- (BOOL)isRunning
 {
-  switch ([sender indexOfSelectedItem])
+  return _isRunning;
+}
+
+- (BOOL)isDebugging
+{
+  return _isDebugging;
+}
+
+- (void)performRun
+{
+  if (!_isRunning && !_isDebugging)
     {
-    case 0:
-      debugTarget = DEBUG_DEFAULT_TARGET;
-      break;
-    case 1:
-      debugTarget = DEBUG_DEBUG_TARGET;
-      break;
-    default:
-      break;
+      [runButton performClick:self];
+    }
+}
+
+- (void)performDebug
+{
+  if (!_isRunning && !_isDebugging)
+    {
+      [debugButton performClick:self];
     }
 }
 
@@ -197,32 +207,19 @@ enum {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
       objectForKey:ExternalDebugger] isEqualToString: @"YES"])
     {
-      NSString *dp = [currentProject projectName];
-      NSString *fp = nil;
-      NSString *pn = nil;
-      NSString *gdbPath;
-      NSArray  *args;
-      NSTask   *task;
-      NSDistantObject <Terminal>*terminal;
+      NSString                   *dp = [currentProject projectName];
+      NSString                   *fp = nil;
+      NSString                   *pn = nil;
+      NSString                   *gdbPath;
+      NSArray                    *args;
+      NSTask                     *task;
+      NSDistantObject <Terminal> *terminal;
 
       /* Get the Terminal application */
       terminal = (NSDistantObject<Terminal> *)[NSConnection 
 	rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
 
-      /* Prepare tasks */
-      switch (debugTarget)
-	{
-	case DEBUG_DEFAULT_TARGET:
-	  pn = [dp stringByAppendingPathExtension:@"app"];
-	  break;
-	case DEBUG_DEBUG_TARGET:
-	  pn = [dp stringByAppendingPathExtension:@"debug"];
-	  break;
-	default:
-	  [NSException raise:@"PCInternalDevException" 
-	    format:@"Unknown build target!"];
-	  break;
-	}
+      pn = [dp stringByAppendingPathExtension:@"debug"];
 
       if (terminal == nil)
 	{
@@ -362,6 +359,7 @@ enum {
   [launchTask setStandardError:errorPipe];
   [launchTask launch];
 
+  _isRunning = YES;
   RELEASE(args);
 }
 
@@ -375,10 +373,13 @@ enum {
   [NOTIFICATION_CENTER removeObserver:self];
 
   [runButton setState:NSOffState];
+  [debugButton setState:NSOffState];
   [componentView display];
 
   RELEASE(launchTask);
   launchTask = nil;
+  _isRunning = NO;
+  _isDebugging = NO;
 
 }
 

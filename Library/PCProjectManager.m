@@ -26,9 +26,8 @@
 
 #include "PCBundleLoader.h"
 #include "PCFileManager.h"
-#include "PCFileManager+UInterface.h"
 #include "PCProjectManager.h"
-#include "PCHistoryPanel.h"
+#include "PCLoadedFilesPanel.h"
 #include "PCBuildPanel.h"
 #include "PCLaunchPanel.h"
 
@@ -123,7 +122,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   RELEASE(loadedProjects);
 
   if (projectInspector)  RELEASE(projectInspector);
-  if (historyPanel)      RELEASE(historyPanel);
+  if (loadedFilesPanel)      RELEASE(loadedFilesPanel);
   if (buildPanel)        RELEASE(buildPanel);
   if (launchPanel)       RELEASE(launchPanel);
 
@@ -133,6 +132,27 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (void)setDelegate:(id)aDelegate 
 {
   delegate = aDelegate;
+}
+
+- (id)delegate
+{
+  return delegate;
+}
+
+- (void)setPrefController:(id)aController
+{
+  prefController = aController;
+}
+
+- (id)prefController
+{
+  return prefController;
+}
+
+- (NSDictionary *)preferencesDict
+{
+  NSLog(@"Getting preferencesDict");
+  return [prefController preferencesDict];
 }
 
 - (void)createProjectTypeAccessaryView
@@ -216,22 +236,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [[[self projectInspector] panel] makeKeyAndOrderFront:self];
 }
 
-- (NSPanel *)historyPanel
+- (NSPanel *)loadedFilesPanel
 {
-  if (!historyPanel)
+  if (!loadedFilesPanel)
     {
-      historyPanel = [[PCHistoryPanel alloc] initWithProjectManager:self];
+      loadedFilesPanel = [[PCLoadedFilesPanel alloc] initWithProjectManager:self];
     }
 
-  return historyPanel;
+  return loadedFilesPanel;
 }
 
-- (void)showProjectHistory:(id)sender
+- (void)showProjectLoadedFiles:(id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateHistory] isEqualToString: @"YES"])
+              objectForKey: SeparateLoadedFiles] isEqualToString: @"YES"])
     {
-      [[self historyPanel] orderFront: nil];
+      [[self loadedFilesPanel] orderFront: nil];
     }
 }
 
@@ -561,6 +581,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   files = [fileManager filesForAdd];
 
+  NSLog(@"PCPM {addProjectFiles} %@", files);
+
   // No files was selected 
   if (!files)
     {
@@ -580,22 +602,59 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)removeProjectFiles
 {
-  NSArray  *files = nil;
-  NSString *categoryKey = nil;
-  NSString *directory = nil;
+  NSArray        *files = nil;
+  NSString       *categoryKey = nil;
+  NSString       *directory = nil;
+  NSString       *bPath = nil;
+  PCProject      *project = activeProject;
+  NSString       *removeString = [NSString stringWithString:@"Remove files..."];
+  NSMutableArray *subprojs = nil;
+  int            i;
 
   if (!activeProject)
     {
       return NO;
     }
 
+  // We need to get root project
+  while ([project isSubproject])
+    {
+      project = [project superProject];
+    }
+  bPath = [[activeProject projectBrowser] pathOfSelectedFile];
+  categoryKey = [project keyForCategoryPath:bPath];
+
   files = [[activeProject projectBrowser] selectedFiles];
-  categoryKey = [activeProject selectedRootCategoryKey];
   directory = [activeProject dirForCategoryKey:categoryKey];
+
+  // Determining target project
+  if ([categoryKey isEqualToString:PCSubprojects] 
+      && [activeProject isSubproject])
+    {
+      subprojs = [NSMutableArray array];
+      project = [activeProject superProject];
+      removeString = [NSString stringWithString:@"Remove subprojects..."];
+      for (i = 0; i < [files count]; i++)
+	{
+	  [subprojs addObject:
+	    [[files objectAtIndex:i] 
+	    stringByAppendingPathExtension:@"subproj"]];
+	}
+      directory = [project dirForCategoryKey:categoryKey];
+    }
+  else
+    {
+      project = activeProject;
+    }
+
+  NSLog(@"%@: %@ from %@", removeString, files, directory);
+  NSLog(@"PCPM(removeProjectFiles):%@ KEY:%@ bPath:%@", 
+	[activeProject projectName], categoryKey, bPath);
 
   if (files)
     {
-      int ret;
+      int            ret;
+      NSMutableArray *bPathArray = nil;
 
       if ([categoryKey isEqualToString:PCLibraries])
 	{
@@ -608,7 +667,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       else
 	{
 	  ret = NSRunAlertPanel(@"Remove",
-				@"Remove files...",
+				removeString,
 				@"...from Project and Disk",
 				@"...from Project only",
 				@"Cancel");
@@ -618,26 +677,53 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
-	  ret = [activeProject removeFiles:files forKey:categoryKey];
+	  ret = [project removeFiles:files forKey:categoryKey];
+
 	  if (flag && ret && ![categoryKey isEqualToString:PCLibraries])
 	    {
-	      ret = [fileManager removeFiles:files fromDirectory:directory];
+	      if ([categoryKey isEqualToString:PCSubprojects])
+		{
+		  ret = [fileManager removeFiles:subprojs 
+		                   fromDirectory:directory];
+		}
+	      else
+		{
+		  ret = [fileManager removeFiles:files 
+		                   fromDirectory:directory];
+		}
 	    }
+
 	  if (!ret)
 	    {
 	      NSRunAlertPanel(@"Alert",
 			      @"Error removing files from project %@!",
 			      @"OK", nil, nil, [activeProject projectName]);
+	      return NO;
 	    }
-	  // Save project because we've removed file from disk
+
+	  // Save project because we've removed file(s) from disk
 	  // Should be fixed later (add pending removal of files?)
 	  else if (flag) 
 	    {
-	      [activeProject save];
+	      [project save];
 	    }
+	  bPathArray = [NSMutableArray 
+	    arrayWithArray:[bPath componentsSeparatedByString:@"/"]];
+	  i = [bPathArray count];
+	  while ([[bPathArray objectAtIndex:i-1] isEqualToString:@""])
+	    {
+	      [bPathArray removeObjectAtIndex:i-1];
+	      i = [bPathArray count];
+	    }
+	  [bPathArray removeObjectAtIndex:i-1];
+	  [[activeProject projectBrowser] 
+	    setPath:[bPathArray componentsJoinedByString:@"/"]];
+	}
+      else
+	{
 	  return NO;
 	}
-    }
+    } // files
 
   return YES;
 }
@@ -659,7 +745,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if ([loadedProjects count] == 0)
     {
       if (projectInspector) [projectInspector close];
-      if (historyPanel) [historyPanel close];
+      if (loadedFilesPanel) [loadedFilesPanel close];
       if (buildPanel) [buildPanel close];
       if (launchPanel) [launchPanel close];
       [self setActiveProject: nil];

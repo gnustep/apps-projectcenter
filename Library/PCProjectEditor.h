@@ -13,6 +13,8 @@
 
 #include <Foundation/Foundation.h>
 
+#include "PCProject.h"
+
 @class PCProject;
 @class PCEditor;
 @class PCEditorView;
@@ -50,6 +52,7 @@
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 - (NSView *)componentView;
+- (PCProject *)project;
 
 // ===========================================================================
 // ==== Project and Editor handling

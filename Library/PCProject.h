@@ -27,10 +27,12 @@
 
 #include <AppKit/AppKit.h>
 
+#include "PCProjectManager.h"
+
 @class PCProjectManager;
 @class PCProjectWindow;
 @class PCProjectBrowser;
-@class PCProjectHistory;
+@class PCProjectLoadedFiles;
 
 @class PCProjectInspector;
 @class PCProjectBuilder;
@@ -48,35 +50,35 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 @interface PCProject : NSObject
 {
-  PCProjectManager    *projectManager; 
-  PCProjectWindow     *projectWindow;
-  PCProjectBrowser    *projectBrowser;
-  PCProjectHistory    *projectHistory;
-  PCProjectEditor     *projectEditor;
-  PCProjectBuilder    *projectBuilder;
-  PCProjectLauncher   *projectLauncher;
+  PCProjectManager     *projectManager; 
+  PCProjectWindow      *projectWindow;
+  PCProjectBrowser     *projectBrowser;
+  PCProjectLoadedFiles *projectLoadedFiles;
+  PCProjectEditor      *projectEditor;
+  PCProjectBuilder     *projectBuilder;
+  PCProjectLauncher    *projectLauncher;
 
-  NSView              *builderContentView;
-  NSView              *debuggerContentView;
- 
-  NSMutableDictionary *projectDict;
-  NSString            *projectName;
-  NSString            *projectPath;
+  NSView               *builderContentView;
+  NSView               *debuggerContentView;
+  
+  NSMutableDictionary  *projectDict;
+  NSString             *projectName;
+  NSString             *projectPath;
 
-  NSArray             *rootKeys;       // e.g. CLASS_FILES
-  NSArray             *rootCategories; // e.g. Classes
-  NSDictionary        *rootEntries;    // Initialised by subclasses
-  NSMutableDictionary *buildOptions;
+  NSArray              *rootKeys;       // e.g. CLASS_FILES
+  NSArray              *rootCategories; // e.g. Classes
+  NSDictionary         *rootEntries;    // Initialised by subclasses
+  NSMutableDictionary  *buildOptions;
 
-  BOOL                editorIsActive;
+  BOOL                 editorIsActive;
 
-  PCProject           *activeSubproject;
+  PCProject            *activeSubproject;
 
   // Subproject
-  NSMutableArray      *loadedSubprojects;
-  BOOL                isSubproject;
-  PCProject           *rootProject;
-  PCProject           *superProject;
+  NSMutableArray       *loadedSubprojects;
+  BOOL                 isSubproject;
+  PCProject            *rootProject;
+  PCProject            *superProject;
 }
 
 // ============================================================================
@@ -99,7 +101,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (PCProjectManager *)projectManager;
 - (PCProjectWindow *)projectWindow;
 - (PCProjectBrowser *)projectBrowser;
-- (PCProjectHistory *)projectHistory;
+- (PCProjectLoadedFiles *)projectLoadedFiles;
 - (PCProjectBuilder *)projectBuilder;
 - (PCProjectLauncher *)projectLauncher;
 - (PCProjectEditor *)projectEditor;
@@ -126,9 +128,6 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (BOOL)isExecutable;
 - (NSString *)execToolName;
 
-- (NSArray *)fileTypesForCategoryKey:(NSString *)key;
-- (NSString *)dirForCategoryKey:(NSString *)key;
-
 - (NSArray *)buildTargets;
 - (NSArray *)sourceFileKeys;
 - (NSArray *)resourceFileKeys;
@@ -138,6 +137,10 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSArray *)localizableKeys;
 
 - (BOOL)isEditableCategory:(NSString *)category;
+- (NSArray *)fileTypesForCategoryKey:(NSString *)key;
+- (NSString *)categoryKeyForFileType:(NSString *)type;
+- (NSString *)dirForCategoryKey:(NSString *)key;
+- (NSString *)complementaryTypeForType:(NSString *)type;
 
 // Subclasses need to call this before their customised implementation!
 - (BOOL)writeMakefile;
@@ -211,6 +214,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 - (NSArray *)contentAtCategoryPath:(NSString *)categoryPath;
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)keyPath;
 
+- (NSString *)rootCategoryForCategoryPath:(NSString *)categoryPath;
 - (NSString *)categoryForCategoryPath:(NSString *)categoryPath;
 - (NSString *)keyForCategoryPath:(NSString *)kp;
 

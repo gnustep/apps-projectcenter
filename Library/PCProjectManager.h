@@ -33,7 +33,7 @@
 @class PCProjectInspector;
 @class PCProjectBuilder;
 @class PCProjectLauncher;
-@class PCProjectHistory;
+@class PCProjectLoadedFiles;
 @class PCProjectFinder;
 
 @class NewSubprojectController;
@@ -51,6 +51,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 @interface PCProjectManager : NSObject <ProjectBuilder>
 {
   id                  delegate;
+  id                  prefController;
 
   PCBundleLoader      *bundleLoader;
   NSMutableDictionary *projectTypes;
@@ -60,7 +61,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
   
   NSPanel             *buildPanel;
   NSPanel             *launchPanel;
-  NSPanel             *historyPanel;
+  NSPanel             *loadedFilesPanel;
   NSPanel             *findPanel;
   
   NSMutableDictionary *loadedProjects;
@@ -97,6 +98,10 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (void)dealloc;
 - (void)createProjectTypeAccessaryView;
 - (void)setDelegate:(id)aDelegate;
+- (id)delegate;
+- (void)setPrefController:(id)aController;
+- (id)prefController;
+- (NSDictionary *)preferencesDict;
 
 // ============================================================================
 // ==== Timer handling
@@ -110,8 +115,8 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (PCProjectInspector *)projectInspector;
 - (NSPanel *)inspectorPanel;
 - (void)showProjectInspector:(id)sender;
-- (NSPanel *)historyPanel;
-- (void)showProjectHistory:(id)sender;
+- (NSPanel *)loadedFilesPanel;
+- (void)showProjectLoadedFiles:(id)sender;
 - (NSPanel *)buildPanel;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;

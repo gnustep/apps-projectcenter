@@ -407,16 +407,16 @@
   [v addSubview: separateEditor];
   RELEASE(separateEditor);
 
-  separateHistory = [[NSButton alloc] initWithFrame: NSMakeRect(48,6,124,21)];
-  [separateHistory setTitle: @"Project History"];
-  [separateHistory setButtonType: NSSwitchButton];
-  [separateHistory setBordered: NO];
-  [separateHistory setRefusesFirstResponder: YES];
-  [separateHistory setTarget: self];
-  [separateHistory setAction: @selector (setDisplayPanels:)];
-  [separateHistory setContinuous: NO];
-  [v addSubview: separateHistory];
-  RELEASE(separateHistory);
+  separateLoadedFiles = [[NSButton alloc] initWithFrame: NSMakeRect(48,6,124,21)];
+  [separateLoadedFiles setTitle: @"Project LoadedFiles"];
+  [separateLoadedFiles setButtonType: NSSwitchButton];
+  [separateLoadedFiles setBordered: NO];
+  [separateLoadedFiles setRefusesFirstResponder: YES];
+  [separateLoadedFiles setTarget: self];
+  [separateLoadedFiles setAction: @selector (setDisplayPanels:)];
+  [separateLoadedFiles setContinuous: NO];
+  [v addSubview: separateLoadedFiles];
+  RELEASE(separateLoadedFiles);
 
   // Some buttons
   v = [[NSBox alloc] initWithFrame: NSMakeRect(5,79,254,98)];

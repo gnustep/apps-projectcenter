@@ -269,21 +269,76 @@
 }
 
 // Tools
+
+- (void)toggleToolbar:(id)sender
+{
+  [[[projectManager activeProject] projectWindow] toggleToolbar];
+
+  if ([[sender title] isEqualToString:@"Hide Tool Bar"])
+    {
+      [sender setTitle:@"Show Tool Bar"];
+    }
+  else
+    {
+      [sender setTitle:@"Hide Tool Bar"];
+    }
+}
+
 - (void)showInspector:(id)sender
 {
   [projectManager showProjectInspector:self];
 }
 
-- (void)showHistoryPanel:(id)sender
-{
-  [projectManager showProjectHistory:self];
-}
-
+// Build Panel
 - (void)showBuildPanel:(id)sender
 {
   [[[projectManager activeProject] projectWindow] showProjectBuild:self];
 }
 
+- (void)executeBuild:(id)sender
+{
+  [self showBuildPanel:self];
+  [[[projectManager activeProject] projectBuilder] performStartBuild];
+}
+
+- (void)stopBuild:(id)sender
+{
+  [[[projectManager activeProject] projectBuilder] performStopBuild];
+}
+
+- (void)startClean:(id)sender
+{
+  [self showBuildPanel:self];
+  [[[projectManager activeProject] projectBuilder] performStartClean];
+}
+
+// Loaded Files
+- (void)showLoadedFilesPanel:(id)sender
+{
+  [projectManager showProjectLoadedFiles:self];
+}
+
+- (void)loadedFilesSortByTime:(id)sender
+{
+  [[[projectManager activeProject] projectLoadedFiles] setSortByTime];
+}
+
+- (void)loadedFilesSortByName:(id)sender
+{
+  [[[projectManager activeProject] projectLoadedFiles] setSortByName];
+}
+
+- (void)loadedFilesNextFile:(id)sender
+{
+  [[[projectManager activeProject] projectLoadedFiles] selectNextFile];
+}
+
+- (void)loadedFilesPreviousFile:(id)sender
+{
+  [[[projectManager activeProject] projectLoadedFiles] selectPreviousFile];
+}
+
+// Launch Panel
 - (void)showLaunchPanel:(id)sender
 {
   [[[projectManager activeProject] projectWindow] showProjectLaunch:self];
@@ -291,7 +346,14 @@
 
 - (void)runTarget:(id)sender
 {
-  [[projectManager activeProject] runSelectedTarget:self];
+  [self showLaunchPanel:self];
+  [[[projectManager activeProject] projectLauncher] performRun];
+}
+
+- (void)debugTarget:(id)sender
+{
+  [self showLaunchPanel:self];
+  [[[projectManager activeProject] projectLauncher] performDebug];
 }
 
 //============================================================================
@@ -419,6 +481,46 @@
       if ([[menuItem title] isEqualToString:@"Jump to Selection"]) return NO;
       if ([[menuItem title] isEqualToString:@"Line Number..."]) return NO;
       if ([[menuItem title] isEqualToString:@"Man Page"]) return NO;
+    }
+
+  // Toolbar
+  if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]
+      && ![[[projectManager activeProject] projectWindow] isToolbarVisible])
+    {
+      [menuItem setTitle:@"Show Tool Bar"];
+    }
+  if ([[menuItem title] isEqualToString:@"Show Tool Bar"]
+      && [[[projectManager activeProject] projectWindow] isToolbarVisible])
+    {
+      [menuItem setTitle:@"Hide Tool Bar"];
+    }
+    
+  // Project Build related
+  if (([menuTitle isEqualToString: @"Project Build"]))
+    {
+      if ([[[projectManager activeProject] projectBuilder] isBuilding]
+	  || [[[projectManager activeProject] projectBuilder] isCleaning])
+	{
+	  if ([[menuItem title] isEqualToString:@"Build"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Clean"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Next error"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Previous error"]) return NO;
+	}
+      else
+	{
+	  if ([[menuItem title] isEqualToString:@"Stop Build"]) return NO;
+	}
+    }
+    
+  // Project Launcher related
+  if (([menuTitle isEqualToString: @"Launcher"]))
+    {
+      if ([[[projectManager activeProject] projectLauncher] isRunning]
+	  || [[[projectManager activeProject] projectLauncher] isDebugging])
+	{
+	  if ([[menuItem title] isEqualToString:@"Run"]) return NO;
+	  if ([[menuItem title] isEqualToString:@"Debug"]) return NO;
+	}
     }
 
   return YES;

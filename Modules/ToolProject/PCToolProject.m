@@ -124,7 +124,7 @@
   return [NSString stringWithString:@"opentool"];
 }
 
-- (NSArray *)fileTypesForCategory:(NSString *)category
+- (NSArray *)fileTypesForCategoryKey:(NSString *)category
 {
   if ([category isEqualToString:PCClasses])
     {
@@ -136,7 +136,7 @@
     }
   else if ([category isEqualToString:PCOtherSources])
     {
-      return [NSArray arrayWithObjects:@"c",@"C",nil];
+      return [NSArray arrayWithObjects:@"c",@"C",@"m",nil];
     }
   else if ([category isEqualToString:PCImages])
     {
