@@ -55,6 +55,7 @@ ProjectCentre_files.tiff \
 ProjectCentre_find.tiff \
 ProjectCentre_prefs.tiff \
 ProjectCentre_run.tiff \
+ProjectCenter_rpm.tiff \
 ProjectCentre_settings.tiff \
 ProjectCentre_uml.tiff 
 

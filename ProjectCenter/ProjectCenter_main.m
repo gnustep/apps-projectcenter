@@ -194,6 +194,6 @@ void createMenu()
   [[NSApplication sharedApplication] setMainMenu:menu];
   [[NSApplication sharedApplication] setServicesMenu: services];
 
-  [menu update];
-  [menu display];
+  //  [menu update];
+  //  [menu display];
 }
