@@ -251,6 +251,7 @@
   [ttWindow setFrameOrigin:origin];
 }
 
+// NSView methods
 - (NSToolTipTag)addToolTipRect:(NSRect)aRect
                          owner:(id)anObject
                       userData:(void *)data
@@ -279,12 +280,6 @@
   return tag;
 }
    
-- (void)removeToolTip:(NSToolTipTag)tag
-{
-  [self removeTrackingRect:tag];
-//  [toolTips removeObjectForKey:[NSNumber numberWithInt:tag]];
-}
-                              
 - (void)removeAllToolTips
 {
   int               i, j;
@@ -309,12 +304,18 @@
   _hasTooltips = NO;
 }
    
+- (void)removeToolTip:(NSToolTipTag)tag
+{
+  [self removeTrackingRect:tag];
+//  [toolTips removeObjectForKey:[NSNumber numberWithInt:tag]];
+}
+                              
 - (void)setToolTip:(NSString *)string
 {
   NSTrackingRectTag tag;
   NSRect            rect;
   
-  if (string == nil) // Remove tooltip
+  if (string == nil) // Remove old tooltip
     {
       if (_hasTooltips)
 	{

@@ -306,11 +306,6 @@
 // ==== Notifications
 // ============================================================================
 
-- (void)controlTextDidEndEditing:(NSNotification *)aNotification
-{
-  [self changeCommonProjectEntry:[aNotification object]];
-}
-
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
   PCProject *rootProject = [projectManager rootActiveProject];
@@ -435,6 +430,13 @@
   // Buttons
   [self setSearchOrderButtonsState];
 
+  [cppOptField setNextText:objcOptField];
+  [objcOptField setNextText:cOptField];
+  [cOptField setNextText:ldOptField];
+  [ldOptField setNextText:installPathField];
+  [installPathField setNextText:toolField];
+  [toolField setNextText:cppOptField];
+  
   // Retain view
   [buildAttributesView retain];
 }
@@ -592,7 +594,13 @@
   [authorDown setRefusesFirstResponder:YES];
   [authorDown setImage: [NSImage imageNamed:@"common_ArrowDown"]];
 
-  // Retain view
+  // Link textfields
+  [descriptionField setNextText:releaseField];
+  [releaseField setNextText:licenseField];
+  [licenseField setNextText:licDescriptionField];
+  [licDescriptionField setNextText:urlField];
+  [urlField setNextText:descriptionField];
+
   [projectDescriptionView retain];
 }
 
