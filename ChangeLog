@@ -1,3 +1,19 @@
+2003-04-28  Adam Fedor  <fedor@gnu.org>
+
+	* PCLib/PCMakefileFactory.m (-appendOtherSources): Changed from
+	appendCFiles.
+	(-appendHeaders:forTarget:, -appendClasses:forTarget:,
+	-appendOtherSources:forTarget): New.
+	(-appendHeaders:, -appendClasses:, -appendOtherSources:,
+	-appendLibraryHeaders:, appendLibraryClasses:, 
+	appendLibraryOtherSources:): Use them.
+	* PCLib/PCProject.m (-fileExtensionsForCategory): Add .m to 
+	PCOtherSources.
+	* PCAppProj/PCAppProject.m (-writeMakefile): Use appendOtherSources:
+	* PCBundleProj/PCBundleProject.m, PCGormProj/PCGormProject.m,
+	PCLibProj/PCLibProject.m, PCRenaissanceProj/PCRenaissanceProject.m,
+	PCToolProj/PCToolProject.m: Idem.
+
 2003-04-27  Adam Fedor  <fedor@gnu.org>
 
 	* PCAppProj/PCAppProj.pcproj, PCBaseFileTypes/PCBaseFileTypes.pcproj,

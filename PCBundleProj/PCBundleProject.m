@@ -47,7 +47,6 @@
 {
   NSTextField *textField;
   NSRect frame = {{84,120}, {80, 80}};
-  NSBox *box;
 
   [super _initUI];
 
@@ -168,12 +167,12 @@
 
     [mf appendHeaders:[dict objectForKey:PCHeaders]];
     [mf appendClasses:[dict objectForKey:PCClasses]];
-    [mf appendCFiles:[dict objectForKey:PCOtherSources]];
+    [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
 
     [mf appendTailForBundle];
 
     // Write the new file to disc!
-    if (mfd = [mf encodedMakefile])
+    if ((mfd = [mf encodedMakefile]))
     {
         if ([mfd writeToFile:mfl atomically:YES])
         {
@@ -201,6 +200,7 @@
 
 - (NSArray *)buildTargets
 {
+  return nil;
 }
 
 - (NSString *)projectDescription

@@ -148,7 +148,7 @@
     return [NSArray arrayWithObjects:@"h",nil];
   }
   else if ([key isEqualToString:PCOtherSources]) {
-    return [NSArray arrayWithObjects:@"c",@"C",@"M",nil];
+    return [NSArray arrayWithObjects:@"c",@"C",@"m",@"M",nil];
   }
   else if ([key isEqualToString:PCLibraries]) {
     return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
@@ -724,7 +724,7 @@
     keys   = [origin allKeys];
 
     enumerator = [keys objectEnumerator];
-    while( key = [enumerator nextObject] )
+    while( (key = [enumerator nextObject]) )
     {
         if( [projectDict objectForKey:key] == nil )
         {

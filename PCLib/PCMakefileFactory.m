@@ -22,6 +22,12 @@
 #define COMMENT_LIBRARY     @"\n\n#\n# Library\n#\n\n"
 #define COMMENT_TOOL        @"\n\n#\n# Tool\n#\n\n"
 
+@interface PCMakefileFactory (Private)
+- (void)appendHeaders:(NSArray *)array forTarget: (NSString *)target;
+- (void)appendClasses:(NSArray *)array forTarget: (NSString *)target;
+- (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target;
+@end
+
 @implementation PCMakefileFactory
 
 static PCMakefileFactory *_factory = nil;
@@ -69,17 +75,40 @@ static PCMakefileFactory *_factory = nil;
     [mfile appendString:aString];
 }
 
-- (void)appendHeaders:(NSArray *)array
+- (void)appendHeaders:(NSArray *)array forTarget: (NSString *)target
 {
     [self appendString:COMMENT_HEADERS];
-    [self appendString:[NSString stringWithFormat:@"%@_HEADERS= ",pnme]];
+    [self appendString:[NSString stringWithFormat:@"%@_HEADER_FILES= ", 
+				 target]];
 
     if( array && [array count] )
     {
         NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-	while (tmp = [enumerator nextObject]) 
+	while ( (tmp = [enumerator nextObject]) ) 
+        {
+	    [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
+	}
+    }
+}
+
+- (void)appendHeaders:(NSArray *)array
+{
+  [self appendHeaders: array forTarget: pnme];
+}
+
+- (void)appendClasses:(NSArray *)array forTarget: (NSString *)target
+{
+    [self appendString:COMMENT_CLASSES];
+    [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES= ", target]];
+
+    if( array && [array count] )
+    {
+        NSString     *tmp;
+        NSEnumerator *enumerator = [array objectEnumerator];
+
+	while ( (tmp = [enumerator nextObject] )) 
         {
 	    [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
 	}
@@ -88,36 +117,53 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)appendClasses:(NSArray *)array
 {
-    [self appendString:COMMENT_CLASSES];
-    [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES= ",pnme]];
+  [self appendClasses: array forTarget: pnme];
+}
 
-    if( array && [array count] )
+- (void)appendOtherSources:(NSArray *)array forTarget: (NSString *)target
+{
+  NSMutableArray *marray = nil;
+  NSEnumerator *oenum;
+  NSString *file;
+  
+  [self appendString:COMMENT_CFILES];
+  [self appendString:[NSString stringWithFormat:@"%@_C_FILES= ", target]];
+  if ( array == nil || [array count] == 0)
+    return;
+  
+  /* Other Sources can have both m files and c files (possibly others?).  */
+  oenum = [array objectEnumerator];
+  while ((file = [oenum nextObject]))
     {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
+      if ([file hasSuffix: @".m"])
+	{
+	  if (marray == nil)
+	    marray = [NSMutableArray arrayWithCapacity: 2];
+	  [marray addObject: file];
+	}
+      else /* if ([f hasSuffix: @".c"]) */
+	{
+	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ",file]];
+	}
+    }
 
-	while (tmp = [enumerator nextObject]) 
-        {
-	    [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
+  [self appendString: @"\n"];
+  [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES += ",pnme]];
+  if ( marray )
+    {
+      NSString     *file;
+      NSEnumerator *enumerator = [marray objectEnumerator];
+	
+      while ( (file = [enumerator nextObject]) ) 
+	{
+	  [self appendString:[NSString stringWithFormat:@"\\\n%@ ", file]];
 	}
     }
 }
 
-- (void)appendCFiles:(NSArray *)array
+- (void)appendOtherSources:(NSArray *)array
 {
-    [self appendString:COMMENT_CFILES];
-    [self appendString:[NSString stringWithFormat:@"%@_C_FILES= ",pnme]];
-
-    if( array && [array count] )
-    {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
-
-	while (tmp = [enumerator nextObject]) 
-        {
-	    [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-	}
-    }
+  [self appendOtherSources: array forTarget: pnme];
 }
 
 - (void)appendInstallDir:(NSString*)dir
@@ -137,7 +183,7 @@ static PCMakefileFactory *_factory = nil;
     NSString     *tmp;
     NSEnumerator *enumerator = [array objectEnumerator];
 
-    while (tmp = [enumerator nextObject]) {
+    while ((tmp = [enumerator nextObject])) {
 	[self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
     }
 }
@@ -151,7 +197,7 @@ static PCMakefileFactory *_factory = nil;
 	NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-        while (tmp = [enumerator nextObject]) {
+        while ((tmp = [enumerator nextObject])) {
             [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
         }
     }
@@ -246,7 +292,7 @@ static PCMakefileFactory *_factory = nil;
         NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-        while (tmp = [enumerator nextObject]) 
+        while ((tmp = [enumerator nextObject])) 
         {
           if (![tmp isEqualToString:@"gnustep-base"] &&
               ![tmp isEqualToString:@"gnustep-gui"]) 
@@ -296,7 +342,7 @@ static PCMakefileFactory *_factory = nil;
         NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-        while (tmp = [enumerator nextObject]) 
+        while ((tmp = [enumerator nextObject])) 
         {
           if (![tmp isEqualToString:@"gnustep-base"] &&
               ![tmp isEqualToString:@"gnustep-gui"]) 
@@ -350,7 +396,7 @@ static PCMakefileFactory *_factory = nil;
         NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-        while (tmp = [enumerator nextObject]) 
+        while ((tmp = [enumerator nextObject]))
         {
           if (![tmp isEqualToString:@"gnustep-base"])
           {
@@ -363,58 +409,19 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendLibraryHeaders:(NSArray*)array
 {
     NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-
-    [self appendString:COMMENT_HEADERS];
-    [self appendString:[NSString stringWithFormat:@"%@_HEADER_FILES= ",libnme]];
-    
-    if( array && [array count] )
-    {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
-            
-        while (tmp = [enumerator nextObject])
-        {
-            [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-        }
-    }   
+    [self appendHeaders: array forTarget: libnme];
 }
 
 - (void)appendLibraryClasses:(NSArray *)array
 {
     NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-
-    [self appendString:COMMENT_CLASSES];
-    [self appendString:[NSString stringWithFormat:@"%@_OBJC_FILES= ",libnme]];
-
-    if( array && [array count] )
-    {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
-    
-        while (tmp = [enumerator nextObject])
-        {
-            [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-        }
-    }
+    [self appendClasses: array forTarget: libnme];
 }
 
-- (void)appendLibraryCFiles:(NSArray *)array
+- (void)appendLibraryOtherSources:(NSArray *)array
 {
-    NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
-
-    [self appendString:COMMENT_CFILES];
-    [self appendString:[NSString stringWithFormat:@"%@_C_FILES= ",libnme]];
-
-    if( array && [array count] )
-    {
-        NSString     *tmp;
-        NSEnumerator *enumerator = [array objectEnumerator];
-
-        while (tmp = [enumerator nextObject])
-        {
-            [self appendString:[NSString stringWithFormat:@"\\\n%@ ",tmp]];
-        }
-    }
+  NSString *libnme = [NSString stringWithFormat:@"lib%@",pnme];
+  [self appendOtherSources: array forTarget: libnme];
 }
 
 @end
@@ -447,7 +454,7 @@ static PCMakefileFactory *_factory = nil;
         NSString     *tmp;
         NSEnumerator *enumerator = [array objectEnumerator];
 
-        while (tmp = [enumerator nextObject]) 
+        while ((tmp = [enumerator nextObject]) )
         {
           if (![tmp isEqualToString:@"gnustep-base"])
           {

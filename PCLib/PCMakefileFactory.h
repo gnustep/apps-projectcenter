@@ -27,7 +27,7 @@
 
 - (void)appendHeaders:(NSArray *)array;
 - (void)appendClasses:(NSArray *)array;
-- (void)appendCFiles:(NSArray *)array;
+- (void)appendOtherSources:(NSArray *)array;
 
 - (void)appendInstallDir:(NSString*)dir;
 
@@ -70,7 +70,7 @@
 - (void)appendLibraryLibraries:(NSArray*)array;
 - (void)appendLibraryHeaders:(NSArray*)array;
 - (void)appendLibraryClasses:(NSArray *)array;
-- (void)appendLibraryCFiles:(NSArray *)array;
+- (void)appendLibraryOtherSources:(NSArray *)array;
 
 @end
 

@@ -190,7 +190,7 @@
 
     [mf appendHeaders:[dict objectForKey:PCHeaders]];
     [mf appendClasses:[dict objectForKey:PCClasses]];
-    [mf appendCFiles:[dict objectForKey:PCOtherSources]];
+    [mf appendOtherSources:[dict objectForKey:PCOtherSources]];
 
     [mf appendTailForApp];
 

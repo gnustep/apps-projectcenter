@@ -106,12 +106,12 @@
 
     [mf appendLibraryHeaders:[dict objectForKey:PCHeaders]];
     [mf appendLibraryClasses:[dict objectForKey:PCClasses]];
-    [mf appendLibraryCFiles:[dict objectForKey:PCOtherSources]];
+    [mf appendLibraryOtherSources:[dict objectForKey:PCOtherSources]];
 
     [mf appendTailForLibrary];
 
     // Write the new file to disc!
-    if (mfd = [mf encodedMakefile])
+    if ((mfd = [mf encodedMakefile]))
     {
         if ([mfd writeToFile:mfl atomically:YES])
         {
@@ -139,6 +139,7 @@
 
 - (NSArray *)buildTargets
 {
+  return nil;
 }
 
 - (NSString *)projectDescription
