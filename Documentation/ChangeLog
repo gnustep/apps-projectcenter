@@ -1,3 +1,8 @@
+2004-11-19  Nicola Pero <n.pero@mi.flashnet.it>
+
+	* GNUmakefile.preamble (ADDITIONAL_LIB_DIRS): Fixed finding the
+	ProjectCenter framework when non-flattened.
+
 2004-10-14 Serg Stoyan <stoyan255@ukr.net>
 
 	* Fixed interface (*.gorm) files wrt to latest GORM changes.
