@@ -36,28 +36,31 @@
 
 @interface PCProjectDebugger : NSObject <ProjectComponent>
 {
-  NSBox *componentView;
+  NSPanel       *launchPanel;
+  NSBox         *componentView;
   NSPopUpButton *popup;
 
-  NSButton *runButton;
+  NSButton      *runButton;
 
-  PCProject *currentProject;    // Not retained!
-  NSDictionary *currentOptions; // Not retained!
+  PCProject     *currentProject;    // Not retained!
+  NSDictionary  *currentOptions; // Not retained!
 
-  NSTextView *stdOut;
-  NSTextView *stdError;
+  NSTextView    *stdOut;
+  NSTextView    *stdError;
 
-  NSFileHandle *readHandle;
-  NSFileHandle *errorReadHandle;
-  NSTask *task;
+  NSFileHandle  *readHandle;
+  NSFileHandle  *errorReadHandle;
+  NSTask        *task;
 
-  int debugTarget;
+  int           debugTarget;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
 
-- (NSView *)componentView;
+- (NSPanel *) createLaunchPanel;
+- (NSPanel *) launchPanel;
+- (NSView *) componentView;
 
 - (void)popupChanged:(id)sender;
 

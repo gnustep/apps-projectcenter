@@ -46,34 +46,92 @@ enum {
 
 @interface PCProjectDebugger (CreateUI)
 
+- (void)_createLaunchPanel;
 - (void)_createComponentView;
 
 @end
 
 @implementation PCProjectDebugger (CreateUI)
 
+- (void) _createLaunchPanel
+{
+  launchPanel = [[NSPanel alloc]
+    initWithContentRect: NSMakeRect (0, 300, 480, 322)
+    styleMask: (NSTitledWindowMask 
+		| NSClosableWindowMask
+		| NSResizableWindowMask)
+    backing: NSBackingStoreRetained
+    defer: YES];
+  [launchPanel setMinSize: NSMakeSize(400, 160)];
+  [launchPanel setFrameAutosaveName: @"ProjectLauncher"];
+  [launchPanel setReleasedWhenClosed: NO];
+  [launchPanel setHidesOnDeactivate: NO];
+  [launchPanel setTitle: [NSString 
+    stringWithFormat: @"%@ - Launch", [currentProject projectName]]];
+
+  if (![launchPanel setFrameUsingName: @"ProjectLauncher"])
+    {
+      [launchPanel center];
+    }
+}
+
 - (void)_createComponentView
 {
-  NSSplitView *split;
+  NSSplitView  *split;
   NSScrollView *scrollView1; 
   NSScrollView *scrollView2; 
-  NSMatrix* matrix;
-  NSRect _w_frame;
-  NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
-  id button;
-  NSBox *box;
+  NSMatrix     *matrix;
+  NSRect       _w_frame;
+  NSButtonCell *buttonCell = [[[NSButtonCell alloc] init] autorelease];
+  id           button;
+  NSBox        *box;
 
-  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(-1,-1,562,248)];
+  componentView = [[NSBox alloc] initWithFrame:NSMakeRect(8,-1,464,322)];
   [componentView setTitlePosition:NSNoTitle];
   [componentView setBorderType:NSNoBorder];
   [componentView setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   [componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
 
   /*
+   * Top buttons
+   */
+  _w_frame = NSMakeRect(0, 270, 88, 44);
+  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+			              mode: NSHighlightModeMatrix
+			         prototype: buttonCell
+			      numberOfRows: 1
+			   numberOfColumns: 2];
+  [matrix sizeToCells];
+  [matrix setSelectionByRect: YES];
+  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
+  [matrix setTarget: self];
+  [componentView addSubview: matrix];
+
+  RELEASE(matrix);
+
+  runButton = [matrix cellAtRow:0 column:0];
+  [runButton setTag: 0];
+  [runButton setImagePosition: NSImageOnly];
+  [runButton setImage: IMAGE(@"ProjectCenter_run")];
+  [runButton setAlternateImage: IMAGE(@"ProjectCenter_run")];
+  [runButton setButtonType: NSMomentaryPushButton];
+  [runButton setTitle: @"Run"];
+  [runButton setAction: @selector(run:)];
+
+  button = [matrix cellAtRow:0 column:1];
+  [button setTag: 1];
+  [button setImagePosition: NSImageOnly];
+  [button setImage: IMAGE(@"ProjectCenter_debug")];
+  [button setAlternateImage: IMAGE(@"ProjectCenter_debug")];
+  [button setButtonType: NSMomentaryPushButton];
+  [button setTitle: @"Debug"];
+  [button setAction: @selector(debug:)];
+
+  /*
    *
    */
 
-  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,46)];
+/*  scrollView1 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,46)];
 
   [scrollView1 setHasHorizontalScroller: NO];
   [scrollView1 setHasVerticalScroller: YES];
@@ -92,13 +150,13 @@ enum {
 				      alpha:1.0]];
   [[stdOut textContainer] setWidthTracksTextView:YES];
 
-  [scrollView1 setDocumentView:stdOut];
+  [scrollView1 setDocumentView:stdOut];*/
 
   /*
    *
    */
 
-  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,0,562,92)];
+  scrollView2 = [[NSScrollView alloc] initWithFrame:NSMakeRect (0,-1,464,253)];
 
   [scrollView2 setHasHorizontalScroller:NO];
   [scrollView2 setHasVerticalScroller:YES];
@@ -116,69 +174,20 @@ enum {
 
   [scrollView2 setDocumentView:stdError];
 
-  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,152)];  
+/*  split = [[NSSplitView alloc] initWithFrame:NSMakeRect(-1,-1,562,152)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
   [split addSubview: scrollView1];
   [split addSubview: scrollView2];
   
-  [componentView addSubview:split];
+  [componentView addSubview:split];*/
+  [componentView addSubview: scrollView2];
 
-  RELEASE(scrollView1);
+//  RELEASE(scrollView1);
   RELEASE(scrollView2);
-  RELEASE(split);
+//  RELEASE(split);
 
-  /*
-   */
-
-  _w_frame = NSMakeRect(-1,160,120,60);
-  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
-			     mode: NSHighlightModeMatrix
-			     prototype: buttonCell
-			     numberOfRows: 1
-			     numberOfColumns: 2];
-  [matrix sizeToCells];
-  [matrix setSelectionByRect:YES];
-  [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [matrix setTarget:self];
-  [componentView addSubview:matrix];
-
-  RELEASE(matrix);
-
-  runButton = [matrix cellAtRow:0 column:0];
-  [runButton setTag:0];
-  [runButton setImagePosition:NSImageAbove];
-  [runButton setImage:IMAGE(@"ProjectCentre_run")];
-  [runButton setAlternateImage:IMAGE(@"ProjectCentre_run")];
-  [runButton setButtonType:NSOnOffButton];
-  [runButton setTitle:@"Run"];
-  [runButton setAction:@selector(run:)];
-
-  button = [matrix cellAtRow:0 column:1];
-  [button setTag:1];
-  [button setImagePosition:NSImageAbove];
-  [button setImage:IMAGE(@"ProjectCenter_debug")];
-  [button setAlternateImage:IMAGE(@"ProjectCenter_debug")];
-  [button setButtonType:NSOnOffButton];
-  [button setTitle:@"Debug"];
-  [button setAction:@selector(debug:)];
-
-  box = [[NSBox alloc] initWithFrame:NSMakeRect(128,160,204,60)];
-  [box setTitle:@"Launch Target"];
-  [box setBorderType:NSBezelBorder];
-  [box setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [componentView addSubview:box];
-  RELEASE(box);
-
-  popup = [[NSPopUpButton alloc] initWithFrame:NSMakeRect(8,6,172,21)];
-  [popup addItemWithTitle:@"Default"];
-  [popup addItemWithTitle:@"Debug"];
-  [popup setTarget:self];
-  [popup setAction:@selector(popupChanged:)];
-  [box addSubview:popup];
-  RELEASE(popup);
-
-  [componentView sizeToFit];
-  [split adjustSubviews];
+//  [componentView sizeToFit];
+//  [split adjustSubviews];
 }
 
 @end
@@ -209,6 +218,21 @@ enum {
   if (errorReadHandle) RELEASE(errorReadHandle);
 
   [super dealloc];
+}
+
+- (NSPanel *) createLaunchPanel
+{
+  if (!launchPanel)
+    {
+      [self _createLaunchPanel];
+    }
+
+  return launchPanel;
+}
+
+- (NSPanel *) launchPanel
+{
+  return launchPanel;
 }
 
 - (NSView *)componentView;
