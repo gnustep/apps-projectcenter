@@ -623,11 +623,20 @@ NSString
   NSMutableString *projectFile = nil;
   NSString        *path = nil;
   NSRange         pathRange;
+  NSRange         slashRange;
 
   path = [file stringByDeletingLastPathComponent];
   pathRange = [path rangeOfString:projectPath];
 
   if (pathRange.length)
+    {
+      slashRange.location = pathRange.length;
+      slashRange.length = 1;
+    }
+  
+  if (pathRange.length 
+      && slashRange.location != [path length]
+      && [[path substringWithRange:slashRange] isEqualToString:@"/"])
     {
       pathRange.length++;
       projectFile = [NSMutableString stringWithString:file];

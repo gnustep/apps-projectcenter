@@ -720,12 +720,11 @@
   PCProject    *changedProject = [notifObject objectForKey:@"Project"];
 
   if (changedProject != project 
-      && changedProject != [project activeSubproject]
-      && [changedProject superProject] != [project activeSubproject])
+      && changedProject != [project activeSubproject])
     {
       return;
     }
-
+    
   [self setTitle];
 
   // TODO: if window isn't visible and "edited" attribute set, after ordering

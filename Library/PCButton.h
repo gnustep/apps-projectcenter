@@ -32,6 +32,8 @@
  */
 @interface PCButton : NSButton 
 {
+  NSString          *_toolTipText;
+
   NSTrackingRectTag tRectTag;
   NSTimer           *ttTimer;
   NSWindow          *ttWindow;
@@ -43,16 +45,6 @@
 - (void)setShowTooltip:(BOOL)yn;
 
 - (void)updateTrackingRect;
-
-@end
-
-/*
- * Button Cell
- */
-@interface PCButtonCell : NSButtonCell
-{
-  NSImage *tile;
-}
 
 @end
 

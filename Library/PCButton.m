@@ -30,7 +30,7 @@
 - (id)initWithFrame:(NSRect)frameRect
 {
   self = [super initWithFrame:frameRect];
-  [self setCell:[[PCButtonCell alloc] init]];
+  [_cell setGradientType:NSGradientConvexWeak];
   [self setImagePosition:NSImageOnly];
   [self setFont:[NSFont systemFontOfSize: 10.0]];
 
@@ -168,6 +168,11 @@
 //      NSLog (@"-- invalidate");
       [ttTimer invalidate];
       ttTimer = nil;
+
+      if (ttWindow && [ttWindow isVisible])
+	{
+	  [ttWindow orderOut:self];
+	}
     }
 }
 
@@ -195,77 +200,90 @@
     }
 }
 
-@end
+//
+// Tool Tips
+//
 
-@implementation PCButtonCell
-
-- (id)init
+- (void)_invalidateToolTip:(NSTimer *)timer
 {
-  self = [super init];
-  tile = [[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle]
-    pathForImageResource:@"ButtonTile"]];
+  [timer invalidate];
+  timer = nil;
 
-  return self;
-}
-
-- (void)dealloc 
-{
-  RELEASE(tile);
-
-  [super dealloc];
-}
-
-- (void) drawInteriorWithFrame: (NSRect)cellFrame inView: (NSView*)controlView
-{
-  [super drawInteriorWithFrame: cellFrame inView: controlView];
-
-  if (!_cell.is_highlighted)
+  if (ttWindow && [ttWindow isVisible])
     {
-      NSPoint  position;
-      NSImage  *imageToDisplay;
-      unsigned mask = 0;
+      [ttWindow orderOut:self];
+    }
+}
 
-      if ([controlView isFlipped])
-	{
-	  position = NSMakePoint(cellFrame.origin.x+1, 
-				 cellFrame.size.height-2);
-	}
-      else
-	{
-	  position = NSMakePoint(1, 2);
-	}
+- (NSToolTipTag) addToolTipRect: (NSRect)aRect
+                          owner: (id)anObject
+                       userData: (void *)data
+{
+  SEL ownerSelector = @selector(view:stringForToolTip:point:userData:);
+  
+/*  if (aRect == NSZeroRect)
+    {
+      return;
+    }*/
 
-      // Tile
-      [tile compositeToPoint:position
-  	           operation:NSCompositeSourceOver];
+  if (![anObject respondsToSelector:ownerSelector] 
+      && ![anObject isKindOfClass:[NSString class]])
+    {
+      return;
+    }
 
-      if (_cell.state)
-	mask = _showAltStateMask;
+  tRectTag = [[self superview] addTrackingRect:aRect
+                                         owner:self
+                                      userData:data
+                                  assumeInside:NO];
+  [[self window] setAcceptsMouseMovedEvents:YES];
+  
+  if (ttTimer == nil)
+    {
+      ttTimer = [NSTimer
+	scheduledTimerWithTimeInterval:0.5
+	                        target:self
+			      selector:@selector(showTooltip:)
+			      userInfo:nil
+                               repeats:YES];
+    }
 
-      // Image
-      [_cell_image setBackgroundColor:[NSColor clearColor]];
-      [_altImage setBackgroundColor:[NSColor clearColor]];
-      if (mask & NSContentsCellMask)
+  return 0;
+}
+   
+- (void) removeAllToolTips
+{
+}
+   
+- (void) removeToolTip: (NSToolTipTag)tag
+{
+}
+                              
+- (void) setToolTip: (NSString *)string
+{
+  ASSIGN(_toolTipText, string);
+
+  if (string == nil)
+    {
+      _hasTooltip = NO;
+      if (ttTimer != nil)
 	{
-	  imageToDisplay = _altImage;
-	}
-      else
-	{
-	  imageToDisplay = _cell_image;
-	}
-	
-      position.x = (cellFrame.size.width - [_cell_image size].width)/2;
-      position.y = (cellFrame.size.height - [_cell_image size].height)/2;
-      if (_cell.is_disabled)
-	{
-	  [_cell_image dissolveToPoint:position fraction:0.5];
-	}
-      else
-	{
-	  [imageToDisplay compositeToPoint:position
-	                         operation:NSCompositeSourceOver];
 	}
     }
+    
+  if (_hasTooltip)
+    {
+      tRectTag = [[self superview] addTrackingRect:[self frame]
+	                                     owner:self
+                                          userData:nil
+                                      assumeInside:NO];
+      [[self window] setAcceptsMouseMovedEvents:YES];
+    }
+}
+   
+- (NSString *) toolTip
+{
+  return _toolTipText;
 }
 
 @end

@@ -722,8 +722,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *category = [[project projectBrowser] nameOfSelectedCategory];
   NSString       *categoryKey = [activeProject keyForCategory:category];
   NSMutableArray *files = nil;
-  NSString       *path = nil;
-  NSRange        pathRange;
+  NSString       *file = nil;
+  NSString       *projectFile = nil;
 
   files = [fileManager filesForAdd];
 
@@ -736,10 +736,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return NO;
     }
 
-  path = [[files objectAtIndex:0] stringByDeletingLastPathComponent];
-  pathRange = [path rangeOfString:[activeProject projectPath]];
+  file = [[files objectAtIndex:0] lastPathComponent];
+  projectFile = [activeProject projectFileFromFile:[files objectAtIndex:0] 
+                                            forKey:categoryKey];
 
-  if (pathRange.length)
+  if (![projectFile isEqualToString:file])
     {
       [activeProject addFiles:files forKey:categoryKey notify:YES];
     }
