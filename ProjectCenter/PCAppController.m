@@ -46,6 +46,8 @@
     [defaults setObject:@"/usr/bin/gdb" forKey:Debugger];
     [defaults setObject:@"/usr/bin/gcc" forKey:Compiler];
 
+    [defaults setObject:@"YES" forKey:ExternalEditor];
+
     [defaults setObject:[NSString stringWithFormat:@"%@/ProjectCenterBuildDir",NSTemporaryDirectory()] forKey:RootBuildDirectory];
 
     /*
@@ -76,7 +78,7 @@
 	infoController = [[PCInfoController alloc] init];
 	logger = [[PCLogController alloc] init];
 	projectManager = [[PCProjectManager alloc] init];
-	fileManager = [[PCFileManager alloc] init];
+	fileManager = [PCFileManager fileManager];
 	menuController = [[PCMenuController alloc] init];
 
 	[projectManager setDelegate:self];

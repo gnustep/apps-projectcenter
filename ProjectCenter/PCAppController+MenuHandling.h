@@ -32,8 +32,8 @@
 - (void)showPrefWindow:(id)sender;
 - (void)showInfoPanel:(id)sender;
 
-//- (void)showLoadedProjects:(id)sender;
 - (void)showInspector:(id)sender;
+- (void)showBuildPanel:(id)sender;
 
 - (void)openProject:(id)sender;
 - (void)newProject:(id)sender;
@@ -59,3 +59,6 @@
 - (void)removeFile:(id)sender;
 
 @end
+
+
+

@@ -168,8 +168,8 @@ void createMenu()
   tools = [[[NSMenu alloc] init] autorelease];
   [menu setSubmenu:tools forItem:[menu itemWithTitle:@"Tools"]];
   [tools addItemWithTitle:@"Loaded Projects..." action:@selector(showLoadedProjects:) keyEquivalent:@""];
-  [tools addItemWithTitle:@"Build Panel" action:@selector(:) keyEquivalent:@""];
-  [tools addItemWithTitle:@"Find Panel" action:@selector(:) keyEquivalent:@"F"];
+  [tools addItemWithTitle:@"Build Panel" action:@selector(showBuildPanel:) keyEquivalent:@""];
+  [tools addItemWithTitle:@"Find Panel" action:@selector(showFindPanel:) keyEquivalent:@"F"];
   [tools addItemWithTitle:@"Inspector Panel" action:@selector(showInspector:) keyEquivalent:@""];
 
   /*

@@ -42,15 +42,14 @@
   [infoController showInfoWindow:sender];
 }
 
-/*
-- (void)showLoadedProjects:(id)sender
-{
-  [projectManager showLoadedProjects];
-}
-*/
 - (void)showInspector:(id)sender
 {
   [projectManager showInspectorForProject:[projectManager activeProject]];
+}
+
+- (void)showBuildPanel:(id)sender;
+{
+  [[projectManager activeProject] build:self];
 }
 
 - (void)openProject:(id)sender

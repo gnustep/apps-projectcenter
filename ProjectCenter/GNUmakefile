@@ -35,6 +35,7 @@ ProjectCenter_RESOURCE_FILES= 			\
 	ProjectCentre_prefs.tiff 		\
 	ProjectCentre_run.tiff 			\
 	ProjectCentre_uml.tiff 			\
+	ProjectCentre_settings.tiff		\
 	FileIcon_.c.tiff 			\
 	FileIcon_.h.tiff 			\
 	FileIcon_.m.tiff 			\
