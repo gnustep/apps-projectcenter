@@ -38,6 +38,8 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
+#define DEFAULT_RPM_PATH @"/usr/src/redhat/SOURCES/"
+
 @interface PCProjectBuilder (CreateUI)
 
 - (void)_createComponentView;
@@ -67,7 +69,7 @@
 
   logOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,32)];
   [logOutput setMaxSize:NSMakeSize(1e7, 1e7)];
-  [logOutput setMinSize:NSMakeSize(516, 48)];
+  // [logOutput setMinSize:NSMakeSize(516, 48)];
   [logOutput setRichText:NO];
   [logOutput setEditable:NO];
   [logOutput setSelectable:YES];
@@ -82,7 +84,6 @@
   [scrollView1 setHasVerticalScroller: YES];
   [scrollView1 setBorderType: NSBezelBorder];
   [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [scrollView1 autorelease];
 
   /*
    *
@@ -90,7 +91,7 @@
 
   errorOutput = [[NSTextView alloc] initWithFrame:NSMakeRect(0,0,516,80)];
   [errorOutput setMaxSize:NSMakeSize(1e7, 1e7)];
-  [errorOutput setMinSize:NSMakeSize(516, 48)];
+  //[errorOutput setMinSize:NSMakeSize(516, 48)];
   [errorOutput setRichText:NO];
   [errorOutput setEditable:NO];
   [errorOutput setSelectable:YES];
@@ -105,7 +106,6 @@
   [scrollView2 setHasVerticalScroller:YES];
   [scrollView2 setBorderType: NSBezelBorder];
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
-  [scrollView2 autorelease];
 
   split = [[NSSplitView alloc] initWithFrame:NSMakeRect(0,0,540,188)];  
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
@@ -114,24 +114,29 @@
   [split adjustSubviews];
   
   [componentView addSubview:split];
-  [split autorelease];
+
+  RELEASE(scrollView1);
+  RELEASE(scrollView2);
+  RELEASE(split);
 
   /*
-   * 5 build Buttons
+   * 6 build Buttons
    */
 
-  _w_frame = NSMakeRect(0,194,224,44);
-  matrix = [[[NSMatrix alloc] initWithFrame: _w_frame
-                                       mode: NSHighlightModeMatrix
-                                  prototype: buttonCell
-                               numberOfRows: 1
-                            numberOfColumns: 5] autorelease];
+  _w_frame = NSMakeRect(0,194,272,44);
+  matrix = [[NSMatrix alloc] initWithFrame: _w_frame
+			     mode: NSHighlightModeMatrix
+			     prototype: buttonCell
+			     numberOfRows:1
+			     numberOfColumns:6];
   [matrix sizeToCells];
   [matrix setSelectionByRect:YES];
   [matrix setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [matrix setTarget:self];
   [matrix setAction:@selector(build:)];
   [componentView addSubview:matrix];
+
+  RELEASE(matrix);
 
   button = [matrix cellAtRow:0 column:0];
   [button setTag:0];
@@ -168,11 +173,18 @@
   [button setButtonType:NSMomentaryPushButton];
   [button setTitle:@"Install"];
 
+  button = [matrix cellAtRow:0 column:5];
+  [button setTag:5];
+  [button setImagePosition:NSImageOnly];
+  [button setImage:IMAGE(@"ProjectCenter_rpm")];
+  [button setButtonType:NSMomentaryPushButton];
+  [button setTitle:@"Packaging"];
+
   /*
    * Status
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,220,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(288,220,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
@@ -181,13 +193,15 @@
   [textField setStringValue:@"Status:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | 
 				   NSViewMinYMargin)];
-  [componentView addSubview:[textField autorelease]];
+  [componentView addSubview:textField];
+
+  RELEASE(textField);
 
   /*
    * Status message
    */
 
-  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,220,104,15)];
+  buildStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(340,220,104,15)];
   [buildStatusField setAlignment: NSLeftTextAlignment];
   [buildStatusField setBordered: NO];
   [buildStatusField setEditable: NO];
@@ -197,13 +211,15 @@
   [buildStatusField setAutoresizingMask: (NSViewMaxXMargin | 
 					  NSViewWidthSizable | 
 					  NSViewMinYMargin)];
-  [componentView addSubview:[buildStatusField autorelease]];
+  [componentView addSubview:buildStatusField];
+
+  RELEASE(buildStatusField);
 
   /*
    * Target
    */
 
-  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(256,196,48,15)];
+  textField = [[NSTextField alloc] initWithFrame:NSMakeRect(288,196,48,15)];
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setBezeled: NO];
@@ -212,13 +228,15 @@
   [textField setStringValue:@"Target:"];
   [textField setAutoresizingMask: (NSViewMaxXMargin | 
 				   NSViewMinYMargin)];
-  [componentView addSubview:[textField autorelease]];
+  [componentView addSubview:textField];
+
+  RELEASE(textField);
 
   /*
    * Target message
    */
 
-  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(308,196,104,15)];
+  targetField = [[NSTextField alloc] initWithFrame:NSMakeRect(340,196,104,15)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -228,7 +246,9 @@
   [targetField setAutoresizingMask: (NSViewMaxXMargin | 
 				     NSViewWidthSizable | 
 				     NSViewMinYMargin)];
-  [componentView addSubview:[targetField autorelease]];
+  [componentView addSubview:targetField];
+
+  RELEASE(targetField);
 }
 
 @end
@@ -273,6 +293,7 @@
   NSDictionary *optionDict;
   NSString *status;
   NSString *target;
+  SEL postProcess = NULL;
 
   logPipe = [NSPipe pipe];
   readHandle = [[logPipe fileHandleForReading] retain];
@@ -296,7 +317,7 @@
     }
     status = [NSString stringWithString:@"Cleaning..."];
     target = [NSString stringWithString:@"Clean"];
-    [args addObject:@"clean"];
+    [args addObject:@"distclean"];
     break;
   case 2:
     status = [NSString stringWithString:@"Building..."];
@@ -313,6 +334,14 @@
     status = [NSString stringWithString:@"Installing..."];
     target = [NSString stringWithString:@"Install"];
     [args addObject:@"install"];
+    break;
+  case 5:
+    status = [NSString stringWithString:@"Packaging..."];
+    target = [NSString stringWithString:@"Making RPM"];
+    [args addObject:@"specfile"];
+    postProcess = @selector(copyPackageTo:);
+
+    NSRunAlertPanel(@"Creating RPM SPEC",@"After creating the RPM SPEC file you have to invoke \"rpm -ba %@.spec\" in the project directory.\nThis only works if you made a \"make install\" before!",@"OK",nil,nil,[currentProject projectName]);     
     break;
   }
 
@@ -350,6 +379,10 @@
   [makeTask launch];
   [makeTask waitUntilExit];
 
+  if (postProcess) {
+    [self performSelector:postProcess];
+  }
+  
   [buildStatusField setStringValue:@"Waiting..."];  
   [targetField setStringValue:@""];  
 
@@ -365,9 +398,10 @@
 		       name:NSTaskDidTerminateNotification 
 		       object:makeTask];
 
-  [readHandle release];
-  [errorReadHandle release];  
-  [makeTask autorelease];
+  RELEASE(readHandle);
+  RELEASE(errorReadHandle);  
+
+  AUTORELEASE(makeTask);
 }
 
 - (void)logStdOut:(NSNotification *)aNotif
@@ -403,6 +437,28 @@
     [self logString:@"*** Build Failed!" error:YES newLine:YES];
     [[logOutput window] orderFront:self];
   }
+}
+
+- (void)copyPackageTo:(NSString *)path
+{
+  NSString *dest;
+  NSString *source = nil;
+
+  if (!path) {
+    dest = [NSString stringWithString:DEFAULT_RPM_PATH];
+  }
+  else {
+    dest = path;
+  }
+
+  // Create the tar.gz package
+
+  // Copy it
+  if (source) {
+    [[NSFileManager defaultManager] copyPath:source toPath:dest handler:nil];
+  }
+  // Copy the package to path
+  postProcess = NULL;
 }
 
 @end

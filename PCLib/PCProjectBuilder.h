@@ -59,6 +59,8 @@
 
 - (void)buildDidTerminate:(NSNotification *)aNotif;
 
+- (void)copyPackageTo:(NSString *)path;
+
 @end
 
 @interface PCProjectBuilder (BuildLogging)

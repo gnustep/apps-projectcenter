@@ -77,6 +77,7 @@ static PCBundleMakefileFactory *_factory = nil;
     [string appendString:@"# Bundle\n"];
     [string appendString:@"#\n\n"];
     
+    [string appendString:[NSString stringWithFormat:@"PACKAGE_NAME=%@\n",prName]];
     [string appendString:[NSString stringWithFormat:@"BUNDLE_NAME=%@\n",prName]];
     [string appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION=.bundle\n"]];
     [string appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR=%@\n",installDir]];
