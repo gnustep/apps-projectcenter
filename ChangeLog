@@ -1,3 +1,8 @@
+2003-05-11 Philippe C.D. Robert <probert@siggraph.org>
+
+	* PCFileManager.m:
+	  Directories can be chosen in case of interfaces.
+
 2003-05-08 Serg Stoyan <stoyan@hologr.com>
 
 	* PCMenuController.m:
