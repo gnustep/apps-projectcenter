@@ -223,8 +223,9 @@ NSString
   // Loaded Files
   if (projectLoadedFiles && [[projectManager loadedFilesPanel] isVisible])
     {
-      [windows setObject:[[projectManager loadedFilesPanel] stringWithSavedFrame]
-                  forKey:@"LoadedFiles"];
+      [windows 
+	setObject:[[projectManager loadedFilesPanel] stringWithSavedFrame]
+           forKey:@"LoadedFiles"];
     }
   else
     {

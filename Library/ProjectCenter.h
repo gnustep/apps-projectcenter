@@ -37,7 +37,6 @@
 #include <ProjectCenter/PCProjectLauncher.h>
 #include <ProjectCenter/PCProjectEditor.h>
 #include <ProjectCenter/PCServer.h>
-#include <ProjectCenter/PCProject+ComponentHandling.h>
 #include <ProjectCenter/PCFileManager.h>
 #include <ProjectCenter/PCEditor.h>
 #include <ProjectCenter/PCEditorView.h>

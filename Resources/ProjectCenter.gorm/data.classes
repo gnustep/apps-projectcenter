@@ -172,7 +172,7 @@
 	    "fileNewUntitled:",
 	    "showInspector:",
 	    "showBuildPanel:",
-	    "showHistoryPanel:",
+	    "showLoadedFilesPanel:",
 	    "runTarget:",
 	    "executeBuild:",
 	    "stopBuild:",
@@ -180,10 +180,10 @@
 	    "showLaunchPanel:",
 	    "debugTarget:",
 	    "toggleToolbar:",
-	    "historySortByTime:",
-	    "historySortByName:",
-	    "historyNextFile:",
-	    "historyPreviousFile:"
+	    "loadedFilesSortByTime:",
+	    "loadedFilesSortByName:",
+	    "loadedFilesNextFile:",
+	    "loadedFilesPreviousFile:"
 	);
 	Outlets = (
 	);
