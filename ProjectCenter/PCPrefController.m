@@ -374,26 +374,26 @@
 
 - (void)setSuccessSound:(id)sender
 {
-    NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
-
-    if (path) {
-        [successField setStringValue:path];
-
-        [[NSUserDefaults standardUserDefaults] setObject:path forKey:SuccessSound];
-        [preferencesDict setObject:path forKey:SuccessSound];
-    }
+  NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
+  
+  if (path) {
+    [successField setStringValue:path];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:SuccessSound];
+    [preferencesDict setObject:path forKey:SuccessSound];
+  }
 }
 
 - (void)setFailureSound:(id)sender
 {
-    NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
-
-    if (path) {
-        [failureField setStringValue:path];
-
-        [[NSUserDefaults standardUserDefaults] setObject:path forKey:FailureSound];
-        [preferencesDict setObject:path forKey:FailureSound];
-    }
+  NSString *path = [self selectFileWithTypes:[NSArray arrayWithObjects:@"snd",@"au",nil]];
+  
+  if (path) {
+    [failureField setStringValue:path];
+    
+    [[NSUserDefaults standardUserDefaults] setObject:path forKey:FailureSound];
+    [preferencesDict setObject:path forKey:FailureSound];
+  }
 }
 
 - (void)setPromptOnClean:(id)sender
@@ -415,6 +415,7 @@
 - (void)setUseExternalEditor:(id)sender
 {
   NSUserDefaults *def = [NSUserDefaults standardUserDefaults];
+
   switch ([[sender selectedCell] state]) {
   case 0:
     [def setObject:@"NO" forKey:ExternalEditor];
@@ -489,7 +490,8 @@
   retval = [openPanel runModalForDirectory:[[NSUserDefaults standardUserDefaults] objectForKey:@"LastOpenDirectory"] file:nil types:types];
   
   if (retval == NSOKButton) {
-    [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] forKey:@"LastOpenDirectory"];
+    [[NSUserDefaults standardUserDefaults] setObject:[openPanel directory] 
+					   forKey:@"LastOpenDirectory"];
     file = [[openPanel filenames] objectAtIndex:0];
     
   }

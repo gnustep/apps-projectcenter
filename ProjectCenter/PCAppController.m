@@ -38,7 +38,16 @@
 + (void)initialize
 {
     NSMutableDictionary	*defaults = [NSMutableDictionary dictionary];
-    NSString	*_bundlePath = @"/usr/GNUstep/Local/Library/ProjectCenter";
+    NSDictionary *env = [[NSProcessInfo processInfo] environment];
+    NSString *prefix = [env objectForKey:@"GNUSTEP_LOCAL_ROOT"];
+    NSString *_bundlePath;
+
+    if (prefix && ![prefix isEqualToString:@""]) {
+      _bundlePath = [prefix stringByAppendingPathComponent:@"Library/ProjectCenter"];
+    }
+    else {
+      _bundlePath = [NSString stringWithString:@"/usr/GNUstep/Local/Library/ProjectCenter"];
+    }
 
     [defaults setObject:_bundlePath forKey:BundlePaths];
 
