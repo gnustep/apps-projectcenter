@@ -1,3 +1,8 @@
+2004-02-28 09:50 Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* PCLib/PCButton.m: Removed extraneous RELEASE which was causing
+	a segfault.
+	
 2004-02-28 08:40 Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* PCLib/PCProjectBuilder.m: -build: method now calls make: directly

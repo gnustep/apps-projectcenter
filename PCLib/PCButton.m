@@ -54,7 +54,7 @@
 
   if (ttWindow != nil)
     {
-      RELEASE(ttWindow);
+      // RELEASE(ttWindow);
     }
 
   [super dealloc];
