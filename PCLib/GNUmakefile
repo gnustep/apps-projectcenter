@@ -59,7 +59,8 @@ ProjectCenter.h \
 ProjectDebugger.h \
 ProjectEditor.h \
 ProjectType.h \
-Server.h 
+Server.h \
+PCSplitView.h 
 
 #
 
@@ -76,7 +77,8 @@ PCProject.m \
 PCProjectBuilder.m \
 PCProjectDebugger.m \
 PCProjectManager.m \
-PCServer.m 
+PCServer.m \
+PCSplitView.m 
 
 #
 

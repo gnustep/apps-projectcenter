@@ -153,7 +153,7 @@
   [button setImage:IMAGE(@"ProjectCenter_debug")];
   [button setAlternateImage:IMAGE(@"ProjectCenter_debug")];
   [button setButtonType:NSOnOffButton];
-  [button setTitle:@"Clean"];
+  [button setTitle:@"Debug"];
   [button setAction:@selector(debug:)];
 
   [componentView sizeToFit];

@@ -27,6 +27,7 @@
 #import "PCProject.h"
 #import "ProjectCenter.h"
 #import "PCProjectBuilder.h"
+#import "PCSplitView.h"
 
 #if defined(GNUSTEP)
 #import <AppKit/IMLoading.h>
@@ -51,7 +52,7 @@
   NSButtonCell* buttonCell = [[[NSButtonCell alloc] init] autorelease];
   id textField;
   id button;
-  NSSplitView *split;
+  PCSplitView *split;
 
   browserController = [[PCBrowserController alloc] init];
 
@@ -108,13 +109,10 @@
   _w_frame.size.height -= 76;
   _w_frame.size.width -= 16;
   _w_frame.origin.x += 8;
-  split = [[NSSplitView alloc] initWithFrame:_w_frame];
+  split = [[PCSplitView alloc] initWithFrame:_w_frame];
   [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   _c_view = [projectWindow contentView];
-
-  //[_c_view addSubview:browser];
-  //[_c_view addSubview:box];
 
   [split addSubview:browser];
   [split addSubview:box];
