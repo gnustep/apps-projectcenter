@@ -84,7 +84,7 @@ extern NSString *PCProjectBuildDidStopNotification;
 - (void)openFileInInternalEditor:(NSString *)file;
 
 - (NSWindow *)editorForFile:(NSString *)aFile;
-- (void)windowDidClose:(NSNotification *)aNotif;
+- (void)windowWillClose:(NSNotification *)aNotif;
 
 //----------------------------------------------------------------------------
 // Server

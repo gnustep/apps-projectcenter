@@ -89,11 +89,13 @@
 
 - (void)openFileInInternalEditor:(NSString *)file
 {
-  if ([openDocuments objectForKey:file]) {
-    [[openDocuments objectForKey:file] makeKeyAndOrderFront:self];
+  NSWindow *editorWindow = nil;
+
+  if ((editorWindow = [openDocuments objectForKey:file])) {
+    [editorWindow makeKeyAndOrderFront:self];
   }
   else {
-    NSWindow *editorWindow = [self editorForFile:file];
+    editorWindow = [self editorForFile:file];
     
     [editorWindow setDelegate:self];
     [editorWindow center];
@@ -129,19 +131,19 @@
   [textView setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [textView setBackgroundColor:[NSColor whiteColor]];
   [[textView textContainer] setWidthTracksTextView:YES];
-  [textView autorelease];
 
   scrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect (-1,-1,514,322)];
   [scrollView setDocumentView:textView];
+  [textView release];
   //[textView setMinSize:NSMakeSize(0.0,[scrollView contentSize].height)];
   [[textView textContainer] setContainerSize:NSMakeSize([scrollView contentSize].width,1e7)];
   [scrollView setHasHorizontalScroller: YES];
   [scrollView setHasVerticalScroller: YES];
   [scrollView setBorderType: NSBezelBorder];
   [scrollView setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-  [scrollView autorelease];
 
   [[window contentView] addSubview:scrollView];
+  [scrollView release];
 
   /*
    * Will be replaced when a real editor is available...
@@ -152,11 +154,14 @@
   return [window autorelease];
 }
 
-- (void)windowDidClose:(NSNotification *)aNotif
+- (void)windowWillClose:(NSNotification *)aNotif
 {
-  NSWindow *window = [aNotif object];
+  // Otherwise it crashes when reopening the same file?...
+  NSWindow *window = [[aNotif object] retain];
 
+  /*
   [openDocuments removeObjectForKey:[window title]];
+  */
 }
 
 //----------------------------------------------------------------------------
