@@ -1,0 +1,5 @@
+2001-09-25  Adam Fedor  <fedor@gnu.org>
+
+	* PCGormProj/GNUmakefile.preamble: Include required headers from
+	other subprojects (patch from kim@tinker.com).
+
