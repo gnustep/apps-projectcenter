@@ -53,7 +53,7 @@
   IBOutlet NSBox          *buildAttributesView;
   IBOutlet NSTextField    *projectNameLabel;
   IBOutlet NSPopUpButton  *searchOrderPopup;
-  IBOutlet NSScrollView   *searchOrderScroll;
+
   NSTableView             *searchOrderList;
   NSTableColumn           *searchOrderColumn;
   NSMutableArray          *searchItems;

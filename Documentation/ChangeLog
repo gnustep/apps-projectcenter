@@ -1,3 +1,11 @@
+2005-01-05 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/GNUstep.postamble: Make "ln -s" ProjectCenter to the 
+	../Library. It should make correct compiling on Windows.
+	
+	* Library/PCFileManager.m:
+	(defaultManager:): Don't autorelease returned object.
+	
 2005-01-04 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFilesManager.[hm]:

@@ -38,14 +38,14 @@ ADDITIONAL_OBJCFLAGS +=
 ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I./Library
+ADDITIONAL_INCLUDE_DIRS += -I./
 
 # Additional LDFLAGS to pass to the linker
 ADDITIONAL_LDFLAGS += -lProjectCenter
 
 # Additional library directories the linker should search
-#ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR_NAME)
-ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current/$(GNUSTEP_TARGET_LDIR)
+#ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR)
+ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current
 
 ADDITIONAL_TOOL_LIBS +=
 

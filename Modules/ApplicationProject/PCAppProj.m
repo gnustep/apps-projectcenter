@@ -63,7 +63,7 @@ static PCAppProj *_creator = nil;
 - (PCProject *)createProjectAt:(NSString *)path
 {
   PCAppProject        *project = nil;
-  PCFileManager       *pcfm = [PCFileManager fileManager];
+  PCFileManager       *pcfm = [PCFileManager defaultManager];
   PCFileCreator       *pcfc = [PCFileCreator sharedCreator];
   NSString            *_file = nil;
   NSString            *_2file = nil;

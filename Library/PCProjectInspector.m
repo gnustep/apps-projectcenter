@@ -167,11 +167,6 @@
   [inspectorPanel setFrameUsingName:@"ProjectInspector"];
   
   // PopUp
-  [inspectorPopup removeAllItems];
-  [inspectorPopup addItemWithTitle:@"Build Attributes"];
-  [inspectorPopup addItemWithTitle:@"Project Attributes"];
-  [inspectorPopup addItemWithTitle:@"Project Description"];
-  [inspectorPopup addItemWithTitle:@"File Attributes"];
   [inspectorPopup selectItemAtIndex:0];
   
   // Build Attributes
@@ -397,50 +392,15 @@
 
   // Search Order
   // Popup
-  [searchOrderPopup removeAllItems];
-  [searchOrderPopup addItemWithTitle:@"Header Directories Search Order"];
-  [searchOrderPopup addItemWithTitle:@"Library Directories Search Order"];
-  [searchOrderPopup addItemWithTitle:@"Framework Directories Search Order"];
   [searchOrderPopup selectItemAtIndex:0];
 
-  // Table column
-  searchOrderColumn = [(NSTableColumn *)[NSTableColumn alloc] 
-    initWithIdentifier: @"SO List"];
-  [searchOrderColumn setEditable:NO];
-
   // Table
-  searchOrderList = [[NSTableView alloc]
-    initWithFrame:NSMakeRect(0,0,290,99)];
-  [searchOrderList setAllowsMultipleSelection:NO];
-  [searchOrderList setAllowsColumnReordering:NO];
-  [searchOrderList setAllowsColumnResizing:NO];
-  [searchOrderList setAllowsEmptySelection:YES];
-  [searchOrderList setAllowsColumnSelection:NO];
   [searchOrderList setCornerView:nil];
   [searchOrderList setHeaderView:nil];
-  [searchOrderList addTableColumn:searchOrderColumn];
-  [searchOrderList setDataSource:self];
-  [searchOrderList setDrawsGrid:NO];
-  [searchOrderList setTarget:self];
-  [searchOrderList setDoubleAction:@selector(searchOrderDoubleClick:)];
-  [searchOrderList setAction:@selector(searchOrderClick:)];
-
-  // ScrollView
-  [searchOrderScroll setDocumentView:searchOrderList];
-  [searchOrderScroll setHasHorizontalScroller:NO];
-  [searchOrderScroll setHasVerticalScroller:YES];
-  [searchOrderScroll setBorderType:NSBezelBorder];
-  RELEASE(searchOrderList);
 
   // Buttons
   [self setSearchOrderButtonsState];
 
-  [cppOptField setNextText:objcOptField];
-  [objcOptField setNextText:cOptField];
-  [cOptField setNextText:ldOptField];
-  [ldOptField setNextText:installPathField];
-  [installPathField setNextText:cppOptField];
-  
   // Retain view
   [buildAttributesView retain];
 }

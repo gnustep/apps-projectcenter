@@ -38,7 +38,7 @@ static NSDictionary  *dict = nil;
 
 + (id)sharedCreator
 {
-  if (!_creator)
+  if (_creator == nil)
     {
       NSDictionary *classDict;
       NSDictionary *headerDict;
@@ -95,12 +95,12 @@ static NSDictionary  *dict = nil;
 
 
       dict = [[NSDictionary alloc] initWithObjectsAndKeys:
-	ccDict,CFile,
-        chDict,CHeader,
-        protocolDict,ProtocolFile,
-        headerDict,ObjCHeader,
-        classDict,ObjCClass,
-        gsmarkupDict,GSMarkupFile,
+	ccDict, CFile,
+        chDict, CHeader,
+        protocolDict, ProtocolFile,
+        headerDict, ObjCHeader,
+        classDict, ObjCClass,
+        gsmarkupDict, GSMarkupFile,
 	nil];
     }
 
@@ -121,7 +121,7 @@ static NSDictionary  *dict = nil;
                               path:(NSString *)path 
 		           project:(PCProject *)aProject
 {
-  PCFileManager       *pcfm = [PCFileManager fileManager];
+  PCFileManager       *pcfm = [PCFileManager defaultManager];
   NSString            *_file;
   NSString            *newFile = nil;
   NSMutableDictionary *files;

@@ -42,14 +42,14 @@
 
 static PCFileManager *_mgr = nil;
 
-+ (PCFileManager *)fileManager
++ (PCFileManager *)defaultManager
 {
-  if (!_mgr)
+  if (_mgr == nil)
     {
-      _mgr = [[PCFileManager alloc] init];
+      _mgr = [[self alloc] init];
     }
 
-  return AUTORELEASE(_mgr);
+  return _mgr;
 }
 
 // ===========================================================================

@@ -77,7 +77,9 @@
 
 - (void)dealloc
 {
+#ifdef DEVELOPMENT
   NSLog(@"PCBundleProject: dealloc");
+#endif
   [rootCategories release];
   [rootKeys release];
   [rootEntries release];

@@ -23,11 +23,10 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 before-all::
-	rm -f ProjectCenter
-	$(LN_S) . ProjectCenter
+	cd ..;rm -f ProjectCenter;$(LN_S) Library ProjectCenter
 
 after-clean::
-	rm -f ProjectCenter
+	rm -f ../ProjectCenter
 
 after-uninstall::
 	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Headers/ProjectCenter
