@@ -611,6 +611,13 @@ NSString
   return rootCategories;
 }
 
+- (NSString *)keyForCategory:(NSString *)category 
+{
+  int index = [rootObjects indexOfObject:category];
+
+  return [rootKeys objectAtIndex:index];
+}
+
 - (BOOL)save
 {
   NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
@@ -804,12 +811,12 @@ NSString
 
 - (PCProject *)superProject
 {
-    return nil;
+  return nil;
 }
 
 - (PCProject *)rootProject
 {
-    return self;
+  return self;
 }
 
 - (void)newSubprojectNamed:(NSString *)aName
@@ -822,7 +829,7 @@ NSString
 
 - (BOOL)isSubProject
 {
-    return NO;
+  return NO;
 }
 
 @end

@@ -213,8 +213,13 @@
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *lastOpenDir = [ud objectForKey:@"LastOpenDirectory"];
   int            retval;
+  PCProject      *project = [projectManager activeProject];
 
   [self _createAddFilesPanel];
+
+  [fileTypePopup selectItemWithTitle:
+    [project keyForCategory:[project selectedRootCategory]]];
+
   [self filesForAddPopupClicked:self];
 
   if (!lastOpenDir)
@@ -239,6 +244,7 @@
   NSString  *fileType = [fileTypePopup titleOfSelectedItem];
 
   [addFilesPanel setTitle:[NSString stringWithFormat:@"Add %@",fileType]];
+  [addFilesPanel display];
 }
 
 // ============================================================================
@@ -251,37 +257,52 @@
   PCProject     *project = [projectManager activeProject];
   NSArray       *fileTypes = nil;
   NSFileManager *fileManager = [NSFileManager defaultManager];
-  BOOL     isDir;
+  BOOL          isDir;
+  NSString      *fileType = nil;
+  NSString      *category = nil;
 
 //  NSLog(@"Panel should show %@", filename);
   if ([fileManager fileExistsAtPath:filename isDirectory:&isDir] && isDir)
     {
       return YES;
     }
-  
-  if (sender == addFilesPanel)
+
+  if (sender != addFilesPanel)
     {
-      NSString *fileType;
-      NSString *category;
-      
-      if ((fileType = [fileTypePopup titleOfSelectedItem]))
-	{
-	  category = [project projectKeyForKeyPath:
-	    [NSString stringWithFormat:@"/%@",fileType]];
-	  fileTypes = [project fileTypesForCategory:category];
-	}
+      NSLog(@"Sender is not our panel!");
+      return YES;
     }
-  else 
+    
+  if (!(fileType = [fileTypePopup titleOfSelectedItem]))
     {
+      NSLog(@"Selected File type is nil!");
+      return YES;
+    }
+  
+  category = [project projectKeyForKeyPath:
+    [NSString stringWithFormat:@"/%@",fileType]];
+  
+  fileTypes = [project fileTypesForCategory:category];
+  if (fileTypes == nil);
+    {
+      NSLog(@"Project file types is nil! Category: %@", category);
       return YES;
     }
 
-//  NSLog(@"%@ : %@", fileTypes, [filename pathExtension]);
+  NSLog(@"%@ : %@", fileTypes, [filename pathExtension]);
   if (fileTypes && [fileTypes containsObject:[filename pathExtension]])
     {
-      if ([[filename stringByDeletingLastPathComponent] 
-	  isEqualToString:[project projectPath]])
+      NSString *filePath;
+      NSString *projectPath;
+
+      filePath = [[filename stringByDeletingLastPathComponent]
+	          stringByResolvingSymlinksInPath];
+      projectPath = [[project projectPath] stringByResolvingSymlinksInPath];
+
+//      NSLog(@"Path: %@ | Project path: %@", filePath, projectPath);
+      if ([filePath isEqualToString:projectPath])
 	{
+	  return NO;
 	}
       return YES;
     }

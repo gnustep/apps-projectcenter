@@ -166,6 +166,7 @@ static NSString * const PCInstallDir           = @"INSTALLDIR";
 static NSString * const PCLinkerOptions        = @"LINKEROPTIONS";
 static NSString * const PCLastEditing          = @"LAST_EDITING";
 static NSString * const PCMainInterfaceFile    = @"MAININTERFACE";
+static NSString * const PCHelpFile             = @"HELP_FILE";
 static NSString * const PCObjCCompilerOptions  = @"OBJC_COMPILEROPTIONS";
 static NSString * const PCPrincipalClass       = @"PRINCIPAL_CLASS";
 static NSString * const PCAuthors              = @"PROJECT_AUTHORS";

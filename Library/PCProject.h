@@ -167,6 +167,7 @@ extern NSString *PCProjectDictDidSaveNotification;
 
 - (NSArray *)rootKeys;
 - (NSDictionary *)rootCategories;
+- (NSString *)keyForCategory:(NSString *)category;
 
 - (BOOL)save;
 - (BOOL)saveAt:(NSString *)projPath;

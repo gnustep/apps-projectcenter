@@ -26,6 +26,7 @@
 #include "PCProjectManager.h"
 #include "PCProject.h"
 #include "PCProjectBrowser.h"
+#include "PCProjectWindow.h"
 #include "PCProjectInspector.h"
 
 @implementation PCProjectInspector
@@ -304,8 +305,10 @@
     [projectDict objectForKey:PCURL]];
 
   authorsItems = [projectDict objectForKey:PCAuthors];
-//  NSLog(@"updateValues: %@",authorsItems);
   [authorsList reloadData];
+
+  // File Attributes view
+  [self setFANameAndIcon:[project projectBrowser]];
 }
 
 
@@ -1037,15 +1040,27 @@
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
 {
-  NSString *fileName = [[aNotif object] nameOfSelectedFile];
+//  [self setFANameAndIcon:[aNotif object]];
+}
+
+- (void)setFANameAndIcon:(PCProjectBrowser *)browser
+{
+  NSString *fileName = [browser nameOfSelectedFile];
 
   if (fileName)
     {
       [fileNameField setStringValue:fileName];
+      [fileIconView setImage:[[project projectWindow] fileIconImage]];
+    }
+  else if ([[browser selectedFiles] count] > 1)
+    {
+      [fileNameField setStringValue:@"Multiple files selected"];
+      [fileIconView setImage:[[project projectWindow] fileIconImage]];
     }
   else
     {
       [fileNameField setStringValue:@"No files selected"];
+      [fileIconView setImage:[NSImage imageNamed:@"common_Unknown"]];
     }
 }
 

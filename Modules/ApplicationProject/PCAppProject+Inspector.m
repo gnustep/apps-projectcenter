@@ -25,6 +25,30 @@
 #include <ProjectCenter/ProjectCenter.h>
 #include "PCAppProject+Inspector.h"
 
+// ----------------------------------------------------------------------------
+// --- Customized text field
+// ----------------------------------------------------------------------------
+NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
+
+@interface PCITextField : NSTextField
+{
+}
+
+@end
+
+@implementation PCITextField
+
+- (BOOL)becomeFirstResponder
+{
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCITextFieldGetFocus
+                  object:self];
+		  
+  return [super becomeFirstResponder];
+}
+
+@end
+
 @implementation PCAppProject (Inspector)
 
 // ----------------------------------------------------------------------------
@@ -54,6 +78,7 @@
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
+  [textField setSelectable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Project Type:"];
@@ -78,6 +103,7 @@
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
+  [textField setSelectable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Project Name:"];
@@ -100,6 +126,7 @@
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
+  [textField setSelectable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Language:"];
@@ -122,6 +149,7 @@
   [textField setAlignment: NSRightTextAlignment];
   [textField setBordered: NO];
   [textField setEditable: NO];
+  [textField setSelectable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
   [textField setStringValue:@"Application Class:"];
@@ -160,13 +188,14 @@
   [_iconViewBox addSubview:iconView];
   RELEASE(iconView);
 
-  // Buttons
+  // TFs Buttons
   setAppIconButton = [[NSButton alloc]
     initWithFrame:NSMakeRect(220,156,56,24)];
   [setAppIconButton setTitle:@"Set..."];
   [setAppIconButton setRefusesFirstResponder:YES];
   [setAppIconButton setTarget:self];
   [setAppIconButton setAction:@selector(setFile:)];
+  [setAppIconButton setEnabled:NO];
   [_iconsBox addSubview:setAppIconButton];
   RELEASE(setAppIconButton);
 
@@ -176,6 +205,7 @@
   [clearAppIconButton setRefusesFirstResponder:YES];
   [clearAppIconButton setTarget:self];
   [clearAppIconButton setAction:@selector(clearFile:)];
+  [clearAppIconButton setEnabled:NO];
   [_iconsBox addSubview:clearAppIconButton];
   RELEASE(clearAppIconButton);
 
@@ -191,7 +221,7 @@
   [_iconsBox addSubview:textField];
   RELEASE(textField);
 
-  appImageField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,206,211,21)];
+  appImageField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,206,211,21)];
   [appImageField setAlignment: NSLeftTextAlignment];
   [appImageField setBordered: YES];
   [appImageField setEditable: YES];
@@ -199,8 +229,6 @@
   [appImageField setDrawsBackground: YES];
   [appImageField setStringValue:@""];
   [appImageField setDelegate:self];
-  [appImageField setTarget:self];
-  [appImageField setAction:@selector(setAppIcon:)];
   [_iconsBox addSubview:appImageField];
   RELEASE(appImageField);
   
@@ -216,7 +244,7 @@
   [_iconsBox addSubview:textField];
   RELEASE(textField);
 
-  helpFileField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,167,211,21)];
+  helpFileField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,167,211,21)];
   [helpFileField setAlignment: NSLeftTextAlignment];
   [helpFileField setBordered: YES];
   [helpFileField setEditable: YES];
@@ -239,7 +267,7 @@
   [_iconsBox addSubview:textField];
   RELEASE(textField);
 
-  mainNIBField = [[NSTextField alloc] initWithFrame:NSMakeRect(2,128,211,21)];
+  mainNIBField = [[PCITextField alloc] initWithFrame:NSMakeRect(2,128,211,21)];
   [mainNIBField setAlignment: NSLeftTextAlignment];
   [mainNIBField setBordered: YES];
   [mainNIBField setEditable: YES];
@@ -265,7 +293,7 @@
   //
   docExtColumn = [[NSTableColumn alloc] initWithIdentifier: @"extension"];
   [[docExtColumn headerCell] setStringValue:@"Extenstion"];
-  [docExtColumn setWidth:94];
+  [docExtColumn setWidth:75];
   docIconColumn = [[NSTableColumn alloc] initWithIdentifier: @"icon"];
   [[docIconColumn headerCell] setStringValue:@"Icon name"];
 
@@ -312,6 +340,11 @@
 
   RELEASE(_iconsBox);
 
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(tfGetFocus:)
+                                               name:PCITextFieldGetFocus
+                                             object:nil];
+
   [self updateInspectorValues:nil];
 }
 
@@ -330,60 +363,70 @@
 
 - (void)setAppClass:(id)sender
 {
-  [projectDict setObject:[appClassField stringValue] forKey:PCPrincipalClass];
+  [self setProjectDictObject:[appClassField stringValue]
+                      forKey:PCPrincipalClass];
+}
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCProjectDictDidChangeNotification
-                  object:self];
+- (void)setIconViewImage:(NSImage *)image
+{
+  NSRect   frame = {{0,0}, {64, 64}};
+
+  [iconView setImage:nil];
+  [iconView display];
+
+  if (image == nil)
+    {
+      return;
+    }
+
+  frame.size = [image size];
+  [iconView setFrame:frame];
+  [iconView setImage:image];
+  [iconView display];
 }
 
 - (void)setFile:(id)sender
 {
-/*  int         result;  
-  NSArray     *fileTypes = [NSImage imageFileTypes];
-  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-  NSString    *dir = nil;*/
-
-/*  NSLog(@"FR: %@", 
-	[[[projectAttributesView superview] firstResponder] className]);*/
-  id firstResponder = 
-	[[[[self projectManager] projectInspector] panel] firstResponder];
-  NSLog(@"FR: %@", [firstResponder className]);
-
-/*  [openPanel setAllowsMultipleSelection:NO];
-  
-  dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey:@"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory:dir
-                                      file:nil 
-                                     types:fileTypes];
-
-  if (result == NSOKButton)
+  if (!activeTextField)
     {
-      NSString *imageFilePath = [[openPanel filenames] objectAtIndex:0];
+      return;
+    }
 
-      if (![self setAppIconWithImageAtPath:imageFilePath])
-	{
-	  NSRunAlertPanel(@"Error while opening file!", 
-			  @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
-	}
-    }  */
+  if (activeTextField == appImageField)
+    {
+      [self setAppIcon:self];
+    }
+  else if (activeTextField == helpFileField)
+    {
+    }
+  else if (activeTextField == mainNIBField)
+    {
+      [self setMainNib:self];
+    }
 }
 
 - (void)clearFile:(id)sender
 {
-/*  [projectDict setObject:@"" forKey:PCAppIcon];
-  [infoDict setObject:@"" forKey:@"NSIcon"];
-  [infoDict setObject:@"" forKey:@"ApplicationIcon"];
-  [appImageField setStringValue:@""];
-  [iconView setImage:nil];
-  [iconView display];
+  if (!activeTextField)
+    {
+      return;
+    }
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCProjectDictDidChangeNotification
-                  object:self];*/
+  if (activeTextField == appImageField)
+    {
+      [self clearAppIcon:self];
+    }
+  else if (activeTextField == helpFileField)
+    {
+    }
+  else if (activeTextField == mainNIBField)
+    {
+      [self clearMainNib:self];
+    }
+  [self setIconViewImage:nil];
 }
 
+// Application Icon
 - (void)setAppIcon:(id)sender
 {
   int         result;  
@@ -392,6 +435,7 @@
   NSString    *dir = nil;
 
   [openPanel setAllowsMultipleSelection:NO];
+  [openPanel setTitle:@"Set Application Icon"];
   
   dir = [[NSUserDefaults standardUserDefaults]
     objectForKey:@"LastOpenDirectory"];
@@ -413,18 +457,16 @@
 
 - (void)clearAppIcon:(id)sender
 {
+  [appImageField setStringValue:@""];
   [infoDict setObject:@"" forKey:@"NSIcon"];
   [infoDict setObject:@"" forKey:@"ApplicationIcon"];
-  [appImageField setStringValue:@""];
-  [iconView setImage:nil];
-  [iconView display];
   
   [self setProjectDictObject:@"" forKey:PCAppIcon];
 }
 
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path
 {
-  NSRect   frame = {{0,0}, {64, 64}};
+//  NSRect   frame = {{0,0}, {64, 64}};
   NSImage  *image = nil;
   NSString *imageName = nil;
 
@@ -437,14 +479,16 @@
 
   [appImageField setStringValue:imageName];
 
-  [iconView setImage:nil];
+  [self setIconViewImage:image];
+
+/*  [iconView setImage:nil];
   [iconView display];
 
   frame.size = [image size];
   [iconView setFrame:frame];
   [iconView setImage:image];
   [iconView display];
-  RELEASE(image);
+  RELEASE(image);*/
 
   [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCImages];
   
@@ -456,6 +500,7 @@
   return YES;
 }
 
+// Main Interface File
 - (void)setMainNib:(id)sender
 {
   int         result;
@@ -463,6 +508,7 @@
   NSString    *dir = nil;
 
   [openPanel setAllowsMultipleSelection:NO];
+  [openPanel setTitle:@"Set Main Interface File"];
   
   dir = [[NSUserDefaults standardUserDefaults]
     objectForKey:@"LastOpenDirectory"];
@@ -486,34 +532,48 @@
 {
   NSString *nibName = [path lastPathComponent];
 
+  [self setIconViewImage:[[NSWorkspace sharedWorkspace] iconForFile:path]];
+
   [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCInterfaces];
   [infoDict setObject:nibName forKey:@"NSMainNibFile"];
+
   [self setProjectDictObject:nibName forKey:PCMainInterfaceFile];
 
-//  [mainNibField setStringValue:nibName];
+  [mainNIBField setStringValue:nibName];
 
   return YES;
 }
 
 - (void)clearMainNib:(id)sender
 {
+  [mainNIBField setStringValue:@""];
   [infoDict setObject:@"" forKey:@"NSMainNibFile"];
-  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile];
 
-//  [mainNibField setStringValue:@""];
+  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile];
 }
 
+// Document Icons
 - (void)addDocIcon:(id)sender
 {
   int row;
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:2];
+  int selectedRow = [docIconsList selectedRow];
 
   [entry setObject:@"" forKey:@"Extension"];
   [entry setObject:@"" forKey:@"Icon"];
-  [docIconsItems addObject:entry];
+
+  if (selectedRow >= 0)
+    {
+      [docIconsItems insertObject:entry atIndex:selectedRow + 1];
+      row = selectedRow + 1;
+    }
+  else
+    {
+      [docIconsItems addObject:entry];
+      row = [docIconsItems count] - 1;
+    }
   [docIconsList reloadData];
   
-  row = [docIconsItems count] - 1;
   [docIconsList selectRow:row byExtendingSelection:NO];
   [docIconsList editColumn:0 row:row withEvent:nil select:YES];
 
@@ -595,11 +655,6 @@
 
 - (void)updateInspectorValues:(NSNotification *)aNotif
 {
-  NSRect   frame = {{0,0}, {48,48}};
-  NSImage  *image = nil;
-  NSString *path = nil;
-  NSString *_icon = nil;
-
   NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
@@ -607,26 +662,90 @@
   [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
   [projectLanguageField setStringValue:[projectDict objectForKey:@"LANGUAGE"]];
   [appClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
+
   [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
-
-  _icon = [projectDict objectForKey:PCAppIcon];
-  if (_icon && ![_icon isEqualToString:@""])
-    {
-      path = [self dirForCategory:PCImages];
-      path = [path stringByAppendingPathComponent:_icon];
-    }
-
-  if (path && (image = [[NSImage alloc] initWithContentsOfFile:path]))
-    {
-      frame.size = [image size];
-      [iconView setFrame:frame];
-      [iconView setImage:image];
-      [iconView display];
-      RELEASE(image);
-    }
+  [helpFileField setStringValue:[projectDict objectForKey:PCHelpFile]];
+  [mainNIBField setStringValue:[projectDict objectForKey:PCMainInterfaceFile]];
 
   docIconsItems = [projectDict objectForKey:PCDocumentExtensions];
   [docIconsList reloadData];
+}
+
+// TextFields (PCITextField subclass)
+// 
+// NSTextField become first responder when user clicks on it and immediately
+// lost first resonder status, so we can't catch when focus leaves textfield
+// with resignFirstResponder: method overriding. Here we're using
+// controlTextDidEndEditing (NSTextField's delegate method) to achieve this.
+
+- (void)tfGetFocus:(NSNotification *)aNotif
+{
+  id       anObject = [aNotif object];
+  NSString *file = nil;
+  NSString *path = nil;
+
+  
+  if (anObject != appImageField 
+      && anObject != helpFileField 
+      && anObject != mainNIBField)
+    {
+      NSLog(@"tfGetFocus: not that textfield");
+      return;
+    }
+
+  if (anObject == appImageField)
+    {
+//      NSLog(@"Application Icon get focus");
+
+      file = [appImageField stringValue];
+
+      if ([file isEqualToString:@""]) return;
+
+      path = [self dirForCategory:PCImages];
+      path = [path stringByAppendingPathComponent:file];
+
+      [self setIconViewImage:[[NSImage alloc] initWithContentsOfFile:path]];
+      activeTextField = appImageField;
+    }
+  else if (anObject == helpFileField)
+    {
+//      NSLog(@"Help File get focus");
+      activeTextField = helpFileField;
+    }
+  else if (anObject == mainNIBField)
+    {
+//      NSLog(@"Main Interface File get focus");
+
+      file = [mainNIBField stringValue];
+      
+      if ([file isEqualToString:@""]) return;
+
+      path = [projectPath stringByAppendingPathComponent:file];
+      [self setIconViewImage:[[NSWorkspace sharedWorkspace] iconForFile:path]];
+      activeTextField = mainNIBField;
+    }
+
+  [setAppIconButton setEnabled:YES];
+  [clearAppIconButton setEnabled:YES];
+}
+
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+{
+  id anObject = [aNotification object];
+  
+  if (anObject != appImageField 
+      && anObject != helpFileField 
+      && anObject != mainNIBField)
+    {
+      NSLog(@"tfLostFocus: not that textfield");
+      return;
+    }
+
+  activeTextField = nil;
+  [self setIconViewImage:nil];
+
+  [setAppIconButton setEnabled:NO];
+  [clearAppIconButton setEnabled:NO];
 }
 
 @end

@@ -116,7 +116,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString *name = nil;
 
   // Doesn't work with subprojects!
-  if ([browser selectedColumn] != 0)
+  if ([browser selectedColumn] != 0 && [[browser selectedCells] count] == 1)
     {
       name = [[[browser path] componentsSeparatedByString:@"/"] lastObject];
     }

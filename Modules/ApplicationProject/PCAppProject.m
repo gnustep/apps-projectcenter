@@ -87,12 +87,21 @@
   NSString *infoFile = nil;
 
   infoFile = [path stringByAppendingPathComponent:@"Info-gnustep.plist"];
-  infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:infoFile];
+  if ([[NSFileManager defaultManager] fileExistsAtPath:infoFile])
+    {
+      infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:infoFile];
+    }
+  else
+    {
+      infoDict = [[NSMutableDictionary alloc] init];
+    }
 }
 
 - (void)dealloc
 {
   NSLog (@"PCAppProject: dealloc");
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(infoDict);
   RELEASE(projectAttributesView);
@@ -282,20 +291,20 @@
 
   if (entry == nil)
     {
-      NSLog(@"%@ is nil", name);
+//      NSLog(@"%@ is nil", name);
       return;
     }
 
   if ([entry isKindOfClass:[NSString class]] && [entry isEqualToString:@""])
     {
-      NSLog(@"%@ is empty string", name);
+//      NSLog(@"%@ is empty string", name);
       [infoDict removeObjectForKey:name];
       return;
     }
 
   if ([entry isKindOfClass:[NSArray class]] && [entry count] <= 0)
     {
-      NSLog(@"%@ is empty array", name);
+//      NSLog(@"%@ is empty array", name);
       [infoDict removeObjectForKey:name];
       return;
     }
@@ -320,14 +329,73 @@
   [self writeInfoEntry:@"NSMainNibFile" forKey:PCMainInterfaceFile];
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
   [infoDict setObject:@"Application" forKey:@"NSRole"];
+  [infoDict setObject:[self convertExtensions] forKey:@"NSTypes"];
   [self writeInfoEntry:@"URL" forKey:PCURL];
-
-  // Document icons
-  [self writeInfoEntry:@"NSTypes" forKey:PCDocumentExtensions];
 
   infoFile = [projectPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
 
   return [infoDict writeToFile:infoFile atomically:YES];
+}
+
+- (NSArray *)convertExtensions
+{
+  NSMutableArray *icons = [NSMutableArray arrayWithCapacity:1];
+  NSMutableArray *extensions = [NSMutableArray arrayWithCapacity:1];
+  NSArray        *docIE = [projectDict objectForKey:PCDocumentExtensions];
+  NSEnumerator   *enumerator = [docIE objectEnumerator];
+  id             anObject;
+
+  NSMutableArray      *resArray = [[NSMutableArray alloc] init];
+  NSMutableDictionary *tmpDict = [NSMutableDictionary dictionaryWithCapacity:1];
+  NSString            *ic;
+  NSArray             *ex;
+
+  while ((anObject = [enumerator nextObject]))
+    {
+      [icons addObject:[anObject objectForKey:@"Icon"]];
+      [extensions addObject:[anObject objectForKey:@"Extension"]];
+    }
+
+  // At this point we have 2 arrays; 1 list of icons and 2 list of extensions.
+  // So go group it!
+  while ([icons count] && [extensions count])
+    {
+      int                 i;
+      BOOL                loaded = NO;
+      NSMutableDictionary *tdict;
+      NSString            *tic;
+
+      ic = [icons objectAtIndex:0];
+      ex = [NSMutableArray arrayWithObject:[extensions objectAtIndex:0]];
+
+      for (i = 0; i < [resArray count]; i++)
+	{
+	  tdict = [resArray objectAtIndex:i];
+	  tic = [tdict objectForKey:@"NSIcon"];
+
+	  if([tic isEqualToString:ic])
+	    {
+	      [[tdict objectForKey:@"NSUnixExtensions"] 
+		addObject:[ex objectAtIndex:0]];
+	      loaded = YES;
+	      continue;
+	    }
+	}
+
+      if (!loaded)
+	{
+	  [tmpDict setObject:ic forKey:@"NSIcon"];
+	  [tmpDict setObject:ex forKey:@"NSUnixExtensions"];
+      
+	  [resArray addObject:[tmpDict copy]];
+	}
+
+      [tmpDict removeAllObjects];
+      [icons removeObjectAtIndex:0];
+      [extensions removeObjectAtIndex:0];
+    }
+
+  return resArray;
 }
 
 // Overriding
@@ -403,38 +471,6 @@
   return NO;
 }
 
-- (void)appendHead:(PCMakefileFactory *)mff
-{
-  [mff appendString:
-    [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
-     [projectDict objectForKey:PCInstallDir]]];
-}
-
-- (void)appendApplication:(PCMakefileFactory *)mff
-{
-  [mff appendString:@"\n#\n# Application\n#\n"];
-  [mff appendString:
-    [NSString stringWithFormat:@"PACKAGE_NAME = %@\n",projectName]];
-  [mff appendString:
-    [NSString stringWithFormat:@"APP_NAME = %@\n",projectName]];
-    
-  [mff appendString:[NSString stringWithFormat:@"%@_APPLICATION_ICON = %@\n",
-                     projectName, [projectDict objectForKey:PCAppIcon]]];
-
-  // TODO: proper support for localisation
-  //[self appendString:[NSString stringWithFormat:@"%@_LANGUAGES=English\n",pnme]];
-  //[self appendString:[NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES=Localizable.strings\n",pnme]];
-}
-
-- (void)appendTail:(PCMakefileFactory *)mff
-{
-  [mff appendString:@"\n\n#\n# Makefiles\n#\n"];
-  [mff appendString:@"-include GNUmakefile.preamble\n"];
-  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
-  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/application.make\n"];
-  [mff appendString:@"-include GNUmakefile.postamble\n"];
-}
-
 - (BOOL)writeMakefilePreamble
 {
   NSMutableString *mfp = [[NSMutableString alloc] init];
@@ -484,8 +520,8 @@
 	{
 	  [mfp appendString:[NSString stringWithFormat:@"-I%@ ",tmp]];
 	}
-      [mfp appendString:@"\n\n"];
     }
+  [mfp appendString:@"\n\n"];
   
   // Directories where to search libraries
   [mfp appendString:
@@ -501,8 +537,8 @@
 	{
 	  [mfp appendString:[NSString stringWithFormat:@"-L%@ ",tmp]];
 	}
-      [mfp appendString:@"\n\n"];
     }
+  [mfp appendString:@"\n\n"];
 
 //  [mfp appendString:[projectDict objectForKey:PCLibraries]];
 
@@ -514,6 +550,38 @@
     }
 
   return NO;
+}
+
+- (void)appendHead:(PCMakefileFactory *)mff
+{
+  [mff appendString:
+    [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
+     [projectDict objectForKey:PCInstallDir]]];
+}
+
+- (void)appendApplication:(PCMakefileFactory *)mff
+{
+  [mff appendString:@"\n#\n# Application\n#\n"];
+  [mff appendString:
+    [NSString stringWithFormat:@"PACKAGE_NAME = %@\n",projectName]];
+  [mff appendString:
+    [NSString stringWithFormat:@"APP_NAME = %@\n",projectName]];
+    
+  [mff appendString:[NSString stringWithFormat:@"%@_APPLICATION_ICON = %@\n",
+                     projectName, [projectDict objectForKey:PCAppIcon]]];
+
+  // TODO: proper support for localisation
+  //[self appendString:[NSString stringWithFormat:@"%@_LANGUAGES=English\n",pnme]];
+  //[self appendString:[NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES=Localizable.strings\n",pnme]];
+}
+
+- (void)appendTail:(PCMakefileFactory *)mff
+{
+  [mff appendString:@"\n\n#\n# Makefiles\n#\n"];
+  [mff appendString:@"-include GNUmakefile.preamble\n"];
+  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/aggregate.make\n"];
+  [mff appendString:@"include $(GNUSTEP_MAKEFILES)/application.make\n"];
+  [mff appendString:@"-include GNUmakefile.postamble\n"];
 }
 
 @end

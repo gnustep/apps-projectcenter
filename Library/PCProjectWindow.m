@@ -34,6 +34,7 @@
 
 #include "PCProjectBrowser.h"
 #include "PCProjectHistory.h"
+#include "PCProjectInspector.h"
 
 #include "PCProjectWindow.h"
 
@@ -302,7 +303,7 @@
   // Should be provided by PC*Proj bundles
   if ([[object selectedFiles] count] > 1 && [pathComponents count] > 2)
     {
-      iconName = [[NSString alloc] initWithString:@"MultipleSelection"];
+      iconName = [[NSString alloc] initWithString:@"MultiFiles"];
     }
   else if ([lastComponent isEqualToString: @"/"])
     {
@@ -367,11 +368,6 @@
   if (icon != nil)
     {
       [fileIcon setImage:icon];
-      // Set icon in Inspector "File Attributes". Should not be here!
-//      [fileIconView setImage:icon];
-    }
-  else
-    {
     }
 
   // Set title
@@ -380,13 +376,15 @@
       [fileIconTitle setStringValue:
 	[NSString stringWithFormat: 
 	@"%i files", [[object selectedFiles] count]]];
-//      [fileNameField setStringValue:@"Multiple files selected"];
     }
   else
     {
       [fileIconTitle setStringValue:lastComponent];
-//      [fileNameField setStringValue:lastComponent];
     }
+
+  // Project Inspector
+  [[[project projectManager] projectInspector] 
+    setFANameAndIcon:[project projectBrowser]];
 }
 
 - (NSString *)fileIconTitle

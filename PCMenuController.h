@@ -93,7 +93,9 @@
 // Tools
 - (void)showInspector:(id)sender;
 - (void)showEditorPanel:(id)sender;
+// Build Panel
 - (void)showBuildPanel:(id)sender;
+// Launch Panel
 - (void)showLaunchPanel:(id)sender;
 - (void)runTarget:(id)sender;
 

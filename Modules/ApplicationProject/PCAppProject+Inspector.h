@@ -61,6 +61,7 @@
 // --- Notifications
 // ----------------------------------------------------------------------------
 - (void)updateInspectorValues:(NSNotification *)aNotif;
+- (void)tfGetFocus:(NSNotification *)aNotif;
 
 @end
 

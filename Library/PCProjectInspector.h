@@ -26,6 +26,7 @@
 #define _PCProjectInspector_h_
 
 @class PCProjectManager;
+@class PCProjectBrowser;
 
 @interface PCProjectInspector : NSObject
 {
@@ -141,6 +142,8 @@
 - (void)createFileAttributes;
 
 - (void)browserDidSetPath:(NSNotification *)aNotif;
+
+- (void)setFANameAndIcon:(PCProjectBrowser *)browser;
 
 @end
 

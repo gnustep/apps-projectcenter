@@ -594,6 +594,12 @@ NSString *ActiveProjectDidChangeNotification = @"ActiveProjectDidChange";
 			      @"Error removing files from project %@!",
 			      @"OK", nil, nil, [activeProject projectName]);
 	    }
+	  // Save project because we've removed file from disk
+	  // Should be fixed later (add pending removal of files?)
+	  else if (flag) 
+	    {
+	      [activeProject save];
+	    }
 	  return NO;
 	}
     }

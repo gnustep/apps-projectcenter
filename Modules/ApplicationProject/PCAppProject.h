@@ -37,6 +37,8 @@
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectInspector.h>
 
+@class PCITextField;
+
 @interface PCAppProject : PCProject
 {
   NSBox          *projectAttributesView;
@@ -44,9 +46,11 @@
   NSTextField    *projectNameField;
   NSTextField    *projectLanguageField;
   NSTextField    *appClassField;
-  NSTextField    *appImageField;
-  NSTextField    *helpFileField;
-  NSTextField    *mainNIBField;
+
+  PCITextField   *activeTextField;
+  PCITextField   *appImageField;
+  PCITextField   *helpFileField;
+  PCITextField   *mainNIBField;
 
   NSImageView    *iconView;
   NSImage        *icon;
@@ -83,6 +87,7 @@
 
 - (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key;
 - (BOOL)writeInfoFile;
+- (NSArray *)convertExtensions;
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;
 - (void)appendApplication:(PCMakefileFactory *)mff;

@@ -11,6 +11,8 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
+VERSION = 0.4
+COMPRESSION = bzip2
 
 #
 # Subprojects
@@ -34,15 +36,16 @@ Images/FileM.tiff \
 Images/FileMH.tiff \
 Images/FileRTF.tiff \
 Images/FileProject.tiff \
+Images/Build.tiff \
 Images/Clean.tiff \
 Images/Debug.tiff \
 Images/Files.tiff \
 Images/Find.tiff \
+Images/Inspector.tiff \
 Images/Install.tiff \
-Images/Build.tiff \
+Images/MultiFiles.tiff \
 Images/Options.tiff \
 Images/Run.tiff \
-Images/Inspector.tiff \
 Images/Stop.tiff \
 Images/Editor.tiff \
 Images/ProjectCenter_add.tiff \
