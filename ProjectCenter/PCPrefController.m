@@ -482,7 +482,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   [super dealloc];
 }
 
-- (void)showPrefWindow: (id)sender
+- (void) showPrefWindow: (id)sender
 {
   NSDictionary *prefs;
   NSString     *val;
@@ -514,6 +514,10 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
   // Fill in the defaults
 
   // Building
+  [successField setStringValue: 
+    (val = [preferencesDict objectForKey: SuccessSound]) ? val : @""];
+  [failureField setStringValue: 
+    (val = [preferencesDict objectForKey: FailureSound]) ? val : @""];
   [promptOnClean setState:
     ([[preferencesDict objectForKey: PromptOnClean] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
@@ -535,7 +539,7 @@ NSString *SavePeriodDidChangeNotification = @"SavePeriodDidChangeNotification";
     (val = [preferencesDict objectForKey: AutoSavePeriod]) ? val : @"120"];
 
   // Editing
-  if( [[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Tab"] )
+  if([[preferencesDict objectForKey: TabBehaviour] isEqualToString:@"Tab"])
     {
       [tabMatrix selectCellAtRow: 0 column: 0];
     }
