@@ -1,11 +1,11 @@
 /*
-   GNUstep ProjectCenter - http://www.projectcenter.ch
+   GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000 Philippe C.D. Robert
+   Copyright (C) 2001 Free Software Foundation
 
-   Author: Philippe C.D. Robert <phr@projectcenter.ch>
+   Author: Philippe C.D. Robert <phr@3dkit.org>
 
-   This file is part of ProjectCenter.
+   This file is part of GNUstep.
 
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
@@ -97,7 +97,7 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"\tPlease report all bugs or other issues you don't like to phr@projectcenter.ch!"];
+  [textField setStringValue:@"\tPlease report all bugs or other issues you don't like to phr@3dkit.org!"];
   [box addSubview:textField];
   RELEASE(textField);
 

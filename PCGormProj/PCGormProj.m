@@ -1,13 +1,13 @@
 /*
-   GNUstep ProjectCenter - http://www.projectcenter.ch
+   GNUstep ProjectCenter - http://www.gnustep.org
 
-   Copyright (C) 2000 Philippe C.D. Robert
+   Copyright (C) 2001 Free Software Foundation
    Copyright (C) 2001 Pierre-Yves Rivaille
 
-   Authors: Philippe C.D. Robert <phr@projectcenter.ch>
+   Authors: Philippe C.D. Robert <phr@3dkit.org>
             Pierre-Yves Rivaille <pyrivail@ens-lyon.fr>
 
-   This file is part of ProjectCenter.
+   This file is part of GNUstep.
 
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
