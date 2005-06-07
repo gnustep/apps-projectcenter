@@ -3,7 +3,7 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep Integrated Development Environment";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.4.1";
+  ApplicationRelease = "0.4.3";
   FullVersionID = "HEAD";
   Authors = (
     "Philippe C.D. Robert",

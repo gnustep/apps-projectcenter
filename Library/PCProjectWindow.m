@@ -131,6 +131,18 @@
     {
       [launchButton setEnabled:NO];
     }
+
+/*  editorButton = [[PCButton alloc] initWithFrame:NSMakeRect(88,5,43,43)];
+  [editorButton setRefusesFirstResponder:YES];
+  [editorButton setToolTip:@"Editor"];
+  [editorButton setTitle:@"Editor"];
+  [editorButton setImage:IMAGE(@"Stop")];
+  [editorButton setTarget:self];
+  [editorButton setAction:@selector(showProjectEditor:)];
+  [editorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
+  [editorButton setButtonType:NSMomentaryPushButton];
+  [toolbarView addSubview:editorButton];
+  RELEASE (editorButton);*/
   
   loadedFilesButton = [[PCButton alloc] initWithFrame:NSMakeRect(88,5,43,43)];
   [loadedFilesButton setRefusesFirstResponder:YES];
@@ -901,6 +913,7 @@
 - (BOOL)makeFirstResponder:(NSResponder *)aResponder
 {
   firstResponder = aResponder;
+
   [projectWindow makeFirstResponder:firstResponder];
 
   return YES;

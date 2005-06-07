@@ -1,3 +1,9 @@
+2005-06-07 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProjectEditor.m: 
+	(orderFrontEditorForFile:): Always show editor subview 
+	(Fixed bug#11779).
+
 2005-02-12 Pascal Hoftsee <caelian@gmail.com>
   	   Committed by Gregory Jonh Casamento <greg_casamento@yahoo.com>
 	
