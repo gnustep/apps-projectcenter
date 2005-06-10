@@ -255,8 +255,8 @@ NSString *PCEditorDidResignActiveNotification =
       editor = [[PCEditor alloc] initWithPath:path 
 	                         categoryPath:categoryPath
 	                        projectEditor:self];
-      [componentView setContentView:[editor componentView]];
-      [[project projectWindow] makeFirstResponder:[editor editorView]];
+//      [componentView setContentView:[editor componentView]];
+//      [[project projectWindow] makeFirstResponder:[editor editorView]];
 
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
@@ -280,6 +280,7 @@ NSString *PCEditorDidResignActiveNotification =
   else
     {
       [componentView setContentView:[editor componentView]];
+      [[project projectWindow] setCustomContentView:componentView];
       [[project projectWindow] makeFirstResponder:[editor editorView]];
     }
 }

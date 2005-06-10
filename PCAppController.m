@@ -214,6 +214,7 @@
   NSLog (@"--- Application WILL terminate");
 #endif
 
+/*
   if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
@@ -221,6 +222,7 @@
 	removeFileAtPath:[projectManager rootBuildPath]
 	         handler:nil];
     }
+*/
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 

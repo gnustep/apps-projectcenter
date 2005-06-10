@@ -20,10 +20,13 @@ ProjectCenter 0.5
 -----------------
 
 - Add more project types (Framework,Resource Set,Palette)       stoyan
+- Implement root build directory handling			stoyan
 - Localization support for projects                             stoyan
-- Editor enhancements (syntax highlighting, indentation)        stoyan
-- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
 - Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
+- Editor code parser (get it from CodeEditor?)			stoyan
+- Editor syntax highlighting				        stoyan
+- Editor indentation						stoyan
+- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
 - Add pending adding/removal of files                           stoyan
 
 ProjectCenter 0.6

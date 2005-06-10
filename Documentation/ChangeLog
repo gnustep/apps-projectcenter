@@ -1,3 +1,15 @@
+2005-06-11 Serg Stoyan <stoyan255@ukr.net>
+
+	* PCAppController.m:
+	(applicationWillTerminate:): Don't remove temorary directory. Needs 
+	more investigation since NSTemporaryDirectory() returns f.e.
+	/tmp/GNUstepSecure1000.
+	
+	* Library/PCProjectEditor.m:
+        (orderFrontEditorForFile:): Always show editor subview
+        (Fixed bug#11779). Incorporated from HEAD branch.
+
+	
 2005-01-28 Serg Stoyan <stoyan255@ukr.net>
 
 	* Moduleas/ResourceSetProject: Added.
