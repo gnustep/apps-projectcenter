@@ -1,3 +1,10 @@
+2005-07-01 Serg Stoyan <stoyan255@ukr.net>
+
+	* Resources/Preferences.gorm: Fixed name of preferences panel. 
+	(Bug # 13590)
+	
+	* Update all .gorm files with latest GORM
+	
 2005-06-07 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectEditor.m: 
