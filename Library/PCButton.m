@@ -262,6 +262,11 @@
   NSPoint origin;
 
 //  NSLog(@"mouseMoved");
+  if (ttWindow == nil)
+    {
+      return;
+    }
+
   mouseLocation = [NSEvent mouseLocation];
   
   origin = NSMakePoint(mouseLocation.x + 8, 

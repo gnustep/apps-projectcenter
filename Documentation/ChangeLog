@@ -1,3 +1,7 @@
+2005-07-03 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCButton: (mouseMoved:) check if ttWindow is not nil.
+	
 2005-07-01 Serg Stoyan <stoyan255@ukr.net>
 
 	* Resources/Preferences.gorm: Fixed name of preferences panel. 
