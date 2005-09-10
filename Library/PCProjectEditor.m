@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2002-2004 Free Software Foundation
 
@@ -32,9 +32,13 @@
 
 #include "PCLogController.h"
 
+#include "CodeParser.h"
+
 NSString *PCEditorDidChangeFileNameNotification = 
           @"PCEditorDidChangeFileNameNotification";
 	  
+NSString *PCEditorWillOpenNotification = 
+          @"PCEditorWillOpenNotification";
 NSString *PCEditorDidOpenNotification = 
           @"PCEditorDidOpenNotification";
 NSString *PCEditorDidCloseNotification = 
@@ -60,31 +64,31 @@ NSString *PCEditorDidResignActiveNotification =
 
   frame = NSMakeRect(0,0,562,248);
   componentView = [[NSBox alloc] initWithFrame:frame];
-  [componentView setTitlePosition: NSNoTitle];
-  [componentView setBorderType: NSNoBorder];
+  [componentView setTitlePosition:NSNoTitle];
+  [componentView setBorderType:NSNoBorder];
   [componentView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-  [componentView setContentViewMargins: NSMakeSize(0.0,0.0)];
+  [componentView setContentViewMargins:NSMakeSize(0.0,0.0)];
 
   frame = NSMakeRect (0, 0, 562, 40);
   scrollView = [[NSScrollView alloc] initWithFrame:frame];
-  [scrollView setHasHorizontalScroller: NO];
-  [scrollView setHasVerticalScroller: YES];
-  [scrollView setBorderType: NSBezelBorder];
+  [scrollView setHasHorizontalScroller:NO];
+  [scrollView setHasVerticalScroller:YES];
+  [scrollView setBorderType:NSBezelBorder];
   [scrollView setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];
 
   // This is a placeholder!
   frame = [[scrollView contentView] frame];
   textView =   [[NSTextView alloc] initWithFrame:frame];
-  [textView setMinSize: NSMakeSize (0, 0)];
-  [textView setMaxSize: NSMakeSize(1e7, 1e7)];
-  [textView setRichText: NO];
-  [textView setEditable: NO];
-  [textView setSelectable: YES];
-  [textView setVerticallyResizable: YES];
-  [textView setHorizontallyResizable: NO];
+  [textView setMinSize:NSMakeSize (0, 0)];
+  [textView setMaxSize:NSMakeSize(1e7, 1e7)];
+  [textView setRichText:NO];
+  [textView setEditable:NO];
+  [textView setSelectable:YES];
+  [textView setVerticallyResizable:YES];
+  [textView setHorizontallyResizable:NO];
   [textView setAutoresizingMask:(NSViewWidthSizable|NSViewHeightSizable)];
-  [[textView textContainer] setWidthTracksTextView: YES];
-  [scrollView setDocumentView: textView];
+  [[textView textContainer] setWidthTracksTextView:YES];
+  [scrollView setDocumentView:textView];
   RELEASE(textView);
 
   frame.size = NSMakeSize([scrollView contentSize].width,1e7);
@@ -198,8 +202,8 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)dealloc
 {
 #ifdef DEVELOPMENT
-  NSLog (@"PCProjectEditor: dealloc");
 #endif
+  NSLog (@"PCProjectEditor: dealloc");
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -209,7 +213,6 @@ NSString *PCEditorDidResignActiveNotification =
       RELEASE(componentView);
     }
 
-  [self closeAllEditors];
   RELEASE(editorsDict);
 
   [super dealloc];
@@ -255,9 +258,6 @@ NSString *PCEditorDidResignActiveNotification =
       editor = [[PCEditor alloc] initWithPath:path 
 	                         categoryPath:categoryPath
 	                        projectEditor:self];
-//      [componentView setContentView:[editor componentView]];
-//      [[project projectWindow] makeFirstResponder:[editor editorView]];
-
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
     }
@@ -320,11 +320,13 @@ NSString *PCEditorDidResignActiveNotification =
     }
 }
 
+// Called by PCProject. After that retainCount goes down and [self dealloc]
+// called by autorelease mechanism
 - (BOOL)closeAllEditors
 {
   NSEnumerator   *enumerator = [editorsDict keyEnumerator];
-  PCEditor       *editor;
-  NSString       *key;
+  PCEditor       *editor = nil;
+  NSString       *key = nil;
   NSMutableArray *editedFiles = [[NSMutableArray alloc] init];
 
   while ((key = [enumerator nextObject]))
@@ -350,6 +352,11 @@ NSString *PCEditorDidResignActiveNotification =
     }
 
   [editorsDict removeAllObjects];
+
+  // Stop parser. It releases self.
+  // TODO: There should be a few parsers.
+  [aParser stop];
+  [parserConnection release];
 
   return YES;
 }
@@ -490,7 +497,7 @@ NSString *PCEditorDidResignActiveNotification =
     {
       return;
     }
- 
+    
   [editorsDict removeObjectForKey:[editor path]];
 
   if ([editorsDict count])
@@ -511,6 +518,7 @@ NSString *PCEditorDidResignActiveNotification =
       [[project projectWindow] makeFirstResponder:scrollView];
 
       [browser setPath:[path stringByDeletingLastPathComponent]];
+      [self setActiveEditor:nil];
     }
 }
 
@@ -519,7 +527,7 @@ NSString *PCEditorDidResignActiveNotification =
   PCEditor *editor = [aNotif object];
   NSString *categoryPath = nil;
 
-  if ([editor projectEditor] != self || activeEditor == editor)
+  if ([editor projectEditor] != self) // || activeEditor == editor)
     {
       return;
     }
@@ -536,14 +544,16 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidResignActive:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
+  // Clearing activeEditor blocks the ability to get some information from
+  // loaded and visible but not active editor
+/*  PCEditor *editor = [aNotif object];
   
   if ([editor projectEditor] != self)
     {
       return;
     }
 
-  [self setActiveEditor:nil];
+  [self setActiveEditor:nil];*/
 }
 
 - (void)editorDidChangeFileName:(NSNotification *)aNotif
@@ -563,6 +573,54 @@ NSString *PCEditorDidResignActiveNotification =
   
   [editorsDict removeObjectForKey:_oldFileName];
   [editorsDict setObject:_editor forKey:_newFileName];
+}
+
+// ===========================================================================
+// ==== Parser
+// ===========================================================================
+
+- (id<CodeParser>)parserForFile:(NSString *)path
+{
+  if (parserConnection == nil)
+    {
+      NSPort  *port1 = nil;
+      NSPort  *port2 = nil;
+      NSArray *portArray = nil;
+
+      // Create connection to parser server
+      port1 = [NSPort new];
+      port2 = [NSPort new];
+      parserConnection = [[NSConnection alloc] initWithReceivePort:port1
+	                                                  sendPort:port2];
+      // Set self as root object for connection with parser.
+      // setRootObject retains self.
+      [parserConnection setRootObject:self];
+      [self release];
+
+      // Ports switched here.
+      portArray = [NSArray arrayWithObjects:port2, port1, nil];
+
+      NSLog(@"PCProjectEditor: detaching parser thread...");
+
+      [NSThread detachNewThreadSelector:@selector(connectWithPorts:)
+	                       toTarget:[PCObjCParser class]
+	                     withObject:portArray];
+      // Wait for parser thread initialization (setServer:)
+      while (aParser == nil)
+	{
+	  [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+	                           beforeDate:[NSDate distantFuture]];
+	}
+    }
+    
+  return aParser;
+}
+
+- (oneway void)setServer:(id)anObject
+{
+  NSLog(@"PCProjectEditor: parser thread detached and ready to talk");
+  [anObject setProtocolForProxy:@protocol(CodeParser)];
+  aParser = [anObject retain];
 }
 
 @end

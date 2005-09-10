@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -26,7 +26,9 @@
 #ifndef _PCProjectWindow_h_
 #define _PCProjectWindow_h_ 
 
-#include "AppKit/AppKit.h"
+#include <AppKit/AppKit.h>
+#include "PCFileNameField.h"
+#include "PCFileNameIcon.h"
 
 @class PCProject;
 @class PCProjectBrowser;
@@ -46,8 +48,10 @@
   PCButton    *findButton;
   PCButton    *inspectorButton;
 
-  NSImageView *fileIcon;
-  NSTextField *fileIconTitle;
+  NSTextField *statusLine;
+
+  PCFileNameIcon  *fileIcon;
+  PCFileNameField *fileIconTitle;
 
   PCSplitView *h_split;
   PCSplitView *v_split;
@@ -58,6 +62,7 @@
   BOOL        _isToolbarVisible;
   BOOL        _hasCustomView;
   BOOL        _hasLoadedFilesView;
+  BOOL        _splitViewsRestored;
 }
 
 // ============================================================================
@@ -66,9 +71,9 @@
 
 // Will go into gorm file
 - (void)_initUI;
+
 - (id)initWithProject:(PCProject *)owner;
 - (void)setTitle;
-- (void)setFileIcon:(NSNotification *)notification;
 
 // ============================================================================
 // ==== Accessory methods
@@ -77,11 +82,7 @@
 - (BOOL)hasLoadedFilesView;
 - (NSView *)customContentView;
 - (void)setCustomContentView:(NSView *)subview;
-
-- (NSImage *)fileIconImage;
-- (void)setFileIconImage:(NSImage *)image;
-- (NSString *)fileIconTitle;
-- (void)setFileIconTitle:(NSString *)title;
+- (void)setStatusLineText:(NSString *)text;
 
 // ============================================================================
 // ==== Actions

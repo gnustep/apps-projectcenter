@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2002-2004 Free Software Foundation
 
@@ -38,6 +38,8 @@
 @class NSView;
 @class NSScrollView;
 
+@protocol CodeParser;
+
 @interface PCProjectEditor : NSObject
 {
   PCProject           *project;
@@ -46,6 +48,9 @@
 
   NSMutableDictionary *editorsDict;
   PCEditor            *activeEditor;
+  
+  id<CodeParser>      aParser;
+  NSConnection        *parserConnection;
 }
 
 // ===========================================================================
@@ -97,10 +102,18 @@
 - (void)editorDidBecomeActive:(NSNotification *)aNotif;
 - (void)editorDidResignActive:(NSNotification *)aNotif;
 
+// ===========================================================================
+// ==== Parser
+// ===========================================================================
+
+- (id<CodeParser>)parserForFile:(NSString *)path;
+- (oneway void)setServer:(id)anObject;
+
 @end
 
 extern NSString *PCEditorDidChangeFileNameNotification;
 
+extern NSString *PCEditorWillOpenNotification;
 extern NSString *PCEditorDidOpenNotification;
 extern NSString *PCEditorDidCloseNotification;
 

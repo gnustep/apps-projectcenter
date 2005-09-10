@@ -33,6 +33,9 @@ ProjectCenter_HEADER_FILES = \
   PCMakefileFactory.h \
   PCSplitView.h \
   PCButton.h \
+  PCFileNameField.h \
+  PCFileNameIcon.h \
+  PCObjCParser.h \
   \
   PCProjectManager.h \
   PCBuildPanel.h \
@@ -57,7 +60,8 @@ ProjectCenter_HEADER_FILES = \
   PCDefines.h \
   ProjectCenter.h \
   ProjectType.h \
-  Server.h
+  Server.h \
+  CodeParser.h
 
 #
 # Class files
@@ -72,6 +76,9 @@ ProjectCenter_OBJC_FILES = \
   PCMakefileFactory.m \
   PCSplitView.m \
   PCButton.m \
+  PCFileNameField.m \
+  PCFileNameIcon.m \
+  PCObjCParser.m \
   \
   PCProjectManager.m \
   PCBuildPanel.m \
@@ -97,6 +104,7 @@ ProjectCenter_OBJC_FILES = \
 # Resources
 #
 ProjectCenter_RESOURCE_FILES = \
+  Resources/ProjectWindow.gorm \
   Resources/NewSubproject.gorm \
   Resources/NewFile.gorm \
   Resources/ProjectInspector.gorm \

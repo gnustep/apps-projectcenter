@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -28,73 +28,10 @@
 #include "PCProject.h"
 #include "PCProjectBrowser.h"
 #include "PCProjectWindow.h"
+#include "PCFileNameField.h"
 #include "PCProjectInspector.h"
 
 #include "PCLogController.h"
-
-@implementation PCFileNameField
-
-- (void)setEditableField:(BOOL)yn
-{
-  NSRect frame = [self frame];
-
-  if ([self textShouldSetEditable] == NO)
-    {
-      return;
-    }
-
-  if (yn == YES)
-    {
-      frame.size.width += 4;
-      frame.origin.x -= 4;
-      [self setFrame:frame];
-      
-      [self setBordered:YES];
-      [self setBackgroundColor:[NSColor whiteColor]];
-      [self setEditable:YES];
-      [self setNeedsDisplay:YES];
-      [[self superview] setNeedsDisplay:YES];
-    }
-  else
-    {
-      frame.size.width -= 4;
-      frame.origin.x += 4;
-      [self setFrame:frame];
-
-      [self setBackgroundColor:[NSColor lightGrayColor]];
-      [self setBordered:NO];
-      [self setEditable:NO];
-      [self setNeedsDisplay:YES];
-      [[self superview] setNeedsDisplay:YES];
-    }
-}
-
-- (void)mouseDown:(NSEvent *)theEvent
-{
-  [self setEditableField:YES];
-  [super mouseDown:theEvent];
-}
-
-- (BOOL)textShouldSetEditable
-{
-  NSString *text = [self stringValue];
-
-  if ([text isEqualToString:@"No files selected"]
-      || [text isEqualToString:@"Multiple files selected"])
-    {
-      return NO;
-    }
-
-  return YES;
-}
-
-- (void)textDidEndEditing:(NSNotification *)aNotification
-{
-  [self setEditableField:NO];
-  [super textDidEndEditing:aNotification];
-}
-
-@end
 
 @implementation PCProjectInspector
 
@@ -296,11 +233,20 @@
   [self inspectorPopupDidChange:inspectorPopup];
 }
 
+// When user ends editing of text field with Tab or changing focus, entered
+// changes should be accepted. The exception is PCFileName fields. I'm not sure
+// if this is correct implementation (action is performed twice if user ends 
+// editing with Enter key)
 - (void)controlTextDidEndEditing:(NSNotification *)aNotif
 {
   NSControl  *anObject = [aNotif object];
   id         target = [anObject target];
   SEL        action = [anObject action];
+
+  if ([anObject isKindOfClass:[PCFileNameField class]])
+    {
+      return;
+    }
 
   if ([target respondsToSelector:action])
     {
@@ -388,9 +334,6 @@
 
   authorsItems = [projectDict objectForKey:PCAuthors];
   [authorsList reloadData];
-
-  // File Attributes view
-//  [self setFileNameAndIcon:[project projectBrowser]];
 }
 
 // ============================================================================
@@ -718,11 +661,9 @@
   [localizableButton setRefusesFirstResponder:YES];
   [publicHeaderButton setRefusesFirstResponder:YES];
 
-/*  [[NSNotificationCenter defaultCenter] 
-    addObserver:self
-       selector:@selector(browserDidSetPath:)
-           name:PCBrowserDidSetPathNotification
-         object:[project projectBrowser]];*/
+  [fileIconView setFileNameField:fileNameField];
+  [fileIconView setMultipleFilesSelectionText:@"Multiple files selected"];
+
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
        selector:@selector(panelDidResignKey:)
@@ -732,16 +673,22 @@
 
 - (void)beginFileRename
 {
+/*  if (fileName != nil)
+    {
+      [fileName release];
+    }
+
+  fileName = [[fileNameField stringValue] copy];
+  NSLog(@"fileName: %@", fileName);*/
+
   [fileNameField setEditableField:YES];
   [inspectorPanel makeFirstResponder:fileNameField];
 }
 
-//- (void)setFileNameAndIcon:(PCProjectBrowser *)browser
-- (void)setFileName:(NSString *)name andIcon:(NSImage *)icon
+// Delegate method of PCFileNameField class
+- (void)controlStringValueDidChange:(NSString *)aString
 {
-  NSArray   *publicHeaders = nil;
-
-//  NSLog(@"PCPI: setFANameAndIcon");
+  NSArray *publicHeaders = nil;
 
   // Initial default buttons state
   [localizableButton setEnabled:NO];
@@ -753,15 +700,10 @@
     {
       [fileName release];
     }
+  fileName = [aString copy];
 
-//  fileName = [[browser nameOfSelectedFile] retain];
-  fileName = [name copy];
-
-  if (fileName && icon)
+  if (fileName)
     {
-      [fileNameField setStringValue:fileName];
-      [fileIconView setImage:[[project projectWindow] fileIconImage]];
-
       if ([project canHavePublicHeaders] 
 	  && [[fileName pathExtension] isEqualToString:@"h"])
 	{
@@ -773,16 +715,17 @@
 	    }
 	}
     }
-/*  else if ([[browser selectedFiles] count] > 1)
+}
+
+// Delegate method of PCFileNameField class
+- (BOOL)textShouldSetEditable:(NSString *)text
+{
+  if ([[project rootCategories] containsObject:text])
     {
-      [fileNameField setStringValue:@"Multiple files selected"];
-      [fileIconView setImage:[[project projectWindow] fileIconImage]];
-    }*/
-  else
-    {
-      [fileNameField setStringValue:@"No files selected"];
-      [fileIconView setImage:[NSImage imageNamed:@"common_Unknown"]];
+      return NO;
     }
+
+  return YES;
 }
 
 - (void)fileNameDidChange:(id)sender
@@ -823,12 +766,6 @@
     {
       [project setLocalizableFile:fileName public:YES];
     }
-}
-
-// --- Notifications
-- (void)browserDidSetPath:(NSNotification *)aNotif
-{
-//  [self setFANameAndIcon:[aNotif object]];
 }
 
 - (void)panelDidResignKey:(NSNotification *)aNotif

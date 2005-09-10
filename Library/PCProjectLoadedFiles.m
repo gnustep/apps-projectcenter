@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -86,8 +86,8 @@
 
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
-	   selector:@selector(fileDidOpen:)
-	       name:PCEditorDidOpenNotification
+	   selector:@selector(fileWillOpen:)
+	       name:PCEditorWillOpenNotification
 	     object:nil];
 
       [[NSNotificationCenter defaultCenter]
@@ -228,7 +228,7 @@
 // ==== Notifications
 // ===========================================================================
 
-- (void)fileDidOpen:(NSNotification *)aNotif
+- (void)fileWillOpen:(NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
   NSString *filePath = nil;
@@ -255,7 +255,7 @@
   row = [[self editedFilesRep] indexOfObject:filePath];
   [filesList selectRow:row byExtendingSelection:NO];
   
-  PCLogInfo(self, @"fileDidOpen.END");
+  PCLogInfo(self, @"fileWillOpen.END");
 }
 
 - (void)fileDidClose:(NSNotification *)aNotif

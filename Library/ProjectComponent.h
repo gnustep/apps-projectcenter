@@ -3,7 +3,7 @@
  *
  * Project ProjectCenter
  *
- * Created with ProjectCenter - http://www.gnustep.org
+ * Created with ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
  *
  * $Id$
  */

@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -53,11 +53,11 @@ typedef enum _PCTabFlags {
 // ==== Class methods
 //=============================================================================
 
-+ (void)setTabBehaviour:(int)tabFlags;
-+ (int)tabBehaviour;
+//+ (void)setTabBehaviour:(int)tabFlags;
+//+ (int)tabBehaviour;
 
-+ (void)setShouldHighlight:(BOOL)yn;
-+ (BOOL)shouldHighlight;
+//+ (void)setShouldHighlight:(BOOL)yn;
+//+ (BOOL)shouldHighlight;
 
 //=============================================================================
 // ==== Init
@@ -71,7 +71,7 @@ typedef enum _PCTabFlags {
 //=============================================================================
 
 - (void)setEditor:(PCEditor *)anEditor;
-- (void)setString:(NSString *)aString;
+//- (void)setString:(NSString *)aString;
 
 //=============================================================================
 // ==== Text handling
@@ -79,12 +79,12 @@ typedef enum _PCTabFlags {
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent;
 
-- (void)insertText:(id)aString;
+//- (void)insertText:(id)aString;
 
-- (void)highlightText;
-- (void)highlightTextInRange:(NSRange)range;
+//- (void)highlightText;
+//- (void)highlightTextInRange:(NSRange)range;
 
-- (void)keyDown: (NSEvent *)anEvent;
+//- (void)keyDown: (NSEvent *)anEvent;
 
 @end
 

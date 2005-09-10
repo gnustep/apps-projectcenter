@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -221,6 +221,10 @@ NSString
                   forKey:@"ShowToolbar"];
     }
 
+  // ProjectBrowser
+  [windows setObject:NSStringFromRect([[projectBrowser view] frame])
+              forKey:@"ProjectBrowser"];
+
   // Write to file and exit if prefernces wasn't set to save panels
   if (![[ud objectForKey:RememberWindows] isEqualToString:@"YES"])
     {
@@ -404,7 +408,7 @@ NSString
 {
   AUTORELEASE(projectName);
   projectName = [aName copy];
-  [projectWindow setFileIconTitle:projectName];
+//  [projectWindow setFileIconTitle:projectName];
 }
 
 - (NSString *)projectName
@@ -1337,8 +1341,10 @@ NSString
 {
   NSString *key = [self keyForRootCategoryInCategoryPath:categoryPath];
   NSArray  *pathArray = nil;
+  NSString *listEntry = nil;
 
   pathArray = [categoryPath componentsSeparatedByString:@"/"];
+  listEntry = [pathArray lastObject];
 
 /*  PCLogInfo(self, @"{%@}{contentAtCategoryPath:} %@",
 	    projectName, categoryPath);*/
@@ -1346,6 +1352,7 @@ NSString
   // Click on /Category
   if ([pathArray count] == 2)
     {
+      NSLog(@"Click on Category");
       if ([projectManager activeProject] != self)
 	{
 	  [projectManager setActiveProject:self];
@@ -1360,6 +1367,15 @@ NSString
 	  [projectManager setActiveProject:self];
 	}
       return rootCategories;
+    }
+  else if ([[listEntry pathExtension] isEqualToString:@"m"]
+    || [[listEntry pathExtension] isEqualToString:@"h"])
+    {// Class and header files (TODO: test subprojects)
+      return [[projectEditor activeEditor] classNames];
+    }
+  else if ([[listEntry substringToIndex:1] isEqualToString:@"@"])
+    {// Class name (TODO: test subprojects)
+      return [[projectEditor activeEditor] methodNamesForClass:listEntry];
     }
   else if ([key isEqualToString:PCSubprojects] && [pathArray count] > 2)
     { // Click on "/Subprojects/Name+"
@@ -1377,11 +1393,11 @@ NSString
 
       return [_subproject contentAtCategoryPath:spCategoryPath];
     }
-  else if ([[[categoryPath lastPathComponent] pathExtension] isEqualToString:@"m"]
+/*  else if ([[[categoryPath lastPathComponent] pathExtension] isEqualToString:@"m"]
 	   || [[[categoryPath lastPathComponent] pathExtension] isEqualToString:@"h"])
     { // ".m" file
       return [[projectEditor activeEditor] listOfClasses];
-    }
+    }*/
 
   return [projectDict objectForKey:key];
 }
@@ -1412,11 +1428,16 @@ NSString
     }
 
   // Class and header files
-/*  if ([[listEntry pathExtension] isEqualToString:@"m"]
+  if ([[listEntry pathExtension] isEqualToString:@"m"]
     || [[listEntry pathExtension] isEqualToString:@"h"])
     {
       return YES;
-    }*/
+    }
+    
+  if ([[listEntry substringToIndex:1] isEqualToString:@"@"])
+    {
+      return YES;
+    }
 
   // TODO: Libraries
 //  if ([[projectBrowser nameOfSelectedCategory] isEqualToString:@"Libraries"])

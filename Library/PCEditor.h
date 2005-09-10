@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2002-2004 Free Software Foundation
 
@@ -30,6 +30,9 @@
 
 @class PCProjectEditor;
 @class PCEditorView;
+@class PCObjCParser;
+
+@protocol CodeParser;
 
 @interface PCEditor : NSObject
 {
@@ -47,6 +50,10 @@
   BOOL            _isEdited;
   BOOL            _isWindowed;
   BOOL            _isExternal;
+
+  NSMutableArray  *_parserObjects;
+
+  id<CodeParser>  aParser;
 }
 
 // ===========================================================================
@@ -107,10 +114,14 @@
 // ==== Parser and scrolling
 // ===========================================================================
 
-- (NSArray *)listOfClasses;
-- (NSArray *)listOfMethodsOfClass:(NSString *)className;
-- (NSArray *)listOfDefines;
-- (NSArray *)listOfVars;
+- (NSArray *)classNames;
+- (NSArray *)methodNamesForClass:(NSString *)class;
+
+- (void)addClassName:(NSString *)class withRange:(NSRange)range;
+- (void)addMethodWithDefinition:(NSString *)method 
+                       andRange:(NSRange)range
+		       forClass:(NSString *)class;
+
 - (void)scrollToClassName:(NSString *)className;
 - (void)scrollToMethodName:(NSString *)className;
 - (void)scrollToLineNumber:(int)line;
@@ -124,13 +135,6 @@
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr;
 
 @end
-
-/*@interface NSObject (PCEditorDelegate)
-
-- (void)editorDidClose:(id)sender;
-- (void)setBrowserPath:(NSString *)file category:(NSString *)category;
-
-@end*/
 
 #endif // _PCEDITOR_H_
 

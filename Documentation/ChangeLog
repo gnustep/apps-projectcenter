@@ -1,3 +1,30 @@
+2005-09-11 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProject.m: (saveProjectWindowsAndPanels): save ProjectBrowser
+	frame.
+
+	* Library/PCProjectWindow.m: gormified.
+	(_initUI): Adopt to grom model. Make self as delegate for h_split.
+	(splitView:resizeSubviewsWithOldSize:) implemented h_split delegate method.
+	Used for restoring saved frame of ProjectBrowser. In general, used to 
+	restore subviews size of horisontal and verstical split views from last
+	session. "Remember project windows and panels in PC.project" task from
+	TODO file is considered fully comleted now. Use this scheme for other 
+	split views in PC.
+
+	* Library/PCFileNameIcon.[hm]: new files. I'm not sure yet if it should
+	be separate class for file icons.
+
+2005-06-20 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFileNameField.m: new file.
+	
+	* Library/PCProjectInspector.m: moved class PCFileNameField to separate
+	file.
+	
+	* Library/PCProjectWindow.m: 
+	(_initUI)fileIconTitle now is PCFileNameField instead of NSTextField.
+	
 2005-06-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* PCAppController.m:

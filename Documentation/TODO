@@ -4,30 +4,35 @@ TODO
 This is the GNUstep ProjectCenter TODO list. "+" means that this task
 is done. Feel free to propose changes to this list or make suggestions!
 
-ProjectCenter 0.4                                               Owner
------------------                                               ------
+ProjectCenter 0.4                                              Owner
+-----------------                                              ------
 
-+ Review and cleanup of PC project bundles/templates            stoyan
-+ Finish Project Inspector                                      stoyan
-+ Inspector UI using Gorm                                       stoyan
-+ File creation (File->New in project) cleanup and finishing    stoyan
-+ Initial suprojects support                                    stoyan
-+ Finish support of external editors                            stoyan
-+ Preferences enhancements and UI using Gorm                    stoyan
-+ Remember project windows and panels in PC.project             stoyan
+- Review and cleanup of PC project bundles/templates	[done!]
+- Finish Project Inspector						[done!]
+- Inspector UI using Gorm						[done!]
+- File creation (File->New in project) cleanup and finishing	[done!]
+- Initial suprojects support					[done!]
+- Finish support of external editors			[done!]
+- Preferences enhancements and UI using Gorm		[done!]
+- Remember project windows and panels in PC.project	[done!]
 
 ProjectCenter 0.5
 -----------------
 
-- Add more project types (Framework,Resource Set,Palette)       stoyan
-- Implement root build directory handling			stoyan
-- Localization support for projects                             stoyan
-- Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
-- Editor code parser (get it from CodeEditor?)			stoyan
-- Editor syntax highlighting				        stoyan
-- Editor indentation						stoyan
-- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
-- Add pending adding/removal of files                           stoyan
+- Create ProjectWindow GORM file				[done!]
+- Add "Framework" project type					[done!]
+- Add "Resource Set" project type				[done!]
+- Add "Palette" project type					stoyan
+- Add "Component" project type					stoyan
+- Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
+- Editor code parser (get it from CodeEditor?)		stoyan
+- Project Browser should show classes, #define's an so on	stoyan
+- Implement Editor indentation					stoyan
+- Implement Editor syntax highlighting			stoyan
+- Implement root build directory handling		stoyan
+- ProjectBuilder enhancements (warnings,errors,options etc.)	stoyan
+- Localization support for projects			stoyan
+- Add pending adding/removal of files			stoyan
 
 ProjectCenter 0.6
 -----------------

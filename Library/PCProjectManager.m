@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -537,6 +537,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       projectTypeName = [projectFile objectForKey:PCProjectType];
       projectClassName = [projectTypes objectForKey:projectTypeName];
+      if (projectClassName == nil)
+	{
+	  NSRunAlertPanel(@"Loading Project Failed!",
+			  @"Project type '%@' is not supported!",
+			  @"OK",nil,nil,projectTypeName); 
+	}
     }
 
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];

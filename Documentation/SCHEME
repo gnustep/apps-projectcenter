@@ -39,9 +39,8 @@ PCMenuController/      |   ||
 ------------------------------
 Other (controls, tools, etc.):
 ------------------------------
-PCButton
-PCSplitView
-PCOutputView (Should be implemented. Used by e.g. Project Builder)
+PCButton (ProjectWindow, ProjectBuild, ProjectLaunch)
+PCSplitView (ProjectWindow, ProjectBuild, ProjectLaunch)
 PCBundleLoader (Used in ProjectCenter application)
 PCMakefileFactory (Used in PC*Project bundles)
 PCServer (don't used)

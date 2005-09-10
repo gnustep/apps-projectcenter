@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -29,8 +29,8 @@
 
 @implementation PCEditorView
 
-static BOOL shouldHighlight = NO;
-static int  _tabFlags       = PCTab4Sp;
+//static BOOL shouldHighlight = NO;
+//static int  _tabFlags       = PCTab4Sp;
 
 - (BOOL)becomeFirstResponder
 {
@@ -50,7 +50,7 @@ static int  _tabFlags       = PCTab4Sp;
 //=============================================================================
 // ==== Class methods
 //=============================================================================
-
+/*
 + (void)setTabBehaviour:(int)tabFlags
 {
     _tabFlags = tabFlags;
@@ -70,52 +70,20 @@ static int  _tabFlags       = PCTab4Sp;
 {
     return shouldHighlight;
 }
-
+*/
 //=============================================================================
 // ==== Init
 //=============================================================================
 
 - (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer*)tc
 {
-  if ((self = [super initWithFrame:frameRect textContainer:tc])) 
-  {
-    shouldHighlight = NO;
+  self = [super initWithFrame:frameRect textContainer:tc];
 
-    _keywords = [[NSArray alloc] initWithObjects:@"@class",
-                                                 @"@selector",
-						 @"@interface",
-						 @"@implementation",
-						 @"@end",
-						 @"@protocol",
-						 @"#import",
-						 @"#include",
-						 @"#define",
-				                 @"#ifdef",
-						 @"#ifndef",
-						 @"#if defined",
-						 @"#else",
-						 @"#elif",
-						 @"#endif",
-						 @"#pragma",
-						 @"#warning",
-						 nil];
-#ifndef GNUSTEP_BASE_VERSION
-      _textStorage = [self textStorage];
-#endif
-
-  }
   return self;
 }
 
 - (void)dealloc
 {
-  if (scanner) 
-    {
-      [scanner release];
-    }
-
-  [_keywords release];
-
   [super dealloc];
 }
 
@@ -128,24 +96,11 @@ static int  _tabFlags       = PCTab4Sp;
   editor = anEditor;
 }
 
-- (void)setString:(NSString *)aString
-{
-  [scanner autorelease];
-  scanner = [[NSScanner alloc] initWithString:aString];
-
-  [super setString:aString];
-
-  if( shouldHighlight )
-    {
-      [self highlightText];
-    }
-}
-
 //=============================================================================
 // ==== Text handling
 //=============================================================================
 
-- (void)insertText:(id)aString
+/*- (void)insertText:(id)aString
 {
   NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
 
@@ -156,26 +111,25 @@ static int  _tabFlags       = PCTab4Sp;
       [[self textStorage] invalidateAttributesInRange:txtRange];
       [self highlightTextInRange:txtRange];
     }
-}
+}*/
 
-- (void)highlightText
+/*- (void)highlightText
 {
   NSRange txtRange = NSMakeRange(0, [[self textStorage] length]);
 
   [self highlightTextInRange:txtRange];
-}
+}*/
 
-- (void)highlightTextInRange:(NSRange)txtRange
+/*- (void)highlightTextInRange:(NSRange)txtRange
 {
   //NSDictionary *aDict;
   //NSArray      *keywords;
 
-/*
-  aDict = [NSDictionary dictionaryWithObjectsAndKeys:
-			  editorFont, NSFontAttributeName,
-			@"UnknownCodeType", @"PCCodeTypeAttributeName",
-			nil];
-*/
+
+//  aDict = [NSDictionary dictionaryWithObjectsAndKeys:
+//			  editorFont, NSFontAttributeName,
+//			@"UnknownCodeType", @"PCCodeTypeAttributeName",
+//			nil];
 
   [_textStorage beginEditing];  
   [_textStorage setAttributes:nil range:txtRange];
@@ -188,9 +142,7 @@ static int  _tabFlags       = PCTab4Sp;
   [self colouriseComments];
   [self colouriseCPPComments];
 
-  /*
-   * BIG HACK!
-   */
+// * BIG HACK!
   
   NS_DURING
     [_textStorage endEditing];
@@ -199,46 +151,45 @@ static int  _tabFlags       = PCTab4Sp;
   NS_ENDHANDLER
 
   [self setNeedsDisplay:YES];
-}
+}*/
 
-- (void)keyDown:(NSEvent *)anEvent
+/*- (void)keyDown:(NSEvent *)anEvent
 {
-    /*
-    NSString *chars = [anEvent charactersIgnoringModifiers];
-    int modifiers = [anEvent modifierFlags];
+    
+//    NSString *chars = [anEvent charactersIgnoringModifiers];
+//    int modifiers = [anEvent modifierFlags];
+//
+//    if(([chars lossyCString][0] == 's') && (modifiers & NSCommandKeyMask))
+//    {
+//	[editor saveFile];
+//	return;
+//    }
 
-    if(([chars lossyCString][0] == 's') && (modifiers & NSCommandKeyMask))
+  if ([[anEvent characters] isEqualToString:@"\t"])
     {
-	[editor saveFile];
-	return;
-    }
-    */
-
-    if( [[anEvent characters] isEqualToString:@"\t"] )
-    {
-        switch( _tabFlags )
+      switch (_tabFlags)
 	{
-	    case PCTabTab:
-	        [self insertText: @"\t"];
-	        break;
-	    case PCTab2Sp:
-	        [self insertText: @"  "];
-	        break;
-	    case PCTab4Sp:
-	        [self insertText: @"    "];
-	        break;
-	    case PCTab8Sp:
-	        [self insertText: @"        "];
-	        break;
-            default:
-	        break;
+	case PCTabTab:
+	  [self insertText: @"\t"];
+	  break;
+	case PCTab2Sp:
+	  [self insertText: @"  "];
+	  break;
+	case PCTab4Sp:
+	  [self insertText: @"    "];
+	  break;
+	case PCTab8Sp:
+	  [self insertText: @"        "];
+	  break;
+	default:
+	  break;
 	}
     }
-    else
+  else
     {
-	[super keyDown:anEvent];
+      [super keyDown:anEvent];
     }
-}
+}*/
 
 @end
 

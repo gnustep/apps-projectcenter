@@ -2,23 +2,6 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "capitalizeWord:",
-	    "cut:",
-	    "deleteToMark:",
-	    "indent:",
-	    "moveBackwardAndModifySelection:",
-	    "moveToBeginningOfLine:",
-	    "moveWordBackwardAndModifySelection:",
-	    "orderFront:",
-	    "pageUp:",
-	    "performZoom:",
-	    "saveDocumentAs:",
-	    "selectLine:",
-	    "showGuessPanel:",
-	    "takeFloatValueFrom:",
-	    "toggleRuler:",
-	    "unhide:",
-	    "zoom:",
 	    "setBuildTool:"
 	);
 	Super = NSObject;

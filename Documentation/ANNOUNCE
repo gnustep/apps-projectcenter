@@ -18,25 +18,14 @@ What is ProjectCenter?
 Noteworthy changes in version `0.4.1'.
 ======================================
 
-   * Fixes in file and subprojects handling.
-
-   * Improvements and fixes in file selection dialog.
-
-   * Rewritten toolips code for buttons. Made it NSView compatible
-     (ready for incorporation into NSView code).
-
-   * All .gorm files updated with latest GORM.
-
-   * Added support for document-based applications (added "Document Types" 
-     panel into Project Inspector).
-
+   * 
 
 How can I get support for this software?
 ========================================
 
    You may wish to use the GNUstep discussion mailing list for general
    questions and discussion.  Look at the GNUstep Web Pages for more
-   information regarding GNUstep resources <http://www.gnustep.org/>
+   information regarding GNUstep resources <http://www.gnustep.org>
 
 Where can you get it?  How can you compile it?
 ==============================================
@@ -55,4 +44,3 @@ Obtaining GNU Software
    Check out the GNU web site. (`http://www.gnu.org/')
 
    Check out the GNUstep web site. (`http://www.gnustep.org/')
-

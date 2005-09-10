@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -65,140 +65,47 @@
 
 - (void)_initUI
 {
-  NSView       *_c_view;
-  unsigned int style = NSTitledWindowMask 
-                     | NSClosableWindowMask
-		     | NSMiniaturizableWindowMask
-		     | NSResizableWindowMask;
-  NSRect       rect;
-  NSRect       tmpRect;
-  NSView       *browserView = nil;
+  NSRect rect;
+  NSView *browserView = nil;
 
-  /*
-   * Project Window
-   */
-  rect = NSMakeRect (100,100,560,448);
-  projectWindow = [[NSWindow alloc] initWithContentRect: rect
-                                              styleMask: style
-                                                backing: NSBackingStoreBuffered
-                                                  defer: YES];
-  [projectWindow setDelegate: self];
-  [projectWindow setMinSize: NSMakeSize (560,290)];
-  [projectWindow setMiniwindowImage: IMAGE(@"FileProject")];
-  _c_view = [projectWindow contentView];
+  if (projectWindow != nil)
+    {
+      return;
+    }
 
-  /*
-   * Toolbar
-   */
-  tmpRect = rect;
-  rect.size.width -= 16;
-  rect.size.height = 48;
-  rect.origin.x = 8;
-  rect.origin.y = 391;
-  toolbarView = [[NSBox alloc] initWithFrame:rect];
-  [toolbarView setTitlePosition:NSNoTitle];
-  [toolbarView setBorderType:NSNoBorder];
-  [toolbarView setAutoresizingMask:NSViewWidthSizable | NSViewMinYMargin];
-  [toolbarView setContentViewMargins:NSMakeSize(0.0,0.0)];
-  [_c_view addSubview:toolbarView];
-  RELEASE(toolbarView);
-  
-  buildButton = [[PCButton alloc] initWithFrame:NSMakeRect(0,5,43,43)];
-  [buildButton setRefusesFirstResponder:YES];
+  if ([NSBundle loadNibNamed:@"ProjectWindow" owner:self] == NO)
+    {
+      PCLogError(self, @"error loading ProjectWindow NIB file!");
+      return;
+    }
+
   [buildButton setToolTip:@"Build"];
-  [buildButton setTitle:@"Build"];
-  [buildButton setImage:IMAGE(@"Build")];
-  [buildButton setTarget:self];
-  [buildButton setAction:@selector(showProjectBuild:)];
-  [buildButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [buildButton setButtonType:NSMomentaryPushButton];
-  [toolbarView addSubview:buildButton];
-  RELEASE(buildButton);
-  
-  launchButton = [[PCButton alloc] initWithFrame:NSMakeRect(44,5,43,43)];
-  [launchButton setRefusesFirstResponder:YES];
+//  [buildButton setImage:IMAGE(@"Build")];
+
   [launchButton setToolTip:@"Launch/Debug"];
-  [launchButton setTitle:@"Launch/Debug"];
-  [launchButton setImage:IMAGE(@"Run")];
-  [launchButton setTarget:self];
-  [launchButton setAction:@selector(showProjectLaunch:)];
-  [launchButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [launchButton setButtonType:NSMomentaryPushButton];
-  [toolbarView addSubview:launchButton];
-  RELEASE (launchButton);
-  
+//  [launchButton setImage:IMAGE(@"Run")];
   if (![project isExecutable])
     {
       [launchButton setEnabled:NO];
     }
-  
-  loadedFilesButton = [[PCButton alloc] initWithFrame:NSMakeRect(88,5,43,43)];
-  [loadedFilesButton setRefusesFirstResponder:YES];
+
   [loadedFilesButton setToolTip:@"Loaded Files"];
-  [loadedFilesButton setTitle:@"Loaded Files"];
-  [loadedFilesButton setImage:IMAGE(@"Files")];
-  [loadedFilesButton setTarget:self];
-  [loadedFilesButton setAction:@selector(showProjectLoadedFiles:)];
-  [loadedFilesButton 
-    setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [loadedFilesButton setButtonType:NSMomentaryPushButton];
-  [toolbarView addSubview:loadedFilesButton];
-  RELEASE(loadedFilesButton);
-  
+//  [loadedFilesButton setImage:IMAGE(@"Files")];
   if ([self hasLoadedFilesView])
     {
       [loadedFilesButton setEnabled:NO];
     }
 
-  findButton = [[PCButton alloc] initWithFrame:NSMakeRect(132,5,43,43)];
-  [findButton setRefusesFirstResponder:YES];
   [findButton setToolTip:@"Find"];
-  [findButton setTitle:@"Find"];
-  [findButton setImage:IMAGE(@"Find")];
-  [findButton setTarget:project];
-  [findButton setAction:@selector(showFindView:)];
-  [findButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [findButton setButtonType:NSMomentaryPushButton];
-  [toolbarView addSubview:findButton];
-  RELEASE(findButton);
-  
-  inspectorButton = [[PCButton alloc] initWithFrame:NSMakeRect(176,5,43,43)];
-  [inspectorButton setRefusesFirstResponder:YES];
+//  [findButton setImage:IMAGE(@"Find")];
+
   [inspectorButton setToolTip:@"Inspector"];
-  [inspectorButton setTitle:@"Inspector"];
-  [inspectorButton setImage:IMAGE(@"Inspector")];
-  [inspectorButton setTarget:[project projectManager]];
-  [inspectorButton setAction:@selector(showProjectInspector:)];
-  [inspectorButton setAutoresizingMask:(NSViewMaxXMargin | NSViewMinYMargin)];
-  [inspectorButton setButtonType:NSMomentaryPushButton];
-  [toolbarView addSubview:inspectorButton];
-  RELEASE(inspectorButton);
-  
+//  [inspectorButton setImage:IMAGE(@"Inspector")];
 
-  /*
-   * File icon and title
-   */
-  fileIcon = [[NSImageView alloc] initWithFrame:NSMakeRect (496,0,48,48)];
-  [fileIcon setRefusesFirstResponder:YES];
-  [fileIcon setEditable:NO];
-  [fileIcon setAutoresizingMask:(NSViewMinXMargin | NSViewMinYMargin)];
-  [fileIcon setImage:IMAGE(@"projectSuitcase")];
-  [toolbarView addSubview:fileIcon];
-  RELEASE(fileIcon);
+  [fileIcon setFileNameField:fileIconTitle];
 
-  fileIconTitle = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (308,4,180,21)];
-  [fileIconTitle setAutoresizingMask: (NSViewMinXMargin 
-				       | NSViewMinYMargin 
-				       | NSViewWidthSizable)];
-  [fileIconTitle setEditable:NO];
-  [fileIconTitle setSelectable:NO];
-  [fileIconTitle setDrawsBackground: NO];
-  [fileIconTitle setAlignment:NSRightTextAlignment];
-  [fileIconTitle setBezeled:NO];
-  [toolbarView addSubview:fileIconTitle];
-  RELEASE(fileIconTitle);
- 
+  [statusLine setStringValue:@""];
+    
   /*
    * Hosrizontal split view
    */
@@ -207,8 +114,7 @@
   rect.size.width -= 16;
   rect.origin.x += 8;
   rect.origin.y = -2;
-  h_split = [[PCSplitView alloc] initWithFrame:rect];
-  [h_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [h_split setDelegate:self];
 
   /*
    * Vertical split view
@@ -218,13 +124,6 @@
     {
       rect.size.height = 130;
     }
-/*  else
-    {
-      rect.size.height -= 64;
-      rect.size.width -= 16;
-      rect.origin.x += 8;
-      rect.origin.y = 0;
-    }*/
   v_split = [[PCSplitView alloc] initWithFrame:rect];
   [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [v_split setVertical:YES];
@@ -254,10 +153,6 @@
     {
       [self _createCustomView];
     }
-
-  [_c_view addSubview:h_split];
-  RELEASE(h_split);
-
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -269,8 +164,10 @@
 
       project = owner;
       _isToolbarVisible = YES;
+      _splitViewsRestored = NO;
 
       [self _initUI];
+      [self setTitle];
       
       // Window
       [projectWindow setFrameAutosaveName: @"ProjectWindow"];
@@ -293,15 +190,6 @@
 	{
 	  [self toggleToolbar];
 	}
-
-      [self setTitle];
-
-      // Browser
-      [[NSNotificationCenter defaultCenter] 
-	addObserver:self
-           selector:@selector (setFileIcon:)
-               name:PCBrowserDidSetPathNotification
-             object:[project projectBrowser]];
 
       // Project dictionary
       [[NSNotificationCenter defaultCenter] 
@@ -355,144 +243,6 @@
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
-
-- (NSImage *)fileIconImage
-{
-  return [fileIcon image];
-}
-
-- (void)setFileIconImage:(NSImage *)image 
-{
-  [fileIcon setImage:image];
-}
-
-- (void)setFileIcon:(NSNotification *)notification
-{
-  id       object = [notification object];
-  NSString *categoryName = nil;
-  NSString *fileName = nil;
-  NSString *fileExtension = nil;
-  NSString *iconName = nil;
-  NSImage  *icon = nil;
-  PCProjectInspector *inspector = [[project projectManager] projectInspector];
-
-  fileName = [object nameOfSelectedFile];
-  if (fileName)
-    {
-      fileExtension = [fileName pathExtension];
-    }
-  else
-    {
-      categoryName = [object nameOfSelectedCategory];
-    }
-
-  PCLogError(self,@"{setFileIcon} file %@ category %@", 
-	    fileName, categoryName);
-  
-  // Should be provided by PC*Proj bundles
-  if ([[object selectedFiles] count] > 1)
-    {
-      iconName = [[NSString alloc] initWithString:@"MultiFiles"];
-    }
-  else if (!categoryName && !fileName) // Nothing selected
-    {
-      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Classes"])
-    {
-      iconName = [[NSString alloc] initWithString:@"classSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Headers"])
-    {
-      iconName = [[NSString alloc] initWithString:@"headerSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Other Sources"])
-    {
-      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Interfaces"])
-    {
-      iconName = [[NSString alloc] initWithString:@"nibSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Images"])
-    {
-      iconName = [[NSString alloc] initWithString:@"iconSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Other Resources"])
-    {
-      iconName = [[NSString alloc] initWithString:@"otherSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Subprojects"])
-    {
-      iconName = [[NSString alloc] initWithString:@"subprojectSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Documentation"])
-    {
-      iconName = [[NSString alloc] initWithString:@"helpSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Supporting Files"])
-    {
-      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Libraries"])
-    {
-      iconName = [[NSString alloc] initWithString:@"librarySuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Non Project Files"])
-    {
-      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
-    }
-    
-  if (iconName != nil)
-    {
-      icon = IMAGE(iconName);
-      RELEASE(iconName);
-    }
-  else if (fileExtension != nil && ![fileExtension isEqualToString:@""])
-    {
-      icon = [[NSWorkspace sharedWorkspace] iconForFile:fileName];
-    }
-
-  // Set icon to Project Window and Project Inspector
-  if (icon != nil)
-    {
-      [fileIcon setImage:icon];
-    }
-
-  // Set title
-  if ([[object selectedFiles] count] > 1)
-    {
-      [fileIconTitle setStringValue:
-	[NSString stringWithFormat: 
-	@"%i files", [[object selectedFiles] count]]];
-      [inspector setFileName:@"Multiple" andIcon:icon];
-    }
-  else if (fileName)
-    {
-      [fileIconTitle setStringValue:fileName];
-      [inspector setFileName:fileName andIcon:icon];
-    }
-  else if (categoryName)
-    {
-      [fileIconTitle setStringValue:categoryName];
-      [inspector setFileName:nil andIcon:nil];
-    }
-  else
-    {
-      [fileIconTitle setStringValue:[project projectName]];
-      [inspector setFileName:nil andIcon:nil];
-    }
-}
-
-- (NSString *)fileIconTitle
-{
-  return [fileIconTitle stringValue];
-}
-
-- (void)setFileIconTitle:(NSString *)title 
-{
-  [fileIconTitle setStringValue:title];
-}
 
 - (BOOL)hasCustomView
 {
@@ -549,36 +299,14 @@
   [customView display];
 }
 
+- (void)setStatusLineText:(NSString *)text
+{
+  [statusLine setStringValue:text];
+}
+
 // ============================================================================
 // ==== Actions
 // ============================================================================
-
-- (void)showProjectLoadedFiles:(id)sender
-{
-  NSPanel       *panel = [[project projectManager] loadedFilesPanel];
-  NSScrollView  *componentView = [[project projectLoadedFiles] componentView];
-      
-//  PCLogInfo(self, @"showProjectLoadedFiles");
-
-  if ([self hasLoadedFilesView])
-    {
-      if (panel && [panel isVisible])
-	{
-	  [panel close];
-	}
-
-      [componentView setBorderType:NSBezelBorder];
-      [componentView setFrame:NSMakeRect(0,0,128,130)];
-      [v_split addSubview:[[project projectLoadedFiles] componentView]];
-      [v_split adjustSubviews];
-    }
-  else
-    {
-      [componentView setBorderType:NSNoBorder];
-      [panel orderFront:nil];
-      [v_split adjustSubviews];
-    }
-}
 
 - (void)showProjectBuild:(id)sender
 {
@@ -631,6 +359,38 @@
     }
 }
 
+- (void)showProjectLoadedFiles:(id)sender
+{
+  NSPanel       *panel = [[project projectManager] loadedFilesPanel];
+  NSScrollView  *componentView = [[project projectLoadedFiles] componentView];
+      
+//  PCLogInfo(self, @"showProjectLoadedFiles");
+
+  if ([self hasLoadedFilesView])
+    {
+      if (panel && [panel isVisible])
+	{
+	  [panel close];
+	}
+
+      [componentView setBorderType:NSBezelBorder];
+      [componentView setFrame:NSMakeRect(0,0,128,130)];
+      [v_split addSubview:[[project projectLoadedFiles] componentView]];
+      [v_split adjustSubviews];
+    }
+  else
+    {
+      [componentView setBorderType:NSNoBorder];
+      [panel orderFront:nil];
+      [v_split adjustSubviews];
+    }
+}
+
+- (void)showProjectInspector:(id)sender
+{
+  [[project projectManager] showProjectInspector:sender];
+}
+
 - (void)showProjectEditor:(id)sender
 {
   [self setCustomContentView:[[project projectEditor] componentView]];
@@ -646,7 +406,6 @@
 {
   NSRect rect;
   NSView *cView = [projectWindow contentView];
-      
 
   if (_isToolbarVisible)
     {
@@ -952,6 +711,74 @@
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
+}
+
+// ============================================================================
+// ==== SplitView delegate
+// ============================================================================
+
+- (void)         splitView:(NSSplitView *)sender
+ resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+  NSDictionary *projectDict = [project projectDict];
+  NSDictionary *windowsDict = [projectDict objectForKey:@"PC_WINDOWS"];
+  NSSize       hSplitSize = [sender frame].size;
+  NSRect       browserRect;
+  NSRect       vSplitRect;
+  NSRect       boxRect;
+
+  // Use saved frame of ProjectBrowser only first time. Every time window is
+  // resized use new size of subviews.
+  if (_splitViewsRestored)
+    {
+      browserRect = [[[project projectBrowser] view] frame];
+    }
+  else
+    {
+      browserRect = 
+	NSRectFromString([windowsDict objectForKey:@"ProjectBrowser"]);
+    }
+
+  // v_split resize
+  vSplitRect = browserRect;
+  if (vSplitRect.size.height > 0)
+    {
+      vSplitRect.size.width = hSplitSize.width;
+    }
+  else
+    {
+      vSplitRect.size.width = hSplitSize.width;
+      vSplitRect.size.height = 100;
+      vSplitRect.origin.x = 0;
+      vSplitRect.origin.y = 0;
+    }
+  NSLog(@"v_split %@", NSStringFromRect(vSplitRect));
+  [v_split setFrame:vSplitRect];
+
+  // v_split subviews resize
+  if ([self hasLoadedFilesView])
+    {
+      // browser
+      NSLog(@"browser %@", NSStringFromRect(browserRect));
+      [[[project projectBrowser] view] setFrame:browserRect];
+
+      // loaded files
+      boxRect.origin.x = browserRect.size.width + [v_split dividerThickness];
+      boxRect.origin.y = 0;
+      boxRect.size.width = [v_split frame].size.width - boxRect.origin.x;
+      boxRect.size.height = [v_split frame].size.height;
+      NSLog(@"loadedFiles %@", NSStringFromRect(boxRect));
+      [[[project projectLoadedFiles] componentView] setFrame:boxRect];
+    }
+
+  // editor
+  boxRect.origin.x = 0;
+  boxRect.origin.y = browserRect.size.height + [sender dividerThickness];
+  boxRect.size.width = hSplitSize.width;
+  boxRect.size.height = hSplitSize.height - boxRect.origin.y;
+  [customView setFrame:boxRect];
+
+  _splitViewsRestored = YES;
 }
 
 @end

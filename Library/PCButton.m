@@ -1,5 +1,5 @@
 /*
-  GNUstep ProjectCenter - http://www.gnustep.org
+  GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
  
   Copyright (C) 2003-2004 Free Software Foundation
  
@@ -34,12 +34,15 @@
 // ==== Main
 // ============================================================================
 
-- (id)initWithFrame:(NSRect)frameRect
+//- (id)initWithFrame:(NSRect)frameRect
+- (id)initWithCoder:(NSCoder *)coder
 {
-  self = [super initWithFrame:frameRect];
+//  self = [super initWithFrame:frameRect];
+  self = [super initWithCoder:coder];
   [_cell setGradientType:NSGradientConvexWeak];
   [self setImagePosition:NSImageOnly];
   [self setFont:[NSFont systemFontOfSize:10.0]];
+  [self setRefusesFirstResponder:YES];
 
   _hasTooltips = NO;
   ttTimer = nil;
@@ -264,6 +267,10 @@
   NSPoint origin;
 
 //  NSLog(@"mouseMoved");
+  if (ttWindow == nil)
+    {
+      return;
+    }
   mouseLocation = [NSEvent mouseLocation];
   
   origin = NSMakePoint(mouseLocation.x + 8, 

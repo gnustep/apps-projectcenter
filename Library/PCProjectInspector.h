@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -28,15 +28,7 @@
 
 @class PCProjectManager;
 @class PCProjectBrowser;
-
-@interface PCFileNameField : NSTextField
-{
-}
-
-- (void)setEditableField:(BOOL)yn;
-- (BOOL)textShouldSetEditable;
-
-@end
+@class PCFileNameField;
 
 @interface PCProjectInspector : NSObject
 {
@@ -96,7 +88,7 @@
 
   // File Attributes
   IBOutlet NSBox           *fileAttributesView;
-  IBOutlet NSImageView     *fileIconView;
+  IBOutlet PCFileNameIcon  *fileIconView;
   IBOutlet PCFileNameField *fileNameField;
   NSString                 *fileName;
   IBOutlet NSButton        *localizableButton;
@@ -165,8 +157,6 @@
 - (void)createFileAttributes;
 
 - (void)beginFileRename;
-- (void)browserDidSetPath:(NSNotification *)aNotif;
-- (void)setFileName:(NSString *)name andIcon:(NSImage *)icon;
 - (void)fileNameDidChange:(id)sender;
 - (void)setPublicHeader:(id)sender;
 

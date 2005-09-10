@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -29,6 +29,8 @@
 #include "PCProject.h"
 #include "PCProjectBrowser.h"
 #include "PCProjectEditor.h"
+
+#include "PCEditor.h"
 
 #include "PCLogController.h"
 
@@ -65,6 +67,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification 
 	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(editorDidOpen:)
+	       name:PCEditorDidOpenNotification
+	     object:nil];
     }
 
   return self;
@@ -92,7 +100,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return browser;
 }
 
-// Returns nil if multiple files selected
+// Returns nil if multiple files or category selected
 - (NSString *)nameOfSelectedFile
 {
   NSString *name = nil;
@@ -451,6 +459,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     {
       [self reloadLastColumnAndNotify:YES];
     }
+}
+
+- (void)editorDidOpen:(NSNotification *)aNotif
+{
+/*  PCEditor *object = [aNotif object];
+  
+  NSLog(@"PCBrowser: %@ classes: %@", 
+	[object categoryPath], [object classNames]);*/
+  [self reloadLastColumnAndNotify:NO];
 }
 
 @end

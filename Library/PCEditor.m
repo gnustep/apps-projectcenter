@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2002-2004 Free Software Foundation
 
@@ -27,8 +27,11 @@
 #include "PCProjectEditor.h"
 #include "PCEditor.h"
 #include "PCEditorView.h"
+#include "PCProjectWindow.h"
 
 #include "PCLogController.h"
+
+#include "CodeParser.h"
 
 @implementation PCEditor (UInterface)
 
@@ -106,9 +109,9 @@
 
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
 {
-  PCEditorView    *ev;
-  NSTextContainer *tc;
-  NSLayoutManager *lm;
+  PCEditorView    *ev = nil;
+  NSTextContainer *tc = nil;
+  NSLayoutManager *lm = nil;
 
   /*
    * setting up the objects needed to manage the view but using the
@@ -126,14 +129,14 @@
   ev = [[PCEditorView alloc] initWithFrame:fr textContainer:tc];
   [ev setEditor:self];
 
-  [ev setMinSize:NSMakeSize(  0,   0)];
+  [ev setMinSize:NSMakeSize(0, 0)];
   [ev setMaxSize:NSMakeSize(1e7, 1e7)];
   [ev setRichText:YES];
   [ev setEditable:YES];
   [ev setVerticallyResizable:YES];
   [ev setHorizontallyResizable:NO];
   [ev setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-  [ev setTextContainerInset:NSMakeSize( 5, 5)];
+  [ev setTextContainerInset:NSMakeSize(5, 5)];
   [[ev textContainer] setWidthTracksTextView:YES];
 
   [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
@@ -155,26 +158,14 @@
 {
   if ((self = [super init]))
     {
-      NSString            *t;
-      NSAttributedString *as;
-      NSDictionary       *at;
-      NSFont             *ft;
-
       projectEditor = aProjectEditor;
       _isEdited = NO;
       _isWindowed = NO;
       _window = nil;
       _path = [file copy];
       _categoryPath = [categoryPath copy];
-
-      ft = [NSFont userFixedPitchFontOfSize:0.0];
-      at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
-      t  = [NSString stringWithContentsOfFile:file];
-      as = [[NSAttributedString alloc] initWithString:t attributes:at];
-
       _storage = [[NSTextStorage alloc] init];
-      [_storage setAttributedString:as];
-      RELEASE(as);
+      _parserObjects = [[NSMutableArray alloc] init];
 
       if (categoryPath) // category == nil if we're non project editor
 	{
@@ -197,10 +188,21 @@
 	       name:NSTextDidChangeNotification
 	     object:_extEditorView];
 
-      // Inform about file opening
+      // Parser
       [[NSNotificationCenter defaultCenter]
-	postNotificationName:PCEditorDidOpenNotification
-	              object:self];
+    	addObserver:self
+           selector:@selector(fileDidParse:)
+               name:PCParserDidParseFileNotification
+             object:nil];
+  
+      // Inform about future file opening
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:PCEditorWillOpenNotification
+                      object:self];
+
+      // Start parsing
+      aParser = [projectEditor parserForFile:_path];
+      [aParser parseFileAtPath:_path forEditor:self];
     }
 
   return self;
@@ -283,8 +285,8 @@
 - (void)dealloc
 {
 #ifdef DEVELOPMENT
-  NSLog(@"PCEditor: %@ dealloc", _path);
 #endif
+  NSLog(@"PCEditor: %@ dealloc", [_path lastPathComponent]);
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -292,42 +294,10 @@
   RELEASE(_path);
   RELEASE(_categoryPath);
   RELEASE(_intScrollView);
+  RELEASE(_storage);
+  RELEASE(_parserObjects);
 
   [super dealloc];
-}
-
-- (void)show
-{
-  if (_isWindowed)
-    {
-      [_window makeKeyAndOrderFront:nil];
-    }
-}
-
-- (void)setWindowed:(BOOL)yn
-{
-  if ( (yn && _isWindowed) || (!yn && !_isWindowed) )
-    {
-      return;
-    }
-
-  if (yn && !_isWindowed)
-    {
-      [self _createWindow];
-      [_window setTitle:[NSString stringWithFormat: @"%@",
-      [_path stringByAbbreviatingWithTildeInPath]]];
-    }
-  else if (!yn && _isWindowed)
-    {
-      [_window close];
-    }
-
-  _isWindowed = yn;
-}
-
-- (BOOL)isWindowed
-{
-  return _isWindowed;
 }
 
 // ===========================================================================
@@ -403,6 +373,40 @@
       [_window setDocumentEdited:yn];
     }
   _isEdited = yn;
+}
+
+- (BOOL)isWindowed
+{
+  return _isWindowed;
+}
+
+- (void)setWindowed:(BOOL)yn
+{
+  if ( (yn && _isWindowed) || (!yn && !_isWindowed) )
+    {
+      return;
+    }
+
+  if (yn && !_isWindowed)
+    {
+      [self _createWindow];
+      [_window setTitle:[NSString stringWithFormat: @"%@",
+      [_path stringByAbbreviatingWithTildeInPath]]];
+    }
+  else if (!yn && _isWindowed)
+    {
+      [_window close];
+    }
+
+  _isWindowed = yn;
+}
+
+- (void)show
+{
+  if (_isWindowed)
+    {
+      [_window makeKeyAndOrderFront:nil];
+    }
 }
 
 // ===========================================================================
@@ -600,147 +604,102 @@
 // ==== Parser and scrolling
 // ===========================================================================
 
-- (NSString *)classNameFromString:(NSString *)string
+// ==== Parsing
+
+- (void)fileDidParse:(NSNotification *)aNotif
 {
-  NSString        *className = nil;
-  NSMutableArray  *lineComps = nil;
-
-  // @implementation ClassName (Category)
-  //
-  // @implementation ClassName(Category)
-  // @implementation ClassName( Category)
-  // @implementation ClassName(Category )
-  // 
-  // @implementation ClassName ( Category )
-  // @implementation ClassName (Category )
-  // @implementation ClassName ( Category)
-  lineComps = [[string componentsSeparatedByString:@" "] mutableCopy];
-
-  if ([lineComps count] > 2)
-//      && [[[lineComps objectAtIndex:2] substringWithRange:NSMakeRange(0,1)] isEqualToString:@"("])
+  if ([[[aNotif userInfo] objectForKey:@"Path"] isEqualToString:_path])
     {
-      [lineComps removeObjectAtIndex:0];
-      className = [lineComps componentsJoinedByString:@""];
-      RELEASE(lineComps);
-
-      return [NSString stringWithFormat:@"@%@", className];
-    }
-  else
-    {
-      return [NSString stringWithFormat:@"@%@", [lineComps objectAtIndex:1]];
+      [_storage setAttributedString:[[aNotif userInfo] objectForKey:@"Text"]];
     }
 
-  return nil;
+  // Inform about file opening
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorDidOpenNotification
+                  object:self];
 }
 
-- (NSString *)methodNameFromString:(NSString *)string
+/* objectProperties
+ * { 
+ *   "Type" = "Class | Method | Constant"
+ *
+ *   "ClassName" = @SomeClass(SomeCategory)
+ *   
+ *   "Name" = "- (void)methodName:someArg:anotherArg:"
+ *   or
+ *   "Name" = "@SomeClass : SomeParentClass(SomeCategory)"
+ *   
+ *   "DefinitionRange" = (unsigned, unsigned)
+ *
+ *   "Range" = (unsigned, unsigned)
+ * }
+ */
+- (NSArray *)classNames
 {
-  NSString *methodName = nil;
+  NSEnumerator   *enumerator = [_parserObjects objectEnumerator];
+  NSDictionary   *key = nil;
+  NSMutableArray *classes = [NSMutableArray array];
 
-  return methodName;
-}
-
-- (NSMutableArray *)linesWithKeyword:(NSString *)keyword atBOL:(BOOL)yn
-{
-  NSMutableArray *lines = [[NSMutableArray alloc] init];
-  NSString       *text = [_storage string];
-  NSRange        range = {0, [text length]};
-  NSRange        subRange = {0, 0};
-  NSRange        lineRange = {0, 0};
-  NSString       *tmpStr = nil;
-  NSString       *lineString = nil;
+  while ((key = [enumerator nextObject]))
+    {
+      if ([[key objectForKey:@"Type"] isEqualToString:@"Class"])
+	{
+	  [classes addObject:[key objectForKey:@"Name"]];
+	}
+    }
   
-  while (range.location < [text length])
-    {
-      subRange = [text rangeOfString:keyword
-	                     options:NSLiteralSearch
-	                       range:range];
-			       
-      NSLog(@"subRange: {%i, %i}", subRange.location, subRange.length);
+  return classes;
+}
 
-      if (subRange.location == NSNotFound)
+- (NSArray *)methodNamesForClass:(NSString *)class
+{
+  NSEnumerator   *enumerator = [_parserObjects objectEnumerator];
+  NSDictionary   *key = nil;
+  NSMutableArray *methods = [NSMutableArray array];
+
+  while ((key = [enumerator nextObject]))
+    {
+      if ([[key objectForKey:@"Type"] isEqualToString:@"Method"]
+	  &&[[key objectForKey:@"ClassName"] isEqualToString:class])
 	{
-	  break;
+	  [methods addObject:[key objectForKey:@"Name"]];
 	}
-
-      // Set range for next search
-      range.location = subRange.location + subRange.length;
-      range.length = [text length] - range.location;
-      NSLog(@"range: {%i, %i}", range.location, range.length);
-
-      // If keyword is located not at the beginning of line then skip it.
-      if (yn)
-	{
-	  tmpStr = [text substringWithRange:NSMakeRange(subRange.location-1,1)];
-	  if (![tmpStr isEqualToString:@"\n"])
-	    {
-	      NSLog(@"CONTINUE %i %i", range.location, range.length);
-	      continue;
-	    }
-	}
-
-      // Get line range where @implementation is located
-      lineRange = [text lineRangeForRange:subRange];
-      lineString = [text substringWithRange:lineRange];
-      NSLog(@"0. line range: {%i, %i}", lineRange.location, lineRange.length);
-
-      [lines addObject:lineString];
     }
 
-  return AUTORELEASE(lines);
+  return methods;
 }
 
-- (NSArray *)listOfClasses
+- (void)addClassName:(NSString *)class withRange:(NSRange)range
 {
-  NSMutableArray *classesArray = [[NSMutableArray alloc] init];
-  NSMutableArray *linesArray = nil;
-  NSString       *lineString = nil;
-  int            i;
+  NSMutableDictionary *objectProperties = [NSMutableDictionary dictionary];
 
-  NSLog(@"Start searching for class implementations...");
+  // Add to PCEditor's object array
+  [objectProperties setObject:@"Class" forKey:@"Type"];
+  [objectProperties setObject:class forKey:@"Name"];
+  [objectProperties setObject:NSStringFromRange(range) forKey:@"Range"];
 
-  // Get lines with keywords
-  if ([[[_path lastPathComponent] pathExtension] isEqualToString:@"m"])
-    {
-      linesArray = [self linesWithKeyword:@"@implementation" atBOL:YES];
-    }
-  else if ([[[_path lastPathComponent] pathExtension] isEqualToString:@"h"])
-    {
-      linesArray = [self linesWithKeyword:@"@interface" atBOL:YES];
-    }
+  [_parserObjects addObject:objectProperties];
 
-  // Get class names
-  for (i = 0; i < [linesArray count]; i++)
-    {
-      lineString = [linesArray objectAtIndex:i];
-      [classesArray addObject:[self classNameFromString:lineString]];
-    }
-
-  return AUTORELEASE((NSArray*)classesArray);
+//  NSLog(@"Class name: %@", class);
 }
 
-- (NSArray *)listOfMethodsOfClass:(NSString *)className
+- (void)addMethodWithDefinition:(NSString *)method
+                       andRange:(NSRange)range
+		       forClass:(NSString *)class
 {
-  NSMutableArray *methodsArray = [[NSMutableArray alloc] init];
+  NSMutableDictionary *objectProperties = [NSMutableDictionary dictionary];
 
-  return AUTORELEASE((NSArray*)methodsArray);
+  [objectProperties setObject:@"Method" forKey:@"Type"];
+  [objectProperties setObject:class forKey:@"ClassName"];
+  [objectProperties setObject:method forKey:@"Name"];
+  [objectProperties setObject:NSStringFromRange(range) forKey:@"Range"];
+
+  [_parserObjects addObject:objectProperties];
+
+//  NSLog(@"Method: %@", method);
 }
 
-- (NSArray *)listOfDefines
-{
-  NSMutableArray *definesArray = [[NSMutableArray alloc] init];
-
-  return AUTORELEASE((NSArray*)definesArray);
-}
-
-- (NSArray *)listOfVars
-{
-  NSMutableArray *varsArray = [[NSMutableArray alloc] init];
-
-  return AUTORELEASE((NSArray*)varsArray);
-}
-
-//--- Scrolling
+// === Scrolling
 
 - (void)scrollToClassName:(NSString *)className
 {

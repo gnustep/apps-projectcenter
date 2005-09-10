@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -112,7 +112,7 @@ if (__value != __object) \
 // ==== From PCProject.h
 //
 #ifndef IMAGE
-#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#define IMAGE(X) [NSImage imageNamed:(X)]
 #endif
 
 //=============================================================================

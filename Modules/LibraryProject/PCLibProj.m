@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001-2004 Free Software Foundation
 
@@ -155,8 +155,6 @@ static PCLibProj *_creator = nil;
 
   return [[[PCLibProject alloc] initWithProjectDictionary:dict 
                                                      path:pPath] autorelease];
-
-  return nil;
 }
 
 @end

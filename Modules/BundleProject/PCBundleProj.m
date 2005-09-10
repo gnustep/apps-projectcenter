@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001-2004 Free Software Foundation
 
@@ -56,7 +56,7 @@ static PCBundleProj *_creator = nil;
 
 - (NSString *)projectTypeName
 {
-  return @"Loadable Bundle";
+  return @"Bundle";
 }
 
 - (PCProject *)createProjectAt:(NSString *)path
