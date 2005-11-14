@@ -22,8 +22,35 @@
 #  If not, write to the Free Software Foundation,
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-before-all::
+HEADER_LINK_DEPENDS=link-setup
+
+before-all:: header-links
 
 after-clean::
+	rm -rf ProjectCenter $(HEADER_LINK_DEPENDS)
 
 after-uninstall::
+
+# FIXME: Temporary solution to Library being in the wrong place - we really
+# should just move the directory in CVS
+DO_HEADER_LINKS=no
+ifeq ($(GNUSTEP_TARGET_OS), mingw32)
+	DO_HEADER_LINKS=yes
+endif
+ifeq ($(GNUSTEP_TARGET_OS), cygwin)
+	DO_HEADER_LINKS=yes
+endif
+ifeq ($(DO_HEADER_LINKS), yes)
+header-links: $(HEADER_LINK_DEPENDS)
+	-rm -rf ProjectCenter
+	-mkdir ProjectCenter
+	cp -f Library/*.h ProjectCenter
+else
+header-links: $(HEADER_LINK_DEPENDS)
+	-rm -f ProjectCenter
+	$(LN_S) Library ProjectCenter
+endif
+
+$(HEADER_LINK_DEPENDS):
+	touch $(HEADER_LINK_DEPENDS)
+

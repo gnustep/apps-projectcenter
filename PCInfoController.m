@@ -24,7 +24,7 @@
 */
 
 #include "PCInfoController.h"
-#include <ProjectCenter/ProjectCenter.h>
+#include "Library/ProjectCenter.h"
 
 @implementation PCInfoController
 

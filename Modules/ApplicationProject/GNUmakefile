@@ -17,7 +17,7 @@ ApplicationProject_PRINCIPAL_CLASS = PCAppProj
 #
 # Additional libraries
 #
-#ApplicationProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
+ApplicationProject_LIBRARIES_DEPEND_UPON +=
 
 #
 # Resource files

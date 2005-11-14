@@ -40,12 +40,6 @@
 @class PCProjectLauncher;
 @class PCProjectEditor;
 
-/*#ifndef GNUSTEP_BASE_VERSION
-@protocol ProjectBuilder;
-#else
-#include <ProjectCenter/ProjectBuilder.h>
-#endif*/
-
 extern NSString *PCProjectDictDidChangeNotification;
 extern NSString *PCProjectDictDidSaveNotification;
 

@@ -21,7 +21,7 @@ BundleProject_PRINCIPAL_CLASS = PCBundleProj
 #
 # Additional libraries
 #
-BundleProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
+BundleProject_LIBRARIES_DEPEND_UPON +=
 
 #
 # Resource files
@@ -29,8 +29,6 @@ BundleProject_LIBRARIES_DEPEND_UPON += -lProjectCenter
 BundleProject_RESOURCE_FILES = \
 Resources/PC.project \
 Resources/Inspector.gorm
-#Resources/class.template \
-#Resources/header.template 
 
 #
 # Header files

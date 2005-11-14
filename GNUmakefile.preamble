@@ -41,11 +41,13 @@ ADDITIONAL_CFLAGS +=
 ADDITIONAL_INCLUDE_DIRS += -I./
 
 # Additional LDFLAGS to pass to the linker
-ADDITIONAL_LDFLAGS += -lProjectCenter
+ADDITIONAL_LDFLAGS +=
 
 # Additional library directories the linker should search
-#ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR)
 ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current
+
+# Additional LDFLAGS to pass to the linker
+ADDITIONAL_GUI_LIBS += -lProjectCenter
 
 #
 # Flags dealing with installing and uninstalling

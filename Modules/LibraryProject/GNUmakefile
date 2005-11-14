@@ -24,7 +24,7 @@ LibraryProject_PRINCIPAL_CLASS = PCLibProj
 # Additional libraries
 #
 
-LibraryProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
+LibraryProject_LIBRARIES_DEPEND_UPON +=
 
 #
 # Resource files

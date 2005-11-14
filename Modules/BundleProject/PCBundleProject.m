@@ -23,11 +23,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCBundleProj.h"
-#include "PCBundleProject.h"
-
 #include <ProjectCenter/PCMakefileFactory.h>
 #include <ProjectCenter/ProjectCenter.h>
+
+#include "PCBundleProj.h"
+#include "PCBundleProject.h"
 
 @implementation PCBundleProject
 

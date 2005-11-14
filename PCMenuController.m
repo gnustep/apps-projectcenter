@@ -28,7 +28,7 @@
 #include "PCInfoController.h"
 #include "PCPrefController.h"
 #include "PCLogController.h"
-#include <ProjectCenter/ProjectCenter.h>
+#include "Library/ProjectCenter.h"
 
 @implementation PCMenuController
 

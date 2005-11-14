@@ -14,7 +14,7 @@ AggregateProject_PRINCIPAL_CLASS = PCAggregateProj
 #
 # Additional libraries
 #
-AggregateProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
+AggregateProject_LIBRARIES_DEPEND_UPON +=
 
 #
 # Resource files

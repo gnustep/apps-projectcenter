@@ -23,10 +23,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#include <ProjectCenter/PCMakefileFactory.h>
+
 #include "PCToolProject.h"
 #include "PCToolProj.h"
-
-#include <ProjectCenter/PCMakefileFactory.h>
 
 @implementation PCToolProject
 

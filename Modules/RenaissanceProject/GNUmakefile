@@ -22,8 +22,7 @@ RenaissanceProject_PRINCIPAL_CLASS = PCRenaissanceProj
 #
 # Additional libraries
 #
-
-RenaissanceProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
+RenaissanceProject_LIBRARIES_DEPEND_UPON +=
 
 #
 # Resource files

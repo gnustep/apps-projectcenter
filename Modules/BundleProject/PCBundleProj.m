@@ -26,7 +26,7 @@
 */
 
 #include <ProjectCenter/PCFileCreator.h>
-#include "ProjectCenter/PCMakefileFactory.h"
+#include <ProjectCenter/PCMakefileFactory.h>
 
 #include "PCBundleProj.h"
 #include "PCBundleProject.h"

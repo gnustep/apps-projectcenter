@@ -14,7 +14,6 @@ include $(GNUSTEP_MAKEFILES)/common.make
 #
 # Bundle
 #
-
 PACKAGE_NAME = ToolProject
 BUNDLE_NAME = ToolProject
 ToolProject_PRINCIPAL_CLASS = PCToolProj
@@ -23,13 +22,11 @@ ToolProject_PRINCIPAL_CLASS = PCToolProj
 #
 # Additional libraries
 #
-
 ToolProject_LIBRARIES_DEPEND_UPON += -lProjectCenter 
 
 #
 # Resource files
 #
-
 ToolProject_RESOURCE_FILES= \
 Resources/PC.project \
 Resources/main.m \
@@ -38,7 +35,6 @@ Resources/Inspector.gorm
 #
 # Header files
 #
-
 ToolProject_HEADERS= \
 PCToolProj.h \
 PCToolProject.h 
@@ -46,7 +42,6 @@ PCToolProject.h
 #
 # Class files
 #
-
 ToolProject_OBJC_FILES= \
 PCToolProj.m \
 PCToolProject.m 
@@ -54,7 +49,6 @@ PCToolProject.m
 #
 # C files
 #
-
 ToolProject_C_FILES= 
 
 include ../GNUmakefile.bundles

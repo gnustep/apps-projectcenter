@@ -24,7 +24,7 @@
 */
 
 #include "PCPrefController.h"
-#include <ProjectCenter/ProjectCenter.h>
+#include "Library/ProjectCenter.h"
 
 #include "PCLogController.h"
 
