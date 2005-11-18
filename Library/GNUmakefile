@@ -54,7 +54,7 @@ ProjectCenter_HEADER_FILES = \
   PCTextFinder.h \
   PCTextFinder+UInterface.h \
   \
-  PCPrefContoller.h \
+  PCPrefController.h \
   PCLogController.h \
   PCDefines.h \
   ProjectCenter.h \

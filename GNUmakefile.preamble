@@ -42,7 +42,7 @@ ADDITIONAL_OBJCFLAGS += -DPCDefaultBuildTool=@"\"$(GMAKE)\"" \
 ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I./
+ADDITIONAL_INCLUDE_DIRS += -I./ -I./Headers
 
 # Additional LDFLAGS to pass to the linker
 ADDITIONAL_LDFLAGS +=
