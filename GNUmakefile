@@ -25,8 +25,6 @@ SUBPROJECTS = \
 #
 ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
-Resources/LogPanel.gorm \
-Resources/Preferences.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
 Images/FileC.tiff \
@@ -90,8 +88,6 @@ Modules/ToolProject/ToolProject.bundle
 ProjectCenter_HEADERS = \
 PCAppController.h \
 PCInfoController.h \
-PCLogController.h \
-PCMenuController.h \
 PCPrefController.h
 
 #
@@ -100,9 +96,7 @@ PCPrefController.h
 ProjectCenter_OBJC_FILES = \
 PCAppController.m \
 PCInfoController.m \
-PCLogController.m \
 PCMenuController.m \
-PCPrefController.m \
 ProjectCenter_main.m
 
 -include GNUmakefile.preamble

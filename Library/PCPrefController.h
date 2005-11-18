@@ -31,6 +31,14 @@
 #define PCSavePeriodDidChangeNotification @"PCSavePeriodDidChangeNotification"
 #define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"
 
+#ifndef PCDefaultBuildTool 
+#define PCDefaultBuildTool @"/usr/bin/make"
+#endif
+
+#ifndef PCDefaultDebugger
+#define PCDefaultDebugger @"/usr/bin/gdb"
+#endif
+
 @interface PCPrefController : NSObject
 {
   IBOutlet NSPanel       *panel;
@@ -85,7 +93,7 @@
 - (id)init;
 - (void)dealloc;
 - (void)setDefaultValues;
-- (void)loadPrefernces;
+- (void)loadPreferences;
 
 - (NSDictionary *)preferencesDict;
 - (id)objectForKey:(NSString *)key;

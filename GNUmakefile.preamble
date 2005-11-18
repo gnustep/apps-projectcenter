@@ -24,6 +24,9 @@
 #  If not, write to the Free Software Foundation,
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
+GMAKE = `whereis -b gmake`
+GDB = `whereis -b gdb`
+
 #
 # Flags dealing with compiling and linking
 #
@@ -32,7 +35,8 @@
 ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += 
+ADDITIONAL_OBJCFLAGS += -DPCDefaultBuildTool=@"\"$(GMAKE)\"" \
+                        -DPCDefaultDebugger=@"\"$(GDB)\""
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS +=

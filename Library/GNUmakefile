@@ -9,9 +9,9 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 # Framework
 #
-VERSION = 0.4.1
+VERSION = 0.4.3
 FRAMEWORK_NAME = ProjectCenter
-ProjectCenter_CURRENT_VERSION_NAME = 0.4.1
+ProjectCenter_CURRENT_VERSION_NAME = 0.4.3
 ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
 
 ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
@@ -54,6 +54,8 @@ ProjectCenter_HEADER_FILES = \
   PCTextFinder.h \
   PCTextFinder+UInterface.h \
   \
+  PCPrefContoller.h \
+  PCLogController.h \
   PCDefines.h \
   ProjectCenter.h \
   ProjectType.h \
@@ -91,7 +93,10 @@ ProjectCenter_OBJC_FILES = \
   PCEditorView.m \
   PCEditorView+Highlighting.m \
   PCTextFinder.m \
-  PCTextFinder+UInterface.m 
+  PCTextFinder+UInterface.m \
+  \
+  PCPrefController.m \
+  PCLogController.m
 
 #
 # Resources
@@ -109,7 +114,9 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/gsmarkup.template \
   Resources/header.template \
   Resources/postamble.template \
-  Resources/protocol.template
+  Resources/protocol.template \
+  Resources/LogPanel.gorm \
+  Resources/Preferences.gorm
 
 -include GNUmakefile.preamble
 
