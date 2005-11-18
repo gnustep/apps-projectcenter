@@ -25,8 +25,8 @@
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
 # TODO: Make sure if it's portable
-GMAKE = `which -b gmake`
-GDB = `which -b gdb`
+GMAKE = `which gmake`
+GDB = `which gdb`
 
 #
 # Flags dealing with compiling and linking
