@@ -1,3 +1,10 @@
+2005-11-18 Adam Fedor  <fedor@gnu.org>
+
+	* GNUmakefile.preamble: Change 'whereis' to which. (Make sure if it's
+	portable, Serg Stoyan). Correct ADDITIONAL_LIB_DIRS.
+	* Library/PCLogController.h: Change tags to PC_* because of conflict
+	on MingW. And is use in code.
+
 2005-11-15 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/GNUmakefile: Change framework version to 0.4.3

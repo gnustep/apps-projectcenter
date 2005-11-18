@@ -28,10 +28,10 @@
 
 #include <AppKit/AppKit.h>
 
-#define INFO	0
-#define STATUS	1
-#define WARNING	2
-#define ERROR	3
+#define PC_INFO		0
+#define PC_STATUS	1
+#define PC_WARNING	2
+#define PC_ERROR	3
 
 // --- Functions
 void

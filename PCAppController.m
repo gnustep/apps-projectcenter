@@ -139,7 +139,7 @@
     }
 
   [logController 
-    logMessage:@"Loading additional subsystems..." withTag:INFO sender:self];
+    logMessage:@"Loading additional subsystems..." withTag:PC_INFO sender:self];
 
   doServer = [[PCServer alloc] init];
   

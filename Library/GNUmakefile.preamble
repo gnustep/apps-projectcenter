@@ -47,7 +47,7 @@ ADDITIONAL_OBJCFLAGS += -Wall
 ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I../
+ADDITIONAL_INCLUDE_DIRS += -I..
 
 # Additional LDFLAGS to pass to the linker
 #ADDITIONAL_LDFLAGS += 

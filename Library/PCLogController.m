@@ -40,7 +40,7 @@ PCLogInfo(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, INFO, format, ap);
+  PCLog(sender, PC_INFO, format, ap);
   va_end(ap);
 }
 
@@ -50,7 +50,7 @@ PCLogStatus(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, STATUS, format, ap);
+  PCLog(sender, PC_STATUS, format, ap);
   va_end(ap);
 }
 
@@ -60,7 +60,7 @@ PCLogWarning(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, WARNING, format, ap);
+  PCLog(sender, PC_WARNING, format, ap);
   va_end(ap);
 }
 
@@ -70,7 +70,7 @@ PCLogError(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, ERROR, format, ap);
+  PCLog(sender, PC_ERROR, format, ap);
   va_end(ap);
 }
 
@@ -148,24 +148,24 @@ static PCLogController *_logCtrllr = nil;
 
   switch (tag) 
     {
-    case INFO:
+    case PC_INFO:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.0 green:.0 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
-    case STATUS:
+    case PC_STATUS:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.0 green:.35 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
       
-    case WARNING:
+    case PC_WARNING:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.56 green:.45 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
 
-    case ERROR:
+    case PC_ERROR:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.63 green:.0 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
