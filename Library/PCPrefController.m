@@ -23,10 +23,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCPrefController.h"
-#include "Library/ProjectCenter.h"
-
+#include "PCDefines.h"
 #include "PCLogController.h"
+
+#include "PCPrefController.h"
 
 // TODO: rewrite it as PCPreferences, use +sharedPreferences instead of
 // [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
