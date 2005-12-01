@@ -8,7 +8,7 @@ GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 #
 # Main application
 #
-VERSION = 0.4.2
+VERSION = 0.4.3
 PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
@@ -18,7 +18,7 @@ ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 #
 SUBPROJECTS = \
         Library \
-	Modules \
+	Modules
 
 #
 # Resource files

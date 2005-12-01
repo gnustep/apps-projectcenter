@@ -1,3 +1,7 @@
+2005-12-01 Serg Stoyan <stoyan255@ukr.net>
+
+	* GNUmakefile: Change application version to 0.4.3.
+	
 2005-11-18 Adam Fedor  <fedor@gnu.org>
 
 	* GNUmakefile.preamble: Change 'whereis' to which. (Make sure if it's
