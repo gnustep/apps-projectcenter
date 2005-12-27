@@ -20,21 +20,42 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCLOGCONTROLLER_H
+#define _PCLOGCONTROLLER_H
 
 #include <AppKit/AppKit.h>
 
-@interface PCInfoController : NSObject
+#define INFO	0
+#define STATUS	1
+#define WARNING	2
+#define ERROR	3
+
+// --- Functions
+void
+PCLog(id sender, int tag, NSString* format, va_list args);
+void
+PCLogInfo(id sender, NSString* format, ...);
+void
+PCLogStatus(id sender, NSString* format, ...);
+void
+PCLogWarning(id sender, NSString* format, ...);
+void
+PCLogError(id sender, NSString* format, ...);
+
+
+@interface PCLogController : NSObject
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  IBOutlet NSPanel    *panel;
+  IBOutlet NSTextView *textView;
+
+  NSMutableDictionary *textAttributes;
 }
 
-- (id)init;
-- (void)dealloc;
++ (PCLogController *)sharedLogController;
 
-- (void)showInfoWindow:(id)sender;
+- (void)showPanel;
+- (void)logMessage:(NSString *)message withTag:(int)tag sender:(id)sender;
+- (void)putMessageOnScreen:(NSAttributedString *)message;
 
 @end
 

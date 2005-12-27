@@ -1,7 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2002-2004 Free Software Foundation
+
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,22 +23,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCSplitView_h_
+#define _PCSplitView_h_
 
-#include <AppKit/AppKit.h>
+#include <AppKit/NSSplitView.h>
 
-@interface PCInfoController : NSObject
+@interface PCSplitView : NSSplitView
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+
 }
 
-- (id)init;
-- (void)dealloc;
+- (float)dividerThickness;
 
-- (void)showInfoWindow:(id)sender;
+- (void)drawDividerInRect:(NSRect)aRect;
 
 @end
 
-#endif
+#endif // _PCSplitView_h_
+

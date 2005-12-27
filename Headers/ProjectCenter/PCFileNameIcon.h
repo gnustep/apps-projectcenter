@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2000-2005 Free Software Foundation
+
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,21 +22,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCFileNameIcon_h_
+#define _PCFileNameIcon_h_
 
-#include <AppKit/AppKit.h>
+@class NSImageView;
 
-@interface PCInfoController : NSObject
+@interface PCFileNameIcon : NSImageView
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  NSString    *filePath;
+  NSTextField *fileNameField;
+  NSString    *msfText;
 }
 
-- (id)init;
-- (void)dealloc;
-
-- (void)showInfoWindow:(id)sender;
+- (void)setFileNameField:(NSTextField *)field;
+- (void)setMultipleFilesSelectionText:(NSString *)text;
+- (void)setFileIcon:(NSNotification *)notification;
 
 @end
 

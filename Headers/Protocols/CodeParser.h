@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2005 Free Software Foundation
+
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,21 +22,18 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _CodeParserProtocol_h_
+#define _CodeParserProtocol_h_
 
-#include <AppKit/AppKit.h>
+#include <Foundation/NSObject.h>
 
-@interface PCInfoController : NSObject
-{
-    id infoWindow;
-    NSDictionary *infoDict;
-}
+@class PCEditor;
 
-- (id)init;
-- (void)dealloc;
+@protocol CodeParser <NSObject>
 
-- (void)showInfoWindow:(id)sender;
+- (id)setString:(NSString *)text;
+- (NSArray *)classNames;
+- (NSArray *)methodNames;
 
 @end
 

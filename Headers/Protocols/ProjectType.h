@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2000-2002 Free Software Foundation
+
+   Author: Philippe C.D. Robert <probert@siggraph.org>
 
    This file is part of GNUstep.
 
@@ -20,21 +22,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PROJECTTYPE_H
+#define _PROJECTTYPE_H
 
-#include <AppKit/AppKit.h>
+/*
+  Description: A ProjectType is used to create a project of a certain type. 
+               With this approach this procedure can be implemented as a bundle 
+ 	       and therefore PC remains open for future extensions!
+*/
 
-@interface PCInfoController : NSObject
-{
-    id infoWindow;
-    NSDictionary *infoDict;
-}
+#include <Foundation/Foundation.h>
 
-- (id)init;
-- (void)dealloc;
+@class PCProject;
 
-- (void)showInfoWindow:(id)sender;
+@protocol ProjectType
+
+- (PCProject *)createProjectAt:(NSString *)path;
 
 @end
 

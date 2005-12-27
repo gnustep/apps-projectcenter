@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2003-2004 Free Software Foundation
+
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,21 +22,22 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCLaunchPanel_h_
+#define _PCLaunchPanel_h_
 
 #include <AppKit/AppKit.h>
 
-@interface PCInfoController : NSObject
+@class PCProjectManager;
+
+@interface PCProjectLauncherPanel : NSPanel
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  PCProjectManager *projectManager;
+  PCProject        *currentProject;
+  NSBox            *contentBox;
+  NSBox            *emptyBox;
 }
 
-- (id)init;
-- (void)dealloc;
-
-- (void)showInfoWindow:(id)sender;
+- (id)initWithProjectManager:(PCProjectManager *)aManager;
 
 @end
 

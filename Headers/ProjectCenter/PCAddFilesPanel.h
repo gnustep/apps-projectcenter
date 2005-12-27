@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2004 Free Software Foundation
+
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,21 +22,32 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCAddFilesPanel_h_
+#define _PCAddFilesPanel_h_
 
+//#include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 
-@interface PCInfoController : NSObject
+@interface PCAddFilesPanel : NSOpenPanel
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  NSBox	        *fileTypeAccessaryView;
+  NSPopUpButton *fileTypePopup;
 }
 
-- (id)init;
-- (void)dealloc;
++ (PCAddFilesPanel *)addFilesPanel;
 
-- (void)showInfoWindow:(id)sender;
+- (void)setCategories:(NSArray *)categories;
+- (void)selectCategory:(NSString *)category;
+- (NSString *)selectedCategory;
+- (void)setFileTypes:(NSArray *)fileTypes;
+
+- (void)filesForAddPopupClicked:(id)sender;
+
+@end
+
+@interface NSObject (PCAddFilesPanelDelegate)
+
+- (void)categoryChangedTo:(NSString *)category;
 
 @end
 

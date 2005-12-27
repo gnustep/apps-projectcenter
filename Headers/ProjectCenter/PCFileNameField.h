@@ -1,7 +1,9 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2000-2004 Free Software Foundation
+
+   Authors: Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,22 +22,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCFileNameField_h_
+#define _PCFileNameField_h_
 
-#include <AppKit/AppKit.h>
+@class NSTextField;
 
-@interface PCInfoController : NSObject
+@interface PCFileNameField : NSTextField
 {
-    id infoWindow;
-    NSDictionary *infoDict;
 }
 
-- (id)init;
-- (void)dealloc;
-
-- (void)showInfoWindow:(id)sender;
-
+- (void)setEditableField:(BOOL)yn;
+- (BOOL)textShouldSetEditable:(NSString *)text;
 @end
 
 #endif

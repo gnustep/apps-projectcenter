@@ -1,7 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2004 Free Software Foundation
+
+   Authors: Philippe C.D. Robert
+            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -20,21 +23,37 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCINFOCONTROLLER_H
-#define _PCINFOCONTROLLER_H
+#ifndef _PCFileCreator_h_
+#define _PCFileCreator_h_
 
 #include <AppKit/AppKit.h>
 
-@interface PCInfoController : NSObject
+#define ProtocolFile	@"Objective-C Protocol"
+#define ObjCClass	@"Objective-C Class"
+#define ObjCHeader	@"Objective-C Header"
+#define CFile		@"C File"
+#define CHeader	        @"C Header"
+#define GSMarkupFile	@"GNUstep Markup"
+
+@class PCProject;
+
+@interface PCFileCreator : NSObject
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  NSMutableString *file;
 }
 
-- (id)init;
-- (void)dealloc;
++ (id)sharedCreator;
 
-- (void)showInfoWindow:(id)sender;
+- (NSString *)name;
+- (NSDictionary *)creatorDictionary;
+
+// The implementation needs some heavy cleanup!
+- (NSDictionary *)createFileOfType:(NSString *)type
+                              path:(NSString *)path
+			   project:(PCProject *)aProject;
+
+- (void)replaceTagsInFileAtPath:(NSString *)newFile
+                    withProject:(PCProject *)aProject;
 
 @end
 
