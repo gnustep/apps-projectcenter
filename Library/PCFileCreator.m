@@ -23,12 +23,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCProject.h"
-#include "PCFileManager.h"
-#include "PCFileCreator.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCFileCreator.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
 @implementation PCFileCreator
 
@@ -122,10 +122,10 @@ static NSDictionary  *dict = nil;
 		           project:(PCProject *)aProject
 {
   PCFileManager       *pcfm = [PCFileManager defaultManager];
-  NSString            *_file;
+  NSString            *_file = nil;
   NSString            *newFile = nil;
-  NSMutableDictionary *files;
-  NSBundle            *bundle;
+  NSMutableDictionary *files = nil;
+  NSBundle            *bundle = nil;
 
   // A class and possibly a header
   files = [NSMutableDictionary dictionaryWithCapacity:2];
@@ -135,39 +135,33 @@ static NSDictionary  *dict = nil;
   bundle = [NSBundle bundleForClass:[self class]];
   newFile = [path copy];
 
+  // Remove file extension from "path"
+  if (![[path pathExtension] isEqualToString: @""])
+    {
+      path = [path stringByDeletingPathExtension];
+    }
+  
   /*
    * Objective-C Class
    */
   if ([type isEqualToString:ObjCClass]) 
     {
       _file = [bundle pathForResource:@"class" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"m"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"m"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"m"];
       [pcfm copyFile:_file toFile:newFile];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ObjCClass forKey:newFile];
-
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-
-      // Header must be created as well!
-      newFile = [path stringByAppendingPathExtension:@"h"];
-      _file = [bundle pathForResource:@"header" ofType:@"template"];
-      [pcfm copyFile:_file toFile:newFile];
-      
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:ObjCHeader forKey:newFile];
     }
+
   /*
    * Objective-C Header
+   * When creating Objective C Class file also create Objective C Header file
    */
-  else if ([type isEqualToString:ObjCHeader]) 
+  if ([type isEqualToString:ObjCHeader] ||
+      [type isEqualToString:ObjCClass])
     {
       _file = [bundle pathForResource:@"header" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"h"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"h"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"h"];
       [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ObjCHeader forKey:newFile];
@@ -176,36 +170,24 @@ static NSDictionary  *dict = nil;
   /*
    * C File
    */
-  else if ([type isEqualToString:CFile]) 
+  if ([type isEqualToString:CFile]) 
     {
       _file = [bundle pathForResource:@"cfile" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"c"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"c"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"c"];
       [pcfm copyFile:_file toFile:newFile];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:CFile forKey:newFile];
-
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-
-      // Header should be created as well.
-      newFile = [path stringByAppendingPathExtension:@"h"];
-      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
-      [pcfm copyFile:_file toFile:newFile];
-      
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:CHeader forKey:newFile];
     }
+
   /*
    * C Header
+   * When creating C file also create C Header file
    */
-  else if ([type isEqualToString:CHeader]) 
+  if ([type isEqualToString:CHeader] ||
+      [type isEqualToString:CFile]) 
     {
       _file = [bundle pathForResource:@"cheader" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"h"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"h"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"h"];
       [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:CHeader forKey:newFile];
@@ -216,10 +198,7 @@ static NSDictionary  *dict = nil;
   else if ([type isEqualToString:GSMarkupFile])
     {
       _file = [bundle pathForResource:@"gsmarkup" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"gsmarkup"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
       [pcfm copyFile:_file toFile:newFile];
       [files setObject:GSMarkupFile forKey:newFile];
     }
@@ -229,14 +208,12 @@ static NSDictionary  *dict = nil;
   else if ([type isEqualToString:ProtocolFile]) 
     {
       _file = [bundle pathForResource:@"protocol" ofType:@"template"];
-      if ([[path pathExtension] isEqual: @"h"] == NO)
-	{
-	  newFile = [path stringByAppendingPathExtension:@"h"];
-	}
+      newFile = [path stringByAppendingPathExtension:@"h"];
       [pcfm copyFile:_file toFile:newFile];
       [self replaceTagsInFileAtPath:newFile withProject:aProject];
       [files setObject:ProtocolFile forKey:newFile];
     }
+
   /*
    * Notify the browser!
    */

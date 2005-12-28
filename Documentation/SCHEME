@@ -1,49 +1,51 @@
-                       +- PCProjectInspector
-                       |
-                       +- PCLoadedFilesPanel
-                       |
-                       +- PCBuildPanel
-                       |
-                       +- PCLaunchPanel
-                       |
-                       +- [SI]PCFindPanel
-PCAppController-\      |
+PCAppController-\
 |                ----- PCProjectManager
 PCMenuController/      |   ||
-                       |   PCProject <PCAppProject, PCBundleProject>
+                       |   PCProject -> <ProjectType>
+                       |   |
+                       |   +- PCProjectInspector
                        |   |
                        |   +- PCProjectWindow
                        |   |
                        |   +- PCProjectBrowser
                        |   |
                        |   +- PCProjectLoadedFiles
+                       |   |  |
+                       |   |  +- PCProjectLoadedFilesPanel
                        |   |
                        |   +- PCProjectBuilder
+                       |   |  |
+                       |   |  +- PCProjectBuilderPanel
                        |   |
                        |   +- PCProjectLauncher
+                       |   |  |
+                       |   |  +- PCProjectLauncherPanel
                        |   |
-                       |   +- [SI]PCProjectFinder
+                       |   +- PCProjectEditor -> <CodeEditor>
+                       |   |                  -> <CodeParser>
                        |   |
-                       |   +- PCProjectEditor
-                       |      ||
-                       |      PCEditor
+                       |   +- [*]PCProjectFinder
                        |      |
-                       |      +- PCEditorView 
+                       |      +- [*]PCProjectFinderPanel
+                       |   
+                       +- PCFileManager
+                       |  |
+                       |  +- PCFileCreator
+                       |  |
+                       |  +- PCAddFilesPanel
                        |
-                       PCTextFinder
+                       +- PCMakefileFactory (Used by project type bundles)
                        |
-                       PCFileManager
-                       |
-                       +- PCFileCreator
+                       +- PCBundleManager (loading of project types,editors,parsers)
+
+---
+[*] - not implemented
 
 ------------------------------
 Other (controls, tools, etc.):
 ------------------------------
-PCButton (ProjectWindow, ProjectBuild, ProjectLaunch)
-PCSplitView (ProjectWindow, ProjectBuild, ProjectLaunch)
-PCBundleLoader (Used in ProjectCenter application)
-PCMakefileFactory (Used in PC*Project bundles)
-PCServer (don't used)
+PCButton (ProjectWindow, ProjectBuilder, ProjectLauncher)
+PCSplitView (ProjectWindow, ProjectBuilder, ProjectLauncher)
 
 ----------
 THOUGHTS:
@@ -62,10 +64,10 @@ THOUGHTS:
 Localization:
 ~~~~~~~~~~~~~
 - On project creation, all resources go to Resources subdir and placed into
-  GNUmakefile as *_RESOURCE_FILES; [done!]
+  GNUmakefile as *_RESOURCE_FILES; 					[DONE!]
 - If some file from [PC*Proj localizableKeys] categories selected as 
   "Localizable Resource", that file removed from *_RESOURCE_FILES and placed
-  into *_LOCALIZED_RESOURCE_FILES (for directories: Resources->Language.lproj);
-- in PC.project add USER_LANGUAGES=(); [done!]
-- in PC.project add LOCALIZED_RESOURCES=(); [done!]
+  into *_LOCALIZED_RESOURCE_FILES (for directories: <Language>.lproj);	[]
+- in PC.project add USER_LANGUAGES=(); 					[DONE!]
+- in PC.project add LOCALIZED_RESOURCES=();				[]
 

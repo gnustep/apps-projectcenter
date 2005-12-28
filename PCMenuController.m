@@ -19,13 +19,13 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
+#include <ProjectCenter/ProjectCenter.h>
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
 #include "PCInfoController.h"
-#include "PCPrefController.h"
-#include "PCLogController.h"
-#include <ProjectCenter/ProjectCenter.h>
 
 @implementation PCMenuController
 
@@ -208,6 +208,7 @@
 		     notify:YES];
 	  [[project projectEditor] editorForFile:newFilePath
 	                            categoryPath:categoryPath
+					editable:YES
 				        windowed:NO];
 	}
     }
@@ -254,7 +255,7 @@
 }
 
 // Edit. PCProjectEditor have to provide this menu and functionality
-- (void)findShowPanel:(id)sender
+/*- (void)findShowPanel:(id)sender
 {
   [[PCTextFinder sharedFinder] showFindPanel:self];
 }
@@ -267,7 +268,7 @@
 - (void)findPrevious:(id)sender
 {
   [[PCTextFinder sharedFinder] findPrevious:self];
-}
+}*/
 
 // Tools
 
@@ -496,7 +497,7 @@
     }
 
   // Find menu items
-  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
+/*  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
     {
       if (![[[PCTextFinder sharedFinder] findPanel] isVisible])
 	{
@@ -507,7 +508,7 @@
       if ([[menuItem title] isEqualToString:@"Jump to Selection"]) return NO;
       if ([[menuItem title] isEqualToString:@"Line Number..."]) return NO;
       if ([[menuItem title] isEqualToString:@"Man Page"]) return NO;
-    }
+    }*/
 
   // Toolbar
   if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]

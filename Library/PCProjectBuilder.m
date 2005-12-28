@@ -25,15 +25,15 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCDefines.h"
-#include "PCSplitView.h"
-#include "PCButton.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCSplitView.h>
+#include <ProjectCenter/PCButton.h>
 
-#include "PCProjectManager.h"
-#include "PCProject.h"
-#include "PCProjectBuilder.h"
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectBuilder.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]

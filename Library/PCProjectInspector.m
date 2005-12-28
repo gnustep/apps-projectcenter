@@ -23,15 +23,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCProjectManager.h"
-#include "PCProject.h"
-#include "PCProjectBrowser.h"
-#include "PCProjectWindow.h"
-#include "PCFileNameField.h"
-#include "PCProjectInspector.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectBrowser.h>
+#include <ProjectCenter/PCProjectWindow.h>
+#include <ProjectCenter/PCProjectInspector.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectInspector
 
@@ -57,6 +56,13 @@
     addObserver:self
        selector:@selector(updateValues:)
            name:PCProjectDictDidChangeNotification
+         object:nil];
+	 
+  // Track Browser selection changes
+  [[NSNotificationCenter defaultCenter] 
+    addObserver:self
+       selector:@selector (browserDidSetPath:)
+           name:PCBrowserDidSetPathNotification
          object:nil];
 
   [self inspectorPopupDidChange:inspectorPopup];
@@ -334,6 +340,16 @@
 
   authorsItems = [projectDict objectForKey:PCAuthors];
   [authorsList reloadData];
+
+  // File Attributes
+  [fileIcon setFileIcon:(id)[project projectBrowser]];
+  [self updateFileAttributes];
+}
+
+- (void)browserDidSetPath:(NSNotification *)aNotif
+{
+  [fileIcon setFileIcon:[aNotif object]];
+  [self updateFileAttributes];
 }
 
 // ============================================================================
@@ -501,8 +517,8 @@
   [project setProjectDictObject:[sender titleOfSelectedItem]
                          forKey:PCLanguage
 	  	         notify:NO];
+  [[project projectWindow] setTitle];
 }
-
 
 // ============================================================================
 // ==== Project Description
@@ -661,8 +677,8 @@
   [localizableButton setRefusesFirstResponder:YES];
   [publicHeaderButton setRefusesFirstResponder:YES];
 
-  [fileIconView setFileNameField:fileNameField];
-  [fileIconView setMultipleFilesSelectionText:@"Multiple files selected"];
+  [fileIcon setFileNameField:fileIconField];
+  [fileIcon setMultipleFilesSelectionText:@"Multiple files selected"];
 
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
@@ -671,24 +687,18 @@
          object:inspectorPanel];
 }
 
-- (void)beginFileRename
+- (void)updateFileAttributes
 {
-/*  if (fileName != nil)
-    {
-      [fileName release];
-    }
-
-  fileName = [[fileNameField stringValue] copy];
-  NSLog(@"fileName: %@", fileName);*/
-
-  [fileNameField setEditableField:YES];
-  [inspectorPanel makeFirstResponder:fileNameField];
-}
-
-// Delegate method of PCFileNameField class
-- (void)controlStringValueDidChange:(NSString *)aString
-{
-  NSArray *publicHeaders = nil;
+  PCProjectBrowser *browser = [project projectBrowser];
+  NSString         *category = [browser nameOfSelectedCategory];
+  NSString         *categoryKey = [project keyForCategory:category];
+  NSArray          *files = [browser selectedFiles];
+  NSString         *file = nil;
+  int              array_count = [files count];
+  int              present_count = 0;
+  NSArray          *publicHeaders = nil;
+  NSArray          *localizedResources = nil;
+  NSEnumerator     *enumerator = nil;
 
   // Initial default buttons state
   [localizableButton setEnabled:NO];
@@ -696,25 +706,102 @@
   [publicHeaderButton setEnabled:NO];
   [publicHeaderButton setState:NSOffState];
 
+  if (files == nil)
+    {
+      return;
+    }
+
+  // --- Enable buttons
+    
+  // If selection is not category AND category is allow localization 
+  // enable localizableButton checkbox
+  if ([[project localizableKeys] containsObject:categoryKey])
+    {
+      [localizableButton setEnabled:YES];
+    }
+
+  // If selection is not category 
+  // AND project accepts public headers 
+  // AND file extension is .h or .H enable publicHeaders checkbox.
+  if ([project canHavePublicHeaders] == YES )
+    {
+      BOOL enable = YES;
+
+      enumerator = [files objectEnumerator];
+      while ((file = [enumerator nextObject]))
+	{
+	    if (![[file pathExtension] isEqualToString:@"h"] &&
+		![[file pathExtension] isEqualToString:@"H"])
+	    {
+	      enable = NO;
+	    }
+	}
+
+      if (enable)
+	{
+	  [publicHeaderButton setEnabled:YES];
+	}
+    }
+
+  // --- Set state of buttons
+  // There are 3 sutiuations:
+  // - all files present in group (state: ON)
+  // - part of file present in group (state: OFF)
+  // - no files present in group (state: OFF)
+
+  // Set state of Public Headers button
+  if ([publicHeaderButton isEnabled])
+    {
+      publicHeaders = [project publicHeaders];
+      enumerator = [files objectEnumerator];
+      present_count = 0;
+      while ((file = [enumerator nextObject]))
+	{
+	  if ([publicHeaders containsObject:file]) 
+	    {
+	      present_count++;
+	    }
+	}
+      if (array_count == present_count)
+	{
+	  [publicHeaderButton setState:NSOnState];
+	}
+    }
+
+  // Set state of Localized Resource button
+  if ([localizableButton isEnabled])
+    {
+      localizedResources = [project localizedResources];
+      enumerator = [files objectEnumerator];
+      present_count = 0;
+      while ((file = [enumerator nextObject]))
+	{
+	  if ([localizedResources containsObject:file]) 
+	    {
+	      present_count++;
+	    }
+	}
+      if (array_count == present_count)
+	{
+	  [localizableButton setState:NSOnState];
+	}
+    }
+}
+
+- (void)beginFileRename
+{
+  [fileIconField setEditableField:YES];
+  [inspectorPanel makeFirstResponder:fileIconField];
+}
+
+// Delegate method of PCFileNameField class
+- (void)controlStringValueDidChange:(NSString *)aString
+{
   if (fileName != nil)
     {
       [fileName release];
     }
   fileName = [aString copy];
-
-  if (fileName)
-    {
-      if ([project canHavePublicHeaders] 
-	  && [[fileName pathExtension] isEqualToString:@"h"])
-	{
-	  [publicHeaderButton setEnabled:YES];
-	  publicHeaders = [project publicHeaders];
-	  if (publicHeaders && [publicHeaders containsObject:fileName])
-	    {
-	      [publicHeaderButton setState:NSOnState];
-	    }
-	}
-    }
 }
 
 // Delegate method of PCFileNameField class
@@ -730,50 +817,66 @@
 
 - (void)fileNameDidChange:(id)sender
 {
-  if ([fileName isEqualToString:[fileNameField stringValue]])
+  if ([fileName isEqualToString:[fileIconField stringValue]])
     {
       return;
     }
 
 /*  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
-	    [project projectName], fileName, [fileNameField stringValue]);*/
+	    [project projectName], fileName, [fileIconField stringValue]);*/
 
-  if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
+  if ([project renameFile:fileName toFile:[fileIconField stringValue]] == NO)
     {
-      [fileNameField setStringValue:fileName];
+      [fileIconField setStringValue:fileName];
     }
 }
 
 - (void)setPublicHeader:(id)sender
 {
-  if ([sender state] == NSOffState)
+  PCProjectBrowser *browser = [project projectBrowser];
+  NSArray          *files = [browser selectedFiles];
+  NSEnumerator     *enumerator = [files objectEnumerator];
+  NSString         *file = nil;
+
+  while ((file = [enumerator nextObject]))
     {
-      [project setHeaderFile:fileName public:NO];
-    }
-  else
-    {
-      [project setHeaderFile:fileName public:YES];
+      if ([sender state] == NSOffState)
+	{
+	  [project setHeaderFile:fileName public:NO];
+	}
+      else
+	{
+	  [project setHeaderFile:fileName public:YES];
+	}
     }
 }
 
 - (void)setLocalizableResource:(id)sender
 {
-  if ([sender state] == NSOffState)
+  PCProjectBrowser *browser = [project projectBrowser];
+  NSArray          *files = [browser selectedFiles];
+  NSEnumerator     *enumerator = [files objectEnumerator];
+  NSString         *file = nil;
+
+  while ((file = [enumerator nextObject]))
     {
-      [project setLocalizableFile:fileName public:NO];
-    }
-  else
-    {
-      [project setLocalizableFile:fileName public:YES];
+      if ([sender state] == NSOffState)
+	{
+	  [project setResourceFile:file localizable:NO];
+	}
+      else
+	{
+	  [project setResourceFile:file localizable:YES];
+	}
     }
 }
 
 - (void)panelDidResignKey:(NSNotification *)aNotif
 {
-  if ([fileNameField isEditable] == YES)
+  if ([fileIconField isEditable] == YES)
     {
-      [inspectorPanel makeFirstResponder:fileIconView];
-      [fileNameField setStringValue:fileName];
+      [inspectorPanel makeFirstResponder:fileIcon];
+      [fileIconField setStringValue:fileName];
     }
 }
 
@@ -781,7 +884,7 @@
 // ==== NSTableViews
 // ============================================================================
 
-- (int)numberOfRowsInTableView: (NSTableView *)aTableView
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
@@ -795,9 +898,9 @@
   return 0;
 }
     
-- (id)            tableView: (NSTableView *)aTableView
-  objectValueForTableColumn: (NSTableColumn *)aTableColumn
-                        row: (int)rowIndex
+- (id)            tableView:(NSTableView *)aTableView
+  objectValueForTableColumn:(NSTableColumn *)aTableColumn
+                        row:(int)rowIndex
 {
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
@@ -814,7 +917,7 @@
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-               row:(int)rowIndex
+ 	       row:(int)rowIndex
 {
   if (authorsList != nil && aTableView == authorsList)
     {

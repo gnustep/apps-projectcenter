@@ -13,6 +13,7 @@ VERSION = 0.5.0
 FRAMEWORK_NAME = ProjectCenter
 ProjectCenter_CURRENT_VERSION_NAME = 0.5.0
 ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
+ProjectCenter_HEADER_FILES_DIR = ../Headers/ProjectCenter
 
 ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 
@@ -25,80 +26,64 @@ ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
 # Header files
 #
 ProjectCenter_HEADER_FILES = \
-  PCBundleLoader.h \
+  PCDefines.h \
+  ProjectCenter.h \
+  \
+  PCBundleManager.h \
   PCFileManager.h \
   PCAddFilesPanel.h \
   PCFileCreator.h \
-  PCServer.h \
   PCMakefileFactory.h \
-  PCSplitView.h \
-  PCButton.h \
-  PCFileNameField.h \
-  PCFileNameIcon.h \
-  PCObjCParser.h \
   \
   PCProjectManager.h \
-  PCBuildPanel.h \
-  PCLaunchPanel.h \
-  PCLoadedFilesPanel.h \
   PCProject.h \
   PCProjectWindow.h \
   PCProjectInspector.h \
   PCProjectBuilder.h \
+  PCProjectBuilderPanel.h \
   PCProjectLauncher.h \
+  PCProjectLauncherPanel.h \
   PCProjectEditor.h \
   \
   PCProjectBrowser.h \
   PCProjectLoadedFiles.h \
+  PCProjectLoadedFilesPanel.h \
   \
-  PCEditor.h \
-  PCEditorView.h \
-  PCEditorView+Highlighting.h \
-  PCTextFinder.h \
-  PCTextFinder+UInterface.h \
-  \
-  PCDefines.h \
-  ProjectCenter.h \
-  ProjectType.h \
-  Server.h \
-  CodeParser.h
+  PCPrefController.h \
+  PCLogController.h
 
 #
 # Class files
 #
 
 ProjectCenter_OBJC_FILES = \
-  PCBundleLoader.m \
+  PCBundleManager.m \
+  PCMakefileFactory.m \
   PCFileManager.m \
   PCAddFilesPanel.m \
   PCFileCreator.m \
-  PCServer.m \
-  PCMakefileFactory.m \
-  PCSplitView.m \
-  PCButton.m \
-  PCFileNameField.m \
-  PCFileNameIcon.m \
-  PCObjCParser.m \
   \
   PCProjectManager.m \
-  PCBuildPanel.m \
-  PCLaunchPanel.m \
-  PCLoadedFilesPanel.m \
   PCProject.m \
   PCProjectWindow.m \
   PCProjectInspector.m \
   PCProjectBuilder.m \
+  PCProjectBuilderPanel.m \
   PCProjectLauncher.m \
+  PCProjectLauncherPanel.m \
   PCProjectEditor.m \
   \
   PCProjectBrowser.m \
   PCProjectLoadedFiles.m \
+  PCProjectLoadedFilesPanel.m \
   \
-  PCEditor.m \
-  PCEditorView.m \
-  PCEditorView+Highlighting.m \
-  PCTextFinder.m \
-  PCTextFinder+UInterface.m 
+  PCSplitView.m \
+  PCButton.m \
+  PCFileNameField.m \
+  PCFileNameIcon.m \
+  \
+  PCPrefController.m \
+  PCLogController.m
 
 #
 # Resources
@@ -118,7 +103,9 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/gsmarkup.template \
   Resources/header.template \
   Resources/postamble.template \
-  Resources/protocol.template
+  Resources/protocol.template \
+  Resources/LogPanel.gorm \
+  Resources/Preferences.gorm
 
 -include GNUmakefile.preamble
 

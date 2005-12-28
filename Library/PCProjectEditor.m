@@ -23,16 +23,17 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCProjectWindow.h"
-#include "PCProjectBrowser.h"
-#include "PCProjectEditor.h"
-#include "PCEditor.h"
-#include "PCEditorView.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCBundleManager.h>
+#include <ProjectCenter/PCProjectWindow.h>
+#include <ProjectCenter/PCProjectBrowser.h>
+#include <ProjectCenter/PCProjectEditor.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
-#include "CodeParser.h"
+#include <Protocols/CodeParser.h>
 
 NSString *PCEditorDidChangeFileNameNotification = 
           @"PCEditorDidChangeFileNameNotification";
@@ -104,58 +105,12 @@ NSString *PCEditorDidResignActiveNotification =
 
 @implementation PCProjectEditor
 // ===========================================================================
-// ==== Class Methods
-// ===========================================================================
-
-+ (PCEditor *)openFileInEditor:(NSString *)path
-{
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *editor = [ud objectForKey:Editor];
-
-  if (![editor isEqualToString:@"ProjectCenter"])
-    {
-      NSArray        *ea = [editor componentsSeparatedByString:@" "];
-      NSString       *app = [ea objectAtIndex: 0];
-
-      if ([[app pathExtension] isEqualToString:@"app"])
-	{
-	  BOOL ret = [[NSWorkspace sharedWorkspace] openFile:path 
-	                                     withApplication:app];
-
-	  if (ret == NO)
-	    {
-	      PCLogError(self, @"Could not open %@ using %@", path, app);
-	    }
-
-	  return nil;
-	}
-
-      editor = [[PCEditor alloc] initExternalEditor:editor 
-	                                   withPath:path
-				      projectEditor:self];
-    }
-  else
-    {
-      PCEditor *editor;
-
-      editor = [[PCEditor alloc] initWithPath:path 
-	                         categoryPath:nil
-				projectEditor:self];
-      [editor setWindowed:YES];
-      [editor show];
-
-      return editor;
-    }
-
-  return nil;
-}
-
-// ===========================================================================
 // ==== Initialisation
 // ===========================================================================
 
-- (id)initWithProject: (PCProject *)aProject
+- (id)initWithProject:(PCProject *)aProject
 {
+  PCBundleManager *bundleManager;
   NSAssert(aProject, @"No project specified!");
 
   if ((self = [super init]))
@@ -164,6 +119,15 @@ NSString *PCEditorDidResignActiveNotification =
       project = aProject;
       componentView  = nil;
       editorsDict = [[NSMutableDictionary alloc] init];
+
+      // Bundles
+      bundleManager = [[project projectManager] bundleManager];
+      
+      // Editor bundles
+      editorBundlesInfo = [[bundleManager infoForBundlesOfType:@"editor"] copy];
+
+      // Parser bundles
+      parserBundlesInfo = [[bundleManager infoForBundlesOfType:@"parser"] copy];
       
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
@@ -213,6 +177,8 @@ NSString *PCEditorDidResignActiveNotification =
       RELEASE(componentView);
     }
 
+  RELEASE(editorBundlesInfo);
+  RELEASE(parserBundlesInfo);
   RELEASE(editorsDict);
 
   [super dealloc];
@@ -237,32 +203,211 @@ NSString *PCEditorDidResignActiveNotification =
 // ==== Project and Editor handling
 // ===========================================================================
 
-- (PCEditor *)editorForFile:(NSString *)path
-               categoryPath:(NSString *)categoryPath
-	           windowed:(BOOL)yn
+- (NSDictionary *)infoTableForBundleType:(NSString *)type
+			     andFileType:(NSString *)extension
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *ed = [ud objectForKey:Editor];
-  PCEditor       *editor;
+  NSDictionary *bundlesInfo = nil;
+  NSEnumerator *enumerator = nil;
+  NSString     *bundlePathKey = nil;
+  NSDictionary *infoTable = nil;
 
-  if (![ed isEqualToString:@"ProjectCenter"])
+  if ([type isEqualToString:@"editor"])
     {
-      editor = [[PCEditor alloc] initExternalEditor:ed
-	                                   withPath:path
-	                              projectEditor:self];
-      return editor;
+      bundlesInfo = editorBundlesInfo;
     }
+  else
+    {
+      bundlesInfo = parserBundlesInfo;
+    }
+
+  enumerator = [[bundlesInfo allKeys] objectEnumerator];
+  while ((bundlePathKey = [enumerator nextObject]))
+    {
+      infoTable = [bundlesInfo objectForKey:bundlePathKey];
+      if ([[infoTable objectForKey:@"FileTypes"] containsObject:extension])
+	{
+	  break;
+	}
+      else
+	{
+	  infoTable = nil;
+	}
+    }
+
+  return infoTable;
+}
+
+- (NSString *)classNameForBundleType:(NSString*)type 
+			     andFile:(NSString *)file
+{
+  NSString     *fileExtension = [file pathExtension];
+  NSDictionary *infoTable = nil;
+  NSString     *className = nil;
+
+  infoTable = [self infoTableForBundleType:type andFileType:fileExtension];
+  className = [infoTable objectForKey:@"PrincipalClassName"];
+
+  if (className == nil && [type isEqualToString:@"editor"])
+    {
+      className = [NSString stringWithString:@"PCEditor"];
+    }
+
+  return className;
+}
+
+// TODO: Should it be editor or parser?
+- (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item
+{
+  NSDictionary *infoTable = [self infoTableForBundleType:@"editor" 
+ 					     andFileType:[item pathExtension]];
+
+  if ([[infoTable objectForKey:@"ProvidesBrowserItems"] isEqualToString:@"YES"])
+    {
+      return YES;
+    }
+  
+  return NO;
+}
+
+// categoryPath:
+// 1. "/Classes/Class.m/- init"
+// 2. "/Subprojects/Project/Classes/Class.m/- init"
+// 3. "/Library/gnustep-gui"
+- (id<CodeEditor>)editorForCategoryPath:(NSString *)categoryPath
+			       windowed:(BOOL)windowed
+{
+  NSArray        *pathArray = [categoryPath pathComponents];
+  PCProject      *activeProject = [[project projectManager] activeProject];
+  NSString       *category = [[project projectBrowser] nameOfSelectedCategory];
+  NSString       *categoryKey = [activeProject keyForCategory:category];
+  NSString       *fileName = nil;
+  NSString       *filePath = nil;
+  NSFileManager  *fm = [NSFileManager defaultManager];
+  BOOL           isDir;
+  BOOL           editable = YES;
+  id<CodeEditor> editor;
+  NSString       *pathLastObject = nil;
+  NSString       *firstSymbol = nil;
+
+  fileName = [[[[project projectBrowser] pathFromSelectedCategory] 
+    pathComponents] objectAtIndex:2];
+  filePath = [activeProject pathForFile:fileName forKey:categoryKey];
+
+/*  NSLog(@"PCPE: fileName: %@ filePath: %@ project: %@", 
+	fileName, filePath, [activeProject projectName]);*/
+
+  // Determine if file not exist or file is directory
+  if (![fm fileExistsAtPath:filePath isDirectory:&isDir] || isDir)
+    {
+      return nil;
+    }
+
+  // Determine if file is text file
+  if (![[PCFileManager defaultManager] isTextFile:filePath])
+    {
+      return nil;
+    }
+
+  // Determine if file should be opened for read only
+  if (![project isEditableFile:fileName])
+    {
+      editable = NO;
+    }
+  
+//  NSLog(@"fileName: %@ > %@", fileName, listEntry);
+
+  editor = [self editorForFile:filePath 
+		  categoryPath:categoryPath
+		      editable:editable
+		      windowed:windowed];
+  if (!editor)
+    {
+      NSLog(@"We don't have editor for file: %@", fileName);
+    }
+		      
+  pathLastObject = [pathArray lastObject];
+/*  NSLog(@"pathArray: c: %i %@", [pathArray count], pathArray);
+  NSLog(@"pathArray: lastObject %@", [pathArray lastObject]);
+  NSLog(@"lastObject[1]: %@", 
+  [pathLastObject substringWithRange:NSMakeRange(0,1)]);*/
+
+  pathLastObject = [pathArray lastObject];
+  firstSymbol = [pathLastObject substringWithRange:NSMakeRange(0,1)];
+  if ([pathLastObject isEqualToString:@"/"]) // file selected
+    {
+      [[project projectBrowser] reloadLastColumnAndNotify:NO]; 
+    }
+  else if ([firstSymbol isEqualToString:@"@"])
+    {
+    }
+  else if ([firstSymbol isEqualToString:@"-"]
+	   || [firstSymbol isEqualToString:@"+"])
+    {
+      [editor scrollToMethodName:pathLastObject];
+    }
+
+  return editor;
+}
+
+- (id<CodeEditor>)editorForFile:(NSString *)path
+                   categoryPath:(NSString *)categoryPath
+		       editable:(BOOL)editable
+	               windowed:(BOOL)windowed
+{
+//  NSUserDefaults  *ud = [NSUserDefaults standardUserDefaults];
+//  NSString        *ed = [ud objectForKey:Editor];
+  PCBundleManager *bundleManager = [[project projectManager] bundleManager];
+  NSString        *editorClassName = nil;
+  NSString        *parserClassName = nil;
+  id<CodeEditor>  editor;
+  id<CodeParser>  parser;
+
+  NSLog(@"PCPE: categoryPath: \"%@\"", categoryPath);
+
+  // TODO: Include external editor code into editor bundle?
+/*  if (![ed isEqualToString:@"ProjectCenter"])
+    {
+      [editor initExternalEditor:ed withPath:path projectEditor:self];
+      return editor;
+    }*/
 
   if (!(editor = [editorsDict objectForKey:path]))
     {
-      editor = [[PCEditor alloc] initWithPath:path 
-	                         categoryPath:categoryPath
-	                        projectEditor:self];
+      // Editor
+      editorClassName = [self classNameForBundleType:@"editor"
+					     andFile:[path lastPathComponent]];
+      editor = [bundleManager objectForClassName:editorClassName
+	  			    withProtocol:@protocol(CodeEditor)
+				    inBundleType:@"editor"];
+      if (!editor)
+	{
+	  return nil;
+	}
+
+      // Parser
+      parserClassName = [self classNameForBundleType:@"parser"
+					     andFile:[path lastPathComponent]];
+      if (parserClassName != nil)
+	{
+	  NSLog(@"PCPE: parser: %@", parserClassName);
+	  parser = [bundleManager objectForClassName:parserClassName
+	      				withProtocol:@protocol(CodeParser)
+	    				inBundleType:@"parser"];
+	  AUTORELEASE(parser);
+	  [editor setParser:parser];
+	}
+
+      [editor openFileAtPath:path 
+		categoryPath:categoryPath
+	       projectEditor:self
+		    editable:editable];
+
       [editorsDict setObject:editor forKey:path];
       RELEASE(editor);
     }
 
-  [editor setWindowed:yn];
+  [editor setCategoryPath:categoryPath];
+  [editor setWindowed:windowed];
 
   [self orderFrontEditorForFile:path];
 
@@ -271,7 +416,12 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)orderFrontEditorForFile:(NSString *)path
 {
-  PCEditor *editor = [editorsDict objectForKey:path];
+  id<CodeEditor> editor = [editorsDict objectForKey:path];
+
+  if (!editor)
+    {
+      return;
+    }
 
   if ([editor isWindowed])
     {
@@ -285,7 +435,7 @@ NSString *PCEditorDidResignActiveNotification =
     }
 }
 
-- (void)setActiveEditor:(PCEditor *)anEditor
+- (void)setActiveEditor:(id<CodeEditor>)anEditor
 {
   if (anEditor != activeEditor)
     {
@@ -293,7 +443,7 @@ NSString *PCEditorDidResignActiveNotification =
     }
 }
 
-- (PCEditor *)activeEditor
+- (id<CodeEditor>)activeEditor
 {
   return activeEditor;
 }
@@ -305,14 +455,18 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)closeActiveEditor:(id)sender
 {
+  if (!activeEditor)
+    {
+      return;
+    }
+
   [activeEditor closeFile:self save:YES];
 }
 
 - (void)closeEditorForFile:(NSString *)file
 {
-  PCEditor *editor = nil;
+  id<CodeEditor> editor;
 
-//  editor = [editorsDict objectForKey:file];
   if ([editorsDict count] > 0 && (editor = [editorsDict objectForKey:file]))
     {
       [editor closeFile:self save:YES];
@@ -325,7 +479,7 @@ NSString *PCEditorDidResignActiveNotification =
 - (BOOL)closeAllEditors
 {
   NSEnumerator   *enumerator = [editorsDict keyEnumerator];
-  PCEditor       *editor = nil;
+  id<CodeEditor> editor;
   NSString       *key = nil;
   NSMutableArray *editedFiles = [[NSMutableArray alloc] init];
 
@@ -355,8 +509,8 @@ NSString *PCEditorDidResignActiveNotification =
 
   // Stop parser. It releases self.
   // TODO: There should be a few parsers.
-  [aParser stop];
-  [parserConnection release];
+/*  [aParser stop];
+  [parserConnection release];*/
 
   return YES;
 }
@@ -396,10 +550,10 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (BOOL)saveAllFiles
 {
-  NSEnumerator *enumerator = [editorsDict keyEnumerator];
-  PCEditor     *editor;
-  NSString     *key;
-  BOOL          ret = YES;
+  NSEnumerator   *enumerator = [editorsDict keyEnumerator];
+  id<CodeEditor> editor;
+  NSString       *key;
+  BOOL           ret = YES;
 
   while ((key = [enumerator nextObject]))
     {
@@ -416,7 +570,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (BOOL)saveFile
 {
-  PCEditor *editor = [self activeEditor];
+  id<CodeEditor> editor = [self activeEditor];
 
   if (editor != nil)
     {
@@ -428,7 +582,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (BOOL)saveFileAs:(NSString *)file
 {
-  PCEditor *editor = [self activeEditor];
+  id<CodeEditor> editor = [self activeEditor];
 
   if (editor != nil)
     {
@@ -439,7 +593,10 @@ NSString *PCEditorDidResignActiveNotification =
       res = [editor saveFileTo:file];
       [editor closeFile:self save:NO];
 
-      [self editorForFile:file categoryPath:categoryPath windowed:iw];
+      [self editorForFile:file 
+	     categoryPath:categoryPath
+		 editable:YES
+		 windowed:iw];
 
       return res;
     }
@@ -449,7 +606,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (BOOL)saveFileTo:(NSString *)file
 {
-  PCEditor *editor = [self activeEditor];
+  id<CodeEditor> editor = [self activeEditor];
 
   if (editor != nil)
     {
@@ -461,7 +618,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (BOOL)revertFileToSaved
 {
-  PCEditor *editor = [self activeEditor];
+  id<CodeEditor> editor = [self activeEditor];
 
   if (editor != nil)
     {
@@ -490,7 +647,7 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidClose:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
+  id<CodeEditor> editor = [aNotif object];
 
   // It is not our editor
   if ([editor projectEditor] != self)
@@ -502,8 +659,8 @@ NSString *PCEditorDidResignActiveNotification =
 
   if ([editorsDict count])
     {
-      NSString *lastEditorKey = [[editorsDict allKeys] lastObject];
-      PCEditor *lastEditor = [editorsDict objectForKey:lastEditorKey];
+      NSString       *lastEditorKey = [[editorsDict allKeys] lastObject];
+      id<CodeEditor> lastEditor = [editorsDict objectForKey:lastEditorKey];
 
       lastEditorKey = [[editorsDict allKeys] lastObject];
       [componentView setContentView:[lastEditor componentView]];
@@ -512,20 +669,19 @@ NSString *PCEditorDidResignActiveNotification =
   else
     {
       PCProjectBrowser *browser = [project projectBrowser];
-      NSString         *path = [browser path];
       
       [componentView setContentView:scrollView];
       [[project projectWindow] makeFirstResponder:scrollView];
 
-      [browser setPath:[path stringByDeletingLastPathComponent]];
+      [browser setPath:[browser pathToSelectedCategory]];
       [self setActiveEditor:nil];
     }
 }
 
 - (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
-  NSString *categoryPath = nil;
+  id<CodeEditor> editor = [aNotif object];
+  NSString       *categoryPath = nil;
 
   if ([editor projectEditor] != self) // || activeEditor == editor)
     {
@@ -558,10 +714,10 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidChangeFileName:(NSNotification *)aNotif
 {
-  NSDictionary *_editorDict = [aNotif object];
-  PCEditor     *_editor = [_editorDict objectForKey:@"Editor"];
-  NSString     *_oldFileName = nil;
-  NSString     *_newFileName = nil;
+  NSDictionary   *_editorDict = [aNotif object];
+  id<CodeEditor> _editor = [_editorDict objectForKey:@"Editor"];
+  NSString       *_oldFileName = nil;
+  NSString       *_newFileName = nil;
 
   if ([_editor projectEditor] != self)
     {
@@ -573,54 +729,6 @@ NSString *PCEditorDidResignActiveNotification =
   
   [editorsDict removeObjectForKey:_oldFileName];
   [editorsDict setObject:_editor forKey:_newFileName];
-}
-
-// ===========================================================================
-// ==== Parser
-// ===========================================================================
-
-- (id<CodeParser>)parserForFile:(NSString *)path
-{
-  if (parserConnection == nil)
-    {
-      NSPort  *port1 = nil;
-      NSPort  *port2 = nil;
-      NSArray *portArray = nil;
-
-      // Create connection to parser server
-      port1 = [NSPort new];
-      port2 = [NSPort new];
-      parserConnection = [[NSConnection alloc] initWithReceivePort:port1
-	                                                  sendPort:port2];
-      // Set self as root object for connection with parser.
-      // setRootObject retains self.
-      [parserConnection setRootObject:self];
-      [self release];
-
-      // Ports switched here.
-      portArray = [NSArray arrayWithObjects:port2, port1, nil];
-
-      NSLog(@"PCProjectEditor: detaching parser thread...");
-
-      [NSThread detachNewThreadSelector:@selector(connectWithPorts:)
-	                       toTarget:[PCObjCParser class]
-	                     withObject:portArray];
-      // Wait for parser thread initialization (setServer:)
-      while (aParser == nil)
-	{
-	  [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
-	                           beforeDate:[NSDate distantFuture]];
-	}
-    }
-    
-  return aParser;
-}
-
-- (oneway void)setServer:(id)anObject
-{
-  NSLog(@"PCProjectEditor: parser thread detached and ready to talk");
-  [anObject setProtocolForProxy:@protocol(CodeParser)];
-  aParser = [anObject retain];
 }
 
 @end

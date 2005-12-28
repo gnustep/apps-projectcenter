@@ -23,15 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCProject.h"
-#include "PCProjectEditor.h"
-#include "PCEditor.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectEditor.h>
 
-#include "PCPrefController.h"
-#include "PCLogController.h"
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
 
-#include "PCProjectLoadedFiles.h"
+#include <Protocols/CodeEditor.h>
+#include <ProjectCenter/PCProjectLoadedFiles.h>
 
 @implementation PCProjectLoadedFiles
 
@@ -230,9 +230,9 @@
 
 - (void)fileWillOpen:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
-  NSString *filePath = nil;
-  int      row;
+  id<CodeEditor> editor = [aNotif object];
+  NSString       *filePath = nil;
+  int            row;
 
   if ([editor projectEditor] != [project projectEditor])
     {
@@ -260,8 +260,8 @@
 
 - (void)fileDidClose:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
-  NSString *filePath = [editor path];
+  id<CodeEditor> editor = [aNotif object];
+  NSString       *filePath = [editor path];
 
   if ([editor projectEditor] != [project projectEditor])
     {
@@ -287,10 +287,10 @@
 
 - (void)editorDidBecomeActive:(NSNotification *)aNotif
 {
-  PCEditor *editor = [aNotif object];
-  NSString *filePath = nil;
-  unsigned index;
-  unsigned filesCount;
+  id<CodeEditor> editor = [aNotif object];
+  NSString       *filePath = nil;
+  unsigned       index;
+  unsigned       filesCount;
   
   if ([editor projectEditor] != [project projectEditor])
     {
@@ -310,11 +310,11 @@
 
 - (void)editorDidChangeFileName:(NSNotification *)aNotif
 {
-  NSDictionary *_editorDict = [aNotif object];
-  PCEditor     *_editor = [_editorDict objectForKey:@"Editor"];
-  NSString     *_oldFileName = nil;
-  NSString     *_newFileName = nil;
-  unsigned     index;
+  NSDictionary   *_editorDict = [aNotif object];
+  id<CodeEditor> _editor = [_editorDict objectForKey:@"Editor"];
+  NSString       *_oldFileName = nil;
+  NSString       *_newFileName = nil;
+  unsigned       index;
 
   if ([_editor projectEditor] != [project projectEditor])
     {

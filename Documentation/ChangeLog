@@ -1,3 +1,17 @@
+2005-11-20 Serg Stoyan <stoyan255@ukr.net>
+
+	* Rewritte bundle loading mechanizm. Bundle now loaded on demand.
+	
+	* Created Protocols directory.
+	
+	* PCEditor and friends moved to loadable bundle Modules/Editors/ProjectCenter.
+	
+	* PCLogController.[hm] and PCPrefController.[hm] was moved to Library.
+	
+	* Fixes for MingW environment (thanks to Adam Fedor).
+	
+	* Added attempt to find make and debugger utilities.
+	
 2005-09-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProject.m: (saveProjectWindowsAndPanels): save ProjectBrowser
@@ -9,7 +23,7 @@
 	Used for restoring saved frame of ProjectBrowser. In general, used to 
 	restore subviews size of horisontal and verstical split views from last
 	session. "Remember project windows and panels in PC.project" task from
-	TODO file is considered fully comleted now. Use this scheme for other 
+	TODO file is considered fully comleted now. Will use this scheme for other 
 	split views in PC.
 
 	* Library/PCFileNameIcon.[hm]: new files. I'm not sure yet if it should

@@ -24,7 +24,7 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCFileNameField.h"
+#include <ProjectCenter/PCFileNameField.h>
 
 @implementation PCFileNameField
 

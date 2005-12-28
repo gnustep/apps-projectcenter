@@ -18,15 +18,13 @@ ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 #
 SUBPROJECTS = \
         Library \
-	Modules \
+	Modules
 
 #
 # Resource files
 #
 ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
-Resources/LogPanel.gorm \
-Resources/Preferences.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
 Images/FileC.tiff \
@@ -77,23 +75,23 @@ Images/soundSuitcase.tiff \
 Images/soundSuitcaseH.tiff \
 Images/subprojectSuitcase.tiff \
 Images/subprojectSuitcaseH.tiff \
-Modules/AggregateProject/Aggregate.project \
-Modules/ApplicationProject/Application.project \
-Modules/BundleProject/Bundle.project \
-Modules/FrameworkProject/Framework.project \
-Modules/LibraryProject/Library.project \
-Modules/ResourceSetProject/ResourceSet.project \
-Modules/ToolProject/Tool.project
+Modules/Projects/Aggregate/Aggregate.project \
+Modules/Projects/Application/Application.project \
+Modules/Projects/Bundle/Bundle.project \
+Modules/Projects/Framework/Framework.project \
+Modules/Projects/Library/Library.project \
+Modules/Projects/ResourceSet/ResourceSet.project \
+Modules/Projects/Tool/Tool.project \
+Modules/Editors/ProjectCenter/ProjectCenter.editor \
+Modules/Parsers/ProjectCenter/ProjectCenter.parser
 
 #
 # Header files
 #
 ProjectCenter_HEADERS = \
-PCAppController.h \
-PCInfoController.h \
-PCLogController.h \
-PCMenuController.h \
-PCPrefController.h
+Headers/PCAppController.h \
+Headers/PCInfoController.h \
+Headers/PCMenuController.h
 
 #
 # Class files
@@ -101,9 +99,7 @@ PCPrefController.h
 ProjectCenter_OBJC_FILES = \
 PCAppController.m \
 PCInfoController.m \
-PCLogController.m \
 PCMenuController.m \
-PCPrefController.m \
 ProjectCenter_main.m
 
 -include GNUmakefile.preamble

@@ -22,11 +22,11 @@
   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCButton.h"
-#include "PCDefines.h"
+#include <ProjectCenter/PCButton.h>
+#include <ProjectCenter/PCDefines.h>
 
-#include "AppKit/NSBezierPath.h"
-#include "GNUstepGUI/GSTrackingRect.h"
+#include <AppKit/NSBezierPath.h>
+#include <GNUstepGUI/GSTrackingRect.h>
 
 @implementation PCButton
 

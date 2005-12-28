@@ -23,16 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCFileManager.h"
-#include "PCFileCreator.h"
-#include "PCProjectManager.h"
-#include "PCProject.h"
-#include "PCProjectBrowser.h"
-#include "PCServer.h"
-#include "PCAddFilesPanel.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCFileCreator.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectBrowser.h>
+#include <ProjectCenter/PCAddFilesPanel.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
 @implementation PCFileManager
 
@@ -84,8 +83,16 @@ static PCFileManager *_mgr = nil;
   [super dealloc];
 }
 
+- (BOOL)     fileManager:(NSFileManager *)manager 
+ shouldProceedAfterError:(NSDictionary *)errorDict
+{
+  NSLog(@"FM error is: %@", [errorDict objectForKey:@"Error"]);
+
+  return YES;
+}
+
 // ===========================================================================
-// ==== File stuff
+// ==== File handling
 // ===========================================================================
 
 - (NSMutableArray *)filesForOpenOfType:(NSArray *)types
@@ -201,11 +208,13 @@ static PCFileManager *_mgr = nil;
       directoryPath = [toFile stringByDeletingLastPathComponent];
       if ([self createDirectoriesIfNeededAtPath:directoryPath] == NO)
 	{
+	  NSLog(@"PCFileManager: createDirectoriesIfNeededAtPath: == NO");
 	  return NO;
 	}
 
-      if (![fm copyPath:file toPath:toFile handler:nil])
+      if ([fm copyPath:file toPath:toFile handler:self] == NO)
 	{
+	  NSLog(@"PCFileManager: copyPath:toPath: == NO");
 	  return NO;
 	}
     }
@@ -225,6 +234,27 @@ static PCFileManager *_mgr = nil;
   path = [directory stringByAppendingPathComponent:[file lastPathComponent]];
 
   if (![self copyFile:file toFile:path])
+    {
+      return NO;
+    }
+
+  return YES;
+}
+
+- (BOOL)copyFile:(NSString *)file 
+   fromDirectory:(NSString *)fromDir
+   intoDirectory:(NSString *)toDir
+{
+  NSString *path = nil;
+
+  if (!file || !fromDir || !toDir)
+    {
+      return NO;
+    }
+    
+  path = [fromDir stringByAppendingPathComponent:[file lastPathComponent]];
+
+  if (![self copyFile:path intoDirectory:toDir])
     {
       return NO;
     }
@@ -283,8 +313,31 @@ static PCFileManager *_mgr = nil;
   path = [directory stringByAppendingPathComponent:file];
   if (![fm removeFileAtPath:path handler:nil])
     {
+      NSLog(@"PCFileManager: removeFileAtPath: == NO");
       return NO;
     }
+
+  [self removeDirectoriesIfEmptyAtPath:directory];
+
+  return YES;
+}
+
+- (BOOL)removeFileAtPath:(NSString *)file
+{
+  NSFileManager *fm = [NSFileManager defaultManager];
+  
+  if (!file)
+    {
+      return NO;
+    }
+
+  if (![fm removeFileAtPath:file handler:nil])
+    {
+      return NO;
+    }
+
+  [self 
+    removeDirectoriesIfEmptyAtPath:[file stringByDeletingLastPathComponent]];
 
   return YES;
 }
@@ -306,6 +359,20 @@ static PCFileManager *_mgr = nil;
 	{
 	  return NO;
 	}
+    }
+
+  return YES;
+}
+
+- (BOOL)moveFile:(NSString *)file intoDirectory:(NSString *)directory
+{
+  if ([self copyFile:file intoDirectory:directory] == YES)
+    {
+      [self removeFileAtPath:file];
+    }
+  else
+    {
+      return NO;
     }
 
   return YES;
@@ -557,3 +624,48 @@ static PCFileManager *_mgr = nil;
 
 @end
 
+@implementation PCFileManager (FileType)
+
+/**
+ * Returns YES if the file identified by `filename' is a text file,
+ * otherwise returns NO.
+ *
+ * The test is one by reading the first 512 bytes of the file
+ * and checking whether at least 90% of the data are printable
+ * ASCII characters.
+ *
+ * Author Saso Kiselkov
+ */
+- (BOOL)isTextFile:(NSString *)filename
+{
+  NSFileHandle *fh;
+  NSData       *data;
+  unsigned int i, n;
+  const char   *buf;
+  unsigned int printable;
+
+  fh = [NSFileHandle fileHandleForReadingAtPath:filename];
+  if (fh == nil)
+    {
+      return NO;
+    }
+
+  data = [fh readDataOfLength:512];
+  if ([data length] == 0)
+    {
+      return YES;
+    }
+
+  buf = [data bytes];
+  for (i = printable = 0, n = [data length]; i < n; i++)
+    {
+      if (isprint(buf[i]) || isspace(buf[i]))
+	{
+	  printable++;
+	}
+    }
+
+  return (((double) printable / n) > 0.9);
+}
+
+@end

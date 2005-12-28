@@ -23,9 +23,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCProject.h"
-#include "PCMakefileFactory.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCMakefileFactory.h>
 
 #define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
 #define COMMENT_RESOURCES    @"\n\n#\n# Resource files\n#\n"
@@ -59,12 +59,12 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)createMakefileForProject:(NSString *)prName
 {
-  NSAssert( prName, @"No project name given!");
+  NSAssert(prName, @"No project name given!");
 
-  AUTORELEASE( mfile );
+  AUTORELEASE(mfile);
   mfile = [[NSMutableString alloc] init];
 
-  AUTORELEASE( pnme );
+  AUTORELEASE(pnme);
   pnme = [prName copy];
 
   [mfile appendString:@"#\n"];
@@ -244,7 +244,9 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendClasses:(NSArray *)array
 {
   if (array == nil || [array count] == 0)
-    return;
+    {
+      return;
+    }
 
   [self appendClasses:array forTarget:pnme];
 }
@@ -252,7 +254,9 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendClasses:(NSArray *)array forTarget:(NSString *)target
 {
   if (array == nil || [array count] == 0)
-    return;
+    {
+      return;
+    }
 
   [self appendString:COMMENT_CLASSES];
   [self appendString:
@@ -264,7 +268,9 @@ static PCMakefileFactory *_factory = nil;
 - (void)appendOtherSources:(NSArray *)array
 {
   if (array == nil || [array count] == 0)
-    return;
+    {
+      return;
+    }
 
   [self appendOtherSources: array forTarget: pnme];
 }
@@ -277,7 +283,9 @@ static PCMakefileFactory *_factory = nil;
   NSString       *file;
   
   if (array == nil || [array count] == 0)
-    return;
+    {
+      return;
+    }
 
   // Other Sources can have both .m files and non .m files
   oenum = [array objectEnumerator];
@@ -331,25 +339,83 @@ static PCMakefileFactory *_factory = nil;
     }
 }
 
-- (void)appendResources
+- (void)appendResources:(NSArray *)array inDir:(NSString *)dir
 {
+  int      i = 0;
+  int      count = [array count];
+  NSString *string = nil;
+  NSString *item = nil;
+  NSString *eol = [NSString stringWithString:@"\\\n"];
+
+  if (array == nil || count <= 0)
+    {
+      return;
+    }
+
+  // Header
   [self appendString:COMMENT_RESOURCES];
   [self appendString:
-    [NSString stringWithFormat:@"%@_RESOURCE_FILES = ",pnme]];
+    [NSString stringWithFormat:@"%@_RESOURCE_FILES = \\\n",pnme]];
+
+  // Items
+  for (i = 0; i < count; i++)
+    {
+      item = [array objectAtIndex:i];
+      string = [NSString stringWithFormat:@"%@/%@ %@", dir, item, eol];
+      [self appendString:string];
+      if (i == (count-2))
+	{
+	  eol = [NSString stringWithString:@"\n"];
+	}
+    }
 }
 
 - (void)appendResourceItems:(NSArray *)array
 {
   if (array == nil || [array count] <= 0)
-    return;
+    {
+      return;
+    }
 
   [self appendString:@"\\\n"];
   [self appendString:[array componentsJoinedByString:@" \\\n"]];
 }
 
-- (void)appendLocalization
+- (void)appendLocalizedResources:(NSArray *)resources 
+		    forLanguages:(NSArray *)languages
 {
+  NSString *langs = [languages componentsJoinedByString:@" "];
+  NSString *string = nil;
+  NSString *item = nil;
+  NSString *eol = [NSString stringWithString:@"\\\n"];
+  int      i = 0;
+  int      count = [resources count];
+
+  if (resources == nil || count <= 0)
+    {
+      return;
+    }
+
+  // Header
   [self appendString:COMMENT_LOCALIZATION];
+  
+  // Languages
+  string = [NSString stringWithFormat:@"%@_LANGUAGES = %@\n", pnme, langs];
+  [self appendString:string];
+
+  // Items
+  [self appendString:
+    [NSString stringWithFormat:@"%@_LOCALIZED_RESOURCE_FILES = \\\n",pnme]];
+  for (i = 0; i < count; i++)
+    {
+      if (i == (count-1))
+	{
+	  eol = [NSString stringWithString:@"\n"];
+	}
+      item = [resources objectAtIndex:i];
+      string = [NSString stringWithFormat:@"%@ %@", item, eol];
+      [self appendString:string];
+    }
 }
 
 - (void)appendSubprojects:(NSArray*)array
@@ -358,7 +424,9 @@ static PCMakefileFactory *_factory = nil;
   NSEnumerator *enumerator = nil;
 
   if (array == nil || [array count] == 0)
-    return;
+    {
+      return;
+    }
 
   [self appendString:COMMENT_SUBPROJECTS];
   [self appendString:@"SUBPROJECTS = "];

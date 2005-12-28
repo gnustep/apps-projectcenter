@@ -24,9 +24,9 @@
 
 #include <AppKit/AppKit.h>
 
-#include "PCDefines.h"
-#include "PCFileNameIcon.h"
-#include "PCProjectBrowser.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCFileNameIcon.h>
+#include <ProjectCenter/PCProjectBrowser.h>
 
 @implementation PCFileNameIcon
 
@@ -35,13 +35,6 @@
   filePath = nil;
   msfText = nil;
   [self setImage:[NSImage imageNamed:@"projectSuitcase"]];
-
-  // Browser
-  [[NSNotificationCenter defaultCenter] 
-    addObserver:self
-       selector:@selector (setFileIcon:)
-           name:PCBrowserDidSetPathNotification
-         object:nil];
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -53,13 +46,6 @@
   [self setRefusesFirstResponder:YES];
   [self setEditable:NO];
   [self setImage:[NSImage imageNamed:@"projectSuitcase"]];
-
-  // Browser
-  [[NSNotificationCenter defaultCenter] 
-    addObserver:self
-       selector:@selector (setFileIcon:)
-           name:PCBrowserDidSetPathNotification
-         object:nil];
 
   return self;
 }
@@ -87,9 +73,8 @@
   msfText = [text copy];
 }
 
-- (void)setFileIcon:(NSNotification *)notification
+- (void)setFileIcon:(id)object
 {
-  id       object = [notification object];
   NSString *categoryName = nil;
   NSString *fileName = nil;
   NSString *fileExtension = nil;
@@ -193,18 +178,17 @@
 	    @"%i files", [[object selectedFiles] count]]];
 	}
     }
-  else if (fileName)
-    {
-      [fileNameField setStringValue:fileName];
-    }
   else if (categoryName)
     {
       [fileNameField setStringValue:categoryName];
     }
+  else if (fileName)
+    {
+      [fileNameField setStringValue:fileName];
+    }
   else
     {
-//      [fileNameField setStringValue:[project projectName]];
-//      [inspector setFileName:nil andIcon:nil];
+      [fileNameField setStringValue:@"No files selected"];
     }
 }
 

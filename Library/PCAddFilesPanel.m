@@ -22,8 +22,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCLogController.h"
-#include "PCAddFilesPanel.h"
+#include <ProjectCenter/PCLogController.h>
+#include <ProjectCenter/PCAddFilesPanel.h>
 
 static PCAddFilesPanel *addFilesPanel = nil;
 

@@ -23,23 +23,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCSplitView.h"
-#include "PCButton.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCSplitView.h>
+#include <ProjectCenter/PCButton.h>
 
-#include "PCProjectManager.h"
-#include "PCProject.h"
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProject.h>
 
-#include "PCProjectWindow.h"
-#include "PCProjectBrowser.h"
-#include "PCProjectEditor.h"
-#include "PCProjectBuilder.h"
-#include "PCProjectLauncher.h"
-#include "PCProjectLoadedFiles.h"
-#include "PCProjectInspector.h"
+#include <ProjectCenter/PCProjectWindow.h>
+#include <ProjectCenter/PCProjectBrowser.h>
+#include <ProjectCenter/PCProjectEditor.h>
+#include <ProjectCenter/PCProjectBuilder.h>
+#include <ProjectCenter/PCProjectLauncher.h>
+#include <ProjectCenter/PCProjectLoadedFiles.h>
+#include <ProjectCenter/PCProjectInspector.h>
 
-#include "PCPrefController.h"
-#include "PCLogController.h"
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectWindow
 
@@ -66,7 +66,7 @@
 - (void)_initUI
 {
   NSRect rect;
-  NSView *browserView = nil;
+//  NSView *browserView = nil;
 
   if (projectWindow != nil)
     {
@@ -122,11 +122,12 @@
   rect = [[projectWindow contentView] frame];
   if (h_split)
     {
-      rect.size.height = 130;
+      rect.size.height = 185;
     }
   v_split = [[PCSplitView alloc] initWithFrame:rect];
   [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [v_split setVertical:YES];
+  [v_split setDelegate:self];
 
   /*
    * File Browser
@@ -217,6 +218,13 @@
 	   selector:@selector(preferencesDidChange:)
 	       name:PCPreferencesDidChangeNotification
 	     object:nil];
+	     
+      // Track Browser selection changes for file icon updates
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector (browserDidSetPath:)
+	       name:PCBrowserDidSetPathNotification
+	     object:[project projectBrowser]];
     }
   
   return self;
@@ -224,9 +232,12 @@
 
 - (void)setTitle
 {
-  [projectWindow setTitle: [NSString stringWithFormat: @"%@ - %@", 
-  [project projectName],
-  [[project projectPath] stringByAbbreviatingWithTildeInPath]]];
+  NSString *name = [project projectName];
+  NSString *path = [[project projectPath] stringByAbbreviatingWithTildeInPath];
+  NSString *language = [[project projectDict] objectForKey:PCLanguage];
+
+  [projectWindow 
+    setTitle:[NSString stringWithFormat:@"%@ - %@ [%@]",name,path,language]];
 }
 
 - (void)dealloc
@@ -299,7 +310,7 @@
   [customView display];
 }
 
-- (void)setStatusLineText:(NSString *)text
+- (void)updateStatusLineWithText:(NSString *)text
 {
   [statusLine setStringValue:text];
 }
@@ -537,6 +548,7 @@
   //--- Add Custom view
   if ([self hasCustomView] && customView == nil)
     {
+//      [browserView setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
       [self _createCustomView];
     }
 
@@ -579,6 +591,7 @@
   //--- Remove Custom view
   if (![self hasCustomView] && customView != nil)
     {
+//      [browserView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
       [customView removeFromSuperview];
       [h_split adjustSubviews];
       customView = nil;
@@ -601,6 +614,11 @@
 	}
       [loadedFilesButton setEnabled:YES];
     }
+}
+
+- (void)browserDidSetPath:(NSNotification *)aNotif
+{
+  [fileIcon setFileIcon:[aNotif object]];
 }
 
 // ============================================================================
@@ -717,68 +735,127 @@
 // ==== SplitView delegate
 // ============================================================================
 
-- (void)         splitView:(NSSplitView *)sender
- resizeSubviewsWithOldSize:(NSSize)oldSize
+// Subviews: browser and loaded files
+- (void)resizeVerticalSubiewsWithOldSize:(NSSize)oldSize
 {
-  NSDictionary *projectDict = [project projectDict];
-  NSDictionary *windowsDict = [projectDict objectForKey:@"PC_WINDOWS"];
-  NSSize       hSplitSize = [sender frame].size;
+  NSSize       splitSize = [v_split frame].size;
+  NSDictionary *projectDict = nil;
+  NSDictionary *windowsDict = nil;
+  NSString     *browserString = nil;
   NSRect       browserRect;
-  NSRect       vSplitRect;
   NSRect       boxRect;
+
+  if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
+    {
+      return;
+    }
+
+//  NSLog(@"resize vertical split view");
+//  NSLog(@"v_split %@", NSStringFromRect([v_split frame]));
+
+  if (!_splitViewsRestored)
+    {
+      projectDict = [project projectDict];
+      windowsDict = [projectDict objectForKey:@"PC_WINDOWS"];
+      if (windowsDict != nil)
+	{
+	  browserString = [windowsDict objectForKey:@"ProjectBrowser"];
+	  if (browserString != nil && ![browserString isEqualToString:@""])
+	    {
+	      browserRect = NSRectFromString(browserString);
+	    }
+	}
+      else
+	{
+	  browserRect = NSMakeRect(0, 0, splitSize.width, splitSize.height);
+	}
+    }
 
   // Use saved frame of ProjectBrowser only first time. Every time window is
   // resized use new size of subviews.
   if (_splitViewsRestored)
     {
       browserRect = [[[project projectBrowser] view] frame];
-    }
-  else
-    {
-      browserRect = 
-	NSRectFromString([windowsDict objectForKey:@"ProjectBrowser"]);
+      browserRect.size.height = splitSize.height;
+      if (![self hasLoadedFilesView])
+	{
+	  browserRect.size.width = splitSize.width;
+	}
     }
 
-  // v_split resize
-  vSplitRect = browserRect;
-  if (vSplitRect.size.height > 0)
-    {
-      vSplitRect.size.width = hSplitSize.width;
-    }
-  else
-    {
-      vSplitRect.size.width = hSplitSize.width;
-      vSplitRect.size.height = 100;
-      vSplitRect.origin.x = 0;
-      vSplitRect.origin.y = 0;
-    }
-  NSLog(@"v_split %@", NSStringFromRect(vSplitRect));
-  [v_split setFrame:vSplitRect];
+  // Browser
+//  NSLog(@"browser %@", NSStringFromRect(browserRect));
+  [browserView setFrame:browserRect];
 
-  // v_split subviews resize
+  // Loaded Files 
   if ([self hasLoadedFilesView])
     {
-      // browser
-      NSLog(@"browser %@", NSStringFromRect(browserRect));
-      [[[project projectBrowser] view] setFrame:browserRect];
-
-      // loaded files
       boxRect.origin.x = browserRect.size.width + [v_split dividerThickness];
       boxRect.origin.y = 0;
       boxRect.size.width = [v_split frame].size.width - boxRect.origin.x;
       boxRect.size.height = [v_split frame].size.height;
-      NSLog(@"loadedFiles %@", NSStringFromRect(boxRect));
+//      NSLog(@"loadedFiles %@", NSStringFromRect(boxRect));
       [[[project projectLoadedFiles] componentView] setFrame:boxRect];
     }
 
-  // editor
-  boxRect.origin.x = 0;
-  boxRect.origin.y = browserRect.size.height + [sender dividerThickness];
-  boxRect.size.width = hSplitSize.width;
-  boxRect.size.height = hSplitSize.height - boxRect.origin.y;
-  [customView setFrame:boxRect];
-
   _splitViewsRestored = YES;
+}
+
+// Subviews: vertical split view and custom view
+- (void)resizeHorizontalSubiewsWithOldSize:(NSSize)oldSize
+{
+  NSSize splitSize = [h_split frame].size;
+  NSSize hSplitSize;
+  NSRect vSplitRect;
+  NSRect boxRect;
+  
+  if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
+    {
+      return;
+    }
+
+//  NSLog(@"resize horizontal split view");
+
+  hSplitSize = [h_split frame].size;
+  
+  // Vertical Split View
+  vSplitRect = [browserView frame];
+  vSplitRect.origin.x = 0;
+  vSplitRect.origin.y = 0;
+  if (![self hasCustomView])
+    {
+      vSplitRect.size = hSplitSize;
+    }
+  else
+    {
+      vSplitRect.size.width = hSplitSize.width;
+    }
+  [v_split setFrame:vSplitRect];
+  
+  // Custom view (Editor|Builder|Launcher)
+  if ([self hasCustomView])
+    {
+      boxRect.origin.x = 0;
+      boxRect.origin.y = vSplitRect.size.height + [h_split dividerThickness];
+      boxRect.size.width = hSplitSize.width;
+      boxRect.size.height = hSplitSize.height - boxRect.origin.y;
+      [customView setFrame:boxRect];
+    }
+}
+
+- (void)         splitView:(NSSplitView *)sender
+ resizeSubviewsWithOldSize:(NSSize)oldSize
+{
+  if (sender == v_split)
+    {
+      [self resizeVerticalSubiewsWithOldSize:oldSize];
+    }
+  else
+    {
+      [self resizeHorizontalSubiewsWithOldSize:oldSize];
+    }
+
+  return;
 }
 
 @end

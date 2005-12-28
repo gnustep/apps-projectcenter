@@ -19,12 +19,12 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
 #include "PCInfoController.h"
-#include "PCPrefController.h"
-#include "PCLogController.h"
 
 #include <ProjectCenter/ProjectCenter.h>
 
@@ -95,11 +95,6 @@
   return logController;
 }
 
-- (PCServer *)doServer
-{
-  return doServer;
-}
-
 //============================================================================
 //==== Misc...
 //============================================================================
@@ -136,29 +131,7 @@
     }
 
   [logController 
-    logMessage:@"Loading additional subsystems..." withTag:INFO sender:self];
-
-  doServer = [[PCServer alloc] init];
-  
-  NS_DURING
-    
-  doConnection = [[NSConnection alloc] init];
-  [doConnection registerName:connectionName];
-  
-  NS_HANDLER
-    
-  NSRunAlertPanel(@"Warning!",
-		  @"Could not register the DO connection %@",
-                  @"OK",nil,nil,nil,
-		  connectionName);
-  NS_ENDHANDLER
-    
-  [[NSNotificationCenter defaultCenter] addObserver:doServer 
-                                           selector:@selector(connectionDidDie:)
-                                             name:NSConnectionDidDieNotification
-                                            object:doConnection];
-  
-  [doConnection setDelegate:doServer];
+    logMessage:NSLocalizedString(@"Loading additional subsystems...", @"When loaded additional bundles") withTag:INFO sender:self];
 
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCAppDidInitNotification
@@ -235,8 +208,6 @@
   RELEASE(logController);
   RELEASE(menuController);
   RELEASE(projectManager);
-
-  RELEASE(doServer);
 
 #ifdef DEVELOPMENT
   NSLog (@"--- Application WILL terminate.END");

@@ -1,20 +1,20 @@
 TODO
 ****
 
-This is the GNUstep ProjectCenter TODO list. "+" means that this task
-is done. Feel free to propose changes to this list or make suggestions!
+This is the GNUstep ProjectCenter TODO list.
+Feel free to propose changes to this list or make suggestions!
 
 ProjectCenter 0.4                                              Owner
 -----------------                                              ------
 
-- Review and cleanup of PC project bundles/templates	[done!]
-- Finish Project Inspector						[done!]
-- Inspector UI using Gorm						[done!]
+- Review and cleanup of PC project bundles/templates		[done!]
+- Finish Project Inspector					[done!]
+- Inspector UI using Gorm					[done!]
 - File creation (File->New in project) cleanup and finishing	[done!]
 - Initial suprojects support					[done!]
-- Finish support of external editors			[done!]
-- Preferences enhancements and UI using Gorm		[done!]
-- Remember project windows and panels in PC.project	[done!]
+- Finish support of external editors				[done!]
+- Preferences enhancements and UI using Gorm			[done!]
+- Remember project windows and panels in PC.project		[done!]
 
 ProjectCenter 0.5
 -----------------
@@ -24,43 +24,53 @@ ProjectCenter 0.5
 - Add "Resource Set" project type				[done!]
 - Add "Palette" project type					stoyan
 - Add "Component" project type					stoyan
+- Implement on demand loading of bundles			[done!]
+- Localization support for projects 				[done!]
+- Finish save/restore size of split views in Project Window	[done!]
+- Save last used path separately for different file panels	stoyan
+--- Project Editor:
+  - Implement on demand loading (editor for file type)		stoyan
+  - Open some files read only (Supporting Files)		stoyan
+  - Implement code parser (get it from CodeEditor?)		stoyan
+  - Project Browser should show file structure.			stoyan
+  - Click on Browser item should move cursor to line in file	stoyan
+  - Implement Editor indentation				stoyan
+--- Project Builder:
+  - Implement root build directory handling			stoyan
+  - Parse gcc output
+  - Display warnings,errors,options etc. as clickable list	stoyan
+- Imlement pending adding/removal of files (history?)		stoyan
 - Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
-- Editor code parser (get it from CodeEditor?)		stoyan
-- Project Browser should show classes, #define's an so on	stoyan
-- Implement Editor indentation					stoyan
-- Implement Editor syntax highlighting			stoyan
-- Implement root build directory handling		stoyan
-- ProjectBuilder enhancements (warnings,errors,options etc.)	stoyan
-- Localization support for projects			stoyan
-- Add pending adding/removal of files			stoyan
+- Review all dialogs and situations when dialogs must be 
+  popped up							stoyan
 
 ProjectCenter 0.6
 -----------------
 
-- Create custom Info panel                                      ???
+- Rewrite Preferences (3rd party sections etc.)			stoyan
+- Implement Editor syntax highlighting				stoyan
 - More options for file creation                                ???
-- Direct code documentation (using autogsdoc)                   ???
-- Better integration with other tools 
-  (Gorm, CodeEditor, EasyDiff)                                  ???
-- ProjectCenter localization                                    ???
+- Better integration with other tools  (Gorm)                   ???
+- Create custom Info panel                                      ???
 
 ProjectCenter 0.7
 -----------------
 
-- Initial user documentation                                    ???
-- Initial support for integrated debugging                      ???
-- Optimised support for integrated debugging                    ???
+- An initial project wide find feature                          ???
+- Implement support for integrated debugging                    ???
 - More project customisation possibilities                      ???
 - CVS integration                                               ???
 
 ProjectCenter 0.8
 -----------------
 
-- An initial project wide find feature                          ???
+- Initial user documentation                                    ???
+- Direct code documentation (using autogsdoc)                   ???
 
 ProjectCenter 0.9
 -----------------
 
+- ProjectCenter localization                                    ???
 - An initial class browser/documentation feature                ???
 
 ProjectCenter 1.0

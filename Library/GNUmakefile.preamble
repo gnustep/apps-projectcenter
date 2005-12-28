@@ -33,6 +33,10 @@
 #   be put into Makefile.postamble.
 #
 
+# TODO: Make sure if it's portable
+GMAKE = `which gmake`
+GDB = `which gdb`
+
 #
 # Flags dealing with compiling and linking
 #
@@ -41,16 +45,17 @@
 ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -Wall
+ADDITIONAL_OBJCFLAGS += -Wall -DPCDefaultBuildTool=@"\"$(GMAKE)\"" \
+                              -DPCDefaultDebugger=@"\"$(GDB)\""
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I../
+ADDITIONAL_INCLUDE_DIRS += -I../ -I../Headers
 
 # Additional LDFLAGS to pass to the linker
-#ADDITIONAL_LDFLAGS += 
+ADDITIONAL_LDFLAGS += 
 
 # Additional library directories the linker should search
 ADDITIONAL_LIB_DIRS += -L../ProjectCenter/$(GNUSTEP_OBJ_DIR)

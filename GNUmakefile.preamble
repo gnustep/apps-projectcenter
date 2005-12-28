@@ -30,20 +30,23 @@
 ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += 
+ADDITIONAL_OBJCFLAGS +=
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS +=
 
 # Additional include directories the compiler should search
-ADDITIONAL_INCLUDE_DIRS += -I./
+ADDITIONAL_INCLUDE_DIRS += -I./ -I./Headers
 
 # Additional LDFLAGS to pass to the linker
-ADDITIONAL_LDFLAGS += -lProjectCenter
+ADDITIONAL_LDFLAGS += 
 
 # Additional library directories the linker should search
-#ADDITIONAL_LIB_DIRS += -L./Library/$(GNUSTEP_OBJ_DIR)
-ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current
+ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current \
+                       -L./Library/ProjectCenter.framework
+
+# Additional LDFLAGS to pass to the linker
+ADDITIONAL_GUI_LIBS += -lProjectCenter
 
 #
 # Flags dealing with installing and uninstalling
@@ -51,3 +54,4 @@ ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current
 
 # Additional directories to be created during installation
 ADDITIONAL_INSTALL_DIRS +=
+

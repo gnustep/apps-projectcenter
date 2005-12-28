@@ -23,15 +23,16 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCProjectLauncher.h"
-#include "PCDefines.h"
-#include "PCProject.h"
-#include "PCProjectManager.h"
-#include "PCButton.h"
-
-#include "PCLogController.h"
-
 #include <AppKit/AppKit.h>
+
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProjectLauncher.h>
+
+#include <ProjectCenter/PCButton.h>
+
+#include <ProjectCenter/PCLogController.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
