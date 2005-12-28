@@ -22,14 +22,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCProjectManager.h"
-#include "PCProject.h"
-#include "PCProjectLauncher.h"
-#include "PCLaunchPanel.h"
+#include <ProjectCenter/PCProjectManager.h>
+#include <ProjectCenter/PCProject.h>
+#include <ProjectCenter/PCProjectLauncher.h>
+#include <ProjectCenter/PCProjectLauncherPanel.h>
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
-@implementation PCLaunchPanel
+@implementation PCProjectLauncherPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {

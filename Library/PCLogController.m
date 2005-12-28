@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -23,7 +20,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCLogController.h"
+#include <ProjectCenter/PCLogController.h>
 
 void
 PCLog(id sender, int tag, NSString* format, va_list args)
@@ -40,7 +37,7 @@ PCLogInfo(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, PC_INFO, format, ap);
+  PCLog(sender, INFO, format, ap);
   va_end(ap);
 }
 
@@ -50,7 +47,7 @@ PCLogStatus(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, PC_STATUS, format, ap);
+  PCLog(sender, STATUS, format, ap);
   va_end(ap);
 }
 
@@ -60,7 +57,7 @@ PCLogWarning(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, PC_WARNING, format, ap);
+  PCLog(sender, WARNING, format, ap);
   va_end(ap);
 }
 
@@ -70,7 +67,7 @@ PCLogError(id sender, NSString* format, ...)
   va_list ap;
 
   va_start(ap, format);
-  PCLog(sender, PC_ERROR, format, ap);
+  PCLog(sender, ERROR, format, ap);
   va_end(ap);
 }
 
@@ -148,24 +145,24 @@ static PCLogController *_logCtrllr = nil;
 
   switch (tag) 
     {
-    case PC_INFO:
+    case INFO:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.0 green:.0 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
-    case PC_STATUS:
+    case STATUS:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.0 green:.35 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
       
-    case PC_WARNING:
+    case WARNING:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.56 green:.45 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];
       break;
 
-    case PC_ERROR:
+    case ERROR:
       [textAttributes 
 	setObject:[NSColor colorWithDeviceRed:.63 green:.0 blue:.0 alpha:1.0]
 	   forKey:NSForegroundColorAttributeName];

@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -23,12 +20,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include "PCDefines.h"
-#include "PCLogController.h"
+#include <ProjectCenter/PCDefines.h>
+#include <ProjectCenter/PCLogController.h>
 
-#include "PCPrefController.h"
+#include <ProjectCenter/PCPrefController.h>
 
-// TODO: rewrite it as PCPreferences, use +sharedPreferences instead of
+// TODO: rewrite it as PCPrefernces, use +sharedPreferences instead of
 // [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
 
 @implementation PCPrefController
@@ -120,8 +117,8 @@ static PCPrefController *_prefCtrllr = nil;
   [preferencesDict setObject:@"YES" forKey:PromptOnQuit];
   [preferencesDict setObject:@"YES" forKey:DeleteCacheWhenQuitting];
   [preferencesDict setObject:@"YES" forKey:FullPathInFilePanels];
-  [preferencesDict setObject:PCDefaultBuildTool forKey:BuildTool];
-  [preferencesDict setObject:PCDefaultDebugger forKey:Debugger];
+  [preferencesDict setObject:@"/usr/bin/make" forKey:BuildTool];
+  [preferencesDict setObject:@"/usr/bin/gdb" forKey:Debugger];
   [preferencesDict setObject:@"ProjectCenter" forKey:Editor];
 
   // Interface
