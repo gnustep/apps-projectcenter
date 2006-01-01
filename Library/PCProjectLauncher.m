@@ -290,7 +290,8 @@ enum {
   if ([project isExecutable])
     {
       openPath = [project execToolName];
-      [args addObject:[project projectName]];
+      [args addObject: [[project projectPath]
+	stringByAppendingPathComponent: [project projectName]]];
     }
   else 
     {
