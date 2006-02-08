@@ -136,7 +136,8 @@ static PCPrefController *_prefCtrllr = nil;
   [preferencesDict setObject:@"YES" forKey:RememberWindows];
   [preferencesDict setObject:@"NO" forKey:DisplayLog];
 
-  [ud setPersistentDomain:preferencesDict forName:@"ProjectCenter"];
+  [ud setPersistentDomain: preferencesDict
+		  forName: [[NSProcessInfo processInfo] processName]];
   [ud synchronize];
 }
 
