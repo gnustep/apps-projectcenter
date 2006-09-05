@@ -2,9 +2,6 @@
 // TODO: Needs checking
 @implementation PCEditor (Document)
 
-#import "CommandQueryPanel.h"
-#import "LineQueryPanel.h"
-#import "TextFinder.h"
 #import "EditorRulerView.h"
 #import "EditorTextView.h"
 #import "SyntaxHighlighter.h"
@@ -154,76 +151,9 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-- (void)pipeOutputOfCommand:(NSString *)command
-{
-  NSTask * task;
-  NSPipe * inPipe, * outPipe;
-  NSString * inString, * outString;
-  NSFileHandle * inputHandle;
+// --- Parentesis highlighting
 
-  inString = [[textView string] substringWithRange:
-    [textView selectedRange]];
-  inPipe = [NSPipe pipe];
-  outPipe = [NSPipe pipe];
-
-  task = [[NSTask new] autorelease];
-
-  [task setLaunchPath: @"/bin/sh"];
-  [task setArguments: [NSArray arrayWithObjects: @"-c", command, nil]];
-  [task setStandardInput: inPipe];
-  [task setStandardOutput: outPipe];
-  [task setStandardError: outPipe];
-
-  inputHandle = [inPipe fileHandleForWriting];
-
-  [task launch];
-  [inputHandle writeData: [inString
-    dataUsingEncoding: NSUTF8StringEncoding]];
-  [inputHandle closeFile];
-  [task waitUntilExit];
-  outString = [[[NSString alloc]
-    initWithData: [[outPipe fileHandleForReading] availableData]
-        encoding: NSUTF8StringEncoding]
-    autorelease];
-  if ([task terminationStatus] != 0)
-    {
-      if (NSRunAlertPanel(_(@"Error running command"),
-        _(@"The command returned with a non-zero exit status"
-          @" -- aborting pipe.\n"
-          @"Do you want to see the command's output?\n"),
-        _(@"No"), _(@"Yes"), nil) == NSAlertAlternateReturn)
-        {
-          NSRunAlertPanel(_(@"The command's output"),
-            outString, nil, nil, nil);
-        }
-    }
-  else
-    {
-      [textView replaceCharactersInRange:[textView selectedRange]
-                              withString:outString];
-      [self textDidChange: nil];
-    }
-}
-
-- (void) updateMiniwindowIconToEdited: (BOOL) flag
-{
-  NSImage * icon;
-
-  if (flag)
-    {
-      icon = [NSImage imageNamed:
-        [NSString stringWithFormat: @"File_%@_mod", [self fileType]]];
-    }
-  else
-    {
-      icon = [NSImage imageNamed:
-        [NSString stringWithFormat: @"File_%@", [self fileType]]];
-    }
-
-  [myWindow setMiniwindowImage: icon];
-}
-
-- (void) unhighlightCharacter
+- (void)unhighlightCharacter
 {
   if (isCharacterHighlit)
     {
@@ -274,7 +204,7 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-- (void) highlightCharacterAt: (unsigned int) location
+- (void)highlightCharacterAt:(unsigned int)location
 {
   if (isCharacterHighlit == NO)
     {
@@ -315,7 +245,7 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-- (void) computeNewParenthesisNesting
+- (void)computeNewParenthesisNesting
 {
   NSRange selectedRange;
   NSString * myString;
@@ -367,93 +297,24 @@ unsigned int FindDelimiterInString(NSString * string,
 }
 
 
+// --- State
 
-- (void)goToLine:sender
+- (void)updateMiniwindowIconToEdited:(BOOL)flag
 {
-/*  LineQueryPanel * lqp = [LineQueryPanel shared];
+  NSImage * icon;
 
-  if ([lqp runModal] == NSOKButton)
+  if (flag)
     {
-      [self goToLineNumber: (unsigned int) [lqp unsignedIntValue]];
-    }*/
-}
-
-- (void)goToLineNumber:(unsigned int)lineNumber
-{
-/*  unsigned int offset;
-  unsigned int i;
-  NSString * line;
-  NSEnumerator * e;
-  NSArray * lines = [[textView string] componentsSeparatedByString: @"\n"];
-  e = [lines objectEnumerator];
-  NSRange r;
-
-  for (offset = 0, i=1;
-       (line = [e nextObject]) != nil && i < lineNumber;
-       i++, offset += [line length] + 1);
-
-  if (line != nil)
-    {
-      r = NSMakeRange(offset, [line length]);
+      icon = [NSImage imageNamed:
+        [NSString stringWithFormat: @"File_%@_mod", [self fileType]]];
     }
   else
     {
-      r = NSMakeRange([[textView string] length], 0);
-    }
-  [textView setSelectedRange: r];
-  [textView scrollRangeToVisible: r];*/
-}
-
-- (void)textViewDidChangeSelection:(NSNotification *)notification
-{
-  if (editorTextViewIsPressingKey == NO)
-    {
-      [self computeNewParenthesisNesting];
-    }
-  [(EditorRulerView *) [[textView enclosingScrollView] horizontalRulerView]
-    refreshHighlightedArea];
-  [(EditorRulerView *) [[textView enclosingScrollView] verticalRulerView]
-    refreshHighlightedArea];
-}
-
-- (void) textDidChange: (NSNotification *) notif
-{
-
-  if (![self isDocumentEdited])
-    {
-      [self updateMiniwindowIconToEdited: YES];
+      icon = [NSImage imageNamed:
+        [NSString stringWithFormat: @"File_%@", [self fileType]]];
     }
 
-  [self updateChangeCount: NSChangeDone];
-}
-
-- (void) editorTextViewWillPressKey: sender
-{
-  editorTextViewIsPressingKey = YES;
-
-  [self unhighlightCharacter];
-}
-
-- (void) editorTextViewDidPressKey: sender
-{
-  [self computeNewParenthesisNesting];
-
-  editorTextViewIsPressingKey = NO;
-}
-
-- (void) findNext: sender
-{
-  [[TextFinder sharedInstance] findNext: self];
-}
-
-- (void) findPrevious: sender
-{
-  [[TextFinder sharedInstance] findPrevious: self];
-}
-
-- (void) jumpToSelection: sender
-{
-  [textView scrollRangeToVisible: [textView selectedRange]];
+  [myWindow setMiniwindowImage: icon];
 }
 
 @end

@@ -23,23 +23,23 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCSplitView.h>
-#include <ProjectCenter/PCButton.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCSplitView.h>
+#import <ProjectCenter/PCButton.h>
 
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
 
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectEditor.h>
-#include <ProjectCenter/PCProjectBuilder.h>
-#include <ProjectCenter/PCProjectLauncher.h>
-#include <ProjectCenter/PCProjectLoadedFiles.h>
-#include <ProjectCenter/PCProjectInspector.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectBuilder.h>
+#import <ProjectCenter/PCProjectLauncher.h>
+#import <ProjectCenter/PCProjectLoadedFiles.h>
+#import <ProjectCenter/PCProjectInspector.h>
 
-#include <ProjectCenter/PCPrefController.h>
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCPrefController.h>
+#import <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectWindow
 
@@ -63,21 +63,9 @@
   [h_split adjustSubviews];
 }
 
-- (void)_initUI
+- (void)awakeFromNib
 {
   NSRect rect;
-//  NSView *browserView = nil;
-
-  if (projectWindow != nil)
-    {
-      return;
-    }
-
-  if ([NSBundle loadNibNamed:@"ProjectWindow" owner:self] == NO)
-    {
-      PCLogError(self, @"error loading ProjectWindow NIB file!");
-      return;
-    }
 
   [buildButton setToolTip:@"Build"];
 //  [buildButton setImage:IMAGE(@"Build")];
@@ -103,6 +91,8 @@
 //  [inspectorButton setImage:IMAGE(@"Inspector")];
 
   [fileIcon setFileNameField:fileIconTitle];
+  [fileIcon setDelegate:[project projectBrowser]];
+  [fileIcon updateIcon];
 
   [statusLine setStringValue:@""];
     
@@ -167,11 +157,18 @@
       _isToolbarVisible = YES;
       _splitViewsRestored = NO;
 
-      [self _initUI];
+      if (projectWindow == nil)
+	{
+	  if ([NSBundle loadNibNamed:@"ProjectWindow" owner:self] == NO)
+	    {
+	      PCLogError(self, @"error loading ProjectWindow NIB file!");
+	      return nil;
+	    }
+	}
       [self setTitle];
       
       // Window
-      [projectWindow setFrameAutosaveName: @"ProjectWindow"];
+      [projectWindow setFrameAutosaveName:@"ProjectWindow"];
 
       pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
       windowFrame = [pcWindows objectForKey:@"ProjectWindow"];
@@ -225,6 +222,23 @@
 	   selector:@selector (browserDidSetPath:)
 	       name:PCBrowserDidSetPathNotification
 	     object:[project projectBrowser]];
+
+      // Editor changes
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector (editorDidChange:)
+	       name:PCEditorDidChangeNotification
+	     object:nil];
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector (editorDidSave:)
+	       name:PCEditorDidSaveNotification
+	     object:nil];
+      [[NSNotificationCenter defaultCenter] 
+	addObserver:self
+	   selector:@selector (editorDidRevert:)
+	       name:PCEditorDidRevertNotification
+	     object:nil];
     }
   
   return self;
@@ -372,8 +386,10 @@
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  NSPanel       *panel = [[project projectManager] loadedFilesPanel];
-  NSScrollView  *componentView = [[project projectLoadedFiles] componentView];
+  NSPanel      *panel = [[project projectManager] loadedFilesPanel];
+  NSScrollView *componentView;
+
+  componentView = (NSScrollView *)[[project projectLoadedFiles] componentView];
       
 //  PCLogInfo(self, @"showProjectLoadedFiles");
 
@@ -618,7 +634,50 @@
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
 {
-  [fileIcon setFileIcon:[aNotif object]];
+  PCProjectBrowser *browser = [aNotif object];
+
+  if (browser != [project projectBrowser])
+    {
+      return;
+    }
+  
+  [fileIcon updateIcon];
+}
+
+- (void)editorDidChange:(NSNotification *)aNotif
+{
+  id<CodeEditor> editor = [aNotif object];
+  
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+
+  [fileIcon updateIcon];
+}
+
+- (void)editorDidSave:(NSNotification *)aNotif
+{
+  id<CodeEditor> editor = [aNotif object];
+  
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+
+  [fileIcon updateIcon];
+}
+
+- (void)editorDidRevert:(NSNotification *)aNotif
+{
+  id<CodeEditor> editor = [aNotif object];
+  
+  if ([editor projectEditor] != [project projectEditor])
+    {
+      return;
+    }
+
+  [fileIcon updateIcon];
 }
 
 // ============================================================================

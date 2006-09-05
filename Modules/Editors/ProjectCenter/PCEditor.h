@@ -57,6 +57,36 @@
   NSArray         *parserMethods;
 //  NSMutableArray  *classNames;
 //  NSMutableArray  *methodNames;
+
+  IBOutlet NSMenu *menu;
+
+  NSFont  *defaultFont;
+  NSFont  *highlightFont;
+
+  NSColor *textColor;
+  NSColor *highlightColor;
+  NSColor *backgroundColor;
+  NSColor *readOnlyColor;
+  NSColor *textBackground;
+  
+  // location of the highlit delimiter character
+  unsigned int highlitCharacterLocation;
+
+  // is YES if we are currently highlighting a delimiter character
+  // otherwise NO
+  BOOL isCharacterHighlit;
+
+  // the stored color and font attributes of the highlit character, so
+  // that they can be restored later on when the character is un-highlit
+  NSColor *previousFGColor;
+  NSColor *previousBGColor;
+  NSColor *previousFont;
+  
+  // This is used to protect that -textViewDidChangeSelection: invocations
+  // don't do anything when the text view changing, because this causes
+  // further changes to the text view and infinite recursive invocations
+  // of this method.
+  BOOL editorTextViewIsPressingKey;
 }
 
 - (BOOL)editorShouldClose;
@@ -72,6 +102,10 @@
 // ==== TextView (_intEditorView, _extEditorView) delegate
 // ===========================================================================
 - (void)textDidChange:(NSNotification *)aNotification;
+- (void)textViewDidChangeSelection:(NSNotification *)notification;
+- (void)editorTextViewWillPressKey:sender;
+- (void)editorTextViewDidPressKey:sender;
+
 - (BOOL)becomeFirstResponder;
 - (BOOL)resignFirstResponder;
 
@@ -82,6 +116,25 @@
 - (void)_createWindow;
 - (void)_createInternalView;
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr;
+
+@end
+
+@interface PCEditor (Menu)
+
+- (void)pipeOutputOfCommand:(NSString *)command;
+// Find
+- (void)findNext:sender;
+- (void)findPrevious:sender;
+- (void)jumpToSelection:sender;
+- (void)goToLine:sender;
+
+@end
+
+@interface PCEditor (Parentesis)
+
+- (void)unhighlightCharacter;
+- (void)highlightCharacterAt:(unsigned int)location;
+- (void)computeNewParenthesisNesting;
 
 @end
 

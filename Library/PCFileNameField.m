@@ -26,6 +26,8 @@
 
 #include <ProjectCenter/PCFileNameField.h>
 
+NSString *PCFileNameFieldNoFiles = @"No files selected";
+
 @implementation PCFileNameField
 
 - (void)setFont:(NSFont *)fontObject
@@ -106,10 +108,9 @@
 
 - (BOOL)textShouldSetEditable:(NSString *)text
 {
-  id       delegate = [self delegate];
+  id delegate = [self delegate];
 
-  if ([text isEqualToString:@"No files selected"]
-      || [text isEqualToString:@"Multiple files selected"])
+  if ([text isEqualToString:PCFileNameFieldNoFiles])
     {
       return NO;
     }

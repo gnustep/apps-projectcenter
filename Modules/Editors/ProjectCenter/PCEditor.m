@@ -23,12 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCLogController.h>
 
-#include "PCEditor.h"
-#include "PCEditorView.h"
+#import "PCEditor.h"
+#import "PCEditorView.h"
+//#import "CommandQueryPanel.h"
+//#import "LineQueryPanel.h"
+//#import "TextFinder.h"
 
 @implementation PCEditor (UInterface)
 
@@ -124,6 +127,8 @@
   RELEASE(lm);
 
   ev = [[PCEditorView alloc] initWithFrame:fr textContainer:tc];
+  [ev setBackgroundColor:textBackground];
+  [ev setTextColor:textColor];
   [ev createSyntaxHighlighterForFileType:[_path pathExtension]];
   [ev setEditor:self];
 
@@ -165,18 +170,57 @@
       _isEdited = NO;
       _isWindowed = NO;
       _isExternal = YES;
+
+      ASSIGN(defaultFont, [PCEditorView defaultEditorFont]);
+      ASSIGN(highlightFont, [PCEditorView defaultEditorBoldFont]);
+      ASSIGN(textColor, [NSColor blackColor]);
+      ASSIGN(backgroundColor, [NSColor whiteColor]);
+      ASSIGN(readOnlyColor, [NSColor lightGrayColor]);
+      
+      previousFGColor = nil;
+      previousBGColor = nil;
+      previousFont = nil;
+
+      isCharacterHighlit = NO;
     }
 
   return self;
 }
 
+- (void)dealloc
+{
+#ifdef DEVELOPMENT
+#endif
+  NSLog(@"PCEditor: %@ dealloc", [_path lastPathComponent]);
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  // _window is setReleasedWhenClosed:YES
+  RELEASE(_path);
+  RELEASE(_categoryPath);
+  RELEASE(_intScrollView);
+  RELEASE(_storage);
+
+//  RELEASE(parserClasses);
+  RELEASE(parserMethods);
+  RELEASE(aParser);
+
+  RELEASE(defaultFont);
+  RELEASE(highlightFont);
+  RELEASE(textColor);
+  RELEASE(backgroundColor);
+  RELEASE(readOnlyColor);
+
+  [super dealloc];
+}
+
 - (void)setParser:(id)parser
 {
-//  NSLog(@"RC aParser:%i parser:%i", 
-//	[aParser retainCount], [parser retainCount]);
+/*  NSLog(@"RC aParser:%i parser:%i", 
+	[aParser retainCount], [parser retainCount]);*/
   ASSIGN(aParser, parser);
-//  NSLog(@"RC aParser:%i parser:%i", 
-//	[aParser retainCount], [parser retainCount]);
+/*  NSLog(@"RC aParser:%i parser:%i", 
+	[aParser retainCount], [parser retainCount]);*/
 }
 
 - (id)openFileAtPath:(NSString *)file
@@ -184,37 +228,38 @@
        projectEditor:(id)aProjectEditor
 	    editable:(BOOL)editable
 {
-  NSString           *text;
-  NSAttributedString *attributedString;
-  NSDictionary       *attributes;
-  NSFont             *font;
-  NSColor            *textBackground;
+  NSString            *text;
+  NSAttributedString  *attributedString = [NSAttributedString alloc];
+  NSMutableDictionary *attributes = [NSMutableDictionary new];
+  NSFont              *font;
+//  NSColor            *textBackground;
 
+  NSLog(@"PCEditor: openFileAtPath");
+
+  // Inform about future file opening
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorWillOpenNotification
+		  object:self];
   projectEditor = aProjectEditor;
   _path = [file copy];
   _categoryPath = [categoryPath copy];
-  _storage = [[NSTextStorage alloc] init];
 
   // Prepare
   font = [NSFont userFixedPitchFontOfSize:0.0];
   if (editable)
     {
-      textBackground = [NSColor whiteColor];
+      textBackground = backgroundColor;
     }
   else
     {
-      textBackground = [NSColor colorWithCalibratedRed:0.97
-						 green:0.90
-						  blue:0.90
-						 alpha:1.0];
+      textBackground = readOnlyColor;
     }
 
-  attributes = [NSDictionary dictionaryWithObjectsAndKeys:
-    font, NSFontAttributeName,
-    textBackground, NSBackgroundColorAttributeName];
+  [attributes setObject:font forKey:NSFontAttributeName];
+  [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
+
   text  = [NSString stringWithContentsOfFile:file];
-  attributedString = [[NSAttributedString alloc] initWithString:text
-						     attributes:attributes];
+  [attributedString initWithString:text attributes:attributes];
   //
 
   _storage = [[NSTextStorage alloc] init];
@@ -229,7 +274,6 @@
 	{
 	  [self _createInternalView];
 	  [_intEditorView setEditable:editable];
-	  [_intEditorView setBackgroundColor:textBackground];
 	  
 	  [[NSNotificationCenter defaultCenter]
 	    addObserver:self 
@@ -244,11 +288,12 @@
        selector:@selector(textDidChange:)
 	   name:NSTextDidChangeNotification
 	 object:_extEditorView];
-
-  // Inform about future file opening
+	 
+  // File open was finished
   [[NSNotificationCenter defaultCenter]
-    postNotificationName:PCEditorWillOpenNotification
+    postNotificationName:PCEditorDidOpenNotification
 		  object:self];
+
   return self;
 }
 
@@ -315,30 +360,11 @@
                   object:self];
 }
 
-- (void)dealloc
-{
-#ifdef DEVELOPMENT
-#endif
-  NSLog(@"PCEditor: %@ dealloc", [_path lastPathComponent]);
-
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-  // _window is setReleasedWhenClosed:YES
-  RELEASE(_path);
-  RELEASE(_categoryPath);
-  RELEASE(_intScrollView);
-  RELEASE(_storage);
-
-//  RELEASE(parserClasses);
-  RELEASE(parserMethods);
-  RELEASE(aParser);
-
-  [super dealloc];
-}
-
 // ===========================================================================
 // ==== Accessory methods
 // ===========================================================================
+
+//--- CodeEditor protocol
 
 - (id)projectEditor
 {
@@ -411,6 +437,84 @@
   _isEdited = yn;
 }
 
+- (NSImage *)fileIcon
+{
+  NSString *fileExtension = [[_path lastPathComponent] uppercaseString];
+  NSString *imageName = nil;
+  NSString *imagePath = nil;
+  NSBundle *bundle = nil;
+  NSImage  *image = nil;
+
+  fileExtension = [[[_path lastPathComponent] pathExtension] uppercaseString];
+  if (_isEdited)
+    {
+      imageName = [NSString stringWithFormat:@"File%@H", fileExtension];
+    }
+  else
+    {
+      imageName = [NSString stringWithFormat:@"File%@", fileExtension];
+    }
+
+  bundle = [NSBundle bundleForClass:NSClassFromString(@"PCEditor")];
+  imagePath = [bundle pathForResource:imageName ofType:@"tiff"];
+
+  image = [[NSImage alloc] initWithContentsOfFile:imagePath];
+
+  return AUTORELEASE(image);
+}
+
+- (NSArray *)browserItemsForItem:(NSString *)item
+{
+  NSEnumerator   *enumerator;
+  NSDictionary   *method;
+  NSDictionary   *class;
+  NSMutableArray *items;
+  
+  NSLog(@"PCEditor: asked for browser items for: %@", item);
+
+  [aParser setString:[_storage string]];
+
+  // If item is .m or .h file show class list
+  if ([[item pathExtension] isEqualToString:@"m"]
+      || [[item pathExtension] isEqualToString:@"h"])
+    {
+      ASSIGN(parserClasses, [aParser classNames]);
+
+      NSLog(@"Class names %@@", parserClasses);
+
+      items = [NSMutableArray array];
+      enumerator = [parserClasses objectEnumerator];
+      while ((class = [enumerator nextObject]))
+	{
+	  NSLog(@"Class> %@", class);
+	  [items addObject:[class objectForKey:@"ClassName"]];
+	}
+    }
+
+  // If item starts with "@" show method list
+  if ([[item substringToIndex:1] isEqualToString:@"@"])
+    {
+      ASSIGN(parserMethods, [aParser methodNames]);
+
+      items = [NSMutableArray array];
+      enumerator = [parserMethods objectEnumerator];
+      while ((method = [enumerator nextObject]))
+	{
+	  //      NSLog(@"Method> %@", method);
+	  [items addObject:[method objectForKey:@"MethodName"]];
+	}
+    }
+
+  return items;
+}
+
+- (NSMenu *)menu
+{
+  return nil;
+}
+
+//--- protocol end
+
 - (BOOL)isWindowed
 {
   return _isWindowed;
@@ -461,9 +565,28 @@
 
 - (BOOL)saveFile
 {
-  [self setIsEdited:NO];
+  BOOL saved = NO;
 
-  return [[_storage string] writeToFile:_path atomically:YES];
+  if (_isEdited == NO)
+    {
+      return YES;
+    }
+    
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorWillSaveNotification
+		  object:self];
+
+  saved = [[_storage string] writeToFile:_path atomically:YES];
+ 
+  if (saved == YES)
+    {
+      [self setIsEdited:NO];
+      [[NSNotificationCenter defaultCenter]
+	postNotificationName:PCEditorDidSaveNotification
+	  	      object:self];
+    }
+
+  return saved;
 }
 
 - (BOOL)saveFileTo:(NSString *)path
@@ -477,6 +600,15 @@
   NSAttributedString *as = nil;
   NSDictionary       *at = nil;
   NSFont             *ft = nil;
+
+  if (_isEdited == NO)
+    {
+      return YES;
+    }
+
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorWillRevertNotification
+		  object:self];
 
   // This is temporary
   ft = [NSFont userFixedPitchFontOfSize:0.0];
@@ -492,6 +624,10 @@
   [_intEditorView setNeedsDisplay:YES];
   [_extEditorView setNeedsDisplay:YES];
   
+  [[NSNotificationCenter defaultCenter]
+    postNotificationName:PCEditorDidRevertNotification
+		  object:self];
+		  
   return YES;
 }
 
@@ -611,8 +747,43 @@
   if ([object isKindOfClass:[PCEditorView class]]
       && (object == _intEditorView || object == _extEditorView))
     {
-      [self setIsEdited:YES];
+      if (_isEdited == NO)
+	{
+	  [[NSNotificationCenter defaultCenter]
+	    postNotificationName:PCEditorWillChangeNotification
+			  object:self];
+
+	  [self setIsEdited:YES];
+	  
+	  [[NSNotificationCenter defaultCenter]
+	    postNotificationName:PCEditorDidChangeNotification
+			  object:self];
+	}
     }
+}
+
+- (void)textViewDidChangeSelection:(NSNotification *)notification
+{
+  if (editorTextViewIsPressingKey == NO)
+    {
+      [self computeNewParenthesisNesting];
+    }
+}
+
+- (void)editorTextViewWillPressKey:sender
+{
+  editorTextViewIsPressingKey = YES;
+//  NSLog(@"Will pressing key");
+
+  [self unhighlightCharacter];
+}
+
+- (void)editorTextViewDidPressKey:sender
+{
+//  NSLog(@"Did pressing key");
+  [self computeNewParenthesisNesting];
+
+  editorTextViewIsPressingKey = NO;
 }
 
 - (BOOL)becomeFirstResponder
@@ -637,56 +808,11 @@
 // ==== Parser and scrolling
 // ===========================================================================
 
-// ==== Parsing
-
-- (BOOL)providesChildrenForBrowserItem:(NSString *)item
-{
-}
-
-// protocol
-- (NSArray *)browserItemsForItem:(NSString *)item
-{
-  NSEnumerator   *enumerator = nil;
-  NSDictionary   *method = nil;
-  NSMutableArray *methodNames = nil;
-  
-  NSLog(@"PCEditor: asked for browser items");
-
-  // If item is .m or .h file show class list
-/*  if ([[item pathExtension] isEqualToString:@"m"]
-      || [[item pathExtension] isEqualToString:@"h"])
-    {
-      return [aParser classNames];
-    }
-
-  // If item starts with "@" show method list
-  if ([[item substringToIndex:1] isEqualToString:@"@"])
-    {
-    }*/
-
-/*  if (aParser)
-    {
-      [aParser setString:[_storage string]];
-      NSLog(@"===\nMethods list:\n%@\n\n", [aParser methods]);
-    }*/
-
-  [aParser setString:[_storage string]];
-
-  // Methods
-  ASSIGN(parserMethods, [aParser methodNames]);
-
-  methodNames = [NSMutableArray array];
-  enumerator = [parserMethods objectEnumerator];
-  while ((method = [enumerator nextObject]))
-    {
-//      NSLog(@"Method> %@", method);
-      [methodNames addObject:[method objectForKey:@"MethodName"]];
-    }
-
-  return methodNames;
-}
-
 // === Scrolling
+
+- (void)fileStructureItemSelected:(NSString *)item
+{
+}
 
 - (void)scrollToClassName:(NSString *)className
 {
@@ -719,8 +845,408 @@
     }
 }
 
-- (void)scrollToLineNumber:(int)line
+- (void)scrollToLineNumber:(unsigned int)lineNumber
 {
+  unsigned int offset;
+  unsigned int i;
+  NSString     *line;
+  NSEnumerator *e;
+  NSArray      *lines;
+  NSRange      range;
+
+  lines = [[_intEditorView string] componentsSeparatedByString: @"\n"];
+  e = [lines objectEnumerator];
+
+  for (offset = 0, i = 1;
+       (line = [e nextObject]) != nil && i < lineNumber;
+       i++, offset += [line length] + 1);
+
+  if (line != nil)
+    {
+      range = NSMakeRange(offset, [line length]);
+    }
+  else
+    {
+      range = NSMakeRange([[_intEditorView string] length], 0);
+    }
+  [_intEditorView setSelectedRange:range];
+  [_intEditorView scrollRangeToVisible:range];
+}
+
+@end
+
+@implementation PCEditor (Menu)
+
+- (void)pipeOutputOfCommand:(NSString *)command
+{
+  NSTask * task;
+  NSPipe * inPipe, * outPipe;
+  NSString * inString, * outString;
+  NSFileHandle * inputHandle;
+
+  inString = [[_intEditorView string] substringWithRange:
+    [_intEditorView selectedRange]];
+  inPipe = [NSPipe pipe];
+  outPipe = [NSPipe pipe];
+
+  task = [[NSTask new] autorelease];
+
+  [task setLaunchPath: @"/bin/sh"];
+  [task setArguments: [NSArray arrayWithObjects: @"-c", command, nil]];
+  [task setStandardInput: inPipe];
+  [task setStandardOutput: outPipe];
+  [task setStandardError: outPipe];
+
+  inputHandle = [inPipe fileHandleForWriting];
+
+  [task launch];
+  [inputHandle writeData: [inString
+    dataUsingEncoding: NSUTF8StringEncoding]];
+  [inputHandle closeFile];
+  [task waitUntilExit];
+  outString = [[[NSString alloc]
+    initWithData: [[outPipe fileHandleForReading] availableData]
+        encoding: NSUTF8StringEncoding]
+    autorelease];
+  if ([task terminationStatus] != 0)
+    {
+      if (NSRunAlertPanel(_(@"Error running command"),
+        _(@"The command returned with a non-zero exit status"
+          @" -- aborting pipe.\n"
+          @"Do you want to see the command's output?\n"),
+        _(@"No"), _(@"Yes"), nil) == NSAlertAlternateReturn)
+        {
+          NSRunAlertPanel(_(@"The command's output"),
+            outString, nil, nil, nil);
+        }
+    }
+  else
+    {
+      [_intEditorView replaceCharactersInRange:[_intEditorView selectedRange]
+                              withString:outString];
+      [self textDidChange: nil];
+    }
+}
+
+- (void)findNext:sender
+{
+//  [[TextFinder sharedInstance] findNext: self];
+}
+
+- (void)findPrevious:sender
+{
+//  [[TextFinder sharedInstance] findPrevious: self];
+}
+
+- (void)jumpToSelection:sender
+{
+  [_intEditorView scrollRangeToVisible:[_intEditorView selectedRange]];
+}
+
+- (void)goToLine:sender
+{
+/*  LineQueryPanel * lqp = [LineQueryPanel shared];
+
+  if ([lqp runModal] == NSOKButton)
+    {
+      [self goToLineNumber: (unsigned int) [lqp unsignedIntValue]];
+    }*/
+}
+
+@end
+
+/**
+ * Checks whether a character is a delimiter.
+ *
+ * This function checks whether `character' is a delimiter character,
+ * (i.e. one of "(", ")", "[", "]", "{", "}") and returns YES if it
+ * is and NO if it isn't. Additionaly, if `character' is a delimiter,
+ * `oppositeDelimiter' is set to a string denoting it's opposite
+ * delimiter and `searchBackwards' is set to YES if the opposite
+ * delimiter is located before the checked delimiter character, or
+ * to NO if it is located after the delimiter character.
+ */
+static inline BOOL CheckDelimiter(unichar character,
+                                  unichar * oppositeDelimiter,
+                                  BOOL * searchBackwards)
+{
+  if (character == '(')
+    {
+      *oppositeDelimiter = ')';
+      *searchBackwards = NO;
+
+      return YES;
+    }
+  else if (character == ')')
+    {
+      *oppositeDelimiter = '(';
+      *searchBackwards = YES;
+
+      return YES;
+    }
+  else if (character == '[')
+    {
+      *oppositeDelimiter = ']';
+      *searchBackwards = NO;
+
+      return YES;
+    }
+  else if (character == ']')
+    {
+      *oppositeDelimiter = '[';
+      *searchBackwards = YES;
+
+      return YES;
+    }
+  else if (character == '{')
+    {
+      *oppositeDelimiter = '}';
+      *searchBackwards = NO;
+
+      return YES;
+    }
+  else if (character == '}')
+    {
+      *oppositeDelimiter = '{';
+      *searchBackwards = YES;
+
+      return YES;
+    }
+  else
+    {
+      return NO;
+    }
+}
+
+/**
+ * Attempts to find a delimiter in a certain string around a certain location.
+ *
+ * Attempts to locate `delimiter' in `string', starting at
+ * location `startLocation' a searching forwards (backwards if
+ * searchBackwards = YES) at most 1000 characters. The argument
+ * `oppositeDelimiter' denotes what is considered to be the opposite
+ * delimiter of the one being search for, so that nested delimiters
+ * are ignored correctly.
+ *
+ * @return The location of the delimiter if it is found, or NSNotFound
+ *      if it isn't.
+ */
+unsigned int FindDelimiterInString(NSString * string,
+                                   unichar delimiter,
+                                   unichar oppositeDelimiter,
+                                   unsigned int startLocation,
+                                   BOOL searchBackwards)
+{
+  unsigned int i;
+  unsigned int length;
+  unichar (*charAtIndex)(id, SEL, unsigned int);
+  SEL sel = @selector(characterAtIndex:);
+  int nesting = 1;
+
+  charAtIndex = (unichar (*)(id, SEL, unsigned int)) [string
+    methodForSelector: sel];
+
+  if (searchBackwards)
+    {
+      if (startLocation < 1000)
+        length = startLocation;
+      else
+        length = 1000;
+
+      for (i=1; i <= length; i++)
+        {
+          unichar c;
+
+          c = charAtIndex(string, sel, startLocation - i);
+          if (c == delimiter)
+            nesting--;
+          else if (c == oppositeDelimiter)
+            nesting++;
+
+          if (nesting == 0)
+            break;
+        }
+
+      if (i > length)
+        return NSNotFound;
+      else
+        return startLocation - i;
+    }
+  else
+    {
+      if ([string length] < startLocation + 1000)
+        length = [string length] - startLocation;
+      else
+        length = 1000;
+
+      for (i=1; i < length; i++)
+        {
+          unichar c;
+
+          c = charAtIndex(string, sel, startLocation + i);
+          if (c == delimiter)
+            nesting--;
+          else if (c == oppositeDelimiter)
+            nesting++;
+
+          if (nesting == 0)
+            break;
+        }
+
+      if (i == length)
+        return NSNotFound;
+      else
+        return startLocation + i;
+    }
+}
+
+@implementation PCEditor (Parentesis)
+
+- (void)unhighlightCharacter
+{
+  if (isCharacterHighlit)
+    {
+      NSTextStorage *textStorage = [_intEditorView textStorage];
+      NSRange       r = NSMakeRange(highlitCharacterLocation, 1);
+
+      NSLog(@"highlight");
+
+      isCharacterHighlit = NO;
+
+      [textStorage beginEditing];
+
+      // restore the character's color and font attributes
+      if (previousFont != nil)
+        {
+          [textStorage addAttribute: NSFontAttributeName
+                              value: previousFont
+                              range: r];
+        }
+      else
+        {
+          [textStorage removeAttribute: NSFontAttributeName range: r];
+        }
+
+      if (previousFGColor != nil)
+        {
+          [textStorage addAttribute: NSForegroundColorAttributeName
+                              value: previousFGColor
+                              range: r];
+        }
+      else
+        {
+          [textStorage removeAttribute: NSForegroundColorAttributeName
+                                 range: r];
+        }
+
+      if (previousBGColor != nil)
+        {
+          [textStorage addAttribute: NSBackgroundColorAttributeName
+                              value: previousBGColor
+                              range: r];
+        }
+      else
+        {
+          [textStorage removeAttribute: NSBackgroundColorAttributeName
+                                 range: r];
+        }
+
+      [textStorage endEditing];
+    }
+}
+
+- (void)highlightCharacterAt:(unsigned int)location
+{
+  if (isCharacterHighlit == NO)
+    {
+      NSTextStorage * textStorage = [_intEditorView textStorage];
+      NSRange r = NSMakeRange(location, 1);
+      NSRange tmp;
+
+      NSLog(@"highlight");
+
+      highlitCharacterLocation = location;
+
+      isCharacterHighlit = YES;
+
+      [textStorage beginEditing];
+
+      // store the previous character's attributes
+      ASSIGN(previousFGColor,
+        [textStorage attribute: NSForegroundColorAttributeName
+                       atIndex: location
+                effectiveRange: &tmp]);
+      ASSIGN(previousBGColor,
+        [textStorage attribute: NSBackgroundColorAttributeName
+                       atIndex: location
+                effectiveRange: &tmp]);
+      ASSIGN(previousFont, [textStorage attribute: NSFontAttributeName
+                                          atIndex: location
+                                   effectiveRange: &tmp]);
+
+      [textStorage addAttribute: NSFontAttributeName
+                          value: highlightFont
+                          range: r];
+      [textStorage addAttribute: NSForegroundColorAttributeName
+                          value: highlightColor
+                          range: r];
+
+      [textStorage removeAttribute: NSBackgroundColorAttributeName
+                             range: r];
+
+      [textStorage endEditing];
+    }
+}
+
+- (void)computeNewParenthesisNesting
+{
+  NSRange selectedRange;
+  NSString * myString;
+
+  if ([[NSUserDefaults standardUserDefaults] boolForKey: @"DontTrackNesting"])
+    {
+      return;
+    }
+
+  selectedRange = [_intEditorView selectedRange];
+
+  // make sure we un-highlight a previously highlit delimiter
+  [self unhighlightCharacter];
+
+  // if we have a character at the selected location, check
+  // to see if it is a delimiter character
+  myString = [_intEditorView string];
+  if (selectedRange.length <= 1 && [myString length] > selectedRange.location)
+    {
+      unichar c;
+      // we must initialize these explicitly in order to make
+      // gcc shut up about flow control
+      unichar oppositeDelimiter = 0;
+      BOOL searchBackwards = NO;
+
+      c = [myString characterAtIndex: selectedRange.location];
+
+      // if it is, search for the opposite delimiter in a range
+      // of at most 1000 characters around it in either forward
+      // or backward direction (depends on the kind of delimiter
+      // we're searching for).
+      if (CheckDelimiter(c, &oppositeDelimiter, &searchBackwards))
+        {
+          unsigned int result;
+
+          result = FindDelimiterInString(myString,
+                                         oppositeDelimiter,
+                                         c,
+                                         selectedRange.location,
+                                         searchBackwards);
+
+          // and in case a delimiter is found, highlight it
+          if (result != NSNotFound)
+            {
+              [self highlightCharacterAt: result];
+            }
+        }
+    }
 }
 
 @end

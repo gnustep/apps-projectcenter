@@ -23,14 +23,14 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectInspector.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectInspector.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectInspector
 
@@ -342,13 +342,14 @@
   [authorsList reloadData];
 
   // File Attributes
-  [fileIcon setFileIcon:(id)[project projectBrowser]];
+  [fileIconView setDelegate:[project projectBrowser]];
+  [fileIconView updateIcon];
   [self updateFileAttributes];
 }
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
 {
-  [fileIcon setFileIcon:[aNotif object]];
+  [fileIconView updateIcon];
   [self updateFileAttributes];
 }
 
@@ -637,9 +638,9 @@
 
 - (void)downAuthor:(id)sender
 {
-  int selectedRow = [authorsList selectedRow];
-  id  nextRow;
-  id  currentRow;
+  unsigned selectedRow = [authorsList selectedRow];
+  id       nextRow;
+  id       currentRow;
 
   if (selectedRow < [authorsItems count]-1)
   {
@@ -669,7 +670,7 @@
 
   if ([NSBundle loadNibNamed:@"FileAttributes" owner:self] == NO)
     {
-      PCLogError(self, @"error loading ProjectDescription NIB file!");
+      PCLogError(self, @"error loading FileAttributes NIB file!");
       return;
     }
 
@@ -677,8 +678,7 @@
   [localizableButton setRefusesFirstResponder:YES];
   [publicHeaderButton setRefusesFirstResponder:YES];
 
-  [fileIcon setFileNameField:fileIconField];
-  [fileIcon setMultipleFilesSelectionText:@"Multiple files selected"];
+  [fileIconView setFileNameField:fileNameField];
 
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
@@ -790,8 +790,8 @@
 
 - (void)beginFileRename
 {
-  [fileIconField setEditableField:YES];
-  [inspectorPanel makeFirstResponder:fileIconField];
+  [fileNameField setEditableField:YES];
+  [inspectorPanel makeFirstResponder:fileNameField];
 }
 
 // Delegate method of PCFileNameField class
@@ -817,17 +817,17 @@
 
 - (void)fileNameDidChange:(id)sender
 {
-  if ([fileName isEqualToString:[fileIconField stringValue]])
+  if ([fileName isEqualToString:[fileNameField stringValue]])
     {
       return;
     }
 
 /*  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
-	    [project projectName], fileName, [fileIconField stringValue]);*/
+	    [project projectName], fileName, [fileNameField stringValue]);*/
 
-  if ([project renameFile:fileName toFile:[fileIconField stringValue]] == NO)
+  if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
     {
-      [fileIconField setStringValue:fileName];
+      [fileNameField setStringValue:fileName];
     }
 }
 
@@ -873,10 +873,10 @@
 
 - (void)panelDidResignKey:(NSNotification *)aNotif
 {
-  if ([fileIconField isEditable] == YES)
+  if ([fileNameField isEditable] == YES)
     {
-      [inspectorPanel makeFirstResponder:fileIcon];
-      [fileIconField setStringValue:fileName];
+      [inspectorPanel makeFirstResponder:fileIconView];
+      [fileNameField setStringValue:fileName];
     }
 }
 

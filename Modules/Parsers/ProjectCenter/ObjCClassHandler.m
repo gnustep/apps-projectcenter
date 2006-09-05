@@ -20,9 +20,9 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include "ObjCClassHandler.h"
+#import "ObjCClassHandler.h"
 
 @implementation ObjCClassHandler
 
@@ -30,12 +30,17 @@
 {
   self = [super init];
   position = 0;
-  classBeginPosition = 0;
+  nameBeginPosition = 0;
+  nameEndPosition = 0;
+  bodyBeginPosition = 0;
+  bodySymbolCount = -1;
 
   inSpace = NO;
+  keyword = [[NSMutableString alloc] init];
   class = [[NSMutableString alloc] init];
   classes = [[NSMutableArray alloc] init];
 
+  prev_step = ClassNone;
   step = ClassNone;
   _preSymbol = 0;
 
@@ -45,6 +50,7 @@
 - (void)dealloc
 {
   NSLog(@"ClassHandler: dealloc");
+  RELEASE(keyword);
   RELEASE(class);
   RELEASE(classes);
   [super dealloc];
@@ -52,7 +58,35 @@
 
 - (NSArray *)classes
 {
-  return methods;
+  return classes;
+}
+
+- (void)addClassToArray
+{
+//  NSLog(@"OCCH: class: %@", class);
+  if ([class length])
+    {
+      NSDictionary *dict;
+      NSString     *dClass;
+      NSString     *dNRange;
+      NSString     *dBRange;
+
+      dClass = [class copy];
+      dNRange = NSStringFromRange(NSMakeRange(nameBeginPosition,
+			  		      nameEndPosition-nameBeginPosition));
+      dBRange = NSStringFromRange(NSMakeRange(bodyBeginPosition,
+			  		      position-bodyBeginPosition));
+
+      dict = [NSDictionary dictionaryWithObjectsAndKeys:
+	dClass, @"ClassName",
+	dNRange, @"ClassNameRange",
+	dBRange, @"ClassBodyRange",
+	nil];
+
+      [classes addObject:dict];
+      RELEASE(dClass);
+    }
+  [class setString:@""];
 }
 
 #define NotClass {step = ClassNone; [class setString: @""];}
@@ -61,16 +95,16 @@
 {
   unsigned int len = [element length];
 
-  [super string: element];
+  [super string:element];
 
   /* Comments */
   if (_commentType != NoComment)
     {
     }
-  else if (_stringBegin/* != NoString*/)
+  else if (_stringBegin /* != NoString*/)
     {
     }
-  else
+  else if (step != ClassNone)
     {
       inSpace = NO;
 
@@ -78,25 +112,13 @@
         {
           NotClass;
         }
-      else if (step == MethodSymbol)
+      else if (step == ClassSymbol)
         {
-          if (_preSymbol == '(')
-            step = MethodReturnValue;
-          else if ((_preSymbol == '+') || (_preSymbol == '='))
-            step = MethodName;
-
-          [method appendString: element];
+    	  [keyword appendString:element];
         }
-      else if (step == MethodReturnValue)
+      else if ((step == ClassName) || (step == ClassCategory))
         {
-          if (_preSymbol == ')')
-            step = MethodName;
-
-          [method appendString: element];
-        }
-      else if (step == MethodName)
-        {
-          [method appendString: element];
+          [class appendString:element];
         }
     }
 
@@ -106,7 +128,7 @@
 
 - (void)number:(NSString *)element 
 {
-  [super number: element];
+  [super number:element];
 
   /* Comments */
   if (_commentType != NoComment)
@@ -123,13 +145,17 @@
         {
           NotClass;
         }
-      else if (step == ClassSymbol)
+/*      else if (step == ClassSymbol)
         {
           NotClass;
         }
-      else if ((step == ClassName))
+      else if (step == ClassCategory)
         {
-          [class appendString: element];
+          NotClass;
+        }*/
+      else if (step == ClassName)
+        {
+          [class appendString:element];
         }
     }
 
@@ -141,7 +167,7 @@
 {
   BOOL newline = NO;
 
-  [super spaceAndNewLine: element];
+  [super spaceAndNewLine:element];
 
   if ((element == 0x0A) || (element == 0x0D))
     {
@@ -159,20 +185,52 @@
     {
       if (step != ClassNone)
         {
-          if ((!newline) && (!inSpace))
+/*          if ((!newline) && (!inSpace))
             {
-              [method appendString:[NSString stringWithFormat:@"%c",element]];
+              [class appendString:[NSString stringWithFormat:@"%c",element]];
             }
-          if (element == ' ')
-            {
-              inSpace = YES;
-            }
+	  else*/
+	  if ((newline || element == ' ') && (step == ClassSymbol))
+    	    {
+//	      NSLog(@"keyword: %@", keyword);
+	      if ([keyword isEqualToString:@"end"])
+		{
+//		  NSLog(@"@end reached");
+		  [self addClassToArray];
+		  step = ClassNone;
+		}
+	      else if ([keyword isEqualToString:@"interface"] || 
+	     	       [keyword isEqualToString:@"implementation"])
+		{
+		  [class appendString:@"@"];
+		  step = ClassName;
+		  prev_step = ClassNone;
+		  nameBeginPosition = position;
+		}
+	      [keyword setString:@""];
+	      
+      	      if (prev_step == ClassBody)
+		{
+		  step = ClassBody;
+		  prev_step = ClassNone;
+		}
+
+	      inSpace = YES;
+	    }
+	  else if (newline && (step == ClassName))
+	    {
+//	      NSLog(@"Class body start: \"%@\"", class);
+	      step = ClassBody;
+	      nameEndPosition = position - 1;
+	      bodyBeginPosition = position;
+	    }
         }
 
-      if (newline && (step == MethodNone))
+      // Class name should start from beginning of line 
+      // (some spaces may prepend "@" symbol)
+      if (newline && (step == ClassNone))
         {
           step = ClassStart;
-          classBeginPosition = position;
         }
     }
 
@@ -182,7 +240,7 @@
 
 - (void)symbol:(unichar)element 
 {
-  [super symbol: element];
+  [super symbol:element];
 
   /* Comments */
   if (_commentType != NoComment)
@@ -196,55 +254,45 @@
       inSpace = NO;
       _preSymbol = element;
 
-      if (step == ClassStart)
+      if ((step == ClassStart) || (step == ClassBody))
         {
-          if ((element == '+') || (element == '-'))
-            {
-              step = ClassSymbol;
-              [method appendString:[NSString stringWithFormat: @"%c", element]];
-            }
-          else
-            {
-              NotClass;
-            }
+	  if (element == '@')
+	    {
+	      prev_step = step;
+	      step = ClassSymbol;
+	    }
         }
-      else if (step == ClassSymbol)
+      else if (step == ClassName)
         {
-          if ((element == '(') || (element == '_'))
+          if (element == '(')
             {
-              [method appendString: [NSString stringWithFormat:@"%c", element]];
+	      step = ClassCategory;
+	      [class appendString:[NSString stringWithFormat:@"%c",element]];
             }
+	  else if (element == '<')
+	    {
+	      step = ClassProto;
+	    }
+	  else if (element == ':')
+	    {
+	      [class appendString:[NSString stringWithFormat:@"%c",element]];
+	    }
         }
-      else if (step == ClassReturnValue)
+      else if (step == ClassCategory)
         {
           if (element == ')')
             {
               step = ClassName;
             }
-          [method appendString:[NSString stringWithFormat:@"%c", element]];
+          [class appendString:[NSString stringWithFormat:@"%c",element]];
         }
-      else if (step == ClassName) 
-        {
-          if (element != '{')
-            [method appendString:[NSString stringWithFormat: @"%c", element]];
-        }
-
-      if ((element == ';') || (element == '{') || 
-          (element == '}') || (position == 0))
-        {
-          step = ClassStart;
-          classBeginPosition = position;
-          if ([class length])
+      else if (step == ClassProto)
+	{
+          if (element == '>')
             {
-              NSDictionary *dict;
-
-              dict = [NSDictionary dictionaryWithObjectsAndKeys:
-	       	AUTORELEASE([class copy]), @"class",
-		[NSNumber numberWithUnsignedInt:methodBeginPosition], @"position", nil];
-              [methods addObject: dict];
+              step = ClassName;
             }
-          [class setString:@""];
-        }
+	}
     }
 
   position++;
@@ -254,7 +302,7 @@
 - (void)invisible:(unichar)element
 {
   [super invisible:element];
-  position ++;
+  position++;
   _preChar = element;
 }
 

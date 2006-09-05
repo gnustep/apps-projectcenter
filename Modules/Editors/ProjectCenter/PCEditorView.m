@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005  Saso Kiselkov
+    Copyright (C) 2006  Saso Kiselkov, Sergii Stoian
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,8 +40,7 @@
 #import "PCEditor.h"
 #import "SyntaxHighlighter.h"
 
-static inline float
-my_abs(float aValue)
+static inline float my_abs(float aValue)
 {
   if (aValue >= 0)
     {
@@ -125,7 +124,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 @interface PCEditorView (Private)
 
-- (void) insertSpaceFillAlignedAtTabsOfSize: (unsigned int) tabSize;
+- (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
 
 @end
 
@@ -137,7 +136,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
  *
  * @argument tabSize Specifies how many spaces represent one tab.
  */
-- (void) insertSpaceFillAlignedAtTabsOfSize: (unsigned int) tabSize
+- (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize
 {
   char buf[tabSize];
   NSString * string = [self string];
@@ -174,51 +173,51 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 @implementation PCEditorView
 
-+ (NSFont *) defaultEditorFont
++ (NSFont *)defaultEditorFont
 {
-  NSUserDefaults * df = [NSUserDefaults standardUserDefaults];
-  NSString * fontName;
-  float fontSize;
-  NSFont * font = nil;
+  NSUserDefaults *df = [NSUserDefaults standardUserDefaults];
+  NSString       *fontName;
+  float          fontSize;
+  NSFont         *font;
 
   fontName = [df objectForKey:@"EditorFont"];
   fontSize = [df floatForKey:@"EditorFontSize"];
 
   if (fontName != nil)
     {
-      font = [NSFont fontWithName: fontName size: fontSize];
+      font = [NSFont fontWithName:fontName size:fontSize];
     }
   if (font == nil)
     {
-      font = [NSFont userFixedPitchFontOfSize: fontSize];
+      font = [NSFont userFixedPitchFontOfSize:fontSize];
     }
 
   return font;
 }
 
-+ (NSFont *) defaultEditorBoldFont
++ (NSFont *)defaultEditorBoldFont
 {
-  NSFont * font = [self defaultEditorFont];
+  NSFont *font = [self defaultEditorFont];
 
-  return [[NSFontManager sharedFontManager] convertFont: font
-                                            toHaveTrait: NSBoldFontMask];
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSBoldFontMask];
 }
 
-+ (NSFont *) defaultEditorItalicFont
++ (NSFont *)defaultEditorItalicFont
 {
-  NSFont * font = [self defaultEditorFont];
+  NSFont *font = [self defaultEditorFont];
 
-  return [[NSFontManager sharedFontManager] convertFont: font
-                                            toHaveTrait: NSItalicFontMask];
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSItalicFontMask];
 }
 
-+ (NSFont *) defaultEditorBoldItalicFont
++ (NSFont *)defaultEditorBoldItalicFont
 {
-  NSFont * font = [self defaultEditorFont];
+  NSFont *font = [self defaultEditorFont];
 
-  return [[NSFontManager sharedFontManager] convertFont: font
-                                            toHaveTrait: NSBoldFontMask |
-                                                         NSItalicFontMask];
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSBoldFontMask |
+					                NSItalicFontMask];
 }
 
 // ---
@@ -238,7 +237,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 }
 // ---
 
-- (void) dealloc
+- (void)dealloc
 {
   TEST_RELEASE(highlighter);
 
@@ -247,10 +246,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)setEditor:(PCEditor *)anEditor
 {
-  ASSIGN(editor, anEditor);
+  editor = anEditor;
 }
 
-- (void) awakeFromNib
+- (void)awakeFromNib
 {
 /*  NSData * data;
   NSUserDefaults * df = [NSUserDefaults standardUserDefaults];
@@ -285,9 +284,8 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType
 {
   ASSIGN(highlighter, [[[SyntaxHighlighter alloc]
-    initWithFileType: fileType textStorage: [self textStorage]]
-    autorelease]);
-//  [highlighter highlightRange: NSMakeRange(0, [[self string] length])];
+	 initWithFileType:fileType 
+	      textStorage:[self textStorage]] autorelease]);
 }
 
 - (void)insertText:text
@@ -364,16 +362,16 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
  */
 - (void)keyDown:(NSEvent *)ev
 {
-//  [editorDocument editorTextViewWillPressKey: self];
+  [editor editorTextViewWillPressKey: self];
   [super keyDown:ev];
-//  [editorDocument editorTextViewDidPressKey: self];
+  [editor editorTextViewDidPressKey: self];
 }
 
 - (void)paste:sender
 {
-//  [editorDocument editorTextViewWillPressKey: self];
+  [editor editorTextViewWillPressKey:self];
   [super paste:sender];
-//  [editorDocument editorTextViewDidPressKey: self];
+  [editor editorTextViewDidPressKey:self];
 }
 
 - (void)mouseDown:(NSEvent *)ev

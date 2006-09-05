@@ -29,15 +29,16 @@ ProjectCenter 0.5
 - Finish save/restore size of split views in Project Window	[done!]
 - Save last used path separately for different file panels	stoyan
 --- Project Editor:
-  - Implement on demand loading (editor for file type)		stoyan
-  - Open some files read only (Supporting Files)		stoyan
-  - Implement code parser (get it from CodeEditor?)		stoyan
-  - Project Browser should show file structure.			stoyan
-  - Click on Browser item should move cursor to line in file	stoyan
+  - Implement on demand loading (editor for file type)		[done!]
+  - Open some files read only (Supporting Files)		[done!]
+  - Implement code parser (get it from CodeEditor?)		[done!]
+  - Project Browser should show file structure.			[done!]
+  - Click on Browser item should move cursor to line in file	[done!]
   - Implement Editor indentation				stoyan
 --- Project Builder:
   - Implement root build directory handling			stoyan
-  - Parse gcc output
+  - Finish options handling					stoyan
+  - Parse gcc output						stoyan
   - Display warnings,errors,options etc. as clickable list	stoyan
 - Imlement pending adding/removal of files (history?)		stoyan
 - Finish FileNameIcon (draggable, files can be dragged to it)	stoyan

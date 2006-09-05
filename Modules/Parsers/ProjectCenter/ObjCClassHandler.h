@@ -28,24 +28,26 @@
 #include "ObjCCommentHandler.h"
 
 /**
- * ClassStart         ClassSymbol          ClassName    ClassEnd
- *            @interface/@implementation      Name        ;/{
- *            
+ * ClassStart  ClassSymbol  ClassName  ClassSuper  ClassProto   | ClassCategory
+ *             @...         CName      : CSuper    < Protocol > | ( Category )
  *
- * MethodStart is after each ';' or new line
- * MethodSymbol is +/- for objective-C
- * MethodReturnValue is surround by '(' and ')', and can be ignore
- * MethodName contain method name and messages
- * MethodNone is not method;
+ * ClassStart is after each ';' or new line
+ * ClassSymbol is '@' with 'interface'/'implementation' after that
+ * ClassName started after ClassSymbol and next first ' '
+ * ClassCategory is surround by '(' and ')'. Started after ClassName and ' '
+ * ClassNone is not method;
  */
 
-typedef enum _CheckStep {
+typedef enum _CS {
   ClassStart, 
   ClassSymbol,
-  ClassReturnValue,
-  ClassName, 
-  ClassNone
-} CheckStep;
+  ClassName,
+  ClassSuper,
+  ClassProto,
+  ClassCategory,
+  ClassBody,
+  ClassNone,
+} CS;
 
 
 @class NSMutableString;
@@ -56,17 +58,26 @@ typedef enum _CheckStep {
   unsigned int    position;
 
   BOOL            inSpace;
+  NSMutableString *keyword;
   NSMutableString *class;
   NSMutableArray  *classes;
   unichar         _preSymbol;
-  unsigned        classBeginPosition;
+  unsigned        nameBeginPosition;
+  unsigned        nameEndPosition;
+  unsigned        bodyBeginPosition;
+  int             bodySymbolCount;
 
-  CheckStep       step;
+  CS       step;
+  CS       prev_step;
 }
 
 // NSArray of NSDictionaries 
-// (method = NSString; position = NSNumber)
+// ClassName = NSString;
+// ClassNameRange = NSString <- NSStringFromRange(NSRange)
+// ClassBodyRange = NSString <- NSStringFromRange(NSRange)
 - (NSArray *)classes;
+
+- (void)addClassToArray;
 
 @end
 

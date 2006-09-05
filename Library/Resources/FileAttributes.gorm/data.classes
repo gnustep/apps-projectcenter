@@ -2,7 +2,8 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "fileNameDidChange:"
+	    "fileNameDidChange:",
+	    "setLocalizableResource:"
 	);
 	Super = NSObject;
     };
@@ -23,7 +24,8 @@
     PCProjectInspector = {
 	Actions = (
 	    "fileNameDidChange:",
-	    "setPublicHeader:"
+	    "setPublicHeader:",
+	    "setLocalizableResource:"
 	);
 	Outlets = (
 	    fileIconView,

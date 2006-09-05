@@ -21,9 +21,7 @@
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 */
 
-#include <AppKit/AppKit.h>
-/*#import <AppKit/NSView.h>
-#import <AppKit/NSTextView.h>*/
+#import <AppKit/NSTextView.h>
 
 @class NSColor;
 @class PCEditor;

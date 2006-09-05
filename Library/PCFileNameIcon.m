@@ -22,11 +22,11 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCFileNameIcon.h>
-#include <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCFileNameIcon.h>
+#import <ProjectCenter/PCProjectBrowser.h>
 
 @implementation PCFileNameIcon
 
@@ -59,6 +59,7 @@
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(fileNameField);
+  RELEASE(delegate);
 
   [super dealloc];
 }
@@ -68,128 +69,36 @@
   fileNameField = RETAIN(field);
 }
 
-- (void)setMultipleFilesSelectionText:(NSString *)text
+- (void)setDelegate:(id)object
 {
-  msfText = [text copy];
+  delegate = object;
 }
 
-- (void)setFileIcon:(id)object
+- (void)updateIcon
 {
-  NSString *categoryName = nil;
-  NSString *fileName = nil;
-  NSString *fileExtension = nil;
-  NSString *iconName = nil;
-  NSImage  *icon = nil;
-
-  fileName = [object nameOfSelectedFile];
-  if (fileName)
+  if (delegate)
     {
-      fileExtension = [fileName pathExtension];
-    }
-  else
-    {
-      categoryName = [object nameOfSelectedCategory];
-    }
-
-/*  PCLogError(self,@"{setFileIcon} file %@ category %@", 
-	    fileName, categoryName);*/
-  
-  // Should be provided by PC*Proj bundles
-  if ([[object selectedFiles] count] > 1)
-    {
-      iconName = [[NSString alloc] initWithString:@"MultiFiles"];
-    }
-  else if (!categoryName && !fileName) // Nothing selected
-    {
-      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Classes"])
-    {
-      iconName = [[NSString alloc] initWithString:@"classSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Headers"])
-    {
-      iconName = [[NSString alloc] initWithString:@"headerSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Other Sources"])
-    {
-      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Interfaces"])
-    {
-      iconName = [[NSString alloc] initWithString:@"nibSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Images"])
-    {
-      iconName = [[NSString alloc] initWithString:@"iconSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Other Resources"])
-    {
-      iconName = [[NSString alloc] initWithString:@"otherSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Subprojects"])
-    {
-      iconName = [[NSString alloc] initWithString:@"subprojectSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Documentation"])
-    {
-      iconName = [[NSString alloc] initWithString:@"helpSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Supporting Files"])
-    {
-      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Libraries"])
-    {
-      iconName = [[NSString alloc] initWithString:@"librarySuitcase"];
-    }
-  else if ([categoryName isEqualToString: @"Non Project Files"])
-    {
-      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
-    }
-    
-  if (iconName != nil)
-    {
-      icon = IMAGE(iconName);
-      RELEASE(iconName);
-    }
-  else //if (fileExtension != nil && ![fileExtension isEqualToString:@""])
-    {
-      icon = [[NSWorkspace sharedWorkspace] iconForFile:fileName];
-    }
-
-  // Set icon 
-  if (icon != nil)
-    {
-      [self setImage:icon];
-    }
-
-  // Set title
-  if ([[object selectedFiles] count] > 1)
-    {
-      if (msfText != nil)
+      if ([delegate respondsToSelector:@selector(fileNameIconImage)])
 	{
-	  [fileNameField setStringValue:msfText];
+	  [self setImage:[delegate fileNameIconImage]];
 	}
-      else
+      if ([delegate respondsToSelector:@selector(fileNameIconTitle)])
 	{
-	  [fileNameField setStringValue:
-	    [NSString stringWithFormat: 
-	    @"%i files", [[object selectedFiles] count]]];
+	  [fileNameField setStringValue:[delegate fileNameIconTitle]];
 	}
     }
-  else if (categoryName)
-    {
-      [fileNameField setStringValue:categoryName];
-    }
-  else if (fileName)
-    {
-      [fileNameField setStringValue:fileName];
-    }
-  else
-    {
-      [fileNameField setStringValue:@"No files selected"];
-    }
+}
+
+@end
+
+@implementation PCFileNameIcon (FileNameIconDelegate)
+
+- (NSImage *)fileNameIconImage
+{
+}
+
+- (NSString *)fileNameIconTitle
+{
 }
 
 @end

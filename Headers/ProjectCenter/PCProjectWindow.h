@@ -26,9 +26,9 @@
 #ifndef _PCProjectWindow_h_
 #define _PCProjectWindow_h_ 
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCFileNameField.h>
-#include <ProjectCenter/PCFileNameIcon.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCFileNameField.h>
+#import <ProjectCenter/PCFileNameIcon.h>
 
 @class PCProject;
 @class PCProjectBrowser;
@@ -70,9 +70,6 @@
 // ============================================================================
 // ==== Intialization & deallocation
 // ============================================================================
-
-// Will go into gorm file
-- (void)_initUI;
 
 - (id)initWithProject:(PCProject *)owner;
 - (void)setTitle;

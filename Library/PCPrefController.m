@@ -20,10 +20,10 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCLogController.h>
 
-#include <ProjectCenter/PCPrefController.h>
+#import <ProjectCenter/PCPrefController.h>
 
 // TODO: rewrite it as PCPrefernces, use +sharedPreferences instead of
 // [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
@@ -139,8 +139,8 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)loadPreferences
 {
-  NSDictionary *prefs = nil;
-  NSString     *val = nil;
+  NSDictionary *prefs;
+  NSString     *val;
 
   prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
   [preferencesDict addEntriesFromDictionary: prefs];
@@ -148,14 +148,14 @@ static PCPrefController *_prefCtrllr = nil;
   // Fill in the defaults
 
   // Building
-  [successField setStringValue: 
-    (val = [preferencesDict objectForKey: SuccessSound]) ? val : @""];
+  val = [preferencesDict objectForKey:SuccessSound];
+  [successField setStringValue: (val == nil) ? @"" : val];
 
   [failureField setStringValue: 
-    (val = [preferencesDict objectForKey: FailureSound]) ? val : @""];
+    (val = [preferencesDict objectForKey:FailureSound]) ? val : @""];
 
   [promptOnClean setState:
-    ([[preferencesDict objectForKey: PromptOnClean] 
+    ([[preferencesDict objectForKey:PromptOnClean] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 
   [rootBuildDirField setStringValue: 
@@ -250,8 +250,8 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)awakeFromNib
 {
-  NSArray *tabMatrixCells = nil;
-  int     i;
+  NSArray  *tabMatrixCells;
+  unsigned i;
   
   [promptOnClean setRefusesFirstResponder:YES];
   

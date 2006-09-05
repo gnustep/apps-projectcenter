@@ -39,7 +39,7 @@
   method = [[NSMutableString alloc] init];
   methods = [[NSMutableArray alloc] init];
 
-  step = MethodNone;
+  prev_step = step = MethodNone;
   _preSymbol = 0;
 
   return self;
@@ -108,30 +108,14 @@
         {
           NotMethod;
         }
-      else if (step == MethodSymbol)
-        {
-          if (_preSymbol == '(')
-	    {
-	      step = MethodReturnValue;
-	    }
-          else if ((_preSymbol == '+') || (_preSymbol == '='))
-	    {
-	      step = MethodName;
-	    }
-          [method appendString:element];
-        }
-      else if (step == MethodReturnValue)
-        {
-          if (_preSymbol == ')')
-	    {
-	      step = MethodName;
-	    }
-          [method appendString:element];
-        }
       else if (step == MethodName)
         {
           [method appendString:element];
         }
+      else if (step == MethodParameterStart)
+	{
+	  step = MethodParameter;
+	}
     }
 
   position += len;
@@ -197,12 +181,17 @@
     {
       if (step != MethodNone)
         {
-          if ((!newline) && (!inSpace))
+/*          if ((!newline) && (!inSpace))
             {
               [method appendString:[NSString stringWithFormat:@"%c",element]];
-            }
-          if (element == ' ')
+            }*/
+          if (element == ' ' || newline)
             {
+	      if (step == MethodParameter)
+		{
+		  step = MethodName;
+		  prev_step = MethodNone;
+		}
               inSpace = YES;
             }
         }
@@ -221,7 +210,7 @@
 
 - (void)symbol:(unichar)element 
 {
-  [super symbol: element];
+  [super symbol:element];
 
   /* Comments */
   if (_commentType != NoComment)
@@ -244,22 +233,34 @@
 	      nameBeginPosition = position;
 	    }
         }
-/*      else if (step == MethodSymbol)
+      else if ((step == MethodName) || (step == MethodParameterStart))
         {
           if (element == '(')
             {
+	      if (step == MethodParameterStart)
+		{
+		 prev_step = step; 
+		}
 	      step = MethodReturnValue;
             }
-	  [method appendString:[NSString stringWithFormat: @"%c", element]];
+	  else if (element == ':')
+	    {
+	      step = MethodParameterStart;
+    	      [method appendString:@":"];
+	    }
         }
-      else if (step == MethodReturnValue)
+      else if (step == MethodReturnValue && element == ')')
         {
-          if (element == ')')
-            {
-              step = MethodName;
-            }
-          [method appendString:[NSString stringWithFormat: @"%c", element]];
-        }*/
+	  if (prev_step == MethodParameterStart)
+	    {
+	      step = prev_step;
+	    }
+	  else
+	    {
+	      step = MethodName;
+	    }
+//          [method appendString:[NSString stringWithFormat: @"%c", element]];
+        }
       else if ((step == MethodName) && (element != '{') && (element != ';')) 
         {
 	  [method appendString:[NSString stringWithFormat: @"%c", element]];

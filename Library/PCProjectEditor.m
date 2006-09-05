@@ -23,27 +23,31 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCBundleManager.h>
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCBundleManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectEditor.h>
 
-#include <ProjectCenter/PCLogController.h>
-
-#include <Protocols/CodeParser.h>
+#import <ProjectCenter/PCLogController.h>
 
 NSString *PCEditorDidChangeFileNameNotification = 
           @"PCEditorDidChangeFileNameNotification";
-	  
-NSString *PCEditorWillOpenNotification = 
-          @"PCEditorWillOpenNotification";
-NSString *PCEditorDidOpenNotification = 
-          @"PCEditorDidOpenNotification";
-NSString *PCEditorDidCloseNotification = 
-          @"PCEditorDidCloseNotification";
+
+NSString *PCEditorWillOpenNotification = @"PCEditorWillOpenNotification";
+NSString *PCEditorDidOpenNotification = @"PCEditorDidOpenNotification";
+NSString *PCEditorWillCloseNotification = @"PCEditorWillCloseNotification";
+NSString *PCEditorDidCloseNotification = @"PCEditorDidCloseNotification";
+
+NSString *PCEditorWillChangeNotification = @"PCEditorWillChangeNotification";
+NSString *PCEditorDidChangeNotification = @"PCEditorDidChangeNotification";
+NSString *PCEditorWillSaveNotification = @"PCEditorWillSaveNotification";
+NSString *PCEditorDidSaveNotification = @"PCEditorDidSaveNotification";
+NSString *PCEditorWillRevertNotification = @"PCEditorWillRevertNotification";
+NSString *PCEditorDidRevertNotification = @"PCEditorDidRevertNotification";
 
 NSString *PCEditorDidBecomeActiveNotification = 
           @"PCEditorDidBecomeActiveNotification";
@@ -258,8 +262,21 @@ NSString *PCEditorDidResignActiveNotification =
 // TODO: Should it be editor or parser?
 - (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item
 {
-  NSDictionary *infoTable = [self infoTableForBundleType:@"editor" 
- 					     andFileType:[item pathExtension]];
+  NSString     *file = [[project projectBrowser] nameOfSelectedFile];
+  NSDictionary *infoTable = nil;
+
+  // File selected and editor should already be loaded
+  if (file != nil)
+    {
+      if ([[item substringToIndex:1] isEqualToString:@"@"])
+	{
+	  return YES;
+	}
+    }
+
+  // Category selected
+  infoTable = [self infoTableForBundleType:@"editor" 
+			       andFileType:[item pathExtension]];
 
   if ([[infoTable objectForKey:@"ProvidesBrowserItems"] isEqualToString:@"YES"])
     {
@@ -269,11 +286,20 @@ NSString *PCEditorDidResignActiveNotification =
   return NO;
 }
 
+- (id<CodeEditor>)editorForFile:(NSString *)fileName key:(NSString *)key
+{
+  NSString *filePath = nil;
+
+  filePath = [project pathForFile:fileName forKey:key];
+
+  return [editorsDict objectForKey:filePath];
+}
+
 // categoryPath:
 // 1. "/Classes/Class.m/- init"
 // 2. "/Subprojects/Project/Classes/Class.m/- init"
 // 3. "/Library/gnustep-gui"
-- (id<CodeEditor>)editorForCategoryPath:(NSString *)categoryPath
+- (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
 			       windowed:(BOOL)windowed
 {
   NSArray        *pathArray = [categoryPath pathComponents];
@@ -316,10 +342,10 @@ NSString *PCEditorDidResignActiveNotification =
   
 //  NSLog(@"fileName: %@ > %@", fileName, listEntry);
 
-  editor = [self editorForFile:filePath 
-		  categoryPath:categoryPath
-		      editable:editable
-		      windowed:windowed];
+  editor = [self openEditorForFile:filePath 
+		      categoryPath:categoryPath
+			  editable:editable
+			  windowed:windowed];
   if (!editor)
     {
       NSLog(@"We don't have editor for file: %@", fileName);
@@ -332,7 +358,7 @@ NSString *PCEditorDidResignActiveNotification =
   [pathLastObject substringWithRange:NSMakeRange(0,1)]);*/
 
   pathLastObject = [pathArray lastObject];
-  firstSymbol = [pathLastObject substringWithRange:NSMakeRange(0,1)];
+  firstSymbol = [pathLastObject substringToIndex:1];
   if ([pathLastObject isEqualToString:@"/"]) // file selected
     {
       [[project projectBrowser] reloadLastColumnAndNotify:NO]; 
@@ -349,10 +375,10 @@ NSString *PCEditorDidResignActiveNotification =
   return editor;
 }
 
-- (id<CodeEditor>)editorForFile:(NSString *)path
-                   categoryPath:(NSString *)categoryPath
-		       editable:(BOOL)editable
-	               windowed:(BOOL)windowed
+- (id<CodeEditor>)openEditorForFile:(NSString *)path
+		       categoryPath:(NSString *)categoryPath
+			   editable:(BOOL)editable
+			   windowed:(BOOL)windowed
 {
 //  NSUserDefaults  *ud = [NSUserDefaults standardUserDefaults];
 //  NSString        *ed = [ud objectForKey:Editor];
@@ -385,7 +411,7 @@ NSString *PCEditorDidResignActiveNotification =
 	}
 
       // Parser
-      parserClassName = [self classNameForBundleType:@"parser"
+/*      parserClassName = [self classNameForBundleType:@"parser"
 					     andFile:[path lastPathComponent]];
       if (parserClassName != nil)
 	{
@@ -393,9 +419,9 @@ NSString *PCEditorDidResignActiveNotification =
 	  parser = [bundleManager objectForClassName:parserClassName
 	      				withProtocol:@protocol(CodeParser)
 	    				inBundleType:@"parser"];
-	  AUTORELEASE(parser);
 	  [editor setParser:parser];
-	}
+	  RELEASE(parser);
+	}*/
 
       [editor openFileAtPath:path 
 		categoryPath:categoryPath
@@ -593,10 +619,10 @@ NSString *PCEditorDidResignActiveNotification =
       res = [editor saveFileTo:file];
       [editor closeFile:self save:NO];
 
-      [self editorForFile:file 
-	     categoryPath:categoryPath
-		 editable:YES
-		 windowed:iw];
+      [self openEditorForFile:file 
+		 categoryPath:categoryPath
+		     editable:YES
+		     windowed:iw];
 
       return res;
     }
@@ -654,7 +680,7 @@ NSString *PCEditorDidResignActiveNotification =
     {
       return;
     }
-    
+  
   [editorsDict removeObjectForKey:[editor path]];
 
   if ([editorsDict count])
@@ -683,7 +709,7 @@ NSString *PCEditorDidResignActiveNotification =
   id<CodeEditor> editor = [aNotif object];
   NSString       *categoryPath = nil;
 
-  if ([editor projectEditor] != self) // || activeEditor == editor)
+  if ([editor projectEditor] != self)
     {
       return;
     }

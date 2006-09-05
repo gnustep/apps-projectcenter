@@ -27,6 +27,8 @@
 
 @class NSTextField;
 
+extern NSString *PCFileNameFieldNoFiles;
+
 @interface PCFileNameField : NSTextField
 {
 }

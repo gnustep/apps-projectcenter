@@ -43,7 +43,9 @@ typedef enum _CheckStep {
   MethodBody,
   MethodSymbol,
   MethodReturnValue,
-  MethodName, 
+  MethodName,
+  MethodParameterStart,
+  MethodParameter,
   MethodNone
 } CheckStep;
 
@@ -65,6 +67,7 @@ typedef enum _CheckStep {
   int             bodySymbolCount;
 
   CheckStep       step;
+  CheckStep       prev_step;
 }
 
 // NSArray of NSDictionaries 

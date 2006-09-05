@@ -20,10 +20,11 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <Protocols/CodeParser.h>
+#import <Protocols/CodeParser.h>
 
-#include "PCParser.h"
-#include "ObjCMethodHandler.h"
+#import "PCParser.h"
+#import "ObjCClassHandler.h"
+#import "ObjCMethodHandler.h"
 
 typedef enum _CodeType {
   StringCodeType,          /* 41-5A, 61-7A, 5F */
@@ -39,17 +40,19 @@ typedef enum _CodeType {
 // ==== Initialisation
 // ===========================================================================
 
-- (id) init
+- (id)init
 {
   self = [super init];
   return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
-  NSLog(@"CEParser: dealloc");
+  NSLog(@"PCParser: dealloc");
   free(_uchar);
   RELEASE(_string);
+
+  [super dealloc];
 }
 
 - (id)setString:(NSString *)text
@@ -70,11 +73,11 @@ typedef enum _CodeType {
 
 - (NSArray *)classNames
 {
-/*  _handler = [[ObjCClassHandler alloc] init];
+  _handler = [[ObjCClassHandler alloc] init];
   [self parse];
   AUTORELEASE(_handler);
   
-  return [(ObjCClassHandler *)_handler methods];*/
+  return [(ObjCClassHandler *)_handler classes];
 }
 
 - (NSArray *)methodNames
@@ -142,15 +145,15 @@ static void (*impSymbol)(id, SEL, unichar);
   NSLog(@"CodeParser begin...");
 
   impString = (void (*)(id, SEL, id))
-              [[_handler class] instanceMethodForSelector: selString]; 
+              [[_handler class] instanceMethodForSelector:selString]; 
   impNumber = (void (*)(id, SEL, id))
-              [[_handler class] instanceMethodForSelector: selNumber];
+              [[_handler class] instanceMethodForSelector:selNumber];
   impSpaceAndNewLine = (void (*)(id, SEL, unichar))
-              [[_handler class] instanceMethodForSelector: selSpaceAndNewLine];
+              [[_handler class] instanceMethodForSelector:selSpaceAndNewLine];
   impInvisible = (void (*)(id, SEL, unichar))
-              [[_handler class] instanceMethodForSelector: selInvisible];
+              [[_handler class] instanceMethodForSelector:selInvisible];
   impSymbol = (void (*)(id, SEL, unichar))
-              [[_handler class] instanceMethodForSelector: selSymbol];
+              [[_handler class] instanceMethodForSelector:selSymbol];
 
   start = end = 0;
   startType = codeType(_uchar+start);

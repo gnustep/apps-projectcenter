@@ -23,14 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCFileNameField.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
 NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
@@ -65,12 +66,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	addObserver:self 
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification 
-	     object:nil];
-
-      [[NSNotificationCenter defaultCenter]
-	addObserver:self
-	   selector:@selector(editorDidOpen:)
-	       name:PCEditorDidOpenNotification
 	     object:nil];
     }
 
@@ -366,6 +361,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString       *category;
   PCProject      *activeProject;
   NSString       *browserPath;
+  NSString       *filePath;
 
   if (sender != browser)
     {
@@ -376,17 +372,20 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   category = [self nameOfSelectedCategory];
   activeProject = [[project projectManager] activeProject];
   browserPath = [self path];
+  filePath = [self pathToSelectedFile];
 
-  NSLog(@"browserPath: %@ forProject: %@", 
-	browserPath, [activeProject projectName]);
+/*  NSLog(@"browserPath: %@ forProject: %@", 
+	browserPath, [activeProject projectName]);*/
 
-  if ([[self selectedFiles] count] == 1
-      && ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
+//  if ([[self selectedFiles] count] == 1
+  if (filePath &&
+      [filePath isEqualToString:browserPath] && 
+      ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
     {
 /*      PCLogInfo(self, @"[click] category: %@ filePath: %@",
 	      category, filePath);*/
-      [[activeProject projectEditor] editorForCategoryPath:browserPath
-	      					  windowed:NO];
+      [[activeProject projectEditor] openEditorForCategoryPath:browserPath
+					    	      windowed:NO];
     }
 
   [[NSNotificationCenter defaultCenter]
@@ -423,8 +422,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	{
 	  if ([[NSWorkspace sharedWorkspace] openFile:filePath] == NO)
 	    {
-	      [[project projectEditor] editorForCategoryPath:[browser path]
-						    windowed:YES];
+	      [[project projectEditor] openEditorForCategoryPath:[browser path]
+					    		windowed:YES];
 	    }
 	}
     }
@@ -474,15 +473,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
 }
 
-- (void)editorDidOpen:(NSNotification *)aNotif
-{
-/*  PCEditor *object = [aNotif object];
-  
-  NSLog(@"PCBrowser: %@ classes: %@", 
-	[object categoryPath], [object classNames]);*/
-  [self reloadLastColumnAndNotify:NO];
-}
-
 @end
 
 @implementation PCProjectBrowser (ProjectBrowserDelegate)
@@ -527,7 +517,144 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       [categoryPath appendString:[files objectAtIndex:i]];
 
       [cell setLeaf:![project hasChildrenAtCategoryPath:categoryPath]];
+      [cell setRefusesFirstResponder:YES];
     }
+}
+
+@end
+
+@implementation PCProjectBrowser (FileNameIconDelegate)
+
+// If file was opened in editor: 
+// 1. Determine editor
+// 2. Ask editor for icon
+- (NSImage *)_editorIconImageForFile:(NSString *)fileName
+{
+  PCProjectEditor *projectEditor = [project projectEditor];
+  id<CodeEditor>  editor = nil;
+  NSString        *categoryName = [self nameOfSelectedCategory];
+  NSString        *categoryKey = [project keyForCategory:categoryName];
+
+  editor = [projectEditor editorForFile:fileName key:categoryKey];
+  if (editor != nil)
+    {
+      return [editor fileIcon];
+    }
+
+  return nil;
+}
+
+- (NSImage *)fileNameIconImage
+{
+  NSString *categoryName = nil;
+  NSString *fileName = nil;
+  NSString *fileExtension = nil;
+  NSString *iconName = nil;
+  NSImage  *icon = nil;
+
+  fileName = [self nameOfSelectedFile];
+  if (fileName)
+    {
+      if ((icon = [self _editorIconImageForFile:fileName]))
+	{
+	  return icon;
+	}
+      fileExtension = [fileName pathExtension];
+    }
+  else
+    {
+      categoryName = [self nameOfSelectedCategory];
+    }
+
+/*  PCLogError(self,@"{setFileIcon} file %@ category %@", 
+	    fileName, categoryName);*/
+  
+  if ([[self selectedFiles] count] > 1)
+    {
+      iconName = [[NSString alloc] initWithString:@"MultiFiles"];
+    }
+  else if (!categoryName && !fileName) // Nothing selected
+    {
+      iconName = [[NSString alloc] initWithString:@"FileProject"];
+    }
+  else if ([categoryName isEqualToString: @"Classes"])
+    {
+      iconName = [[NSString alloc] initWithString:@"classSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Headers"])
+    {
+      iconName = [[NSString alloc] initWithString:@"headerSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Other Sources"])
+    {
+      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Interfaces"])
+    {
+      iconName = [[NSString alloc] initWithString:@"nibSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Images"])
+    {
+      iconName = [[NSString alloc] initWithString:@"iconSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Other Resources"])
+    {
+      iconName = [[NSString alloc] initWithString:@"otherSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Subprojects"])
+    {
+      iconName = [[NSString alloc] initWithString:@"subprojectSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Documentation"])
+    {
+      iconName = [[NSString alloc] initWithString:@"helpSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Supporting Files"])
+    {
+      iconName = [[NSString alloc] initWithString:@"genericSuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Libraries"])
+    {
+      iconName = [[NSString alloc] initWithString:@"librarySuitcase"];
+    }
+  else if ([categoryName isEqualToString: @"Non Project Files"])
+    {
+      iconName = [[NSString alloc] initWithString:@"projectSuitcase"];
+    }
+    
+  if (iconName != nil)
+    {
+      icon = IMAGE(iconName);
+      RELEASE(iconName);
+    }
+  else
+    {
+      icon = [[NSWorkspace sharedWorkspace] iconForFile:fileName];
+    }
+
+  return icon;
+}
+
+- (NSString *)fileNameIconTitle
+{
+  NSString *categoryName = [self nameOfSelectedCategory];
+  NSString *fileName = [self nameOfSelectedFile];
+  int      filesCount = [[self selectedFiles] count];
+
+  if (filesCount > 1)
+    {
+      return [NSString stringWithFormat:@"%i files", filesCount];
+    }
+  else if (fileName)
+    {
+      return fileName;
+    }
+  else if (categoryName)
+    {
+      return categoryName;
+    }
+
+  return PCFileNameFieldNoFiles;
 }
 
 @end

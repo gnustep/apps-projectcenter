@@ -4,6 +4,7 @@
 
 include $(GNUSTEP_MAKEFILES)/common.make
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
+#GNUSTEP_BUILD_DIR = $(HOME)/Projects/GNUstep/==BUILD==/ProjectCenter
 
 #
 # Main application
@@ -27,12 +28,6 @@ ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
-Images/FileC.tiff \
-Images/FileCH.tiff \
-Images/FileH.tiff \
-Images/FileHH.tiff \
-Images/FileM.tiff \
-Images/FileMH.tiff \
 Images/FileRTF.tiff \
 Images/FileProject.tiff \
 Images/Build.tiff \

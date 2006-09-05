@@ -23,15 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectEditor.h>
 
-#include <ProjectCenter/PCPrefController.h>
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCPrefController.h>
+#import <ProjectCenter/PCLogController.h>
 
-#include <Protocols/CodeEditor.h>
-#include <ProjectCenter/PCProjectLoadedFiles.h>
+#import <Protocols/CodeEditor.h>
+#import <ProjectCenter/PCProjectLoadedFiles.h>
 
 @implementation PCProjectLoadedFiles
 
@@ -75,7 +75,7 @@
       [filesScroll setHasHorizontalScroller:NO];
       [filesScroll setHasVerticalScroller:YES];
       if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-  	  objectForKey: SeparateLoadedFiles] isEqualToString: @"NO"])
+  	  objectForKey:SeparateLoadedFiles] isEqualToString:@"NO"])
 	{
 	  [filesScroll setBorderType:NSBezelBorder];
 	}
@@ -86,8 +86,8 @@
 
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
-	   selector:@selector(fileWillOpen:)
-	       name:PCEditorWillOpenNotification
+	   selector:@selector(fileDidOpen:)
+	       name:PCEditorDidOpenNotification
 	     object:nil];
 
       [[NSNotificationCenter defaultCenter]
@@ -228,7 +228,7 @@
 // ==== Notifications
 // ===========================================================================
 
-- (void)fileWillOpen:(NSNotification *)aNotif
+- (void)fileDidOpen:(NSNotification *)aNotif
 {
   id<CodeEditor> editor = [aNotif object];
   NSString       *filePath = nil;
@@ -255,7 +255,7 @@
   row = [[self editedFilesRep] indexOfObject:filePath];
   [filesList selectRow:row byExtendingSelection:NO];
   
-  PCLogInfo(self, @"fileWillOpen.END");
+//  PCLogInfo(self, @"fileDidOpen.END");
 }
 
 - (void)fileDidClose:(NSNotification *)aNotif
@@ -301,7 +301,7 @@
     {
       filePath = [editor path];
       index = [[self editedFilesRep] indexOfObject:filePath];
-      if (index >=0 && index < filesCount)
+      if (index < filesCount)
 	{
 	  [filesList selectRow:index byExtendingSelection:NO];
 	}

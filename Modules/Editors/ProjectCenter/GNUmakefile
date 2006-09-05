@@ -23,7 +23,13 @@ ProjectCenter_RESOURCE_FILES= \
     Resources/Info.table \
     Resources/C.syntax \
     Resources/ObjC.syntax \
-    Resources/Plist.syntax
+    Resources/Plist.syntax \
+    Resources/FileC.tiff \
+    Resources/FileCH.tiff \
+    Resources/FileH.tiff \
+    Resources/FileHH.tiff \
+    Resources/FileM.tiff \
+    Resources/FileMH.tiff
 
 #
 # Header files

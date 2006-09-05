@@ -29,9 +29,7 @@
 #include <Foundation/Foundation.h>
 
 #include <Protocols/CodeEditor.h>
-#include <Protocols/ProjectEditor.h>
-
-#include "PCProject.h"
+#include <Protocols/CodeParser.h>
 
 @class PCProject;
 @class PCEditor;
@@ -41,9 +39,7 @@
 @class NSView;
 @class NSScrollView;
 
-@protocol CodeParser;
-
-@interface PCProjectEditor : NSObject <ProjectEditor>
+@interface PCProjectEditor : NSObject
 {
   PCProject           *project;
   NSBox               *componentView;
@@ -79,17 +75,16 @@
 			     
 - (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item;
 
-- (id<CodeEditor>)editorForCategoryPath:(NSString *)categoryPath
-			       windowed:(BOOL)windowed;
+// Returns nil if editor is not opened
+- (id<CodeEditor>)editorForFile:(NSString *)fileName key:(NSString *)key;
 
-/*- (id<CodeEditor>)editorForFile:(NSString *)path
-                   categoryPath:(NSString *)categoryPath
-	               windowed:(BOOL)yn;*/
-		       
-- (id<CodeEditor>)editorForFile:(NSString *)path
-                   categoryPath:(NSString *)categoryPath
-		       editable:(BOOL)editable
-	               windowed:(BOOL)windowed;
+- (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
+                                   windowed:(BOOL)windowed;
+
+- (id<CodeEditor>)openEditorForFile:(NSString *)path
+                       categoryPath:(NSString *)categoryPath
+		           editable:(BOOL)editable
+	                   windowed:(BOOL)windowed;
 		       
 - (void)orderFrontEditorForFile:(NSString *)path;
 - (id<CodeEditor>)activeEditor;
@@ -119,6 +114,27 @@
 - (void)editorDidResignActive:(NSNotification *)aNotif;
 
 @end
+
+extern NSString *PCEditorDidChangeFileNameNotification;
+
+extern NSString *PCEditorWillOpenNotification;
+extern NSString *PCEditorDidOpenNotification;
+extern NSString *PCEditorWillCloseNotification;
+extern NSString *PCEditorDidCloseNotification;
+
+extern NSString *PCEditorWillChangeNotification;
+extern NSString *PCEditorDidChangeNotification;
+extern NSString *PCEditorWillSaveNotification;
+extern NSString *PCEditorDidSaveNotification;
+extern NSString *PCEditorWillRevertNotification;
+extern NSString *PCEditorDidRevertNotification;
+
+extern NSString *PCEditorDidBecomeActiveNotification;
+extern NSString *PCEditorDidResignActiveNotification;
+
+/*
+extern NSString *PCEditorSaveDidFailNotification;
+*/
 
 #endif 
 

@@ -32,11 +32,22 @@
   NSString    *filePath;
   NSTextField *fileNameField;
   NSString    *msfText;
+
+  id          delegate;
 }
 
 - (void)setFileNameField:(NSTextField *)field;
-- (void)setMultipleFilesSelectionText:(NSString *)text;
-- (void)setFileIcon:(NSNotification *)notification;
+
+- (void)setDelegate:(id)object;
+
+- (void)updateIcon;
+
+@end
+
+@interface PCFileNameIcon (FileNameIconDelegate)
+
+- (NSImage *)fileNameIconImage;
+- (NSString *)fileNameIconTitle;
 
 @end
 

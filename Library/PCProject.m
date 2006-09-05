@@ -787,7 +787,7 @@ NSString
     {
       return;
     }
-
+    
   resPath = [projectPath stringByAppendingPathComponent:@"Resources"];
   resFilePath = [resPath stringByAppendingPathComponent:file];
   localizedResources = [[self localizedResources] mutableCopy];
@@ -854,8 +854,7 @@ NSString
   NSString *fileName = [filePath lastPathComponent];
   NSString *extension = [filePath pathExtension];
 
-  if ([key isEqualToString:PCSupportingFiles]
-      || [key isEqualToString:PCDocuFiles]) 
+  if ([key isEqualToString:PCSupportingFiles]) 
     {
       if ([fileName isEqualToString:@"GNUmakefile"] ||
 	  [extension isEqualToString:@"plist"])
@@ -1006,7 +1005,7 @@ NSString
   // File is located in project's directory tree
   if (pathRange.length && ![type isEqualToString:PCLibraries])
     {
-      int      i;
+      unsigned i;
 
       for (i = 0; i < [subprojects count]; i++)
 	{
@@ -1279,12 +1278,14 @@ NSString
 
   if ([[self localizedResources] containsObject:fromFile])
     {// Rename file in language dirs
-      NSArray        *userLanguages = nil;
-      NSEnumerator   *enumerator = nil;
-      NSString       *lang = nil;
-      NSString       *langPath = nil;
-      NSMutableArray *localizedResources = [self localizedResources];
+      NSArray        *userLanguages;
+      NSEnumerator   *enumerator;
+      NSString       *lang;
+      NSString       *langPath;
+      NSMutableArray *localizedResources;
 
+      localizedResources = 
+	[NSMutableArray arrayWithArray:[self localizedResources]];
       userLanguages = [projectDict objectForKey:PCUserLanguages];
       enumerator = [userLanguages objectEnumerator];
       while ((lang = [enumerator nextObject]))
@@ -1517,8 +1518,6 @@ NSString
 
 @implementation PCProject (ProjectBrowser)
 
-// TODO: Think about moving all browser related methods into PCProjectBrowser
-
 - (NSArray *)rootKeys
 {
   // e.g. CLASS_FILES
@@ -1555,6 +1554,43 @@ NSString
 {
   return [rootEntries objectForKey:key];
 }
+
+- (NSString *)rootCategoryForCategoryPath:(NSString *)categoryPath
+{
+  NSArray *pathComponents = nil;
+
+  if ([categoryPath isEqualToString:@"/"] || [categoryPath isEqualToString:@""])
+    {
+      return nil;
+    }
+    
+  pathComponents = [categoryPath componentsSeparatedByString:@"/"];
+
+  return [pathComponents objectAtIndex:1];
+}
+
+- (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath
+{
+  NSString *category = nil;
+  NSString *key = nil;
+
+  if (categoryPath == nil 
+      || [categoryPath isEqualToString:@""]
+      || [categoryPath isEqualToString:@"/"])
+    {
+      return nil;
+    }
+
+  category = [self rootCategoryForCategoryPath:categoryPath];
+  key = [self keyForCategory:category];
+
+/*  PCLogInfo(self, @"{%@}(keyForRootCategoryInCategoryPath): %@ key:%@", 
+	    projectName, categoryPath, key);*/
+
+  return key;
+}
+
+// --- Requested by Project Browser
 
 - (NSArray *)contentAtCategoryPath:(NSString *)categoryPath
 {
@@ -1608,15 +1644,6 @@ NSString
     { // The file is selected, ask editor for browser items
       return [[projectEditor activeEditor] browserItemsForItem:listEntry];
     }
-/*  else if ([[listEntry pathExtension] isEqualToString:@"m"]
-    || [[listEntry pathExtension] isEqualToString:@"h"])
-    {// Class and header files (TODO: test subprojects)
-      return [[projectEditor activeEditor] classNames];
-    }
-  else if ([[listEntry substringToIndex:1] isEqualToString:@"@"])
-    {// Class name (TODO: test subprojects)
-      return [[projectEditor activeEditor] methodNamesForClass:listEntry];
-    }*/
 }
 
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)categoryPath
@@ -1646,10 +1673,10 @@ NSString
       return YES;
     }
 
-  // Files
-  if ([[projectDict objectForKey:categoryKey] containsObject:listEntry])
+  // Files. listEntry is file in category or contents of file
+  if ([[projectDict objectForKey:categoryKey] containsObject:listEntry] ||
+      [projectBrowser nameOfSelectedFile])
     {
-//      NSLog(@"PCP [hasChildrenAtCategoryPath]: item is file selected");
       // TODO: Libraries
       if ([category isEqualToString:@"Libraries"])
 	{
@@ -1663,41 +1690,6 @@ NSString
     }
   
   return NO;
-}
-
-- (NSString *)rootCategoryForCategoryPath:(NSString *)categoryPath
-{
-  NSArray *pathComponents = nil;
-
-  if ([categoryPath isEqualToString:@"/"] || [categoryPath isEqualToString:@""])
-    {
-      return nil;
-    }
-    
-  pathComponents = [categoryPath componentsSeparatedByString:@"/"];
-
-  return [pathComponents objectAtIndex:1];
-}
-
-- (NSString *)keyForRootCategoryInCategoryPath:(NSString *)categoryPath
-{
-  NSString *category = nil;
-  NSString *key = nil;
-
-  if (categoryPath == nil 
-      || [categoryPath isEqualToString:@""]
-      || [categoryPath isEqualToString:@"/"])
-    {
-      return nil;
-    }
-
-  category = [self rootCategoryForCategoryPath:categoryPath];
-  key = [self keyForCategory:category];
-
-/*  PCLogInfo(self, @"{%@}(keyForRootCategoryInCategoryPath): %@ key:%@", 
-	    projectName, categoryPath, key);*/
-
-  return key;
 }
 
 @end

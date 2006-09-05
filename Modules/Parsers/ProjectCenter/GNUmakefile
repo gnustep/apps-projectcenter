@@ -29,6 +29,7 @@ ProjectCenter_HEADERS= \
     PCParser.h \
     CodeHandler.h \
     ObjCCommentHandler.h \
+    ObjCClassHandler.h \
     ObjCMethodHandler.h
 
 #
@@ -37,6 +38,7 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCParser.m \
     ObjCCommentHandler.m \
+    ObjCClassHandler.m \
     ObjCMethodHandler.m
 
 include ../../GNUmakefile.bundles

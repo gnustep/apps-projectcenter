@@ -23,6 +23,8 @@
 #include <ProjectCenter/PCLogController.h>
 #include <ProjectCenter/ProjectCenter.h>
 
+#include <Protocols/CodeEditor.h>
+
 #include "PCAppController.h"
 #include "PCMenuController.h"
 #include "PCInfoController.h"
@@ -206,10 +208,10 @@
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
 	             forKey:PCNonProject
 		     notify:YES];
-	  [[project projectEditor] editorForFile:newFilePath
-	                            categoryPath:categoryPath
-					editable:YES
-				        windowed:NO];
+	  [[project projectEditor] openEditorForFile:newFilePath
+					categoryPath:categoryPath
+					    editable:YES
+					    windowed:NO];
 	}
     }
 }

@@ -42,7 +42,6 @@
 
 #include "Protocols/ProjectType.h"
 #include "Protocols/CodeEditor.h"
-#include "Protocols/ProjectEditor.h"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
@@ -445,7 +444,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *_file = nil;
   NSString               *_2file = nil;
   NSString               *_resFile = nil;
-  int                    i = 0;
+  unsigned               i = 0;
   PCProject<ProjectType> *project = nil;
   NSMutableArray         *otherResArray = nil;
   NSString               *plistFile = nil;
@@ -825,7 +824,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *directory = [activeProject dirForCategoryKey:categoryKey];
   NSString       *removeString = nil;
   NSMutableArray *subprojs = [NSMutableArray array];
-  int            i;
+  unsigned       i;
 
   // Determining target project
   if ([categoryKey isEqualToString:PCSubprojects])
@@ -1293,7 +1292,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *spDir = nil;
   NSDictionary   *spDict = nil;
   NSString       *spName = nil;
-  int            i;
+  unsigned       i;
 
   files = [fileManager 
     filesForAddOfTypes:[NSArray arrayWithObjects:@"subproj",nil]];

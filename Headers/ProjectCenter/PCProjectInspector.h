@@ -90,8 +90,8 @@
 
   // File Attributes
   IBOutlet NSBox           *fileAttributesView;
-  IBOutlet PCFileNameIcon  *fileIcon;
-  IBOutlet PCFileNameField *fileIconField;
+  IBOutlet PCFileNameIcon  *fileIconView;
+  IBOutlet PCFileNameField *fileNameField;
   NSString                 *fileName;
   IBOutlet NSButton        *localizableButton;
   IBOutlet NSButton        *publicHeaderButton;

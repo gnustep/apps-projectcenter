@@ -28,10 +28,6 @@
 #include <Foundation/Foundation.h>
 #include <AppKit/AppKit.h>
 
-//#include <Protocols/ProjectEditor.h>
-
-@protocol ProjectEditor;
-
 @protocol CodeEditor <NSObject>
 
 // ===========================================================================
@@ -41,12 +37,12 @@
 
 - (id)openFileAtPath:(NSString *)file
 	categoryPath:(NSString *)categoryPath
-       projectEditor:(id<ProjectEditor>)aProjectEditor
+       projectEditor:(id)aProjectEditor
 	    editable:(BOOL)editable;
 
 - (id)openExternalEditor:(NSString *)editor
 	  	withPath:(NSString *)file
-	   projectEditor:(id<ProjectEditor>)aProjectEditor;
+	   projectEditor:(id)aProjectEditor;
 
 - (void)show;
 - (void)setWindowed:(BOOL)yn;
@@ -55,16 +51,25 @@
 // ===========================================================================
 // ==== Accessor methods
 // ===========================================================================
-- (id<ProjectEditor>)projectEditor;
+- (id)projectEditor;
+
 - (NSWindow *)editorWindow;
 - (NSView *)editorView;
 - (NSView *)componentView;
+
 - (NSString *)path;
 - (void)setPath:(NSString *)path;
+
 - (NSString *)categoryPath;
 - (void)setCategoryPath:(NSString *)path;
+
 - (BOOL)isEdited;
 - (void)setIsEdited:(BOOL)yn;
+
+- (NSImage *)fileIcon;
+
+// Returns class or method names
+- (NSArray *)browserItemsForItem:(NSString *)item;
 
 // ===========================================================================
 // ==== Object managment
@@ -79,12 +84,10 @@
 // ==== Parser and scrolling
 // ===========================================================================
 
-// Returns class or method names
-- (NSArray *)browserItemsForItem:(NSString *)item;
-
+- (void)fileStructureItemSelected:(NSString *)item;
 - (void)scrollToClassName:(NSString *)className;
 - (void)scrollToMethodName:(NSString *)methodName;
-- (void)scrollToLineNumber:(int)line;
+- (void)scrollToLineNumber:(unsigned int)lineNumber;
 
 @end
 
