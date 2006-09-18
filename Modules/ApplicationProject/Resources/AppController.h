@@ -21,7 +21,8 @@
  
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
-   Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+   Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA 02111 USA.
 */
 
 #import <AppKit/AppKit.h>
@@ -30,18 +31,19 @@
 {
 }
 
-+ (void)initialize;
++ (void) initialize;
 
-- (id)init;
-- (void)dealloc;
+- (id) init;
+- (void) dealloc;
 
-- (void)awakeFromNib;
+- (void) awakeFromNib;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotif;
-- (BOOL)applicationShouldTerminate:(id)sender;
-- (void)applicationWillTerminate:(NSNotification *)aNotif;
-- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
+- (void) applicationDidFinishLaunching: (NSNotification *)aNotif;
+- (BOOL) applicationShouldTerminate: (id)sender;
+- (void) applicationWillTerminate: (NSNotification *)aNotif;
+- (BOOL) application: (NSApplication *)application
+            openFile: (NSString *)fileName;
 
-- (void)showPrefPanel:(id)sender;
+- (void) showPrefPanel: (id)sender;
 
 @end

@@ -19,7 +19,8 @@
 
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
-   Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
+   Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA  02110-1301, USA
 */
 
 #include <Foundation/Foundation.h>
@@ -32,13 +33,13 @@ int main(int argc, const char *argv[])
 {
   CREATE_AUTORELEASE_POOL (pool);
   [NSApplication sharedApplication];
-  [NSApp setDelegate:[AppController new]];
+  [NSApp setDelegate: [AppController new]];
   
-  #ifdef GNUSTEP
-    [NSBundle loadGSMarkupNamed:@"MainMenu-GNUstep"  owner:[NSApp delegate]];
-  #else
-    [NSBundle loadGSMarkupNamed:@"MainMenu-OSX"  owner:[NSApp delegate]];
-  #endif
+#ifdef GNUSTEP
+    [NSBundle loadGSMarkupNamed: @"MainMenu-GNUstep"  owner: [NSApp delegate]];
+#else
+    [NSBundle loadGSMarkupNamed: @"MainMenu-OSX"  owner: [NSApp delegate]];
+#endif
 
   RELEASE (pool);
   return NSApplicationMain (argc, argv);
