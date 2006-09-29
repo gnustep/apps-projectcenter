@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http: //www.gnustep.org
 
    Copyright (C) 2001 Free Software Foundation
 
@@ -19,7 +19,8 @@
 
    You should have received a copy of the GNU General Public
    License along with this library; if not, write to the Free
-   Software Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA
+   Software Foundation, Inc., 51 Franklin Street, Fifth Floor,
+   Boston, MA  02110-1301, USA
 */
 
 #include <ProjectCenter/ProjectCenter.h>
@@ -32,11 +33,11 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 @implementation PCAppTextField
 
-- (BOOL)becomeFirstResponder
+- (BOOL) becomeFirstResponder
 {
   [[NSNotificationCenter defaultCenter]
-    postNotificationName:PCITextFieldGetFocus
-                  object:self];
+    postNotificationName: PCITextFieldGetFocus
+                  object: self];
 		  
   return [super becomeFirstResponder];
 }
@@ -45,12 +46,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
 @implementation PCAppProject (Inspector)
 
-- (void)awakeFromNib
+- (void) awakeFromNib
 {
-  [docBasedAppButton setRefusesFirstResponder:YES];
+  [docBasedAppButton setRefusesFirstResponder: YES];
 
-  [docBasedAppButton setState:
-    ([[projectDict objectForKey:PCDocumentBasedApp]
+  [docBasedAppButton setState: 
+    ([[projectDict objectForKey: PCDocumentBasedApp]
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 }
 
@@ -58,40 +59,40 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // --- User Interface
 // ----------------------------------------------------------------------------
 
-- (void)createProjectAttributes
+- (void) createProjectAttributes
 {
   // Languages
   [projectLanguagePB removeAllItems];
   [projectLanguagePB 
-    addItemsWithTitles:[projectDict objectForKey:PCUserLanguages]];
+    addItemsWithTitles: [projectDict objectForKey: PCUserLanguages]];
   [projectLanguagePB 
-    selectItemWithTitle:[projectDict objectForKey:PCLanguage]];
+    selectItemWithTitle: [projectDict objectForKey: PCLanguage]];
   
   // TFs Buttons
-  [setFieldButton setRefusesFirstResponder:YES];
-  [clearFieldButton setRefusesFirstResponder:YES];
+  [setFieldButton setRefusesFirstResponder: YES];
+  [clearFieldButton setRefusesFirstResponder: YES];
 
   // Document types buttons
-  [addDocTypeButton setRefusesFirstResponder:YES];
-  [removeDocTypeButton setRefusesFirstResponder:YES];
-  [docBasedAppButton setRefusesFirstResponder:YES];
+  [addDocTypeButton setRefusesFirstResponder: YES];
+  [removeDocTypeButton setRefusesFirstResponder: YES];
+  [docBasedAppButton setRefusesFirstResponder: YES];
 
-  [self setDocBasedApp:docBasedAppButton];
+  [self setDocBasedApp: docBasedAppButton];
   
-  [[NSNotificationCenter defaultCenter] addObserver:self
-                                           selector:@selector(tfGetFocus:)
-                                               name:PCITextFieldGetFocus
-                                             object:nil];
+  [[NSNotificationCenter defaultCenter] addObserver: self
+                                           selector: @selector(tfGetFocus:)
+                                               name: PCITextFieldGetFocus
+                                             object: nil];
   [projectAttributesView retain];
 
-  [self updateInspectorValues:nil];
+  [self updateInspectorValues: nil];
 }
 
-- (NSView *)projectAttributesView
+- (NSView *) projectAttributesView
 {
   if (!projectAttributesView)
     {
-      if ([NSBundle loadNibNamed:@"Inspector" owner:self] == NO)
+      if ([NSBundle loadNibNamed: @"Inspector" owner: self] == NO)
 	{
 	  NSLog(@"PCAppProject: error loading Inspector NIB!");
 	  return nil;
@@ -106,24 +107,24 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // --- Actions
 // ----------------------------------------------------------------------------
 
-- (void)setCurrentLanguage:(id)sender
+- (void) setCurrentLanguage: (id)sender
 {
   NSLog(@"set current language to %@", [sender titleOfSelectedItem]);
-  [self setProjectDictObject:[sender titleOfSelectedItem]
-                      forKey:PCLanguage
-		      notify:YES];
+  [self setProjectDictObject: [sender titleOfSelectedItem]
+                      forKey: PCLanguage
+		      notify: YES];
 }
 
-- (void)setAppClass:(id)sender
+- (void) setAppClass: (id)sender
 {
-  [self setProjectDictObject:[appClassField stringValue]
-                      forKey:PCPrincipalClass
-		      notify:YES];
+  [self setProjectDictObject: [appClassField stringValue]
+                      forKey: PCPrincipalClass
+		      notify: YES];
 }
 
-- (void)setIconViewImage:(NSImage *)image
+- (void) setIconViewImage: (NSImage *)image
 {
-  [iconView setImage:nil];
+  [iconView setImage: nil];
   [iconView display];
 
   if (image == nil)
@@ -131,11 +132,11 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       return;
     }
 
-  [iconView setImage:image];
+  [iconView setImage: image];
   [iconView display];
 }
 
-- (void)setFile:(id)sender
+- (void) setFile: (id)sender
 {
   if (!activeTextField)
     {
@@ -144,18 +145,22 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
   if (activeTextField == appImageField)
     {
-      [self setAppIcon:self];
+      [self setAppIcon: self];
     }
   else if (activeTextField == helpFileField)
     {
+      NSString	*value = [activeTextField stringValue];
+
+      [self setProjectDictObject: value forKey: PCHelpFile notify: YES];
+NSLog(@"Set %@", value);
     }
   else if (activeTextField == mainNIBField)
     {
-      [self setMainNib:self];
+      [self setMainNib: self];
     }
 }
 
-- (void)clearFile:(id)sender
+- (void) clearFile: (id)sender
 {
   if (!activeTextField)
     {
@@ -164,40 +169,42 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
   if (activeTextField == appImageField)
     {
-      [self clearAppIcon:self];
+      [self clearAppIcon: self];
     }
   else if (activeTextField == helpFileField)
     {
+      [infoDict removeObjectForKey: @"GSHelpContentsFile"];
+      [self setProjectDictObject: @"" forKey: PCHelpFile notify: YES];
     }
   else if (activeTextField == mainNIBField)
     {
-      [self clearMainNib:self];
+      [self clearMainNib: self];
     }
-  [self setIconViewImage:nil];
+  [self setIconViewImage: nil];
 }
 
 // Application Icon
-- (void)setAppIcon:(id)sender
+- (void) setAppIcon: (id)sender
 {
   int         result;  
   NSArray     *fileTypes = [NSImage imageFileTypes];
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
   NSString    *dir = nil;
 
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setTitle:@"Set Application Icon"];
+  [openPanel setAllowsMultipleSelection: NO];
+  [openPanel setTitle: @"Set Application Icon"];
   
   dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey:@"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory:dir
-                                      file:nil 
-                                     types:fileTypes];
+    objectForKey: @"LastOpenDirectory"];
+  result = [openPanel runModalForDirectory: dir
+                                      file: nil 
+                                     types: fileTypes];
 
   if (result == NSOKButton)
     {
-      NSString *imageFilePath = [[openPanel filenames] objectAtIndex:0];
+      NSString *imageFilePath = [[openPanel filenames] objectAtIndex: 0];
 
-      if (![self setAppIconWithImageAtPath:imageFilePath])
+      if (![self setAppIconWithImageAtPath: imageFilePath])
 	{
 	  NSRunAlertPanel(@"Error while opening file!", 
 			  @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
@@ -205,62 +212,62 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     }  
 }
 
-- (void)clearAppIcon:(id)sender
+- (void) clearAppIcon: (id)sender
 {
-  [appImageField setStringValue:@""];
-  [infoDict setObject:@"" forKey:@"NSIcon"];
-  [infoDict setObject:@"" forKey:@"ApplicationIcon"];
+  [appImageField setStringValue: @""];
+  [infoDict setObject: @"" forKey: @"NSIcon"];
+  [infoDict setObject: @"" forKey: @"ApplicationIcon"];
   
-  [self setProjectDictObject:@"" forKey:PCAppIcon notify:YES];
+  [self setProjectDictObject: @"" forKey: PCAppIcon notify: YES];
 }
 
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path
+- (BOOL) setAppIconWithImageAtPath: (NSString *)path
 {
   NSImage  *image = nil;
   NSString *imageName = nil;
 
-  if (!(image = [[NSImage alloc] initWithContentsOfFile:path]))
+  if (!(image = [[NSImage alloc] initWithContentsOfFile: path]))
     {
       return NO;
     }
 
   imageName = [path lastPathComponent];
 
-  [appImageField setStringValue:imageName];
+  [appImageField setStringValue: imageName];
 
-  [self setIconViewImage:image];
+  [self setIconViewImage: image];
 
-  [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCImages];
+  [self addAndCopyFiles: [NSArray arrayWithObject: path] forKey: PCImages];
   
-  [infoDict setObject:imageName forKey:@"NSIcon"];
-  [infoDict setObject:imageName forKey:@"ApplicationIcon"];
+  [infoDict setObject: imageName forKey: @"NSIcon"];
+  [infoDict setObject: imageName forKey: @"ApplicationIcon"];
 
-  [self setProjectDictObject:imageName forKey:PCAppIcon notify:YES];
+  [self setProjectDictObject: imageName forKey: PCAppIcon notify: YES];
 
   return YES;
 }
 
 // Main Interface File
-- (void)setMainNib:(id)sender
+- (void) setMainNib: (id)sender
 {
   int         result;
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
   NSString    *dir = nil;
 
-  [openPanel setAllowsMultipleSelection:NO];
-  [openPanel setTitle:@"Set Main Interface File"];
+  [openPanel setAllowsMultipleSelection: NO];
+  [openPanel setTitle: @"Set Main Interface File"];
   
   dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey:@"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory:dir
-                                      file:nil 
-                                     types:[NSArray arrayWithObject:@"gorm"]];
+    objectForKey: @"LastOpenDirectory"];
+  result = [openPanel runModalForDirectory: dir
+                                      file: nil 
+                                     types: [NSArray arrayWithObject: @"gorm"]];
 
   if (result == NSOKButton)
     {
-      NSString *file = [[openPanel filenames] objectAtIndex:0];
+      NSString *file = [[openPanel filenames] objectAtIndex: 0];
 
-      if (![self setMainNibWithFileAtPath:file])
+      if (![self setMainNibWithFileAtPath: file])
 	{
 	  NSRunAlertPanel(@"Error while opening file!", 
 			  @"Couldn't open %@", @"OK", nil, nil,file);
@@ -268,223 +275,224 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     }  
 }
 
-- (BOOL)setMainNibWithFileAtPath:(NSString *)path
+- (BOOL) setMainNibWithFileAtPath: (NSString *)path
 {
   NSString *nibName = [path lastPathComponent];
 
-  [self setIconViewImage:[[NSWorkspace sharedWorkspace] iconForFile:path]];
+  [self setIconViewImage: [[NSWorkspace sharedWorkspace] iconForFile: path]];
 
-  [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCInterfaces];
-  [infoDict setObject:nibName forKey:@"NSMainNibFile"];
+  [self addAndCopyFiles: [NSArray arrayWithObject: path] forKey: PCInterfaces];
+  [infoDict setObject: nibName forKey: @"NSMainNibFile"];
 
-  [self setProjectDictObject:nibName forKey:PCMainInterfaceFile notify:YES];
+  [self setProjectDictObject: nibName forKey: PCMainInterfaceFile notify: YES];
 
-  [mainNIBField setStringValue:nibName];
+  [mainNIBField setStringValue: nibName];
 
   return YES;
 }
 
-- (void)clearMainNib:(id)sender
+- (void) clearMainNib: (id)sender
 {
-  [mainNIBField setStringValue:@""];
-  [infoDict setObject:@"" forKey:@"NSMainNibFile"];
+  [mainNIBField setStringValue: @""];
+  [infoDict setObject: @"" forKey: @"NSMainNibFile"];
 
-  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile notify:YES];
+  [self setProjectDictObject: @"" forKey: PCMainInterfaceFile notify: YES];
 }
 
 // Document Types
-- (void)showDocTypesPanel:(id)sender
+- (void) showDocTypesPanel: (id)sender
 {
-  [docTypesPanel makeKeyAndOrderFront:nil];
+  [docTypesPanel makeKeyAndOrderFront: nil];
 }
 
-- (void)setDocBasedApp:(id)sender
+- (void) setDocBasedApp: (id)sender
 {
-  NSString *docBased = [projectDict objectForKey:PCDocumentBasedApp];
+  NSString *docBased = [projectDict objectForKey: PCDocumentBasedApp];
 
   if ([docBasedAppButton state] == NSOnState)
     {
-      [docTypeLabel setTextColor:[NSColor blackColor]];
-      [docTypeField setBackgroundColor:[NSColor whiteColor]];
-      [docTypeField setTextColor:[NSColor blackColor]];
-      [docTypeField setEditable:YES];
+      [docTypeLabel setTextColor: [NSColor blackColor]];
+      [docTypeField setBackgroundColor: [NSColor whiteColor]];
+      [docTypeField setTextColor: [NSColor blackColor]];
+      [docTypeField setEditable: YES];
 
-      [docNameLabel setTextColor:[NSColor blackColor]];
-      [docNameField setBackgroundColor:[NSColor whiteColor]];
-      [docNameField setTextColor:[NSColor blackColor]];
-      [docNameField setEditable:YES];
+      [docNameLabel setTextColor: [NSColor blackColor]];
+      [docNameField setBackgroundColor: [NSColor whiteColor]];
+      [docNameField setTextColor: [NSColor blackColor]];
+      [docNameField setEditable: YES];
 
-      [docRoleLabel setTextColor:[NSColor blackColor]];
-      [docRoleField setBackgroundColor:[NSColor whiteColor]];
-      [docRoleField setTextColor:[NSColor blackColor]];
-      [docRoleField setEditable:YES];
+      [docRoleLabel setTextColor: [NSColor blackColor]];
+      [docRoleField setBackgroundColor: [NSColor whiteColor]];
+      [docRoleField setTextColor: [NSColor blackColor]];
+      [docRoleField setEditable: YES];
 
-      [docClassLabel setTextColor:[NSColor blackColor]];
-      [docClassField setBackgroundColor:[NSColor whiteColor]];
-      [docClassField setTextColor:[NSColor blackColor]];
-      [docClassField setEditable:YES];
+      [docClassLabel setTextColor: [NSColor blackColor]];
+      [docClassField setBackgroundColor: [NSColor whiteColor]];
+      [docClassField setTextColor: [NSColor blackColor]];
+      [docClassField setEditable: YES];
 
-      [nameColumn setIdentifier:@"NSHumanReadableName"];
-      [[nameColumn headerCell] setStringValue:@"Name"];
-      [docTypesList addTableColumn:roleColumn];
-      [docTypesList addTableColumn:classColumn];
+      [nameColumn setIdentifier: @"NSHumanReadableName"];
+      [[nameColumn headerCell] setStringValue: @"Name"];
+      [docTypesList addTableColumn: roleColumn];
+      [docTypesList addTableColumn: classColumn];
       RELEASE(roleColumn);
       RELEASE(classColumn);
       
-      if (![docBased isEqualToString:@"YES"])
+      if (![docBased isEqualToString: @"YES"])
 	{
-	  [self setProjectDictObject:@"YES" 
-	                      forKey:PCDocumentBasedApp
-			      notify:YES];
+	  [self setProjectDictObject: @"YES" 
+	                      forKey: PCDocumentBasedApp
+			      notify: YES];
 	}
     }
   else
     {
-      [docTypeLabel setTextColor:[NSColor darkGrayColor]];
-      [docTypeField setBackgroundColor:[NSColor lightGrayColor]];
-      [docTypeField setTextColor:[NSColor darkGrayColor]];
-      [docTypeField setEditable:NO];
+      [docTypeLabel setTextColor: [NSColor darkGrayColor]];
+      [docTypeField setBackgroundColor: [NSColor lightGrayColor]];
+      [docTypeField setTextColor: [NSColor darkGrayColor]];
+      [docTypeField setEditable: NO];
 
-      [docNameLabel setTextColor:[NSColor darkGrayColor]];
-      [docNameField setBackgroundColor:[NSColor lightGrayColor]];
-      [docNameField setTextColor:[NSColor darkGrayColor]];
-      [docNameField setEditable:NO];
+      [docNameLabel setTextColor: [NSColor darkGrayColor]];
+      [docNameField setBackgroundColor: [NSColor lightGrayColor]];
+      [docNameField setTextColor: [NSColor darkGrayColor]];
+      [docNameField setEditable: NO];
 
-      [docRoleLabel setTextColor:[NSColor darkGrayColor]];
-      [docRoleField setBackgroundColor:[NSColor lightGrayColor]];
-      [docRoleField setTextColor:[NSColor darkGrayColor]];
-      [docRoleField setEditable:NO];
+      [docRoleLabel setTextColor: [NSColor darkGrayColor]];
+      [docRoleField setBackgroundColor: [NSColor lightGrayColor]];
+      [docRoleField setTextColor: [NSColor darkGrayColor]];
+      [docRoleField setEditable: NO];
 
-      [docClassLabel setTextColor:[NSColor darkGrayColor]];
-      [docClassField setBackgroundColor:[NSColor lightGrayColor]];
-      [docClassField setTextColor:[NSColor darkGrayColor]];
-      [docClassField setEditable:NO];
+      [docClassLabel setTextColor: [NSColor darkGrayColor]];
+      [docClassField setBackgroundColor: [NSColor lightGrayColor]];
+      [docClassField setTextColor: [NSColor darkGrayColor]];
+      [docClassField setEditable: NO];
 
       // Columns
-//      [docTypesList removeTableColumn:nameColumn];
-      [nameColumn setIdentifier:@"NSIcon"];
-      [[nameColumn headerCell] setStringValue:@"Icon"];
+//      [docTypesList removeTableColumn: nameColumn];
+      [nameColumn setIdentifier: @"NSIcon"];
+      [[nameColumn headerCell] setStringValue: @"Icon"];
       RETAIN(roleColumn);
       RETAIN(classColumn);
-      [docTypesList removeTableColumn:roleColumn];
-      [docTypesList removeTableColumn:classColumn];
+      [docTypesList removeTableColumn: roleColumn];
+      [docTypesList removeTableColumn: classColumn];
       
-      if (![docBased isEqualToString:@"NO"])
+      if (![docBased isEqualToString: @"NO"])
 	{
-	  [self setProjectDictObject:@"NO" 
-	                      forKey:PCDocumentBasedApp
-			      notify:YES];
+	  [self setProjectDictObject: @"NO" 
+	                      forKey: PCDocumentBasedApp
+			      notify: YES];
 	}
     }
 }
 
-- (void)addDocType:(id)sender
+- (void) addDocType: (id)sender
 {
   int                 row;
-  NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:6];
+  NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity: 6];
   int                 selectedRow = [docTypesList selectedRow];
 
-  [entry setObject:@"" forKey:@"NSName"];
-  [entry setObject:@"" forKey:@"NSHumanReadableName"];
-  [entry setObject:[NSArray array] forKey:@"NSUnixExtensions"];
-  [entry setObject:@"" forKey:@"NSIcon"];
-  [entry setObject:@"" forKey:@"NSRole"];
-  [entry setObject:@"NSDocumentClass" forKey:@"NSDocumentClass"];
+  [entry setObject: @"" forKey: @"NSName"];
+  [entry setObject: @"" forKey: @"NSHumanReadableName"];
+  [entry setObject: [NSArray array] forKey: @"NSUnixExtensions"];
+  [entry setObject: @"" forKey: @"NSIcon"];
+  [entry setObject: @"" forKey: @"NSRole"];
+  [entry setObject: @"NSDocumentClass" forKey: @"NSDocumentClass"];
 
   if (selectedRow >= 0 && [docTypesItems count] > 0)
     {
-      [docTypesItems insertObject:entry atIndex:selectedRow + 1];
+      [docTypesItems insertObject: entry atIndex: selectedRow + 1];
       row = selectedRow + 1;
     }
   else
     {
-      [docTypesItems addObject:entry];
+      [docTypesItems addObject: entry];
       row = [docTypesItems count] - 1;
     }
   [docTypesList reloadData];
   
-  [docTypesList selectRow:row byExtendingSelection:NO];
-  [docTypesList scrollRowToVisible:row];
+  [docTypesList selectRow: row byExtendingSelection: NO];
+  [docTypesList scrollRowToVisible: row];
 
-  [self fillFieldsForRow:row];
+  [self fillFieldsForRow: row];
 
-  [self setProjectDictObject:docTypesItems 
-                      forKey:PCDocumentTypes
-		      notify:YES];
+  [self setProjectDictObject: docTypesItems 
+                      forKey: PCDocumentTypes
+		      notify: YES];
 }
 
-- (void)removeDocType:(id)sender
+- (void) removeDocType: (id)sender
 {
   int selectedRow = [docTypesList selectedRow];
 
   if (selectedRow >= 0)
     {
-      [docTypesItems removeObjectAtIndex:selectedRow];
+      [docTypesItems removeObjectAtIndex: selectedRow];
       [docTypesList reloadData];
     }
 
   if (([docTypesList selectedRow] < 0) && ([docTypesItems count] > 0))
     {
-      [docTypesList selectRow:[docTypesItems count]-1 byExtendingSelection:NO];
+      [docTypesList selectRow:
+	[docTypesItems count]-1 byExtendingSelection: NO];
     }
 
-  [self fillFieldsForRow:[docTypesList selectedRow]];
+  [self fillFieldsForRow: [docTypesList selectedRow]];
 
-  [self setProjectDictObject:docTypesItems
-                      forKey:PCDocumentTypes
-                      notify:YES];
+  [self setProjectDictObject: docTypesItems
+                      forKey: PCDocumentTypes
+                      notify: YES];
 }
 
-- (void)docFieldSet:(id)sender
+- (void) docFieldSet: (id)sender
 {
   NSMutableDictionary *object = nil;
  
   NSLog(@"docFieldSet");
 
   if (sender != docTypeField && sender != docNameField 
-      && sender != docIconField && sender != docExtensionsField
-      && sender != docRoleField && sender != docClassField)
+    && sender != docIconField && sender != docExtensionsField
+    && sender != docRoleField && sender != docClassField)
     {
       return;
     }
     
   if ([docTypesItems count] <= 0)
     {
-      [self addDocType:addDocTypeButton];
+      [self addDocType: addDocTypeButton];
     }
 
-  object = [[docTypesItems objectAtIndex:[docTypesList selectedRow]] 
+  object = [[docTypesItems objectAtIndex: [docTypesList selectedRow]] 
     mutableCopy];
 
   if (sender == docTypeField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSName"];
+      [object setObject: [sender stringValue] forKey: @"NSName"];
     }
   else if (sender == docNameField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSHumanReadableName"];
+      [object setObject: [sender stringValue] forKey: @"NSHumanReadableName"];
     }
   else if (sender == docIconField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSIcon"];
+      [object setObject: [sender stringValue] forKey: @"NSIcon"];
     }
   else if (sender == docExtensionsField)
     {
       [object 
-	setObject:[[sender stringValue] componentsSeparatedByString:@","]
-	   forKey:@"NSUnixExtensions"];
+	setObject: [[sender stringValue] componentsSeparatedByString: @","]
+	   forKey: @"NSUnixExtensions"];
     }
   else if (sender == docRoleField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSRole"];
+      [object setObject: [sender stringValue] forKey: @"NSRole"];
     }
   else if (sender == docClassField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSDocumentClass"];
+      [object setObject: [sender stringValue] forKey: @"NSDocumentClass"];
     }
 
-  [docTypesItems replaceObjectAtIndex:[docTypesList selectedRow] 
-                          withObject:object];
+  [docTypesItems replaceObjectAtIndex: [docTypesList selectedRow] 
+                          withObject: object];
   [docTypesList reloadData];
   [object release];
 }
@@ -493,39 +501,39 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 // --- Document Types browser
 // ----------------------------------------------------------------------------
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (int) numberOfRowsInTableView: (NSTableView *)aTableView
 {
   return [docTypesItems count];
 }
     
-- (id)            tableView:(NSTableView *)aTableView
-  objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex
+- (id)            tableView: (NSTableView *)aTableView
+  objectValueForTableColumn: (NSTableColumn *)aTableColumn
+                        row: (int)rowIndex
 {
   NSDictionary *object = nil;
 
   if (docTypesItems != nil || [docTypesItems count] > 0)
     {
-      object = [docTypesItems objectAtIndex:rowIndex];
+      object = [docTypesItems objectAtIndex: rowIndex];
 
       if (aTableColumn == extensionsColumn)
 	{
-	  return [[object objectForKey:@"NSUnixExtensions"] 
-	    componentsJoinedByString:@","];
+	  return [[object objectForKey: @"NSUnixExtensions"] 
+	    componentsJoinedByString: @","];
 	}
       else
 	{
-	  return [object objectForKey:[aTableColumn identifier]];
+	  return [object objectForKey: [aTableColumn identifier]];
 	}
     }
 
   return nil;
 }
   
-- (void)tableView:(NSTableView *)aTableView
-   setObjectValue:anObject
-   forTableColumn:(NSTableColumn *)aTableColumn
-              row:(int)rowIndex
+- (void) tableView: (NSTableView *)aTableView
+    setObjectValue: anObject
+    forTableColumn: (NSTableColumn *)aTableColumn
+               row: (int)rowIndex
 {
   NSMutableDictionary *type = nil;
   
@@ -534,94 +542,95 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       return;
     }
 
-  type = [docTypesItems objectAtIndex:rowIndex];
-  if ([[aTableColumn identifier] isEqualToString:@"NSUnixExtensions"])
+  type = [docTypesItems objectAtIndex: rowIndex];
+  if ([[aTableColumn identifier] isEqualToString: @"NSUnixExtensions"])
     {
-      [type removeObjectForKey:@"Extension"];
-      [type setObject:anObject forKey:@"Extension"];
+      [type removeObjectForKey: @"Extension"];
+      [type setObject: anObject forKey: @"Extension"];
     }
-  else if ([[aTableColumn identifier] isEqualToString:@"NSIcon"])
+  else if ([[aTableColumn identifier] isEqualToString: @"NSIcon"])
     {
-      [type removeObjectForKey:@"Icon"];
-      [type setObject:anObject forKey:@"Icon"];
+      [type removeObjectForKey: @"Icon"];
+      [type setObject: anObject forKey: @"Icon"];
     }
   
-  [self setProjectDictObject:docTypesItems
-                      forKey:PCDocumentTypes
-		      notify:YES];
+  [self setProjectDictObject: docTypesItems
+                      forKey: PCDocumentTypes
+		      notify: YES];
 }
 
-- (BOOL)tableView:(NSTableView *)aTableView shouldSelectRow:(int)rowIndex
+- (BOOL) tableView: (NSTableView *)aTableView shouldSelectRow: (int)rowIndex
 {
-  [self fillFieldsForRow:rowIndex];
+  [self fillFieldsForRow: rowIndex];
   return YES;
 }
 
-- (void)fillFieldsForRow:(int)rowIndex
+- (void) fillFieldsForRow: (int)rowIndex
 {
   NSDictionary *type = nil;
   int          itemCount = [docTypesItems count];
 
   if (itemCount <= 0 || rowIndex > itemCount || rowIndex < 0)
     {
-      [docTypeField setStringValue:@""];
-      [docNameField setStringValue:@""];
-      [docIconField setStringValue:@""];
-      [docExtensionsField setStringValue:@""];
-      [docRoleField setStringValue:@""];
-      [docClassField setStringValue:@""];
+      [docTypeField setStringValue: @""];
+      [docNameField setStringValue: @""];
+      [docIconField setStringValue: @""];
+      [docExtensionsField setStringValue: @""];
+      [docRoleField setStringValue: @""];
+      [docClassField setStringValue: @""];
 
       return;
     }
 
-  type = [docTypesItems objectAtIndex:rowIndex];
+  type = [docTypesItems objectAtIndex: rowIndex];
   
-  [docTypeField setStringValue:[type objectForKey:@"NSName"]];
-  [docNameField setStringValue:[type objectForKey:@"NSHumanReadableName"]];
-  [docIconField setStringValue:[type objectForKey:@"NSIcon"]];
+  [docTypeField setStringValue: [type objectForKey: @"NSName"]];
+  [docNameField setStringValue: [type objectForKey: @"NSHumanReadableName"]];
+  [docIconField setStringValue: [type objectForKey: @"NSIcon"]];
 
-  [docExtensionsField setStringValue:@""];
-  if ([[type objectForKey:@"NSUnixExtensions"] count] > 0)
+  [docExtensionsField setStringValue: @""];
+  if ([[type objectForKey: @"NSUnixExtensions"] count] > 0)
     {
-      [docExtensionsField setStringValue:
-	[[type objectForKey:@"NSUnixExtensions"] 
-	 componentsJoinedByString:@","]];
+      [docExtensionsField setStringValue: 
+	[[type objectForKey: @"NSUnixExtensions"] 
+	 componentsJoinedByString: @","]];
     }
 
-  [docRoleField setStringValue:[type objectForKey:@"NSRole"]];
-  [docClassField setStringValue:[type objectForKey:@"NSDocumentClass"]];
+  [docRoleField setStringValue: [type objectForKey: @"NSRole"]];
+  [docClassField setStringValue: [type objectForKey: @"NSDocumentClass"]];
 }
 
 // ----------------------------------------------------------------------------
 // --- Notifications
 // ----------------------------------------------------------------------------
 
-- (void)updateInspectorValues:(NSNotification *)aNotif
+- (void) updateInspectorValues: (NSNotification *)aNotif
 {
 //  NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
-  [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];
-  [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
-//  [projectLanguageField setStringValue:[projectDict objectForKey:PCLanguage]];
-  [appClassField setStringValue:[projectDict objectForKey:PCPrincipalClass]];
+  [projectTypeField setStringValue: [projectDict objectForKey: PCProjectType]];
+  [projectNameField setStringValue: [projectDict objectForKey: PCProjectName]];
+//  [projectLanguageField setStringValue: [projectDict objectForKey: PCLanguage]];
+  [appClassField setStringValue: [projectDict objectForKey: PCPrincipalClass]];
 
-  [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
-  [helpFileField setStringValue:[projectDict objectForKey:PCHelpFile]];
-  [mainNIBField setStringValue:[projectDict objectForKey:PCMainInterfaceFile]];
+  [appImageField setStringValue: [projectDict objectForKey: PCAppIcon]];
+  [helpFileField setStringValue: [projectDict objectForKey: PCHelpFile]];
+  [mainNIBField setStringValue:
+    [projectDict objectForKey: PCMainInterfaceFile]];
 
-  docTypesItems = [projectDict objectForKey:PCDocumentTypes];
+  docTypesItems = [projectDict objectForKey: PCDocumentTypes];
   [docTypesList reloadData];
 }
 
 // TextFields (PCITextField subclass)
 // 
 // NSTextField become first responder when user clicks on it and immediately
-// lost first resonder status, so we can't catch when focus leaves textfield
+// lost first responder status, so we can't catch when focus leaves textfield
 // with resignFirstResponder: method overriding. Here we're using
 // controlTextDidEndEditing (NSTextField's delegate method) to achieve this.
 
-- (void)tfGetFocus:(NSNotification *)aNotif
+- (void) tfGetFocus: (NSNotification *)aNotif
 {
   id       anObject = [aNotif object];
   NSString *file = nil;
@@ -629,8 +638,8 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 
   
   if (anObject != appImageField 
-      && anObject != helpFileField 
-      && anObject != mainNIBField)
+    && anObject != helpFileField 
+    && anObject != mainNIBField)
     {
 //      NSLog(@"tfGetFocus: not that textfield");
       return;
@@ -640,12 +649,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     {
       file = [appImageField stringValue];
 
-      if (![file isEqualToString:@""])
+      if (![file isEqualToString: @""])
 	{
-	  path = [self dirForCategoryKey:PCImages];
-	  path = [path stringByAppendingPathComponent:file];
-	  [self setIconViewImage:[[NSImage alloc]
-          initWithContentsOfFile:path]];
+	  path = [self dirForCategoryKey: PCImages];
+	  path = [path stringByAppendingPathComponent: file];
+	  [self setIconViewImage: [[NSImage alloc]
+          initWithContentsOfFile: path]];
 	}
       activeTextField = appImageField;
     }
@@ -657,41 +666,41 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     {
       file = [mainNIBField stringValue];
       
-      if (![file isEqualToString:@""])
+      if (![file isEqualToString: @""])
 	{
-	  path = [projectPath stringByAppendingPathComponent:file];
-	  [self setIconViewImage:[[NSWorkspace sharedWorkspace]
-	             iconForFile:path]];
+	  path = [projectPath stringByAppendingPathComponent: file];
+	  [self setIconViewImage: [[NSWorkspace sharedWorkspace]
+	             iconForFile: path]];
 	}
       activeTextField = mainNIBField;
     }
 
-  [setFieldButton setEnabled:YES];
-  [clearFieldButton setEnabled:YES];
+  [setFieldButton setEnabled: YES];
+  [clearFieldButton setEnabled: YES];
 }
 
-- (void)controlTextDidEndEditing:(NSNotification *)aNotification
+- (void) controlTextDidEndEditing: (NSNotification *)aNotification
 {
   NSControl *anObject = [aNotification object];
   id        target = [anObject target];
   SEL       action = [anObject action];
 
   if (anObject == appImageField
-      || anObject == helpFileField
-      || anObject == mainNIBField)
+    || anObject == helpFileField
+    || anObject == mainNIBField)
     {
       activeTextField = nil;
-      [self setIconViewImage:nil];
+      [self setIconViewImage: nil];
 
-      [setFieldButton setEnabled:NO];
-      [clearFieldButton setEnabled:NO];
+      [setFieldButton setEnabled: NO];
+      [clearFieldButton setEnabled: NO];
 
       return;
     }
 
-  if ([target respondsToSelector:action])
+  if ([target respondsToSelector: action])
     {
-      [target performSelector:action withObject:anObject];
+      [target performSelector: action withObject: anObject];
     }
 }
 

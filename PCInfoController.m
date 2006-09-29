@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http: //www.gnustep.org
 
    Copyright (C) 2001 Free Software Foundation
 
@@ -28,23 +28,23 @@
 
 @implementation PCInfoController
 
-- (id)init
+- (id) init
 {
   if ((self = [super init]))
     {
       NSString *file;
 
-      file = [[NSBundle mainBundle] pathForResource:@"Info-gnustep" 
-	ofType:@"plist"];
+      file = [[NSBundle mainBundle] pathForResource: @"Info-gnustep" 
+	ofType: @"plist"];
 
-      infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
+      infoDict = [NSDictionary dictionaryWithContentsOfFile: file];
       RETAIN(infoDict);
     }
 
   return self;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
   RELEASE(infoDict);
 
@@ -56,17 +56,17 @@
   [super dealloc];
 }
 
-- (void)showInfoWindow:(id)sender
+- (void) showInfoWindow: (id)sender
 {
 #if defined(GNUSTEP)
   if (!infoWindow)
     {
-      infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
+      infoWindow = [[GSInfoPanel alloc] initWithDictionary: infoDict];
     }
 
-  [infoWindow setTitle:@"Info"];
+  [infoWindow setTitle: @"Info"];
   [infoWindow center];
-  [infoWindow makeKeyAndOrderFront:self];
+  [infoWindow makeKeyAndOrderFront: self];
 #else
   NSRunAlertPanel(@"Info",
 		  @"OPENSTEP has no support for GSInfoPanel",

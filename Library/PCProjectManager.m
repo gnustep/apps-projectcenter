@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http: //www.gnustep.org
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -70,25 +70,25 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       
       nonProjectEditors = [[NSMutableDictionary alloc] init];
 
-      rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
-      if (!rootBuildPath || [rootBuildPath isEqualToString:@""])
+      rootBuildPath = [[defs stringForKey: RootBuildDirectory] copy];
+      if (!rootBuildPath || [rootBuildPath isEqualToString: @""])
 	{
 	  rootBuildPath = [NSTemporaryDirectory() copy];
 	}
 
       [[NSNotificationCenter defaultCenter] 
-	addObserver:self 
-	   selector:@selector(resetSaveTimer:)
-	       name:PCSavePeriodDidChangeNotification
-	     object:nil];
+	addObserver: self 
+	   selector: @selector(resetSaveTimer:)
+	       name: PCSavePeriodDidChangeNotification
+	     object: nil];
 
       [[NSNotificationCenter defaultCenter] 
-	addObserver:self 
-	   selector:@selector(editorDidClose:)
-	       name:PCEditorDidCloseNotification
-	     object:nil];
+	addObserver: self 
+	   selector: @selector(editorDidClose:)
+	       name: PCEditorDidCloseNotification
+	     object: nil];
 
-      fileManager = [[PCFileManager alloc] initWithProjectManager:self];
+      fileManager = [[PCFileManager alloc] initWithProjectManager: self];
     }
 
   return self;
@@ -100,7 +100,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSLog (@"PCProjectManager: dealloc");
 #endif
 
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
 
   if ([saveTimer isValid])
     {
@@ -125,7 +125,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [super dealloc];
 }
 
-- (void)setDelegate:(id)aDelegate 
+- (void)setDelegate: (id)aDelegate 
 {
   delegate = aDelegate;
 }
@@ -135,7 +135,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return delegate;
 }
 
-- (void)setPrefController:(id)aController
+- (void)setPrefController: (id)aController
 {
   prefController = aController;
 }
@@ -155,23 +155,23 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   // For "Open Project" and "New Project" panels
-  projectTypePopup = [[NSPopUpButton alloc] initWithFrame:fr pullsDown:NO];
-  [projectTypePopup setRefusesFirstResponder:YES];
-  [projectTypePopup setAutoenablesItems:NO];
-  [projectTypePopup addItemsWithTitles:
+  projectTypePopup = [[NSPopUpButton alloc] initWithFrame: fr pullsDown: NO];
+  [projectTypePopup setRefusesFirstResponder: YES];
+  [projectTypePopup setAutoenablesItems: NO];
+  [projectTypePopup addItemsWithTitles: 
     [[projectTypes allKeys] 
-    sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+    sortedArrayUsingSelector: @selector(caseInsensitiveCompare:)]];
   [projectTypePopup sizeToFit];
   [projectTypeAccessaryView sizeToFit];
-  [projectTypePopup selectItemAtIndex:0];
+  [projectTypePopup selectItemAtIndex: 0];
 
   projectTypeAccessaryView = [[NSBox alloc] init];
-  [projectTypeAccessaryView setTitle:@"Project Types"];
-  [projectTypeAccessaryView setTitlePosition:NSAtTop];
-  [projectTypeAccessaryView setBorderType:NSGrooveBorder];
-  [projectTypeAccessaryView addSubview:projectTypePopup];
+  [projectTypeAccessaryView setTitle: @"Project Types"];
+  [projectTypeAccessaryView setTitlePosition: NSAtTop];
+  [projectTypeAccessaryView setBorderType: NSGrooveBorder];
+  [projectTypeAccessaryView addSubview: projectTypePopup];
   [projectTypeAccessaryView sizeToFit];
-  [projectTypeAccessaryView setAutoresizingMask:NSViewMinXMargin 
+  [projectTypeAccessaryView setAutoresizingMask: NSViewMinXMargin 
                                                 | NSViewMaxXMargin];
   RELEASE(projectTypePopup);
 }
@@ -185,22 +185,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSTimeInterval interval;
 
   interval = [[[PCPrefController sharedPCPreferences] 
-    objectForKey:AutoSavePeriod] intValue];
+    objectForKey: AutoSavePeriod] intValue];
 
   if (interval > 0 && saveTimer == nil)
     {
       saveTimer = [NSTimer 
-	scheduledTimerWithTimeInterval:interval
-	                        target:self
-	                      selector:@selector(saveAllProjects)
-	                      userInfo:nil
-	                       repeats:YES];
+	scheduledTimerWithTimeInterval: interval
+	                        target: self
+	                      selector: @selector(saveAllProjects)
+	                      userInfo: nil
+	                       repeats: YES];
       return YES;
     }
   return NO;
 }
 
-- (BOOL)resetSaveTimer:(NSNotification *)notif
+- (BOOL)resetSaveTimer: (NSNotification *)notif
 {
   [self stopSaveTimer];
 
@@ -233,7 +233,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (!projectInspector)
     {
       projectInspector = 
-	[[PCProjectInspector alloc] initWithProjectManager:self];
+	[[PCProjectInspector alloc] initWithProjectManager: self];
     }
 
   return projectInspector;
@@ -244,9 +244,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return [[self projectInspector] panel];
 }
 
-- (void)showProjectInspector:(id)sender
+- (void)showProjectInspector: (id)sender
 {
-  [[[self projectInspector] panel] makeKeyAndOrderFront:self];
+  [[[self projectInspector] panel] makeKeyAndOrderFront: self];
 }
 
 - (NSPanel *)loadedFilesPanel
@@ -254,16 +254,16 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
   if (!loadedFilesPanel
-      && [[ud objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
+      && [[ud objectForKey: SeparateLoadedFiles] isEqualToString: @"YES"])
     {
       loadedFilesPanel = 
-	[[PCLoadedFilesPanel alloc] initWithProjectManager:self];
+	[[PCLoadedFilesPanel alloc] initWithProjectManager: self];
     }
 
   return loadedFilesPanel;
 }
 
-- (void)showProjectLoadedFiles:(id)sender
+- (void)showProjectLoadedFiles: (id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
               objectForKey: SeparateLoadedFiles] isEqualToString: @"YES"])
@@ -277,9 +277,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
   if (!buildPanel
-      && [[ud objectForKey:SeparateBuilder] isEqualToString:@"YES"])
+      && [[ud objectForKey: SeparateBuilder] isEqualToString: @"YES"])
     {
-      buildPanel = [[PCBuildPanel alloc] initWithProjectManager:self];
+      buildPanel = [[PCBuildPanel alloc] initWithProjectManager: self];
     }
 
   return buildPanel;
@@ -290,9 +290,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
   if (!launchPanel
-      && [[ud objectForKey:SeparateLauncher] isEqualToString:@"YES"])
+      && [[ud objectForKey: SeparateLauncher] isEqualToString: @"YES"])
     {
-      launchPanel = [[PCLaunchPanel alloc] initWithProjectManager:self];
+      launchPanel = [[PCLaunchPanel alloc] initWithProjectManager: self];
     }
 
   return launchPanel;
@@ -350,15 +350,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return rootProject;
 }
 
-- (void)setActiveProject:(PCProject *)aProject
+- (void)setActiveProject: (PCProject *)aProject
 {
   if (aProject != activeProject)
     {
       activeProject = aProject;
 
       [[NSNotificationCenter defaultCenter]
-	postNotificationName:PCActiveProjectDidChangeNotification
-	              object:activeProject];
+	postNotificationName: PCActiveProjectDidChangeNotification
+	              object: activeProject];
     }
 }
 
@@ -369,7 +369,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 //  PCLogInfo(self, @"saveAllProjectsIfNeeded");
 
   // If this method was called not by NSTimer, check if we should save projects
-  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([[defs objectForKey: SaveOnQuit] isEqualToString: @"YES"])
     {
       [self saveAllProjects];
     }
@@ -383,7 +383,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   while ((key = [enumerator nextObject]))
     {
-      project = [loadedProjects objectForKey:key];
+      project = [loadedProjects objectForKey: key];
 
       if ([project save] == NO)
 	{
@@ -398,8 +398,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== Project actions
 // ============================================================================
 
-- (NSString *)convertLegacyProject:(NSMutableDictionary *)pDict
-                            atPath:(NSString *)aPath
+- (NSString *)convertLegacyProject: (NSMutableDictionary *)pDict
+                            atPath: (NSString *)aPath
 {
   NSString        *pPath = nil;
   NSString        *projectClassName = nil;
@@ -417,7 +417,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSMutableArray  *otherResArray = nil;
   NSString        *plistFile = nil;
 
-  projectClassName = [pDict objectForKey:PCProjectBuilderClass];
+  projectClassName = [pDict objectForKey: PCProjectBuilderClass];
   if (projectClassName == nil)
     {
       // Project created by 0.4 release or later
@@ -425,96 +425,96 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   // Gorm project type doesn't exists anymore
-  if ([projectClassName isEqualToString:@"PCGormProj"])
+  if ([projectClassName isEqualToString: @"PCGormProj"])
     {
-      projectTypeName = [NSString stringWithString:@"Application"];
-      projectClassName = [projectTypes objectForKey:projectTypeName];
+      projectTypeName = [NSString stringWithString: @"Application"];
+      projectClassName = [projectTypes objectForKey: projectTypeName];
     }
 
   // Handling directory layout
   _projectPath = [aPath stringByDeletingLastPathComponent];
-  _resPath = [_projectPath stringByAppendingPathComponent:@"Resources"];
-  [fm createDirectoryAtPath:_resPath attributes:nil];
+  _resPath = [_projectPath stringByAppendingPathComponent: @"Resources"];
+  [fm createDirectoryAtPath: _resPath attributes: nil];
 
   // Documents
-  _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Documentation"];
-  _fromDirArray = [pDict objectForKey:PCDocuFiles];
+  _fromDirPath = [_projectPath stringByAppendingPathComponent: @"Documentation"];
+  _fromDirArray = [pDict objectForKey: PCDocuFiles];
   for (i = 0; i < [_fromDirArray count]; i++)
     {
-      _resFile = [_fromDirArray objectAtIndex:i];
-      _file = [_fromDirPath stringByAppendingPathComponent:_resFile];
-      _2file = [_resPath stringByAppendingPathComponent:_resFile];
-      [fm movePath:_file toPath:_2file handler:nil];
+      _resFile = [_fromDirArray objectAtIndex: i];
+      _file = [_fromDirPath stringByAppendingPathComponent: _resFile];
+      _2file = [_resPath stringByAppendingPathComponent: _resFile];
+      [fm movePath: _file toPath: _2file handler: nil];
     }
-  [fm removeFileAtPath:_fromDirPath handler:nil];
+  [fm removeFileAtPath: _fromDirPath handler: nil];
 
   // Images
-  _fromDirPath = [_projectPath stringByAppendingPathComponent:@"Images"];
-  _fromDirArray = [pDict objectForKey:PCImages];
+  _fromDirPath = [_projectPath stringByAppendingPathComponent: @"Images"];
+  _fromDirArray = [pDict objectForKey: PCImages];
   for (i = 0; i < [_fromDirArray count]; i++)
     {
-      _resFile = [_fromDirArray objectAtIndex:i];
-      _file = [_fromDirPath stringByAppendingPathComponent:_resFile];
-      _2file = [_resPath stringByAppendingPathComponent:_resFile];
-      [fm movePath:_file toPath:_2file handler:nil];
+      _resFile = [_fromDirArray objectAtIndex: i];
+      _file = [_fromDirPath stringByAppendingPathComponent: _resFile];
+      _2file = [_resPath stringByAppendingPathComponent: _resFile];
+      [fm movePath: _file toPath: _2file handler: nil];
     }
-  [fm removeFileAtPath:_fromDirPath handler:nil];
+  [fm removeFileAtPath: _fromDirPath handler: nil];
   
   // Interfaces
-  _fromDirArray = [pDict objectForKey:PCInterfaces];
+  _fromDirArray = [pDict objectForKey: PCInterfaces];
   for (i = 0; i < [_fromDirArray count]; i++)
     {
-      _resFile = [_fromDirArray objectAtIndex:i];
-      _file = [_projectPath stringByAppendingPathComponent:_resFile];
-      _2file = [_resPath stringByAppendingPathComponent:_resFile];
-      [fm movePath:_file toPath:_2file handler:nil];
+      _resFile = [_fromDirArray objectAtIndex: i];
+      _file = [_projectPath stringByAppendingPathComponent: _resFile];
+      _2file = [_resPath stringByAppendingPathComponent: _resFile];
+      [fm movePath: _file toPath: _2file handler: nil];
     }
 
   // Other resources
   otherResArray = [NSMutableArray 
-    arrayWithArray:[pDict objectForKey:PCOtherResources]];
-  plistFile = [NSString stringWithFormat:@"%@Info.plist",
-               [pDict objectForKey:PCProjectName]];
+    arrayWithArray: [pDict objectForKey: PCOtherResources]];
+  plistFile = [NSString stringWithFormat: @"%@Info.plist",
+               [pDict objectForKey: PCProjectName]];
   for (i = 0; i < [otherResArray count]; i++)
     {
-      _resFile = [otherResArray objectAtIndex:i];
-      _file = [_projectPath stringByAppendingPathComponent:_resFile];
-      if ([_resFile isEqualToString:plistFile])
+      _resFile = [otherResArray objectAtIndex: i];
+      _file = [_projectPath stringByAppendingPathComponent: _resFile];
+      if ([_resFile isEqualToString: plistFile])
 	{
 	  _2file = 
-	    [_resPath stringByAppendingPathComponent:@"Info-gnustep.plist"];
-	  [otherResArray replaceObjectAtIndex:i 
-	                           withObject:@"Info-gnustep.plist"];
-	  [pDict setObject:otherResArray forKey:PCOtherResources];
+	    [_resPath stringByAppendingPathComponent: @"Info-gnustep.plist"];
+	  [otherResArray replaceObjectAtIndex: i 
+	                           withObject: @"Info-gnustep.plist"];
+	  [pDict setObject: otherResArray forKey: PCOtherResources];
 	}
       else
 	{
-	  _2file = [_resPath stringByAppendingPathComponent:_resFile];
+	  _2file = [_resPath stringByAppendingPathComponent: _resFile];
 	}
-      [fm movePath:_file toPath:_2file handler:nil];
+      [fm movePath: _file toPath: _2file handler: nil];
     }
 
-  // GNUmakefiles will be generated in [PCProject initWithProjectDictionary:]
+  // GNUmakefiles will be generated in [PCProject initWithProjectDictionary: ]
 
   // Remove obsolete records from project dictionary and write to PC.project
   pPath = [[aPath stringByDeletingLastPathComponent]
-    stringByAppendingPathComponent:@"PC.project"];
+    stringByAppendingPathComponent: @"PC.project"];
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
 
   projectTypeName = [projectCreator projectTypeName];
-  [pDict setObject:projectTypeName forKey:PCProjectType];
-  [pDict removeObjectForKey:PCProjectBuilderClass];
-  [pDict removeObjectForKey:PCPrincipalClass];
+  [pDict setObject: projectTypeName forKey: PCProjectType];
+  [pDict removeObjectForKey: PCProjectBuilderClass];
+  [pDict removeObjectForKey: PCPrincipalClass];
 
-  if ([pDict writeToFile:pPath atomically:YES] == YES)
+  if ([pDict writeToFile: pPath atomically: YES] == YES)
     {
-//      [[NSFileManager defaultManager] removeFileAtPath:aPath handler:nil];
+//      [[NSFileManager defaultManager] removeFileAtPath: aPath handler: nil];
     }
 
   return projectClassName;
 }
 
-- (PCProject *)loadProjectAt:(NSString *)aPath
+- (PCProject *)loadProjectAt: (NSString *)aPath
 {
   NSMutableDictionary *projectFile = nil;
   NSString            *projectTypeName = nil;
@@ -522,26 +522,26 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   id<ProjectType>     projectCreator;
   PCProject           *project = nil;
 
-  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
+  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
   
   // For compatibility with 0.3.x projects
-  projectClassName = [self convertLegacyProject:projectFile atPath:aPath];
+  projectClassName = [self convertLegacyProject: projectFile atPath: aPath];
   if (projectClassName)
     {
       aPath = [[aPath stringByDeletingLastPathComponent]
-	stringByAppendingPathComponent:@"PC.project"];
+	stringByAppendingPathComponent: @"PC.project"];
     }
 
   // No conversion were taken
   if (projectClassName == nil)
     {
-      projectTypeName = [projectFile objectForKey:PCProjectType];
-      projectClassName = [projectTypes objectForKey:projectTypeName];
+      projectTypeName = [projectFile objectForKey: PCProjectType];
+      projectClassName = [projectTypes objectForKey: projectTypeName];
     }
 
   projectCreator = [NSClassFromString(projectClassName) sharedCreator];
 
-  if ((project = [projectCreator openProjectAt:aPath])) 
+  if ((project = [projectCreator openProjectAt: aPath])) 
     {
       PCLogStatus(self, @"Project %@ loaded as %@", 
 		  [project projectName], [projectCreator projectTypeName]);
@@ -559,51 +559,51 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return nil;
 }
 
-- (BOOL)openProjectAt:(NSString *)aPath
+- (BOOL)openProjectAt: (NSString *)aPath
 {
-  NSDictionary *pDict = [NSDictionary dictionaryWithContentsOfFile:aPath];
+  NSDictionary *pDict = [NSDictionary dictionaryWithContentsOfFile: aPath];
   NSString     *projectName = nil;
   PCProject    *project = nil;
   NSDictionary *wap = nil;
   BOOL         isDir = NO;
 
-  projectName = [pDict objectForKey:PCProjectName];
+  projectName = [pDict objectForKey: PCProjectName];
 
-  if ((project = [loadedProjects objectForKey:projectName]) != nil)
+  if ((project = [loadedProjects objectForKey: projectName]) != nil)
     {
-      [[project projectWindow] makeKeyAndOrderFront:self];
+      [[project projectWindow] makeKeyAndOrderFront: self];
       return YES;
     }
 
-  if ([[NSFileManager defaultManager] fileExistsAtPath:aPath 
-                                           isDirectory:&isDir] && !isDir) 
+  if ([[NSFileManager defaultManager] fileExistsAtPath: aPath 
+                                           isDirectory: &isDir] && !isDir) 
     {
-      project = [self loadProjectAt:aPath];
+      project = [self loadProjectAt: aPath];
 
       if (!project) 
 	{
 	  return NO;
 	}
 
-      [loadedProjects setObject:project forKey:projectName];
-      [self setActiveProject:project];
-      [project setProjectManager:self];
+      [loadedProjects setObject: project forKey: projectName];
+      [self setActiveProject: project];
+      [project setProjectManager: self];
 
       // Windows and panels
-      wap = [pDict objectForKey:@"PC_WINDOWS"];
-      if ([[wap allKeys] containsObject:@"ProjectBuild"])
+      wap = [pDict objectForKey: @"PC_WINDOWS"];
+      if ([[wap allKeys] containsObject: @"ProjectBuild"])
 	{
-	  [[project projectWindow] showProjectBuild:self];
+	  [[project projectWindow] showProjectBuild: self];
 	}
-      if ([[wap allKeys] containsObject:@"ProjectLaunch"])
+      if ([[wap allKeys] containsObject: @"ProjectLaunch"])
 	{
-	  [[project projectWindow] showProjectLaunch:self];
+	  [[project projectWindow] showProjectLaunch: self];
 	}
-      if ([[wap allKeys] containsObject:@"LoadedFiles"])
+      if ([[wap allKeys] containsObject: @"LoadedFiles"])
 	{
-	  [[project projectWindow] showProjectLoadedFiles:self];
+	  [[project projectWindow] showProjectLoadedFiles: self];
 	}
-      [[project projectWindow] orderFront:self];
+      [[project projectWindow] orderFront: self];
 
       return YES;
     }
@@ -611,33 +611,33 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return NO;
 }
 
-- (PCProject *)createProjectOfType:(NSString *)projectType 
-                              path:(NSString *)aPath
+- (PCProject *)createProjectOfType: (NSString *)projectType 
+                              path: (NSString *)aPath
 {
-  NSString  *className = [projectTypes objectForKey:projectType];
+  NSString  *className = [projectTypes objectForKey: projectType];
   Class	    creatorClass = NSClassFromString(className);
   PCProject *project = nil;
   NSString  *projectName = [aPath lastPathComponent];
 
-  if ((project = [loadedProjects objectForKey:projectName]) != nil)
+  if ((project = [loadedProjects objectForKey: projectName]) != nil)
     {
-      [[project projectWindow] makeKeyAndOrderFront:self];
+      [[project projectWindow] makeKeyAndOrderFront: self];
       return project;
     }
 
-  if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
+  if (![creatorClass conformsToProtocol: @protocol(ProjectType)]) 
     {
-      [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
-	          format:@"%@ does not conform to ProjectType!", projectType];
+      [NSException raise: NOT_A_PROJECT_TYPE_EXCEPTION 
+	          format: @"%@ does not conform to ProjectType!", projectType];
       return nil;
     }
 
-  if (!(project = [[creatorClass sharedCreator] createProjectAt:aPath])) 
+  if (!(project = [[creatorClass sharedCreator] createProjectAt: aPath])) 
     {
       return nil;
     }
 
-  [project setProjectManager:self];
+  [project setProjectManager: self];
   [self startSaveTimer];
 
   return project;
@@ -647,15 +647,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSArray  *files = nil;
   NSString *filePath = nil;
-  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+  NSArray  *fileTypes = [NSArray arrayWithObjects: @"project",@"pcproj",nil];
 
-  files = [fileManager filesForOpenOfType:fileTypes
-                                 multiple:NO
-			            title:@"Open Project"
-				  accView:nil];
-  filePath = [files objectAtIndex:0];
+  files = [fileManager filesForOpenOfType: fileTypes
+                                 multiple: NO
+			            title: @"Open Project"
+				  accView: nil];
+  filePath = [files objectAtIndex: 0];
 
-  if (filePath != nil && [self openProjectAt:filePath] == NO)
+  if (filePath != nil && [self openProjectAt: filePath] == NO)
     {
       NSRunAlertPanel(@"Attention!",
 		      @"Couldn't open project %@!",
@@ -667,29 +667,29 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (void)newProject
 {
   NSString  *filePath = nil;
-  NSArray   *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+  NSArray   *fileTypes = [NSArray arrayWithObjects: @"project",@"pcproj",nil];
   NSString  *projectType = nil;
   PCProject *project = nil;
 
   [self createProjectTypeAccessaryView];
   
-  filePath = [fileManager fileForSaveOfType:fileTypes
-	  		              title:@"New Project"
-				    accView:projectTypeAccessaryView];
+  filePath = [fileManager fileForSaveOfType: fileTypes
+	  		              title: @"New Project"
+				    accView: projectTypeAccessaryView];
   if (filePath != nil) 
     {
       projectType = [projectTypePopup titleOfSelectedItem];
 
-      if (!(project = [self createProjectOfType:projectType path:filePath]))
+      if (!(project = [self createProjectOfType: projectType path: filePath]))
 	{
 	  NSRunAlertPanel(@"Attention!",
 			  @"Failed to create %@!",
 			  @"OK",nil,nil,filePath);
 	}
 
-      [loadedProjects setObject:project forKey:[project projectName]];
-      [self setActiveProject:project];
-      [[project projectWindow] orderFront:self];
+      [loadedProjects setObject: project forKey: [project projectName]];
+      [self setActiveProject: project];
+      [[project projectWindow] orderFront: self];
     }
 }
 
@@ -720,20 +720,20 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   PCProject      *project = [self rootActiveProject];
   NSString       *category = [[project projectBrowser] nameOfSelectedCategory];
-  NSString       *categoryKey = [activeProject keyForCategory:category];
+  NSString       *categoryKey = [activeProject keyForCategory: category];
   NSMutableArray *files = nil;
   NSString       *file = nil;
   NSString       *projectFile = nil;
-  NSArray        *fileTypes = [project fileTypesForCategoryKey:categoryKey];
+  NSArray        *fileTypes = [project fileTypesForCategoryKey: categoryKey];
 
-  files = [fileManager filesForAddOfTypes:fileTypes];
+  files = [fileManager filesForAddOfTypes: fileTypes];
 
 /*  PCLogInfo(self, @"[addProjectFiles] %@ to category: %@ of project %@",
 	    files, categoryKey, [activeProject projectName]);*/
 
   // Category may be changed
   category = [[project projectBrowser] nameOfSelectedCategory];
-  categoryKey = [activeProject keyForCategory:category];
+  categoryKey = [activeProject keyForCategory: category];
   
   // No files was selected 
   if (!files)
@@ -741,18 +741,18 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return NO;
     }
 
-  file = [[files objectAtIndex:0] lastPathComponent];
-  projectFile = [activeProject projectFileFromFile:[files objectAtIndex:0] 
-                                            forKey:categoryKey];
+  file = [[files objectAtIndex: 0] lastPathComponent];
+  projectFile = [activeProject projectFileFromFile: [files objectAtIndex: 0] 
+                                            forKey: categoryKey];
 
-  if (![projectFile isEqualToString:file])
+  if (![projectFile isEqualToString: file])
     {
-      [activeProject addFiles:files forKey:categoryKey notify:YES];
+      [activeProject addFiles: files forKey: categoryKey notify: YES];
     }
   else
     {
       // Copy and add files
-      [activeProject addAndCopyFiles:files forKey:categoryKey];
+      [activeProject addAndCopyFiles: files forKey: categoryKey];
     }
 
   return YES;
@@ -768,22 +768,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCProject      *project = [self rootActiveProject];
   NSArray        *files = [[project projectBrowser] selectedFiles];
   NSString       *category = [[project projectBrowser] nameOfSelectedCategory];
-  NSString       *categoryKey = [project keyForCategory:category];
-  NSString       *directory = [activeProject dirForCategoryKey:categoryKey];
-  NSString       *removeString = [NSString stringWithString:@"Remove files..."];
+  NSString       *categoryKey = [project keyForCategory: category];
+  NSString       *directory = [activeProject dirForCategoryKey: categoryKey];
+  NSString       *removeString = [NSString stringWithString: @"Remove files..."];
   NSMutableArray *subprojs = [NSMutableArray array];
   int            i;
 
   // Determining target project
-  if ([categoryKey isEqualToString:PCSubprojects])
+  if ([categoryKey isEqualToString: PCSubprojects])
     {
       if ([activeProject isSubproject])
 	{
 	  project = [activeProject superProject];
-	  [self setActiveProject:project];
+	  [self setActiveProject: project];
 	}
-      removeString = [NSString stringWithString:@"Remove subprojects..."];
-      directory = [project dirForCategoryKey:categoryKey];
+      removeString = [NSString stringWithString: @"Remove subprojects..."];
+      directory = [project dirForCategoryKey: categoryKey];
     }
   else
     {
@@ -791,14 +791,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
 /*  PCLogInfo(self, @"%@: %@ from %@", removeString, files, directory);
-  PCLogInfo(self, @"[removeProjectFiles]:%@ KEY:%@", 
+  PCLogInfo(self, @"[removeProjectFiles]: %@ KEY: %@", 
 	    [activeProject projectName], categoryKey);*/
 
   if (files)
     {
       int ret;
 
-      if ([categoryKey isEqualToString:PCLibraries])
+      if ([categoryKey isEqualToString: PCLibraries])
 	{
 	  ret = NSRunAlertPanel(@"Remove",
 				@"Remove libraries from Project?",
@@ -820,23 +820,23 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  BOOL flag = (ret == NSAlertDefaultReturn) ? YES : NO;
 
 	  // Remove from projectDict
-	  ret = [project removeFiles:files forKey:categoryKey notify:YES];
+	  ret = [project removeFiles: files forKey: categoryKey notify: YES];
 
 	  // Remove files from disk
-	  if (flag && ret && ![categoryKey isEqualToString:PCLibraries])
+	  if (flag && ret && ![categoryKey isEqualToString: PCLibraries])
 	    {
-	      if ([categoryKey isEqualToString:PCSubprojects])
+	      if ([categoryKey isEqualToString: PCSubprojects])
 		{
 		  for (i = 0; i < [files count]; i++)
 		    {
-		      [subprojs addObject:
-			[[files objectAtIndex:i] 
-			stringByAppendingPathExtension:@"subproj"]];
+		      [subprojs addObject: 
+			[[files objectAtIndex: i] 
+			stringByAppendingPathExtension: @"subproj"]];
 		    }
 		  files = subprojs;
 		}
-    	      ret = [fileManager removeFiles:files 
-		               fromDirectory:directory];
+    	      ret = [fileManager removeFiles: files 
+		               fromDirectory: directory];
 	    }
 
 	  if (!ret)
@@ -862,19 +862,19 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return YES;
 }
 
-- (void)closeProject:(PCProject *)aProject
+- (void)closeProject: (PCProject *)aProject
 {
   PCProject *currentProject = nil;
   NSString  *projectName = [aProject projectName];
 
-  currentProject = RETAIN([loadedProjects objectForKey:projectName]);
+  currentProject = RETAIN([loadedProjects objectForKey: projectName]);
   if (!currentProject)
     {
       return;
     }
 
   // Remove it from the loaded projects!
-  [loadedProjects removeObjectForKey:projectName];
+  [loadedProjects removeObjectForKey: projectName];
 
   if ([loadedProjects count] == 0)
     {
@@ -899,7 +899,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
   else if (currentProject == [self activeProject])
     {
-      [self setActiveProject:[[loadedProjects allValues] lastObject]];
+      [self setActiveProject: [[loadedProjects allValues] lastObject]];
     }
 
   RELEASE(currentProject);
@@ -909,12 +909,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
-  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([[defs objectForKey: SaveOnQuit] isEqualToString: @"YES"])
     {
       [activeProject save];
     }
 
-  [activeProject close:self];
+  [activeProject close: self];
 }
 
 - (BOOL)closeAllProjects
@@ -928,11 +928,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   while ([loadedProjects count] > 0)
     {
       project = [enumerator nextObject];
-      if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+      if ([[defs objectForKey: SaveOnQuit] isEqualToString: @"YES"])
 	{
 	  [project save];
 	}
-      if ([project close:self] == NO)
+      if ([project close: self] == NO)
 	{
 	  return NO;
 	}
@@ -950,15 +950,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSArray  *files = nil;
   NSString *filePath = nil;
 
-  files = [fileManager filesForOpenOfType:nil
-                                 multiple:NO
-			            title:@"Open File"
-				  accView:nil];
-  filePath = [files objectAtIndex:0];
+  files = [fileManager filesForOpenOfType: nil
+                                 multiple: NO
+			            title: @"Open File"
+				  accView: nil];
+  filePath = [files objectAtIndex: 0];
 
   if (filePath != nil)
     {
-      [self openFileWithEditor:filePath];
+      [self openFileWithEditor: filePath];
     }
 }
 
@@ -972,20 +972,20 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return [[activeProject projectEditor] saveFile];
 }
 
-- (BOOL)saveFileAs:(NSString *)path
+- (BOOL)saveFileAs: (NSString *)path
 {
-  return [[activeProject projectEditor] saveFileAs:path];
+  return [[activeProject projectEditor] saveFileAs: path];
 }
 
 - (BOOL)saveFileTo
 {
   NSString *filePath = nil;
 
-  filePath = [fileManager fileForSaveOfType:nil
-			              title:@"Save To..."
-				    accView:nil];
+  filePath = [fileManager fileForSaveOfType: nil
+			              title: @"Save To..."
+				    accView: nil];
 
-  if (filePath != nil && ![[activeProject projectEditor] saveFileTo:filePath]) 
+  if (filePath != nil && ![[activeProject projectEditor] saveFileTo: filePath]) 
     {
       NSRunAlertPanel(@"Alert", @"Couldn't save file to\n%@!",
 		      @"OK", nil, nil, filePath);
@@ -1002,8 +1002,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)renameFile
 {
-  [self showProjectInspector:self];
-  [projectInspector selectSectionWithTitle:@"File Attributes"];
+  [self showProjectInspector: self];
+  [projectInspector selectSectionWithTitle: @"File Attributes"];
   [projectInspector beginFileRename];
 
   return YES;
@@ -1011,7 +1011,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)closeFile
 {
-  return [[activeProject projectEditor] closeActiveEditor:self];
+  return [[activeProject projectEditor] closeActiveEditor: self];
 }
 
 // Project menu
@@ -1019,21 +1019,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== Non project editors
 // ============================================================================
 
-- (void)openFileWithEditor:(NSString *)path
+- (void)openFileWithEditor: (NSString *)path
 {
   PCEditor *editor;
 
-  editor = [PCProjectEditor openFileInEditor:path];
+  editor = [PCProjectEditor openFileInEditor: path];
   
-  [nonProjectEditors setObject:editor forKey:path];
+  [nonProjectEditors setObject: editor forKey: path];
   RELEASE(editor);
 }
 
-- (void)editorDidClose:(NSNotification *)aNotif
+- (void)editorDidClose: (NSNotification *)aNotif
 {
   PCEditor *editor = [aNotif object];
   
-  [nonProjectEditors removeObjectForKey:[editor path]];
+  [nonProjectEditors removeObjectForKey: [editor path]];
 }
 
 @end
@@ -1041,28 +1041,28 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 @implementation PCProjectManager (FileManagerDelegates)
 
 // willCreateFile
-- (NSString *)fileManager:(id)sender
-           willCreateFile:(NSString *)aFile
-	          withKey:(NSString *)key
+- (NSString *)fileManager: (id)sender
+           willCreateFile: (NSString *)aFile
+	          withKey: (NSString *)key
 {
   NSString *path = nil;
 
-  if ([activeProject doesAcceptFile:aFile forKey:key]) 
+  if ([activeProject doesAcceptFile: aFile forKey: key]) 
     {
-      path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
+      path = [[activeProject projectPath] stringByAppendingPathComponent: aFile];
     }
 
   return path;
 }
 
 // didCreateFiles
-- (void)fileManager:(id)sender
-      didCreateFile:(NSString *)aFile
-            withKey:(NSString *)key
+- (void)fileManager: (id)sender
+      didCreateFile: (NSString *)aFile
+            withKey: (NSString *)key
 {
-  [activeProject addFiles:[NSArray arrayWithObject:aFile]
-                   forKey:key
-		   notify:YES];
+  [activeProject addFiles: [NSArray arrayWithObject: aFile]
+                   forKey: key
+		   notify: YES];
 }
 
 @end
@@ -1074,7 +1074,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   projectTypes = [[NSMutableDictionary alloc] init];
 
   bundleLoader = [[PCBundleLoader alloc] init];
-  [bundleLoader setDelegate:self];
+  [bundleLoader setDelegate: self];
   [bundleLoader loadBundles];
 }
 
@@ -1088,7 +1088,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return projectTypes;
 }
 
-- (void)bundleLoader:(id)sender didLoadBundle:(NSBundle *)aBundle
+- (void)bundleLoader: (id)sender didLoadBundle: (NSBundle *)aBundle
 {
   Class    principalClass;
   NSString *projectTypeName = nil;
@@ -1098,10 +1098,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   principalClass = [aBundle principalClass];
   projectTypeName = [[principalClass sharedCreator] projectTypeName];
 
-  if (![projectTypes objectForKey:projectTypeName]) 
+  if (![projectTypes objectForKey: projectTypeName]) 
     {
-      [projectTypes setObject:NSStringFromClass(principalClass)
-	               forKey:projectTypeName];
+      [projectTypes setObject: NSStringFromClass(principalClass)
+	               forKey: projectTypeName];
     }
 }
 
@@ -1115,44 +1115,44 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if (!nsPanel)
     {
-      if ([NSBundle loadNibNamed:@"NewSubproject" owner:self] == NO)
+      if ([NSBundle loadNibNamed: @"NewSubproject" owner: self] == NO)
 	{
 	  PCLogError(self, @"error loading NewSubproject NIB!");
 	  return NO;
 	}
 
-      [nsPanel setFrameAutosaveName:@"NewSubproject"];
+      [nsPanel setFrameAutosaveName: @"NewSubproject"];
       if (![nsPanel setFrameUsingName: @"NewSubproject"])
     	{
 	  [nsPanel center];
 	}
 
-      [nsImage setImage:[NSApp applicationIconImage]];
+      [nsImage setImage: [NSApp applicationIconImage]];
       [nsTypePB removeAllItems];
-      [nsTypePB addItemsWithTitles:
+      [nsTypePB addItemsWithTitles: 
 	[[activeProject allowableSubprojectTypes] 
-	sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-      [nsTypePB setRefusesFirstResponder:YES];
-      [nsTypePB selectItemAtIndex:0];
-      [nsCancelButton setRefusesFirstResponder:YES];
-      [nsCreateButton setRefusesFirstResponder:YES];
+	sortedArrayUsingSelector: @selector(caseInsensitiveCompare:)]];
+      [nsTypePB setRefusesFirstResponder: YES];
+      [nsTypePB selectItemAtIndex: 0];
+      [nsCancelButton setRefusesFirstResponder: YES];
+      [nsCreateButton setRefusesFirstResponder: YES];
     }
-  [projectNameField setStringValue:[activeProject projectName]];
-  [nsPanel makeKeyAndOrderFront:nil];
-  [nsNameField setStringValue:@""];
-  [nsPanel makeFirstResponder:nsNameField];
+  [projectNameField setStringValue: [activeProject projectName]];
+  [nsPanel makeKeyAndOrderFront: nil];
+  [nsNameField setStringValue: @""];
+  [nsPanel makeFirstResponder: nsNameField];
 
   return YES;
 }
 
-- (void)closeNewSubprojectPanel:(id)sender
+- (void)closeNewSubprojectPanel: (id)sender
 {
-  [nsPanel orderOut:self];
+  [nsPanel orderOut: self];
 }
 
-- (BOOL)createSubproject:(id)sender
+- (BOOL)createSubproject: (id)sender
 {
-  [nsPanel orderOut:self];
+  [nsPanel orderOut: self];
 
   return [self createSubproject];
 }
@@ -1164,59 +1164,59 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString  *spPath = nil;
   NSString  *spType = [nsTypePB titleOfSelectedItem];
 
-  if (![[spName pathExtension] isEqualToString:@"subproj"])
+  if (![[spName pathExtension] isEqualToString: @"subproj"])
     {
       spName = [[nsNameField stringValue] 
-	stringByAppendingPathExtension:@"subproj"];
+	stringByAppendingPathExtension: @"subproj"];
     }
 
-  spPath = [[activeProject projectPath] stringByAppendingPathComponent:spName];
+  spPath = [[activeProject projectPath] stringByAppendingPathComponent: spName];
 
   PCLogStatus(self, @"creating subproject with type %@ at path %@",
 	      spType, spPath);
 
   // Create subproject
-  subproject = [self createSubprojectOfType:spType path:spPath];
+  subproject = [self createSubprojectOfType: spType path: spPath];
 
   return YES;
 }
 
-- (PCProject *)createSubprojectOfType:(NSString *)projectType 
-                                 path:(NSString *)aPath
+- (PCProject *)createSubprojectOfType: (NSString *)projectType 
+                                 path: (NSString *)aPath
 {
-  NSString  *className = [projectTypes objectForKey:projectType];
+  NSString  *className = [projectTypes objectForKey: projectType];
   Class	    creatorClass = NSClassFromString(className);
   PCProject *subproject = nil;
 /*  NSString  *subprojectName = [aPath lastPathComponent];
 
-  if ((project = [activeProject objectForKey:projectName]) != nil)
+  if ((project = [activeProject objectForKey: projectName]) != nil)
     {
-      [[project projectWindow] makeKeyAndOrderFront:self];
+      [[project projectWindow] makeKeyAndOrderFront: self];
       return project;
     }*/
 
-  if (![creatorClass conformsToProtocol:@protocol(ProjectType)]) 
+  if (![creatorClass conformsToProtocol: @protocol(ProjectType)]) 
     {
-      [NSException raise:NOT_A_PROJECT_TYPE_EXCEPTION 
-	          format:@"%@ does not conform to ProjectType!", projectType];
+      [NSException raise: NOT_A_PROJECT_TYPE_EXCEPTION 
+	          format: @"%@ does not conform to ProjectType!", projectType];
       return nil;
     }
 
-  if (!(subproject = [[creatorClass sharedCreator] createProjectAt:aPath])) 
+  if (!(subproject = [[creatorClass sharedCreator] createProjectAt: aPath])) 
     {
       return nil;
     }
-  [subproject setIsSubproject:YES];
-  [subproject setSuperProject:activeProject];
-  [subproject setProjectManager:self];
+  [subproject setIsSubproject: YES];
+  [subproject setSuperProject: activeProject];
+  [subproject setProjectManager: self];
 
 //  PCLogInfo(self, @"{createSubproject} add to %@", [activeProject projectName]);
-  [activeProject addSubproject:subproject];
+  [activeProject addSubproject: subproject];
 
   return subproject;
 }
 
-- (void)controlTextDidChange:(NSNotification *)aNotif
+- (void)controlTextDidChange: (NSNotification *)aNotif
 {
   if ([aNotif object] != nsNameField)
     {
@@ -1226,11 +1226,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   // TODO: Add check for valid subproject named
   if ([[nsNameField stringValue] length] > 0)
     {
-      [nsCreateButton setEnabled:YES];
+      [nsCreateButton setEnabled: YES];
     }
   else
     {
-      [nsCreateButton setEnabled:NO];
+      [nsCreateButton setEnabled: NO];
     }
 }
 
@@ -1245,38 +1245,38 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   int            i;
 
   files = [fileManager 
-    filesForAddOfTypes:[NSArray arrayWithObjects:@"subproj",nil]];
+    filesForAddOfTypes: [NSArray arrayWithObjects: @"subproj",nil]];
 
   // Validate if it real projects
   for (i = 0; i < [files count]; i++)
     {
-      spDir = [files objectAtIndex:i];
-      pcProject = [spDir stringByAppendingPathComponent:@"PC.project"];
-      if (![[spDir pathExtension] isEqualToString:@"subproj"]
-	  || ![fm fileExistsAtPath:pcProject])
+      spDir = [files objectAtIndex: i];
+      pcProject = [spDir stringByAppendingPathComponent: @"PC.project"];
+      if (![[spDir pathExtension] isEqualToString: @"subproj"]
+	  || ![fm fileExistsAtPath: pcProject])
 	{
-	  [files removeObjectAtIndex:i];
+	  [files removeObjectAtIndex: i];
 	}
     }
   
 //  PCLogInfo(self, @"{addSubproject} %@", files);
 
-  if (![fileManager copyFiles:files
-                intoDirectory:[activeProject projectPath]])
+  if (![fileManager copyFiles: files
+                intoDirectory: [activeProject projectPath]])
     {
       return NO;
     }
 
   for (i = 0; i < [files count]; i++)
     {
-      spDir = [files objectAtIndex:i];
-      pcProject = [spDir stringByAppendingPathComponent:@"PC.project"];
-      spDict = [NSDictionary dictionaryWithContentsOfFile:pcProject];
-      spName = [spDict objectForKey:PCProjectName];
+      spDir = [files objectAtIndex: i];
+      pcProject = [spDir stringByAppendingPathComponent: @"PC.project"];
+      spDict = [NSDictionary dictionaryWithContentsOfFile: pcProject];
+      spName = [spDict objectForKey: PCProjectName];
       
 //      PCLogInfo(self, @"{addSubproject} dir: %@ file: %@", spDir, pcProject);
 	
-      [activeProject addSubprojectWithName:spName];
+      [activeProject addSubprojectWithName: spName];
     }
 
   return YES;
