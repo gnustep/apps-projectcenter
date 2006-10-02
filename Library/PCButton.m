@@ -28,6 +28,8 @@
 #include "AppKit/NSBezierPath.h"
 #include "GNUstepGUI/GSTrackingRect.h"
 
+static BOOL	doesRetain = NO;
+
 @implementation PCButton
 
 // ============================================================================
@@ -80,13 +82,15 @@
 
 - (void)release
 {
-  // If retain count is number of tracking rects + superview retain,
-  // remove tracking rects. It seems that tracking rects retain this object.
-  if (_hasTooltips && [self retainCount] == [_tracking_rects count] + 1)
+  if (doesRetain)
     {
-      [self removeAllToolTips];
+      // If retain count is number of tracking rects + superview retain,
+      // remove tracking rects. It seems that tracking rects retain this object.
+      if (_hasTooltips && [self retainCount] == [_tracking_rects count] + 1)
+	{
+	  [self removeAllToolTips];
+	}
     }
-
   [super release];
 }
 
@@ -282,6 +286,7 @@
 {
   SEL               ownerSelector;
   NSTrackingRectTag tag;
+  int		    rc;
   
   if (NSEqualRects(aRect,NSZeroRect) || ttTimer != nil)
     {
@@ -295,11 +300,17 @@
       return -1;
     }
 
+  rc = [self retainCount];
+
   // Set rect tracking
   tag = [self addTrackingRect:aRect
                         owner:self
                      userData:data
                  assumeInside:NO];
+  if (rc != [self retainCount])
+    {
+      doesRetain = YES;
+    }
 
   return tag;
 }
@@ -337,6 +348,7 @@
 {
   NSTrackingRectTag tag;
   NSRect            rect;
+  int		    rc;
 
   if (string == nil) // Remove old tooltip
     {
@@ -355,10 +367,17 @@
       rect = [self frame];
       rect.origin.x = 0;
       rect.origin.y = 0;
+
+      rc = [self retainCount];
       tag = [self addTrackingRect:rect
                             owner:self
                          userData:string
                      assumeInside:NO];
+
+      if (rc != [self retainCount])
+	{
+	  doesRetain = YES;
+	}
       _hasTooltips = YES;
     }
 }
