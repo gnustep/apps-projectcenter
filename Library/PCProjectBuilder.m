@@ -1,5 +1,5 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http: //www.gnustep.org
 
    Copyright (C) 2000-2004 Free Software Foundation
 
@@ -113,11 +113,11 @@
    *  Error and Log output
    */
   scrollView1 = [[NSScrollView alloc] 
-    initWithFrame:NSMakeRect (0, 0, 464, 120)];
-  [scrollView1 setHasHorizontalScroller:NO];
-  [scrollView1 setHasVerticalScroller:YES];
+    initWithFrame: NSMakeRect (0, 0, 464, 120)];
+  [scrollView1 setHasHorizontalScroller: NO];
+  [scrollView1 setHasVerticalScroller: YES];
   [scrollView1 setBorderType: NSBezelBorder];
-  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [scrollView1 setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   errorOutput = [[NSTextView alloc] 
     initWithFrame: [[scrollView1 contentView] frame]];
@@ -136,38 +136,38 @@
   [[errorOutput textContainer] setContainerSize: 
     NSMakeSize ([errorOutput frame].size.width, 1e7)];
 
-  [[errorOutput textContainer] setWidthTracksTextView:YES];
+  [[errorOutput textContainer] setWidthTracksTextView: YES];
 
-  [scrollView1 setDocumentView:errorOutput];
+  [scrollView1 setDocumentView: errorOutput];
   RELEASE(errorOutput);
 
   /*
    */
   scrollView2 = [[NSScrollView alloc] 
-    initWithFrame:NSMakeRect (0, 0, 480, 133)];
+    initWithFrame: NSMakeRect (0, 0, 480, 133)];
   [scrollView2 setHasHorizontalScroller: NO];
   [scrollView2 setHasVerticalScroller: YES];
   [scrollView2 setBorderType: NSBezelBorder];
-  [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  [scrollView2 setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
 
   logOutput = [[NSTextView alloc] 
-    initWithFrame:[[scrollView2 contentView] frame]];
-  [logOutput setRichText:NO];
-  [logOutput setEditable:NO];
-  [logOutput setSelectable:YES];
+    initWithFrame: [[scrollView2 contentView] frame]];
+  [logOutput setRichText: NO];
+  [logOutput setEditable: NO];
+  [logOutput setSelectable: YES];
   [logOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
   [logOutput setBackgroundColor: [NSColor lightGrayColor]];
-  [[logOutput textContainer] setWidthTracksTextView:YES];
-  [[logOutput textContainer] setHeightTracksTextView:YES];
+  [[logOutput textContainer] setWidthTracksTextView: YES];
+  [[logOutput textContainer] setHeightTracksTextView: YES];
   [logOutput setHorizontallyResizable: NO];
   [logOutput setVerticallyResizable: YES];
   [logOutput setMinSize: NSMakeSize (0, 0)];
   [logOutput setMaxSize: NSMakeSize (1E7, 1E7)];
   [[logOutput textContainer] setContainerSize: 
     NSMakeSize ([logOutput frame].size.width, 1e7)];
-  [[logOutput textContainer] setWidthTracksTextView:YES];
+  [[logOutput textContainer] setWidthTracksTextView: YES];
 
-  [scrollView2 setDocumentView:logOutput];
+  [scrollView2 setDocumentView: logOutput];
   RELEASE(logOutput);
 
   split = [[PCSplitView alloc] initWithFrame: NSMakeRect (0, 0, 464, 255)];
@@ -193,7 +193,7 @@
   [textField setEditable: NO];
   [textField setSelectable: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Target:"];
+  [textField setStringValue: @"Target: "];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [componentView addSubview: textField];
   RELEASE(textField);
@@ -202,7 +202,7 @@
    * Target message
    */
   targetField = [[NSTextField alloc] 
-    initWithFrame:NSMakeRect(251, 293, 220, 21)];
+    initWithFrame: NSMakeRect(251, 293, 220, 21)];
   [targetField setAlignment: NSLeftTextAlignment];
   [targetField setBordered: NO];
   [targetField setEditable: NO];
@@ -213,7 +213,7 @@
   [targetField setAutoresizingMask: (NSViewMaxXMargin | 
 				     NSViewWidthSizable | 
 				     NSViewMinYMargin)];
-  [componentView addSubview:targetField];
+  [componentView addSubview: targetField];
   RELEASE (targetField);
 
   /*
@@ -227,9 +227,9 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Status:"];
+  [textField setStringValue: @"Status: "];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [componentView addSubview:textField];
+  [componentView addSubview: textField];
   RELEASE(textField);
 
   /*
@@ -253,8 +253,9 @@
 
 - (void) _createOptionsPanel
 {
-  NSView      *cView = nil;
-  NSTextField *textField = nil;
+  NSString		*str;
+  NSView		*cView = nil;
+  NSTextField		*textField = nil;
 
   optionsPanel = [[NSPanel alloc] 
     initWithContentRect: NSMakeRect (100, 100, 300, 120)
@@ -273,7 +274,7 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Arguments:"];
+  [textField setStringValue: @"Arguments: "];
   [cView addSubview: textField];
   
   RELEASE (textField);
@@ -286,13 +287,15 @@
   [buildTargetArgsField setEditable: YES];
   [buildTargetArgsField setBezeled: YES];
   [buildTargetArgsField setDrawsBackground: YES];
-  [buildTargetArgsField setStringValue: @""];
+  str = [[currentProject projectDict] objectForKey: @"BuildTargetArgs"];
+  if (str == nil) str = @"";
+  [buildTargetArgsField setStringValue: str];
   [buildTargetArgsField setDelegate: self];
   [buildTargetArgsField setTarget: self];
   [buildTargetArgsField setAction: @selector (setArguments:)];
   [cView addSubview: buildTargetArgsField];
 
-//  RELEASE (buildTargetArgsField);
+  RELEASE (buildTargetArgsField);
 
   // Host
   textField = [[NSTextField alloc] initWithFrame: NSMakeRect (8,67,60,21)];
@@ -301,7 +304,7 @@
   [textField setEditable: NO];
   [textField setBezeled: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Host:"];
+  [textField setStringValue: @"Host: "];
   [cView addSubview: textField];
 
   RELEASE (textField);
@@ -314,13 +317,15 @@
   [buildTargetHostField setEditable: YES];
   [buildTargetHostField setBezeled: YES];
   [buildTargetHostField setDrawsBackground: YES];
-  [buildTargetHostField setStringValue: @"localhost"];
+  str = [[currentProject projectDict] objectForKey: @"BuildTargetHost"];
+  if (str == nil) str = @"localhost";
+  [buildTargetHostField setStringValue: str];
   [buildTargetHostField setDelegate: self];
   [buildTargetHostField setTarget: self];
   [buildTargetHostField setAction: @selector (setHost:)];
   [cView addSubview: buildTargetHostField];
   
-//  RELEASE (buildTargetArgsField);
+  RELEASE (buildTargetHostField);
 
   // Target
   textField = [[NSTextField alloc]
@@ -331,7 +336,7 @@
   [textField setEditable: NO];
   [textField setSelectable: NO];
   [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Target:"];
+  [textField setStringValue: @"Target: "];
   [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
   [cView addSubview: textField];
 
@@ -345,6 +350,9 @@
   [popup addItemWithTitle: @"Profile"];
   [popup addItemWithTitle: @"Tarball"];
   [popup addItemWithTitle: @"RPM"];
+  str = [[currentProject projectDict] objectForKey: @"BuildTarget"];
+  if ([str length] == 0) str = @"Default";
+  [popup selectItemWithTitle: str];
   [popup setTarget: self];
   [popup setAction: @selector (popupChanged:)];
   [popup setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -357,7 +365,7 @@
 
 @implementation PCProjectBuilder
 
-- (id)initWithProject:(PCProject *)aProject
+- (id) initWithProject: (PCProject *)aProject
 {
   NSAssert(aProject, @"No project specified!");
 
@@ -366,7 +374,7 @@
   if ((self = [super init]))
     {
       currentProject = aProject;
-      buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
+      buildTarget = [[NSMutableString alloc] initWithString: @"Default"];
       buildArgs = [[NSMutableArray array] retain];
       postProcess = NULL;
       makeTask = nil;
@@ -377,7 +385,7 @@
   return self;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
 #ifdef DEVELOPMENT
   NSLog (@"PCProjectBuilder: dealloc");
@@ -394,7 +402,7 @@
   [super dealloc];
 }
 
-- (NSView *)componentView
+- (NSView *) componentView
 {
   if (!componentView)
     {
@@ -405,87 +413,87 @@
 }
 
 // --- Accessory
-- (BOOL)isBuilding
+- (BOOL) isBuilding
 {
   return _isBuilding;
 }
 
-- (BOOL)isCleaning
+- (BOOL) isCleaning
 {
   return _isCleaning;
 }
 
-- (void)performStartBuild
+- (void) performStartBuild
 {
   if (!_isBuilding && !_isCleaning)
     {
-      [buildButton performClick:self];
+      [buildButton performClick: self];
     }
 }
 
-- (void)performStartClean
+- (void) performStartClean
 {
   if (!_isCleaning && !_isBuilding)
     {
-      [cleanButton performClick:self];
+      [cleanButton performClick: self];
     }
 }
 
-- (void)performStopBuild
+- (void) performStopBuild
 {
   if (_isBuilding)
     {
-      [buildButton performClick:self];
+      [buildButton performClick: self];
     }
   else if (_isCleaning)
     {
-      [cleanButton performClick:self];
+      [cleanButton performClick: self];
     }
 }
 
 // --- GUI Actions
-- (void)startBuild:(id)sender
+- (void) startBuild: (id)sender
 {
   NSString *tFString = [targetField stringValue];
-  NSArray  *tFArray = [tFString componentsSeparatedByString:@" "];
+  NSArray  *tFArray = [tFString componentsSeparatedByString: @" "];
 
-  if ([self stopBuild:self] == YES)
+  if ([self stopBuild: self] == YES)
     {// We've just stopped build process
       return;
     }
-  makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
+  makePath = [[NSUserDefaults standardUserDefaults] objectForKey: BuildTool];
 
-  [buildTarget setString:[tFArray objectAtIndex:0]];
+  [buildTarget setString: [tFArray objectAtIndex: 0]];
 
   // Set build arguments
   if ([buildTarget isEqualToString: @"Debug"])
     {
-      [buildArgs addObject:@"debug=yes"];
+      [buildArgs addObject: @"debug=yes"];
     }
-  else if ([buildTarget isEqualToString:@"Profile"])
+  else if ([buildTarget isEqualToString: @"Profile"])
     {
-      [buildArgs addObject:@"profile=yes"];
-      [buildArgs addObject:@"static=yes"];
+      [buildArgs addObject: @"profile=yes"];
+      [buildArgs addObject: @"static=yes"];
     }
-  else if ([buildTarget isEqualToString:@"Tarball"])
+  else if ([buildTarget isEqualToString: @"Tarball"])
     {
-      [buildArgs addObject:@"dist"];
+      [buildArgs addObject: @"dist"];
     }
-  else if ([buildTarget isEqualToString:@"RPM"])
+  else if ([buildTarget isEqualToString: @"RPM"])
     {
-      [buildArgs addObject:@"rpm"];
+      [buildArgs addObject: @"rpm"];
       postProcess = @selector (copyPackageTo:);
     }
 
-  statusString = [NSString stringWithString:@"Building..."];
-  [buildTarget setString:@"Build"];
-  [cleanButton setEnabled:NO];
-  [installButton setEnabled:NO];
-  [self build:self];
+  statusString = [NSString stringWithString: @"Building..."];
+  [buildTarget setString: @"Build"];
+  [cleanButton setEnabled: NO];
+  [installButton setEnabled: NO];
+  [self build: self];
   _isBuilding = YES;
 }
 
-- (BOOL)stopBuild:(id)sender
+- (BOOL) stopBuild: (id)sender
 {
   // [makeTask isRunning] doesn't work here.
   // "waitpid 7045, result -1, error No child processes" is printed.
@@ -507,7 +515,7 @@
   return NO;
 }
 
-- (void)startClean:(id)sender
+- (void) startClean: (id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
       objectForKey: PromptOnClean] isEqualToString: @"YES"])
@@ -517,40 +525,40 @@
 			  @"Yes", @"No", nil, [currentProject projectName])
 	  == NSAlertAlternateReturn)
 	{
-	  [cleanButton setState:NSOffState];
+	  [cleanButton setState: NSOffState];
 	  return;
 	}
     }
   [buildTarget setString: @"Clean"];
   statusString = [NSString stringWithString: @"Cleaning..."];
   [buildArgs addObject: @"distclean"];
-  [buildButton setEnabled:NO];
-  [installButton setEnabled:NO];
+  [buildButton setEnabled: NO];
+  [installButton setEnabled: NO];
   [self build: self];
   _isCleaning = YES;
 }
 
-- (void)startInstall:(id)sender
+- (void) startInstall: (id)sender
 {
-  [buildTarget setString:@"Install"];
-  statusString = [NSString stringWithString:@"Installing..."];
-  [buildArgs addObject:@"install"];
-  [buildButton setEnabled:NO];
-  [cleanButton setEnabled:NO];
-  [self build:self];
+  [buildTarget setString: @"Install"];
+  statusString = [NSString stringWithString: @"Installing..."];
+  [buildArgs addObject: @"install"];
+  [buildButton setEnabled: NO];
+  [cleanButton setEnabled: NO];
+  [self build: self];
 }
 
-- (void)showOptionsPanel:(id)sender
+- (void) showOptionsPanel: (id)sender
 {
   if (!optionsPanel)
     {
       [self _createOptionsPanel];
     }
-  [optionsPanel orderFront:nil];
+  [optionsPanel orderFront: nil];
 }
 
 // --- Actions
-- (void)build:(id)sender
+- (void) build: (id)sender
 {
   NSPipe       *logPipe;
   NSPipe       *errorPipe;
@@ -575,8 +583,8 @@
       [currentProject save];
     }
 
-  if ([buildTarget isEqualToString:@"RPM"]
-      && [env objectForKey:@"RPM_TOPDIR"] == nil)
+  if ([buildTarget isEqualToString: @"RPM"]
+      && [env objectForKey: @"RPM_TOPDIR"] == nil)
     {
       NSRunAlertPanel(@"Attention!",
 		      @"First set the environment variable 'RPM_TOPDIR'!",
@@ -589,38 +597,38 @@
   readHandle = [logPipe fileHandleForReading];
   [readHandle waitForDataInBackgroundAndNotify];
 
-  [NOTIFICATION_CENTER addObserver:self 
-                          selector:@selector(logStdOut:)
-			      name:NSFileHandleDataAvailableNotification
-			    object:readHandle];
+  [NOTIFICATION_CENTER addObserver: self 
+                          selector: @selector(logStdOut:)
+			      name: NSFileHandleDataAvailableNotification
+			    object: readHandle];
 
   errorPipe = [NSPipe pipe];
   errorReadHandle = [errorPipe fileHandleForReading];
   [errorReadHandle waitForDataInBackgroundAndNotify];
 
-  [NOTIFICATION_CENTER addObserver:self 
-                          selector:@selector(logErrOut:) 
-			      name:NSFileHandleDataAvailableNotification
-			    object:errorReadHandle];
+  [NOTIFICATION_CENTER addObserver: self 
+                          selector: @selector(logErrOut:) 
+			      name: NSFileHandleDataAvailableNotification
+			    object: errorReadHandle];
 
-  [buildStatusField setStringValue:statusString];
+  [buildStatusField setStringValue: statusString];
 
   // Run make task
   [logOutput setString: @""];
   [errorOutput setString: @""];
 
-  [NOTIFICATION_CENTER addObserver:self 
-                          selector:@selector(buildDidTerminate:) 
-			      name:NSTaskDidTerminateNotification
-			    object:nil];
+  [NOTIFICATION_CENTER addObserver: self 
+                          selector: @selector(buildDidTerminate:) 
+			      name: NSTaskDidTerminateNotification
+			    object: nil];
 
   makeTask = [[NSTask alloc] init];
-  [makeTask setArguments:buildArgs];
+  [makeTask setArguments: buildArgs];
   [makeTask setCurrentDirectoryPath: [currentProject projectPath]];
-  [makeTask setLaunchPath:makePath];
+  [makeTask setLaunchPath: makePath];
 
-  [makeTask setStandardOutput:logPipe];
-  [makeTask setStandardError:errorPipe];
+  [makeTask setStandardOutput: logPipe];
+  [makeTask setStandardError: errorPipe];
 
   NS_DURING
     {
@@ -634,13 +642,13 @@
 		      
       //Clean up after task is terminated
       [[NSNotificationCenter defaultCenter] 
-	postNotificationName:NSTaskDidTerminateNotification
-	              object:makeTask];
+	postNotificationName: NSTaskDidTerminateNotification
+	              object: makeTask];
     }
   NS_ENDHANDLER
 }
 
-- (void)buildDidTerminate:(NSNotification *)aNotif
+- (void) buildDidTerminate: (NSNotification *)aNotif
 {
   int status;
 
@@ -649,11 +657,11 @@
       return;
     }
 
-//  [NOTIFICATION_CENTER removeObserver:self];
+//  [NOTIFICATION_CENTER removeObserver: self];
 
-  [NOTIFICATION_CENTER removeObserver:self 
-			         name:NSTaskDidTerminateNotification
-			       object:nil];
+  [NOTIFICATION_CENTER removeObserver: self 
+			         name: NSTaskDidTerminateNotification
+			       object: nil];
 
   // If task was not launched catch exception
   NS_DURING
@@ -669,44 +677,44 @@
   if (status == 0)
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ succeeded!", buildTarget] 
-	                     error:NO
-			   newLine:NO];
-      [buildStatusField setStringValue:[NSString stringWithFormat: 
+	[NSString stringWithFormat: @"=== %@ succeeded!", buildTarget] 
+	                     error: NO
+			   newLine: NO];
+      [buildStatusField setStringValue: [NSString stringWithFormat: 
 	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
     } 
   else
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ terminated!", buildTarget]
-	                     error:NO
-			   newLine:NO];
-      [buildStatusField setStringValue:[NSString stringWithFormat: 
+	[NSString stringWithFormat: @"=== %@ terminated!", buildTarget]
+	                     error: NO
+			   newLine: NO];
+      [buildStatusField setStringValue: [NSString stringWithFormat: 
 	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
     }
 
   // Rstore buttons state
-  if ([buildTarget isEqualToString:@"Build"])
+  if ([buildTarget isEqualToString: @"Build"])
     {
-      [buildButton setState:NSOffState];
-      [cleanButton setEnabled:YES];
-      [installButton setEnabled:YES];
+      [buildButton setState: NSOffState];
+      [cleanButton setEnabled: YES];
+      [installButton setEnabled: YES];
     }
-  else if ([buildTarget isEqualToString:@"Clean"])
+  else if ([buildTarget isEqualToString: @"Clean"])
     {
-      [cleanButton setState:NSOffState];
-      [buildButton setEnabled:YES];
-      [installButton setEnabled:YES];
+      [cleanButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [installButton setEnabled: YES];
     }
-  else if ([buildTarget isEqualToString:@"Install"])
+  else if ([buildTarget isEqualToString: @"Install"])
     {
-      [installButton setState:NSOffState];
-      [buildButton setEnabled:YES];
-      [cleanButton setEnabled:YES];
+      [installButton setState: NSOffState];
+      [buildButton setEnabled: YES];
+      [cleanButton setEnabled: YES];
     }
 
   [buildArgs removeAllObjects];
-  [buildTarget setString:@"Default"];
+  [buildTarget setString: @"Default"];
 
   RELEASE(makeTask);
   makeTask = nil;
@@ -714,7 +722,7 @@
   // Run post process if configured
   if (status && postProcess)
     {
-      [self performSelector:postProcess];
+      [self performSelector: postProcess];
       postProcess = NULL;
     }
 
@@ -722,9 +730,16 @@
   _isCleaning = NO;
 }
 
-- (void)popupChanged:(id)sender
+- (void) popupChanged: (id)sender
 {
-  NSString *target = [targetField stringValue];
+  NSString		*target;
+
+  [currentProject setProjectDictObject: [popup titleOfSelectedItem]
+				forKey: @"BuildTarget"
+				notify: YES];
+  [currentProject setProjectDictObject: [buildTargetArgsField stringValue]
+				forKey: @"BuildTargetArgs"
+				notify: YES];
 
   target = [NSString stringWithFormat: 
             @"%@ with args ' %@ '", 
@@ -734,13 +749,13 @@
   [targetField setStringValue: target];
 }
 
-- (void)logStdOut:(NSNotification *)aNotif
+- (void) logStdOut: (NSNotification *)aNotif
 {
   NSData *data;
 
   if ((data = [readHandle availableData]))
     {
-      [self logData:data error:NO];
+      [self logData: data error: NO];
     }
 
   if (makeTask)
@@ -749,13 +764,13 @@
     }
   else
     {
-      [NOTIFICATION_CENTER removeObserver:self 
-			             name:NSFileHandleDataAvailableNotification
-			           object:readHandle];
+      [NOTIFICATION_CENTER removeObserver: self 
+			             name: NSFileHandleDataAvailableNotification
+			           object: readHandle];
     }
 }
 
-- (void)logErrOut:(NSNotification *)aNotif
+- (void) logErrOut: (NSNotification *)aNotif
 {
   NSData *data;
 
@@ -763,7 +778,7 @@
   
   if ((data = [errorReadHandle availableData]))
     {
-      [self logData:data error:YES];
+      [self logData: data error: YES];
     }
 
   if (makeTask)
@@ -772,13 +787,13 @@
     }
   else
     {
-      [NOTIFICATION_CENTER removeObserver:self 
-			             name:NSFileHandleDataAvailableNotification
-			           object:errorReadHandle];
+      [NOTIFICATION_CENTER removeObserver: self 
+			             name: NSFileHandleDataAvailableNotification
+			           object: errorReadHandle];
     }
 }
 
-- (void)copyPackageTo:(NSString *)path
+- (void) copyPackageTo: (NSString *)path
 {
   NSString *source = nil;
   NSString *dest = nil;
@@ -788,8 +803,8 @@
   // Copy the rpm files to the source directory
   if (source) 
   {
-    [[NSFileManager defaultManager] copyPath:srcrpm toPath:dest handler:nil];
-    [[NSFileManager defaultManager] copyPath:rpm    toPath:dest handler:nil];
+    [[NSFileManager defaultManager] copyPath: srcrpm toPath: dest handler: nil];
+    [[NSFileManager defaultManager] copyPath: rpm    toPath: dest handler: nil];
   }
 }
 
@@ -797,45 +812,45 @@
 
 @implementation PCProjectBuilder (BuildLogging)
 
-- (void)logString:(NSString *)string
-            error:(BOOL)yn
+- (void) logString: (NSString *)string
+             error: (BOOL)yn
 {
-  [self logString:string error:yn newLine:NO];
+  [self logString: string error: yn newLine: NO];
 }
 
-- (void)logString:(NSString *)str
-            error:(BOOL)yn
-	  newLine:(BOOL)newLine
+- (void) logString: (NSString *)str
+             error: (BOOL)yn
+	   newLine: (BOOL)newLine
 {
   NSTextView *out = (yn) ? errorOutput : logOutput;
 
-  [out replaceCharactersInRange:
-    NSMakeRange([[out string] length],0) withString:str];
+  [out replaceCharactersInRange: 
+    NSMakeRange([[out string] length],0) withString: str];
 
   if (newLine)
     {
-      [out replaceCharactersInRange:
-	NSMakeRange([[out string] length], 0) withString:@"\n"];
+      [out replaceCharactersInRange: 
+	NSMakeRange([[out string] length], 0) withString: @"\n"];
     }
   else
     {
-      [out replaceCharactersInRange:
-	NSMakeRange([[out string] length], 0) withString:@" "];
+      [out replaceCharactersInRange: 
+	NSMakeRange([[out string] length], 0) withString: @" "];
     }
 
-  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
-  [out setNeedsDisplay:YES];
+  [out scrollRangeToVisible: NSMakeRange([[out string] length], 0)];
+  [out setNeedsDisplay: YES];
 }
 
-- (void)logData:(NSData *)data
-          error:(BOOL)yn
+- (void) logData: (NSData *)data
+           error: (BOOL)yn
 {
   NSString *s = nil;
 
-  s = [[NSString alloc] initWithData:data 
-                            encoding:[NSString defaultCStringEncoding]];
+  s = [[NSString alloc] initWithData: data 
+                            encoding: [NSString defaultCStringEncoding]];
 			    
-  [self logString:s error:yn newLine:NO];
+  [self logString: s error: yn newLine: NO];
 
   RELEASE(s);
 }
