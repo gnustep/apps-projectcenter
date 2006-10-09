@@ -2,4 +2,6 @@
 
 	* GNUmakefile (GNUSTEP_INSTALLATION_DIR): Do not set
 	GNUSTEP_INSTALLATION_DIR.  It should never be set in GNUmakefiles.
-
+	* Library/GNUmakefile: Same change.
+	* Modules/GNUmakefile: Same change.
+	* ProjectCenter/Resources/GNUmakefile: Same change.
