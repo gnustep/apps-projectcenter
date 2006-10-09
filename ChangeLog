@@ -1,0 +1,5 @@
+2006-10-09  Nicola Pero <nicola.pero@meta-innovation.com>
+
+	* GNUmakefile (GNUSTEP_INSTALLATION_DIR): Do not set
+	GNUSTEP_INSTALLATION_DIR.  It should never be set in GNUmakefiles.
+
