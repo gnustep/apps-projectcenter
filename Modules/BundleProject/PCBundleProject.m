@@ -240,6 +240,27 @@
     }
   else
     {
+      /* PS - here the stuff is more complex than usual.
+       *
+       * There is a lot of potential for non-experienced users to
+       * screw up their bundle installation setup here!
+       *
+       * Basically, BUNDLE_INSTALL_DIR for bundles should be set by
+       * default to $(GNUSTEP_BUNDLES), and only experienced users
+       * should change that, normally by specifying a subdirectory.
+       * Unfortunately, ProjectCenter used to set it to something
+       * else (the explicit location of GNUSTEP_BUNDLES in the USER
+       * domain).
+       *
+       * In many cases people will want to install bundles with their
+       * application; in that case, the bundles should go inside the
+       * application directory.  gnustep-make supports that, but I
+       * don't think ProjectCenter does.  In that case the bundles are
+       * not installed (STANDARD_INSTALL = no for them) directly, but
+       * are instead copied locally into the application's Resource
+       * directory.  When the application is installed, the bundles
+       * are automatically installed with it.
+       */
       [mff appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR = %@\n",
         installDir]];
     }
