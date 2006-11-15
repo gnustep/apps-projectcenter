@@ -16,7 +16,7 @@
     LIBRARIES = ("gnustep-base","gnustep-gui");
     LOCALIZED_RESOURCES = ();
     MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)";
-    INSTALLDIR = "$(HOME)/GNUstep/Library/Bundles";
+    INSTALLDIR = "$(GNUSTEP_BUNDLES)";
     OBJC_COMPILEROPTIONS = "";
     OTHER_RESOURCES = ();
     OTHER_SOURCES = ();

@@ -1,3 +1,18 @@
+2006-11-15  Nicola Pero  <nicola@nicola-laptop>
+
+	* Modules/GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Install the
+	bundles in GNUSTEP_INSTALLATION_DIR, not in GNUSTEP_SYSTEM_ROOT.
+	* Modules/ApplicationProject/PCAppProject.m ([PCAppProject
+	-appendHead:]): Do not hardcode GNUSTEP_INSTALLATION_DIR in
+	GNUmakefiles.  See comments in the file for an explanation of how
+	to improve PC's installation controls.
+	* Modules/RenaissanceProject/PCRenaissanceProject.m
+	([PCRenaissanceProject -appendHead:]): Same change.
+	* Modules/ToolProject/PCToolProject.m ([PCToolProject
+	-appendHead:]): Same change.
+	* Modules/BundleProject/Resources/PC.project (INSTALLDIR): Install
+	bundles by default in $(GNUSTEP_BUNDLES).	
+
 2006-10-21 15:41-EDT Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Resources/ProjectCenter.gorm: Corrected issue with dangling menu/

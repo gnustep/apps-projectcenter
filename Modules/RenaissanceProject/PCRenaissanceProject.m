@@ -502,9 +502,21 @@
     }
   else
     {
+      /* FIXME - we should never hardcode installation information in
+       * GNUmakefiles.  Presumably you may want to pass this
+       * information to make on the command line though!  It shouldn't
+       * be hardcoded in the makefile though.  If we add the
+       * functionality of passing it on the command-line, it should be
+       * passed as in make GNUSTEP_INSTALLATION_DOMAIN=SYSTEM rather
+       * than GNUSTEP_INSTALLATION_DIR.  So we should also have the
+       * user select an installation domain rather than an actual
+       * directory (that would be pretty cool). -- Nicola
+       */
+      /*
       [mff appendString: 
 	[NSString stringWithFormat: @"GNUSTEP_INSTALLATION_DIR = %@\n",
         installDir]];
+      */
     }
 }
 

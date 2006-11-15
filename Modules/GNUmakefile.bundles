@@ -20,5 +20,5 @@ ifeq ($(DO_LIB_LINK), yes)
 endif
 
 BUNDLE_EXTENSION = .bundle
-BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Applications/ProjectCenter.app/Resources
+BUNDLE_INSTALL_DIR = $(GNUSTEP_INSTALLATION_DIR)/Applications/ProjectCenter.app/Resources
 $(PACKAGE_NAME)_STANDARD_INSTALL = no
