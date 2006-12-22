@@ -47,7 +47,8 @@
         | NSClosableWindowMask
         | NSMiniaturizableWindowMask
         | NSResizableWindowMask;
-	
+
+
   windowWidth = [[NSFont userFixedPitchFontOfSize:0.0] widthOfString:@"A"];
   windowWidth *= 80;
   windowWidth += 35+80;
@@ -172,7 +173,8 @@
       _isExternal = YES;
 
       ASSIGN(defaultFont, [PCEditorView defaultEditorFont]);
-      ASSIGN(highlightFont, [PCEditorView defaultEditorBoldFont]);
+      ASSIGN(highlightFont, [PCEditorView defaultEditorFont]);
+      ASSIGN(highlightColor, [NSColor greenColor]);
       ASSIGN(textColor, [NSColor blackColor]);
       ASSIGN(backgroundColor, [NSColor whiteColor]);
       ASSIGN(readOnlyColor, [NSColor lightGrayColor]);
@@ -182,6 +184,8 @@
       previousFont = nil;
 
       isCharacterHighlit = NO;
+      highlited_chars[0] = -1;
+      highlited_chars[1] = -1;
     }
 
   return self;
@@ -216,11 +220,11 @@
 
 - (void)setParser:(id)parser
 {
-/*  NSLog(@"RC aParser:%i parser:%i", 
-	[aParser retainCount], [parser retainCount]);*/
+//  NSLog(@"RC aParser:%i parser:%i", 
+//	[aParser retainCount], [parser retainCount]);
   ASSIGN(aParser, parser);
-/*  NSLog(@"RC aParser:%i parser:%i", 
-	[aParser retainCount], [parser retainCount]);*/
+//  NSLog(@"RC aParser:%i parser:%i", 
+//	[aParser retainCount], [parser retainCount]);
 }
 
 - (id)openFileAtPath:(NSString *)file
@@ -479,8 +483,6 @@
       || [[item pathExtension] isEqualToString:@"h"])
     {
       ASSIGN(parserClasses, [aParser classNames]);
-
-      NSLog(@"Class names %@@", parserClasses);
 
       items = [NSMutableArray array];
       enumerator = [parserClasses objectEnumerator];
@@ -1100,72 +1102,84 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-@implementation PCEditor (Parentesis)
+@implementation PCEditor (Parenthesis)
 
 - (void)unhighlightCharacter
 {
-  if (isCharacterHighlit)
-    {
-      NSTextStorage *textStorage = [_intEditorView textStorage];
-      NSRange       r = NSMakeRange(highlitCharacterLocation, 1);
+  int           i;
+  NSTextStorage *textStorage = [_intEditorView textStorage];
 
-      NSLog(@"highlight");
+  [textStorage beginEditing];
+
+//  if (isCharacterHighlit)
+  for (i = 0; (highlited_chars[i] != -1 && i < 2); i++)
+    {
+      NSRange       r = NSMakeRange(highlited_chars[i], 1);
+//      NSRange       r = NSMakeRange(highlitCharacterLocation, i);
+
+//      NSLog(@"unhighlight");
 
       isCharacterHighlit = NO;
-
-      [textStorage beginEditing];
 
       // restore the character's color and font attributes
       if (previousFont != nil)
         {
-          [textStorage addAttribute: NSFontAttributeName
-                              value: previousFont
-                              range: r];
+          [textStorage addAttribute:NSFontAttributeName
+                              value:previousFont
+                              range:r];
         }
       else
         {
-          [textStorage removeAttribute: NSFontAttributeName range: r];
+          [textStorage removeAttribute:NSFontAttributeName range:r];
         }
 
       if (previousFGColor != nil)
         {
-          [textStorage addAttribute: NSForegroundColorAttributeName
-                              value: previousFGColor
-                              range: r];
+          [textStorage addAttribute:NSForegroundColorAttributeName
+                              value:previousFGColor
+                              range:r];
         }
       else
         {
-          [textStorage removeAttribute: NSForegroundColorAttributeName
-                                 range: r];
+          [textStorage removeAttribute:NSForegroundColorAttributeName
+                                 range:r];
         }
 
       if (previousBGColor != nil)
         {
-          [textStorage addAttribute: NSBackgroundColorAttributeName
-                              value: previousBGColor
-                              range: r];
+          [textStorage addAttribute:NSBackgroundColorAttributeName
+                              value:previousBGColor
+                              range:r];
         }
       else
         {
-          [textStorage removeAttribute: NSBackgroundColorAttributeName
-                                 range: r];
+          [textStorage removeAttribute:NSBackgroundColorAttributeName
+                                 range:r];
         }
 
-      [textStorage endEditing];
+      highlited_chars[i] = -1;
     }
+
+  [textStorage endEditing];
 }
 
 - (void)highlightCharacterAt:(unsigned int)location
 {
-  if (isCharacterHighlit == NO)
+  int i;
+
+  for (i = 0; highlited_chars[i] != -1; i++) {};
+
+//  if (isCharacterHighlit == NO)
+  if (i < 2)
     {
-      NSTextStorage * textStorage = [_intEditorView textStorage];
-      NSRange r = NSMakeRange(location, 1);
-      NSRange tmp;
+      NSTextStorage *textStorage = [_intEditorView textStorage];
+      NSRange       r = NSMakeRange(location, 1);
+      NSRange       tmp;
 
-      NSLog(@"highlight");
+//      NSLog(@"highlight");
 
-      highlitCharacterLocation = location;
+//      highlitCharacterLocation = location;
+      highlited_chars[i] = location;
 
       isCharacterHighlit = YES;
 
@@ -1173,26 +1187,29 @@ unsigned int FindDelimiterInString(NSString * string,
 
       // store the previous character's attributes
       ASSIGN(previousFGColor,
-        [textStorage attribute: NSForegroundColorAttributeName
-                       atIndex: location
-                effectiveRange: &tmp]);
+        [textStorage attribute:NSForegroundColorAttributeName
+                       atIndex:location
+                effectiveRange:&tmp]);
       ASSIGN(previousBGColor,
-        [textStorage attribute: NSBackgroundColorAttributeName
-                       atIndex: location
-                effectiveRange: &tmp]);
-      ASSIGN(previousFont, [textStorage attribute: NSFontAttributeName
-                                          atIndex: location
-                                   effectiveRange: &tmp]);
+        [textStorage attribute:NSBackgroundColorAttributeName
+                       atIndex:location
+                effectiveRange:&tmp]);
+      ASSIGN(previousFont, [textStorage attribute:NSFontAttributeName
+                                          atIndex:location
+                                   effectiveRange:&tmp]);
 
-      [textStorage addAttribute: NSFontAttributeName
-                          value: highlightFont
-                          range: r];
-      [textStorage addAttribute: NSForegroundColorAttributeName
-                          value: highlightColor
-                          range: r];
+      [textStorage addAttribute:NSFontAttributeName
+                          value:highlightFont
+                          range:r];
+      [textStorage addAttribute:NSBackgroundColorAttributeName
+                          value:highlightColor
+                          range:r];
+/*      [textStorage addAttribute:NSForegroundColorAttributeName
+                          value:highlightColor
+                          range:r];
 
-      [textStorage removeAttribute: NSBackgroundColorAttributeName
-                             range: r];
+      [textStorage removeAttribute:NSBackgroundColorAttributeName
+                             range:r];*/
 
       [textStorage endEditing];
     }
@@ -1200,10 +1217,10 @@ unsigned int FindDelimiterInString(NSString * string,
 
 - (void)computeNewParenthesisNesting
 {
-  NSRange selectedRange;
-  NSString * myString;
+  NSRange  selectedRange;
+  NSString *myString;
 
-  if ([[NSUserDefaults standardUserDefaults] boolForKey: @"DontTrackNesting"])
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"DontTrackNesting"])
     {
       return;
     }
@@ -1222,9 +1239,9 @@ unsigned int FindDelimiterInString(NSString * string,
       // we must initialize these explicitly in order to make
       // gcc shut up about flow control
       unichar oppositeDelimiter = 0;
-      BOOL searchBackwards = NO;
+      BOOL    searchBackwards = NO;
 
-      c = [myString characterAtIndex: selectedRange.location];
+      c = [myString characterAtIndex:selectedRange.location];
 
       // if it is, search for the opposite delimiter in a range
       // of at most 1000 characters around it in either forward
@@ -1243,7 +1260,8 @@ unsigned int FindDelimiterInString(NSString * string,
           // and in case a delimiter is found, highlight it
           if (result != NSNotFound)
             {
-              [self highlightCharacterAt: result];
+              [self highlightCharacterAt:selectedRange.location];
+              [self highlightCharacterAt:result];
             }
         }
     }

@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2006  Saso Kiselkov, Sergii Stoian
+    Copyright (C) 2005  Saso Kiselkov, Serg Stoyan
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -99,7 +99,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
         }
     }
 
-  if (firstCharOffset >= 0)
+  return firstCharOffset >= 0 ? firstCharOffset : 0;
+
+/*  if (firstCharOffset >= 0)
     {
       // if the indenting of the current line is lower than the indenting
       // of the previous actual line, we return the lower indenting
@@ -119,12 +121,13 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
    else
     {
       return 0;
-    }
+    }*/
 }
 
 @interface PCEditorView (Private)
 
 - (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
+- (void)performIndentation;
 
 @end
 
@@ -169,6 +172,194 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   [super insertText: [NSString stringWithCString: buf length: skip]];
 }
 
+// Go backward to first '\n' char or start of file
+- (int)lineStartIndexForIndex:(int)index forString:(NSString *)string
+{
+  int line_start;
+
+  // Get line start index moving from index backwards
+  for (line_start = index;line_start > 0;line_start--)
+    {
+      if ([string characterAtIndex:line_start] == '\n' &&
+	  line_start != index)
+	{
+	  line_start++;
+	  break;
+	}
+    }
+
+  NSLog(@"index: %i start: %i", index, line_start);
+
+  return line_start > index ? index : line_start;
+}
+
+- (int)lineEndIndexForIndex:(int)index forString:(NSString *)string
+{
+  int line_end;
+  int string_length = [string length];
+
+  // Get line start index moving from index backwards
+  for (line_end = index;line_end < string_length;line_end++)
+    {
+      if ([string characterAtIndex:line_end] == '\n')
+	{
+	  break;
+	}
+    }
+
+  NSLog(@"index: %i end: %i", index, line_end);
+
+  return line_end < string_length ? line_end : string_length;
+}
+
+- (int)previousLineStartIndexForIndex:(int)index forString:(NSString *)string
+{
+  int cur_line_start;
+  int prev_line_start;
+
+  cur_line_start = [self lineStartIndexForIndex:index forString:string];
+  prev_line_start = [self lineStartIndexForIndex:cur_line_start-1
+ 				       forString:string];
+
+  NSLog(@"index: %i prev_start: %i", index, prev_line_start);
+
+  return prev_line_start;
+}
+
+- (int)nextLineStartIndexForIndex:(int)index forString:(NSString *)string
+{
+  int cur_line_end;
+  int next_line_start;
+  int string_length = [string length];
+
+  cur_line_end = [self lineEndIndexForIndex:index forString:string];
+  next_line_start = cur_line_end + 1;
+
+  if (next_line_start < string_length)
+    {
+      return next_line_start;
+    }
+  else
+    {
+      return string_length;
+    }
+}
+
+- (unichar)firstCharOfLineForIndex:(int)index forString:(NSString *)string
+{
+  int line_start = [self lineStartIndexForIndex:index forString:string];
+  int i;
+  unichar c;
+
+  // Get leading whitespaces range
+  for (i = line_start; i >= 0; i++)
+    {
+      c = [string characterAtIndex:i];
+      if (!isspace(c))
+	{
+	  break;
+	}
+    }
+
+  fprintf(stderr, "First char: %c\n", c);
+
+  return c;
+}
+
+- (unichar)firstCharOfPrevLineForIndex:(int)index forString:(NSString *)string
+{
+  int line_start = [self previousLineStartIndexForIndex:index 
+						   forString:string];
+
+  return [self firstCharOfLineForIndex:line_start forString:string];
+}
+
+- (unichar)firstCharOfNextLineForIndex:(int)index
+{
+}
+
+- (void)performIndentation
+{
+  NSString *string = [self string];
+  int      location;
+  int      line_start;
+  int      offset;
+  unichar  c, fc, plfc, clfc;
+  NSRange  wsRange;
+  NSMutableString *indentString;
+  int i;
+  int point;
+
+  location = [self selectedRange].location;
+
+//  point = [self nextLineStartIndexForIndex:location forString:string];
+//  [self setSelectedRange:NSMakeRange(point, 0)];
+
+  clfc = [self firstCharOfLineForIndex:location forString:string];
+  plfc = [self firstCharOfPrevLineForIndex:location forString:string];
+
+  // Get leading whitespaces range
+  line_start = [self lineStartIndexForIndex:location forString:string];
+  for (offset = line_start; offset >= 0; offset++)
+    {
+      c = [string characterAtIndex:offset];
+      if (!isspace(c))
+	{
+	  wsRange = NSMakeRange(line_start, offset-line_start);
+	  break;
+	}
+    }
+
+  // Get indent
+  line_start = [self previousLineStartIndexForIndex:location forString:string];
+  for (offset = line_start; offset >= 0; offset++)
+    {
+      c = [string characterAtIndex:offset];
+      if (!isspace(c))
+	{
+	  offset = offset - line_start;
+	  NSLog(@"offset: %i", offset);
+	  break;
+	}
+    }
+
+  NSLog (@"clfc: %c plfc: %c", clfc, plfc);
+  if (plfc == '{' || clfc == '{')
+    {
+      offset += 2;
+    }
+  else if (clfc == '}' && plfc != '{')
+    {
+      offset -= 2; 
+    }
+
+  // Get offset from BOL of pervious line
+//  offset = ComputeIndentingOffset([self string], line_start-1);
+  NSLog(@"Indent offset: %i", offset);
+
+  // Replace current line whitespaces with new ones
+  indentString = [[NSMutableString alloc] initWithString:@""];
+  for (i = offset; i > 0; i--)
+    {
+      [indentString appendString:@" "];
+    }
+
+  [[self textStorage] replaceCharactersInRange:wsRange 
+				    withString:indentString];
+
+/*  if (location > line_start + offset)
+    {
+      point = location - offset;
+    }
+  else
+    {
+      point = location;
+    }
+  [self setSelectedRange:NSMakeRange(point, 0)];*/
+
+  [indentString release];
+}
+
 @end
 
 @implementation PCEditorView
@@ -178,7 +369,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   NSUserDefaults *df = [NSUserDefaults standardUserDefaults];
   NSString       *fontName;
   float          fontSize;
-  NSFont         *font;
+  NSFont         *font = nil;
 
   fontName = [df objectForKey:@"EditorFont"];
   fontSize = [df floatForKey:@"EditorFontSize"];
@@ -217,7 +408,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
   return [[NSFontManager sharedFontManager] convertFont:font
                                             toHaveTrait:NSBoldFontMask |
-					                NSItalicFontMask];
+                                                        NSItalicFontMask];
 }
 
 // ---
@@ -237,7 +428,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 }
 // ---
 
-- (void)dealloc
+- (void) dealloc
 {
   TEST_RELEASE(highlighter);
 
@@ -284,65 +475,72 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType
 {
   ASSIGN(highlighter, [[[SyntaxHighlighter alloc]
-	 initWithFileType:fileType 
-	      textStorage:[self textStorage]] autorelease]);
+    initWithFileType: fileType textStorage: [self textStorage]]
+    autorelease]);
 }
 
 - (void)insertText:text
 {
-  if ([text isKindOfClass: [NSString class]])
+  if ([text isKindOfClass:[NSString class]])
     {
       NSString * string = text;
 
-      if ([string isEqualToString: @"\n"])
+      if ([text characterAtIndex:0] == 27)
+	{
+	  NSLog(@"ESC key pressed. Ignoring it");
+	  return;
+	}
+
+      if ([string isEqualToString:@"\n"])
         {
-          if ([[NSUserDefaults standardUserDefaults]
-            boolForKey: @"ReturnDoesAutoindent"])
-            {
-              int offset = ComputeIndentingOffset([self string],
-                [self selectedRange].location);
-              char * buf;
+/*          if ([[NSUserDefaults standardUserDefaults]
+            boolForKey:@"ReturnDoesAutoindent"])
+            {*/
+	      int  location = [self selectedRange].location;
+              int  offset = ComputeIndentingOffset([self string], location);
+              char *buf;
 
               buf = (char *) malloc((offset + 2) * sizeof(unichar));
-              buf[0] = '\n';
+	      buf[0] = '\n';
               memset(&buf[1], ' ', offset);
               buf[offset+1] = '\0';
 
-              [super insertText: [NSString stringWithCString: buf]];
+              [super insertText:[NSString stringWithCString:buf]];
               free(buf);
-            }
+/*            }
           else
             {
-              [super insertText: text];
-            }
+              [super insertText:text];
+            }*/
         }
-      else if ([string isEqualToString: @"\t"])
+      else if ([string isEqualToString:@"\t"])
         {
-          switch ([[NSUserDefaults standardUserDefaults]
-            integerForKey: @"TabConversion"])
+	  [self performIndentation];
+/*          switch ([[NSUserDefaults standardUserDefaults]
+            integerForKey:@"TabConversion"])
             {
             case 0:  // no conversion
-              [super insertText: text];
+              [super insertText:text];
               break;
             case 1:  // 2 spaces
-              [super insertText: @"  "];
+              [super insertText:@"  "];
               break;
             case 2:  // 4 spaces
-              [super insertText: @"    "];
+              [super insertText:@"    "];
               break;
             case 3:  // 8 spaces
-              [super insertText: @"        "];
+              [super insertText:@"        "];
               break;
             case 4:  // aligned to tab boundaries of 2 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize: 2];
+              [self insertSpaceFillAlignedAtTabsOfSize:2];
               break;
             case 5:  // aligned to tab boundaries of 4 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize: 4];
+              [self insertSpaceFillAlignedAtTabsOfSize:4];
               break;
             case 6:  // aligned to tab boundaries of 8 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize: 8];
+              [self insertSpaceFillAlignedAtTabsOfSize:8];
               break; 
-            }
+            }*/
         }
       else
         {
@@ -362,9 +560,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
  */
 - (void)keyDown:(NSEvent *)ev
 {
-  [editor editorTextViewWillPressKey: self];
+  [editor editorTextViewWillPressKey:self];
   [super keyDown:ev];
-  [editor editorTextViewDidPressKey: self];
+  [editor editorTextViewDidPressKey:self];
 }
 
 - (void)paste:sender
@@ -376,7 +574,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)mouseDown:(NSEvent *)ev
 {
+  [editor editorTextViewWillPressKey:self];
   [super mouseDown:ev];
+  [editor editorTextViewDidPressKey:self];
 }
 
 - (NSRect)selectionRect

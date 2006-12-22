@@ -26,12 +26,12 @@
 #ifndef _PCEditor_h_
 #define _PCEditor_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include <Protocols/CodeEditor.h>
-#include <Protocols/CodeParser.h>
+#import <Protocols/CodeEditor.h>
+#import <Protocols/CodeParser.h>
 
-#include <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectEditor.h>
 
 @class PCEditorView;
 
@@ -75,6 +75,7 @@
   // is YES if we are currently highlighting a delimiter character
   // otherwise NO
   BOOL isCharacterHighlit;
+  int  highlited_chars[2];
 
   // the stored color and font attributes of the highlit character, so
   // that they can be restored later on when the character is un-highlit
@@ -130,7 +131,7 @@
 
 @end
 
-@interface PCEditor (Parentesis)
+@interface PCEditor (Parenthesis)
 
 - (void)unhighlightCharacter;
 - (void)highlightCharacterAt:(unsigned int)location;

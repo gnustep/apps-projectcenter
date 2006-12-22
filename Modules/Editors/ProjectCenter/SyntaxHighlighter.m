@@ -748,16 +748,16 @@ LocateString(NSString * str,
   [super dealloc];
 }
 
-- (void)highlightRange:(NSRange)r
+- (void) highlightRange: (NSRange) r
 {
   if (delayedProcessedRange.length > 0)
     {
       [self beginEditingIfNeeded];
-      [self fixUpContextsInRange:delayedProcessedRange];
-      [self fixUpKeywordsInRange:delayedProcessedRange];
+      [self fixUpContextsInRange: delayedProcessedRange];
+      [self fixUpKeywordsInRange: delayedProcessedRange];
 
-      if ([self contextAtEndOfRange:delayedProcessedRange] !=
-          [self contextAfterRange:delayedProcessedRange])
+      if ([self contextAtEndOfRange: delayedProcessedRange] !=
+          [self contextAfterRange: delayedProcessedRange])
         {
           NSRange invalidatedRange;
 
@@ -765,9 +765,9 @@ LocateString(NSString * str,
 
           invalidatedRange = NSMakeRange(NSMaxRange(delayedProcessedRange),
             [textStorage length] - NSMaxRange(delayedProcessedRange));
-          [textStorage addAttribute:KeywordsNotFixedAttributeName
-                              value:[NSNull null]
-                              range:invalidatedRange];
+          [textStorage addAttribute: KeywordsNotFixedAttributeName
+                              value: [NSNull null]
+                              range: invalidatedRange];
         }
     }
   else

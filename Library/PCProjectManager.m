@@ -1079,7 +1079,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *editor = [ud objectForKey:Editor];
 
-//  editor = [PCProjectEditor openFileInEditor:path];
+  editor = [PCProjectEditor openFileInEditor:path];
 
   if (![editor isEqualToString:@"ProjectCenter"])
     {

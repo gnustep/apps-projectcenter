@@ -28,7 +28,7 @@
 #import <Foundation/NSException.h>
 
 static void
-FreeTextPatternItem (TextPatternItem * item)
+FreeTextPatternItem (TextPatternItem *item)
 {
   if (item->type == MultipleCharactersTextPatternItem)
     {
@@ -39,7 +39,7 @@ FreeTextPatternItem (TextPatternItem * item)
 }
 
 static TextPatternItem *
-ParseTextPatternItem (NSString * string, unsigned int * index)
+ParseTextPatternItem (NSString *string, unsigned int *index)
 {
   unsigned int i = *index, n = [string length];
   TextPatternItem * newItem;
@@ -258,7 +258,7 @@ ParseTextPatternItem (NSString * string, unsigned int * index)
 }
 
 static void
-DescribeTextPatternItem(TextPatternItem * item)
+DescribeTextPatternItem(TextPatternItem *item)
 {
   switch (item->type)
     {
@@ -295,7 +295,7 @@ DescribeTextPatternItem(TextPatternItem * item)
 
 
 TextPattern *
-CompileTextPattern (NSString * string)
+CompileTextPattern (NSString *string)
 {
   TextPattern * pattern;
   unsigned int i, n;
@@ -327,7 +327,7 @@ CompileTextPattern (NSString * string)
 }
 
 void
-FreeTextPattern (TextPattern * pattern)
+FreeTextPattern (TextPattern *pattern)
 {
   unsigned int i;
 
@@ -344,7 +344,7 @@ FreeTextPattern (TextPattern * pattern)
 }
 
 static inline BOOL
-IsMemberOfCharacterClass(unichar c, unichar * charClass, unsigned int n)
+IsMemberOfCharacterClass(unichar c, unichar *charClass, unsigned int n)
 {
   unsigned int i;
 
@@ -379,10 +379,10 @@ my_isalnum (unichar c)
 }
 
 static inline BOOL
-CheckTextPatternItemPresence(TextPatternItem * item,
-                             unichar * string,
+CheckTextPatternItemPresence(TextPatternItem *item,
+                             unichar *string,
                              unsigned int stringLength,
-                             unsigned int * offset)
+                             unsigned int *offset)
 {
   switch (item->type)
     {
@@ -540,8 +540,8 @@ CheckTextPatternItemPresence(TextPatternItem * item,
 }
 
 unsigned int
-CheckTextPatternPresenceInString(TextPattern * pattern,
-                                 unichar * string,
+CheckTextPatternPresenceInString(TextPattern *pattern,
+                                 unichar *string,
                                  unsigned int stringLength,
                                  unsigned int index)
 {
@@ -570,7 +570,7 @@ CheckTextPatternPresenceInString(TextPattern * pattern,
     }
 }
 
-unichar * PermissibleCharactersAtPatternBeginning(TextPattern * pattern)
+unichar *PermissibleCharactersAtPatternBeginning(TextPattern *pattern)
 {
   unsigned int i;
 
