@@ -2,9 +2,9 @@
 # GNUmakefile
 #
 
+GNUSTEP_INSTALLATION_DOMAIN = SYSTEM
 include $(GNUSTEP_MAKEFILES)/common.make
 GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
-#GNUSTEP_BUILD_DIR = $(HOME)/Projects/GNUstep/==BUILD==/ProjectCenter
 
 #
 # Main application
@@ -18,7 +18,7 @@ ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 # Subprojects
 #
 SUBPROJECTS = \
-        Library \
+        Framework \
 	Modules
 
 #
