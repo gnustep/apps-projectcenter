@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http: //www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -23,28 +20,29 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#include <ProjectCenter/ProjectCenter.h>
+
 #include "PCInfoController.h"
-#include "Library/ProjectCenter.h"
 
 @implementation PCInfoController
 
-- (id) init
+- (id)init
 {
   if ((self = [super init]))
     {
       NSString *file;
 
-      file = [[NSBundle mainBundle] pathForResource: @"Info-gnustep" 
-	ofType: @"plist"];
+      file = [[NSBundle mainBundle] pathForResource:@"Info-gnustep" 
+	ofType:@"plist"];
 
-      infoDict = [NSDictionary dictionaryWithContentsOfFile: file];
+      infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
       RETAIN(infoDict);
     }
 
   return self;
 }
 
-- (void) dealloc
+- (void)dealloc
 {
   RELEASE(infoDict);
 
@@ -56,17 +54,17 @@
   [super dealloc];
 }
 
-- (void) showInfoWindow: (id)sender
+- (void)showInfoWindow:(id)sender
 {
 #if defined(GNUSTEP)
   if (!infoWindow)
     {
-      infoWindow = [[GSInfoPanel alloc] initWithDictionary: infoDict];
+      infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
     }
 
-  [infoWindow setTitle: @"Info"];
+  [infoWindow setTitle:@"Info"];
   [infoWindow center];
-  [infoWindow makeKeyAndOrderFront: self];
+  [infoWindow makeKeyAndOrderFront:self];
 #else
   NSRunAlertPanel(@"Info",
 		  @"OPENSTEP has no support for GSInfoPanel",

@@ -1,11 +1,8 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
-
+   
    This file is part of GNUstep.
 
    This application is free software; you can redistribute it and/or
@@ -28,7 +25,6 @@
 
 #include <AppKit/AppKit.h>
 
-@class PCServer;
 @class PCProjectManager;
 @class PCFileManager;
 @class PCMenuController;
@@ -45,7 +41,6 @@
   PCPrefController *prefController;
   PCLogController  *logController;
 
-  PCServer         *doServer;
   NSConnection     *doConnection;
 }
 
@@ -67,8 +62,6 @@
 - (PCInfoController *)infoController;
 - (PCPrefController *)prefController;
 - (PCLogController *)logController;
-
-- (PCServer *)doServer;
 
 //============================================================================
 //==== Application

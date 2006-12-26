@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -85,9 +82,9 @@
 - (void)fileNewUntitled:(id)sender;
 
 // Edit
-- (void)findShowPanel:(id)sender;
+/*- (void)findShowPanel:(id)sender;
 - (void)findNext:(id)sender;
-- (void)findPrevious:(id)sender;
+- (void)findPrevious:(id)sender;*/
 
 // Tools
 - (void)showInspector:(id)sender;

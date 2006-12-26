@@ -3,11 +3,13 @@
 #
 
 include $(GNUSTEP_MAKEFILES)/common.make
+GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
+#GNUSTEP_BUILD_DIR = $(HOME)/Projects/GNUstep/==BUILD==/ProjectCenter
 
 #
 # Main application
 #
-VERSION = 0.4.3
+VERSION = 0.5.0
 PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
@@ -26,12 +28,6 @@ ProjectCenter_RESOURCE_FILES = \
 Resources/ProjectCenter.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
-Images/FileC.tiff \
-Images/FileCH.tiff \
-Images/FileH.tiff \
-Images/FileHH.tiff \
-Images/FileM.tiff \
-Images/FileMH.tiff \
 Images/FileRTF.tiff \
 Images/FileProject.tiff \
 Images/Build.tiff \
@@ -74,20 +70,23 @@ Images/soundSuitcase.tiff \
 Images/soundSuitcaseH.tiff \
 Images/subprojectSuitcase.tiff \
 Images/subprojectSuitcaseH.tiff \
-Modules/AggregateProject/AggregateProject.bundle \
-Modules/ApplicationProject/ApplicationProject.bundle \
-Modules/BundleProject/BundleProject.bundle \
-Modules/LibraryProject/LibraryProject.bundle \
-Modules/RenaissanceProject/RenaissanceProject.bundle \
-Modules/ToolProject/ToolProject.bundle 
+Modules/Projects/Aggregate/Aggregate.project \
+Modules/Projects/Application/Application.project \
+Modules/Projects/Bundle/Bundle.project \
+Modules/Projects/Framework/Framework.project \
+Modules/Projects/Library/Library.project \
+Modules/Projects/ResourceSet/ResourceSet.project \
+Modules/Projects/Tool/Tool.project \
+Modules/Editors/ProjectCenter/ProjectCenter.editor \
+Modules/Parsers/ProjectCenter/ProjectCenter.parser
 
 #
 # Header files
 #
 ProjectCenter_HEADERS = \
-PCAppController.h \
-PCInfoController.h \
-PCPrefController.h
+Headers/PCAppController.h \
+Headers/PCInfoController.h \
+Headers/PCMenuController.h
 
 #
 # Class files

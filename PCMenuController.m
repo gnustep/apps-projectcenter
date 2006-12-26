@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -22,13 +19,15 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
+#include <ProjectCenter/ProjectCenter.h>
+
+#include <Protocols/CodeEditor.h>
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
 #include "PCInfoController.h"
-#include "Library/PCPrefController.h"
-#include "Library/PCLogController.h"
-#include "Library/ProjectCenter.h"
 
 @implementation PCMenuController
 
@@ -209,9 +208,10 @@
 	  [project addFiles:[NSArray arrayWithObject:newFilePath]
 	             forKey:PCNonProject
 		     notify:YES];
-	  [[project projectEditor] editorForFile:newFilePath
-	                            categoryPath:categoryPath
-				        windowed:NO];
+	  [[project projectEditor] openEditorForFile:newFilePath
+					categoryPath:categoryPath
+					    editable:YES
+					    windowed:NO];
 	}
     }
 }
@@ -257,7 +257,7 @@
 }
 
 // Edit. PCProjectEditor have to provide this menu and functionality
-- (void)findShowPanel:(id)sender
+/*- (void)findShowPanel:(id)sender
 {
   [[PCTextFinder sharedFinder] showFindPanel:self];
 }
@@ -270,7 +270,7 @@
 - (void)findPrevious:(id)sender
 {
   [[PCTextFinder sharedFinder] findPrevious:self];
-}
+}*/
 
 // Tools
 
@@ -499,7 +499,7 @@
     }
 
   // Find menu items
-  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
+/*  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
     {
       if (![[[PCTextFinder sharedFinder] findPanel] isVisible])
 	{
@@ -510,7 +510,7 @@
       if ([[menuItem title] isEqualToString:@"Jump to Selection"]) return NO;
       if ([[menuItem title] isEqualToString:@"Line Number..."]) return NO;
       if ([[menuItem title] isEqualToString:@"Man Page"]) return NO;
-    }
+    }*/
 
   // Toolbar
   if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]

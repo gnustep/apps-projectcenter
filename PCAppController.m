@@ -1,10 +1,7 @@
 /*
-   GNUstep ProjectCenter - http://www.gnustep.org
+   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
    Copyright (C) 2001 Free Software Foundation
-
-   Authors: Philippe C.D. Robert
-            Serg Stoyan
 
    This file is part of GNUstep.
 
@@ -22,14 +19,14 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
+#include <ProjectCenter/PCPrefController.h>
+#include <ProjectCenter/PCLogController.h>
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
 #include "PCInfoController.h"
-#include "Library/PCPrefController.h"
-#include "Library/PCLogController.h"
 
-#include "Library/ProjectCenter.h"
+#include <ProjectCenter/ProjectCenter.h>
 
 @implementation PCAppController
 
@@ -98,11 +95,6 @@
   return logController;
 }
 
-- (PCServer *)doServer
-{
-  return doServer;
-}
-
 //============================================================================
 //==== Misc...
 //============================================================================
@@ -139,29 +131,7 @@
     }
 
   [logController 
-    logMessage:@"Loading additional subsystems..." withTag:PC_INFO sender:self];
-
-  doServer = [[PCServer alloc] init];
-  
-  NS_DURING
-    
-  doConnection = [[NSConnection alloc] init];
-  [doConnection registerName:connectionName];
-  
-  NS_HANDLER
-    
-  NSRunAlertPanel(@"Warning!",
-		  @"Could not register the DO connection %@",
-                  @"OK",nil,nil,nil,
-		  connectionName);
-  NS_ENDHANDLER
-    
-  [[NSNotificationCenter defaultCenter] addObserver:doServer 
-                                           selector:@selector(connectionDidDie:)
-                                             name:NSConnectionDidDieNotification
-                                            object:doConnection];
-  
-  [doConnection setDelegate:doServer];
+    logMessage:NSLocalizedString(@"Loading additional subsystems...", @"When loaded additional bundles") withTag:INFO sender:self];
 
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCAppDidInitNotification
@@ -214,15 +184,15 @@
   NSLog (@"--- Application WILL terminate");
 #endif
 
-// It's broken. Disable it until support for GNUSTEP_BUILD_DIR will 
-// be implemented
-/*  if ([[[NSUserDefaults standardUserDefaults] 
+/*
+  if ([[[NSUserDefaults standardUserDefaults] 
       stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
     {
       [[NSFileManager defaultManager] 
 	removeFileAtPath:[projectManager rootBuildPath]
 	         handler:nil];
-    }*/
+    }
+*/
 
   [[NSUserDefaults standardUserDefaults] synchronize];
 
@@ -238,8 +208,6 @@
   RELEASE(logController);
   RELEASE(menuController);
   RELEASE(projectManager);
-
-  RELEASE(doServer);
 
 #ifdef DEVELOPMENT
   NSLog (@"--- Application WILL terminate.END");

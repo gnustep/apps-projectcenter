@@ -1,8 +1,6 @@
 #  GNUmakefile.preamble
 #
-#  Copyright (C) 2001 Free Software Foundation, Inc.
-#
-#  Author: Philippe C.D. Robert <probert@siggraph.org>
+#  Copyright (C) 2001-2005 Free Software Foundation, Inc.
 #
 #  This file is part of GNUstep
 #
@@ -24,10 +22,6 @@
 #  If not, write to the Free Software Foundation,
 #  59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 
-# TODO: Make sure if it's portable
-GMAKE = `which gmake`
-GDB = `which gdb`
-
 #
 # Flags dealing with compiling and linking
 #
@@ -36,8 +30,7 @@ GDB = `which gdb`
 ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -DPCDefaultBuildTool=@"\"$(GMAKE)\"" \
-                        -DPCDefaultDebugger=@"\"$(GDB)\""
+ADDITIONAL_OBJCFLAGS +=
 
 # Additional flags to pass to the C compiler
 ADDITIONAL_CFLAGS +=
@@ -46,7 +39,7 @@ ADDITIONAL_CFLAGS +=
 ADDITIONAL_INCLUDE_DIRS += -I./ -I./Headers
 
 # Additional LDFLAGS to pass to the linker
-ADDITIONAL_LDFLAGS +=
+ADDITIONAL_LDFLAGS += 
 
 # Additional library directories the linker should search
 ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current \
@@ -61,3 +54,4 @@ ADDITIONAL_GUI_LIBS += -lProjectCenter
 
 # Additional directories to be created during installation
 ADDITIONAL_INSTALL_DIRS +=
+

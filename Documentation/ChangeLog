@@ -1,60 +1,127 @@
-2006-01-16 Serg Stoyan <stoyan255@ukr.net>
+2006-11-20 Serg Stoyan <stoyan255@ukr.net>
 
-	* Release 0.4.3
-
-2005-11-18 Adam Fedor  <fedor@gnu.org>
-
-	* GNUmakefile.preamble: Change 'whereis' to which. (Make sure if it's
-	portable, Serg Stoyan). Correct ADDITIONAL_LIB_DIRS.
-	* Library/PCLogController.h: Change tags to PC_* because of conflict
-	on MingW. And is use in code.
-
-2005-11-15 Serg Stoyan <stoyan255@ukr.net>
-
-	* Library/GNUmakefile: Change framework version to 0.4.3
+	* Rewritte bundle loading mechanizm. Bundle now loaded on demand.
 	
-	* GNUmakefile: Change version to 0.4.3
+	* Created Protocols directory.
 	
-2005-11-10  Adam Fedor  <fedor@gnu.org>
-
-        * GNUmakefile.postamble: Add some hacks to copy header files on
-        Windows machines.
-        * GNUmakefile.preamble: Correct libs
-        * Library/GNUmakefile.postamble: Don't make dir links
-        * Modules/GNUmakefile.bundles: Add bundle libs on Windows.
-
-2005-07-03 Serg Stoyan <stoyan255@ukr.net>
-
-	* Library/PCButton: (mouseMoved:) check if ttWindow is not nil.
+	* PCEditor and friends moved to loadable bundle Modules/Editors/ProjectCenter.
 	
-2005-07-01 Serg Stoyan <stoyan255@ukr.net>
-
-	* Resources/Preferences.gorm: Fixed name of preferences panel. 
-	(Bug # 13590)
+	* PCLogController.[hm] and PCPrefController.[hm] was moved to Library.
 	
-	* Update all .gorm files with latest GORM
+	* Fixes for MingW environment (thanks to Adam Fedor).
 	
-2005-06-07 Serg Stoyan <stoyan255@ukr.net>
-
-	* Library/PCProjectEditor.m: 
-	(orderFrontEditorForFile:): Always show editor subview 
-	(Fixed bug#11779).
-
-2005-02-12 Pascal Hoftsee <caelian@gmail.com>
-  	   Committed by Gregory Jonh Casamento <greg_casamento@yahoo.com>
+	* Added attempt to find make and debugger utilities.
 	
-	* Library/PCButton.m: Corrected issue in 
-	-[PCButton _updateTrackingRects:] which was causing a SIGBUS
-	to occur on FreeBSD by simply moving the remove method call below
-	the line which was referencing the rect.
+2006-11-15  Nicola Pero  <nicola@nicola-laptop>
+
+	* Modules/GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Install the
+	bundles in GNUSTEP_INSTALLATION_DIR, not in GNUSTEP_SYSTEM_ROOT.
+	* Modules/ApplicationProject/PCAppProject.m ([PCAppProject
+	-appendHead:]): Do not hardcode GNUSTEP_INSTALLATION_DIR in
+	GNUmakefiles.  See comments in the file for an explanation of how
+	to improve PC's installation controls.
+	* Modules/RenaissanceProject/PCRenaissanceProject.m
+	([PCRenaissanceProject -appendHead:]): Same change.
+	* Modules/ToolProject/PCToolProject.m ([PCToolProject
+	-appendHead:]): Same change.
+	* Modules/BundleProject/Resources/PC.project (INSTALLDIR): Install
+	bundles by default in $(GNUSTEP_BUNDLES).	
+	
+2006-10-21 15:41-EDT Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Resources/ProjectCenter.gorm: Corrected issue with dangling menu/
+	menu items in  the .gorm file.
+	
+2006-10-09  Nicola Pero <nicola.pero@meta-innovation.com>
+
+	* GNUmakefile (GNUSTEP_INSTALLATION_DIR): Do not set
+	GNUSTEP_INSTALLATION_DIR.  It should never be set in GNUmakefiles.
+	* Library/GNUmakefile: Same change.
+	* Modules/GNUmakefile: Same change.
+	* ProjectCenter/Resources/GNUmakefile: Same change.
+	
+2005-09-11 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCProject.m: (saveProjectWindowsAndPanels): save ProjectBrowser
+	frame.
+
+	* Library/PCProjectWindow.m: gormified.
+	(_initUI): Adopt to grom model. Make self as delegate for h_split.
+	(splitView:resizeSubviewsWithOldSize:) implemented h_split delegate method.
+	Used for restoring saved frame of ProjectBrowser. In general, used to 
+	restore subviews size of horisontal and verstical split views from last
+	session. "Remember project windows and panels in PC.project" task from
+	TODO file is considered fully comleted now. Will use this scheme for other 
+	split views in PC.
+
+	* Library/PCFileNameIcon.[hm]: new files. I'm not sure yet if it should
+	be separate class for file icons.
+
+2005-06-20 Serg Stoyan <stoyan255@ukr.net>
+
+	* Library/PCFileNameField.m: new file.
+	
+	* Library/PCProjectInspector.m: moved class PCFileNameField to separate
+	file.
+	
+	* Library/PCProjectWindow.m: 
+	(_initUI)fileIconTitle now is PCFileNameField instead of NSTextField.
+	
+2005-06-11 Serg Stoyan <stoyan255@ukr.net>
+
+	* PCAppController.m:
+	(applicationWillTerminate:): Don't remove temorary directory. Needs 
+	more investigation since NSTemporaryDirectory() returns f.e.
+	/tmp/GNUstepSecure1000.
+	
+	* Library/PCProjectEditor.m:
+        (orderFrontEditorForFile:): Always show editor subview
+        (Fixed bug#11779). Incorporated from HEAD branch.
+
+	
+2005-01-28 Serg Stoyan <stoyan255@ukr.net>
+
+	* Moduleas/ResourceSetProject: Added.
+	
+2005-01-27 Serg Stoyan <stoyan255@ukr.net>
+
+	* Renaissance project type removed.
 	
 2005-01-26 Serg Stoyan <stoyan255@ukr.net>
 
-	* Release 0.4.2
+	* Renaissance project type code and templates moved into Applicaton
+	project type.
+	
+2005-01-25 Serg Stoyan <stoyan255@ukr.net>
 
-	* PCAppController.m:
-	(applicationWillTerminate:): Disable removal of BuilRoot.
+	* Move "Project Name", "Project Type" and "Language" fields into 
+	Project Inspector's "Project Attributes section"
 
+	* Library/PCProject.m: Add "Project Attributes" view. Modules' 
+	inspectors now subview of this view.
+	
+2005-01-23 Serg Stoyan <stoyan255@ukr.net>
+
+	* Move appendLibraries: from project modules into PCMakefileFactory.m
+	
+	* Include into GNUmakefile only public headers for Framework and 
+	Library project types.
+	
+	* Project type bundles now have .project suffix.
+	
+	* Library/PCBundleLoader.[hm]:
+	(loadBundlesWithExtension:): Added and implemented.
+	(loadBundlesAtPath:withExtension:): ditto.
+	(loadBundleWithFullPath:): ditto.
+	(loadBundles): removed.
+	
+	* Library/PCProjectManager.m:
+	(loadProjectTypeBunldes): Call loadBundlesWithExtension:@"project".
+	
+	* Added Framework project type.
+	
+	* 0.5 branch started.
+	
 2005-01-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.1

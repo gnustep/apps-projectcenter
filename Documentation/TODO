@@ -1,59 +1,77 @@
 TODO
 ****
 
-This is the GNUstep ProjectCenter TODO list. "+" means that this task
-is done. Feel free to propose changes to this list or make suggestions!
+This is the GNUstep ProjectCenter TODO list.
+Feel free to propose changes to this list or make suggestions!
 
-ProjectCenter 0.4                                               Owner
------------------                                               ------
+ProjectCenter 0.4                                              Owner
+-----------------                                              ------
 
-+ Review and cleanup of PC project bundles/templates            stoyan
-+ Finish Project Inspector                                      stoyan
-+ Inspector UI using Gorm                                       stoyan
-+ File creation (File->New in project) cleanup and finishing    stoyan
-+ Initial suprojects support                                    stoyan
-+ Finish support of external editors                            stoyan
-+ Preferences enhancements and UI using Gorm                    stoyan
-+ Remember project windows and panels in PC.project             stoyan
+- Review and cleanup of PC project bundles/templates		[done!]
+- Finish Project Inspector					[done!]
+- Inspector UI using Gorm					[done!]
+- File creation (File->New in project) cleanup and finishing	[done!]
+- Initial suprojects support					[done!]
+- Finish support of external editors				[done!]
+- Preferences enhancements and UI using Gorm			[done!]
+- Remember project windows and panels in PC.project		[done!]
 
 ProjectCenter 0.5
 -----------------
 
-- Add more project types                                        stoyan
-- Localization support for projects                             stoyan
-- Finish ProjectWindow and its contents (Browser, FileIcon)     stoyan
-- ProjectBuilder enhancements (warnings,errors,options etc.)    stoyan
-- Editor enhancements (syntax highlighting, indentation)        stoyan
-- Add pending add/removal of files                              stoyan
+- Create ProjectWindow GORM file				[done!]
+- Add "Framework" project type					[done!]
+- Add "Resource Set" project type				[done!]
+- Add "Palette" project type					stoyan
+- Add "Component" project type					stoyan
+- Implement on demand loading of bundles			[done!]
+- Localization support for projects 				[done!]
+- Finish save/restore size of split views in Project Window	[done!]
+- Save last used path separately for different file panels	stoyan
+--- Project Editor:
+  - Implement on demand loading (editor for file type)		[done!]
+  - Open some files read only (Supporting Files)		[done!]
+  - Implement code parser (get it from CodeEditor?)		[done!]
+  - Project Browser should show file structure.			[done!]
+  - Click on Browser item should move cursor to line in file	[done!]
+  - Implement Editor indentation				stoyan
+--- Project Builder:
+  - Implement root build directory handling			stoyan
+  - Finish options handling					stoyan
+  - Parse gcc output						stoyan
+  - Display warnings,errors,options etc. as clickable list	stoyan
+- Imlement pending adding/removal of files (history?)		stoyan
+- Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
+- Review all dialogs and situations when dialogs must be 
+  popped up							stoyan
 
 ProjectCenter 0.6
 -----------------
 
-- Create custom Info panel                                      ???
+- Rewrite Preferences (3rd party sections etc.)			stoyan
+- Implement Editor syntax highlighting				stoyan
 - More options for file creation                                ???
-- Localization support for GUI based projects                   ???
-- Direct code documentation (using autogsdoc)                   ???
-- Better integration with other tools 
-  (Gorm, CodeEditor, EasyDiff)                                  ???
-- ProjectCenter localization                                    ???
+- Better integration with other tools  (Gorm)                   ???
+- Create custom Info panel                                      ???
 
 ProjectCenter 0.7
 -----------------
 
-- Initial user documentation                                    ???
-- Initial support for integrated debugging                      ???
-- Optimised support for integrated debugging                    ???
+- An initial project wide find feature                          ???
+- Implement support for integrated debugging                    ???
 - More project customisation possibilities                      ???
 - CVS integration                                               ???
 
 ProjectCenter 0.8
 -----------------
 
-- An initial project wide find feature                          ???
+- Initial user documentation                                    ???
+- Direct code documentation (using autogsdoc)                   ???
 
 ProjectCenter 0.9
 -----------------
 
+- ProjectCenter localization                                    ???
 - An initial class browser/documentation feature                ???
 
 ProjectCenter 1.0

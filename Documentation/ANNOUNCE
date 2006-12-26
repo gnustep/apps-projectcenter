@@ -1,7 +1,8 @@
+
 ANNOUNCE
 ************
 
-This is version 0.4.3 of ProjectCenter. This is a urgent bugfix version.
+This is version 0.5.0 of ProjectCenter.
 
 What is ProjectCenter?
 ======================
@@ -15,20 +16,17 @@ What is ProjectCenter?
    distribution fees, for others to use the program. You should read the
    Documentation/COPYING file for more information.
 
-Noteworthy changes in version `0.4.2'.
+Noteworthy changes in version `0.5.0'.
 ======================================
 
-   * Improved compatibility with MingW
-
-   * Various bugfixes
-
+   * 
 
 How can I get support for this software?
 ========================================
 
    You may wish to use the GNUstep discussion mailing list for general
    questions and discussion.  Look at the GNUstep Web Pages for more
-   information regarding GNUstep resources <http://www.gnustep.org/>
+   information regarding GNUstep resources <http://www.gnustep.org>
 
 Where can you get it?  How can you compile it?
 ==============================================
@@ -47,4 +45,3 @@ Obtaining GNU Software
    Check out the GNU web site. (`http://www.gnu.org/')
 
    Check out the GNUstep web site. (`http://www.gnustep.org/')
-
