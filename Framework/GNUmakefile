@@ -88,14 +88,6 @@ ProjectCenter_OBJC_FILES = \
 # Resources
 #
 ProjectCenter_RESOURCE_FILES = \
-  Resources/ProjectWindow.gorm \
-  Resources/NewSubproject.gorm \
-  Resources/NewFile.gorm \
-  Resources/ProjectInspector.gorm \
-  Resources/BuildAttributes.gorm \
-  Resources/ProjectAttributes.gorm \
-  Resources/ProjectDescription.gorm \
-  Resources/FileAttributes.gorm \
   Resources/cfile.template \
   Resources/cheader.template \
   Resources/class.template \
@@ -103,8 +95,25 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/header.template \
   Resources/postamble.template \
   Resources/protocol.template \
-  Resources/LogPanel.gorm \
-  Resources/Preferences.gorm
+
+#
+# Localization
+#
+ProjectCenter_LOCALIZED_RESOURCE_FILES = \
+  ProjectWindow.gorm \
+  NewSubproject.gorm \
+  NewFile.gorm \
+  ProjectInspector.gorm \
+  BuildAttributes.gorm \
+  ProjectAttributes.gorm \
+  ProjectDescription.gorm \
+  FileAttributes.gorm \
+  LogPanel.gorm \
+  Preferences.gorm
+
+ProjectCenter_LANGUAGES = \
+English
+
 
 -include GNUmakefile.preamble
 

@@ -4,7 +4,6 @@
 
 GNUSTEP_INSTALLATION_DOMAIN = SYSTEM
 include $(GNUSTEP_MAKEFILES)/common.make
-GNUSTEP_INSTALLATION_DIR = $(GNUSTEP_SYSTEM_ROOT)
 
 #
 # Main application
@@ -25,7 +24,6 @@ SUBPROJECTS = \
 # Resource files
 #
 ProjectCenter_RESOURCE_FILES = \
-Resources/ProjectCenter.gorm \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
 Images/FileRTF.tiff \
@@ -79,6 +77,16 @@ Modules/Projects/ResourceSet/ResourceSet.project \
 Modules/Projects/Tool/Tool.project \
 Modules/Editors/ProjectCenter/ProjectCenter.editor \
 Modules/Parsers/ProjectCenter/ProjectCenter.parser
+
+#
+# Localization
+#
+ProjectCenter_LOCALIZED_RESOURCE_FILES = \
+ProjectCenter.gorm
+
+ProjectCenter_LANGUAGES = \
+English
+
 
 #
 # Header files

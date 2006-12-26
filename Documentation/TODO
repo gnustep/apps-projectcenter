@@ -4,8 +4,8 @@ TODO
 This is the GNUstep ProjectCenter TODO list.
 Feel free to propose changes to this list or make suggestions!
 
-ProjectCenter 0.4                                              Owner
------------------                                              ------
+ProjectCenter 0.4                                               Owner/Status
+-----------------                                               ------------
 
 - Review and cleanup of PC project bundles/templates		[done!]
 - Finish Project Inspector					[done!]
@@ -22,8 +22,6 @@ ProjectCenter 0.5
 - Create ProjectWindow GORM file				[done!]
 - Add "Framework" project type					[done!]
 - Add "Resource Set" project type				[done!]
-- Add "Palette" project type					stoyan
-- Add "Component" project type					stoyan
 - Implement on demand loading of bundles			[done!]
 - Localization support for projects 				[done!]
 - Finish save/restore size of split views in Project Window	[done!]
@@ -34,13 +32,12 @@ ProjectCenter 0.5
   - Implement code parser (get it from CodeEditor?)		[done!]
   - Project Browser should show file structure.			[done!]
   - Click on Browser item should move cursor to line in file	[done!]
-  - Implement Editor indentation				stoyan
+  - Imlement pending adding/removal of files (history?)		[done!]
 --- Project Builder:
   - Implement root build directory handling			stoyan
   - Finish options handling					stoyan
   - Parse gcc output						stoyan
   - Display warnings,errors,options etc. as clickable list	stoyan
-- Imlement pending adding/removal of files (history?)		stoyan
 - Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
 - Review all dialogs and situations when dialogs must be 
   popped up							stoyan
@@ -49,10 +46,12 @@ ProjectCenter 0.6
 -----------------
 
 - Rewrite Preferences (3rd party sections etc.)			stoyan
-- Implement Editor syntax highlighting				stoyan
-- More options for file creation                                ???
-- Better integration with other tools  (Gorm)                   ???
-- Create custom Info panel                                      ???
+- Add "Palette" project type					stoyan
+- Add "Component" project type					stoyan
+- Create custom Info panel                                      stoyan
+- More options for file creation                                stoyan
+- Implement Editor indentation					stoyan
+- Better integration with other tools  (Gorm)                   stoyan
 
 ProjectCenter 0.7
 -----------------
@@ -60,7 +59,7 @@ ProjectCenter 0.7
 - An initial project wide find feature                          ???
 - Implement support for integrated debugging                    ???
 - More project customisation possibilities                      ???
-- CVS integration                                               ???
+- CVS/SVN integration                                           ???
 
 ProjectCenter 0.8
 -----------------

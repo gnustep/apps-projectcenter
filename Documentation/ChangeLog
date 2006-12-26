@@ -1,3 +1,10 @@
+2006-12-26 Serg Stoyan <stoyan255@gmail.com>
+
+	* Merge changes from UNSTABLE_0_5 into trunk.
+	
+	* Localizable resources for application and framework was 
+	defined (English.lproj)
+
 2006-11-20 Serg Stoyan <stoyan255@ukr.net>
 
 	* Rewritte bundle loading mechanizm. Bundle now loaded on demand.
