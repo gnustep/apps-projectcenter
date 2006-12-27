@@ -42,8 +42,8 @@ ADDITIONAL_INCLUDE_DIRS += -I./ -I./Headers
 ADDITIONAL_LDFLAGS += 
 
 # Additional library directories the linker should search
-ADDITIONAL_LIB_DIRS += -L./Library/ProjectCenter.framework/Versions/Current \
-                       -L./Library/ProjectCenter.framework
+ADDITIONAL_LIB_DIRS += -L./Framework/ProjectCenter.framework/Versions/Current \
+                       -L./Framework/ProjectCenter.framework
 
 # Additional LDFLAGS to pass to the linker
 ADDITIONAL_GUI_LIBS += -lProjectCenter
