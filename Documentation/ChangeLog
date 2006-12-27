@@ -1,11 +1,15 @@
-2006-12-26 Serg Stoyan <stoyan255@gmail.com>
+2006-12-26 Sergii Stoian <stoyan255@gmail.com>
 
 	* Merge changes from UNSTABLE_0_5 into trunk.
 	
 	* Localizable resources for application and framework was 
-	defined (English.lproj)
+	defined (English.lproj).
+	
+	* Rename directory with ProjectCenter framework from Library to Framework.
+	
+	* Fix makefiles wrt to framework directory renaming.
 
-2006-11-20 Serg Stoyan <stoyan255@ukr.net>
+2006-11-20 Sergii Stoian <stoyan255@gmail.com>
 
 	* Rewritte bundle loading mechanizm. Bundle now loaded on demand.
 	
@@ -18,8 +22,8 @@
 	* Fixes for MingW environment (thanks to Adam Fedor).
 	
 	* Added attempt to find make and debugger utilities.
-	
-2006-11-15  Nicola Pero  <nicola@nicola-laptop>
+
+2006-11-15 Nicola Pero <nicola@nicola-laptop>
 
 	* Modules/GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Install the
 	bundles in GNUSTEP_INSTALLATION_DIR, not in GNUSTEP_SYSTEM_ROOT.
@@ -33,12 +37,12 @@
 	-appendHead:]): Same change.
 	* Modules/BundleProject/Resources/PC.project (INSTALLDIR): Install
 	bundles by default in $(GNUSTEP_BUNDLES).	
-	
+
 2006-10-21 15:41-EDT Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Resources/ProjectCenter.gorm: Corrected issue with dangling menu/
 	menu items in  the .gorm file.
-	
+
 2006-10-09  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile (GNUSTEP_INSTALLATION_DIR): Do not set
@@ -46,7 +50,7 @@
 	* Library/GNUmakefile: Same change.
 	* Modules/GNUmakefile: Same change.
 	* ProjectCenter/Resources/GNUmakefile: Same change.
-	
+
 2005-09-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProject.m: (saveProjectWindowsAndPanels): save ProjectBrowser
@@ -73,7 +77,7 @@
 	
 	* Library/PCProjectWindow.m: 
 	(_initUI)fileIconTitle now is PCFileNameField instead of NSTextField.
-	
+
 2005-06-11 Serg Stoyan <stoyan255@ukr.net>
 
 	* PCAppController.m:
@@ -85,20 +89,19 @@
         (orderFrontEditorForFile:): Always show editor subview
         (Fixed bug#11779). Incorporated from HEAD branch.
 
-	
 2005-01-28 Serg Stoyan <stoyan255@ukr.net>
 
 	* Moduleas/ResourceSetProject: Added.
-	
+
 2005-01-27 Serg Stoyan <stoyan255@ukr.net>
 
 	* Renaissance project type removed.
-	
+
 2005-01-26 Serg Stoyan <stoyan255@ukr.net>
 
 	* Renaissance project type code and templates moved into Applicaton
 	project type.
-	
+
 2005-01-25 Serg Stoyan <stoyan255@ukr.net>
 
 	* Move "Project Name", "Project Type" and "Language" fields into 
@@ -106,7 +109,7 @@
 
 	* Library/PCProject.m: Add "Project Attributes" view. Modules' 
 	inspectors now subview of this view.
-	
+
 2005-01-23 Serg Stoyan <stoyan255@ukr.net>
 
 	* Move appendLibraries: from project modules into PCMakefileFactory.m
@@ -128,7 +131,7 @@
 	* Added Framework project type.
 	
 	* 0.5 branch started.
-	
+
 2005-01-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.1
@@ -136,12 +139,12 @@
 	* Modules/ApplicationProject/PCAppProject+Inspector.m: 
 	(addDocType:): Set all textfields to default values.
 	(removeDocType:): Call fillFieldsForRow: after row removing.
-	
+
 2005-01-09 Gregory Jonh Casamento <greg_casamento@yahoo.com>
 
 	* Library/PCProjectBuilder.m: 
 	(build:): Exception handler added.
-	
+
 2005-01-09 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCButton.m: 
@@ -150,7 +153,7 @@
 
 	* Library/PCProjectBuilder.m:
 	(stopBuild:): Eception handler added.
-	
+
 2005-01-05 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/GNUstep.postamble: Make "ln -s" ProjectCenter to the 
@@ -158,7 +161,7 @@
 	
 	* Library/PCFileManager.m:
 	(defaultManager:): Don't autorelease returned object.
-	
+
 2005-01-04 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFilesManager.[hm]:
@@ -228,7 +231,7 @@
 	* Library/PCProjectWindow.m: ditto.
 	
 	*Images/ButtonTile.tiff: removed.
-	
+
 2004-07-15 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProject.m: 
@@ -240,13 +243,13 @@
 	* Update all GORM files with latest CVS GORM version.
 	
 	* Resources/Preferences.gorm: Fix Auto-Save slider.
-	
+
 2004-07-14 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCButton.m: PCButtonCell removed.
 	(initWithFrame:): [self setCell:] removed. [_cell setGradientType:]
 	added.
-	
+
 2004-07-04 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProject.m:
@@ -268,7 +271,7 @@
 
 	* Modules/ToolProject/PCToolProject.m: 
 	(writeMakefile): ditto.
-	
+
 2004-07-03 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
@@ -278,7 +281,7 @@
 
 	* Across the ProjectCenter: Comment out calls for PCLog*. This is
 	speedup PC.
-	
+
 2004-06-22 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFileManager.m:
@@ -290,7 +293,7 @@
 	
 	* Modules/*: Made cleanup in sourceFileKeys, resourceFileKeys and
 	otherKeys methods.
-	
+
 2004-06-21 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCFileManager.m: 
@@ -298,7 +301,7 @@
 	included in project. Optimized.
 
 	* GNUmakefile: Change VERSION var to 0.4.1pre.
-	
+
 2004-06-20 Serg Stoyan <stoyan255@ukr.net>
 
 	* Release 0.4.0.
@@ -332,7 +335,7 @@
 	(appendApplication:): ditto.
 	* Modules/ToolProject/PCToolProject.m:
 	(appendHead:): ditto
-	
+
 2004-06-19 Serg Stoyan <stoyan255@ukr.net>
 
 	* Library/PCProjectManager.m:
