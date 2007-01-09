@@ -31,41 +31,38 @@
 
 @implementation PCProjectBuilderPanel
 
-- (id)initWithProjectManager:(PCProjectManager *)aManager
+- (void)awakeFromNib
 {
-  PCProjectBuilder *projectBuilder = nil;
-  PCProject        *activeProject = nil;
-  
-  projectManager = aManager;
-  activeProject = [projectManager rootActiveProject];
-  projectBuilder = [activeProject projectBuilder];
-  
-  self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
+  PCProject        *activeProject = [projectManager rootActiveProject];
+//  PCProjectBuilder *projectBuilder = [activeProject projectBuilder];
+
+/*  self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
                          styleMask: (NSTitledWindowMask 
 		                    | NSClosableWindowMask
 				    | NSResizableWindowMask)
 			   backing: NSBackingStoreRetained
 			     defer: YES];
   [self setMinSize: NSMakeSize(440, 222)];
-  [self setFrameAutosaveName: @"ProjectBuilder"];
   [self setReleasedWhenClosed: NO];
-  [self setHidesOnDeactivate: NO];
-  [self setTitle: [NSString stringWithFormat: 
+  [self setHidesOnDeactivate: NO];*/
+  [panel setFrameAutosaveName:@"ProjectBuilder"];
+  [panel setTitle:[NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
   // Panel's content view
-  contentBox = [[NSBox alloc] init];
+/*  contentBox = [[NSBox alloc] init];
   [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
   [contentBox setTitlePosition:NSNoTitle];
-  [contentBox setBorderType:NSNoBorder];
-  [super setContentView:contentBox];
+  [contentBox setBorderType:NSNoBorder];*/
+  [panel setContentView:contentBox];
 
   // Empty content view of contentBox
-  emptyBox = [[NSBox alloc] init];
+  RETAIN(emptyBox);
+/*  emptyBox = [[NSBox alloc] init];
   [emptyBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
   [emptyBox setTitlePosition:NSNoTitle];
   [emptyBox setBorderType:NSLineBorder];
-  [contentBox setContentView:emptyBox];
+  [contentBox setContentView:emptyBox];*/
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 
@@ -74,9 +71,20 @@
            name:PCActiveProjectDidChangeNotification
          object:nil];
 
-  if (![self setFrameUsingName: @"ProjectBuilder"])
+  if (![panel setFrameUsingName:@"ProjectBuilder"])
     {
-      [self center];
+      [panel center];
+    }
+}
+
+- (id)initWithProjectManager:(PCProjectManager *)aManager
+{
+  projectManager = aManager;
+
+  if ([NSBundle loadNibNamed:@"BuilderPanel" owner:self] == NO)
+    {
+      PCLogError(self, @"error loading BuilderPanel NIB file!");
+      return nil;
     }
 
   return self;
@@ -90,6 +98,8 @@
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   
+  RELEASE(emptyBox);
+
   [super dealloc];
 }
 
@@ -107,7 +117,7 @@
 /*  PCLogInfo(self, @"orderFront: %@ -> %@", 
 	    builderView, [builderView superview]);*/
 
-  [super orderFront:self];
+  [panel orderFront:self];
 }
 
 - (void)close
@@ -118,7 +128,7 @@
   
 //  PCLogInfo(self, @"close: %@", [contentBox contentView]);
 
-  [super close];
+  [panel close];
 }
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
@@ -141,11 +151,15 @@
     }
   else
     {
-      [self setTitle: [NSString stringWithFormat: 
+      [panel setTitle:[NSString stringWithFormat: 
 	@"%@ - Project Build", [rootProject projectName]]];
-      [contentBox 
-	setContentView:[[rootProject projectBuilder] componentView]];
+      [contentBox setContentView:[[rootProject projectBuilder] componentView]];
     }
+}
+
+- (BOOL)isVisible
+{
+  return [panel isVisible];
 }
 
 @end

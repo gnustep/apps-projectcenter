@@ -1,0 +1,30 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "showProjectInspector:",
+	    "showFindView:",
+	    "showProjectBuild:",
+	    "showProjectLaunch:",
+	    "showProjectLoadedFiles:"
+	);
+	Super = NSObject;
+    };
+    PCProjectBuilderPanel = {
+	Actions = (
+	);
+	Outlets = (
+	    contentBox,
+	    emptyBox,
+	    panel
+	);
+	Super = NSPanel;
+    };
+    PCSplitView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSSplitView;
+    };
+}

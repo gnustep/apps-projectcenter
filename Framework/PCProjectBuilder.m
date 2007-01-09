@@ -45,108 +45,93 @@
 
 @implementation PCProjectBuilder (UserInterface)
 
-- (void) _createComponentView
+- (void)awakeFromNib
 {
-  NSSplitView  *split;
-  NSScrollView *scrollView1; 
+  NSScrollView *errorScroll; 
   NSScrollView *scrollView2;
-  id           textField;
 
-  componentView = [[NSBox alloc] initWithFrame: NSMakeRect(8,-1,464,322)];
-  [componentView setTitlePosition: NSNoTitle];
-  [componentView setBorderType: NSNoBorder];
-  [componentView setAutoresizingMask: NSViewWidthSizable 
-                                    | NSViewHeightSizable];
-  [componentView setContentViewMargins: NSMakeSize (0.0, 0.0)];
+  [componentView retain];
+  [componentView removeFromSuperview];
 
   /*
    * 4 build Buttons
    */
-  buildButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,271,43,43)];
-  [buildButton setToolTip: @"Build"];
-  [buildButton setTitle: @"Make"];
-  [buildButton setImage: IMAGE(@"Build")];
-  [buildButton setAlternateImage: IMAGE(@"Stop")];
-  [buildButton setTarget: self];
-  [buildButton setAction: @selector(startBuild:)];
-  [buildButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [buildButton setButtonType: NSToggleButton];
-  [componentView addSubview: buildButton];
-  RELEASE (buildButton);
-  
-  cleanButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,271,43,43)];
-  [cleanButton setToolTip: @"Clean"];
-  [cleanButton setTitle: @"Make-Clean"];
-  [cleanButton setImage: IMAGE(@"Clean")];
-  [cleanButton setAlternateImage: IMAGE(@"Stop")];
-  [cleanButton setTarget: self];
-  [cleanButton setAction: @selector(startClean:)];
-  [cleanButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [cleanButton setButtonType: NSToggleButton];
-  [componentView addSubview: cleanButton];
-  RELEASE (cleanButton);
+  [buildButton setToolTip:@"Build"];
+//  [buildButton setImage:IMAGE(@"Build")];
 
-  installButton = [[PCButton alloc] initWithFrame: NSMakeRect(88,271,43,43)];
-  [installButton setToolTip: @"Install"];
-  [installButton setTitle: @"Make-Install"];
-  [installButton setImage: IMAGE(@"Install")];
-  [installButton setAlternateImage: IMAGE(@"Stop")];
-  [installButton setTarget: self];
-  [installButton setAction: @selector(startInstall:)];
-  [installButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [installButton setButtonType: NSToggleButton];
-  [componentView addSubview: installButton];
-  RELEASE (installButton);
+  [cleanButton setToolTip:@"Clean"];
+//  [cleanButton setImage:IMAGE(@"Clean")];
 
-  optionsButton = [[PCButton alloc] initWithFrame: NSMakeRect(132,271,43,43)];
-  [optionsButton setToolTip: @"Options"];
-  [optionsButton setTitle: @"Make-Options"];
-  [optionsButton setImage: IMAGE(@"Options")];
-  [optionsButton setTarget: self];
-  [optionsButton setAction: @selector(showOptionsPanel:)];
-  [optionsButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [optionsButton setButtonType: NSMomentaryPushButton];
-  [componentView addSubview: optionsButton];
-  RELEASE (optionsButton);
+  [installButton setToolTip:@"Install"];
+//  [installButton setImage:IMAGE(@"Install")];
+
+  [optionsButton setToolTip:@"Options"];
+//  [optionsButton setImage:IMAGE(@"Options")];
 
   /*
-   *  Error and Log output
+   *  Error output
    */
-  scrollView1 = [[NSScrollView alloc] 
-    initWithFrame:NSMakeRect (0, 0, 464, 120)];
-  [scrollView1 setHasHorizontalScroller:NO];
-  [scrollView1 setHasVerticalScroller:YES];
-  [scrollView1 setBorderType: NSBezelBorder];
-  [scrollView1 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+  errorArray = [[NSMutableArray alloc] initWithCapacity:0];
+  errorString = [[NSMutableString alloc] initWithString:@""];
 
-  errorOutput = [[NSTextView alloc] 
-    initWithFrame: [[scrollView1 contentView] frame]];
-  [errorOutput setRichText: NO];
-  [errorOutput setEditable: NO];
-  [errorOutput setSelectable: YES];
+  errorImageColumn = [[NSTableColumn alloc] initWithIdentifier:@"ErrorImage"];
+  [errorImageColumn setEditable:NO];
+  [errorImageColumn setWidth:20.0];
+  errorColumn = [[NSTableColumn alloc] initWithIdentifier:@"Error"];
+  [errorColumn setEditable:NO];
+
+  errorOutputTable = [[NSTableView alloc]
+    initWithFrame:NSMakeRect(6,6,209,111)];
+  [errorOutputTable setAllowsMultipleSelection:NO];
+  [errorOutputTable setAllowsColumnReordering:NO];
+  [errorOutputTable setAllowsColumnResizing:NO];
+  [errorOutputTable setAllowsEmptySelection:YES];
+  [errorOutputTable setAllowsColumnSelection:NO];
+  [errorOutputTable setRowHeight:18.0];
+  [errorOutputTable setCornerView:nil];
+  [errorOutputTable setHeaderView:nil];
+  [errorOutputTable addTableColumn:errorImageColumn];
+  [errorOutputTable addTableColumn:errorColumn];
+  [errorOutputTable setDataSource:self];
+  [errorOutputTable setBackgroundColor:[NSColor colorWithDeviceRed:0.88
+                                                             green:0.76 
+                                                              blue:0.60 
+                                                             alpha:1.0]];
+
+  errorScroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,0,464,120)];
+  [errorScroll setHasHorizontalScroller:NO];
+  [errorScroll setHasVerticalScroller:YES];
+  [errorScroll setBorderType:NSBezelBorder];
+  [errorScroll setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
+
+/*  errorOutput = [[NSTextView alloc] 
+    initWithFrame:[[scrollView1 contentView] frame]];
+  [errorOutput setRichText:NO];
+  [errorOutput setEditable:NO];
+  [errorOutput setSelectable:YES];
   [errorOutput setAutoresizingMask: NSViewWidthSizable | NSViewHeightSizable];
-  [errorOutput setBackgroundColor: [NSColor colorWithDeviceRed: 0.88
-                                                         green: 0.76 
-                                                          blue: 0.60 
-                                                         alpha: 1.0]];
-  [errorOutput setHorizontallyResizable: NO]; 
-  [errorOutput setVerticallyResizable: YES];
-  [errorOutput setMinSize: NSMakeSize (0, 0)];
-  [errorOutput setMaxSize: NSMakeSize (1E7, 1E7)];
+  [errorOutput setBackgroundColor:[NSColor colorWithDeviceRed:0.88
+                                                        green:0.76 
+                                                         blue:0.60 
+                                                        alpha:1.0]];
+  [errorOutput setHorizontallyResizable:NO]; 
+  [errorOutput setVerticallyResizable:YES];
+  [errorOutput setMinSize:NSMakeSize(0, 0)];
+  [errorOutput setMaxSize:NSMakeSize(1E7, 1E7)];
   [[errorOutput textContainer] setContainerSize: 
-    NSMakeSize ([errorOutput frame].size.width, 1e7)];
+    NSMakeSize([errorOutput frame].size.width, 1e7)];
+  [[errorOutput textContainer] setWidthTracksTextView:YES];*/
 
-  [[errorOutput textContainer] setWidthTracksTextView:YES];
-
-  [scrollView1 setDocumentView:errorOutput];
-  RELEASE(errorOutput);
+  [errorScroll setDocumentView:errorOutputTable];
+  RELEASE(errorOutputTable);
 
   /*
+   *  Log output
    */
   scrollView2 = [[NSScrollView alloc] 
     initWithFrame:NSMakeRect (0, 0, 480, 133)];
-  [scrollView2 setHasHorizontalScroller: NO];
-  [scrollView2 setHasVerticalScroller: YES];
+  [scrollView2 setHasHorizontalScroller:NO];
+  [scrollView2 setHasVerticalScroller:YES];
   [scrollView2 setBorderType: NSBezelBorder];
   [scrollView2 setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
 
@@ -159,10 +144,10 @@
   [logOutput setBackgroundColor: [NSColor lightGrayColor]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
   [[logOutput textContainer] setHeightTracksTextView:YES];
-  [logOutput setHorizontallyResizable: NO];
-  [logOutput setVerticallyResizable: YES];
-  [logOutput setMinSize: NSMakeSize (0, 0)];
-  [logOutput setMaxSize: NSMakeSize (1E7, 1E7)];
+  [logOutput setHorizontallyResizable:NO];
+  [logOutput setVerticallyResizable:YES];
+  [logOutput setMinSize:NSMakeSize (0, 0)];
+  [logOutput setMaxSize:NSMakeSize (1E7, 1E7)];
   [[logOutput textContainer] setContainerSize: 
     NSMakeSize ([logOutput frame].size.width, 1e7)];
   [[logOutput textContainer] setWidthTracksTextView:YES];
@@ -170,85 +155,17 @@
   [scrollView2 setDocumentView:logOutput];
   RELEASE(logOutput);
 
-  split = [[PCSplitView alloc] initWithFrame: NSMakeRect (0, 0, 464, 255)];
-  [split setAutoresizingMask: (NSViewWidthSizable | NSViewHeightSizable)];
-
-  [split addSubview: scrollView1];
-  RELEASE (scrollView1);
-  [split addSubview: scrollView2];
+  /*
+   * Split view
+   */
+  [split addSubview:errorScroll];
+  RELEASE (errorScroll);
+  [split addSubview:scrollView2];
   RELEASE (scrollView2);
 
-  [split adjustSubviews];
-  [componentView addSubview: split];
-  RELEASE (split);
-
-  /*
-   * Target
-   */
-  textField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (200, 293, 48, 21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setBezeled: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Target:"];
-  [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [componentView addSubview: textField];
-  RELEASE(textField);
-
-  /*
-   * Target message
-   */
-  targetField = [[NSTextField alloc] 
-    initWithFrame:NSMakeRect(251, 293, 220, 21)];
-  [targetField setAlignment: NSLeftTextAlignment];
-  [targetField setBordered: NO];
-  [targetField setEditable: NO];
-  [targetField setBezeled: NO];
-  [targetField setSelectable: NO];
-  [targetField setDrawsBackground: NO];
-  [targetField setStringValue: @"Default with args ' '"];
-  [targetField setAutoresizingMask: (NSViewMaxXMargin | 
-				     NSViewWidthSizable | 
-				     NSViewMinYMargin)];
-  [componentView addSubview:targetField];
-  RELEASE (targetField);
-
-  /*
-   * Status
-   */
-  textField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (200, 270, 48, 21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setSelectable: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue:@"Status:"];
-  [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [componentView addSubview:textField];
-  RELEASE(textField);
-
-  /*
-   * Status message
-   */
-  buildStatusField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (251, 270, 220, 21)];
-  [buildStatusField setAlignment: NSLeftTextAlignment];
-  [buildStatusField setBordered: NO];
-  [buildStatusField setEditable: NO];
-  [buildStatusField setSelectable: NO];
-  [buildStatusField setBezeled: NO];
-  [buildStatusField setDrawsBackground: NO];
-  [buildStatusField setStringValue: @"Waiting..."];
-  [buildStatusField setAutoresizingMask: (NSViewMaxXMargin | 
-					  NSViewWidthSizable | 
-					  NSViewMinYMargin)];
-  [componentView addSubview: buildStatusField];
-  RELEASE(buildStatusField);
+//  [split adjustSubviews];
+//  [componentView addSubview:split];
+//  RELEASE (split);
 }
 
 - (void) _createOptionsPanel
@@ -372,6 +289,14 @@
       makeTask = nil;
       _isBuilding = NO;
       _isCleaning = NO;
+
+      makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
+
+      if ([NSBundle loadNibNamed:@"Builder" owner:self] == NO)
+	{
+	  PCLogError(self, @"error loading Builder NIB file!");
+	  return nil;
+	}
     }
 
   return self;
@@ -390,17 +315,14 @@
 //  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
 //  PCLogInfo(self, @"RC: %i", [self retainCount]);
   [componentView release];
+  [errorArray release];
+  [errorString release];
 
   [super dealloc];
 }
 
 - (NSView *)componentView
 {
-  if (!componentView)
-    {
-      [self _createComponentView];
-    }
-
   return componentView;
 }
 
@@ -453,12 +375,10 @@
     {// We've just stopped build process
       return;
     }
-  makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
-
   [buildTarget setString:[tFArray objectAtIndex:0]];
 
   // Set build arguments
-  if ([buildTarget isEqualToString: @"Debug"])
+  if ([buildTarget isEqualToString:@"Debug"])
     {
       [buildArgs addObject:@"debug=yes"];
     }
@@ -471,11 +391,11 @@
     {
       [buildArgs addObject:@"dist"];
     }
-  else if ([buildTarget isEqualToString:@"RPM"])
-    {
-      [buildArgs addObject:@"rpm"];
-      postProcess = @selector (copyPackageTo:);
-    }
+
+  currentEL = ELNone;
+  lastEL = ELNone;
+  nextEL = ELNone;
+  lastIndentString = @"";
 
   statusString = [NSString stringWithString:@"Building..."];
   [buildTarget setString:@"Build"];
@@ -510,7 +430,7 @@
 - (void)startClean:(id)sender
 {
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-      objectForKey: PromptOnClean] isEqualToString: @"YES"])
+      objectForKey:PromptOnClean] isEqualToString:@"YES"])
     {
       if (NSRunAlertPanel(@"Clean Project?",
 			  @"Do you really want to clean project '%@'?",
@@ -521,12 +441,12 @@
 	  return;
 	}
     }
-  [buildTarget setString: @"Clean"];
-  statusString = [NSString stringWithString: @"Cleaning..."];
-  [buildArgs addObject: @"distclean"];
+  statusString = [NSString stringWithString:@"Cleaning..."];
+  [buildTarget setString:@"Clean"];
+  [buildArgs addObject:@"clean"];
   [buildButton setEnabled:NO];
   [installButton setEnabled:NO];
-  [self build: self];
+  [self build:self];
   _isCleaning = YES;
 }
 
@@ -554,9 +474,9 @@
 {
   NSPipe       *logPipe;
   NSPipe       *errorPipe;
-  NSDictionary *env = [[NSProcessInfo processInfo] environment];
+//  NSDictionary *env = [[NSProcessInfo processInfo] environment];
 
-  // Support build options!!!
+  //TODO: Support build options!!!
   //NSDictionary        *optionDict = [currentProject buildOptions];
 
   // Checking prerequisites
@@ -573,15 +493,6 @@
     {
       // Synchronize PC.project and generated files just for case
       [currentProject save];
-    }
-
-  if ([buildTarget isEqualToString:@"RPM"]
-      && [env objectForKey:@"RPM_TOPDIR"] == nil)
-    {
-      NSRunAlertPanel(@"Attention!",
-		      @"First set the environment variable 'RPM_TOPDIR'!",
-		      @"OK", nil, nil);
-      return;
     }
 
   // Prepearing to building
@@ -606,8 +517,10 @@
   [buildStatusField setStringValue:statusString];
 
   // Run make task
-  [logOutput setString: @""];
-  [errorOutput setString: @""];
+  [logOutput setString:@""];
+//  [errorOutput setString:@""];
+  [errorArray removeAllObjects];
+  [errorOutputTable reloadData];
 
   [NOTIFICATION_CENTER addObserver:self 
                           selector:@selector(buildDidTerminate:) 
@@ -616,7 +529,7 @@
 
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments:buildArgs];
-  [makeTask setCurrentDirectoryPath: [currentProject projectPath]];
+  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
   [makeTask setLaunchPath:makePath];
 
   [makeTask setStandardOutput:logPipe];
@@ -714,11 +627,11 @@
   makeTask = nil;
 
   // Run post process if configured
-  if (status && postProcess)
+/*  if (status && postProcess)
     {
       [self performSelector:postProcess];
       postProcess = NULL;
-    }
+    }*/
 
   _isBuilding = NO;
   _isCleaning = NO;
@@ -740,7 +653,9 @@
 {
   NSData *data;
 
-  if ((data = [readHandle availableData]))
+//  NSLog(@"logStdOut");
+
+  if ((data = [readHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:NO];
     }
@@ -761,8 +676,9 @@
 {
   NSData *data;
 
-  NSLog(@"logErrOut");
+//  NSLog(@"logErrOut");
   
+//  if ((data = [errorReadHandle availableData]) && [data length] > 1)
   if ((data = [errorReadHandle availableData]))
     {
       [self logData:data error:YES];
@@ -809,7 +725,8 @@
             error:(BOOL)yn
 	  newLine:(BOOL)newLine
 {
-  NSTextView *out = (yn) ? errorOutput : logOutput;
+//  NSTextView *out = (yn) ? errorOutput : logOutput;
+  NSTextView *out = logOutput;
 
   [out replaceCharactersInRange:
     NSMakeRange([[out string] length],0) withString:str];
@@ -837,10 +754,274 @@
   s = [[NSString alloc] initWithData:data 
                             encoding:[NSString defaultCStringEncoding]];
 			    
-  [self logString:s error:yn newLine:NO];
+  if (yn)
+    {
+      [self logErrorString:s];
+    }
+  else
+    {
+      [self logString:s error:yn newLine:NO];
+    }
 
   RELEASE(s);
 }
 
 @end
 
+@implementation PCProjectBuilder (ErrorLogging)
+
+- (void)logErrorString:(NSString *)string
+{
+  NSRange newLineRange;
+  NSRange lineRange;
+  NSArray *items;
+
+  // Process new data
+  lineRange.location = 0;
+  [errorString appendString:string];
+  while (newLineRange.location != NSNotFound)
+    {
+      newLineRange = [errorString rangeOfString:@"\n"];
+/*      NSLog(@"Line(%i) new line range: %i,%i for string\n<--|%@|-->", 
+	    [errorString length],
+	    newLineRange.location, newLineRange.length, 
+	    errorString);*/
+
+      if (newLineRange.location < [errorString length])
+	{
+	  NSLog(@"<------%@------>", errorString);
+
+	  lineRange.length = newLineRange.location+1;
+	  string = [errorString substringWithRange:lineRange];
+	  items = [self parseErrorLine:string];
+	  if (items)
+	    {
+	      [self addItems:items];
+	    }
+	  [errorString deleteCharactersInRange:lineRange];
+	}
+      else
+	{
+	  newLineRange.location = NSNotFound;
+	  continue;
+	}
+    }
+}
+
+- (void)addItems:(NSArray *)items
+{
+  [errorArray addObjectsFromArray:items];
+  [errorOutputTable reloadData];
+  [errorOutputTable scrollRowToVisible:[errorArray count]-1];
+}
+
+- (NSString *)lineTail:(NSString*)line afterString:(NSString*)string
+{
+  NSRange substrRange;
+
+  substrRange = [line rangeOfString:string];
+/*  NSLog(@"In function ':%i:%i", 
+	substrRange.location, substrRange.length);*/
+  substrRange.location += substrRange.length;
+  substrRange.length = [line length] - (substrRange.location);
+/*  NSLog(@"In function ':%i:%i", 
+	substrRange.location, substrRange.length);*/
+
+  return [line substringWithRange:substrRange];
+}
+
+- (NSArray *)parseErrorLine:(NSString *)string
+{
+  NSArray             *components = [string componentsSeparatedByString:@":"];
+  NSString            *file = [NSString stringWithString:@""];
+  NSString            *includedFile = [NSString stringWithString:@""];
+  NSString            *position = [NSString stringWithString:@"{x=0; y=0}"];
+  NSString            *type = [NSString stringWithString:@""];
+  NSString            *message = [NSString stringWithString:@""];
+  NSMutableArray      *items = [NSMutableArray arrayWithCapacity:1];
+  NSMutableDictionary *errorItem;
+  NSString            *indentString = @"\t";
+  NSString            *lastFile = @"";
+  NSString            *lastIncludedFile = @"";
+
+  if ([errorArray count] > 0)
+    {
+      lastFile = [[errorArray lastObject] objectForKey:@"File"];
+//      if (!lastFile) lastFile = @"";
+      lastIncludedFile = [[errorArray lastObject] objectForKey:@"IncludedFile"];
+//      if (!lastIncludedFile) lastIncludedFile = @"";
+    }
+
+  if ([string rangeOfString:@"In file included from "].location != NSNotFound)
+    {
+      NSLog(@"In file included from ");
+      file = [self lineTail:[components objectAtIndex:0]
+		afterString:@"In file included from "];
+      position = [NSString stringWithFormat:@"{x=0; y=%f}", 
+	       [components objectAtIndex:1]];
+      message = file;
+      lastEL = currentEL;
+      currentEL = ELIncluded;
+    }
+  else if ([string rangeOfString:@"In function '"].location != NSNotFound)
+    {
+      file = [components objectAtIndex:0];
+      message = [self lineTail:string afterString:@"In function "];
+      lastEL = currentEL;
+      currentEL = ELFunction;
+    }
+  else if ([string rangeOfString:@" At top level:"].location != NSNotFound)
+    {
+      lastEL = currentEL;
+      currentEL = ELFile;
+      return nil;
+    }
+  else if ([components count] > 2)
+    {
+      unsigned typeIndex;
+      NSString *substr;
+
+      // file and includedFile
+      file = [components objectAtIndex:0];
+      if (lastEL == ELIncluded || [file isEqualToString:lastIncludedFile])
+	{// first message after "In file included from"
+	  NSLog(@"Inlcuded File: %@", file);
+	  includedFile = file;
+	  file = lastFile;
+	}
+
+      // type
+      if ((typeIndex = [components indexOfObject:@" warning"]) != NSNotFound)
+	{
+	  type = [components objectAtIndex:typeIndex];
+	}
+      else if ((typeIndex = [components indexOfObject:@" error"]) != NSNotFound)
+	{
+	  type = [components objectAtIndex:typeIndex];
+	}
+      // position
+      if (typeIndex == 2) // :line:
+	{
+	  position = [NSString stringWithFormat:@"{x=0; y=%f}", 
+		   [components objectAtIndex:1]];
+	}
+      else if (typeIndex == 3) // :line:column:
+	{
+	  position = [NSString stringWithFormat:@"{x=%f; y=%f}", 
+	      	   [components objectAtIndex:2], [components objectAtIndex:1]];
+	}
+      // message
+      substr = [NSString stringWithFormat:@"%@:", type];
+      message = [self lineTail:string afterString:substr];
+      lastEL = currentEL;
+      currentEL = ELError;
+    }
+  else
+    {
+      return nil;
+    }
+
+  // Insert indentation
+  if (currentEL == ELError)
+    {
+      if (lastEL == ELFunction)
+	{
+	  indentString = @"\t\t";
+	}
+      else if (lastEL == ELError)
+	{
+	  indentString = [NSString stringWithString:lastIndentString];
+	}
+    }
+  else if (currentEL == ELFunction)
+    {
+      indentString = @"\t";
+    }
+  else if (lastEL == ELNone || currentEL == ELFile)
+    {
+      indentString = @"";
+    }
+  message = [NSString stringWithFormat:@"%@%@", indentString, message];
+  lastIndentString = [indentString copy];
+
+  // Create array items
+  if ((lastEL == ELIncluded 
+       || ![includedFile isEqualToString:@""])
+       && ![includedFile isEqualToString:lastIncludedFile])
+    {
+//      NSString *includedMessage;
+
+      NSLog(@"lastEL == ELIncluded");
+
+//      includedMessage = [NSString stringWithFormat:@"%@(%@)", 
+//		      [includedFile copy], [file copy]];
+
+      NSLog(@"Included: %@ != %@", includedFile, lastIncludedFile);
+      errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
+      [errorItem setObject:@"" forKey:@"ErrorImage"];
+      [errorItem setObject:[file copy] forKey:@"File"];
+      [errorItem setObject:[includedFile copy] forKey:@"IncludedFile"];
+      [errorItem setObject:@"" forKey:@"Position"];
+      [errorItem setObject:@"" forKey:@"Type"];
+      [errorItem setObject:[includedFile copy] forKey:@"Error"];
+
+      [items addObject:errorItem];
+    }
+  else if ((lastEL == ELNone || ![file isEqualToString:lastFile])
+	   && currentEL != ELIncluded)
+    {
+      NSLog(@"lastEL == ELNone (%@)", includedFile);
+      NSLog(@"File: %@ != %@", file, lastFile);
+      errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
+      [errorItem setObject:@"" forKey:@"ErrorImage"];
+      [errorItem setObject:[file copy] forKey:@"File"];
+      [errorItem setObject:[includedFile copy] forKey:@"IncludedFile"];
+      [errorItem setObject:@"" forKey:@"Position"];
+      [errorItem setObject:@"" forKey:@"Type"];
+      [errorItem setObject:[file copy] forKey:@"Error"];
+
+      [items addObject:errorItem];
+    }
+
+  errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
+  [errorItem setObject:@"" forKey:@"ErrorImage"];
+  [errorItem setObject:[file copy] forKey:@"File"];
+  [errorItem setObject:[includedFile copy] forKey:@"IncludedFile"];
+  [errorItem setObject:[position copy] forKey:@"Position"];
+  [errorItem setObject:[type copy] forKey:@"Type"];
+  [errorItem setObject:[message copy] forKey:@"Error"];
+
+  NSLog(@"Parsed message: %@ (%@)", message, includedFile);
+
+  [items addObject:errorItem];
+
+  return items;
+}
+
+- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+{
+  if (errorArray != nil && aTableView == errorOutputTable)
+    {
+      return [errorArray count];
+    }
+
+  return 0;
+}
+    
+- (id)            tableView:(NSTableView *)aTableView
+  objectValueForTableColumn:(NSTableColumn *)aTableColumn
+                        row:(int)rowIndex
+{
+  NSDictionary *errorItem;
+
+  if (errorArray != nil && aTableView == errorOutputTable)
+    {
+      errorItem = [errorArray objectAtIndex:rowIndex];
+
+      return [errorItem objectForKey:[aTableColumn identifier]];
+    }
+
+  return nil;
+}
+  
+@end

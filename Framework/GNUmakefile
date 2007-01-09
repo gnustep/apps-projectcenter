@@ -101,6 +101,8 @@ ProjectCenter_RESOURCE_FILES = \
 #
 ProjectCenter_LOCALIZED_RESOURCE_FILES = \
   ProjectWindow.gorm \
+  BuilderPanel.gorm \
+  Builder.gorm \
   NewSubproject.gorm \
   NewFile.gorm \
   ProjectInspector.gorm \

@@ -1,3 +1,11 @@
+2007-01-09 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/English.lproj/Builder.gorm: Added.
+	* Framework/English.lproj/BuilderPanel.gorm: Added.
+	* Framework/PCProjectBuilder.m: Use GORM file for interface.
+	Initial parsing for error logging view was added.
+	* Framework/PCProjectBuilderPanel.m: Use GORM file for interface.
+	
 2006-12-26 Sergii Stoian <stoyan255@gmail.com>
 
 	* Merge changes from UNSTABLE_0_5 into trunk.

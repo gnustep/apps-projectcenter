@@ -1,0 +1,48 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "startInstall:",
+	    "showFindView:",
+	    "showProjectBuild:",
+	    "showProjectInspector:",
+	    "showProjectLaunch:",
+	    "showProjectLoadedFiles:",
+	    "startBuild:",
+	    "startClean:"
+	);
+	Super = NSObject;
+    };
+    PCButton = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSButton;
+    };
+    PCProjectBuilder = {
+	Actions = (
+	    "startInstall:",
+	    "startBuild:",
+	    "startClean:"
+	);
+	Outlets = (
+	    buildButton,
+	    cleanButton,
+	    componentView,
+	    installButton,
+	    split,
+	    optionsButton,
+	    buildStatusField,
+	    targetField
+	);
+	Super = NSObject;
+    };
+    PCSplitView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSSplitView;
+    };
+}
