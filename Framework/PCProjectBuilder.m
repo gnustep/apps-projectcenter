@@ -87,7 +87,7 @@
   [errorOutputTable setAllowsColumnResizing:NO];
   [errorOutputTable setAllowsEmptySelection:YES];
   [errorOutputTable setAllowsColumnSelection:NO];
-  [errorOutputTable setRowHeight:18.0];
+  [errorOutputTable setRowHeight:19.0];
   [errorOutputTable setCornerView:nil];
   [errorOutputTable setHeaderView:nil];
   [errorOutputTable addTableColumn:errorImageColumn];
@@ -97,6 +97,7 @@
                                                              green:0.76 
                                                               blue:0.60 
                                                              alpha:1.0]];
+  [errorOutputTable setDrawsGrid:NO];
 
   errorScroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,0,464,120)];
   [errorScroll setHasHorizontalScroller:NO];
@@ -844,6 +845,14 @@
   NSString            *lastFile = @"";
   NSString            *lastIncludedFile = @"";
 
+  lastEL = currentEL;
+
+  if (lastEL == ELFile) NSLog(@"+++ELFile");
+  if (lastEL == ELFunction) NSLog(@"+++ELFunction");
+  if (lastEL == ELIncluded) NSLog(@"+++ELIncluded");
+  if (lastEL == ELError) NSLog(@"+++ELError");
+  if (lastEL == ELNone) NSLog(@"+++ELNone");
+
   if ([errorArray count] > 0)
     {
       lastFile = [[errorArray lastObject] objectForKey:@"File"];
@@ -855,24 +864,25 @@
   if ([string rangeOfString:@"In file included from "].location != NSNotFound)
     {
       NSLog(@"In file included from ");
+      currentEL = ELIncluded;
       file = [self lineTail:[components objectAtIndex:0]
 		afterString:@"In file included from "];
+      if ([file isEqualToString:lastFile])
+	{
+	  return nil;
+	}
       position = [NSString stringWithFormat:@"{x=0; y=%f}", 
 	       [components objectAtIndex:1]];
-      message = file;
-      lastEL = currentEL;
-      currentEL = ELIncluded;
+      message = [components objectAtIndex:0];
     }
   else if ([string rangeOfString:@"In function '"].location != NSNotFound)
     {
       file = [components objectAtIndex:0];
       message = [self lineTail:string afterString:@"In function "];
-      lastEL = currentEL;
       currentEL = ELFunction;
     }
   else if ([string rangeOfString:@" At top level:"].location != NSNotFound)
     {
-      lastEL = currentEL;
       currentEL = ELFile;
       return nil;
     }
@@ -888,6 +898,11 @@
 	  NSLog(@"Inlcuded File: %@", file);
 	  includedFile = file;
 	  file = lastFile;
+	  currentEL = ELIncludedError;
+	}
+      else
+	{
+	  currentEL = ELError;
 	}
 
       // type
@@ -913,8 +928,6 @@
       // message
       substr = [NSString stringWithFormat:@"%@:", type];
       message = [self lineTail:string afterString:substr];
-      lastEL = currentEL;
-      currentEL = ELError;
     }
   else
     {
@@ -933,14 +946,15 @@
 	  indentString = [NSString stringWithString:lastIndentString];
 	}
     }
-  else if (currentEL == ELFunction)
-    {
-      indentString = @"\t";
-    }
-  else if (lastEL == ELNone || currentEL == ELFile)
+  else if (currentEL == ELIncluded)
     {
       indentString = @"";
     }
+  else if (currentEL == ELIncludedError)
+    {
+      indentString = @"\t\t";
+    }
+
   message = [NSString stringWithFormat:@"%@%@", indentString, message];
   lastIndentString = [indentString copy];
 
@@ -953,8 +967,8 @@
 
       NSLog(@"lastEL == ELIncluded");
 
-//      includedMessage = [NSString stringWithFormat:@"%@(%@)", 
-//		      [includedFile copy], [file copy]];
+/*      includedMessage = [NSString stringWithFormat:@"\t%@(%@)", 
+		      includedFile, file];*/
 
       NSLog(@"Included: %@ != %@", includedFile, lastIncludedFile);
       errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
@@ -967,8 +981,11 @@
 
       [items addObject:errorItem];
     }
-  else if ((lastEL == ELNone || ![file isEqualToString:lastFile])
-	   && currentEL != ELIncluded)
+  else if ((lastEL == ELNone 
+	    || ![file isEqualToString:lastFile] 
+	    || lastEL == ELIncludedError)
+	   && currentEL != ELIncluded
+	   && currentEL != ELIncludedError)
     {
       NSLog(@"lastEL == ELNone (%@)", includedFile);
       NSLog(@"File: %@ != %@", file, lastFile);
@@ -1016,6 +1033,9 @@
 
   if (errorArray != nil && aTableView == errorOutputTable)
     {
+      id dataCell = [aTableColumn dataCellForRow:rowIndex];
+
+      [dataCell setBackgroundColor:[NSColor whiteColor]];
       errorItem = [errorArray objectAtIndex:rowIndex];
 
       return [errorItem objectForKey:[aTableColumn identifier]];
