@@ -33,6 +33,7 @@
 {
   PCProjectManager *projectManager;
   PCProject        *currentProject;
+  NSWindow         *panel;
   NSBox            *contentBox;
   NSBox            *emptyBox;
 }
