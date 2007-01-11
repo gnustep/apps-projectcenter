@@ -25,7 +25,8 @@
 #before-all:: header-links
 
 before-install::
-	cp -r Headers/Protocols Framework/ProjectCenter.framework/Headers
+	mkdir -p Framework/ProjectCenter.framework/Headers/Protocols
+	cp -r Headers/Protocols/*.h Framework/ProjectCenter.framework/Headers/Protocols
 	
 after-clean::
 #	rm -rf ProjectCenter $(HEADER_LINK_DEPENDS)
