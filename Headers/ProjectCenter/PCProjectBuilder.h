@@ -31,6 +31,15 @@
 @class PCProject;
 @class PCButton;
 
+typedef enum _ErrorLevel {
+    ELFile,
+    ELFunction,
+    ELIncluded,
+    ELIncludedError,
+    ELError,
+    ELNone
+} ErrorLevel;
+
 @interface PCProjectBuilder : NSObject
 {
   NSBox           *componentView;
@@ -38,22 +47,35 @@
   PCButton        *cleanButton;
   PCButton        *installButton;
   PCButton        *optionsButton;
+  NSSplitView     *split;
   id              buildStatusField;
   id              targetField;
   NSTextView      *logOutput;
-  NSTextView      *errorOutput;
+///  NSTextView      *errorOutput;
 
+  // Error logging
+  NSTableView     *errorOutputTable;
+  NSTableColumn   *errorImageColumn;
+  NSTableColumn   *errorColumn;
+  NSMutableArray  *errorArray;
+  NSMutableString *errorString;
+
+  ErrorLevel      currentEL;
+  ErrorLevel      lastEL;
+  ErrorLevel      nextEL;
+  NSString        *lastIndentString;
+
+  // Options
   NSPopUpButton   *popup;
-  
   NSPanel         *optionsPanel;
   NSTextField     *buildTargetHostField;
   NSTextField     *buildTargetArgsField;
 
-  NSString        *makePath;
-
+  // Variables
   PCProject       *currentProject;
   NSDictionary    *currentOptions;
 
+  NSString        *makePath;
   NSString        *statusString;
   NSMutableString *buildTarget;
   NSMutableArray  *buildArgs;
@@ -97,7 +119,6 @@
 
 @interface PCProjectBuilder (UserInterface)
 
-- (void)_createComponentView;
 - (void)_createOptionsPanel;
 
 @end
@@ -107,6 +128,16 @@
 - (void)logString:(NSString *)string error:(BOOL)yn;
 - (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
+
+@end
+
+@interface PCProjectBuilder (ErrorLogging)
+
+- (void)logErrorString:(NSString *)string;
+- (void)addItems:(NSArray *)items;
+
+- (NSString *)lineTail:(NSString*)line afterString:(NSString*)string;
+- (NSArray *)parseErrorLine:(NSString *)string;
 
 @end
 
