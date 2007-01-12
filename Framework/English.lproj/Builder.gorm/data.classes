@@ -34,7 +34,8 @@
 	    split,
 	    optionsButton,
 	    buildStatusField,
-	    targetField
+	    targetField,
+	    errorsCountField
 	);
 	Super = NSObject;
     };

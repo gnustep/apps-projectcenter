@@ -33,36 +33,17 @@
 
 - (void)awakeFromNib
 {
-  PCProject        *activeProject = [projectManager rootActiveProject];
-//  PCProjectBuilder *projectBuilder = [activeProject projectBuilder];
+  PCProject *activeProject = [projectManager rootActiveProject];
 
-/*  self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
-                         styleMask: (NSTitledWindowMask 
-		                    | NSClosableWindowMask
-				    | NSResizableWindowMask)
-			   backing: NSBackingStoreRetained
-			     defer: YES];
-  [self setMinSize: NSMakeSize(440, 222)];
-  [self setReleasedWhenClosed: NO];
-  [self setHidesOnDeactivate: NO];*/
   [panel setFrameAutosaveName:@"ProjectBuilder"];
   [panel setTitle:[NSString stringWithFormat: 
     @"%@ - Project Build", [activeProject projectName]]];
 
   // Panel's content view
-/*  contentBox = [[NSBox alloc] init];
-  [contentBox setContentViewMargins:NSMakeSize(8.0, 0.0)];
-  [contentBox setTitlePosition:NSNoTitle];
-  [contentBox setBorderType:NSNoBorder];*/
   [panel setContentView:contentBox];
 
   // Empty content view of contentBox
   RETAIN(emptyBox);
-/*  emptyBox = [[NSBox alloc] init];
-  [emptyBox setContentViewMargins:NSMakeSize(0.0, 0.0)];
-  [emptyBox setTitlePosition:NSNoTitle];
-  [emptyBox setBorderType:NSLineBorder];
-  [contentBox setContentView:emptyBox];*/
 
   // Track project switching
   [[NSNotificationCenter defaultCenter] 

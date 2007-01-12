@@ -67,6 +67,8 @@
 
   [optionsButton setToolTip:@"Options"];
 //  [optionsButton setImage:IMAGE(@"Options")];
+  
+  [errorsCountField setStringValue:@""];
 
   /*
    *  Error output
@@ -81,7 +83,7 @@
   [errorColumn setEditable:NO];
 
   errorOutputTable = [[NSTableView alloc]
-    initWithFrame:NSMakeRect(6,6,209,111)];
+    initWithFrame:NSMakeRect(0,0,209,111)];
   [errorOutputTable setAllowsMultipleSelection:NO];
   [errorOutputTable setAllowsColumnReordering:NO];
   [errorOutputTable setAllowsColumnResizing:NO];
@@ -470,6 +472,42 @@
   [optionsPanel orderFront:nil];
 }
 
+- (void)updateErrorsCountField
+{
+  NSString *string;
+  NSString *errorsString = [NSString stringWithString:@""];;
+  NSString *warningsString = [NSString stringWithString:@""];
+
+  if (errorsCount > 0)
+    {
+      if (errorsCount > 1)
+	{
+	  errorsString = [NSString stringWithFormat:@"%i errors", 
+		       errorsCount];
+	}
+      else
+	{
+	  errorsString = [NSString stringWithString:@"1 error"];
+	}
+    }
+
+  if (warningsCount > 0)
+    {
+      if (warningsCount > 1)
+	{
+	  warningsString = [NSString stringWithFormat:@"%i warnings", 
+			 warningsCount];
+	}
+      else
+	{
+	  warningsString = [NSString stringWithString:@"1 warning"];
+	}
+    }
+
+  string = [NSString stringWithFormat:@"%@ %@", errorsString, warningsString];
+  [errorsCountField setStringValue:string];
+}
+
 // --- Actions
 - (void)build:(id)sender
 {
@@ -505,6 +543,7 @@
                           selector:@selector(logStdOut:)
 			      name:NSFileHandleDataAvailableNotification
 			    object:readHandle];
+  _isLogging = YES;
 
   errorPipe = [NSPipe pipe];
   errorReadHandle = [errorPipe fileHandleForReading];
@@ -514,12 +553,15 @@
                           selector:@selector(logErrOut:) 
 			      name:NSFileHandleDataAvailableNotification
 			    object:errorReadHandle];
+  _isErrorLogging = YES;
+  [errorsCountField setStringValue:[NSString stringWithString:@""]];
+  errorsCount = 0;
+  warningsCount = 0;
 
   [buildStatusField setStringValue:statusString];
 
   // Run make task
   [logOutput setString:@""];
-//  [errorOutput setString:@""];
   [errorArray removeAllObjects];
   [errorOutputTable reloadData];
 
@@ -532,7 +574,6 @@
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
   [makeTask setLaunchPath:makePath];
-
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
 
@@ -565,8 +606,6 @@
 
   NSLog(@"task did terminate");
 
-//  [NOTIFICATION_CENTER removeObserver:self];
-
   [NOTIFICATION_CENTER removeObserver:self 
 			         name:NSTaskDidTerminateNotification
 			       object:nil];
@@ -581,24 +620,47 @@
       status = 1;
     }
   NS_ENDHANDLER
-  
+ 
+  // Finish task
+  RELEASE(makeTask);
+  makeTask = nil;
+
+  // Wait for logging end
+  while (_isLogging || _isErrorLogging) 
+    {
+      [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
+			       beforeDate:[NSDate distantFuture]];
+    };
+    
+  [self updateErrorsCountField];
+
   if (status == 0)
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ succeeded!", buildTarget] 
+	[NSString stringWithFormat:@"=== %@ succeeded! ===", buildTarget] 
 	                     error:NO
-			   newLine:NO];
+			   newLine:YES];
       [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ succeeded...", [currentProject projectName], buildTarget]];
+	@"%@ - %@ succeeded", [currentProject projectName], buildTarget]];
     } 
   else
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ terminated!", buildTarget]
+	[NSString stringWithFormat:@"=== %@ terminated! ===", buildTarget]
 	                     error:NO
-			   newLine:NO];
-      [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ terminated...", [currentProject projectName], buildTarget]];
+			   newLine:YES];
+      if (errorsCount > 0)
+	{
+	  [buildStatusField setStringValue:[NSString stringWithFormat: 
+	    @"%@ - %@ unsuccessful (%i errors)", 
+	    [currentProject projectName], buildTarget, errorsCount]];
+	}
+      else
+	{
+	  [buildStatusField setStringValue:[NSString stringWithFormat: 
+	    @"%@ - %@ unsuccessful", 
+	    [currentProject projectName], buildTarget]];
+	}
     }
 
   // Rstore buttons state
@@ -621,11 +683,6 @@
       [cleanButton setEnabled:YES];
     }
 
-  [buildArgs removeAllObjects];
-  [buildTarget setString:@"Default"];
-
-  RELEASE(makeTask);
-  makeTask = nil;
 
   // Run post process if configured
 /*  if (status && postProcess)
@@ -633,6 +690,9 @@
       [self performSelector:postProcess];
       postProcess = NULL;
     }*/
+
+  [buildArgs removeAllObjects];
+  [buildTarget setString:@"Default"];
 
   _isBuilding = NO;
   _isCleaning = NO;
@@ -667,6 +727,7 @@
     }
   else
     {
+      _isLogging = NO;
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
 			           object:readHandle];
@@ -679,8 +740,7 @@
 
 //  NSLog(@"logErrOut");
   
-//  if ((data = [errorReadHandle availableData]) && [data length] > 1)
-  if ((data = [errorReadHandle availableData]))
+  if ((data = [errorReadHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:YES];
     }
@@ -691,36 +751,16 @@
     }
   else
     {
+      _isErrorLogging = NO;
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
 			           object:errorReadHandle];
     }
 }
 
-- (void)copyPackageTo:(NSString *)path
-{
-  NSString *source = nil;
-  NSString *dest = nil;
-  NSString *rpm = nil;
-  NSString *srcrpm = nil;
-
-  // Copy the rpm files to the source directory
-  if (source) 
-  {
-    [[NSFileManager defaultManager] copyPath:srcrpm toPath:dest handler:nil];
-    [[NSFileManager defaultManager] copyPath:rpm    toPath:dest handler:nil];
-  }
-}
-
 @end
 
 @implementation PCProjectBuilder (BuildLogging)
-
-- (void)logString:(NSString *)string
-            error:(BOOL)yn
-{
-  [self logString:string error:yn newLine:NO];
-}
 
 - (void)logString:(NSString *)str
             error:(BOOL)yn
@@ -777,6 +817,9 @@
   NSRange lineRange;
   NSArray *items;
 
+  // Send it to standard out anyway to see all make process errors
+  [self logString:string error:NO newLine:NO];
+
   // Process new data
   lineRange.location = 0;
   [errorString appendString:string];
@@ -790,7 +833,7 @@
 
       if (newLineRange.location < [errorString length])
 	{
-	  NSLog(@"<------%@------>", errorString);
+//	  NSLog(@"<------%@------>", errorString);
 
 	  lineRange.length = newLineRange.location+1;
 	  string = [errorString substringWithRange:lineRange];
@@ -841,29 +884,35 @@
   NSString            *message = [NSString stringWithString:@""];
   NSMutableArray      *items = [NSMutableArray arrayWithCapacity:1];
   NSMutableDictionary *errorItem;
-  NSString            *indentString = @"\t";
+  NSString            *indentString = @"  ";
   NSString            *lastFile = @"";
   NSString            *lastIncludedFile = @"";
 
+  NSAttributedString  *attributedString;
+  NSMutableDictionary *attributes = [NSMutableDictionary new];
+  NSFont              *font = [NSFont boldSystemFontOfSize:12.0];
+
+  [attributes setObject:font forKey:NSFontAttributeName];
+  [attributes setObject:[NSNumber numberWithInt:NSSingleUnderlineStyle] 
+		 forKey:NSUnderlineStyleAttributeName];
+
   lastEL = currentEL;
 
-  if (lastEL == ELFile) NSLog(@"+++ELFile");
+/*  if (lastEL == ELFile) NSLog(@"+++ELFile");
   if (lastEL == ELFunction) NSLog(@"+++ELFunction");
   if (lastEL == ELIncluded) NSLog(@"+++ELIncluded");
   if (lastEL == ELError) NSLog(@"+++ELError");
-  if (lastEL == ELNone) NSLog(@"+++ELNone");
+  if (lastEL == ELNone) NSLog(@"+++ELNone");*/
 
   if ([errorArray count] > 0)
     {
       lastFile = [[errorArray lastObject] objectForKey:@"File"];
-//      if (!lastFile) lastFile = @"";
       lastIncludedFile = [[errorArray lastObject] objectForKey:@"IncludedFile"];
-//      if (!lastIncludedFile) lastIncludedFile = @"";
     }
 
   if ([string rangeOfString:@"In file included from "].location != NSNotFound)
     {
-      NSLog(@"In file included from ");
+//      NSLog(@"In file included from ");
       currentEL = ELIncluded;
       file = [self lineTail:[components objectAtIndex:0]
 		afterString:@"In file included from "];
@@ -895,7 +944,7 @@
       file = [components objectAtIndex:0];
       if (lastEL == ELIncluded || [file isEqualToString:lastIncludedFile])
 	{// first message after "In file included from"
-	  NSLog(@"Inlcuded File: %@", file);
+//	  NSLog(@"Inlcuded File: %@", file);
 	  includedFile = file;
 	  file = lastFile;
 	  currentEL = ELIncludedError;
@@ -909,10 +958,12 @@
       if ((typeIndex = [components indexOfObject:@" warning"]) != NSNotFound)
 	{
 	  type = [components objectAtIndex:typeIndex];
+	  warningsCount++;
 	}
       else if ((typeIndex = [components indexOfObject:@" error"]) != NSNotFound)
 	{
 	  type = [components objectAtIndex:typeIndex];
+	  errorsCount++;
 	}
       // position
       if (typeIndex == 2) // :line:
@@ -939,7 +990,7 @@
     {
       if (lastEL == ELFunction)
 	{
-	  indentString = @"\t\t";
+	  indentString = @"    ";
 	}
       else if (lastEL == ELError)
 	{
@@ -952,7 +1003,7 @@
     }
   else if (currentEL == ELIncludedError)
     {
-      indentString = @"\t\t";
+      indentString = @"    ";
     }
 
   message = [NSString stringWithFormat:@"%@%@", indentString, message];
@@ -963,21 +1014,16 @@
        || ![includedFile isEqualToString:@""])
        && ![includedFile isEqualToString:lastIncludedFile])
     {
-//      NSString *includedMessage;
+      NSString *incMessage = [NSString stringWithFormat:@"  %@", includedFile];
 
-      NSLog(@"lastEL == ELIncluded");
-
-/*      includedMessage = [NSString stringWithFormat:@"\t%@(%@)", 
-		      includedFile, file];*/
-
-      NSLog(@"Included: %@ != %@", includedFile, lastIncludedFile);
+//      NSLog(@"Included: %@ != %@", includedFile, lastIncludedFile);
       errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
       [errorItem setObject:@"" forKey:@"ErrorImage"];
       [errorItem setObject:[file copy] forKey:@"File"];
       [errorItem setObject:[includedFile copy] forKey:@"IncludedFile"];
       [errorItem setObject:@"" forKey:@"Position"];
       [errorItem setObject:@"" forKey:@"Type"];
-      [errorItem setObject:[includedFile copy] forKey:@"Error"];
+      [errorItem setObject:[incMessage copy] forKey:@"Error"];
 
       [items addObject:errorItem];
     }
@@ -987,15 +1033,19 @@
 	   && currentEL != ELIncluded
 	   && currentEL != ELIncludedError)
     {
-      NSLog(@"lastEL == ELNone (%@)", includedFile);
-      NSLog(@"File: %@ != %@", file, lastFile);
+//      NSLog(@"lastEL == ELNone (%@)", includedFile);
+//      NSLog(@"File: %@ != %@", file, lastFile);
       errorItem = [NSMutableDictionary dictionaryWithCapacity:1];
       [errorItem setObject:@"" forKey:@"ErrorImage"];
       [errorItem setObject:[file copy] forKey:@"File"];
       [errorItem setObject:[includedFile copy] forKey:@"IncludedFile"];
       [errorItem setObject:@"" forKey:@"Position"];
       [errorItem setObject:@"" forKey:@"Type"];
-      [errorItem setObject:[file copy] forKey:@"Error"];
+  
+      attributedString = [[NSAttributedString alloc] initWithString:file
+							 attributes:attributes];
+      [errorItem setObject:[attributedString copy] forKey:@"Error"];
+      [attributedString release];
 
       [items addObject:errorItem];
     }
@@ -1008,7 +1058,7 @@
   [errorItem setObject:[type copy] forKey:@"Type"];
   [errorItem setObject:[message copy] forKey:@"Error"];
 
-  NSLog(@"Parsed message: %@ (%@)", message, includedFile);
+//  NSLog(@"Parsed message: %@ (%@)", message, includedFile);
 
   [items addObject:errorItem];
 
@@ -1033,9 +1083,6 @@
 
   if (errorArray != nil && aTableView == errorOutputTable)
     {
-      id dataCell = [aTableColumn dataCellForRow:rowIndex];
-
-      [dataCell setBackgroundColor:[NSColor whiteColor]];
       errorItem = [errorArray objectAtIndex:rowIndex];
 
       return [errorItem objectForKey:[aTableColumn identifier]];

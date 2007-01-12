@@ -47,6 +47,7 @@ typedef enum _ErrorLevel {
   PCButton        *cleanButton;
   PCButton        *installButton;
   PCButton        *optionsButton;
+  NSTextField     *errorsCountField;
   NSSplitView     *split;
   id              buildStatusField;
   id              targetField;
@@ -85,8 +86,13 @@ typedef enum _ErrorLevel {
   NSFileHandle    *readHandle;
   NSFileHandle    *errorReadHandle;
 
+  int             errorsCount;
+  int             warningsCount;
+
   BOOL            _isBuilding;
   BOOL            _isCleaning;
+  BOOL            _isLogging;
+  BOOL            _isErrorLogging;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -113,8 +119,6 @@ typedef enum _ErrorLevel {
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;
 
-- (void)copyPackageTo:(NSString *)path;
-
 @end
 
 @interface PCProjectBuilder (UserInterface)
@@ -125,7 +129,6 @@ typedef enum _ErrorLevel {
 
 @interface PCProjectBuilder (BuildLogging)
 
-- (void)logString:(NSString *)string error:(BOOL)yn;
 - (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
 
