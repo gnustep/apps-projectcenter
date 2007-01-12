@@ -1,3 +1,11 @@
+2007-01-12 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilder.m: Parsing of error output almost complete,
+	testing. Display number of warnings and errors in statud line after build
+	process finished.
+	* Framework/English.lproj/BuilderPanel.gorm: Change minimal size.
+	* Framework/English.lproj/ProjectWindow.gorm: Fix minimal size.
+		
 2007-01-09 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/English.lproj/Builder.gorm: Added.
