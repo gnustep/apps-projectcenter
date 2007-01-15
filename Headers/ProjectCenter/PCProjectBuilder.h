@@ -51,11 +51,9 @@ typedef enum _ErrorLevel {
   NSSplitView     *split;
   id              buildStatusField;
   id              targetField;
-  NSTextView      *logOutput;
-///  NSTextView      *errorOutput;
 
   // Error logging
-  NSTableView     *errorOutputTable;
+  NSTableView     *errorOutput;
   NSTableColumn   *errorImageColumn;
   NSTableColumn   *errorColumn;
   NSMutableArray  *errorArray;
@@ -65,6 +63,13 @@ typedef enum _ErrorLevel {
   ErrorLevel      lastEL;
   ErrorLevel      nextEL;
   NSString        *lastIndentString;
+  int             errorsCount;
+  int             warningsCount;
+
+  // Output logging
+  NSTextView      *logOutput;
+  NSMutableString *currentBuildFile;
+  NSMutableArray  *currentBuildPath;
 
   // Options
   NSPopUpButton   *popup;
@@ -86,9 +91,6 @@ typedef enum _ErrorLevel {
   NSFileHandle    *readHandle;
   NSFileHandle    *errorReadHandle;
 
-  int             errorsCount;
-  int             warningsCount;
-
   BOOL            _isBuilding;
   BOOL            _isCleaning;
   BOOL            _isLogging;
@@ -99,6 +101,7 @@ typedef enum _ErrorLevel {
 - (void)dealloc;
 
 - (NSView *)componentView;
+- (BOOL)setMakePath;
 
 // --- Accessory
 - (BOOL)isBuilding;
@@ -109,8 +112,12 @@ typedef enum _ErrorLevel {
 
 // --- Actions
 - (void)startBuild:(id)sender;
-- (BOOL)stopBuild:(id)sender;
 - (void)startClean:(id)sender;
+- (void)startInstall:(id)sender;
+- (BOOL)stopMake:(id)sender;
+- (void)cleanupAfterMake;
+
+- (BOOL)prebuildCheck;
 - (void)build:(id)sender;
 //- (void)buildDidTerminate;
 
@@ -118,6 +125,8 @@ typedef enum _ErrorLevel {
 
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;
+
+- (void)updateErrorsCountField;
 
 @end
 
@@ -129,6 +138,8 @@ typedef enum _ErrorLevel {
 
 @interface PCProjectBuilder (BuildLogging)
 
+- (void)parseBuildLine:(NSString *)string;
+
 - (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
 - (void)logData:(NSData *)data error:(BOOL)yn;
 
@@ -137,7 +148,6 @@ typedef enum _ErrorLevel {
 @interface PCProjectBuilder (ErrorLogging)
 
 - (void)logErrorString:(NSString *)string;
-- (void)addItems:(NSArray *)items;
 
 - (NSString *)lineTail:(NSString*)line afterString:(NSString*)string;
 - (NSArray *)parseErrorLine:(NSString *)string;

@@ -645,8 +645,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  [[project projectWindow] showProjectLoadedFiles:self];
 	}
-      [[project projectWindow] orderFront:self];
-
       return YES;
     }
 
@@ -709,6 +707,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (filePath != nil)
     {
       [self openProjectAt:filePath];
+      [[activeProject projectWindow] makeKeyAndOrderFront:self];
+
 /*      NSRunAlertPanel(@"Attention!",
 		      @"Couldn't open project %@!",
 		      @"OK",nil,nil,
@@ -921,7 +921,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCProject *currentProject = nil;
   NSString  *projectName = [aProject projectName];
 
-  currentProject = RETAIN([loadedProjects objectForKey:projectName]);
+  currentProject = [loadedProjects objectForKey:projectName];
   if (!currentProject)
     {
       return;
@@ -948,7 +948,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  [launchPanel close];
 	}
-      [self setActiveProject: nil];
+      [self setActiveProject:nil];
       [self stopSaveTimer];
     }
   else if (currentProject == [self activeProject])

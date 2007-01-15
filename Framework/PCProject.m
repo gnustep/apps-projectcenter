@@ -24,7 +24,8 @@
 */
 
 // TODO: Split into several files with categories
-// TODO: Take care of Libraries and Non Project Files
+// TODO: Take care of Libraries(gnustep-gui, gnustep-base) 
+//       and Non Project Files
 
 #include <ProjectCenter/PCFileManager.h>
 #include <ProjectCenter/PCProjectManager.h>
@@ -305,6 +306,7 @@ NSString
 	  NSRunAlertPanel(@"Attention!",
 			  @"Could not keep a backup of the GNUMakefile!",
 			  @"OK",nil,nil);
+	  return NO;
 	}
     }
 
@@ -470,7 +472,7 @@ NSString
 
 - (BOOL)close:(id)sender
 {
-//  PCLogInfo(self, @"Closing %@ project", projectName);
+  PCLogInfo(self, @"Closing %@ project", projectName);
   
   // Save visible windows and panels positions to project dictionary
   if (isSubproject == NO)
@@ -527,6 +529,12 @@ NSString
       return NO;
     }
 
+  // Project Builder
+/*  if (projectBuilder)
+    {
+      [projectBuilder release];
+    }*/
+  
   // Project window
   if (sender != projectWindow)
     {

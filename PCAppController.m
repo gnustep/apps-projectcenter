@@ -21,6 +21,7 @@
 */
 #include <ProjectCenter/PCPrefController.h>
 #include <ProjectCenter/PCLogController.h>
+#include <ProjectCenter/PCFileManager.h>
 
 #include "PCAppController.h"
 #include "PCMenuController.h"
@@ -123,7 +124,7 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
+//  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
 
   if ([[prefController objectForKey:DisplayLog] isEqualToString:@"YES"])
     {
@@ -180,21 +181,30 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSFileManager *fm;
+  PCFileManager *pcfm;
+  NSString      *rootBuildDir;
+  NSArray       *rootBuildDirList;
+
 #ifdef DEVELOPMENT
   NSLog (@"--- Application WILL terminate");
 #endif
 
-/*
-  if ([[[NSUserDefaults standardUserDefaults] 
-      stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
-    {
-      [[NSFileManager defaultManager] 
-	removeFileAtPath:[projectManager rootBuildPath]
-	         handler:nil];
-    }
-*/
 
-  [[NSUserDefaults standardUserDefaults] synchronize];
+  if ([[ud stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
+    {
+      fm = [NSFileManager defaultManager];
+      pcfm = [PCFileManager defaultManager];
+
+      rootBuildDir = [prefController objectForKey:RootBuildDirectory];
+      rootBuildDirList = [fm directoryContentsAtPath:rootBuildDir];
+      NSLog(@"The following files will be removed from directory \"%@\": %@",
+	    rootBuildDir, rootBuildDirList);
+      [pcfm removeFiles:rootBuildDirList fromDirectory:rootBuildDir];
+    }
+
+  [ud synchronize];
 
   //--- Cleanup
   if (doConnection)

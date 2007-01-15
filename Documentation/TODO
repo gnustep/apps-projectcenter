@@ -32,12 +32,12 @@ ProjectCenter 0.5
   - Implement code parser (get it from CodeEditor?)		[done!]
   - Project Browser should show file structure.			[done!]
   - Click on Browser item should move cursor to line in file	[done!]
-  - Imlement pending adding/removal of files (history?)		[done!]
+  - Imlement pending adding/removal of files (history?)		stoyan
 --- Project Builder:
   - Implement root build directory handling			stoyan
   - Finish options handling					stoyan
-  - Parse gcc output						stoyan
-  - Display warnings,errors,options etc. as clickable list	stoyan
+  - Parse gcc output						[90% done!]
+  - Display warnings,errors,options etc. as clickable list	[90% done!]
 - Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
 - Review all dialogs and situations when dialogs must be 
   popped up							stoyan

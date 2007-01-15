@@ -229,9 +229,9 @@
 // ==== Tool Tips
 // ============================================================================
 
-- (void)mouseEntered:(NSEvent *)theEvent
+/*- (void)mouseEntered:(NSEvent *)theEvent
 {
-//  NSLog (@"mouseEntered");
+  NSLog (@"mouseEntered");
 
   if (ttTimer == nil)
     {
@@ -381,7 +381,7 @@
     }
   
   return nil;
-}
+}*/
 
 @end
 

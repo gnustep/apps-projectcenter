@@ -25,7 +25,7 @@
 
 #import <ProjectCenter/PCPrefController.h>
 
-// TODO: rewrite it as PCPrefernces, use +sharedPreferences instead of
+// TODO: rewrite it as PCPreferences, use +sharedPreferences instead of
 // [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
 
 @implementation PCPrefController
@@ -414,15 +414,24 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)setRootBuildDir:(id)sender
 {
-  NSArray  *types = nil;
-  NSString *path = [self selectFileWithTypes:types];
+  NSString *path;
+
+  if (sender == rootBuildDirButton)
+    {
+      path = [self selectFileWithTypes:nil];
+      [rootBuildDirField setStringValue:path];
+    }
+  else
+    {
+      path = [rootBuildDirField stringValue];
+    }
 
   if (path)
     {
-      [rootBuildDirField setStringValue:path];
-      [[NSUserDefaults standardUserDefaults] setObject:path
-	                                        forKey:RootBuildDirectory];
-      [preferencesDict setObject:path forKey:RootBuildDirectory];
+      [[NSUserDefaults standardUserDefaults] setObject:path 
+						forKey:RootBuildDirectory];
+      [preferencesDict setObject:path 
+			  forKey:RootBuildDirectory];
     }
 }
 

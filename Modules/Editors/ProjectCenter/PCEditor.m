@@ -472,7 +472,7 @@
   NSEnumerator   *enumerator;
   NSDictionary   *method;
   NSDictionary   *class;
-  NSMutableArray *items;
+  NSMutableArray *items = [NSMutableArray array];
   
   NSLog(@"PCEditor: asked for browser items for: %@", item);
 
@@ -484,7 +484,6 @@
     {
       ASSIGN(parserClasses, [aParser classNames]);
 
-      items = [NSMutableArray array];
       enumerator = [parserClasses objectEnumerator];
       while ((class = [enumerator nextObject]))
 	{
@@ -498,7 +497,6 @@
     {
       ASSIGN(parserMethods, [aParser methodNames]);
 
-      items = [NSMutableArray array];
       enumerator = [parserMethods objectEnumerator];
       while ((method = [enumerator nextObject]))
 	{

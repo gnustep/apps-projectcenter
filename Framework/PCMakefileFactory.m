@@ -59,6 +59,10 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)createMakefileForProject:(NSString *)prName
 {
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *buildDir = [ud objectForKey:RootBuildDirectory];
+  NSString       *buildName = [prName stringByAppendingPathExtension:@"build"];
+
   NSAssert(prName, @"No project name given!");
 
   AUTORELEASE(mfile);
@@ -72,6 +76,13 @@ static PCMakefileFactory *_factory = nil;
   [mfile appendString:@"#\n"];
   
   [mfile appendString:@"\ninclude $(GNUSTEP_MAKEFILES)/common.make\n"];
+
+  if (![buildDir isEqualToString:@""])
+    {
+      [mfile appendString:
+        [NSString stringWithFormat:@"\nGNUSTEP_BUILD_DIR = %@\n",
+	  [buildDir stringByAppendingPathComponent:buildName]]];
+    }
 }
 
 - (BOOL)createPreambleForProject:(PCProject *)project

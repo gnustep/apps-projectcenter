@@ -67,10 +67,10 @@
 {
   NSRect rect;
 
-  [buildButton setToolTip:@"Build"];
+  [buildButton setToolTip:@"Project Builder"];
 //  [buildButton setImage:IMAGE(@"Build")];
 
-  [launchButton setToolTip:@"Launch/Debug"];
+  [launchButton setToolTip:@"Project Launcher"];
 //  [launchButton setImage:IMAGE(@"Run")];
   if (![project isExecutable])
     {
@@ -84,10 +84,10 @@
       [loadedFilesButton setEnabled:NO];
     }
 
-  [findButton setToolTip:@"Find"];
+  [findButton setToolTip:@"Project Finder"];
 //  [findButton setImage:IMAGE(@"Find")];
 
-  [inspectorButton setToolTip:@"Inspector"];
+  [inspectorButton setToolTip:@"Project Inspector"];
 //  [inspectorButton setImage:IMAGE(@"Inspector")];
 
   [fileIcon setFileNameField:fileIconTitle];
@@ -749,6 +749,8 @@
 
 /*  PCLogInfo(self, @"windowDidBecomeKey: activeSubproject %@",
 	    [[project activeSubproject] projectName]);*/
+  NSLog(@"windowDidBecomeKey: project %@",
+	[project projectName]);
 
   if ([[project projectManager] rootActiveProject] != project)
     {
@@ -762,7 +764,6 @@
 	  [[project projectManager] setActiveProject:project];
 	}
     }
-
 
   // Workaround
   if ([projectWindow isDocumentEdited])

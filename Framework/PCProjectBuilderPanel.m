@@ -125,6 +125,7 @@
 
 /*  PCLogInfo(self, @"activeProjectDidChange to: %@", 
 	    [rootProject projectName]);*/
+  NSLog(@"activeProjectDidChange to: %@", [rootProject projectName]);
 
   if (!rootProject)
     {

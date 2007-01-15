@@ -1,3 +1,20 @@
+2007-01-15 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m: Fix problem with closing project.
+	* Framework/PCProjectr.m: Ditto.
+	* Framework/PCMakefileFactory.m: Support for root build directory added.
+	* Framework/PCProjectBuilder.m: Code cleanup.
+	* Framework/PCProjectEditor.m: Enable usage of parser. Start testing process.
+	* Framework/PCProjectWindows.m: Enable tooltips for buttons.
+	* Framework/PCPrefController.m: setRootBuildDir: fix.
+
+	* PCAppController.m: applicationWillTerminate: Remove file from build dir on
+	application quit. This code still needs review (also removed build dir because of
+	use PCFileManager's method).
+
+	* Modules/Editors/ProjectCenter/PCEditor.m: browserItemsForItem: Crashes if file
+	is not supported by parser. Fixed.
+	
 2007-01-12 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBuilder.m: Parsing of error output almost complete,

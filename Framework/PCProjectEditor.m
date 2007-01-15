@@ -411,7 +411,7 @@ NSString *PCEditorDidResignActiveNotification =
 	}
 
       // Parser
-/*      parserClassName = [self classNameForBundleType:@"parser"
+      parserClassName = [self classNameForBundleType:@"parser"
 					     andFile:[path lastPathComponent]];
       if (parserClassName != nil)
 	{
@@ -421,7 +421,7 @@ NSString *PCEditorDidResignActiveNotification =
 	    				inBundleType:@"parser"];
 	  [editor setParser:parser];
 	  RELEASE(parser);
-	}*/
+	}
 
       [editor openFileAtPath:path 
 		categoryPath:categoryPath

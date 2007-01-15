@@ -30,6 +30,7 @@
 /*
  * Button
  */
+
 @interface PCButton : NSButton 
 {
   NSToolTipTag        mainToolTip;
