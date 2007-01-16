@@ -300,7 +300,9 @@ static PCFileManager *_mgr = nil;
   return YES;
 }
 
-- (BOOL)removeFile:(NSString *)file fromDirectory:(NSString *)directory
+- (BOOL)removeFile:(NSString *)file
+     fromDirectory:(NSString *)directory
+ removeDirsIfEmpty:(BOOL)removeDirs
 {
   NSString      *path = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
@@ -317,32 +319,24 @@ static PCFileManager *_mgr = nil;
       return NO;
     }
 
-  [self removeDirectoriesIfEmptyAtPath:directory];
+  if (removeDirs)
+    {
+      [self removeDirectoriesIfEmptyAtPath:directory];
+    }
 
   return YES;
 }
 
-- (BOOL)removeFileAtPath:(NSString *)file
+- (BOOL)removeFileAtPath:(NSString *)file removeDirsIfEmpty:(BOOL)removeDirs
 {
-  NSFileManager *fm = [NSFileManager defaultManager];
-  
-  if (!file)
-    {
-      return NO;
-    }
-
-  if (![fm removeFileAtPath:file handler:nil])
-    {
-      return NO;
-    }
-
-  [self 
-    removeDirectoriesIfEmptyAtPath:[file stringByDeletingLastPathComponent]];
-
-  return YES;
+  return [self removeFile:[file lastPathComponent]
+	    fromDirectory:[file stringByDeletingLastPathComponent]
+	removeDirsIfEmpty:removeDirs];
 }
 
-- (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory
+- (BOOL)removeFiles:(NSArray *)files
+      fromDirectory:(NSString *)directory
+  removeDirsIfEmpty:(BOOL)removeDirs
 {
   NSEnumerator *filesEnum = nil;
   NSString     *file = nil;
@@ -355,7 +349,9 @@ static PCFileManager *_mgr = nil;
   filesEnum = [files objectEnumerator];
   while ((file = [filesEnum nextObject]))
     {
-      if ([self removeFile:file fromDirectory:directory] == NO)
+      if ([self removeFile:file 
+	     fromDirectory:directory 
+	 removeDirsIfEmpty:removeDirs] == NO)
 	{
 	  return NO;
 	}
@@ -368,7 +364,7 @@ static PCFileManager *_mgr = nil;
 {
   if ([self copyFile:file intoDirectory:directory] == YES)
     {
-      [self removeFileAtPath:file];
+      [self removeFileAtPath:file removeDirsIfEmpty:YES];
     }
   else
     {

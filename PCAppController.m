@@ -201,7 +201,9 @@
       rootBuildDirList = [fm directoryContentsAtPath:rootBuildDir];
       NSLog(@"The following files will be removed from directory \"%@\": %@",
 	    rootBuildDir, rootBuildDirList);
-      [pcfm removeFiles:rootBuildDirList fromDirectory:rootBuildDir];
+      [pcfm removeFiles:rootBuildDirList 
+	  fromDirectory:rootBuildDir
+      removeDirsIfEmpty:NO];
     }
 
   [ud synchronize];

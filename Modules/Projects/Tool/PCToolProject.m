@@ -99,7 +99,7 @@
       oldFilePath = [oldFilePath stringByAppendingPathComponent:oldFile];
       
       [pcfm copyFile:oldFilePath toFile:infoFilePath];
-      [pcfm removeFileAtPath:oldFilePath];
+      [pcfm removeFileAtPath:oldFilePath removeDirsIfEmpty:YES];
 
       [otherRes removeObject:oldFile];
       [otherRes addObject:infoFile];

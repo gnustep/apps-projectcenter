@@ -60,7 +60,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
   NSMutableDictionary *loadedProjects;
   PCProject           *activeProject;
   
-  NSString            *rootBuildPath;
   NSTimer             *saveTimer;
 
   NSMutableDictionary *nonProjectEditors;
@@ -117,7 +116,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (NSPanel *)buildPanel;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;
-- (NSString *)rootBuildPath;
 - (NSString *)projectPath;
 - (NSString *)selectedFileName;
 

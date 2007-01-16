@@ -1,6 +1,6 @@
 
 ANNOUNCE
-************
+********
 
 This is version 0.5.0 of ProjectCenter.
 
@@ -19,26 +19,28 @@ What is ProjectCenter?
 Noteworthy changes in version `0.5.0'.
 ======================================
 
-   * Added new project types "Framework" and "Resource Set"
+   * Added new project types "Framework" and "Resource Set".
    
-   * Implemented on demand loading of bundles (project types, editor)
+   * Implemented on demand loading of bundles (project types, editor).
    
-   * Impemented localization support for projects
+   * Impemented localization support for projects.
    
    * Some user interface ehnancements were made (save restore geometry of 
-     subviews in project window splitview, drag and drop for icons)
+     subviews in project window splitview, drag and drop for icons).
      
    * Clicking on .m and .h file in project browser expands to file structure
-     (classes, methods)
+     (classes, methods).
      
    * Incorporated ProjectManager's editor with some modifications. Symtax color 
      highlighting works.
    
    * Rewritte bundle loading mechanizm. All bundle now loaded on demand.
    
-   * All windows and panels are now GORM files
+   * All windows and panels are now GORM files.
    
    * Fixes for MingW environment (thanks to Adam Fedor).
+   
+   * Support for separate build directory added.
 
 How can I get support for this software?
 ========================================

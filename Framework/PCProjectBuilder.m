@@ -29,11 +29,14 @@
 #include <ProjectCenter/PCSplitView.h>
 #include <ProjectCenter/PCButton.h>
 
+#include <ProjectCenter/PCFileManager.h>
+
 #include <ProjectCenter/PCProjectManager.h>
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectBuilder.h>
 
 #include <ProjectCenter/PCLogController.h>
+#include <ProjectCenter/PCPrefController.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]
@@ -269,7 +272,7 @@
   
   if ((self = [super init]))
     {
-      currentProject = aProject;
+      project = aProject;
       buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
       buildArgs = [[NSMutableArray array] retain];
       postProcess = NULL;
@@ -398,7 +401,7 @@
   lastIndentString = @"";
 
   currentBuildPath = [[NSMutableArray alloc] initWithCapacity:1];
-  [currentBuildPath addObject:[currentProject projectPath]];
+  [currentBuildPath addObject:[project projectPath]];
   currentBuildFile = [[NSMutableString alloc] initWithString:@""];
 
   statusString = [NSString stringWithString:@"Building..."];
@@ -421,7 +424,7 @@
     {
       if (NSRunAlertPanel(@"Clean Project?",
 			  @"Do you really want to clean project '%@'?",
-			  @"Yes", @"No", nil, [currentProject projectName])
+			  @"Yes", @"No", nil, [project projectName])
 	  == NSAlertAlternateReturn)
 	{
 	  [cleanButton setState:NSOffState];
@@ -480,7 +483,7 @@
   if (_isBuilding || _isCleaning)
     {
       [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ terminated", [currentProject projectName], buildTarget]];
+	@"%@ - %@ terminated", [project projectName], buildTarget]];
     }
 
   // Restore buttons state
@@ -529,20 +532,26 @@
 
 - (BOOL)prebuildCheck
 {
+  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
+  PCFileManager    *pcfm = [PCFileManager defaultManager];
+  NSFileManager    *fm = [NSFileManager defaultManager];
+  NSString         *buildDir = [prefs objectForKey:RootBuildDirectory];
+  NSString         *projectBuildDir;
+
   // Checking prerequisites
-  if ([currentProject isProjectChanged])
+  if ([project isProjectChanged])
     {
       if (NSRunAlertPanel(@"Project Changed!",
 			  @"Should it be saved first?",
 			  @"Yes", @"No", nil) == NSAlertDefaultReturn) 
 	{
-	  [currentProject save];
+	  [project save];
 	}
     }
   else
     {
       // Synchronize PC.project and generated files just for case
-      [currentProject save];
+      [project save];
     }
 
   // Get make tool path
@@ -557,6 +566,14 @@
     }
 
   // Create root build directory if not exist
+  projectBuildDir = [NSString stringWithFormat:@"%@.build", 
+		  [project projectName]];
+  projectBuildDir = [buildDir stringByAppendingPathComponent:projectBuildDir];
+  if (![fm fileExistsAtPath:buildDir] ||
+      ![fm fileExistsAtPath:projectBuildDir])
+    {
+      [pcfm createDirectoriesIfNeededAtPath:projectBuildDir];
+    }
 
   return YES;
 }
@@ -567,7 +584,7 @@
   NSPipe *errorPipe;
 
   // TODO: Support build options!!!
-  //  NSDictionary        *optionDict = [currentProject buildOptions];
+  //  NSDictionary        *optionDict = [project buildOptions];
 
   // Checking build conditions
   if ([self prebuildCheck] == NO)
@@ -614,7 +631,7 @@
 
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments:buildArgs];
-  [makeTask setCurrentDirectoryPath:[currentProject projectPath]];
+  [makeTask setCurrentDirectoryPath:[project projectPath]];
   [makeTask setLaunchPath:makePath];
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
@@ -683,7 +700,7 @@
 	                     error:NO
 			   newLine:YES];
       [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ succeeded", [currentProject projectName], buildTarget]];
+	@"%@ - %@ succeeded", [project projectName], buildTarget]];
     } 
   else
     {
@@ -695,13 +712,13 @@
 	{
 	  [buildStatusField setStringValue:[NSString stringWithFormat: 
 	    @"%@ - %@ failed (%i errors)", 
-	    [currentProject projectName], buildTarget, errorsCount]];
+	    [project projectName], buildTarget, errorsCount]];
 	}
       else
 	{
 	  [buildStatusField setStringValue:[NSString stringWithFormat: 
 	    @"%@ - %@ failed", 
-	    [currentProject projectName], buildTarget]];
+	    [project projectName], buildTarget]];
 	}
     }
 

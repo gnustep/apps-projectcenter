@@ -34,10 +34,11 @@ ProjectCenter 0.5
   - Click on Browser item should move cursor to line in file	[done!]
   - Imlement pending adding/removal of files (history?)		stoyan
 --- Project Builder:
-  - Implement root build directory handling			stoyan
+  - Create panel and builder GORM files				[done!]
+  - Implement root build directory handling			[done!]
   - Finish options handling					stoyan
-  - Parse gcc output						[90% done!]
-  - Display warnings,errors,options etc. as clickable list	[90% done!]
+  - Parse gcc output						[95% done!]
+  - Display warnings,errors,options etc. as clickable list	[done!]
 - Finish FileNameIcon (draggable, files can be dragged to it)	stoyan
 - Review all dialogs and situations when dialogs must be 
   popped up							stoyan
@@ -51,7 +52,7 @@ ProjectCenter 0.6
 - Create custom Info panel                                      stoyan
 - More options for file creation                                stoyan
 - Implement Editor indentation					stoyan
-- Better integration with other tools  (Gorm)                   stoyan
+- Better integration with other tools (Gorm)                    stoyan
 
 ProjectCenter 0.7
 -----------------

@@ -1,5 +1,26 @@
 2007-01-15 Sergii Stoian <stoyan255@gmail.com>
 
+	* Framework/PCProjectManager.m: Remove code handling rootBuildPath var.
+	Remove rootBuildPath var.
+	* Headers/ProjectCenter/PCProjectManager.h: Ditto.
+	* Framework/PCFileManager.m: Add removeDirsIfEmpty:(BOOL) parameter to
+	remove* methods.
+	* Headers/ProjectCenter/PCFileManager.h: Ditto.
+	* Framework/PCProject.m: Pass removeDirsIfEmpty:(BOOL) parameter to 
+	PCFileManager remove* methods calls.
+	* PCAppController.m: Ditto.
+	* Modules/Projects/Application/PCAppProject.m: Ditto.
+	* Modules/Projects/Tool/PCToolProject.m: Ditto.
+	* Framework/PCProjectBuilder.m: Rename ivar currentProject into project.
+	Use it.
+	(prebuildCheck:): Create root build directory if not exist.
+	* Headers/ProjectCenter/PCProjectBuilder.h: Rename ivar currentProject 
+	into project.
+	* Documentation/TODO: Update.
+	* Documentation/ANNOUNCE: Ditto.
+	
+2007-01-15 Sergii Stoian <stoyan255@gmail.com>
+
 	* Framework/PCProjectManager.m: Fix problem with closing project.
 	* Framework/PCProjectr.m: Ditto.
 	* Framework/PCMakefileFactory.m: Support for root build directory added.

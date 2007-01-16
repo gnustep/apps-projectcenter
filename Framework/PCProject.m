@@ -817,13 +817,15 @@ NSString
 		      fromDirectory:langPath
 		      intoDirectory:resPath];
 	    }
-	  [fileManager removeFile:file fromDirectory:langPath];
+	  [fileManager removeFile:file 
+		    fromDirectory:langPath
+		removeDirsIfEmpty:YES];
 	}
     }
 
   if (yn == YES)
     {
-      [fileManager removeFileAtPath:resFilePath];
+      [fileManager removeFileAtPath:resFilePath removeDirsIfEmpty:YES];
       [localizedResources addObject:file];
       [self setProjectDictObject:localizedResources
 			  forKey:PCLocalizedResources

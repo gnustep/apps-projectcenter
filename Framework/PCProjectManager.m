@@ -55,8 +55,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   if ((self = [super init]))
     {
-      NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-
       buildPanel = nil;
       launchPanel = nil;
       loadedFilesPanel = nil;
@@ -69,12 +67,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       loadedProjects = [[NSMutableDictionary alloc] init];
       
       nonProjectEditors = [[NSMutableDictionary alloc] init];
-
-      rootBuildPath = [[defs stringForKey:RootBuildDirectory] copy];
-      if (!rootBuildPath || [rootBuildPath isEqualToString:@""])
-	{
-	  rootBuildPath = [NSTemporaryDirectory() copy];
-	}
 
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
@@ -115,7 +107,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   RELEASE(projectTypes);
   RELEASE(projectTypeAccessaryView);
   RELEASE(fileTypeAccessaryView);
-  RELEASE(rootBuildPath);
 
   if (projectInspector) RELEASE(projectInspector);
   if (loadedFilesPanel) RELEASE(loadedFilesPanel);
@@ -333,11 +324,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSPanel *)projectFinderPanel
 {
   return findPanel;
-}
-
-- (NSString *)rootBuildPath
-{
-  return rootBuildPath;
 }
 
 - (NSString *)projectPath
@@ -890,7 +876,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 		  files = subprojs;
 		}
     	      ret = [fileManager removeFiles:files 
-		               fromDirectory:directory];
+		               fromDirectory:directory
+			   removeDirsIfEmpty:YES];
 	    }
 
 	  if (!ret)

@@ -100,13 +100,17 @@
 - (BOOL)removeDirectoriesIfEmptyAtPath:(NSString *)path;
 
 // Remove 'file' located in 'directory'
-- (BOOL)removeFile:(NSString *)file fromDirectory:(NSString *)directory;
+- (BOOL)removeFile:(NSString *)file
+     fromDirectory:(NSString *)directory
+ removeDirsIfEmpty:(BOOL)removeDirs;
 
-// Remove file with full path 'file'. Calls removeDirectoriesIfEmptyAtPath:.
-- (BOOL)removeFileAtPath:(NSString *)file;
+// Remove file with full path 'file'
+- (BOOL)removeFileAtPath:(NSString *)file removeDirsIfEmpty:(BOOL)removeDirs;
 
 // Remove array of files from directory
-- (BOOL)removeFiles:(NSArray *)files fromDirectory:(NSString *)directory;
+- (BOOL)removeFiles:(NSArray *)files
+      fromDirectory:(NSString *)directory
+  removeDirsIfEmpty:(BOOL)removeDirs;
 
 - (BOOL)moveFile:(NSString *)file intoDirectory:(NSString *)directory;
 

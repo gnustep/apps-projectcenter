@@ -95,12 +95,12 @@
 
 - (PCProject *)createProjectAt:(NSString *)path
 {
-  PCFileManager *pcfm = [PCFileManager defaultManager];
+//  PCFileManager *pcfm = [PCFileManager defaultManager];
   PCFileCreator *pcfc = [PCFileCreator sharedCreator];
   NSBundle      *projectBundle = nil;
   NSString      *_file = nil;
   NSString      *_2file = nil;
-  NSString      *_resourcePath;
+//  NSString      *_resourcePath;
 
   NSAssert(path,@"No valid project path provided!");
 

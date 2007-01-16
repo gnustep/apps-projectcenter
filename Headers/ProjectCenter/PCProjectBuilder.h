@@ -78,7 +78,7 @@ typedef enum _ErrorLevel {
   NSTextField     *buildTargetArgsField;
 
   // Variables
-  PCProject       *currentProject;
+  PCProject       *project;
   NSDictionary    *currentOptions;
 
   NSString        *makePath;
