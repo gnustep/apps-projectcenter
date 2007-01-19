@@ -2,14 +2,15 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "startInstall:",
+	    "showOptionsPanel:",
 	    "showFindView:",
 	    "showProjectBuild:",
 	    "showProjectInspector:",
 	    "showProjectLaunch:",
 	    "showProjectLoadedFiles:",
 	    "startBuild:",
-	    "startClean:"
+	    "startClean:",
+	    "startInstall:"
 	);
 	Super = NSObject;
     };
@@ -24,7 +25,8 @@
 	Actions = (
 	    "startInstall:",
 	    "startBuild:",
-	    "startClean:"
+	    "startClean:",
+	    "showOptionsPanel:"
 	);
 	Outlets = (
 	    buildButton,

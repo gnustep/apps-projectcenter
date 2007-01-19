@@ -129,13 +129,6 @@ if (__value != __object) \
 #define TARGET_MAKE_CLEAN   @"MakeClean"
 #define TARGET_MAKE_RPM     @"MakeRPM"
 
-#define BUILD_TAG     0
-#define LAUNCH_TAG    1
-#define EDITOR_TAG    2
-#define FILES_TAG     3
-#define FIND_TAG      4
-#define INSPECTOR_TAG 5
-
 //=============================================================================
 // ==== Not used yet
 //=============================================================================
@@ -164,6 +157,8 @@ typedef int PCProjInfoBits;
 
 #include <Foundation/Foundation.h>
 
+static NSString * const PCLastEditing          = @"LAST_EDITING";
+
 static NSString * const PCClasses              = @"CLASS_FILES";
 static NSString * const PCHeaders              = @"HEADER_FILES";
 static NSString * const PCOtherSources         = @"OTHER_SOURCES";
@@ -186,7 +181,6 @@ static NSString * const PCPreprocessorOptions  = @"CPPOPTIONS";
 static NSString * const PCCreationDate         = @"CREATION_DATE";
 static NSString * const PCInstallDir           = @"INSTALLDIR";
 static NSString * const PCLinkerOptions        = @"LINKEROPTIONS";
-static NSString * const PCLastEditing          = @"LAST_EDITING";
 static NSString * const PCObjCCompilerOptions  = @"OBJC_COMPILEROPTIONS";
 static NSString * const PCPrincipalClass       = @"PRINCIPAL_CLASS";
 static NSString * const PCAuthors              = @"PROJECT_AUTHORS";
@@ -205,6 +199,15 @@ static NSString * const PCProjectType          = @"PROJECT_TYPE";
 static NSString * const PCURL                  = @"PROJECT_URL";
 static NSString * const PCSearchHeaders        = @"SEARCH_HEADER_DIRS";
 static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
+
+// Project Builder options
+static NSString * const PCBuilderOptions       = @"BUILDER_OPTIONS";
+static NSString * const PCBuilderTarget        = @"BUILDER_TARGET";
+static NSString * const PCBuilderArguments     = @"BUILDER_ARGS";
+static NSString * const PCBuilderDebug         = @"BUILDER_DEBUG";
+static NSString * const PCBuilderProfile       = @"BUILDER_PROFILE";
+static NSString * const PCBuilderVerboseMake   = @"BUILDER_VERBOSE_MAKE";
+static NSString * const PCBuilderSharedLibs    = @"BUILDER_SHARED_LIBS";
 
 // Application specific
 static NSString * const PCAppIcon              = @"APPLICATIONICON";
@@ -226,7 +229,7 @@ static NSString * const PCToolIcon             = @"TOOLICON";
 static NSString * const PCPackageName          = @"PACKAGE_NAME";
 static NSString * const PCLibraryVar           = @"LIBRARY_VAR";
 
-// Will be removed
+// Will be removed (compatibility)
 static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; 
 
 #endif // _PCDEFINES_H_

@@ -108,6 +108,8 @@
       || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
     {
       [projectManager openProjectAt:fileName];
+      [[[projectManager activeProject] projectWindow] 
+	makeKeyAndOrderFront:self];
     }
   else
     {

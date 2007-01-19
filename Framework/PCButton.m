@@ -40,6 +40,7 @@
 //  self = [super initWithFrame:frameRect];
   self = [super initWithCoder:coder];
   [_cell setGradientType:NSGradientConvexWeak];
+  [_cell setImageDimsWhenDisabled:YES];
   [self setImagePosition:NSImageOnly];
   [self setFont:[NSFont systemFontOfSize:10.0]];
   [self setRefusesFirstResponder:YES];
