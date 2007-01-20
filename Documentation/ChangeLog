@@ -1,3 +1,7 @@
+2007-01-20 Sergii Stoian <stoyan255@gmail.com>
+
+	* Modules/Editors/ProjectCenter/Resources/ObjC.syntax: Update.
+
 2007-01-15 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m: Remove code handling rootBuildPath var.
