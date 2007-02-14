@@ -367,9 +367,16 @@
     }
   else
     {
+      /* IMPORTANT FIXME/TODO: We should be using GNUSTEP_INSTALLATION_DOMAIN,
+       * not GNUSTEP_INSTALLATION_DIR.  Even better, we shouldn't specify
+       * this in the GNUmakefile itself at all unless explicitly requested
+       * by the user!
+       */
+      /*
       [mff appendString:
 	[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
         installDir]];
+      */
     }
 }
 

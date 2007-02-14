@@ -1,3 +1,11 @@
+2007-02-14  Nicola Pero <nicola.pero@meta-innovation.com>
+	
+	* Modules/Projects/Application/PCAppProject.m: Do not set
+	GNUSTEP_INSTALLATION_DIR in the GNUmakefile.  This would not work
+	with the new filesystem support.  The GUI probably needs updating
+	to make users aware of this.
+	* Modules/Projects/Tool/PCToolProject.m: Same change.
+
 2007-01-20 Sergii Stoian <stoyan255@gmail.com>
 
 	* Modules/Editors/ProjectCenter/Resources/ObjC.syntax: Update.
@@ -81,7 +89,7 @@
 	
 	* Added attempt to find make and debugger utilities.
 
-2006-11-15 Nicola Pero <nicola@nicola-laptop>
+2006-11-15  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* Modules/GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Install the
 	bundles in GNUSTEP_INSTALLATION_DIR, not in GNUSTEP_SYSTEM_ROOT.
