@@ -242,10 +242,6 @@ static PCPrefController *_prefCtrllr = nil;
   [displayLog setState:
     ([[preferencesDict objectForKey:DisplayLog] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
-
-  // Bundles
-/*  [bundlePathField setStringValue:
-    (val = [preferencesDict objectForKey: BundlePaths]) ? val : @""];*/
 }
 
 - (void)awakeFromNib
@@ -889,18 +885,6 @@ static PCPrefController *_prefCtrllr = nil;
 
   [preferencesDict setObject:[def objectForKey:DisplayLog] 
                       forKey:DisplayLog];
-}
-
-// Bundles
-- (void)setBundlePath:(id)sender
-{
-  NSString *path = [bundlePathField stringValue];
-
-  if (path)
-    {
-      [[NSUserDefaults standardUserDefaults] setObject:path forKey:BundlePaths];
-      [preferencesDict setObject:path forKey:BundlePaths];
-    }
 }
 
 @end

@@ -200,7 +200,10 @@
 // ---
 - (void)loadBundlesWithExtension:(NSString *)extension
 {
-  NSString *path = [self resourcePath];
+  NSEnumerator	*enumerator;
+  NSFileManager	*fileManager = [NSFileManager defaultManager];
+  BOOL 		isDir;
+  NSString      *path = [self resourcePath];
 
   if (path)
     {
@@ -208,29 +211,19 @@
     }
  
   // Load third party bundles
-  path = [[NSUserDefaults standardUserDefaults] objectForKey:BundlePaths];
-  if (!path || [path isEqualToString: @""]) 
+  enumerator = [NSSearchPathForDirectoriesInDomains
+		 (NSApplicationSupportDirectory, NSAllDomainsMask, YES) 
+		 objectEnumerator];
+  while ((path = [enumerator nextObject]) != nil)
     {
-      NSDictionary *env = [[NSProcessInfo processInfo] environment];
-      NSString     *prefix = [env objectForKey: @"GNUSTEP_SYSTEM_ROOT"];
+      path = [path stringByAppendingPathComponent: @"ProjectCenter"];
 
-      path = [prefix stringByAppendingPathComponent:
- 	      @"Library/ApplicationSupport/ProjectCenter"];
-
-      [[NSUserDefaults standardUserDefaults] setObject:path 
-                                                forKey:BundlePaths];
-      [[NSUserDefaults standardUserDefaults] synchronize];
-    }
-
-  if (![[NSFileManager defaultManager] fileExistsAtPath:path]) 
-    {
-      PCLogInfo(self, @"No third party bundles at %@", path);
-      return;
-    }
-  else 
-    {
-      PCLogInfo(self, @"Loading bundles at %@", path);
-      [self loadBundlesAtPath:path withExtension:extension];
+      if ([fileManager fileExistsAtPath: path  isDirectory: &isDir]  
+	  &&  isDir)
+	{
+	  PCLogInfo(self, @"Loading bundles at %@", path);
+	  [self loadBundlesAtPath:path withExtension:extension];
+	}
     }
 }
 

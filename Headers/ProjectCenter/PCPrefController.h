@@ -120,8 +120,6 @@
 - (void)setRememberWindows:(id)sender;
 - (void)setDisplayLog:(id)sender;
 
-- (void)setBundlePath:(id)sender;
-
 @end
 
 #endif

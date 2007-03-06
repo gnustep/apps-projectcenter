@@ -1,3 +1,19 @@
+2007-03-06  Nicola Pero <nicola.pero@meta-innovation.com>
+
+	* GNUmakefile: Set GNUSTEP_MAKEFILES using gnustep-config if not yet set.
+	Do not set GNUSTEP_INSTALLATION_DOMAIN.
+	* PCBundleManager.m ([-loadBundlesWithExtension:]): Rewritten to
+	use the proper NSSearchPathForDirectoriesInDomains API so that it
+	works with all filesystem layouts.  Also, load bundles from all
+	ApplicationSupport/ProjectCenter locations, not just the System
+	one.
+	* Framework/PCPrefController.m (-setBundlePath:): Method removed.
+	* Headers/ProjectCenter/PCPrefController.h: Same change.
+
+	* PCFileManager.m ([-createDirectoriesIfNeededAtPath:]): Avoid
+	infinite loop that would be triggered the first time you tried to
+	build your project.
+	
 2007-02-14  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Fixed definition basing

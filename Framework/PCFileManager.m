@@ -161,14 +161,22 @@ static PCFileManager *_mgr = nil;
 - (BOOL)createDirectoriesIfNeededAtPath:(NSString *)path
 {
   NSString       *_path = [NSString stringWithString:path];
+  NSString       *_oldPath = nil;
   NSMutableArray *pathArray = [NSMutableArray array];
   NSFileManager  *fm = [NSFileManager defaultManager];
   BOOL           isDir;
   int            i;
 
-  while (![fm fileExistsAtPath:_path isDirectory:&isDir])
+  /* We stop when we find a file, or when we can't remove any path
+   * component any more.  Else, you may end up in an infinite loop if
+   * _path = @"".
+   */
+  while (_path != nil  
+	 &&  ![_path isEqualToString: _oldPath]
+	 &&  ![fm fileExistsAtPath:_path isDirectory:&isDir])
     {
       [pathArray addObject:[_path lastPathComponent]];
+      _oldPath = _path;
       _path = [_path stringByDeletingLastPathComponent];
     }
 
