@@ -2,7 +2,11 @@
 
 	* PCProject.m ([-execToolName]): Fixed typo where 'ExecuToolName'
 	had been typed instead of 'ExecToolName'.
-
+	* PCProjectLauncher.m ([-run:]): Add './' before the name when
+	we're using openapp, so that we use 'openapp ./Gorm.app' but
+	'opentool autogsdoc'.  This fixes running application/tool
+	projects.
+	
 2007-03-06  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile: Set GNUSTEP_MAKEFILES using gnustep-config if not yet set.

@@ -291,7 +291,16 @@ enum {
   if ([project isExecutable])
     {
       openPath = [project execToolName];
-      [args addObject:[project projectName]];
+      if ([openPath isEqualToString: @"openapp"])
+	{
+	  /* openapp ./MyApplication.app */
+	  [args addObject: [NSString stringWithFormat: @"./%@", [project projectName]]];
+	}
+      else
+	{
+	  /* opentool MyTool */
+	  [args addObject: [project projectName]];
+	}
     }
   else 
     {
@@ -342,7 +351,6 @@ enum {
                           selector:@selector(runDidTerminate:)
                               name:NSTaskDidTerminateNotification
                             object:launchTask];  
-
   [launchTask setArguments:args];  
   [launchTask setCurrentDirectoryPath:[project projectPath]];
   [launchTask setLaunchPath:openPath];
