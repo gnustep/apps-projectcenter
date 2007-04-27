@@ -1,3 +1,8 @@
+2007-04-27  Nicola Pero <nicola.pero@meta-innovation.com>
+
+	* PCProject.m ([-execToolName]): Fixed typo where 'ExecuToolName'
+	had been typed instead of 'ExecToolName'.
+
 2007-03-06  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile: Set GNUSTEP_MAKEFILES using gnustep-config if not yet set.

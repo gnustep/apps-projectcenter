@@ -680,7 +680,7 @@ NSString
 
 - (NSString *)execToolName
 {
-  return [[self projectBundleInfoTable] objectForKey:@"ExecuToolName"];
+  return [[self projectBundleInfoTable] objectForKey:@"ExecToolName"];
 }
 
 - (NSArray *)buildTargets
