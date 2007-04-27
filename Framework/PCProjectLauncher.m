@@ -204,7 +204,7 @@ enum {
 
 - (void)debug:(id)sender
 {
-  NSString                   *dp = [project projectName];
+  NSString                   *projectName = [project projectName];
   NSString                   *fp = nil;
   NSString                   *pn = nil;
   NSString                   *gdbPath = nil;
@@ -222,6 +222,11 @@ enum {
       return;
     }
 
+  /*
+   * FIXME: Is it possible to somehow support users that don't have
+   * Terminal installed ?  Maybe with reduced functionality.
+   */
+
   // Get the Terminal application
   terminal = (NSDistantObject<Terminal> *)[NSConnection 
     rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
@@ -235,10 +240,28 @@ enum {
       return;
     }
 
-  pn = [dp stringByAppendingPathExtension:@"debug"];
+  /* We try in the order:
+   *  xxx.debug/xxx (gnustep-make v1, application),
+   *  xxx.app/xxx (gnustep-make v1 and v2, application),
+   *  obj/xxx (gnustep-make v1 and v2, tool).
+   */
   fp = [project projectPath];
-  fp = [fp stringByAppendingPathComponent:pn];
-  fp = [fp stringByAppendingPathComponent:dp];
+  fp = [fp stringByAppendingPathComponent: [projectName stringByAppendingPathExtension: @"debug"]];
+  fp = [fp stringByAppendingPathComponent: projectName];
+
+  if (! [fm isExecutableFileAtPath: fp])
+    {
+      fp = [project projectPath];
+      fp = [fp stringByAppendingPathComponent: [projectName stringByAppendingPathExtension: @"app"]];
+      fp = [fp stringByAppendingPathComponent: projectName];
+
+      if (! [fm isExecutableFileAtPath: fp])
+	{
+	  fp = [project projectPath];
+	  fp = [fp stringByAppendingPathComponent: @"obj"];
+	  fp = [fp stringByAppendingPathComponent: projectName];
+	}
+    }
 
 //  PCLogInfo(self, @"debug: %@", fp);
   
@@ -262,7 +285,7 @@ enum {
     {
       NSRunAlertPanel(@"Attention!",
 		      @"Invalid debugger specified: %@!",
-		      @"Abort",nil,nil,dp);
+		      @"Abort",nil,nil,gdbPath);
       [debugButton setState:NSOffState];
       return;
     }

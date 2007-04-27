@@ -1,4 +1,12 @@
 2007-04-27  Nicola Pero <nicola.pero@meta-innovation.com>
+	
+	* PCProjectLauncher.m ([-debug:]): Fixed determining the path of
+	the executable to debug.  Try (in the order) xxx.debug/xxx,
+	xxx.app/xxx and obj/xxx.  Fixed path printed in error message when
+	gdb is not found.  (Originally from a patch by Friedrich
+	<frido@q-software-solutions.de>)
+	
+2007-04-27  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* PCProject.m ([-execToolName]): Fixed typo where 'ExecuToolName'
 	had been typed instead of 'ExecToolName'.
