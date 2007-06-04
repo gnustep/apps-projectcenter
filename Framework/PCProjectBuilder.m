@@ -46,12 +46,65 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-@implementation PCProjectBuilder (UserInterface)
+@implementation PCProjectBuilder
+
+- (id)initWithProject:(PCProject *)aProject
+{
+  NSAssert(aProject, @"No project specified!");
+
+//  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
+  
+  if ((self = [super init]))
+    {
+      project = aProject;
+      buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
+      buildArgs = [[NSMutableArray array] retain];
+      postProcess = NULL;
+      makeTask = nil;
+      _isBuilding = NO;
+      _isCleaning = NO;
+      _isCVLoaded = NO;
+
+      if ([NSBundle loadNibNamed:@"Builder" owner:self] == NO)
+	{
+	  PCLogError(self, @"error loading Builder NIB file!");
+	  return nil;
+	}
+    }
+
+  return self;
+}
+
+- (void)dealloc
+{
+#ifdef DEVELOPMENT
+  NSLog (@"PCProjectBuilder: dealloc");
+#endif
+
+  [buildTarget release];
+  [buildArgs release];
+  [makePath release];
+
+//  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
+//  PCLogInfo(self, @"RC: %i", [self retainCount]);
+  [componentView release];
+  [errorArray release];
+  [errorString release];
+
+  [super dealloc];
+}
 
 - (void)awakeFromNib
 {
   NSScrollView *errorScroll; 
   NSScrollView *logScroll;
+
+  if (_isCVLoaded)
+    {
+      return;
+    }
+
+  NSLog(@"ProjectBuilder awakeFromNib");
 
   [componentView retain];
   [componentView removeFromSuperview];
@@ -156,157 +209,8 @@
 //  [split adjustSubviews];
 //  [componentView addSubview:split];
 //  RELEASE (split);
-}
 
-- (void) _createOptionsPanel
-{
-  NSView      *cView = nil;
-  NSTextField *textField = nil;
-
-  optionsPanel = [[NSPanel alloc] 
-    initWithContentRect: NSMakeRect (100, 100, 300, 120)
-              styleMask: NSTitledWindowMask | NSClosableWindowMask
-	        backing: NSBackingStoreBuffered
-		  defer: YES];
-  [optionsPanel setDelegate: self];
-  [optionsPanel setReleasedWhenClosed: NO];
-  [optionsPanel setTitle: @"Build Options"];
-  cView = [optionsPanel contentView];
-
-  // Args
-  textField = [[NSTextField alloc] initWithFrame: NSMakeRect (8,91,60,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Arguments:"];
-  [cView addSubview: textField];
-  
-  RELEASE (textField);
-
-  // Args message
-  buildTargetArgsField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (70, 91, 220, 21)];
-  [buildTargetArgsField setAlignment: NSLeftTextAlignment];
-  [buildTargetArgsField setBordered: NO];
-  [buildTargetArgsField setEditable: YES];
-  [buildTargetArgsField setBezeled: YES];
-  [buildTargetArgsField setDrawsBackground: YES];
-  [buildTargetArgsField setStringValue: @""];
-  [buildTargetArgsField setDelegate: self];
-  [buildTargetArgsField setTarget: self];
-  [buildTargetArgsField setAction: @selector (setArguments:)];
-  [cView addSubview: buildTargetArgsField];
-
-//  RELEASE (buildTargetArgsField);
-
-  // Host
-  textField = [[NSTextField alloc] initWithFrame: NSMakeRect (8,67,60,21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setEditable: NO];
-  [textField setBezeled: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Host:"];
-  [cView addSubview: textField];
-
-  RELEASE (textField);
-
-  // Host message
-  buildTargetHostField = [[NSTextField alloc] 
-    initWithFrame: NSMakeRect (70, 67, 220, 21)];
-  [buildTargetHostField setAlignment: NSLeftTextAlignment];
-  [buildTargetHostField setBordered: NO];
-  [buildTargetHostField setEditable: YES];
-  [buildTargetHostField setBezeled: YES];
-  [buildTargetHostField setDrawsBackground: YES];
-  [buildTargetHostField setStringValue: @"localhost"];
-  [buildTargetHostField setDelegate: self];
-  [buildTargetHostField setTarget: self];
-  [buildTargetHostField setAction: @selector (setHost:)];
-  [cView addSubview: buildTargetHostField];
-  
-//  RELEASE (buildTargetArgsField);
-
-  // Target
-  textField = [[NSTextField alloc]
-    initWithFrame: NSMakeRect (8, 40, 60, 21)];
-  [textField setAlignment: NSRightTextAlignment];
-  [textField setBordered: NO];
-  [textField setBezeled: NO];
-  [textField setEditable: NO];
-  [textField setSelectable: NO];
-  [textField setDrawsBackground: NO];
-  [textField setStringValue: @"Target:"];
-  [textField setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [cView addSubview: textField];
-
-  RELEASE(textField);
-
-  // Target popup
-  popup = [[NSPopUpButton alloc] 
-    initWithFrame: NSMakeRect (70, 40, 220, 21)];
-  [popup addItemWithTitle: @"Default"];
-  [popup addItemWithTitle: @"Debug"];
-  [popup addItemWithTitle: @"Profile"];
-  [popup addItemWithTitle: @"Tarball"];
-  [popup addItemWithTitle: @"RPM"];
-  [popup setTarget: self];
-  [popup setAction: @selector (popupChanged:)];
-  [popup setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
-  [cView addSubview: popup];
-
-  RELEASE (popup);
-}
-
-@end
-
-@implementation PCProjectBuilder
-
-- (id)initWithProject:(PCProject *)aProject
-{
-  NSAssert(aProject, @"No project specified!");
-
-//  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
-  
-  if ((self = [super init]))
-    {
-      project = aProject;
-      buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
-      buildArgs = [[NSMutableArray array] retain];
-      postProcess = NULL;
-      makeTask = nil;
-      _isBuilding = NO;
-      _isCleaning = NO;
-
-      if ([NSBundle loadNibNamed:@"Builder" owner:self] == NO)
-	{
-	  PCLogError(self, @"error loading Builder NIB file!");
-	  return nil;
-	}
-    }
-
-  return self;
-}
-
-- (void)dealloc
-{
-#ifdef DEVELOPMENT
-  NSLog (@"PCProjectBuilder: dealloc");
-#endif
-
-  [buildTarget release];
-  [buildArgs release];
-  [makePath release];
-
-//  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
-//  PCLogInfo(self, @"RC: %i", [self retainCount]);
-  [componentView release];
-  [errorArray release];
-  [errorString release];
-
-  [super dealloc];
+  _isCVLoaded = YES;
 }
 
 - (NSView *)componentView
@@ -519,15 +423,6 @@
   _isCleaning = NO;
 }
 
-- (void)showOptionsPanel:(id)sender
-{
-  if (!optionsPanel)
-    {
-      [self _createOptionsPanel];
-    }
-  [optionsPanel orderFront:nil];
-}
-
 // --- Actions
 
 - (BOOL)prebuildCheck
@@ -732,18 +627,6 @@
   _isBuilding = NO;
   _isCleaning = NO;
   [self cleanupAfterMake];
-}
-
-- (void)popupChanged:(id)sender
-{
-  NSString *target = [targetField stringValue];
-
-  target = [NSString stringWithFormat: 
-            @"%@ with args ' %@ '", 
-            [popup titleOfSelectedItem], 
-            [buildTargetArgsField stringValue]];
-
-  [targetField setStringValue: target];
 }
 
 - (void)logStdOut:(NSNotification *)aNotif
@@ -1221,6 +1104,37 @@
 	[error objectForKey:@"File"], 
 	[error objectForKey:@"IncludedFile"],
 	[error objectForKey:@"Error"]);
+}
+
+@end
+
+@implementation PCProjectBuilder (Options)
+
+- (void)showOptionsPanel:(id)sender
+{
+  if (!optionsPanel)
+    {
+      if ([NSBundle loadNibNamed:@"BuilderOptions" owner:self] == NO)
+	{
+	  PCLogError(self, @"error loading BuilderOptions NIB file!");
+	  return;
+	}
+      [targetPopup addItemsWithTitles:[project buildTargets]];
+    }
+
+  [optionsPanel makeKeyAndOrderFront:nil];
+}
+
+- (void)popupChanged:(id)sender
+{
+  NSString *target = [targetField stringValue];
+
+  target = [NSString stringWithFormat: 
+            @"%@ with args ' %@ '", 
+            [targetPopup titleOfSelectedItem], 
+            [buildArgsField stringValue]];
+
+  [targetField setStringValue:target];
 }
 
 @end

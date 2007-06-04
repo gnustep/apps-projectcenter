@@ -1,0 +1,24 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "popupChanged:"
+	);
+	Super = NSObject;
+    };
+    PCProjectBuilder = {
+	Actions = (
+	    "popupChanged:"
+	);
+	Outlets = (
+	    buildArgsField,
+	    debugButton,
+	    verboseButton,
+	    optionsPanel,
+	    profileButton,
+	    sharedLibsButton,
+	    targetPopup
+	);
+	Super = NSObject;
+    };
+}

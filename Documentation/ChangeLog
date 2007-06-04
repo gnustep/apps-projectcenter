@@ -1,3 +1,7 @@
+2007-06-05 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilder.m: Added parsing of gcc error output.
+
 2007-04-27  Nicola Pero <nicola.pero@meta-innovation.com>
 	
 	* PCProjectLauncher.m ([-debug:]): Fixed determining the path of
@@ -5,7 +9,7 @@
 	xxx.app/xxx and obj/xxx.  Fixed path printed in error message when
 	gdb is not found.  (Originally from a patch by Friedrich
 	<frido@q-software-solutions.de>)
-	
+
 2007-04-27  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* PCProject.m ([-execToolName]): Fixed typo where 'ExecuToolName'
@@ -14,7 +18,7 @@
 	we're using openapp, so that we use 'openapp ./Gorm.app' but
 	'opentool autogsdoc'.  This fixes running application/tool
 	projects.
-	
+
 2007-03-06  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile: Set GNUSTEP_MAKEFILES using gnustep-config if not yet set.
@@ -30,7 +34,7 @@
 	* PCFileManager.m ([-createDirectoriesIfNeededAtPath:]): Avoid
 	infinite loop that would be triggered the first time you tried to
 	build your project.
-	
+
 2007-02-14  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Fixed definition basing

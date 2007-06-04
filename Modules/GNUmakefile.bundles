@@ -7,8 +7,8 @@ ADDITIONAL_CPPFLAGS +=
 ADDITIONAL_INCLUDE_DIRS += -I../../../ -I../../../Headers
 ADDITIONAL_LIB_DIRS += -L../../../Framework/ProjectCenter.framework/Versions/Current
 
-BUNDLE_INSTALL_DIR = $(GNUSTEP_APPS)/ProjectCenter.app/Resources
-# $(BUNDLE_NAME)_STANDARD_INSTALL = no
+BUNDLE_INSTALL_DIR = $(GNUSTEP_SYSTEM_ROOT)/Applications/ProjectCenter.app/Resources
+$(BUNDLE_NAME)_STANDARD_INSTALL = no
 
 DO_LIB_LINK=no
 ifeq ($(GNUSTEP_TARGET_OS), mingw32)

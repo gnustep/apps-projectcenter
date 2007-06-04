@@ -42,6 +42,26 @@ typedef enum _ErrorLevel {
 
 @interface PCProjectBuilder : NSObject
 {
+  PCProject       *project;
+  NSDictionary    *currentOptions;
+
+  NSString        *makePath;
+  NSString        *statusString;
+  NSMutableString *buildTarget;
+  NSMutableArray  *buildArgs;
+  SEL             postProcess;
+  NSTask          *makeTask;
+
+  NSFileHandle    *readHandle;
+  NSFileHandle    *errorReadHandle;
+
+  BOOL            _isBuilding;
+  BOOL            _isCleaning;
+  BOOL            _isLogging;
+  BOOL            _isErrorLogging;
+
+  // Component view
+  BOOL            _isCVLoaded;
   NSBox           *componentView;
   PCButton        *buildButton;
   PCButton        *cleanButton;
@@ -49,8 +69,8 @@ typedef enum _ErrorLevel {
   PCButton        *optionsButton;
   NSTextField     *errorsCountField;
   NSSplitView     *split;
-  id              buildStatusField;
-  id              targetField;
+  NSTextField     *buildStatusField;
+  NSTextField     *targetField;
 
   // Error logging
   NSTableView     *errorOutput;
@@ -71,30 +91,14 @@ typedef enum _ErrorLevel {
   NSMutableString *currentBuildFile;
   NSMutableArray  *currentBuildPath;
 
-  // Options
-  NSPopUpButton   *popup;
+  // Options panel
   NSPanel         *optionsPanel;
-  NSTextField     *buildTargetHostField;
-  NSTextField     *buildTargetArgsField;
-
-  // Variables
-  PCProject       *project;
-  NSDictionary    *currentOptions;
-
-  NSString        *makePath;
-  NSString        *statusString;
-  NSMutableString *buildTarget;
-  NSMutableArray  *buildArgs;
-  SEL             postProcess;
-  NSTask          *makeTask;
-
-  NSFileHandle    *readHandle;
-  NSFileHandle    *errorReadHandle;
-
-  BOOL            _isBuilding;
-  BOOL            _isCleaning;
-  BOOL            _isLogging;
-  BOOL            _isErrorLogging;
+  NSPopUpButton   *targetPopup;
+  NSTextField     *buildArgsField;
+  NSButton        *debugButton;
+  NSButton        *profileButton;
+  NSButton        *sharedLibsButton;
+  NSButton        *verboseButton;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -121,18 +125,10 @@ typedef enum _ErrorLevel {
 - (void)build:(id)sender;
 //- (void)buildDidTerminate;
 
-- (void)popupChanged:(id)sender;
-
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;
 
 - (void)updateErrorsCountField;
-
-@end
-
-@interface PCProjectBuilder (UserInterface)
-
-- (void)_createOptionsPanel;
 
 @end
 
@@ -151,6 +147,10 @@ typedef enum _ErrorLevel {
 
 - (NSString *)lineTail:(NSString*)line afterString:(NSString*)string;
 - (NSArray *)parseErrorLine:(NSString *)string;
+
+@end
+
+@interface PCProjectBuilder (Options)
 
 @end
 
