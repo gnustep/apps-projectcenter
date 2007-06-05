@@ -25,20 +25,18 @@ Noteworthy changes in version `0.5.0'.
    
    * Impemented localization support for projects.
    
-   * Some user interface ehnancements were made (save restore geometry of 
+   * Some user interface ehnancements were made (save/restore geometry of 
      subviews in project window splitview, drag and drop for icons).
      
    * Clicking on .m and .h file in project browser expands to file structure
      (classes, methods).
      
-   * Incorporated ProjectManager's editor with some modifications. Symtax color 
-     highlighting works.
-   
-   * Rewritte bundle loading mechanizm. All bundle now loaded on demand.
+   * Incorporated ProjectManager's editor with some modifications. Implemented
+     syntax color highlighting.
    
    * All windows and panels are now GORM files.
    
-   * Fixes for MingW environment (thanks to Adam Fedor).
+   * Fixes for MingW environment.
    
    * Support for separate build directory added.
 
@@ -52,8 +50,7 @@ How can I get support for this software?
 Where can you get it?  How can you compile it?
 ==============================================
 
-   You can download sources (for some machines) from
-   ftp://ftp.gnustep.org/pub/gnustep/dev-apps/.
+   You can download sources from ftp://ftp.gnustep.org/pub/gnustep/dev-apps/.
 
 Where do I send bug reports?
 ============================

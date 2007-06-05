@@ -1,3 +1,7 @@
+2007-06-06 Sergii Stoian <stoyan255@gmail.com>
+
+	* GNUmakefile: Set GNUSTEP_INSTALLATION_DOMAIN to SYSTEM.
+	
 2007-06-05 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBuilder.m: Added parsing of gcc error output.

@@ -49,8 +49,6 @@ PCServer (don't used)
 ----------
 THOUGHTS:
 ----------
-- remember splitviews geometry on per project basis;
-- try to incorporate CodeEditor approach
 - implement PCProjectFinder and PCFindPanel GUI;
 
 - "Edit" menu should be completely provided by Editor part;
