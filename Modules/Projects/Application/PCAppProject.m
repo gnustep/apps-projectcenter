@@ -457,7 +457,7 @@
   [mf createPreambleForProject:self];
 
   // Create the new file
-  [mf createMakefileForProject:projectName];
+  [mf createMakefileForProject:self];
 
   // Head (Application)
   [self appendHead:mf];

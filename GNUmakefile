@@ -24,7 +24,7 @@ ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 # Subprojects
 #
 SUBPROJECTS = \
-        Framework \
+	Framework \
 	Modules
 
 #

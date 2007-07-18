@@ -68,27 +68,27 @@
   NSRect rect;
 
   [buildButton setToolTip:@"Project Builder"];
-//  [buildButton setImage:IMAGE(@"Build")];
+  [buildButton setImage:IMAGE(@"Build")];
 
   [launchButton setToolTip:@"Project Launcher"];
-//  [launchButton setImage:IMAGE(@"Run")];
+  [launchButton setImage:IMAGE(@"Run")];
   if (![project isExecutable])
     {
       [launchButton setEnabled:NO];
     }
 
   [loadedFilesButton setToolTip:@"Loaded Files"];
-//  [loadedFilesButton setImage:IMAGE(@"Files")];
+  [loadedFilesButton setImage:IMAGE(@"Files")];
   if ([self hasLoadedFilesView])
     {
       [loadedFilesButton setEnabled:NO];
     }
 
   [findButton setToolTip:@"Project Finder"];
-//  [findButton setImage:IMAGE(@"Find")];
+  [findButton setImage:IMAGE(@"Find")];
 
   [inspectorButton setToolTip:@"Project Inspector"];
-//  [inspectorButton setImage:IMAGE(@"Inspector")];
+  [inspectorButton setImage:IMAGE(@"Inspector")];
 
   [fileIcon setFileNameField:fileIconTitle];
   [fileIcon setDelegate:[project projectBrowser]];

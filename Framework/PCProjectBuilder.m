@@ -113,16 +113,16 @@
    * 4 build Buttons
    */
   [buildButton setToolTip:@"Build"];
-//  [buildButton setImage:IMAGE(@"Build")];
+  [buildButton setImage:IMAGE(@"Build")];
 
   [cleanButton setToolTip:@"Clean"];
-//  [cleanButton setImage:IMAGE(@"Clean")];
+  [cleanButton setImage:IMAGE(@"Clean")];
 
   [installButton setToolTip:@"Install"];
-//  [installButton setImage:IMAGE(@"Install")];
+  [installButton setImage:IMAGE(@"Install")];
 
   [optionsButton setToolTip:@"Build Options"];
-//  [optionsButton setImage:IMAGE(@"Options")];
+  [optionsButton setImage:IMAGE(@"Options")];
   
   [errorsCountField setStringValue:@""];
 

@@ -245,9 +245,9 @@
 // editing with Enter key)
 - (void)controlTextDidEndEditing:(NSNotification *)aNotif
 {
-  NSControl  *anObject = [aNotif object];
-  id         target = [anObject target];
-  SEL        action = [anObject action];
+  NSControl *anObject = [aNotif object];
+  id        target = [anObject target];
+  SEL       action = [anObject action];
 
   if ([anObject isKindOfClass:[PCFileNameField class]])
     {

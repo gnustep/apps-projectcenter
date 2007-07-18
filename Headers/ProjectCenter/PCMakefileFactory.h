@@ -38,7 +38,7 @@
 
 + (PCMakefileFactory *)sharedFactory;
 
-- (void)createMakefileForProject:(NSString *)prName;
+- (void)createMakefileForProject:(PCProject *)project;
 - (BOOL)createPreambleForProject:(PCProject *)project;
 - (BOOL)createPostambleForProject:(PCProject *)project;
 

@@ -1,3 +1,15 @@
+2007-07-19 Sergii Stoian <stoyan255@gmail.com>
+
+	* GNUmakefile.postamble: Cleanup old code.
+	* Headers/ProjectCenter/PCMakefileFacory.h:
+	* Framework/PCMakefileFacory.m: 
+	(-createMakefileFroProject:): change argument type from
+	NSSrting to PCProject. Set installation path PCInstallDir
+	value.
+	* Modules/Projects/*/PC*Project.m:
+	(-writeMakefile): Adopt createMakefileForProject argument type
+	changes.
+	
 2007-06-06 Sergii Stoian <stoyan255@gmail.com>
 
 	* GNUmakefile: Set GNUSTEP_INSTALLATION_DOMAIN to SYSTEM.
