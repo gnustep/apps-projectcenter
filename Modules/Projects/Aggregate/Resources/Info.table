@@ -4,6 +4,7 @@
   Description = "Project that contains subprojects.";
   PrincipalClassName = "PCAggregateProject";
   CanHavePublicHeaders = NO;
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   BrowserRootEntries = {
     SUBPROJECTS = "Subprojects";
     SUPPORTING_FILES = "Supporting Files";

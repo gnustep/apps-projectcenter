@@ -4,7 +4,7 @@
   Description = "Project that handles GNUstep resources.";
   PrincipalClassName = "PCResourceSetProject";
   ExecToolName = "";
-  BuildTargets = ("dist");
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   CanHavePublicHeaders = NO;
   BrowserRootEntries = {
     OTHER_RESOURCES = "Other Resources";
