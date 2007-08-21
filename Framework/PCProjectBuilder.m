@@ -34,6 +34,7 @@
 #include <ProjectCenter/PCProjectManager.h>
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectBuilder.h>
+#include <ProjectCenter/PCProjectBuilderOptions.h>
 
 #include <ProjectCenter/PCLogController.h>
 #include <ProjectCenter/PCPrefController.h>
@@ -57,8 +58,11 @@
   if ((self = [super init]))
     {
       project = aProject;
-      buildTarget = [[NSMutableString alloc] initWithString:@"Default"];
+      buildStatusTarget = [[NSMutableString alloc] initWithString:@"all"];
+      buildTarget = [[NSMutableString alloc] initWithString:@"all"];
       buildArgs = [[NSMutableArray array] retain];
+      buildOptions = [[PCProjectBuilderOptions alloc] initWithProject:project
+							     delegate:self];
       postProcess = NULL;
       makeTask = nil;
       _isBuilding = NO;
@@ -81,6 +85,7 @@
   NSLog (@"PCProjectBuilder: dealloc");
 #endif
 
+  [buildStatusTarget release];
   [buildTarget release];
   [buildArgs release];
   [makePath release];
@@ -90,6 +95,7 @@
   [componentView release];
   [errorArray release];
   [errorString release];
+  [buildOptions release];
 
   [super dealloc];
 }
@@ -118,13 +124,11 @@
   [cleanButton setToolTip:@"Clean"];
   [cleanButton setImage:IMAGE(@"Clean")];
 
-  [installButton setToolTip:@"Install"];
-  [installButton setImage:IMAGE(@"Install")];
-
   [optionsButton setToolTip:@"Build Options"];
   [optionsButton setImage:IMAGE(@"Options")];
   
   [errorsCountField setStringValue:@""];
+  [self updateTargetField];
 
   /*
    *  Error output
@@ -233,6 +237,19 @@
   return YES;
 }
 
+- (void)updateTargetField
+{
+  NSString *s;
+  NSString *args;
+
+  args = [[[project projectDict] objectForKey:PCBuilderArguments] 
+    componentsJoinedByString:@" "];
+
+  s = [NSString stringWithFormat:@"%@ with args '%@'", buildTarget, args];
+
+  [targetField setStringValue:s];
+}
+
 // --- Accessory
 - (BOOL)isBuilding
 {
@@ -272,32 +289,58 @@
     }
 }
 
+- (NSArray *)buildArguments
+{
+  NSDictionary   *projectDict = [project projectDict];
+  NSString       *instDir = [projectDict objectForKey:PCInstallDir];
+  NSMutableArray *args = [NSMutableArray new];
+
+  if (![instDir isEqualToString:@"LOCAL"] &&
+      ![instDir isEqualToString:@"SYSTEM"] &&
+      ![instDir isEqualToString:@"USER"] &&
+      ![instDir isEqualToString:@"NETWORK"] &&
+      ![instDir isEqualToString:@""])
+    {
+      [args addObject:[NSString stringWithFormat:@"DESTDIR=%@", instDir]];
+    }
+
+  [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
+
+  // Get arguments from options
+  if ([[projectDict objectForKey:PCBuilderVerbose] isEqualToString:@"YES"])
+    { // default is 'messages=no'
+      [args addObject:@"messages=yes"];
+    }
+  if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"NO"])
+    { // default is 'debug=yes'
+      [args addObject:@"debug=no"];
+    }
+  if ([[projectDict objectForKey:PCBuilderStrip] isEqualToString:@"YES"])
+    { // default is 'strip=no'
+      [args addObject:@"strip=yes"];
+    }
+  if ([[projectDict objectForKey:PCBuilderSharedLibs] isEqualToString:@"NO"])
+    { // default is 'shared=yes'
+      [args addObject:@"shared=no"];
+    }
+
+  return args;
+}
+
 // --- GUI Actions
 - (void)startBuild:(id)sender
 {
-  NSString *tFString = [targetField stringValue];
-  NSArray  *tFArray = [tFString componentsSeparatedByString:@" "];
-
   if ([self stopMake:self] == YES)
     {// We've just stopped build process
       return;
     }
-  [buildTarget setString:[tFArray objectAtIndex:0]];
+
+  [buildArgs addObject:buildTarget];
 
   // Set build arguments
-  if ([buildTarget isEqualToString:@"Debug"])
-    {
-      [buildArgs addObject:@"debug=yes"];
-    }
-  else if ([buildTarget isEqualToString:@"Profile"])
-    {
-      [buildArgs addObject:@"profile=yes"];
-      [buildArgs addObject:@"static=yes"];
-    }
-  else if ([buildTarget isEqualToString:@"Tarball"])
-    {
-      [buildArgs addObject:@"dist"];
-    }
+  [buildArgs addObjectsFromArray:[self buildArguments]];
+ 
+  NSLog(@"ProjectBuilder arguments: %@", buildArgs);
 
   currentEL = ELNone;
   lastEL = ELNone;
@@ -308,10 +351,9 @@
   [currentBuildPath addObject:[project projectPath]];
   currentBuildFile = [[NSMutableString alloc] initWithString:@""];
 
-  statusString = [NSString stringWithString:@"Building..."];
-  [buildTarget setString:@"Build"];
+  buildStatus = [NSString stringWithString:@"Building..."];
+  [buildStatusTarget setString:@"Build"];
   [cleanButton setEnabled:NO];
-  [installButton setEnabled:NO];
   [self build:self];
   _isBuilding = YES;
 }
@@ -336,28 +378,12 @@
 	}
     }
 
-  statusString = [NSString stringWithString:@"Cleaning..."];
-  [buildTarget setString:@"Clean"];
+  buildStatus = [NSString stringWithString:@"Cleaning..."];
+  [buildStatusTarget setString:@"Clean"];
   [buildArgs addObject:@"clean"];
   [buildButton setEnabled:NO];
-  [installButton setEnabled:NO];
   [self build:self];
   _isCleaning = YES;
-}
-
-- (void)startInstall:(id)sender
-{
-  if ([self stopMake:self] == YES)
-    {// We've just stopped build process
-      return;
-    }
-
-  [buildTarget setString:@"Install"];
-  statusString = [NSString stringWithString:@"Installing..."];
-  [buildArgs addObject:@"install"];
-  [buildButton setEnabled:NO];
-  [cleanButton setEnabled:NO];
-  [self build:self];
 }
 
 - (BOOL)stopMake:(id)sender
@@ -382,36 +408,33 @@
   return NO;
 }
 
+- (void)showOptionsPanel:(id)sender
+{
+  [buildOptions show:[[componentView window] frame]];
+}
+
 - (void)cleanupAfterMake
 {
   if (_isBuilding || _isCleaning)
     {
-      [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ terminated", [project projectName], buildTarget]];
+      [statusField setStringValue:[NSString stringWithFormat: 
+	@"%@ - %@ terminated", [project projectName], buildStatusTarget]];
     }
 
   // Restore buttons state
-  if ([buildTarget isEqualToString:@"Build"])
+  if ([buildStatusTarget isEqualToString:@"Build"])
     {
       [buildButton setState:NSOffState];
       [cleanButton setEnabled:YES];
-      [installButton setEnabled:YES];
     }
-  else if ([buildTarget isEqualToString:@"Clean"])
+  else if ([buildStatusTarget isEqualToString:@"Clean"])
     {
       [cleanButton setState:NSOffState];
       [buildButton setEnabled:YES];
-      [installButton setEnabled:YES];
-    }
-  else if ([buildTarget isEqualToString:@"Install"])
-    {
-      [installButton setState:NSOffState];
-      [buildButton setEnabled:YES];
-      [cleanButton setEnabled:YES];
     }
 
   [buildArgs removeAllObjects];
-  [buildTarget setString:@"Default"];
+  [buildStatusTarget setString:@"Default"];
 
   if (_isBuilding)
     {
@@ -424,7 +447,6 @@
 }
 
 // --- Actions
-
 - (BOOL)prebuildCheck
 {
   PCPrefController *prefs = [PCPrefController sharedPCPreferences];
@@ -512,7 +534,7 @@
   errorsCount = 0;
   warningsCount = 0;
 
-  [buildStatusField setStringValue:statusString];
+  [statusField setStringValue:buildStatus];
 
   // Run make task
   [logOutput setString:@""];
@@ -591,29 +613,29 @@
   if (status == 0)
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ succeeded! ===", buildTarget] 
+	[NSString stringWithFormat:@"=== %@ succeeded! ===", buildStatusTarget] 
 	                     error:NO
 			   newLine:YES];
-      [buildStatusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ succeeded", [project projectName], buildTarget]];
+      [statusField setStringValue:[NSString stringWithFormat: 
+	@"%@ - %@ succeeded", [project projectName], buildStatusTarget]];
     } 
   else
     {
       [self logString: 
-	[NSString stringWithFormat:@"=== %@ terminated! ===", buildTarget]
+	[NSString stringWithFormat:@"=== %@ terminated! ===", buildStatusTarget]
 	                     error:NO
 			   newLine:YES];
       if (errorsCount > 0)
 	{
-	  [buildStatusField setStringValue:[NSString stringWithFormat: 
+	  [statusField setStringValue:[NSString stringWithFormat: 
 	    @"%@ - %@ failed (%i errors)", 
-	    [project projectName], buildTarget, errorsCount]];
+	    [project projectName], buildStatusTarget, errorsCount]];
 	}
       else
 	{
-	  [buildStatusField setStringValue:[NSString stringWithFormat: 
+	  [statusField setStringValue:[NSString stringWithFormat: 
 	    @"%@ - %@ failed", 
-	    [project projectName], buildTarget]];
+	    [project projectName], buildStatusTarget]];
 	}
     }
 
@@ -711,6 +733,13 @@
 
   string = [NSString stringWithFormat:@"%@ %@", errorsString, warningsString];
   [errorsCountField setStringValue:string];
+}
+
+// --- BuilderOptions delgate
+- (void)targetDidSet:(NSString *)target
+{
+  [buildTarget setString:target];
+  [self updateTargetField];
 }
 
 @end
@@ -1108,33 +1137,3 @@
 
 @end
 
-@implementation PCProjectBuilder (Options)
-
-- (void)showOptionsPanel:(id)sender
-{
-  if (!optionsPanel)
-    {
-      if ([NSBundle loadNibNamed:@"BuilderOptions" owner:self] == NO)
-	{
-	  PCLogError(self, @"error loading BuilderOptions NIB file!");
-	  return;
-	}
-      [targetPopup addItemsWithTitles:[project buildTargets]];
-    }
-
-  [optionsPanel makeKeyAndOrderFront:nil];
-}
-
-- (void)popupChanged:(id)sender
-{
-  NSString *target = [targetField stringValue];
-
-  target = [NSString stringWithFormat: 
-            @"%@ with args ' %@ '", 
-            [targetPopup titleOfSelectedItem], 
-            [buildArgsField stringValue]];
-
-  [targetField setStringValue:target];
-}
-
-@end

@@ -9,8 +9,7 @@
 	    "showProjectLaunch:",
 	    "showProjectLoadedFiles:",
 	    "startBuild:",
-	    "startClean:",
-	    "startInstall:"
+	    "startClean:"
 	);
 	Super = NSObject;
     };
@@ -23,7 +22,6 @@
     };
     PCProjectBuilder = {
 	Actions = (
-	    "startInstall:",
 	    "startBuild:",
 	    "startClean:",
 	    "showOptionsPanel:"
@@ -32,10 +30,9 @@
 	    buildButton,
 	    cleanButton,
 	    componentView,
-	    installButton,
 	    split,
 	    optionsButton,
-	    buildStatusField,
+	    statusField,
 	    targetField,
 	    errorsCountField
 	);

@@ -33,8 +33,9 @@
 - (void)awakeFromNib
 {
   filePath = nil;
-  msfText = nil;
-  [self setImage:[NSImage imageNamed:@"projectSuitcase"]];
+  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
+  [self 
+    registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
 }
 
 - (id)initWithFrame:(NSRect)frameRect
@@ -42,10 +43,9 @@
   self = [super initWithFrame:frameRect];
 
   filePath = nil;
-  msfText = nil;
   [self setRefusesFirstResponder:YES];
   [self setEditable:NO];
-  [self setImage:[NSImage imageNamed:@"projectSuitcase"]];
+  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
 
   return self;
 }
@@ -89,15 +89,59 @@
     }
 }
 
-@end
+// --- Drag and drop
 
-@implementation PCFileNameIcon (FileNameIconDelegate)
+// --- NSDraggingDestination protocol methods
+// -- Before the image is released
+- (unsigned int)draggingEntered:(id <NSDraggingInfo>)sender
+{
+  NSPasteboard *pb = [sender draggingPasteboard];
+  NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
+  unsigned int draggingOp = NSDragOperationNone;
 
-- (NSImage *)fileNameIconImage
+  NSLog(@"Dragging entered");
+
+  if (![paths isKindOfClass:[NSArray class]] || [paths count] == 0)
+    {
+      return draggingOp;
+    }
+
+  if (delegate && 
+      [delegate respondsToSelector:@selector(canPerformDraggingOf:)] &&
+      [delegate canPerformDraggingOf:paths] == YES)
+    {
+      draggingOp = NSDragOperationCopy;
+    }
+
+  if (draggingOp == NSDragOperationCopy)
+    { // TODO: Change icon to icon that shows open state of destination
+    }
+
+  return draggingOp;
+}
+
+- (void)draggingExited:(id <NSDraggingInfo>)sender
 {
 }
 
-- (NSString *)fileNameIconTitle
+// -- After the image is released
+- (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
+{
+  NSLog(@"Prepare for drag operation");
+  return YES;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+  NSPasteboard *pb = [sender draggingPasteboard];
+  NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
+
+  NSLog(@"performDragOperation: %@", paths);
+
+  return NO;
+}
+
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sendera
 {
 }
 

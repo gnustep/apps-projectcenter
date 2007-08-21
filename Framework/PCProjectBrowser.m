@@ -657,4 +657,35 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return PCFileNameFieldNoFiles;
 }
 
+- (BOOL)canPerformDraggingOf:(NSArray *)paths
+{
+  NSString     *category = [self nameOfSelectedCategory];
+  NSString     *categoryKey = [project keyForCategory:category];
+  NSArray      *fileTypes = [project fileTypesForCategoryKey:categoryKey];
+  NSEnumerator *e = [paths objectEnumerator];
+  NSString     *s;
+
+  NSLog(@"PCBrowser: canPerformDraggingOf -> %@", category);
+
+  if (!category)
+    {
+      return NO;
+    }
+
+  if (![project isEditableCategory:category])
+    {
+      return NO;
+    }
+
+  while ((s = [e nextObject]))
+    {
+      if (![fileTypes containsObject:[s pathExtension]])
+	{
+	  return NO;
+	}
+    }
+
+  return YES;
+}
+
 @end

@@ -2,20 +2,22 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "popupChanged:"
+	    "optionsButtonClicked:",
+	    "optionsPopupChanged:"
 	);
 	Super = NSObject;
     };
-    PCProjectBuilder = {
+    PCProjectBuilderOptions = {
 	Actions = (
-	    "popupChanged:"
+	    "optionsPopupChanged:",
+	    "optionsButtonClicked:"
 	);
 	Outlets = (
 	    buildArgsField,
 	    debugButton,
 	    verboseButton,
 	    optionsPanel,
-	    profileButton,
+	    stripButton,
 	    sharedLibsButton,
 	    targetPopup
 	);

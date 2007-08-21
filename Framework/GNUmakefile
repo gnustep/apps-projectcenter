@@ -39,6 +39,7 @@ ProjectCenter_HEADER_FILES = \
   PCProjectWindow.h \
   PCProjectInspector.h \
   PCProjectBuilder.h \
+  PCProjectBuilderOptions.h \
   PCProjectBuilderPanel.h \
   PCProjectLauncher.h \
   PCProjectLauncherPanel.h \
@@ -67,6 +68,7 @@ ProjectCenter_OBJC_FILES = \
   PCProjectWindow.m \
   PCProjectInspector.m \
   PCProjectBuilder.m \
+  PCProjectBuilderOptions.m \
   PCProjectBuilderPanel.m \
   PCProjectLauncher.m \
   PCProjectLauncherPanel.m \
