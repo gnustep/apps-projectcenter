@@ -116,20 +116,6 @@ if (__value != __object) \
 #endif
 
 //=============================================================================
-// ==== DEFINES
-//=============================================================================
-
-#define BUILD_ARGS_KEY      @"BuildArgsKey"
-#define BUILD_HOST_KEY      @"BuildHostKey"
-
-#define TARGET_MAKE         @"Make"
-#define TARGET_MAKE_DEBUG   @"MakeDebug"
-#define TARGET_MAKE_PROFILE @"MakeProfile"
-#define TARGET_MAKE_INSTALL @"MakeInstall"
-#define TARGET_MAKE_CLEAN   @"MakeClean"
-#define TARGET_MAKE_RPM     @"MakeRPM"
-
-//=============================================================================
 // ==== Not used yet
 //=============================================================================
 
@@ -202,11 +188,10 @@ static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
 
 // Project Builder options
 static NSString * const PCBuilderOptions       = @"BUILDER_OPTIONS";
-static NSString * const PCBuilderTarget        = @"BUILDER_TARGET";
 static NSString * const PCBuilderArguments     = @"BUILDER_ARGS";
 static NSString * const PCBuilderDebug         = @"BUILDER_DEBUG";
-static NSString * const PCBuilderProfile       = @"BUILDER_PROFILE";
-static NSString * const PCBuilderVerboseMake   = @"BUILDER_VERBOSE_MAKE";
+static NSString * const PCBuilderStrip         = @"BUILDER_STRIP";
+static NSString * const PCBuilderVerbose       = @"BUILDER_VERBOSE";
 static NSString * const PCBuilderSharedLibs    = @"BUILDER_SHARED_LIBS";
 
 // Application specific

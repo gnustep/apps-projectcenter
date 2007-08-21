@@ -1,3 +1,26 @@
+2007-08-22 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilderOptions.m: Add missing file.
+	* Headers/ProjectCenter/PCProjectBuilderOptions.h: Add missing file.
+	* Framework/PCProject.m: 
+	(-rootCategories): Call subproject's method if subproject is active.
+	(-rootEntries): Ditto.
+	(-keyForCategory:): Ditto. Fix bug #20854.
+	(-categoryForKey:): Ditto.
+	(-keyForRootCategoryInCategoryPath:): Since keyForCategory: was made 
+	subproject's sensitive implement key searching here.
+		
+2007-08-21 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilderOptions.m: New file.
+	* Headers/ProjectCenter/PCProjectBuilderOptions.h: New file.
+	* ProjectBuilder options handling finished.
+	* Fixed compliance to GNUstep make v2.	
+	* Framework/PCFileNameIcon.m: Start implementing drag/drop.
+	* Images/ProjectCenter.tiff: Use ProjectManager's app icon.
+	* Modules/Projects/*/Resources/Info.table: change default targets.
+	* Headers/ProjectCenter/PCDefines.h: Clean up.
+	
 2007-07-19 Sergii Stoian <stoyan255@gmail.com>
 
 	* GNUmakefile.postamble: Cleanup old code.

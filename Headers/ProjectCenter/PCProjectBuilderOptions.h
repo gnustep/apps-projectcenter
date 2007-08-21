@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2005 Free Software Foundation
+   Copyright (C) 2000-2007 Free Software Foundation
 
-   Authors: Serg Stoyan
+   Authors: Philippe C.D. Robert
+            Sergii Stoian
 
    This file is part of GNUstep.
 
@@ -22,31 +23,33 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCFileNameIcon_h_
-#define _PCFileNameIcon_h_
+#import <AppKit/AppKit.h>
 
-@class NSImageView;
+@class PCProject;
 
-@interface PCFileNameIcon : NSImageView
+@interface PCProjectBuilderOptions : NSObject
 {
-  NSString    *filePath;
-  NSTextField *fileNameField;
+  PCProject     *project;
+  id            delegate;           // Usually PCProjectBuilder
 
-  id          delegate;
+  NSPanel       *optionsPanel;
+  NSPopUpButton *targetPopup;
+  NSTextField   *buildArgsField;
+  NSButton      *verboseButton;     // messages=yes
+  NSButton      *debugButton;       // debug=no
+  NSButton      *stripButton;       // strip=yes
+  NSButton      *sharedLibsButton;  // shared=no
 }
 
-- (void)setFileNameField:(NSTextField *)field;
-- (void)setDelegate:(id)object;
-- (void)updateIcon;
+- (id)initWithProject:(PCProject *)aProject delegate:(id)aDelegate;
+- (void)show:(NSRect)builderRect;
+- (NSString *)buildTarget;
 
 @end
 
-@interface PCFileNameIcon (FileNameIconDelegate)
+@interface PCProjectBuilderOptions (Delegate)
 
-- (NSImage *)fileNameIconImage;
-- (NSString *)fileNameIconTitle;
-- (BOOL)canPerformDraggingOf:(NSArray *)paths;
+- (void)targetDidSet:(NSString *)aTarget;
 
 @end
 
-#endif

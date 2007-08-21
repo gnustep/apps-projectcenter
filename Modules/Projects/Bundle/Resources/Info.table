@@ -4,7 +4,7 @@
   Description = "Project that handles GNUstep bundles.";
   PrincipalClassName = "PCBundleProject";
   ExecToolName = "";
-  BuildTargets = ("bundle","debug","profile","dist");
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   CanHavePublicHeaders = NO;
   BrowserRootEntries = {
     CLASS_FILES = "Classes";

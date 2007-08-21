@@ -30,6 +30,7 @@
 
 @class PCProject;
 @class PCButton;
+@class PCProjectBuilderOptions;
 
 typedef enum _ErrorLevel {
     ELFile,
@@ -43,10 +44,11 @@ typedef enum _ErrorLevel {
 @interface PCProjectBuilder : NSObject
 {
   PCProject       *project;
-  NSDictionary    *currentOptions;
+  PCProjectBuilderOptions *buildOptions;
 
   NSString        *makePath;
-  NSString        *statusString;
+  NSString        *buildStatus;
+  NSMutableString *buildStatusTarget;
   NSMutableString *buildTarget;
   NSMutableArray  *buildArgs;
   SEL             postProcess;
@@ -65,11 +67,10 @@ typedef enum _ErrorLevel {
   NSBox           *componentView;
   PCButton        *buildButton;
   PCButton        *cleanButton;
-  PCButton        *installButton;
   PCButton        *optionsButton;
   NSTextField     *errorsCountField;
   NSSplitView     *split;
-  NSTextField     *buildStatusField;
+  NSTextField     *statusField;
   NSTextField     *targetField;
 
   // Error logging
@@ -91,14 +92,6 @@ typedef enum _ErrorLevel {
   NSMutableString *currentBuildFile;
   NSMutableArray  *currentBuildPath;
 
-  // Options panel
-  NSPanel         *optionsPanel;
-  NSPopUpButton   *targetPopup;
-  NSTextField     *buildArgsField;
-  NSButton        *debugButton;
-  NSButton        *profileButton;
-  NSButton        *sharedLibsButton;
-  NSButton        *verboseButton;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -106,6 +99,7 @@ typedef enum _ErrorLevel {
 
 - (NSView *)componentView;
 - (BOOL)setMakePath;
+- (void)updateTargetField;
 
 // --- Accessory
 - (BOOL)isBuilding;
@@ -113,12 +107,13 @@ typedef enum _ErrorLevel {
 - (void)performStartBuild;
 - (void)performStartClean;
 - (void)performStopBuild;
+- (NSArray *)buildArguments;
 
 // --- Actions
 - (void)startBuild:(id)sender;
 - (void)startClean:(id)sender;
-- (void)startInstall:(id)sender;
 - (BOOL)stopMake:(id)sender;
+- (void)showOptionsPanel:(id)sender;
 - (void)cleanupAfterMake;
 
 - (BOOL)prebuildCheck;
@@ -147,10 +142,6 @@ typedef enum _ErrorLevel {
 
 - (NSString *)lineTail:(NSString*)line afterString:(NSString*)string;
 - (NSArray *)parseErrorLine:(NSString *)string;
-
-@end
-
-@interface PCProjectBuilder (Options)
 
 @end
 

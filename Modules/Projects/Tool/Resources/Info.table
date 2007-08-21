@@ -5,7 +5,7 @@
   PrincipalClassName = "PCToolProject";
   ExecToolName = "opentool";
   Executable = YES;
-  BuildTargets = ("tool","debug","profile","dist");
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   CanHavePublicHeaders = NO;
   BrowserRootEntries = {
     CLASS_FILES = "Classes";

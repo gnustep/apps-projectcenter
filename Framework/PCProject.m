@@ -1203,10 +1203,10 @@ NSString
   NSEnumerator   *enumerator = nil;
   NSString       *filePath = nil;
   NSString       *file = nil;
-  NSMutableArray *projectFiles = nil;
+  NSMutableArray *projectFiles = [[NSMutableArray alloc] initWithCapacity:1];
   NSArray        *localizedFiles = nil;
 
-  // Check if file localazable. If yes, make it not localizable so file moved
+  // Check if file localizable. If yes, make it not localizable so file moved
   // to Resources dir.
   localizedFiles = [[self localizedResources] copy];
   enumerator = [files objectEnumerator];
@@ -1220,14 +1220,18 @@ NSString
   [localizedFiles release];
 
   // Remove files from project
-  projectFiles = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
+//  projectFiles = [NSMutableArray arrayWithArray:[projectDict objectForKey:key]];
+  [projectFiles setArray:[projectDict objectForKey:key]];
+  NSLog(@"--- projectFiles: %@ forKey: %@", projectFiles, key);
   enumerator = [files objectEnumerator];
   while ((file = [enumerator nextObject]))
     {
       if ([key isEqualToString:PCSubprojects])
 	{
+	  NSLog(@"Removing subproject %@", file);
 	  [self removeSubprojectWithName:file];
 	}
+      NSLog(@"Project %@ remove file %@", projectName, file);
       [projectFiles removeObject:file];
 
       // Close editor
@@ -1235,7 +1239,11 @@ NSString
       [projectEditor closeEditorForFile:filePath];
     }
 
+  NSLog(@"projectFiles: %@", projectFiles);
+
   [self setProjectDictObject:projectFiles forKey:key notify:yn];
+
+  [projectFiles release];
 
   return YES;
 }
@@ -1528,20 +1536,35 @@ NSString
 
 @implementation PCProject (ProjectBrowser)
 
+// e.g. CLASS_FILES
 - (NSArray *)rootKeys
 {
-  // e.g. CLASS_FILES
+  if (activeSubproject)
+    {
+      return [activeSubproject rootKeys];
+    }
+
   return rootKeys;
 }
 
+// e.g. Classes
 - (NSArray *)rootCategories
 {
-  // e.g. Classes
+  if (activeSubproject)
+    {
+      return [activeSubproject rootCategories];
+    }
+
   return rootCategories;
 }
 
 - (NSDictionary *)rootEntries
 {
+  if (activeSubproject)
+    {
+      return [activeSubproject rootEntries];
+    }
+
   return rootEntries;
 }
 
@@ -1550,6 +1573,11 @@ NSString
 - (NSString *)keyForCategory:(NSString *)category
 {
   int index = -1;
+
+  if (activeSubproject)
+    {
+      return [activeSubproject keyForCategory:category];
+    }
 
   if (![rootCategories containsObject:category])
     {
@@ -1562,6 +1590,11 @@ NSString
 
 - (NSString *)categoryForKey:(NSString *)key
 {
+  if (activeSubproject)
+    {
+      return [activeSubproject categoryForKey:key];
+    }
+
   return [rootEntries objectForKey:key];
 }
 
@@ -1583,6 +1616,7 @@ NSString
 {
   NSString *category = nil;
   NSString *key = nil;
+  int      index = -1;
 
   if (categoryPath == nil 
       || [categoryPath isEqualToString:@""]
@@ -1592,7 +1626,19 @@ NSString
     }
 
   category = [self rootCategoryForCategoryPath:categoryPath];
-  key = [self keyForCategory:category];
+
+  // Since keyForCategory subproject sensitive implement 
+  // key searching here
+  // TODO: revise all code in PCProject against subproject
+  // sensitiveness
+  // key = [self keyForCategory:category];
+  if (![rootCategories containsObject:category])
+    {
+      return nil;
+    }
+    
+  index = [rootCategories indexOfObject:category];
+  key = [rootKeys objectAtIndex:index];
 
 /*  PCLogInfo(self, @"{%@}(keyForRootCategoryInCategoryPath): %@ key:%@", 
 	    projectName, categoryPath, key);*/

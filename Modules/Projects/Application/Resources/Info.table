@@ -5,7 +5,7 @@
   PrincipalClassName = "PCAppProject";
   Executable = YES;
   ExecToolName = "openapp";
-  BuildTargets = ("app","debug","profile","dist");
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   CanHavePublicHeaders = NO;
   BrowserRootEntries = {
     CLASS_FILES = "Classes";

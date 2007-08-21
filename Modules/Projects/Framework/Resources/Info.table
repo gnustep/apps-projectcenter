@@ -4,7 +4,7 @@
   Description = "Project that handles GNUstep frameworks.";
   PrincipalClassName = "PCFrameworkProject";
   ExecToolName = "";
-  BuildTargets = ("framework","debug","profile","dist");
+  BuildTargets = ("all","install","uninstall","clean","distclean","dist");
   CanHavePublicHeaders = YES;
   BrowserRootEntries = {
     CLASS_FILES = "Classes";
