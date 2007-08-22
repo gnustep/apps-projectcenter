@@ -2,6 +2,8 @@
 
 	* Modules/Editors/ProjectCenter/Resources/ObjC.syntax: Change color
 	of 'NO'.
+	* Modules/Projects/Library/Resources/Version: Change gcc version to
+	2.9.5.
 	
 2007-08-22 Sergii Stoian <stoyan255@gmail.com>
 
