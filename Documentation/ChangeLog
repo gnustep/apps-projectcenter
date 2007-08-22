@@ -1,3 +1,8 @@
+2007-08-23 Sergii Stoian <stoyan255@gmail.com>
+
+	* Modules/Editors/ProjectCenter/Resources/ObjC.syntax: Change color
+	of 'NO'.
+	
 2007-08-22 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBuilderOptions.m: Add missing file.

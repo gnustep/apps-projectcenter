@@ -213,7 +213,7 @@
         },
         {
           Pattern = "<NO>";
-          ForegroundColor = "1.0 1.0 1.0";
+          ForegroundColor = "1.0 0.0 1.0";
           Bold = YES;
         },
         {
