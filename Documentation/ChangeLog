@@ -18,6 +18,8 @@
 	* Framework/PCProjectWindow.m:
 	(-preferencesDidChange:): Show Builder and Launcher panels only
 	they are visible in project window (fixes bug #20858).
+	* Modules/Projects/Library/Resources/Version: Changed GCC version
+	to 2.95.3.
 	
 2007-08-23 Sergii Stoian <stoyan255@gmail.com>
 
