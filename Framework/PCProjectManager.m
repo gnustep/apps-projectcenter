@@ -684,10 +684,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString *filePath = nil;
   NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
 
-  files = [fileManager filesForOpenOfType:fileTypes
-                                 multiple:NO
-			            title:@"Open Project"
-				  accView:nil];
+  files = [fileManager filesOfTypes:fileTypes
+			  operation:PCOpenProjectOperation
+			   multiple:NO
+			      title:@"Open Project"
+			    accView:nil];
   filePath = [files objectAtIndex:0];
 
   if (filePath != nil)
@@ -704,16 +705,20 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)newProject
 {
-  NSString  *filePath = nil;
+  NSArray   *files;
+  NSString  *filePath;
   NSArray   *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
-  NSString  *projectType = nil;
-  PCProject *project = nil;
+  NSString  *projectType;
+  PCProject *project;
 
   [self createProjectTypeAccessaryView];
   
-  filePath = [fileManager fileForSaveOfType:fileTypes
-	  		              title:@"New Project"
-				    accView:projectTypeAccessaryView];
+  files = [fileManager filesOfTypes:fileTypes
+			  operation:PCSaveFileOperation
+			   multiple:NO
+			      title:@"New Project"
+			    accView:projectTypeAccessaryView];
+  filePath = [files objectAtIndex:0];
   if (filePath != nil) 
     {
       projectType = [projectTypePopup titleOfSelectedItem];
@@ -764,7 +769,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *projectFile = nil;
   NSArray        *fileTypes = [project fileTypesForCategoryKey:categoryKey];
 
-  files = [fileManager filesForAddOfTypes:fileTypes];
+  files = [fileManager filesOfTypes:fileTypes
+			  operation:PCAddFileOperation
+			   multiple:NO
+			      title:nil
+			    accView:nil];
 
 /*  PCLogInfo(self, @"[addProjectFiles] %@ to category: %@ of project %@",
 	    files, categoryKey, [activeProject projectName]);*/
@@ -991,10 +1000,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSArray  *files = nil;
   NSString *filePath = nil;
 
-  files = [fileManager filesForOpenOfType:nil
-                                 multiple:NO
-			            title:@"Open File"
-				  accView:nil];
+  files = [fileManager filesOfTypes:nil
+			  operation:PCOpenFileOperation
+			   multiple:NO
+			      title:@"Open File"
+			    accView:nil];
   filePath = [files objectAtIndex:0];
 
   if (filePath != nil)
@@ -1020,11 +1030,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)saveFileTo
 {
+  NSArray  *files = nil;
   NSString *filePath = nil;
 
-  filePath = [fileManager fileForSaveOfType:nil
-			              title:@"Save To..."
-				    accView:nil];
+  files = [fileManager filesOfTypes:nil
+			  operation:PCSaveFileOperation
+			   multiple:NO
+			      title:@"Save To..."
+			    accView:nil];
+  filePath = [files objectAtIndex:0];
 
   if (filePath != nil && ![[activeProject projectEditor] saveFileTo:filePath]) 
     {
@@ -1281,8 +1295,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *spName = nil;
   unsigned       i;
 
-  files = [fileManager 
-    filesForAddOfTypes:[NSArray arrayWithObjects:@"subproj",nil]];
+  files = [fileManager filesOfTypes:[NSArray arrayWithObjects:@"subproj",nil]
+			  operation:PCAddFileOperation
+			   multiple:NO
+			      title:@"Add Subproject"
+			    accView:nil];
 
   // Validate if it real projects
   for (i = 0; i < [files count]; i++)

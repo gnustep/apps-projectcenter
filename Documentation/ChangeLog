@@ -1,3 +1,21 @@
+2007-08-29 Sergii Stoian <stoyan255@gmail.com>
+
+	* Frameworks/PCFileManager.m:
+	(-filesForOpenOfType:multiple:title:accView:): Removed
+	(-fileForSaveOfType:title:accView:): Removed.
+	(-filesForAddOfTypes:): Removed.
+	(-filesOfTypes:operation:multiple:title:accView:): Implemented. 
+	Replaces removed methods.
+	(-_panelForOperation:title:accView:): New method. Returns panel
+	for specified operation type.
+	(-_saveLastDirectoryForPanel:): New method. Saves last opened
+	directory for operation type (panel).
+	(-panel:isValidFilename:): Validate directory as correct filename
+	if project is opening and directory has PC.project file.
+	* Headers/ProjectCenter/PCFileManager.h: Added new variable 'operation'
+	and declaraion of new mathods.
+	* Framework/PCProjectManager.m: Use new methods of PCFileManager.
+	
 2007-08-23 Sergii Stoian <stoyan255@gmail.com>
 
 	* Modules/Editors/ProjectCenter/Resources/ObjC.syntax: Change color

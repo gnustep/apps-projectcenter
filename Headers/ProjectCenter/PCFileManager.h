@@ -33,6 +33,13 @@
 @class PCProjectManager;
 @class PCAddFilesPanel;
 
+enum {
+    PCOpenFileOperation,
+    PCSaveFileOperation,
+    PCAddFileOperation,
+    PCOpenProjectOperation
+};
+
 @interface PCFileManager : NSObject
 {
   PCProjectManager       *projectManager;
@@ -50,6 +57,8 @@
   IBOutlet NSButton      *nfCreateButton;
 
   PCAddFilesPanel        *addFilesPanel;
+
+  int                    operation;
 }
 
 //==============================================================================
@@ -70,15 +79,12 @@
 // ===========================================================================
 
 // Shows NSOpenPanel and return selected files if any
-- (NSMutableArray *)filesForOpenOfType:(NSArray *)types
-                              multiple:(BOOL)yn
-			         title:(NSString *)title
-			       accView:(NSView *)accessoryView;
+- (NSMutableArray *)filesOfTypes:(NSArray *)types
+		       operation:(int)op
+			multiple:(BOOL)yn
+			   title:(NSString *)title
+			 accView:(NSView *)accessoryView;
 				
-- (NSString *)fileForSaveOfType:(NSArray *)types
-		          title:(NSString *)title
-		        accView:(NSView *)accessoryView;
-
 // Checks if directories in path exists and creates if not.
 - (BOOL)createDirectoriesIfNeededAtPath:(NSString *)path;
 
@@ -124,8 +130,6 @@
 - (void)closeNewFilePanel:(id)sender;
 - (void)createFile:(id)sender;
 - (void)newFilePopupChanged:(id)sender;
-
-- (NSMutableArray *)filesForAddOfTypes:(NSArray*)fileTypes;
 
 @end
 

@@ -24,7 +24,7 @@ ProjectCenter 0.5
 - Add "Resource Set" project type                               [done!]
 - Implement on demand loading of bundles                        [done!]
 - Localization support for projects                             [done!]
-- Finish save/restore size of split views in Project Window     [done!]
++ Finish save/restore size of split views in Project Window     [done!]
 --- Project Editor:
   - Implement on demand loading (editor for file type)          [done!]
   - Open some files read only (Supporting Files)                [done!]
@@ -39,9 +39,8 @@ ProjectCenter 0.5
   - Display warnings,errors,options etc. as clickable list      [done!]
 - GNUstep make version 2.0 compliance                           [done!]
 - Finish FileNameIcon (draggable, files can be dragged to it)   stoyan
-- Save last used path separately for different file panels      stoyan
-- Review all dialogs and situations when dialogs must be 
-  popped up                                                     stoyan
+- Save last used path separately for different file panels      [done!]
+- Review all situations when dialogs must be  popped up         stoyan
 
 ProjectCenter 0.6
 -----------------
