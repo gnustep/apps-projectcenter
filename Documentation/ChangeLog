@@ -15,6 +15,9 @@
 	* Headers/ProjectCenter/PCFileManager.h: Added new variable 'operation'
 	and declaraion of new mathods.
 	* Framework/PCProjectManager.m: Use new methods of PCFileManager.
+	* Framework/PCProjectWindow.m:
+	(-preferencesDidChange:): Show Builder and Launcher panels only
+	they are visible in project window (fixes bug #20858).
 	
 2007-08-23 Sergii Stoian <stoyan255@gmail.com>
 

@@ -78,13 +78,6 @@ enum {
 // ==== File stuff
 // ===========================================================================
 
-// Shows NSOpenPanel and return selected files if any
-- (NSMutableArray *)filesOfTypes:(NSArray *)types
-		       operation:(int)op
-			multiple:(BOOL)yn
-			   title:(NSString *)title
-			 accView:(NSView *)accessoryView;
-				
 // Checks if directories in path exists and creates if not.
 - (BOOL)createDirectoriesIfNeededAtPath:(NSString *)path;
 
@@ -126,6 +119,12 @@ enum {
 
 @interface PCFileManager (UInterface)
 
+// Shows panel and return selected files if any
+- (NSMutableArray *)filesOfTypes:(NSArray *)types
+		       operation:(int)op
+			multiple:(BOOL)yn
+			   title:(NSString *)title
+			 accView:(NSView *)accessoryView;
 - (void)showNewFilePanel;
 - (void)closeNewFilePanel:(id)sender;
 - (void)createFile:(id)sender;

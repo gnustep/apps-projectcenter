@@ -83,170 +83,15 @@ static PCFileManager *_mgr = nil;
   [super dealloc];
 }
 
+// ===========================================================================
+// ==== NSFileManager delegate methods
+// ===========================================================================
 - (BOOL)     fileManager:(NSFileManager *)manager 
  shouldProceedAfterError:(NSDictionary *)errorDict
 {
   NSLog(@"FM error is: %@", [errorDict objectForKey:@"Error"]);
 
   return YES;
-}
-
-// ===========================================================================
-// ==== Dialogs
-// ===========================================================================
-
-- (id)_panelForOperation:(int)op
-		   title:(NSString *)title
-		 accView:(NSView *)accessoryView
-{
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *lastOpenDir;
-  id             panel;
-
-  operation = op;
-
-  switch (op)
-    {
-    case PCOpenFileOperation: 
-      panel = [NSOpenPanel openPanel];
-      [panel setCanChooseFiles:YES];
-      [panel setCanChooseDirectories:NO];
-      lastOpenDir = [ud objectForKey:@"FileOpenLastDirectory"];
-      break;
-    case PCSaveFileOperation: 
-      panel = [NSSavePanel savePanel];
-      lastOpenDir = [ud objectForKey:@"FileSaveLastDirectory"];
-      break;
-    case PCOpenProjectOperation: 
-      panel = [NSOpenPanel openPanel];
-      [panel setAllowsMultipleSelection:NO];
-      [panel setCanChooseFiles:YES];
-      [panel setCanChooseDirectories:YES];
-      lastOpenDir = [ud objectForKey:@"ProjectOpenLastDirectory"];
-      break;
-    case PCAddFileOperation: 
-      if (addFilesPanel == nil)
-	{
-	  addFilesPanel = [PCAddFilesPanel addFilesPanel];
-	}
-      panel = addFilesPanel;
-      lastOpenDir = [ud objectForKey:@"FileAddLastDirectory"];
-      break;
-    default:
-      return nil;
-      break;
-    }
-
-  if (!lastOpenDir)
-    {
-      lastOpenDir = NSHomeDirectory();
-    }
-  [panel setDirectory:lastOpenDir];
-  [panel setDelegate:self];
-
-  if (title != nil)
-    {
-      [panel setTitle:title];
-    }
-  if (accessoryView != nil)
-    {
-      [panel setAccessoryView:accessoryView];
-    }
-
-
-  return panel;
-}
-
-- (void)_saveLastDirectoryForPanel:(id)panel
-{
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *key = nil;
-
-  switch (operation)
-    {
-    case PCOpenFileOperation: 
-      key = @"FileOpenLastDirectory";
-      break;
-    case PCSaveFileOperation: 
-      key = @"FileSaveLastDirectory";
-      break;
-    case PCOpenProjectOperation: 
-      key = @"ProjectOpenLastDirectory";
-      break;
-    case PCAddFileOperation: 
-      key = @"FileAddLastDirectory";
-      break;
-    default:
-      break;
-    }
-
-  if (key != nil)
-    {
-      [ud setObject:[panel directory] forKey:key];
-    }
-}
-
-- (NSMutableArray *)filesOfTypes:(NSArray *)types
-		       operation:(int)op
-			multiple:(BOOL)yn
-			   title:(NSString *)title
-			 accView:(NSView *)accessoryView
-{
-  id             panel;
-  NSMutableArray *fileList = [[NSMutableArray alloc] init];
-  NSString       *file;
-  NSFileManager  *fm = [NSFileManager defaultManager];
-  BOOL           isDir;
-  int            result;
-
-  panel = [self _panelForOperation:op title:title accView:accessoryView];
-
-  if ((op == PCOpenFileOperation) || (op == PCOpenProjectOperation))
-    {
-      [panel setAllowsMultipleSelection:yn];
-
-      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
-	{
-	  [fileList addObjectsFromArray:[panel filenames]];
-
-	  file = [fileList objectAtIndex:0];
-	  if (op == PCOpenProjectOperation &&
-	      [fm fileExistsAtPath:file isDirectory:&isDir] && isDir)
-	    {
-	      file = [file stringByAppendingPathComponent:@"PC.project"];
-	      [fileList insertObject:file atIndex:0];
-	    }
-	}
-    }
-  else if (op == PCSaveFileOperation)
-    {
-      if ((result = [panel runModal]) == NSOKButton) 
-	{
-	  [fileList addObject:[panel filename]];
-	}
-    }
-  else if (op == PCAddFileOperation)
-    {
-      PCProject *project = [projectManager activeProject];
-      NSString  *selectedCategory = nil;
-
-      [panel setCategories:[project rootCategories]];
-      selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
-      [panel selectCategory:selectedCategory];
-
-      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
-	{
-	  [fileList addObjectsFromArray:[panel filenames]];
-	}
-    }
-
-  if (result == NSOKButton)
-    {
-      [self _saveLastDirectoryForPanel:panel];
-      return [fileList autorelease];
-    }
-
-  return nil;
 }
 
 // ===========================================================================
@@ -530,7 +375,167 @@ static PCFileManager *_mgr = nil;
 
 @implementation PCFileManager (UInterface)
 
-// -- "New File in Project" Panel
+// ===========================================================================
+// ==== Panels
+// ===========================================================================
+
+- (id)_panelForOperation:(int)op
+		   title:(NSString *)title
+		 accView:(NSView *)accessoryView
+{
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *lastOpenDir;
+  id             panel;
+
+  operation = op;
+
+  switch (op)
+    {
+    case PCOpenFileOperation: 
+      panel = [NSOpenPanel openPanel];
+      [panel setCanChooseFiles:YES];
+      [panel setCanChooseDirectories:NO];
+      lastOpenDir = [ud objectForKey:@"FileOpenLastDirectory"];
+      break;
+    case PCSaveFileOperation: 
+      panel = [NSSavePanel savePanel];
+      lastOpenDir = [ud objectForKey:@"FileSaveLastDirectory"];
+      break;
+    case PCOpenProjectOperation: 
+      panel = [NSOpenPanel openPanel];
+      [panel setAllowsMultipleSelection:NO];
+      [panel setCanChooseFiles:YES];
+      [panel setCanChooseDirectories:YES];
+      lastOpenDir = [ud objectForKey:@"ProjectOpenLastDirectory"];
+      break;
+    case PCAddFileOperation: 
+      if (addFilesPanel == nil)
+	{
+	  addFilesPanel = [PCAddFilesPanel addFilesPanel];
+	}
+      panel = addFilesPanel;
+      lastOpenDir = [ud objectForKey:@"FileAddLastDirectory"];
+      break;
+    default:
+      return nil;
+      break;
+    }
+
+  if (!lastOpenDir)
+    {
+      lastOpenDir = NSHomeDirectory();
+    }
+  [panel setDirectory:lastOpenDir];
+  [panel setDelegate:self];
+
+  if (title != nil)
+    {
+      [panel setTitle:title];
+    }
+  if (accessoryView != nil)
+    {
+      [panel setAccessoryView:accessoryView];
+    }
+
+
+  return panel;
+}
+
+- (void)_saveLastDirectoryForPanel:(id)panel
+{
+  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString       *key = nil;
+
+  switch (operation)
+    {
+    case PCOpenFileOperation: 
+      key = @"FileOpenLastDirectory";
+      break;
+    case PCSaveFileOperation: 
+      key = @"FileSaveLastDirectory";
+      break;
+    case PCOpenProjectOperation: 
+      key = @"ProjectOpenLastDirectory";
+      break;
+    case PCAddFileOperation: 
+      key = @"FileAddLastDirectory";
+      break;
+    default:
+      break;
+    }
+
+  if (key != nil)
+    {
+      [ud setObject:[panel directory] forKey:key];
+    }
+}
+
+- (NSMutableArray *)filesOfTypes:(NSArray *)types
+		       operation:(int)op
+			multiple:(BOOL)yn
+			   title:(NSString *)title
+			 accView:(NSView *)accessoryView
+{
+  id             panel;
+  NSMutableArray *fileList = [[NSMutableArray alloc] init];
+  NSString       *file;
+  NSFileManager  *fm = [NSFileManager defaultManager];
+  BOOL           isDir;
+  int            result;
+
+  panel = [self _panelForOperation:op title:title accView:accessoryView];
+
+  if ((op == PCOpenFileOperation) || (op == PCOpenProjectOperation))
+    {
+      [panel setAllowsMultipleSelection:yn];
+
+      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
+	{
+	  [fileList addObjectsFromArray:[panel filenames]];
+
+	  file = [fileList objectAtIndex:0];
+	  if (op == PCOpenProjectOperation &&
+	      [fm fileExistsAtPath:file isDirectory:&isDir] && isDir)
+	    {
+	      file = [file stringByAppendingPathComponent:@"PC.project"];
+	      [fileList insertObject:file atIndex:0];
+	    }
+	}
+    }
+  else if (op == PCSaveFileOperation)
+    {
+      if ((result = [panel runModal]) == NSOKButton) 
+	{
+	  [fileList addObject:[panel filename]];
+	}
+    }
+  else if (op == PCAddFileOperation)
+    {
+      PCProject *project = [projectManager activeProject];
+      NSString  *selectedCategory = nil;
+
+      [panel setCategories:[project rootCategories]];
+      selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
+      [panel selectCategory:selectedCategory];
+
+      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
+	{
+	  [fileList addObjectsFromArray:[panel filenames]];
+	}
+    }
+
+  if (result == NSOKButton)
+    {
+      [self _saveLastDirectoryForPanel:panel];
+      return [fileList autorelease];
+    }
+
+  return nil;
+}
+
+// ============================================================================
+// ==== "New File in Project" Panel
+// ============================================================================
 - (void)showNewFilePanel
 {
   if (!newFilePanel)

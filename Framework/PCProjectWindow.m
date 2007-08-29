@@ -571,7 +571,8 @@
   // Project Builder
   if ([[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
     {
-      if ([[[project projectBuilder] componentView] superview])
+      // Project Build is sepearate and visible in project window
+      if ([[[project projectBuilder] componentView] window] == projectWindow)
 	{
 	  [self showProjectBuild:self];
 	}
@@ -589,7 +590,7 @@
   // Project Launcher
   if ([[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"])
     {
-      if ([[[project projectLauncher] componentView] superview])
+      if ([[[project projectLauncher] componentView] window] == projectWindow)
 	{
 	  [self showProjectLaunch:self];
 	}
