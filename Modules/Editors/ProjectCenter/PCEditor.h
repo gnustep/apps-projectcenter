@@ -48,6 +48,7 @@
   NSString        *_categoryPath;
   NSWindow        *_window;
 
+
   BOOL            _isEdited;
   BOOL            _isWindowed;
   BOOL            _isExternal;
@@ -57,8 +58,6 @@
   NSArray         *parserMethods;
 //  NSMutableArray  *classNames;
 //  NSMutableArray  *methodNames;
-
-  IBOutlet NSMenu *menu;
 
   NSFont  *defaultFont;
   NSFont  *highlightFont;

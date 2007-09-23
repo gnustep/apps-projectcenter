@@ -276,6 +276,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (unichar)firstCharOfNextLineForIndex:(int)index
 {
+  return 0;
 }
 
 - (void)performIndentation
@@ -284,11 +285,11 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   int      location;
   int      line_start;
   int      offset;
-  unichar  c, fc, plfc, clfc;
+  unichar  c, plfc, clfc;
   NSRange  wsRange;
   NSMutableString *indentString;
   int i;
-  int point;
+//  int point;
 
   location = [self selectedRange].location;
 
@@ -461,7 +462,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)drawRect:(NSRect)r
 {
-  NSEnumerator *e;
+//  NSEnumerator *e;
   NSRange      drawnRange;
 
   drawnRange = [[self layoutManager] 

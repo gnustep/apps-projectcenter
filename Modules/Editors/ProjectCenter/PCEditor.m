@@ -31,7 +31,6 @@
 #import "PCEditorView.h"
 //#import "CommandQueryPanel.h"
 //#import "LineQueryPanel.h"
-//#import "TextFinder.h"
 
 @implementation PCEditor (UInterface)
 
@@ -218,6 +217,7 @@
   [super dealloc];
 }
 
+// --- Protocol
 - (void)setParser:(id)parser
 {
 //  NSLog(@"RC aParser:%i parser:%i", 
@@ -345,6 +345,7 @@
 
   return self;
 }
+// --- Protocol End
 
 - (void)externalEditorDidClose:(NSNotification *)aNotif
 {
@@ -365,10 +366,10 @@
 }
 
 // ===========================================================================
-// ==== Accessory methods
+// ==== CodeEditor protocol
 // ===========================================================================
 
-//--- CodeEditor protocol
+// --- Accessor methods
 
 - (id)projectEditor
 {
@@ -508,16 +509,12 @@
   return items;
 }
 
-- (NSMenu *)menu
+- (void)show
 {
-  return nil;
-}
-
-//--- protocol end
-
-- (BOOL)isWindowed
-{
-  return _isWindowed;
+  if (_isWindowed)
+    {
+      [_window makeKeyAndOrderFront:nil];
+    }
 }
 
 - (void)setWindowed:(BOOL)yn
@@ -541,17 +538,12 @@
   _isWindowed = yn;
 }
 
-- (void)show
+- (BOOL)isWindowed
 {
-  if (_isWindowed)
-    {
-      [_window makeKeyAndOrderFront:nil];
-    }
+  return _isWindowed;
 }
 
-// ===========================================================================
-// ==== Object managment
-// ===========================================================================
+// --- Object managment
 
 - (BOOL)saveFileIfNeeded
 {

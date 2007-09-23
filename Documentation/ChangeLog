@@ -1,3 +1,9 @@
+﻿2007-09-24 Sergii Stoian <stoyan255@gmail.com>
+
+	* English.lproj/FindPanel.gorm: Added Find panel.
+	* PCMenuController.m: Added Find panel support.
+	* TextFinder.[hm]: Added implementation of Find panel.
+
 2007-08-29 Sergii Stoian <stoyan255@gmail.com>
 
 	* Frameworks/PCFileManager.m:

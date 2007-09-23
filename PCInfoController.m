@@ -56,7 +56,13 @@
 
 - (void)showInfoWindow:(id)sender
 {
-#if defined(GNUSTEP)
+  if ([NSBundle loadNibNamed:@"Info" owner:self] == NO)
+    {
+//	PCLogError(self, @"error loading Menu NIB file!");
+	return;
+    }
+		
+/*#if defined(GNUSTEP)
   if (!infoWindow)
     {
       infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
@@ -69,7 +75,7 @@
   NSRunAlertPanel(@"Info",
 		  @"OPENSTEP has no support for GSInfoPanel",
 		  @"OK",nil,nil,nil);
-#endif
+#endif*/
 }
 
 @end

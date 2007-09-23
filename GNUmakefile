@@ -89,7 +89,9 @@ Modules/Parsers/ProjectCenter/ProjectCenter.parser
 # Localization
 #
 ProjectCenter_LOCALIZED_RESOURCE_FILES = \
-ProjectCenter.gorm
+ProjectCenter.gorm \
+Info.gorm \
+FindPanel.gorm
 
 ProjectCenter_LANGUAGES = \
 English
@@ -110,6 +112,7 @@ ProjectCenter_OBJC_FILES = \
 PCAppController.m \
 PCInfoController.m \
 PCMenuController.m \
+TextFinder.m \
 ProjectCenter_main.m
 
 -include GNUmakefile.preamble

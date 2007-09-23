@@ -27,6 +27,7 @@
 #import <ProjectCenter/PCFileManager.h>
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCBundleManager.h>
+
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectWindow.h>
 #import <ProjectCenter/PCProjectBrowser.h>
@@ -673,7 +674,8 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)editorDidClose:(NSNotification *)aNotif
 {
-  id<CodeEditor> editor = [aNotif object];
+//  id<CodeEditor> editor = [aNotif object];
+  id editor = [aNotif object];
 
   // It is not our editor
   if ([editor projectEditor] != self)

@@ -1,5 +1,15 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "findEnterSelection:",
+	    "findNext:",
+	    "findPrevious:",
+	    "findShowPanel:",
+	    "findJumpToSelection:"
+	);
+	Super = NSObject;
+    };
     PCAppController = {
 	Actions = (
 	);
@@ -44,7 +54,12 @@
 	    "loadedFilesSortByName:",
 	    "loadedFilesNextFile:",
 	    "loadedFilesPreviousFile:",
-	    "showLogPanel:"
+	    "showLogPanel:",
+	    "findEnterSelection:",
+	    "findNext:",
+	    "findPrevious:",
+	    "findShowPanel:",
+	    "findJumpToSelection:"
 	);
 	Outlets = (
 	);

@@ -29,6 +29,8 @@
 #include "PCMenuController.h"
 #include "PCInfoController.h"
 
+#import "TextFinder.h"
+
 @implementation PCMenuController
 
 - (id)init
@@ -256,24 +258,33 @@
 		  @"OK",nil,nil);
 }
 
-// Edit. PCProjectEditor have to provide this menu and functionality
-/*- (void)findShowPanel:(id)sender
+// Edit
+- (void)findShowPanel:(id)sender
 {
-  [[PCTextFinder sharedFinder] showFindPanel:self];
+  [[TextFinder sharedInstance] orderFrontFindPanel:self];
 }
 
 - (void)findNext:(id)sender
 {
-  [[PCTextFinder sharedFinder] findNext:self];
+  [[TextFinder sharedInstance] findNext:self];
 }
 
 - (void)findPrevious:(id)sender
 {
-  [[PCTextFinder sharedFinder] findPrevious:self];
-}*/
+  [[TextFinder sharedInstance] findPrevious:self];
+}
+
+- (void)findJumpToSelection:(id)sender
+{
+  [[TextFinder sharedInstance] jumpToSelection:self];
+}
+
+- (void)findEnterSelection:(id)sender
+{
+  [[TextFinder sharedInstance] enterSelection:self];
+}
 
 // Tools
-
 - (void)toggleToolbar:(id)sender
 {
   [[[projectManager rootActiveProject] projectWindow] toggleToolbar];
