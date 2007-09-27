@@ -43,14 +43,44 @@
 
 - (NSString *)resourcePath;
 
-- (NSDictionary *)infoForBundlesOfType:(NSString *)extension;
-- (NSString *)bundlePathWithName:(NSString *)bundleName;
-- (NSBundle *)bundleOfType:(NSString *)type forClassName:(NSString *)className;
-- (id)objectForClassName:(NSString *)className
-	    withProtocol:(Protocol *)proto
-	    inBundleType:(NSString *)type;
-- (BOOL)loadBundleIfNeededWithName:(NSString *)bundleName;
+// --- Handling of bundles' Info.table dictionaries without actual
+// --- bundles loading
 
+- (NSDictionary *)infoForBundlesType:(NSString *)extension;
+
+// Key value can be checked against NSString and NSArray values only.
+- (NSDictionary *)infoForBundleType:(NSString *)extension
+			    keyName:(NSString *)key
+			keyContains:(NSString *)value;
+
+- (NSDictionary *)infoForBundleName:(NSString *)name
+			       type:(NSString *)type;
+
+- (NSString *)classNameForBundleType:(NSString*)type 
+			    fileName:(NSString *)fileName;
+
+- (NSString *)bundlePathWithName:(NSString *)bundleName;
+
+// --- Invokes loading of bundle
+
+- (id)objectForClassName:(NSString *)className
+	      bundleType:(NSString *)bundleExtension
+		protocol:(Protocol *)proto;
+
+- (id)objectForBundleWithName:(NSString *)name
+			 type:(NSString *)extension
+		     protocol:(Protocol *)proto;
+
+- (id)objectForBundleType:(NSString *)extension
+		 protocol:(Protocol *)proto
+		 fileName:(NSString *)fileName;
+
+- (NSBundle *)bundleOfType:(NSString *)type
+	     withClassName:(NSString *)className;
+
+// --- Bundle loading
+
+- (BOOL)loadBundleIfNeededWithName:(NSString *)bundleName;
 // Load all bundles found in the BundlePaths
 - (void)loadBundlesWithExtension:(NSString *)extension;
 - (void)loadBundlesAtPath:(NSString *)path withExtension:(NSString *)extension;

@@ -178,7 +178,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (projectTypes == nil)
     {
       projectTypes = [[NSMutableDictionary alloc] init];
-      bundlesInfo = [bundleManager infoForBundlesOfType:@"project"];
+      bundlesInfo = [bundleManager infoForBundlesType:@"project"];
 
       bundlePaths = [bundlesInfo allKeys];
       enumerator = [bundlePaths objectEnumerator];
@@ -521,8 +521,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     stringByAppendingPathComponent:@"PC.project"];
 
   project = [bundleManager objectForClassName:projectClassName
-                                 withProtocol:@protocol(ProjectType)
-				 inBundleType:@"project"];
+				   bundleType:@"project"
+				     protocol:@protocol(ProjectType)];
 
   projectTypeName = [project projectTypeName];
   [pDict setObject:projectTypeName forKey:PCProjectType];
@@ -565,8 +565,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return nil;
 	}
       project = [bundleManager objectForClassName:projectClassName
-                                     withProtocol:@protocol(ProjectType)
-				     inBundleType:@"project"];
+				       bundleType:@"project"
+					 protocol:@protocol(ProjectType)];
     }
 
   if (![project openWithDictionaryAt:aPath]) 
@@ -652,8 +652,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   projectCreator = [bundleManager objectForClassName:className 
-                                        withProtocol:@protocol(ProjectType)
-					inBundleType:@"project"];
+					  bundleType:@"project"
+					    protocol:@protocol(ProjectType)];
 //  NSLog(@"%@ CLASS: %@", className, projectCreator);
   if (!projectCreator)
     {
@@ -1076,21 +1076,19 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)openFileWithEditor:(NSString *)path
 {
-/*  id<CodeEditor> editor;
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+//  id<CodeEditor> editor;
+/*  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
   NSString       *editor = [ud objectForKey:Editor];
-
-  editor = [PCProjectEditor openFileInEditor:path];
 
   if (![editor isEqualToString:@"ProjectCenter"])
     {
       NSArray  *ea = [editor componentsSeparatedByString:@" "];
-      NSString *app = [ea objectAtIndex: 0];
+      NSString *app = [ea objectAtIndex:0];
 
       if ([[app pathExtension] isEqualToString:@"app"])
 	{
 	  BOOL ret = [[NSWorkspace sharedWorkspace] openFile:path 
-	    withApplication:app];
+				 	     withApplication:app];
 
 	  if (ret == NO)
 	    {
@@ -1101,24 +1099,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
 
       editor = [[editorClass alloc] initExternalEditor:editor 
-	withPath:path
-	projectEditor:self];
+				      	      withPath:path
+					 projectEditor:self];
     }
   else
     {
       id<CodeEditor> editor;
 
       editor = [[editorClass alloc] initWithPath:path 
-	categoryPath:nil
-	projectEditor:self];
+			    	    categoryPath:nil
+				   projectEditor:self];
       [editor setWindowed:YES];
       [editor show];
 
       return editor;
     }
 
-  return nil;
-  
   [nonProjectEditors setObject:editor forKey:path];
 
   [editor release];*/
@@ -1251,8 +1247,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }*/
 
   projectCreator = [bundleManager objectForClassName:className 
-                                        withProtocol:@protocol(ProjectType)
-					inBundleType:@"project"];
+					  bundleType:@"project"
+					    protocol:@protocol(ProjectType)];
   if (!(subproject = [projectCreator createProjectAt:aPath])) 
     {
       return nil;

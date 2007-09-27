@@ -1,5 +1,22 @@
 ﻿2007-09-24 Sergii Stoian <stoyan255@gmail.com>
 
+	* Framework/PCBundleManager.m,
+	* Headers/ProjectCenter/PCBundleManager.h: Make massive cleaup.
+	some methods changed, some deleted, some added.
+	* Framework/PCProjectManager.m,
+	* Framework/PCProjectEditor.m: Make use of changed PCBundleManager.
+	* TextFinder.m:
+	(-enterSelection:): Add sanity check for text variable.
+	(-jumpToSelection:): Ditto.
+	* Modules/Parsers/ProjectCenter/Resources/Info.table: Fix value of
+	"Name" key.
+	* Headers/Protocols/CodeEditor.h: Remove declaration of 
+	openExternalEditor:withPath:projectEditor: method. It will be provided
+	by Custom.editor bundle (will be added soon).
+	* Headers/ProjectCenter/PCProjectEditor.h: Cleanup.
+
+2007-09-24 Sergii Stoian <stoyan255@gmail.com>
+
 	* English.lproj/FindPanel.gorm: Added Find panel.
 	* PCMenuController.m: Added Find panel support.
 	* TextFinder.[hm]: Added implementation of Find panel.

@@ -40,10 +40,6 @@
        projectEditor:(id)aProjectEditor
 	    editable:(BOOL)editable;
 
-- (id)openExternalEditor:(NSString *)editor
-	  	withPath:(NSString *)file
-	   projectEditor:(id)aProjectEditor;
-
 - (void)show;
 - (void)setWindowed:(BOOL)yn;
 - (BOOL)isWindowed;

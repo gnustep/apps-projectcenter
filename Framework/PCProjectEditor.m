@@ -115,7 +115,6 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (id)initWithProject:(PCProject *)aProject
 {
-  PCBundleManager *bundleManager;
   NSAssert(aProject, @"No project specified!");
 
   if ((self = [super init]))
@@ -125,15 +124,6 @@ NSString *PCEditorDidResignActiveNotification =
       componentView  = nil;
       editorsDict = [[NSMutableDictionary alloc] init];
 
-      // Bundles
-      bundleManager = [[project projectManager] bundleManager];
-      
-      // Editor bundles
-      editorBundlesInfo = [[bundleManager infoForBundlesOfType:@"editor"] copy];
-
-      // Parser bundles
-      parserBundlesInfo = [[bundleManager infoForBundlesOfType:@"parser"] copy];
-      
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
 	   selector:@selector(editorDidOpen:)
@@ -182,8 +172,6 @@ NSString *PCEditorDidResignActiveNotification =
       RELEASE(componentView);
     }
 
-  RELEASE(editorBundlesInfo);
-  RELEASE(parserBundlesInfo);
   RELEASE(editorsDict);
 
   [super dealloc];
@@ -208,63 +196,12 @@ NSString *PCEditorDidResignActiveNotification =
 // ==== Project and Editor handling
 // ===========================================================================
 
-- (NSDictionary *)infoTableForBundleType:(NSString *)type
-			     andFileType:(NSString *)extension
-{
-  NSDictionary *bundlesInfo = nil;
-  NSEnumerator *enumerator = nil;
-  NSString     *bundlePathKey = nil;
-  NSDictionary *infoTable = nil;
-
-  if ([type isEqualToString:@"editor"])
-    {
-      bundlesInfo = editorBundlesInfo;
-    }
-  else
-    {
-      bundlesInfo = parserBundlesInfo;
-    }
-
-  enumerator = [[bundlesInfo allKeys] objectEnumerator];
-  while ((bundlePathKey = [enumerator nextObject]))
-    {
-      infoTable = [bundlesInfo objectForKey:bundlePathKey];
-      if ([[infoTable objectForKey:@"FileTypes"] containsObject:extension])
-	{
-	  break;
-	}
-      else
-	{
-	  infoTable = nil;
-	}
-    }
-
-  return infoTable;
-}
-
-- (NSString *)classNameForBundleType:(NSString*)type 
-			     andFile:(NSString *)file
-{
-  NSString     *fileExtension = [file pathExtension];
-  NSDictionary *infoTable = nil;
-  NSString     *className = nil;
-
-  infoTable = [self infoTableForBundleType:type andFileType:fileExtension];
-  className = [infoTable objectForKey:@"PrincipalClassName"];
-
-  if (className == nil && [type isEqualToString:@"editor"])
-    {
-      className = [NSString stringWithString:@"PCEditor"];
-    }
-
-  return className;
-}
-
 // TODO: Should it be editor or parser?
 - (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item
 {
-  NSString     *file = [[project projectBrowser] nameOfSelectedFile];
-  NSDictionary *infoTable = nil;
+  NSString        *file = [[project projectBrowser] nameOfSelectedFile];
+  PCBundleManager *bundleManager = [[project projectManager] bundleManager];
+  NSDictionary    *infoTable = nil;
 
   // File selected and editor should already be loaded
   if (file != nil)
@@ -276,8 +213,9 @@ NSString *PCEditorDidResignActiveNotification =
     }
 
   // Category selected
-  infoTable = [self infoTableForBundleType:@"editor" 
-			       andFileType:[item pathExtension]];
+  infoTable = [bundleManager infoForBundleType:@"editor" 
+				       keyName:@"FileTypes"
+				   keyContains:[item pathExtension]];
 
   if ([[infoTable objectForKey:@"ProvidesBrowserItems"] isEqualToString:@"YES"])
     {
@@ -381,48 +319,35 @@ NSString *PCEditorDidResignActiveNotification =
 			   editable:(BOOL)editable
 			   windowed:(BOOL)windowed
 {
-//  NSUserDefaults  *ud = [NSUserDefaults standardUserDefaults];
-//  NSString        *ed = [ud objectForKey:Editor];
   PCBundleManager *bundleManager = [[project projectManager] bundleManager];
-  NSString        *editorClassName = nil;
-  NSString        *parserClassName = nil;
+  NSUserDefaults  *ud = [NSUserDefaults standardUserDefaults];
+  NSString        *ed = [ud objectForKey:Editor];
+  NSString        *fileName = [path lastPathComponent];
   id<CodeEditor>  editor;
   id<CodeParser>  parser;
 
   NSLog(@"PCPE: categoryPath: \"%@\"", categoryPath);
 
-  // TODO: Include external editor code into editor bundle?
-/*  if (![ed isEqualToString:@"ProjectCenter"])
-    {
-      [editor initExternalEditor:ed withPath:path projectEditor:self];
-      return editor;
-    }*/
-
   if (!(editor = [editorsDict objectForKey:path]))
     {
       // Editor
-      editorClassName = [self classNameForBundleType:@"editor"
-					     andFile:[path lastPathComponent]];
-      editor = [bundleManager objectForClassName:editorClassName
-	  			    withProtocol:@protocol(CodeEditor)
-				    inBundleType:@"editor"];
-      if (!editor)
+      editor = [bundleManager objectForBundleWithName:ed
+						 type:@"editor"
+					     protocol:@protocol(CodeEditor)];
+      if (editor == nil)
 	{
+	  editor = [bundleManager 
+	    objectForBundleWithName:@"ProjectCenter"
+			       type:@"editor"
+			   protocol:@protocol(CodeEditor)];
 	  return nil;
 	}
 
       // Parser
-      parserClassName = [self classNameForBundleType:@"parser"
-					     andFile:[path lastPathComponent]];
-      if (parserClassName != nil)
-	{
-	  NSLog(@"PCPE: parser: %@", parserClassName);
-	  parser = [bundleManager objectForClassName:parserClassName
-	      				withProtocol:@protocol(CodeParser)
-	    				inBundleType:@"parser"];
-	  [editor setParser:parser];
-	  RELEASE(parser);
-	}
+      parser = [bundleManager objectForBundleType:@"parser"
+					 protocol:@protocol(CodeParser)
+					 fileName:fileName];
+      [editor setParser:parser];
 
       [editor openFileAtPath:path 
 		categoryPath:categoryPath

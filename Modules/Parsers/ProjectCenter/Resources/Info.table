@@ -1,6 +1,6 @@
 {
   Type = "Parser";
-  Name = "CodeEditor ObjectiveC parser";
+  Name = "ProjectCenter";
   Description = "Parser for C and ObjectiveC language";
   PrincipalClassName = "PCParser";
   FileTypes = (C,c,m,M,h,H,cc,CC);

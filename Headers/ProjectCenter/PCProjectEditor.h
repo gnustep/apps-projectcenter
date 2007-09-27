@@ -67,12 +67,6 @@
 // ==== Project and Editor handling
 // ===========================================================================
 
-- (NSDictionary *)infoTableForBundleType:(NSString *)type
-			     andFileType:(NSString *)extension;
-
-- (NSString *)classNameForBundleType:(NSString*)type 
-			     andFile:(NSString *)file;
-			     
 - (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item;
 
 // Returns nil if editor is not opened

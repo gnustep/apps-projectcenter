@@ -280,18 +280,22 @@ static id sharedFindObject = nil;
 - (void)enterSelection:(id)sender
 {
   NSTextView *text = [self textObjectToSearchIn];
-  NSRange    range = [text selectedRange];
   NSString   *string = [text string];
 
-  [self setFindString:[string substringWithRange:range]];
+  if (text && string)
+    {
+      [self setFindString:[string substringWithRange:[text selectedRange]]];
+    }
 }
 
 - (void)jumpToSelection:(id)sender
 {
   NSTextView *text = [self textObjectToSearchIn];
-  NSRange    range = [text selectedRange];
 
-  [text scrollRangeToVisible:range];
+  if (text)
+    {
+      [text scrollRangeToVisible:[text selectedRange]];
+    }
 }
 
 - (void)replace:(id)sender
@@ -384,6 +388,34 @@ static id sharedFindObject = nil;
 	  [statusField setStringValue:@"Not found"];
 	}
     }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)anItem
+{
+
+  if ([anItem action] == @selector(orderFrontFindPanel:))
+    {
+      return ([self textObjectToSearchIn] != NULL);
+    }
+  if ([anItem action] == @selector(findNext:))
+    {
+      return ([self textObjectToSearchIn] != NULL);
+    }
+  if ([anItem action] == @selector(findPrevious:))
+    {
+      return ([self textObjectToSearchIn] != NULL);
+    }
+  if ([anItem action] == @selector(enterSelection:))
+    {
+      return ([self textObjectToSearchIn] != NULL);
+    }
+  if ([anItem action] == @selector(jumpToSelection:))
+    {
+      return ([self textObjectToSearchIn] != NULL);
+    }
+  // if it isn't one of our menu items, we'll let the
+  // superclass take care of it
+  return [super validateMenuItem:anItem];
 }
 
 @end
