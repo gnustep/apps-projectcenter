@@ -1,3 +1,9 @@
+2007-12-13  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* GNUmakefile.preamble (ADDITIONAL_LIB_DIRS): Improved linking to
+	the ProjectCenter framework when it's not installed yet so that it
+	should work on non-flattened layouts.
+
 2007-09-27 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCBundleManager.m,
