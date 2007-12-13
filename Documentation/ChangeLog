@@ -1,3 +1,10 @@
+2007-12-13  Nicola Pero  <nicola@localhost.localdomain>
+
+	* Modules/GNUmakefile.bundles (BUNDLE_INSTALL_DIR): Use
+	GNUSTEP_APPS, not GNUSTEP_SYSTEM_ROOT.
+	(ADDITIONAL_LIB_DIRS): Improved so that it should work on
+	non-flattened layouts as well.
+
 2007-12-13  Nicola Pero  <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile.preamble (ADDITIONAL_LIB_DIRS): Improved linking to
