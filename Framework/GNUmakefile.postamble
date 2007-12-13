@@ -29,8 +29,8 @@
 #	rm -f ../ProjectCenter
 
 #after-uninstall::
-#	rm -rf $(GNUSTEP_SYSTEM_ROOT)/Library/Libraries/libProjectCenter*
+#	rm -rf $(GNUSTEP_LIBRARIES)/libProjectCenter*
 
 #after-install::
-#	cp -r Protocols $(GNUSTEP_SYSTEM_ROOT)/Library/Headers/ProjectCenter
-#	cp -r Widgets $(GNUSTEP_SYSTEM_ROOT)/Library/Headers/ProjectCenter
+#	cp -r Protocols $(GNUSTEP_HEADERS)/ProjectCenter
+#	cp -r Widgets $(GNUSTEP_HEADERS)/ProjectCenter
