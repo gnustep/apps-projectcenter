@@ -1,3 +1,12 @@
+2007-12-20  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* PCMakefileFactory.m ([-createPreambleForProject:]): Output the
+	-l flags in the ADDITIONAL_GUI_LIBS variable, not the
+	ADDITIONAL_LDFLAGS one.  This should fix linking applications on
+	Windows, but will not work well for linking non-GUI libraries.
+	ProjectCenter needs to be extended to allow specifying
+	ADDITIONAL_TOOL_LIBS and ADDITIONAL_OBJC_LIBS on the gui.
+
 2007-12-13  Nicola Pero  <nicola.pero@meta-innovation.com>
 
 	* GNUmakefile.preamble (ADDITIONAL_LIB_DIRS): Improved linking to

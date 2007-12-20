@@ -139,21 +139,6 @@ static PCMakefileFactory *_factory = nil;
   [mfp appendString:
     [NSString stringWithFormat:@"ADDITIONAL_LDFLAGS += %@ ",
      [projectDict objectForKey:PCLinkerOptions]]];
-  array = [projectDict objectForKey:PCLibraries];
-  if (array && [array count])
-    {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-      
-      while ((tmp = [enumerator nextObject]))
-        {
-          if (![tmp isEqualToString:@"gnustep-base"] &&
-              ![tmp isEqualToString:@"gnustep-gui"])
-            {
-              [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
-            }
-        }
-    }
   [mfp appendString:@"\n\n"];
 
   // Directories where to search headers
@@ -191,6 +176,28 @@ static PCMakefileFactory *_factory = nil;
   [mfp appendString:@"\n\n"];
 
 //  [mfp appendString:[projectDict objectForKey:PCLibraries]];
+
+  // Additional GUI libraries
+  // TODO: Let the user select objc, base, gui libraries/frameworks
+  // on the gui - the following works well for GUI stuff only.
+  [mfp appendString:@"# Additional GUI libraries to link\n"];
+  [mfp appendString: @"ADDITIONAL_GUI_LIBS += "];
+  array = [projectDict objectForKey:PCLibraries];
+  if (array && [array count])
+    {
+      NSString     *tmp;
+      NSEnumerator *enumerator = [array objectEnumerator];
+      
+      while ((tmp = [enumerator nextObject]))
+        {
+          if (![tmp isEqualToString:@"gnustep-base"] &&
+              ![tmp isEqualToString:@"gnustep-gui"])
+            {
+              [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+            }
+        }
+    }
+  [mfp appendString:@"\n\n"];
 
   // Write the new file to disc!
   mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile.preamble"];
