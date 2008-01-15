@@ -1,4 +1,4 @@
-﻿2007-09-27 Sergii Stoian <stoyan255@gmail.com>
+﻿2008-01-15 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCBundleManager.m: (objectForClassName:bundleType:protocol:)
 	Return nil if className is nil.
