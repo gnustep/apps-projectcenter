@@ -1,3 +1,8 @@
+﻿2007-09-27 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCBundleManager.m: (objectForClassName:bundleType:protocol:)
+	Return nil if className is nil.
+
 2007-12-20  Nicola Pero  <nicola.pero@meta-innovation.com>
 
 	* PCMakefileFactory.m ([-createPreambleForProject:]): Output the

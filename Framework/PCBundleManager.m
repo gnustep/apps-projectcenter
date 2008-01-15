@@ -233,6 +233,11 @@
 {
   Class objectClass;
 
+  if (!className)
+    {
+      return nil;
+    }
+
   if ([self bundleOfType:bundleExtension withClassName:className] == nil)
     {
       NSLog(@"Bundle for class %@ NOT FOUND!", className);
