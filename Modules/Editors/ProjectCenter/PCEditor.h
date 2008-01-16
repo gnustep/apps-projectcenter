@@ -50,6 +50,7 @@
 
 
   BOOL            _isEdited;
+  BOOL            _isEditable;
   BOOL            _isWindowed;
   BOOL            _isExternal;
 

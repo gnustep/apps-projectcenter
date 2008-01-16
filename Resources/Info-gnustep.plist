@@ -21,24 +21,44 @@
   NSRole = "Editor";
   NSTypes = (
     {
-      NSUnixExtensions = ( "project" );
-      NSIcon = "FileProject.tiff";
+      NSDocumentClass = PCProjectDocument;
+      NSHumanReadableName = "GNUstep project";
+      NSIcon = FileProject.tiff;
+      NSName = GSPCProjectFileType;
+      NSRole = Editor;
+      NSUnixExtensions = ( project );
     },
     {
-      NSUnixExtensions = ( "pcproj" );
-      NSIcon = "FileProject.tiff";
+      NSDocumentClass = PCProjectDocument;
+      NSHumanReadableName = "GNUstep project";
+      NSIcon = FileProject.tiff;
+      NSName = GSPCFileType;
+      NSRole = Editor;
+      NSUnixExtensions = ( pcproj );
     },
     {
-      NSUnixExtensions = ( "m" );
-      NSIcon = "FileM.tiff";
+      NSDocumentClass = PCClassDocument;
+      NSHumanReadableName = "Objective C class file";
+      NSIcon = ProjectCenter.editor/Resources/FileM.tiff;
+      NSName = GSPClassType;
+      NSRole = Editor;
+      NSUnixExtensions = ( m );
     },
     {
-      NSUnixExtensions = ( "h" );
-      NSIcon = "FileH.tiff";
+      NSDocumentClass = PCHeaderDocument;
+      NSHumanReadableName = "C or Objective C header file";
+      NSIcon = ProjectCenter.editor/Resources/FileH.tiff;
+      NSName = GSPCHeaderType;
+      NSRole = Editor;
+      NSUnixExtensions = ( h );
     },
     {
-      NSUnixExtensions = ( "c" );
-      NSIcon = "FileC.tiff";
+      NSDocumentClass = PCCDocument;
+      NSHumanReadableName = "C file";
+      NSIcon = ProjectCenter.editor/Resources/FileC.tiff;
+      NSName = GSPCCType;
+      NSRole = Editor;
+      NSUnixExtensions = ( c );
     }
   );
   URL = "See http://www.gnustep.org/";

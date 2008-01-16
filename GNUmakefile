@@ -33,7 +33,6 @@ SUBPROJECTS = \
 ProjectCenter_RESOURCE_FILES = \
 Resources/Info-gnustep.plist \
 Images/ProjectCenter.tiff \
-Images/FileRTF.tiff \
 Images/FileProject.tiff \
 Images/Build.tiff \
 Images/Clean.tiff \

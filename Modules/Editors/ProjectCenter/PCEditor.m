@@ -70,7 +70,7 @@
     (NSViewWidthSizable|NSViewHeightSizable)];
   rect = [[_extScrollView contentView] frame];
 
-  // Editor view
+  // Text view
   _extEditorView = [self _createEditorViewWithFrame:rect];
 
   // Include editor view
@@ -135,7 +135,6 @@
   [ev setMinSize:NSMakeSize(0, 0)];
   [ev setMaxSize:NSMakeSize(1e7, 1e7)];
   [ev setRichText:YES];
-  [ev setEditable:YES];
   [ev setVerticallyResizable:YES];
   [ev setHorizontallyResizable:NO];
   [ev setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
@@ -143,6 +142,13 @@
   [[ev textContainer] setWidthTracksTextView:YES];
 
   [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
+
+  [ev setEditable:_isEditable];
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self 
+       selector:@selector(textDidChange:)
+	   name:NSTextDidChangeNotification
+	 object:ev];
 
   return ev;
 }
@@ -247,6 +253,7 @@
   projectEditor = aProjectEditor;
   _path = [file copy];
   _categoryPath = [categoryPath copy];
+  _isEditable = editable;
 
   // Prepare
   font = [NSFont userFixedPitchFontOfSize:0.0];
@@ -277,22 +284,9 @@
       if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
 	{
 	  [self _createInternalView];
-	  [_intEditorView setEditable:editable];
-	  
-	  [[NSNotificationCenter defaultCenter]
-	    addObserver:self 
-	       selector:@selector(textDidChange:)
-		   name:NSTextDidChangeNotification
-		 object:_intEditorView];
 	}
     }
 
-  [[NSNotificationCenter defaultCenter]
-    addObserver:self 
-       selector:@selector(textDidChange:)
-	   name:NSTextDidChangeNotification
-	 object:_extEditorView];
-	 
   // File open was finished
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorDidOpenNotification

@@ -1,4 +1,22 @@
-﻿2008-01-15 Sergii Stoian <stoyan255@gmail.com>
+2008-01-16 Sergii Stoian <stoyan255@gmail.com>
+
+	* GNUmakefile: Remove FileRTF.tiff from resoures.
+	* Images/FileRTF.tiff: Removed.
+	* Images/FileM.tiff,
+	* Images/FileMH.tiff,
+	* Images/FileH.tiff,
+	* Images/FileHH.tiff,
+	* Images/FileC.tiff,
+	* Images/FileCH.tiff,
+	Moved to Modules/Editors/ProjectEditor/Resources.
+	* Modules/Editors/ProjectCenter/PCEditor.h: Added new variable 
+	_isEditable.
+	* Modules/Editors/ProjectCenter/PCEditor.m: 
+	(_createEditorViewWithFrame:): Set editable state for NSTextView here.
+	Add observer for changed text notification here.
+	* Resources/Info.plist: NSTypes was extended.
+
+2008-01-15 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCBundleManager.m: (objectForClassName:bundleType:protocol:)
 	Return nil if className is nil.
