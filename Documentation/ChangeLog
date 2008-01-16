@@ -9,6 +9,7 @@
 	* Images/FileC.tiff,
 	* Images/FileCH.tiff,
 	Moved to Modules/Editors/ProjectEditor/Resources.
+	* Images/FileProject.tiff: Added
 	* Modules/Editors/ProjectCenter/PCEditor.h: Added new variable 
 	_isEditable.
 	* Modules/Editors/ProjectCenter/PCEditor.m: 
