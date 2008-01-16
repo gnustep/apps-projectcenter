@@ -395,14 +395,17 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)doubleClick:(id)sender
 {
-  id        selectedCell;
-  NSString  *category;
-  NSString  *fileName;
-  PCProject *activeProject;
-  NSString  *key;
-  NSString  *filePath;
+  id          selectedCell;
+  NSString    *category;
+  NSString    *fileName;
+  PCProject   *activeProject;
+  NSString    *key;
+  NSString    *filePath;
+  NSWorkspace *workspace;
+  NSString    *appName, *type;
   
-  if (sender != browser)
+  if ((sender != browser) ||
+      [[self nameOfSelectedCategory] isEqualToString:@"Libraries"])
     {
       return;
     }
@@ -418,13 +421,23 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     {
 /*      PCLogInfo(self, @"{doubleClick} filePath: %@", filePath);*/
 
-      if (![[self nameOfSelectedCategory] isEqualToString:@"Libraries"]) 
+      workspace = [NSWorkspace sharedWorkspace];
+      [workspace getInfoForFile:filePath application:&appName type:&type];
+//      NSLog (@"Open file: %@ with app: %@", filePath, appName);
+
+      // If 'Editor' role was set in .GNUstepExtPrefs application
+      // name will be returned according that setting. Otherwise
+      // 'ProjectCenter.app' will be returned accoring to NSTypes
+      // from Info-gnustep.plist file of PC.
+      if (appName == nil ||
+	  [appName isEqualToString:@"ProjectCenter.app"])
 	{
-	  if ([[NSWorkspace sharedWorkspace] openFile:filePath] == NO)
-	    {
-	      [[project projectEditor] openEditorForCategoryPath:[browser path]
-					    		windowed:YES];
-	    }
+	  [[project projectEditor] openEditorForCategoryPath:[browser path]
+						    windowed:YES];
+	}
+      else
+	{
+	  [workspace openFile:filePath];
 	}
     }
   else 
