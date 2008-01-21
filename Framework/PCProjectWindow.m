@@ -649,7 +649,7 @@
 {
   id<CodeEditor> editor = [aNotif object];
   
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       return;
     }
@@ -661,7 +661,7 @@
 {
   id<CodeEditor> editor = [aNotif object];
   
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       return;
     }
@@ -673,7 +673,7 @@
 {
   id<CodeEditor> editor = [aNotif object];
   
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       return;
     }

@@ -1,3 +1,78 @@
+2008-01-22 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCEditorManager.m: Added.
+	* Headers/ProjectCenter/PCEditormanager.h: Added.
+	* PCMenuController.m: (-fileSaveAs:): move code to 
+	PCProjectManager.m.
+	* Headers/ProjectCenter/PCEditorManager.h: New file.
+	* Framework/PCEditorManager.m: New file. Superclass for
+	PCProjectEditor.
+	* Framework/PCProjectManager.m: Use PCEditorManager.
+	Implement opening files outside of projects (fixes bug #15992).
+	* Framework/PCProjectLoadedFiles.m: Use PCEditorManager.
+	* Framework/PCProject.m: (-setProjectManager:): Use new
+	method of initializing PCProjectEditor.
+	* Framework/GNUmakefile: Add PCEditorManager.[hm].
+	* Framework/PCProjectBrowser.m: Made use of 
+	PCProjectEditor's editorForFile: method.
+	* Framework/PCProjectEditor.m: Remove initializing of extern
+	variables (moved into PCEditorManager). Use '_componentView'
+	var instead of 'componentView'. The same with _scrollView and
+	_project.
+	(-initWithProject:): renamed into init. Removed code duplicated
+	with superclass' code.
+	(-dealloc): Removed code duplicated with superclass' code.
+	(-editorForFile:key:): Removed. Code moved into superclass'
+	editorForFile: method.
+	(-openEditorForCategoryPath:windowed:): Code that determines
+	existance of file and if file is plain text move into
+	[super openEditorForFile:editable:windowed:]. Changed file
+	opening coditions. Made use of [<CodeEditor> fileStructureItemSelected]
+	method. Code that determines classes and methods in category path
+	was removed.
+	(openEditorForFile:categoryPath:editable:windowed:): Removed in favour
+	of superclass' method.
+	(activeEditor): Ditto.
+	(allEditors): Ditto.
+	(closeActiveEditor:): Ditto.
+	(closeEditorForFile:): Ditto.
+	(saveFile): Ditto.
+	(saveFileTo:): Ditto.
+	(revertFileToSaved): Ditto.
+	(editorDidResignActive:): Ditto.
+	(editorDidChangeFileName:): Ditto.
+	(closeAllEditors:): Cleanup.
+	(saveFileAs:): Made use of new -openEditorForFile:editable:windowed:
+	method.
+	* Framework/PCProjectWindow.m: Made usage of editorManager method
+	of <CodeEditor> protocol.
+	* Modules/Editors/ProjectCenter/PCEditorView.m: 
+	(becomeFirstResponder): Use new -becomeFirstResponder: method of
+	PCEditor class.
+	* Modules/Editors/ProjectCenter/PCEditor.h: Change name of var 
+	projectEditor to _editorManager. Add parameter (PCEditorView *)view
+	to becomeFistResponder and resignFirstResponder methods. Add some
+	comments.
+	* Modules/Editors/ProjectCenter/PCEditor.m: Rename method
+	-openFileAtPath:categoryPath:projectEditor:editable: to
+	-openFileAtPath:editorManager:editable. Rename -projectEditor method
+	to -editorManager. Change becomeFistResponder and resignFirstResponder 
+	methods' definitions.
+	(fileStructureItemSelected:): Add initial implementation of action 
+	code according to the type of selected item.
+	* Headers/Protocols/CodeEditor.h: Change definition of
+	-openFileAtPath:categoryPath:projectEditor:editable: mathod to
+	-openFileAtPath:editorManager:editable. Remove methods
+	scrollToClassName: and scrollToMethodName:. Rename projectEditor
+	method into editorManager.
+	* Headers/ProjectCenter/PCProjectEditor.h: Made PCProjectEditor
+	as subclass of PCEditorManager. Add prefix '_' to variables.
+	(-initWithProject:): renamed into init.
+	(setProject:): Added.
+	Removed methods and variables duplicated with superclass.
+	* Headers/ProjectCenter/PCProjectManager.h: Add editorManager var.
+	(-saveFileAs:): renamed to saveFileAs. 
+
 2008-01-17 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBrowser.m: (doubleClick:): open file with

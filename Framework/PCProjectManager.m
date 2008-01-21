@@ -29,6 +29,7 @@
 
 #include <ProjectCenter/PCBundleManager.h>
 #include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCEditorManager.h>
 #include <ProjectCenter/PCProjectManager.h>
 
 #include <ProjectCenter/PCProject.h>
@@ -81,6 +82,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	     object:nil];
 
       fileManager = [[PCFileManager alloc] initWithProjectManager:self];
+      editorManager = [[PCEditorManager alloc] init];
+      [editorManager setProjectManager:self];
     }
 
   return self;
@@ -107,6 +110,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   RELEASE(projectTypes);
   RELEASE(projectTypeAccessaryView);
   RELEASE(fileTypeAccessaryView);
+
+  if (editorManager)    RELEASE(editorManager);
 
   if (projectInspector) RELEASE(projectInspector);
   if (loadedFilesPanel) RELEASE(loadedFilesPanel);
@@ -1009,7 +1014,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if (filePath != nil)
     {
-      [self openFileWithEditor:filePath];
+      [editorManager openEditorForFile:filePath editable:YES windowed:YES];
     }
 }
 
@@ -1023,9 +1028,46 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return [[activeProject projectEditor] saveFile];
 }
 
-- (BOOL)saveFileAs:(NSString *)path
+- (BOOL)saveFileAs
 {
-  return [[activeProject projectEditor] saveFileAs:path];
+  NSArray  *files = nil;
+  NSString *filePath = nil;
+
+  files = [fileManager filesOfTypes:nil
+			  operation:PCSaveFileOperation
+			   multiple:NO
+			      title:@"Save As..."
+			    accView:nil];
+  filePath = [files objectAtIndex:0];
+
+  if (filePath != nil && ![[activeProject projectEditor] saveFileAs:filePath]) 
+    {
+      NSRunAlertPanel(@"Alert", @"Couldn't save file to\n%@!",
+		      @"OK", nil, nil, filePath);
+      return NO;
+    }
+  else
+    {
+      // TODO: implement 'Save File As' functionality wrt project and
+      // non-project files
+/*      PCProject *project = [projectManager activeProject];
+      NSString  *categoryPath =  nil;
+
+      categoryPath = [NSString stringWithString:@"/"];
+      categoryPath = [categoryPath stringByAppendingPathComponent:
+			      [[project rootEntries] objectForKey:PCNonProject]];
+
+      [projectManager closeFile];
+      [project addFiles:[NSArray arrayWithObject:newFilePath]
+		 forKey:PCNonProject
+		 notify:YES];
+      [[activeProject projectEditor] openEditorForFile:newFilePath
+	      				  categoryPath:categoryPath
+	      				      editable:YES
+	      				      windowed:NO];*/
+    }
+
+  return YES;
 }
 
 - (BOOL)saveFileTo

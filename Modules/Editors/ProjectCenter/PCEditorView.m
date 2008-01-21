@@ -415,12 +415,12 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 // ---
 - (BOOL)becomeFirstResponder
 {
-  return [editor becomeFirstResponder];
+  return [editor becomeFirstResponder:self];
 }
 
 - (BOOL)resignFirstResponder
 {
-  return [editor resignFirstResponder];
+  return [editor resignFirstResponder:self];
 }
 
 - (BOOL)acceptsFirstMouse:(NSEvent *)theEvent

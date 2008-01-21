@@ -547,8 +547,10 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   id<CodeEditor>  editor = nil;
   NSString        *categoryName = [self nameOfSelectedCategory];
   NSString        *categoryKey = [project keyForCategory:categoryName];
+  NSString        *filePath;
 
-  editor = [projectEditor editorForFile:fileName key:categoryKey];
+  filePath = [project pathForFile:fileName forKey:categoryKey];
+  editor = [projectEditor editorForFile:filePath];
   if (editor != nil)
     {
       return [editor fileIcon];

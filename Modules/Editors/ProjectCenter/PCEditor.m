@@ -233,16 +233,14 @@
 //	[aParser retainCount], [parser retainCount]);
 }
 
-- (id)openFileAtPath:(NSString *)file
-	categoryPath:(NSString *)categoryPath
-       projectEditor:(id)aProjectEditor
+- (id)openFileAtPath:(NSString *)filePath
+       editorManager:(id)editorManager
 	    editable:(BOOL)editable
 {
   NSString            *text;
   NSAttributedString  *attributedString = [NSAttributedString alloc];
   NSMutableDictionary *attributes = [NSMutableDictionary new];
   NSFont              *font;
-//  NSColor            *textBackground;
 
   NSLog(@"PCEditor: openFileAtPath");
 
@@ -250,9 +248,8 @@
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillOpenNotification
 		  object:self];
-  projectEditor = aProjectEditor;
-  _path = [file copy];
-  _categoryPath = [categoryPath copy];
+  _editorManager = editorManager;
+  _path = [filePath copy];
   _isEditable = editable;
 
   // Prepare
@@ -269,7 +266,7 @@
   [attributes setObject:font forKey:NSFontAttributeName];
   [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
 
-  text  = [NSString stringWithContentsOfFile:file];
+  text  = [NSString stringWithContentsOfFile:_path];
   [attributedString initWithString:text attributes:attributes];
   //
 
@@ -277,7 +274,8 @@
   [_storage setAttributedString:attributedString];
   RELEASE(attributedString);
 
-  if (categoryPath) // category == nil if we're non project editor
+  [self _createInternalView];
+/*  if (categoryPath) // category == nil if we're non project editor
     {
       NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
 
@@ -285,7 +283,7 @@
 	{
 	  [self _createInternalView];
 	}
-    }
+    }*/
 
   // File open was finished
   [[NSNotificationCenter defaultCenter]
@@ -297,7 +295,7 @@
 
 - (id)openExternalEditor:(NSString *)editor
 	 	withPath:(NSString *)file
-	   projectEditor:(id)aProjectEditor
+	   editorManager:(id)aDelegate
 {
   NSTask         *editorTask = nil;
   NSArray        *ea = nil;
@@ -309,7 +307,7 @@
       return nil;
     }
 
-  projectEditor = aProjectEditor;
+  _editorManager = aDelegate;
   _path = [file copy];
 
   // Task
@@ -365,9 +363,9 @@
 
 // --- Accessor methods
 
-- (id)projectEditor
+- (id)editorManager
 {
-  return projectEditor;
+  return _editorManager;
 }
 
 - (NSWindow *)editorWindow
@@ -772,20 +770,20 @@
   editorTextViewIsPressingKey = NO;
 }
 
-- (BOOL)becomeFirstResponder
+- (BOOL)becomeFirstResponder:(PCEditorView *)view
 {
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCEditorDidBecomeActiveNotification
-                  object:self];
+		  object:self];
 
   return YES;
 }
 
-- (BOOL)resignFirstResponder
+- (BOOL)resignFirstResponder:(PCEditorView *)view
 {
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCEditorDidResignActiveNotification
-                  object:self];
+		  object:self];
 
   return YES;
 }
@@ -798,6 +796,19 @@
 
 - (void)fileStructureItemSelected:(NSString *)item
 {
+  NSString *firstSymbol;
+
+  NSLog(@"[PCEditor] selected file structure item: %@", item);
+
+  firstSymbol = [item substringToIndex:1];
+  if ([firstSymbol isEqualToString:@"@"])      // class selected
+    {
+    }
+  else if ([firstSymbol isEqualToString:@"-"]  // method selected
+	|| [firstSymbol isEqualToString:@"+"])
+    {
+      [self scrollToMethodName:item];
+    }
 }
 
 - (void)scrollToClassName:(NSString *)className

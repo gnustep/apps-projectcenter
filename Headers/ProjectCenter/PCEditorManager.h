@@ -23,32 +23,21 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCProjectEditor_h_
-#define _PCProjectEditor_h_
+#ifndef _PCEditorManager_h_
+#define _PCEditorManager_h_
 
 #include <Foundation/Foundation.h>
 
 #include <Protocols/CodeEditor.h>
 #include <Protocols/CodeParser.h>
 
-#include <ProjectCenter/PCEditorManager.h>
+@class PCProjectManager;
 
-@class PCProject;
-
-@class NSBox;
-@class NSView;
-@class NSScrollView;
-
-@interface PCProjectEditor : PCEditorManager
+@interface PCEditorManager : NSObject
 {
-  PCProject           *_project;
-  NSBox               *_componentView;
-  NSScrollView        *_scrollView;
-
-/*  NSDictionary        *_editorBundlesInfo;
-  NSDictionary        *_parserBundlesInfo;
+  PCProjectManager    *_projectManager;
   NSMutableDictionary *_editorsDict;
-  id<CodeEditor>      _activeEditor;*/
+  id<CodeEditor>      _activeEditor;
 }
 
 // ===========================================================================
@@ -57,38 +46,68 @@
 
 - (id)init;
 - (void)dealloc;
-- (NSView *)componentView;
-- (PCProject *)project;
-- (void)setProject:(PCProject *)aProject;
+- (PCProjectManager *)projectManager;
+- (void)setProjectManager:(PCProjectManager *)aProjectManager;
 
 // ===========================================================================
 // ==== Project and Editor handling
 // ===========================================================================
 
-- (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item;
+// Returns nil if editor is not opened
+- (id<CodeEditor>)editorForFile:(NSString *)filePath;
 
-- (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
-                                   windowed:(BOOL)windowed;
-
+- (id<CodeEditor>)openEditorForFile:(NSString *)path
+		           editable:(BOOL)editable
+	                   windowed:(BOOL)windowed;
+		       
 - (void)orderFrontEditorForFile:(NSString *)path;
-- (BOOL)closeAllEditors;
+- (id<CodeEditor>)activeEditor;
+- (void)setActiveEditor:(id<CodeEditor>)anEditor;
+- (NSArray *)allEditors;
+- (void)closeActiveEditor:(id)sender;
+- (void)closeEditorForFile:(NSString *)file;
 
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
-- (BOOL)saveEditedFiles:(NSArray *)files;
-- (BOOL)saveAllFiles;
+- (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)file;
+- (BOOL)saveFileTo:(NSString *)file;
+- (BOOL)revertFileToSaved;
 
 // ===========================================================================
 // ==== Delegate
 // ===========================================================================
 
+- (void)editorDidOpen:(NSNotification *)aNotif;
 - (void)editorDidClose:(NSNotification *)aNotif;
 - (void)editorDidBecomeActive:(NSNotification *)aNotif;
+- (void)editorDidResignActive:(NSNotification *)aNotif;
+- (void)editorDidChangeFileName:(NSNotification *)aNotif;
 
 @end
+
+extern NSString *PCEditorDidChangeFileNameNotification;
+
+extern NSString *PCEditorWillOpenNotification;
+extern NSString *PCEditorDidOpenNotification;
+extern NSString *PCEditorWillCloseNotification;
+extern NSString *PCEditorDidCloseNotification;
+
+extern NSString *PCEditorWillChangeNotification;
+extern NSString *PCEditorDidChangeNotification;
+extern NSString *PCEditorWillSaveNotification;
+extern NSString *PCEditorDidSaveNotification;
+extern NSString *PCEditorWillRevertNotification;
+extern NSString *PCEditorDidRevertNotification;
+
+extern NSString *PCEditorDidBecomeActiveNotification;
+extern NSString *PCEditorDidResignActiveNotification;
+
+/*
+extern NSString *PCEditorSaveDidFailNotification;
+*/
 
 #endif 
 

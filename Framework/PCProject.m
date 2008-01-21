@@ -577,7 +577,9 @@ NSString
 
   if (!projectEditor)
     {
-      projectEditor = [[PCProjectEditor alloc] initWithProject:self];
+      projectEditor = [[PCProjectEditor alloc] init];
+      [projectEditor setProject:self];
+      [projectEditor setProjectManager:aManager];
     }
 
   if (!projectWindow)

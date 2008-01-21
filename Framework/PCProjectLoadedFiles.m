@@ -234,7 +234,7 @@
   NSString       *filePath = nil;
   int            row;
 
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       PCLogWarning(self, @"File opened from other project");
       return;
@@ -263,7 +263,7 @@
   id<CodeEditor> editor = [aNotif object];
   NSString       *filePath = [editor path];
 
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       PCLogWarning(self, @"File from other project closed");
       return;
@@ -292,7 +292,7 @@
   unsigned       index;
   unsigned       filesCount;
   
-  if ([editor projectEditor] != [project projectEditor])
+  if ([editor editorManager] != [project projectEditor])
     {
       return;
     }
@@ -316,7 +316,7 @@
   NSString       *_newFileName = nil;
   unsigned       index;
 
-  if ([_editor projectEditor] != [project projectEditor])
+  if ([_editor editorManager] != [project projectEditor])
     {
       return;
     }

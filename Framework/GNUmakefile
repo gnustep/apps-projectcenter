@@ -29,6 +29,7 @@ ProjectCenter_HEADER_FILES = \
   ProjectCenter.h \
   \
   PCBundleManager.h \
+  PCEditorManager.h \
   PCFileManager.h \
   PCAddFilesPanel.h \
   PCFileCreator.h \
@@ -58,6 +59,7 @@ ProjectCenter_HEADER_FILES = \
 
 ProjectCenter_OBJC_FILES = \
   PCBundleManager.m \
+  PCEditorManager.m \
   PCMakefileFactory.m \
   PCFileManager.m \
   PCAddFilesPanel.m \

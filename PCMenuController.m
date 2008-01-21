@@ -165,59 +165,8 @@
 
 - (void)fileSaveAs:(id)sender
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSSavePanel	 *savePanel = [NSSavePanel savePanel];
-  NSString       *oldFilePath = nil;
-  NSString 	 *newFilePath = nil;
-  NSString       *directory = nil;
-  int		 retval = NSOKButton;
-
-  oldFilePath = 
-    [[[[projectManager rootActiveProject] projectEditor] activeEditor] path];
-
-  [savePanel setTitle: @"Save As..."];
-  while (![directory isEqualToString: [projectManager projectPath]] 
-	 && retval != NSCancelButton)
-    {
-      retval = [savePanel 
-	runModalForDirectory:[projectManager projectPath]
-	                file:[projectManager selectedFileName]];
-      directory = [savePanel directory];
-    }
-
-  if (retval == NSOKButton)
-    {
-      [ud setObject:directory forKey:@"LastOpenDirectory"];
-
-      newFilePath = [savePanel filename];
-		  
-      if (![projectManager saveFileAs:newFilePath]) 
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Couldn't save file as\n%@!",
-			  @"OK",nil,nil,newFilePath);
-	}
-      else
-	{
-	  PCProject *project = [projectManager activeProject];
-	  NSString  *categoryPath =  nil;
-
-	  categoryPath = [NSString stringWithString:@"/"];
-	  categoryPath = [categoryPath stringByAppendingPathComponent:
-	    [[project rootEntries] objectForKey:PCNonProject]];
-
-	  [projectManager closeFile];
-	  [project addFiles:[NSArray arrayWithObject:newFilePath]
-	             forKey:PCNonProject
-		     notify:YES];
-	  [[project projectEditor] openEditorForFile:newFilePath
-					categoryPath:categoryPath
-					    editable:YES
-					    windowed:NO];
-	}
-    }
+  [projectManager saveFileAs];
 }
-
 
 - (void)fileSaveTo:(id)sender
 {

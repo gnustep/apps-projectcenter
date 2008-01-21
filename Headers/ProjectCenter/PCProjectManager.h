@@ -30,6 +30,7 @@
 
 @class PCBundleManager;
 @class PCFileManager;
+@class PCEditorManager;
 @class PCProject;
 @class PCProjectInspector;
 @class PCProjectBuilder;
@@ -50,6 +51,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
   NSMutableDictionary *projectTypes;
 
   PCFileManager       *fileManager;
+  PCEditorManager     *editorManager;
   PCProjectInspector  *projectInspector;
   
   NSPanel             *buildPanel;
@@ -170,7 +172,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (void)openFile;
 - (void)newFile;
 - (BOOL)saveFile;
-- (BOOL)saveFileAs:(NSString *)path;
+- (BOOL)saveFileAs;
 - (BOOL)saveFileTo;
 - (BOOL)revertFileToSaved;
 - (BOOL)renameFile;

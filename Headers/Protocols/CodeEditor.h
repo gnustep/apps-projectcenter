@@ -35,9 +35,9 @@
 // ===========================================================================
 - (void)setParser:(id)parser;
 
-- (id)openFileAtPath:(NSString *)file
-	categoryPath:(NSString *)categoryPath
-       projectEditor:(id)aProjectEditor
+// Usually delegate is PCEditorManager or PCEditorManager
+- (id)openFileAtPath:(NSString *)filePath
+       editorManager:(id)editorManager
 	    editable:(BOOL)editable;
 
 - (void)show;
@@ -47,7 +47,7 @@
 // ===========================================================================
 // ==== Accessor methods
 // ===========================================================================
-- (id)projectEditor;
+- (id)editorManager;
 
 - (NSWindow *)editorWindow;
 - (NSView *)editorView;
@@ -81,8 +81,6 @@
 // ===========================================================================
 
 - (void)fileStructureItemSelected:(NSString *)item;
-- (void)scrollToClassName:(NSString *)className;
-- (void)scrollToMethodName:(NSString *)methodName;
 - (void)scrollToLineNumber:(unsigned int)lineNumber;
 
 @end

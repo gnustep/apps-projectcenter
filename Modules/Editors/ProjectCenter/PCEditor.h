@@ -37,7 +37,7 @@
 
 @interface PCEditor : NSObject <CodeEditor>
 {
-  id              projectEditor;
+  id              _editorManager;
 
   NSScrollView    *_extScrollView;
   PCEditorView    *_extEditorView;
@@ -107,8 +107,17 @@
 - (void)editorTextViewWillPressKey:sender;
 - (void)editorTextViewDidPressKey:sender;
 
-- (BOOL)becomeFirstResponder;
-- (BOOL)resignFirstResponder;
+- (BOOL)becomeFirstResponder:(PCEditorView *)view;
+- (BOOL)resignFirstResponder:(PCEditorView *)view;
+
+// ===========================================================================
+// ==== Parser and scrolling
+// ===========================================================================
+
+- (void)fileStructureItemSelected:(NSString *)item;  // CodeEditor protocol
+- (void)scrollToClassName:(NSString *)className;
+- (void)scrollToMethodName:(NSString *)methodName;
+- (void)scrollToLineNumber:(unsigned int)lineNumber; // CodeEditor protocol
 
 @end
 
