@@ -45,8 +45,6 @@ enum {
   PCProjectManager       *projectManager;
   id                     delegate;        // PCProjectManager
 
-  NSDictionary           *creators;
-
   // New File in Project panel
   IBOutlet NSPanel       *newFilePanel;
   IBOutlet NSImageView   *nfImage;
@@ -113,8 +111,6 @@ enum {
 
 - (BOOL)moveFile:(NSString *)file intoDirectory:(NSString *)directory;
 
-- (void)createFile;
-
 @end
 
 @interface PCFileManager (UInterface)
@@ -125,10 +121,6 @@ enum {
 			multiple:(BOOL)yn
 			   title:(NSString *)title
 			 accView:(NSView *)accessoryView;
-- (void)showNewFilePanel;
-- (void)closeNewFilePanel:(id)sender;
-- (void)createFile:(id)sender;
-- (void)newFilePopupChanged:(id)sender;
 
 @end
 

@@ -8,7 +8,7 @@
 	);
 	Super = NSObject;
     };
-    PCFileManager = {
+    PCFileCreator = {
 	Actions = (
 	    "closeNewFilePanel:",
 	    "createFile:",

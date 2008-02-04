@@ -30,11 +30,10 @@
 
 #include <ProjectCenter/PCLogController.h>
 
-@implementation PCFileCreator
-
 static PCFileCreator *_creator = nil;
-static NSString      *_name = @"FileCreator";
 static NSDictionary  *dict = nil;
+
+@implementation PCFileCreator
 
 + (id)sharedCreator
 {
@@ -107,14 +106,32 @@ static NSDictionary  *dict = nil;
   return _creator;
 }
 
-- (NSString *)name
+- (id)init
 {
-  return _name;
+  self = [super init];
+  activeProject = nil;
+
+  return self;
+}
+
+- (void)dealloc
+{
+  RELEASE(newFilePanel);
+  RELEASE(dict);
+
+  [super dealloc];
 }
 
 - (NSDictionary *)creatorDictionary
 {
   return dict;
+}
+
+- (void)newFileInProject:(PCProject *)aProject
+{
+  // Set to nil after panel closing
+  activeProject = aProject;
+  [self showNewFilePanel];
 }
 
 - (NSDictionary *)createFileOfType:(NSString *)type 
@@ -284,4 +301,135 @@ static NSDictionary  *dict = nil;
 
 @end
 
+
+@implementation PCFileCreator (UInterface)
+
+// ============================================================================
+// ==== "New File in Project" Panel
+// ============================================================================
+- (void)showNewFilePanel
+{
+  if (!newFilePanel)
+    {
+      if ([NSBundle loadNibNamed:@"NewFile" owner:self] == NO)
+	{
+	  PCLogError(self, @"error loading NewFile NIB!");
+	  return;
+	}
+      [newFilePanel setFrameAutosaveName:@"NewFile"];
+      if (![newFilePanel setFrameUsingName: @"NewFile"])
+    	{
+	  [newFilePanel center];
+	}
+      [newFilePanel center];
+      [nfImage setImage:[NSApp applicationIconImage]];
+      [nfTypePB setRefusesFirstResponder:YES];
+      [nfTypePB removeAllItems];
+      [nfTypePB addItemsWithTitles:
+	[[dict allKeys] 
+	  sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
+      [nfTypePB selectItemAtIndex:0];
+      [nfCancleButton setRefusesFirstResponder:YES];
+      [nfCreateButton setRefusesFirstResponder:YES];
+      [newFilePanel setDefaultButtonCell:[nfCreateButton cell]];
+    }
+
+  [self newFilePopupChanged:nfTypePB];
+
+  [newFilePanel makeKeyAndOrderFront:self];
+  [nfNameField setStringValue:@""];
+  [newFilePanel makeFirstResponder:nfNameField];
+}
+
+- (void)closeNewFilePanel:(id)sender
+{
+  [newFilePanel orderOut:self];
+  activeProject = nil;
+}
+
+- (void)createFile:(id)sender
+{
+  [self createFile];
+  [self closeNewFilePanel:self];
+  activeProject = nil;
+}
+
+- (void)newFilePopupChanged:(id)sender
+{
+  NSString     *type = [sender titleOfSelectedItem];
+  NSDictionary *creator = [dict objectForKey:type];
+
+  if (type)
+    {
+      [nfDescriptionTV setString:[creator objectForKey:@"TypeDescription"]];
+    }
+}
+
+- (void)controlTextDidChange:(NSNotification *)aNotif
+{
+  if ([aNotif object] != nfNameField)
+    {
+      return;
+    }
+
+  // TODO: Add check for valid file names
+  if ([[nfNameField stringValue] length] > 0)
+    {
+      [nfCreateButton setEnabled:YES];
+    }
+  else
+    {
+      [nfCreateButton setEnabled:NO];
+    }
+}
+
+- (void)createFile
+{
+  NSString     *path = nil;
+  NSString     *fileName = [nfNameField stringValue];
+  NSString     *fileType = [nfTypePB titleOfSelectedItem];
+  NSDictionary *fileDict = [dict objectForKey:fileType];
+  NSString     *projectKey = [fileDict objectForKey:@"ProjectKey"];
+
+//  PCLogInfo(self, @"[createFile] %@", fileName);
+
+  if ([activeProject doesAcceptFile:fileName forKey:projectKey]) 
+    {
+      path = [[activeProject projectPath] 
+	stringByAppendingPathComponent:fileName];
+    }
+
+//  PCLogInfo(self, @"creating file at %@", path);
+
+  // Create file
+  if (path) 
+    {
+      NSDictionary  *newFiles = nil;
+      NSEnumerator  *enumerator;
+      NSString      *aFile;
+
+      // Do it finally...
+      newFiles = [self createFileOfType:fileType
+				   path:path
+				project:activeProject];
+
+      // Add files to a project
+      enumerator = [[newFiles allKeys] objectEnumerator]; 
+      while ((aFile = [enumerator nextObject])) 
+	{
+	  fileType = [newFiles objectForKey:aFile];
+	  fileDict = [dict objectForKey:fileType];
+	  projectKey = [fileDict objectForKey:@"ProjectKey"];
+	   
+	  if ([activeProject doesAcceptFile:aFile forKey:projectKey]) 
+	    {
+	      [activeProject addFiles:[NSArray arrayWithObject:aFile]
+			       forKey:projectKey
+			       notify:YES];
+	    }
+	}
+    }
+}
+
+@end
 

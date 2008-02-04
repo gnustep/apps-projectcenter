@@ -39,14 +39,24 @@
 
 @interface PCFileCreator : NSObject
 {
-  NSMutableString *file;
+  PCProject              *activeProject;
+  NSMutableString        *file;
+
+  // New File in Project panel
+  IBOutlet NSPanel       *newFilePanel;
+  IBOutlet NSImageView   *nfImage;
+  IBOutlet NSPopUpButton *nfTypePB;
+  IBOutlet NSTextView    *nfDescriptionTV;
+  IBOutlet NSTextField   *nfNameField;
+  IBOutlet NSButton      *nfCancleButton;
+  IBOutlet NSButton      *nfCreateButton;
 }
 
 + (id)sharedCreator;
 
-- (NSString *)name;
 - (NSDictionary *)creatorDictionary;
 
+- (void)newFileInProject:(PCProject *)aProject;
 // The implementation needs some heavy cleanup!
 - (NSDictionary *)createFileOfType:(NSString *)type
                               path:(NSString *)path
@@ -54,6 +64,17 @@
 
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
                     withProject:(PCProject *)aProject;
+
+@end
+
+@interface PCFileCreator (UInterface)
+
+- (void)showNewFilePanel;
+- (void)closeNewFilePanel:(id)sender;
+- (void)createFile:(id)sender;
+- (void)newFilePopupChanged:(id)sender;
+- (void)controlTextDidChange:(NSNotification *)aNotif;
+- (void)createFile;
 
 @end
 

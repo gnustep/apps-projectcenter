@@ -1,3 +1,16 @@
+2008-02-05 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.[mh]: Cleaning up code that manages
+	non-project editors. Use PCEditorManager instead. Remove
+	PCFileManager's dalegate code(FileManagerDelegates category).
+	(-newFile): Call PCFileCreator's method newFileInProject:.
+	* Framework/PCFileManager.[mh]: Move code related to creation of
+	new file in project from here
+	* Framework/PCFileCreator.[mh]: to here.
+	(-createFile): Add additional check before adding file to 
+	project	(fixes bug #17493).
+	* Framework/English.lproj/NewFile.gorm: Set owner to PCFileCreator.
+
 2008-01-22 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCEditorManager.m: Added.

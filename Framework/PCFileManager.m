@@ -60,8 +60,6 @@ static PCFileManager *_mgr = nil;
   if ((self = [super init])) 
     {
       projectManager = aProjectManager;
-      creators = [[PCFileCreator sharedCreator] creatorDictionary];
-      RETAIN(creators);
     }
   return self;
 }
@@ -71,9 +69,6 @@ static PCFileManager *_mgr = nil;
 #ifdef DEVELOPMENT
   NSLog (@"PCFileManager: dealloc");
 #endif
-
-  RELEASE(creators);
-  RELEASE(newFilePanel);
 
   if (addFilesPanel)
     {
@@ -321,56 +316,6 @@ static PCFileManager *_mgr = nil;
   return YES;
 }
 
-- (void)createFile
-{
-  NSString     *path = nil;
-  NSString     *fileName = [nfNameField stringValue];
-  NSString     *fileType = [nfTypePB titleOfSelectedItem];
-  NSDictionary *theCreator = [creators objectForKey:fileType];
-  NSString     *key = [theCreator objectForKey:@"ProjectKey"];
-
-//  PCLogInfo(self, @"[createFile] %@", fileName);
-
-  path = [projectManager fileManager:self 
-                      willCreateFile:fileName
-		             withKey:key];
-
-//  PCLogInfo(self, @"creating file at %@", path);
-
-  // Create file
-  if (path) 
-    {
-      NSDictionary  *newFiles = nil;
-      PCFileCreator *creator = nil;
-      PCProject     *project = [projectManager activeProject];
-      NSEnumerator  *enumerator;
-      NSString      *aFile;
-
-      creator = [theCreator objectForKey:@"Creator"];
-      if (!creator) 
-	{
-	  NSRunAlertPanel(@"Attention!",
-			  @"Could not create %@. The creator is missing!",
-			  @"OK",nil,nil,fileName);
-	  return;
-	}
-
-      // Do it finally...
-      newFiles = [creator createFileOfType:fileType path:path project:project];
-
-      // Key: name of file
-      enumerator = [[newFiles allKeys] objectEnumerator]; 
-      while ((aFile = [enumerator nextObject])) 
-	{
-	  fileType = [newFiles objectForKey:aFile];
-	  theCreator = [creators objectForKey:fileType];
-	  key = [theCreator objectForKey:@"ProjectKey"];
-	   
-	  [projectManager fileManager:self didCreateFile:aFile withKey:key];
-	}
-    }
-}
-
 @end
 
 @implementation PCFileManager (UInterface)
@@ -531,82 +476,6 @@ static PCFileManager *_mgr = nil;
     }
 
   return nil;
-}
-
-// ============================================================================
-// ==== "New File in Project" Panel
-// ============================================================================
-- (void)showNewFilePanel
-{
-  if (!newFilePanel)
-    {
-      if ([NSBundle loadNibNamed:@"NewFile" owner:self] == NO)
-	{
-	  PCLogError(self, @"error loading NewFile NIB!");
-	  return;
-	}
-      [newFilePanel setFrameAutosaveName:@"NewFile"];
-      if (![newFilePanel setFrameUsingName: @"NewFile"])
-    	{
-	  [newFilePanel center];
-	}
-      [newFilePanel center];
-      [nfImage setImage:[NSApp applicationIconImage]];
-      [nfTypePB setRefusesFirstResponder:YES];
-      [nfTypePB removeAllItems];
-      [nfTypePB addItemsWithTitles:
-	[[creators allKeys] 
-	  sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
-      [nfTypePB selectItemAtIndex:0];
-      [nfCancleButton setRefusesFirstResponder:YES];
-      [nfCreateButton setRefusesFirstResponder:YES];
-    }
-
-  [self newFilePopupChanged:nfTypePB];
-
-  [newFilePanel makeKeyAndOrderFront:self];
-  [nfNameField setStringValue:@""];
-  [newFilePanel makeFirstResponder:nfNameField];
-}
-
-- (void)closeNewFilePanel:(id)sender
-{
-  [newFilePanel orderOut:self];
-}
-
-- (void)createFile:(id)sender
-{
-  [self createFile];
-  [self closeNewFilePanel:self];
-}
-
-- (void)newFilePopupChanged:(id)sender
-{
-  NSString     *type = [sender titleOfSelectedItem];
-  NSDictionary *creator = [creators objectForKey:type];
-
-  if (type)
-    {
-      [nfDescriptionTV setString:[creator objectForKey:@"TypeDescription"]];
-    }
-}
-
-- (void)controlTextDidChange:(NSNotification *)aNotif
-{
-  if ([aNotif object] != nfNameField)
-    {
-      return;
-    }
-
-  // TODO: Add check for valid file names
-  if ([[nfNameField stringValue] length] > 0)
-    {
-      [nfCreateButton setEnabled:YES];
-    }
-  else
-    {
-      [nfCreateButton setEnabled:NO];
-    }
 }
 
 // ============================================================================

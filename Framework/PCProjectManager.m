@@ -29,6 +29,7 @@
 
 #include <ProjectCenter/PCBundleManager.h>
 #include <ProjectCenter/PCFileManager.h>
+#include <ProjectCenter/PCFileCreator.h>
 #include <ProjectCenter/PCEditorManager.h>
 #include <ProjectCenter/PCProjectManager.h>
 
@@ -67,23 +68,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       
       loadedProjects = [[NSMutableDictionary alloc] init];
       
-      nonProjectEditors = [[NSMutableDictionary alloc] init];
-
       [[NSNotificationCenter defaultCenter] 
 	addObserver:self 
 	   selector:@selector(resetSaveTimer:)
 	       name:PCSavePeriodDidChangeNotification
 	     object:nil];
 
-      [[NSNotificationCenter defaultCenter] 
-	addObserver:self 
-	   selector:@selector(editorDidClose:)
-	       name:PCEditorDidCloseNotification
-	     object:nil];
-
       fileManager = [[PCFileManager alloc] initWithProjectManager:self];
-      editorManager = [[PCEditorManager alloc] init];
-      [editorManager setProjectManager:self];
+
     }
 
   return self;
@@ -103,7 +95,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   RELEASE(loadedProjects);
-  RELEASE(nonProjectEditors);
   RELEASE(fileManager);
 
   RELEASE(bundleManager);
@@ -254,6 +245,18 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (PCFileManager *)fileManager
 {
   return fileManager;
+}
+
+- (PCEditorManager *)editorManager
+{
+  if (!editorManager)
+    {
+      // For non project editors
+      editorManager = [[PCEditorManager alloc] init];
+      [editorManager setProjectManager:self];
+    }
+
+  return editorManager;
 }
 
 - (PCProjectInspector *)projectInspector
@@ -1000,6 +1003,16 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== File actions
 // ============================================================================
 
+- (void)openFileAtPath:(NSString *)filePath
+{
+  if (filePath != nil)
+    {
+      [[self editorManager] openEditorForFile:filePath 
+				     editable:YES
+				     windowed:YES];
+    }
+}
+
 - (void)openFile
 {
   NSArray  *files = nil;
@@ -1011,16 +1024,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			      title:@"Open File"
 			    accView:nil];
   filePath = [files objectAtIndex:0];
-
-  if (filePath != nil)
-    {
-      [editorManager openEditorForFile:filePath editable:YES windowed:YES];
-    }
+  [self openFileAtPath:filePath];
 }
 
 - (void)newFile
 {
-  [fileManager showNewFilePanel];
+  [[PCFileCreator sharedCreator] newFileInProject:activeProject];
 }
 
 - (BOOL)saveFile
@@ -1109,93 +1118,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (void)closeFile
 {
   return [[activeProject projectEditor] closeActiveEditor:self];
-}
-
-// Project menu
-// ============================================================================
-// ==== Non project editors
-// ============================================================================
-
-- (void)openFileWithEditor:(NSString *)path
-{
-//  id<CodeEditor> editor;
-/*  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *editor = [ud objectForKey:Editor];
-
-  if (![editor isEqualToString:@"ProjectCenter"])
-    {
-      NSArray  *ea = [editor componentsSeparatedByString:@" "];
-      NSString *app = [ea objectAtIndex:0];
-
-      if ([[app pathExtension] isEqualToString:@"app"])
-	{
-	  BOOL ret = [[NSWorkspace sharedWorkspace] openFile:path 
-				 	     withApplication:app];
-
-	  if (ret == NO)
-	    {
-	      PCLogError(self, @"Could not open %@ using %@", path, app);
-	    }
-
-	  return nil;
-	}
-
-      editor = [[editorClass alloc] initExternalEditor:editor 
-				      	      withPath:path
-					 projectEditor:self];
-    }
-  else
-    {
-      id<CodeEditor> editor;
-
-      editor = [[editorClass alloc] initWithPath:path 
-			    	    categoryPath:nil
-				   projectEditor:self];
-      [editor setWindowed:YES];
-      [editor show];
-
-      return editor;
-    }
-
-  [nonProjectEditors setObject:editor forKey:path];
-
-  [editor release];*/
-}
-
-- (void)editorDidClose:(NSNotification *)aNotif
-{
-  id<CodeEditor> editor = [aNotif object];
-  
-  [nonProjectEditors removeObjectForKey:[editor path]];
-}
-
-@end
-
-@implementation PCProjectManager (FileManagerDelegates)
-
-// willCreateFile
-- (NSString *)fileManager:(id)sender
-           willCreateFile:(NSString *)aFile
-	          withKey:(NSString *)key
-{
-  NSString *path = nil;
-
-  if ([activeProject doesAcceptFile:aFile forKey:key]) 
-    {
-      path = [[activeProject projectPath] stringByAppendingPathComponent:aFile];
-    }
-
-  return path;
-}
-
-// didCreateFiles
-- (void)fileManager:(id)sender
-      didCreateFile:(NSString *)aFile
-            withKey:(NSString *)key
-{
-  [activeProject addFiles:[NSArray arrayWithObject:aFile]
-                   forKey:key
-		   notify:YES];
 }
 
 @end

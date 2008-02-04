@@ -64,8 +64,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
   
   NSTimer             *saveTimer;
 
-  NSMutableDictionary *nonProjectEditors;
-  
   NSBox	              *projectTypeAccessaryView;
   id                  projectTypePopup;
 
@@ -110,6 +108,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ============================================================================
 - (PCBundleManager *)bundleManager;
 - (PCFileManager *)fileManager;
+- (PCEditorManager *)editorManager;
 - (PCProjectInspector *)projectInspector;
 - (NSPanel *)inspectorPanel;
 - (void)showProjectInspector:(id)sender;
@@ -169,6 +168,8 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ==== File actions
 // ============================================================================
 
+// Also called by PCAppController
+- (void)openFileAtPath:(NSString *)filePath;
 - (void)openFile;
 - (void)newFile;
 - (BOOL)saveFile;
@@ -177,27 +178,6 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (BOOL)revertFileToSaved;
 - (BOOL)renameFile;
 - (void)closeFile;
-
-// ============================================================================
-// ==== Non project editors
-// ============================================================================
-
-- (void)openFileWithEditor:(NSString *)path;
-- (void)editorDidClose:(NSNotification *)aNotif;
-
-@end
-
-@interface  PCProjectManager (FileManagerDelegates)
-
-// Returns the full path if the type is valid, nil else.
-- (NSString *)fileManager:(id)sender 
-           willCreateFile:(NSString *)aFile
-	          withKey:(NSString *)key;
-
-// Adds the file to the project and updates the makefile!
-- (void)fileManager:(id)sender 
-      didCreateFile:(NSString *)aFile
-            withKey:(NSString *)key;
 
 @end
 

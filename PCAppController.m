@@ -113,7 +113,7 @@
     }
   else
     {
-      [projectManager openFileWithEditor:fileName];
+      [projectManager openFileAtPath:fileName];
     }
 
   return YES;
@@ -121,7 +121,6 @@
 
 - (void)applicationWillFinishLaunching:(NSNotification *)notification
 {
-//  [bundleLoader loadBundles];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
