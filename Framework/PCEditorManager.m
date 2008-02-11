@@ -147,7 +147,7 @@ NSString *PCEditorDidResignActiveNotification =
   // Determine if file not exist or file is directory
   if (![fm fileExistsAtPath:filePath isDirectory:&isDir] || isDir)
     {
-      NSLog(@"%@ doesn't exist!");
+      NSLog(@"%@ doesn't exist!",filePath);
       return nil;
     }
 
