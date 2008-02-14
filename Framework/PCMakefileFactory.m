@@ -110,6 +110,7 @@ static PCMakefileFactory *_factory = nil;
   NSArray         *array = nil;
   NSDictionary    *projectDict = [project projectDict];
   NSString        *projectPath = [project projectPath];
+  NSString        *projectType = [project projectTypeName];
 
   // Create the new file
   [mfp appendString:@"#\n"];
@@ -175,28 +176,52 @@ static PCMakefileFactory *_factory = nil;
     }
   [mfp appendString:@"\n\n"];
 
-//  [mfp appendString:[projectDict objectForKey:PCLibraries]];
+  // [mfp appendString:[projectDict objectForKey:PCLibraries]];
 
-  // Additional GUI libraries
-  // TODO: Let the user select objc, base, gui libraries/frameworks
-  // on the gui - the following works well for GUI stuff only.
-  [mfp appendString:@"# Additional GUI libraries to link\n"];
-  [mfp appendString: @"ADDITIONAL_GUI_LIBS += "];
-  array = [projectDict objectForKey:PCLibraries];
-  if (array && [array count])
+  if([projectType isEqualToString: @"Tool"])
     {
-      NSString     *tmp;
-      NSEnumerator *enumerator = [array objectEnumerator];
-      
-      while ((tmp = [enumerator nextObject]))
+      // Additional TOOL libraries
+      [mfp appendString:@"# Additional TOOL libraries to link\n"];
+      [mfp appendString: @"ADDITIONAL_TOOL_LIBS += "];
+      array = [projectDict objectForKey:PCLibraries];
+      if (array && [array count])
         {
-          if (![tmp isEqualToString:@"gnustep-base"] &&
-              ![tmp isEqualToString:@"gnustep-gui"])
+          NSString     *tmp;
+          NSEnumerator *enumerator = [array objectEnumerator];
+          
+          while ((tmp = [enumerator nextObject]))
             {
-              [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+              if (![tmp isEqualToString:@"gnustep-base"])
+                {
+                  [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+                }
             }
         }
     }
+  else
+    {
+      // Additional GUI libraries
+      // TODO: Let the user select objc, base, gui libraries/frameworks
+      // on the gui - the following works well for GUI stuff only.
+      [mfp appendString:@"# Additional GUI libraries to link\n"];
+      [mfp appendString: @"ADDITIONAL_GUI_LIBS += "];
+      array = [projectDict objectForKey:PCLibraries];
+      if (array && [array count])
+        {
+          NSString     *tmp;
+          NSEnumerator *enumerator = [array objectEnumerator];
+          
+          while ((tmp = [enumerator nextObject]))
+            {
+              if (![tmp isEqualToString:@"gnustep-base"] &&
+                  ![tmp isEqualToString:@"gnustep-gui"])
+                {
+                  [mfp appendString:[NSString stringWithFormat:@"-l%@ ",tmp]];
+                }
+            }
+        }
+    }
+
   [mfp appendString:@"\n\n"];
 
   // Write the new file to disc!
