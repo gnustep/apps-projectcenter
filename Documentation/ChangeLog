@@ -1,3 +1,8 @@
+2008-02-13 22:10-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCMakefileFactory.m: Correction for bug#22311.  Added
+	project-type specific makefile generation.
+
 2008-02-10 23:53-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m: Corrected problem with call to 
