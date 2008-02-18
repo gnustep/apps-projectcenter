@@ -36,6 +36,9 @@
 #include <ProjectCenter/PCProjectBuilder.h>
 #include <ProjectCenter/PCProjectBuilderOptions.h>
 
+#include <ProjectCenter/PCProjectEditor.h>
+#include <Protocols/CodeEditor.h>
+
 #include <ProjectCenter/PCLogController.h>
 #include <ProjectCenter/PCPrefController.h>
 
@@ -993,13 +996,21 @@
       // position
       if (typeIndex == 2) // :line:
 	{
-	  position = [NSString stringWithFormat:@"{x=0; y=%f}", 
-		   [components objectAtIndex:1]];
+	  int      lInt = atoi([[components objectAtIndex:1] cString]);
+	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
+
+	  position = [NSString stringWithFormat:@"{x=%i; y=0}", 
+		   [lNumber floatValue]];
 	}
       else if (typeIndex == 3) // :line:column:
 	{
+	  int      lInt = atoi([[components objectAtIndex:1] cString]);
+	  int      cInt = atoi([[components objectAtIndex:2] cString]);
+	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
+	  NSNumber *cNumber = [NSNumber numberWithInt:cInt];
+
 	  position = [NSString stringWithFormat:@"{x=%f; y=%f}", 
-	      	   [components objectAtIndex:2], [components objectAtIndex:1]];
+	      	   [lNumber floatValue], [cNumber floatValue]];
 	}
       // message
       substr = [NSString stringWithFormat:@"%@:", type];
@@ -1125,14 +1136,26 @@
 
 - (void)errorItemClick:(id)sender
 {
-  int          rowIndex = [errorOutput selectedRow];
-  NSDictionary *error = [errorArray objectAtIndex:rowIndex];
+  int             rowIndex = [errorOutput selectedRow];
+  NSDictionary    *error = [errorArray objectAtIndex:rowIndex];
+  NSPoint         position;
+  PCProjectEditor *projectEditor = [project projectEditor];
+  id<CodeEditor>  editor;
 
-  NSLog(@"%i: %@(%@): %@", 
-	rowIndex, 
+  editor = [projectEditor openEditorForFile:[error objectForKey:@"File"]
+				   editable:YES
+				   windowed:NO];
+  if (editor)
+    {
+      position = NSPointFromString([error objectForKey:@"Position"]);
+      [editor scrollToLineNumber:(unsigned int)position.x];
+    }
+
+/*  NSLog(@"%f: %@(%@): %@", 
+	position.x, 
 	[error objectForKey:@"File"], 
 	[error objectForKey:@"IncludedFile"],
-	[error objectForKey:@"Error"]);
+	[error objectForKey:@"Error"]);*/
 }
 
 @end

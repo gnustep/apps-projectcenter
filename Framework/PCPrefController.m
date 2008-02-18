@@ -141,6 +141,7 @@ static PCPrefController *_prefCtrllr = nil;
 {
   NSDictionary *prefs;
   NSString     *val;
+  NSString     *defValue = @"";
 
   prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
   [preferencesDict addEntriesFromDictionary: prefs];
@@ -148,18 +149,17 @@ static PCPrefController *_prefCtrllr = nil;
   // Fill in the defaults
 
   // Building
-  val = [preferencesDict objectForKey:SuccessSound];
-  [successField setStringValue: (val == nil) ? @"" : val];
-
+  [successField setStringValue: 
+    (val = [preferencesDict objectForKey:SuccessSound]) ? val : defValue];
   [failureField setStringValue: 
-    (val = [preferencesDict objectForKey:FailureSound]) ? val : @""];
+    (val = [preferencesDict objectForKey:FailureSound]) ? val : defValue];
 
   [promptOnClean setState:
     ([[preferencesDict objectForKey:PromptOnClean] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 
   [rootBuildDirField setStringValue: 
-    (val = [preferencesDict objectForKey:RootBuildDirectory]) ? val : @""];
+    (val = [preferencesDict objectForKey:RootBuildDirectory]) ? val : defValue];
 
   // Saving
   [saveOnQuit setState:
@@ -170,8 +170,9 @@ static PCPrefController *_prefCtrllr = nil;
     ([[preferencesDict objectForKey: KeepBackup] 
      isEqualToString: @"YES"]) ? NSOnState : NSOffState];
 
+  defValue = @"120";
   [autosaveField setStringValue:
-    (val = [preferencesDict objectForKey: AutoSavePeriod]) ? val : @"120"];
+    (val = [preferencesDict objectForKey: AutoSavePeriod]) ? val : defValue];
   [autosaveSlider setFloatValue:[[autosaveField stringValue] floatValue]];
 
   // Key Bindings

@@ -48,18 +48,25 @@
   NSString        *_categoryPath;
   NSWindow        *_window;
 
-
   BOOL            _isEdited;
   BOOL            _isEditable;
   BOOL            _isWindowed;
   BOOL            _isExternal;
 
+  // Search
+  NSView          *goToLineView;
+  NSView          *quickFindView;
+
+  // Parser
   id<CodeParser>  aParser;
   NSArray         *parserClasses;
   NSArray         *parserMethods;
-//  NSMutableArray  *classNames;
-//  NSMutableArray  *methodNames;
 
+  // Syntax highlighter (used in PCEditorView)
+  BOOL            _highlightSyntax;
+
+  // Default text attributes (not syntax) and open/close brackets
+  // highlighting ([],{},())
   NSFont  *defaultFont;
   NSFont  *highlightFont;
 
@@ -136,7 +143,6 @@
 - (void)findNext:sender;
 - (void)findPrevious:sender;
 - (void)jumpToSelection:sender;
-- (void)goToLine:sender;
 
 @end
 

@@ -30,7 +30,6 @@
 @interface PCEditorView : NSTextView
 {
   PCEditor          *editor;
-//  SourceEditorDocument *editorDocument;
   SyntaxHighlighter *highlighter;
 }
 

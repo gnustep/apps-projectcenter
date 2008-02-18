@@ -101,7 +101,7 @@
   if (_commentType != NoComment)
     {
     }
-  else if (_stringBegin /* != NoString*/)
+  else if (_stringBegin)
     {
     }
   else if (step != ClassNone)
@@ -118,7 +118,11 @@
         }
       else if ((step == ClassName) || (step == ClassCategory))
         {
-          [class appendString:element];
+      	  [class appendString:element];
+	  if (prev_step == ClassNone)
+	    {
+	      prev_step = ClassName;
+	    }
         }
     }
 
@@ -205,7 +209,7 @@
 		  [class appendString:@"@"];
 		  step = ClassName;
 		  prev_step = ClassNone;
-		  nameBeginPosition = position;
+		  nameBeginPosition = position+1;
 		}
 	      [keyword setString:@""];
 	      
@@ -221,8 +225,13 @@
 	    {
 //	      NSLog(@"Class body start: \"%@\"", class);
 	      step = ClassBody;
-	      nameEndPosition = position - 1;
-	      bodyBeginPosition = position;
+	      nameEndPosition = position;
+	      bodyBeginPosition = position+1;
+	    }
+	  else if ((element == ' ') && (step == ClassName) 
+		   && (prev_step != ClassName))
+	    {
+	      nameBeginPosition++;
 	    }
         }
 

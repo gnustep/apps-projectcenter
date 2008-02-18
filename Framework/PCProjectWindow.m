@@ -564,9 +564,16 @@
   //--- Add Custom view
   if ([self hasCustomView] && customView == nil)
     {
-//      [browserView setAutoresizingMask: NSViewWidthSizable | NSViewMinYMargin];
       [self _createCustomView];
     }
+  //--- Remove Custom view
+  if (![self hasCustomView] && customView != nil)
+    {
+      [customView removeFromSuperview];
+      [h_split adjustSubviews];
+      customView = nil;
+    }
+
 
   // Project Builder
   if ([[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
@@ -603,15 +610,6 @@
 	{
 	  [self showProjectLaunch:self];
 	}
-    }
-
-  //--- Remove Custom view
-  if (![self hasCustomView] && customView != nil)
-    {
-//      [browserView setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];
-      [customView removeFromSuperview];
-      [h_split adjustSubviews];
-      customView = nil;
     }
 
   // Loaded Files view

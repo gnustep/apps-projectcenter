@@ -245,7 +245,7 @@
             }
 	  else if (element == ':')
 	    {
-	      step = MethodParameterStart;
+	      step = MethodName;
     	      [method appendString:@":"];
 	    }
         }
@@ -293,6 +293,7 @@
       if ((step == MethodName) && (element == ';'))
 	  {
 	    nameEndPosition = position;
+	    bodyBeginPosition = position - 1;
 	    [self addMethodToArray];
 	    step = MethodNone;
 	  }

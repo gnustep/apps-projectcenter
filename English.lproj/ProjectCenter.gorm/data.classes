@@ -3,10 +3,11 @@
     FirstResponder = {
 	Actions = (
 	    "findEnterSelection:",
+	    "findJumpToSelection:",
 	    "findNext:",
 	    "findPrevious:",
 	    "findShowPanel:",
-	    "findJumpToSelection:"
+	    "newAction:"
 	);
 	Super = NSObject;
     };
@@ -59,7 +60,8 @@
 	    "findNext:",
 	    "findPrevious:",
 	    "findShowPanel:",
-	    "findJumpToSelection:"
+	    "findJumpToSelection:",
+	    "goToLine:"
 	);
 	Outlets = (
 	);

@@ -23,10 +23,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCProjectWindow.h>
-#import <ProjectCenter/PCLogController.h>
-
 #import "PCEditor.h"
 #import "PCEditorView.h"
 //#import "CommandQueryPanel.h"
@@ -129,8 +125,11 @@
   ev = [[PCEditorView alloc] initWithFrame:fr textContainer:tc];
   [ev setBackgroundColor:textBackground];
   [ev setTextColor:textColor];
-  [ev createSyntaxHighlighterForFileType:[_path pathExtension]];
   [ev setEditor:self];
+  if (_highlightSyntax)
+    {
+      [ev createSyntaxHighlighterForFileType:[_path pathExtension]];
+    }
 
   [ev setMinSize:NSMakeSize(0, 0)];
   [ev setMaxSize:NSMakeSize(1e7, 1e7)];
@@ -176,6 +175,8 @@
       _isEdited = NO;
       _isWindowed = NO;
       _isExternal = YES;
+
+      _highlightSyntax = YES;
 
       ASSIGN(defaultFont, [PCEditorView defaultEditorFont]);
       ASSIGN(highlightFont, [PCEditorView defaultEditorFont]);
@@ -248,6 +249,7 @@
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillOpenNotification
 		  object:self];
+
   _editorManager = editorManager;
   _path = [filePath copy];
   _isEditable = editable;
@@ -345,11 +347,11 @@
 
   if (![path isEqualToString:_path])
     {
-      PCLogError(self, @"external editor task terminated");
+      NSLog(@"external editor task terminated");
       return;
     }
     
-  PCLogStatus(self, @"Our Editor task terminated");
+  NSLog(@"Our Editor task terminated");
 
   // Inform about closing
   [[NSNotificationCenter defaultCenter] 
@@ -460,10 +462,46 @@
   return AUTORELEASE(image);
 }
 
-- (NSArray *)browserItemsForItem:(NSString *)item
+- (NSArray *)_methodsForClass:(NSString *)className
 {
   NSEnumerator   *enumerator;
   NSDictionary   *method;
+  NSDictionary   *class;
+  NSMutableArray *items = [NSMutableArray array];
+  NSRange        classRange;
+  NSRange        methodRange;
+
+  ASSIGN(parserClasses, [aParser classNames]);
+  ASSIGN(parserMethods, [aParser methodNames]);
+
+  enumerator = [parserClasses objectEnumerator];
+  while ((class = [enumerator nextObject]))
+    {
+      if ([[class objectForKey:@"ClassName"] isEqualToString:className])
+      {
+	classRange = NSRangeFromString([class objectForKey:@"ClassBodyRange"]);
+	break;
+      }
+    }
+
+  enumerator = [parserMethods objectEnumerator];
+  while ((method = [enumerator nextObject]))
+    {
+      //      NSLog(@"Method> %@", method);
+      methodRange = NSRangeFromString([method objectForKey:@"MethodBodyRange"]);
+      if (NSIntersectionRange(classRange, methodRange).length != 0)
+	{
+	  [items addObject:[method objectForKey:@"MethodName"]];
+	}
+    }
+
+  return items;
+}
+
+- (NSArray *)browserItemsForItem:(NSString *)item
+{
+  NSEnumerator   *enumerator;
+//  NSDictionary   *method;
   NSDictionary   *class;
   NSMutableArray *items = [NSMutableArray array];
   
@@ -488,14 +526,15 @@
   // If item starts with "@" show method list
   if ([[item substringToIndex:1] isEqualToString:@"@"])
     {
-      ASSIGN(parserMethods, [aParser methodNames]);
+/*      ASSIGN(parserMethods, [aParser methodNames]);
 
       enumerator = [parserMethods objectEnumerator];
       while ((method = [enumerator nextObject]))
 	{
 	  //      NSLog(@"Method> %@", method);
 	  [items addObject:[method objectForKey:@"MethodName"]];
-	}
+	}*/
+      return [self _methodsForClass:item];
     }
 
   return items;
@@ -803,6 +842,7 @@
   firstSymbol = [item substringToIndex:1];
   if ([firstSymbol isEqualToString:@"@"])      // class selected
     {
+      [self scrollToClassName:item];
     }
   else if ([firstSymbol isEqualToString:@"-"]  // method selected
 	|| [firstSymbol isEqualToString:@"+"])
@@ -813,6 +853,29 @@
 
 - (void)scrollToClassName:(NSString *)className
 {
+  NSEnumerator   *enumerator = nil;
+  NSDictionary   *class = nil;
+  NSRange        classNameRange;
+
+  NSLog(@"SCROLL to class: \"%@\"", className);
+
+  enumerator = [parserClasses objectEnumerator];
+  while ((class = [enumerator nextObject]))
+    {
+      if ([[class objectForKey:@"ClassName"] isEqualToString:className])
+	{
+	  classNameRange = 
+	    NSRangeFromString([class objectForKey:@"ClassNameRange"]);
+	  break;
+	}
+    }
+
+  NSLog(@"classNameRange: %@", NSStringFromRange(classNameRange));
+  if (classNameRange.length != 0)
+    {
+      [_intEditorView setSelectedRange:classNameRange];
+      [_intEditorView scrollRangeToVisible:classNameRange];
+    }
 }
 
 - (void)scrollToMethodName:(NSString *)methodName
@@ -872,6 +935,9 @@
 
 @end
 
+// ===========================================================================
+// ==== Menu actions
+// ===========================================================================
 @implementation PCEditor (Menu)
 
 - (void)pipeOutputOfCommand:(NSString *)command
@@ -927,12 +993,12 @@
 
 - (void)findNext:sender
 {
-//  [[TextFinder sharedInstance] findNext: self];
+//  [[TextFinder sharedInstance] findNext:self];
 }
 
 - (void)findPrevious:sender
 {
-//  [[TextFinder sharedInstance] findPrevious: self];
+//  [[TextFinder sharedInstance] findPrevious:self];
 }
 
 - (void)jumpToSelection:sender
@@ -940,17 +1006,11 @@
   [_intEditorView scrollRangeToVisible:[_intEditorView selectedRange]];
 }
 
-- (void)goToLine:sender
-{
-/*  LineQueryPanel * lqp = [LineQueryPanel shared];
-
-  if ([lqp runModal] == NSOKButton)
-    {
-      [self goToLineNumber: (unsigned int) [lqp unsignedIntValue]];
-    }*/
-}
-
 @end
+
+// ===========================================================================
+// ==== Parenthesis highlighting
+// ===========================================================================
 
 /**
  * Checks whether a character is a delimiter.

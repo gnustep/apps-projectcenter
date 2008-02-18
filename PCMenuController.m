@@ -233,6 +233,13 @@
   [[TextFinder sharedInstance] enterSelection:self];
 }
 
+- (void)goToLine:sender
+{
+// TODO: What is the best: inline editor popup or separate panel?
+//  [[[[projectManager rootActiveProject] projectEditor] activeEditor] 
+//    goToLine:sender];
+}
+
 // Tools
 - (void)toggleToolbar:(id)sender
 {

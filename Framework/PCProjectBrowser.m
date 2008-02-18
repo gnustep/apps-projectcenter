@@ -103,8 +103,10 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSEnumerator   *enumerator;
   NSString       *pathItem;
 
+//  NSLog(@"---> Selected: %@: category: %@", name, category);
+
   if ([[browser selectedCells] count] != 1
-      || [name isEqualToString:[self nameOfSelectedCategory]])
+      || [name isEqualToString:category])
     {
       return nil;
     }
@@ -127,22 +129,14 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 // Returns nil if multiple files selected
 - (NSString *)pathToSelectedFile
 {
-  NSString *name = nil;
-  NSString *path = nil;
+  NSString *name = [self nameOfSelectedFile];
+  NSString *path = [browser path];
 
-  if ([[browser selectedCells] count] == 1)
+  if (!name)
     {
-      name = [[browser path] lastPathComponent];
-      if ([name isEqualToString:[self nameOfSelectedCategory]])
-	{
-	  path = nil;
-	}
-      else
-	{
-	  path = [browser path];
-	}
+      path = nil;
     }
-  
+
   return path;
 }
 
@@ -150,13 +144,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 - (NSString *)nameOfSelectedCategory
 {
   NSArray   *pathArray = [[browser path] componentsSeparatedByString:@"/"];
+  NSString  *lastPathElement = [[browser path] lastPathComponent];
   PCProject *activeProject = [[project projectManager] activeProject];
   NSArray   *rootCategories = [activeProject rootCategories];
   NSString  *name = nil;
   int       i;
 
-  if ([rootCategories containsObject:[pathArray lastObject]]
-      && [[browser selectedCells] count] > 1)
+  if ([lastPathElement isEqualToString:[activeProject projectName]])
+    {
+      return [activeProject projectName];
+    }
+
+  if (([rootCategories containsObject:lastPathElement]
+	  && [[browser selectedCells] count] > 1))
     {
       return nil;
     }
@@ -374,16 +374,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   browserPath = [self path];
   filePath = [self pathToSelectedFile];
 
-/*  NSLog(@"browserPath: %@ forProject: %@", 
-	browserPath, [activeProject projectName]);*/
+//  NSLog(@"browserPath: %@ forProject: %@", 
+//	browserPath, [activeProject projectName]);
 
 //  if ([[self selectedFiles] count] == 1
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
       ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
     {
-/*      PCLogInfo(self, @"[click] category: %@ filePath: %@",
-	      category, filePath);*/
+//      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
       [[activeProject projectEditor] openEditorForCategoryPath:browserPath
 					    	      windowed:NO];
     }

@@ -184,7 +184,8 @@
 - (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
 			       windowed:(BOOL)windowed
 {
-//  NSArray        *pathArray = [categoryPath pathComponents];
+  NSArray        *pathArray = [categoryPath pathComponents];
+  NSString       *pathLastObject = [pathArray lastObject];
   PCProject      *activeProject = [[_project projectManager] activeProject];
   NSString       *category = [[_project projectBrowser] nameOfSelectedCategory];
   NSString       *categoryKey = [activeProject keyForCategory:category];
@@ -192,7 +193,6 @@
   NSString       *filePath = nil;
   BOOL           editable = YES;
   id<CodeEditor> editor;
-  NSString       *pathLastObject = [[categoryPath pathComponents] lastObject];
   NSString       *firstSymbol = nil;
 
   fileName = [[[[_project projectBrowser] pathFromSelectedCategory] 
@@ -244,13 +244,21 @@
   NSLog(@"lastObject[1]: %@", 
   [pathLastObject substringWithRange:NSMakeRange(0,1)]);*/
 
-//  pathLastObject = [pathArray lastObject];
   firstSymbol = [pathLastObject substringToIndex:1];
-  if ([pathLastObject isEqualToString:@"/"]) // file selected
-    { // Reload last column because editor has just been loaded
-      [[_project projectBrowser] reloadLastColumnAndNotify:NO]; 
+  if ([pathLastObject isEqualToString:@"/"])
+    {
+      pathLastObject = [pathArray objectAtIndex:[pathArray count]-2];
+
+      if ([pathLastObject isEqualToString:fileName]) // file selected
+	{ // Reload last column because editor has just been loaded
+	  [[_project projectBrowser] reloadLastColumnAndNotify:NO]; 
+	}
+      else
+	{
+	  [editor fileStructureItemSelected:pathLastObject];
+	}
     }
-  else
+  else // TODO: rethink
     {
       [editor fileStructureItemSelected:pathLastObject];
     }

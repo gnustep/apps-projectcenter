@@ -429,7 +429,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 }
 // ---
 
-- (void) dealloc
+- (void)dealloc
 {
   TEST_RELEASE(highlighter);
 
@@ -462,22 +462,24 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)drawRect:(NSRect)r
 {
-//  NSEnumerator *e;
-  NSRange      drawnRange;
+  NSRange drawnRange;
 
-  drawnRange = [[self layoutManager] 
-    glyphRangeForBoundingRect:r
-	      inTextContainer:[self textContainer]];
-  [highlighter highlightRange:drawnRange];
+  if (highlighter)
+    {
+      drawnRange = [[self layoutManager] 
+	glyphRangeForBoundingRect:r inTextContainer:[self textContainer]];
+      [highlighter highlightRange:drawnRange];
+    }
 
-  [super drawRect: r];
+  [super drawRect:r];
 }
 
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType
 {
-  ASSIGN(highlighter, [[[SyntaxHighlighter alloc]
-    initWithFileType: fileType textStorage: [self textStorage]]
-    autorelease]);
+  ASSIGN(highlighter, 
+	 [[[SyntaxHighlighter alloc] initWithFileType:fileType
+					  textStorage:[self textStorage]]
+					  autorelease]);
 }
 
 - (void)insertText:text

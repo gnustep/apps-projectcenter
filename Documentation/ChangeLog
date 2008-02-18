@@ -1,3 +1,85 @@
+2008-02-19 Sergii Stoian <stoyan255@gmail.com>      
+
+        * PCMenuController.m: Start thinking about "Go to line:" popup.
+        * English.lproj/ProjectCenter.gorm: Added "Edit->Find->Line Number..."
+        menu item.
+        * Framework/PCProjectBrowser.m: (-nameOfSelectedFile:): Improve
+        category select detection.
+        (-pathToSelectedFile:): Use nameOfSelctedFile:. Cleanup.
+        (-nameOfSelctedCategory:): Return project name if subproject is
+        selected.
+        * Framework/PCProjectEditor.m:
+        (-openEditorForCategoryPath:windowed:): Use PCEditor's
+        fileStructureItemSelected if file structure component selected
+        in browser.
+        * Framework/PCProjectBuilder.m: Go to line number in editor
+        on error/warning click functionality implemented.
+        * Framework/PCProjectWindow.m: Cleanup.
+        * Framework/PCPrefController.m: Fix some compiler warnings.
+        * Modules/Parsers/ProjectCenter/ObjCMethodHandler.m:
+        * Modules/Parsers/ProjectCenter/ObjCClassHandler.m:
+        Fix bug #20855. Improve class names parsing: don't include spaces.
+        * Modules/Editors/ProjectCenter/PCEditorView.h: Remove unused
+        editorDocument variable.
+        * Modules/Editors/ProjectCenter/PCEditor.h:
+        * Modules/Editors/ProjectCenter/PCEditor.m: Make class independent
+        from ProjectCenter framework. Added variable _highlighSyntax. It sould
+        be set via preferences in the future.
+        (-_createEditorViewWithFrame:): Use _highlighSyntax variable.
+        (-_methodsForClass:): New method. Used to return to browser methods
+        only for selected class.
+        (-browserItemsForItem:): Use _methodsForClass method.
+        (-scrollToClassName:): Implemented. Now it's a almost identical copy
+        of scrollToMethodName:. TODO: think about code optimization.
+        * Modules/Editors/ProjectCenter/PCEditorView.m:
+        (-drawRect:): Call highilghter only if it's enabled.
+
+2008-02-13 22:10-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCMakefileFactory.m: Correction for bug#22311.  Added
+	project-type specific makefile generation.
+
+2008-02-10 23:53-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m: Corrected problem with call to 
+	NSLog(..) which was causing a crash.
+
+2008-02-05 Sergii Stoian <stoyan255@gmail.com>
+
+	* PCMenuController.m: Start thinking about "Go to line:" popup.
+	* English.lproj/ProjectCenter.gorm: Added "Edit->Find->Line Number..."
+	menu item.
+	* Framework/PCProjectBrowser.m: (-nameOfSelectedFile:): Improve
+	category select detection.
+	(-pathToSelectedFile:): Use nameOfSelctedFile:. Cleanup.
+	(-nameOfSelctedCategory:): Return project name if subproject is
+	selected.
+	* Framework/PCProjectEditor.m: 
+	(-openEditorForCategoryPath:windowed:): Use PCEditor's
+	fileStructureItemSelected if file structure component selected
+	in browser.
+	* Framework/PCProjectBuilder.m: Go to line number in editor
+	on error/warning click functionality implemented.
+	* Framework/PCProjectWindow.m: Cleanup.
+	* Framework/PCPrefController.m: Fix some compiler warnings.
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.m:
+	* Modules/Parsers/ProjectCenter/ObjCClassHandler.m:
+	Fix bug #20855. Improve class names parsing: don't include spaces.
+	* Modules/Editors/ProjectCenter/PCEditorView.h: Remove unused 
+	editorDocument variable.
+	* Modules/Editors/ProjectCenter/PCEditor.h:
+	* Modules/Editors/ProjectCenter/PCEditor.m: Make class independent
+	from ProjectCenter framework. Added variable _highlighSyntax. It sould
+	be set via preferences in the future.
+	(-_createEditorViewWithFrame:): Use _highlighSyntax variable.
+	(-_methodsForClass:): New method. Used to return to browser methods
+	only for selected class.
+	(-browserItemsForItem:): Use _methodsForClass method.
+	(-scrollToClassName:): Implemented. Now it's a almost identical copy
+	of scrollToMethodName:. TODO: think about code optimization.
+	* Modules/Editors/ProjectCenter/PCEditorView.m:
+	(-drawRect:): Call highilghter only if it's enabled.
+
 2008-02-13 22:10-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCMakefileFactory.m: Correction for bug#22311.  Added
