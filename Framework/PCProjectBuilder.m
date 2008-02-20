@@ -933,27 +933,13 @@
 
   if ([string rangeOfString:@"In file included from "].location != NSNotFound)
     {
-//      NSLog(@"In file included from ");
       currentEL = ELIncluded;
       return nil;
-      file = [self lineTail:[components objectAtIndex:0]
-		afterString:@"In file included from "];
-      file = [[currentBuildPath lastObject]
-	stringByAppendingPathComponent:file];
-      if ([file isEqualToString:lastFile])
-	{
-	  return nil;
-	}
-      position = [NSString stringWithFormat:@"{x=0; y=%f}", 
-	       [components objectAtIndex:1]];
-      message = [components objectAtIndex:0];
     }
   else if ([string rangeOfString:@"In function '"].location != NSNotFound)
     {
-      return nil;
-      file = [components objectAtIndex:0];
-      message = [self lineTail:string afterString:@"In function "];
       currentEL = ELFunction;
+      return nil;
     }
   else if ([string rangeOfString:@" At top level:"].location != NSNotFound)
     {
@@ -966,7 +952,6 @@
       NSString *substr;
 
       // file and includedFile
-//      file = [components objectAtIndex:0];
       file = [[currentBuildPath lastObject] 
 	stringByAppendingPathComponent:currentBuildFile];
       if (lastEL == ELIncluded 
@@ -1000,7 +985,7 @@
 	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
 
 	  position = [NSString stringWithFormat:@"{x=%i; y=0}", 
-		   [lNumber floatValue]];
+		   [lNumber intValue]];
 	}
       else if (typeIndex == 3) // :line:column:
 	{
@@ -1009,8 +994,8 @@
 	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
 	  NSNumber *cNumber = [NSNumber numberWithInt:cInt];
 
-	  position = [NSString stringWithFormat:@"{x=%f; y=%f}", 
-	      	   [lNumber floatValue], [cNumber floatValue]];
+	  position = [NSString stringWithFormat:@"{x=%i; y=%i}", 
+	      	   [lNumber intValue], [cNumber floatValue]];
 	}
       // message
       substr = [NSString stringWithFormat:@"%@:", type];
@@ -1046,11 +1031,6 @@
   lastIndentString = [indentString copy];
 
   // Create array items
-/*  else if ((lastEL == ELNone 
-	    || ![file isEqualToString:lastFile] 
-	    || lastEL == ELIncludedError)
-	   && currentEL != ELIncluded
-	   && currentEL != ELIncludedError)*/
   if ((lastEL == ELNone || ![file isEqualToString:lastFile]) 
       && [includedFile isEqualToString:@""])
     {
@@ -1149,13 +1129,13 @@
     {
       position = NSPointFromString([error objectForKey:@"Position"]);
       [editor scrollToLineNumber:(unsigned int)position.x];
-    }
 
-/*  NSLog(@"%f: %@(%@): %@", 
-	position.x, 
-	[error objectForKey:@"File"], 
-	[error objectForKey:@"IncludedFile"],
-	[error objectForKey:@"Error"]);*/
+/*      NSLog(@"%i: %@(%@): %@", 
+	    position.x, 
+	    [error objectForKey:@"File"], 
+	    [error objectForKey:@"IncludedFile"],
+	    [error objectForKey:@"Error"]);*/
+    }
 }
 
 @end

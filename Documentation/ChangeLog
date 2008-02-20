@@ -1,4 +1,13 @@
-2008-02-19 Sergii Stoian <stoyan255@gmail.com>      
+2008-02-20 Sergii Stoian <stoyan255@gmail.com>
+
+        * Framework/PCProjectBuilder.m: 
+	  (-parseErorLine:): Fixed type of saved row and column values.
+	  Cleanup.
+	* Framework/PCEditorManager.m: 
+	  (-openEditorForFile:editable:windowed:): Fixed another NSLog 
+	  parameter missing.
+
+2008-02-19 Sergii Stoian <stoyan255@gmail.com>
 
         * PCMenuController.m: Start thinking about "Go to line:" popup.
         * English.lproj/ProjectCenter.gorm: Added "Edit->Find->Line Number..."
