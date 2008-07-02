@@ -294,7 +294,7 @@
 
   [mff appendString:@"\n\n#\n# Public headers (will be installed)\n#\n"];
 
-  [mff appendString:[NSString stringWithFormat:@"%@_HEADERS = ", 
+  [mff appendString:[NSString stringWithFormat:@"%@_HEADER_FILES = ", 
                      projectName]];
 
   if (array && [array count])
