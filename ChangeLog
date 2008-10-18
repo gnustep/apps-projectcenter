@@ -1,3 +1,11 @@
+2008-10-18 18:18-EDT Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* ChangeLog: Moved to here top level of project.
+	* Documentation/ChangeLog: Removed from here...
+	* Modules/Editors/ProjectCenter/PCEditor.m: Corrected an issue in the
+	windowDidResignKey: method which was making the window the first
+	responder.  This was preventing Find from working properly.
+
 2008-02-20 Sergii Stoian <stoyan255@gmail.com>
 
         * Framework/PCProjectBuilder.m: 

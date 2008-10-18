@@ -755,7 +755,7 @@
 {
   if ([[aNotification object] isEqual:_window] && [_window isVisible])
     {
-      [_window makeFirstResponder:_window];
+      [_window makeFirstResponder:_extEditorView];
     }
 }
 
