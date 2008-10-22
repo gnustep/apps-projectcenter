@@ -237,6 +237,7 @@
       return NO;
     }
 
+  [makePath retain];
   return YES;
 }
 
@@ -302,7 +303,8 @@
       ![instDir isEqualToString:@"SYSTEM"] &&
       ![instDir isEqualToString:@"USER"] &&
       ![instDir isEqualToString:@"NETWORK"] &&
-      ![instDir isEqualToString:@""])
+      ![instDir isEqualToString:@""] &&
+      ([instDir isAbsolutePath] || [instDir characterAtIndex:0] == '$'))
     {
       [args addObject:[NSString stringWithFormat:@"DESTDIR=%@", instDir]];
     }
@@ -475,13 +477,8 @@
     }
 
   // Get make tool path
-  makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
-
-  if (!makePath || ![[NSFileManager defaultManager] fileExistsAtPath:makePath])
+  if (![self setMakePath])
     {
-      NSRunAlertPanel(@"Build terminated",
-  		      @"Build tool not found.\nFile \"%@\" doesn't exist!",
-  		      @"OK", nil, nil, makePath);
       return NO;
     }
 

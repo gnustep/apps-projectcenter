@@ -541,6 +541,17 @@
 	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
         projectName]];
     }
+  else if (![installDir isEqualToString:@"LOCAL"] &&
+	   ![installDir isEqualToString:@"SYSTEM"] &&
+	   ![installDir isEqualToString:@"USER"] &&
+	   ![installDir isEqualToString:@"NETWORK"] &&
+	   ![installDir isAbsolutePath] &&
+	   [installDir characterAtIndex:0] != '$')
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"%@_COPY_INTO_DIR = %@\n",
+        projectName, installDir]];
+    }
   else
     {
       /* IMPORTANT FIXME/TODO: We should be using GNUSTEP_INSTALLATION_DOMAIN,
