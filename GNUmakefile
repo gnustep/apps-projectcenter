@@ -21,6 +21,13 @@ APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 
 #
+# SVN information for releases
+#
+CVS_MODULE_NAME = projectcenter
+SVN_MODULE_NAME = projectcenter
+SVN_BASE_URL = svn+ssh://svn.gna.org/svn/gnustep/apps
+
+#
 # Subprojects
 #
 SUBPROJECTS = \
