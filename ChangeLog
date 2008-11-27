@@ -1,3 +1,9 @@
+2008-11-27 01:29-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCProjectBrowser.m: Check return value of
+	[NSWorkspace getInfoForFile:application:type:].  Corrects crash when
+	no editor is available for a type.
+
 2008-10-25 20:48-EDT Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Version: 0.5
