@@ -1,3 +1,8 @@
+2008-11-27 12:01-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/GNUmakefile
+	* GNUmakefile: Correction for bug #24674.
+
 2008-11-27 01:29-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCProjectBrowser.m: Check return value of
