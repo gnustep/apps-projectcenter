@@ -1,3 +1,9 @@
+2008-11-27 22:06-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Projects/Application/Resources/AppController.m: Correct 
+	warning in application:openFile: in AppController.m in Application
+	project module.
+
 2008-11-27 12:01-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/GNUmakefile

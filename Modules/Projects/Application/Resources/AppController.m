@@ -79,6 +79,7 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
+  return NO;
 }
 
 - (void)showPrefPanel:(id)sender
