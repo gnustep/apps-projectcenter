@@ -1,3 +1,9 @@
+2008-12-07 Riccardo Mottola <rmottola@users.sf.net>
+
+	* Headers/ProjectCenter/PCPrefController.h,
+	Framework/PCPrefController.m: handle setting path from Buttons 
+
+
 2008-11-27 22:06-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Projects/Application/Resources/AppController.m: Correct 

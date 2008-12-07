@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2008 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -664,7 +664,18 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)setBuildTool:(id)sender
 {
-  NSString *path = [buildToolField stringValue];
+  NSString *path;
+ 
+  if (sender == buildToolButton)
+    {
+      path = [self selectFileWithTypes:nil];
+      [buildToolField setStringValue:path];
+    }
+  else
+    {
+      path = [buildToolField stringValue];
+    } 
+
  
   if ([path isEqualToString:@""] || !path)
     {
@@ -685,7 +696,18 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)setDebugger:(id)sender
 {
-  NSString *path = [debuggerField stringValue];
+  NSString *path;
+  
+  if (sender == buildToolButton)
+    {
+      path = [self selectFileWithTypes:nil];
+      [debuggerField setStringValue:path];
+    }
+  else
+    {
+      path = [debuggerField stringValue];
+    }   
+;
  
   if ([path isEqualToString:@""] || !path)
     {

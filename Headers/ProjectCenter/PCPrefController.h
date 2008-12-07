@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2008 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -66,7 +66,9 @@
   IBOutlet NSButton      *deleteCache;
   IBOutlet NSButton      *fullPathInFilePanels;
   IBOutlet NSTextField   *buildToolField;
+  IBOutlet NSButton      *buildToolButton;
   IBOutlet NSTextField   *debuggerField;
+  IBOutlet NSButton      *debuggerButton;
   IBOutlet NSTextField   *editorField;
 
   IBOutlet NSBox         *interfaceView;
