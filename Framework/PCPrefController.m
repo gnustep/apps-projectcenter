@@ -698,7 +698,7 @@ static PCPrefController *_prefCtrllr = nil;
 {
   NSString *path;
   
-  if (sender == buildToolButton)
+  if (sender == debuggerButton)
     {
       path = [self selectFileWithTypes:nil];
       [debuggerField setStringValue:path];
@@ -707,7 +707,7 @@ static PCPrefController *_prefCtrllr = nil;
     {
       path = [debuggerField stringValue];
     }   
-;
+
  
   if ([path isEqualToString:@""] || !path)
     {
