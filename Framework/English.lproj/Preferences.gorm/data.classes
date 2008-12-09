@@ -64,7 +64,9 @@
 	    editorColumnsField,
 	    editorLinesField,
 	    displayLog,
-	    buildToolField
+	    buildToolField,
+	    debuggerButton,
+	    buildToolButton
 	);
 	Super = NSObject;
     };
