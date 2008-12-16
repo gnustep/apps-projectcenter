@@ -395,12 +395,17 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
   int                 row;
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity:6];
   int                 selectedRow = [docTypesList selectedRow];
+  NSString		*s;
 
   [entry setObject:[docTypeField stringValue] forKey:@"NSName"];
   [entry setObject:[docNameField stringValue] forKey:@"NSHumanReadableName"];
   [entry setObject:[[docExtensionsField stringValue] componentsSeparatedByString:@","] forKey:@"NSUnixExtensions"];
   [entry setObject:[docIconField stringValue] forKey:@"NSIcon"];
-  [entry setObject:[docRoleField stringValue] forKey:@"NSRole"];
+  s = [[docRoleField stringValue] stringByTrimmingSpaces];
+  if ([s length] == 0)
+    [entry removeObjectForKey: @"NSRole"];
+  else
+    [entry setObject: s forKey:@"NSRole"];
   [entry setObject:[docClassField stringValue] forKey:@"NSDocumentClass"];
 
   if (selectedRow >= 0 && [docTypesItems count] > 0)
@@ -486,7 +491,12 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
     }
   else if (sender == docRoleField)
     {
-      [object setObject:[sender stringValue] forKey:@"NSRole"];
+      NSString	*s = [[sender stringValue] stringByTrimmingSpaces];
+
+      if ([s length] == 0)
+	[object removeObjectForKey: @"NSRole"];
+      else
+        [object setObject: s forKey:@"NSRole"];
     }
   else if (sender == docClassField)
     {
@@ -570,6 +580,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 - (void)fillFieldsForRow:(int)rowIndex
 {
   NSDictionary *type = nil;
+  NSString	*s;
   int          itemCount = [docTypesItems count];
 
   if (itemCount <= 0 || rowIndex > itemCount || rowIndex < 0)
@@ -578,7 +589,7 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
       [docNameField setStringValue:@""];
       [docIconField setStringValue:@""];
       [docExtensionsField setStringValue:@""];
-      [docRoleField setStringValue:@""];
+      [docRoleField setStringValue: @""];
       [docClassField setStringValue:@""];
 
       return;
@@ -598,7 +609,9 @@ NSString *PCITextFieldGetFocus = @"PCITextFieldGetFocusNotification";
 	 componentsJoinedByString:@","]];
     }
 
-  [docRoleField setStringValue:[type objectForKey:@"NSRole"]];
+  s = [type objectForKey:@"NSRole"];
+  if ([s length] > 0)
+    [docRoleField setStringValue: s];
   [docClassField setStringValue:[type objectForKey:@"NSDocumentClass"]];
 }
 
