@@ -1,0 +1,18 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    PCDebugger = {
+	Actions = (
+	);
+	Outlets = (
+	    consoleView
+	);
+	Super = NSObject;
+    };
+    PCDebuggerView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSTextView;
+    };
+}
