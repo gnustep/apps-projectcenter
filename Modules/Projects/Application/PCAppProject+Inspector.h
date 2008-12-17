@@ -43,6 +43,8 @@
 - (void)clearFile:(id)sender;
 - (void)setAppIcon:(id)sender;
 - (void)clearAppIcon:(id)sender;
+- (void)setHelpFile:(id)sender;
+- (void)clearHelpFile:(id)sender;
 - (BOOL)setAppIconWithImageAtPath:(NSString *)path;
 - (void)setMainNib:(id)sender;
 - (BOOL)setMainNibWithFileAtPath:(NSString *)path;
