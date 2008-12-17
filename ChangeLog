@@ -1,5 +1,11 @@
 2008-12-17 Richard frith-Macdonald <rfm"gnu.org>
 
+	Where files are to be entered using NSOpenPanel and a 'set' button,
+	make the corresponding textfields which display the filename selectable
+	but not editable.
+
+2008-12-17 Richard frith-Macdonald <rfm"gnu.org>
+
 	Clean up document type keys in ...info.plist
 	Implement support for help document.
 
