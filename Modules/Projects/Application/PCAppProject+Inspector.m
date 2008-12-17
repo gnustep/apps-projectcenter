@@ -248,7 +248,8 @@ cleanup(NSMutableDictionary *m, NSString *k)
 - (void)setHelpFile: (id)sender
 {
   int         result;  
-  NSArray     *fileTypes = [NSArray arrayWithObject: @"rtfd"];
+  NSArray     *fileTypes = [NSArray arrayWithObjects:
+    @"rtfd", @"rtf", @"txt", nil];
   NSOpenPanel *openPanel = [NSOpenPanel openPanel];
   NSString    *dir = nil;
 
