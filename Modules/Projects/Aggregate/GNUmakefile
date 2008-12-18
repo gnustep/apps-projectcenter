@@ -1,7 +1,7 @@
 #
 # GNUmakefile - Aggregate.project
 #
-
+GNUSTEP_CORE_SOFTWARE = YES
 include $(GNUSTEP_MAKEFILES)/common.make
 
 #

@@ -33,9 +33,10 @@
 #   be put into Makefile.postamble.
 #
 
-# TODO: Make sure if it's portable
-GMAKE = `which gmake`
-GDB = `which gdb`
+# FIXME: Why are we hardcoding the full path to 'make' or 'gdb' in
+# here ?  Can't we discover them at runtime ?
+GMAKE := $(shell which ${MAKE})
+GDB := $(shell which gdb)
 
 #
 # Flags dealing with compiling and linking

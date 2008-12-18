@@ -1,3 +1,18 @@
+2008-12-18  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* Framework/GNUmakefile.preamble (GMAKE): Take advantage of the
+	MAKE variable, which must already be set to the correct make else
+	we wouldn't be able to compile PC itself, when searching for a
+	working make.  (GMAKE, GDB): Use := to void spawning a subshell
+	every time one of these variables is read.
+
+2008-12-18  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* All GNUmakefiles: added GNUSTEP_CORE_SOFTWARE=YES at the
+	beginning.
+	* GNUmakefile: Export GNUSTEP_CORE_SOFTWARE to reduce chances of a
+	problem if a GNUmakefile in a subdirectory is missing it.
+	
 2008-12-17 Richard frith-Macdonald <rfm"gnu.org>
 
 	Where files are to be entered using NSOpenPanel and a 'set' button,
