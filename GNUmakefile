@@ -9,15 +9,14 @@ ifeq ($(GNUSTEP_MAKEFILES),)
   $(error You need to set GNUSTEP_MAKEFILES before compiling!)
 endif
 
-GNUSTEP_CORE_SOFTWARE = YES
-export GNUSTEP_CORE_SOFTWARE
+PACKAGE_NAME = ProjectCenter
+export PACKAGE_NAME
 include $(GNUSTEP_MAKEFILES)/common.make
 
 #
 # Main application
 #
 VERSION = 0.5.0
-PACKAGE_NAME = ProjectCenter
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 

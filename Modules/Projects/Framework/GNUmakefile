@@ -1,7 +1,7 @@
 #
 # GNUmakefile - FrameworkProject
 #
-GNUSTEP_CORE_SOFTWARE = YES
+PACKAGE_NAME = ProjectCenter
 include $(GNUSTEP_MAKEFILES)/common.make
 
 #
