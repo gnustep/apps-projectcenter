@@ -1,4 +1,4 @@
-﻿TODO
+TODO
 ****
 
 This is the GNUstep ProjectCenter TODO list.
@@ -45,26 +45,26 @@ ProjectCenter 0.5
 ProjectCenter 0.6
 -----------------
 
-- Better integration with other tools (GORM)                    ???
+- Create new Info panel                                         [done!]
+- Implement support for integrated debugging                    casamento
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
-- Add "Palette" project type                                    stoyan
-- Add "Component" project type                                  stoyan
-- Create new Info panel                                         stoyan
 - More options for file creation                                stoyan
-- Think about imlementing pending adding/removal of files       stoyan
 --- Project Editor ---------------------------------------------
   - Implement indentation                                       stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
 --- Project Builder --------------------------------------------
   - Finish parsing gcc output (make errors, etc.)
   - Implement interaction with Editor (errors, warnings)        stoyan
+- Think about imlementing pending adding/removal of files       ???
 - New icons. Need volonteers!!!                                 ???
+- Add "Palette" project type                                    ???
+- Add "Component" project type                                  ???
 
 ProjectCenter 0.7
 -----------------
 
 - An initial project wide find feature                          ???
-- Implement support for integrated debugging                    ???
+- Better integration with other tools (GORM)                    ???
 - CVS/SVN integration                                           ???
 
 ProjectCenter 0.8
