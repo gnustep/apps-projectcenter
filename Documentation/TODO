@@ -46,12 +46,15 @@ ProjectCenter 0.6
 -----------------
 
 - Create new Info panel                                         [done!]
-- Implement support for integrated debugging                    casamento
+- Implement support for integrated debugging                    casamento/mottola
+- change project type from file to bundle                       casamento/mottola
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 - More options for file creation                                stoyan
 --- Project Editor ---------------------------------------------
   - Implement indentation                                       stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
+  - undo inside editor                                          ???
+  - go to line                                                  ???
 --- Project Builder --------------------------------------------
   - Finish parsing gcc output (make errors, etc.)
   - Implement interaction with Editor (errors, warnings)        stoyan
