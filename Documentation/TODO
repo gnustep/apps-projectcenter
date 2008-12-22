@@ -38,9 +38,7 @@ ProjectCenter 0.5
   - Parse gcc output                                            [95% done!]
   - Display warnings,errors,options etc. as clickable list      [done!]
 - GNUstep make version 2.0 compliance                           [done!]
-- Finish FileNameIcon (draggable, files can be dragged to it)    stoyan
 - Save last used path separately for different file panels      [done!]
-- Review all situations when dialogs must be  popped up          stoyan
 
 ProjectCenter 0.6
 -----------------
@@ -48,6 +46,8 @@ ProjectCenter 0.6
 - Create new Info panel                                         [done!]
 - Implement support for integrated debugging                    casamento/mottola
 - change project type from file to bundle                       casamento/mottola
+- Finish FileNameIcon (draggable, files can be dragged to it)   stoyan
+- Review all situations when dialogs must be  popped up         stoyan
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 - More options for file creation                                stoyan
 --- Project Editor ---------------------------------------------
