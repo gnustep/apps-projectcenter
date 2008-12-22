@@ -11,7 +11,7 @@
   debugger = theDebugger;
 }
 
-/** respond to key equivalents which are not bound do menu items */
+/** respond to key events and pipe them down to the debugger */
 -(BOOL)performKeyEquivalent: (NSEvent*)theEvent
 {
     NSString *chars;
