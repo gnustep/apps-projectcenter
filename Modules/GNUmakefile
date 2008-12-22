@@ -32,7 +32,8 @@ SUBPROJECTS = \
 	Projects/ResourceSet 	\
         Projects/Tool        	\
 	Editors/ProjectCenter	\
-	Parsers/ProjectCenter
+	Parsers/ProjectCenter	\
+	Debuggers/ProjectCenter
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 

@@ -25,8 +25,6 @@
 
 #import "PCEditor.h"
 #import "PCEditorView.h"
-//#import "CommandQueryPanel.h"
-//#import "LineQueryPanel.h"
 
 @implementation PCEditor (UInterface)
 

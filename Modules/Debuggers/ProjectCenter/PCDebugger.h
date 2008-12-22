@@ -3,10 +3,13 @@
 #include <AppKit/AppKit.h>
 #include <Foundation/Foundation.h>
 
-@interface PCDebugger : NSObject
+#include <Protocols/CodeDebugger.h>
+
+@interface PCDebugger : NSObject <CodeDebugger>
 {
-  id consoleView;
-  id consoleWindow;
+  id debuggerView;
+  id debuggerWindow;
+  NSString *path;
   NSTask *debuggerTask;
   id standardInput;
   id standardOutput;
