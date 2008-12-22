@@ -179,7 +179,6 @@ NSString *PCEditorDidResignActiveNotification =
 					 protocol:@protocol(CodeParser)
 					 fileName:fileName];
       [editor setParser:parser];
-
       [editor openFileAtPath:filePath 
 	       editorManager:self 
 		    editable:editable];

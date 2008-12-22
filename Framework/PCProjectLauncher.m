@@ -29,10 +29,11 @@
 #include <ProjectCenter/PCProject.h>
 #include <ProjectCenter/PCProjectManager.h>
 #include <ProjectCenter/PCProjectLauncher.h>
-
+#include <ProjectCenter/PCBundleManager.h>
 #include <ProjectCenter/PCButton.h>
-
 #include <ProjectCenter/PCLogController.h>
+
+#include <Protocols/CodeDebugger.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -208,9 +209,9 @@ enum {
   NSString                   *fp = nil;
   NSString                   *pn = nil;
   NSString                   *gdbPath = nil;
-  NSArray                    *args = nil;
-  NSDistantObject <Terminal> *terminal;
   NSFileManager              *fm = [NSFileManager defaultManager];
+  PCBundleManager *bundleManager = [[project projectManager] bundleManager];
+  id<CodeDebugger> debugger;
 
   // Check if project type is executable
   if (![project isExecutable])
@@ -222,23 +223,6 @@ enum {
       return;
     }
 
-  /*
-   * FIXME: Is it possible to somehow support users that don't have
-   * Terminal installed ?  Maybe with reduced functionality.
-   */
-
-  // Get the Terminal application
-  terminal = (NSDistantObject<Terminal> *)[NSConnection 
-    rootProxyForConnectionWithRegisteredName:@"Terminal" host:nil];
-
-  if (terminal == nil)
-    {
-      NSRunAlertPanel(@"Debug",
-		      @"Run Terminal application first",
-		      @"Close",nil,nil);
-      [debugButton setState:NSOffState];
-      return;
-    }
 
   /* We try in the order:
    *  xxx.debug/xxx (gnustep-make v1, application),
@@ -263,16 +247,15 @@ enum {
 	}
     }
 
-//  PCLogInfo(self, @"debug: %@", fp);
-  
   if ([fm isExecutableFileAtPath:fp] == NO)
     {
       NSRunAlertPanel(@"Debug",
-		      @"Can't execute %@!",
+		      @"No executable!  Please build the project first.",
 		      @"Abort",nil,nil,pn);
       [debugButton setState:NSOffState];
       return;
     }
+
 
   // Debugger
   gdbPath = [[NSUserDefaults standardUserDefaults] objectForKey:Debugger];
@@ -290,17 +273,16 @@ enum {
       return;
     }
     
-  // Task
-  args = [[NSArray alloc] initWithObjects:gdbPath, @"--args", fp, nil];
 
-  [terminal terminalRunProgram:AUTORELEASE(gdbPath)
-                 withArguments:args
-                   inDirectory:nil
-                    properties:nil];
+  // Debugger
+  debugger = [bundleManager objectForBundleType: @"debugger"
+			    protocol: @protocol(CodeDebugger)
+			    fileName: [fp stringByDeletingLastPathComponent]];
+  [debugger debugExecutableAtPath: fp
+	    withDebugger: gdbPath];
 
-  [debugButton setState:NSOffState];
-
-  AUTORELEASE(args);
+  // turn debug button off...
+  // [debugButton setState:NSOffState];
 }
 
 - (void)run:(id)sender

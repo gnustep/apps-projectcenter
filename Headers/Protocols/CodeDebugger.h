@@ -34,8 +34,7 @@
 // ==== Initialization
 // ===========================================================================
 
-- (id)initWithPath: (NSString *)filePath;
-+ (id)debugExecutableAtPath:(NSString *)filePath;
+- (void)debugExecutableAtPath:(NSString *)filePath withDebugger: (NSString *)debuggerPath;
 - (void)show;
 
 // ===========================================================================

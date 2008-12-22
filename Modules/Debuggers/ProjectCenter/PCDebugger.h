@@ -12,10 +12,15 @@
   id             debuggerView;
   id             debuggerWindow;
   NSString       *path;
+  NSString       *debuggerPath;
   NSTask         *debuggerTask;
-  NSFileHandle   *standardInput;
-  NSFileHandle   *standardOutput;
-  FILE           *stdInStream;
+  NSPipe         *standardInput;
+  NSPipe         *standardOutput;
+  NSPipe         *standardError;
+  NSFileHandle   *readHandle;
+  NSFileHandle   *errorReadHandle;
+  BOOL           _isLogging;
+  BOOL           _isErrorLogging;  
 }
 
 - (void)putChar:(unichar)ch;

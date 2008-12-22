@@ -20,7 +20,8 @@ ProjectCenter_LIBRARIES_DEPEND_UPON +=
 # Resource files
 #
 ProjectCenter_RESOURCE_FILES= \
-
+    Resources/PCDebugger.gorm \
+    Resources/Info.table
 #
 # Header files
 #

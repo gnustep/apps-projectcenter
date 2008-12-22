@@ -1,3 +1,18 @@
+2008-12-22 18:36-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* English.lproj/ProjectCenter.gorm: Minor changes.
+	* Framework/PCEditorManager.m: Cleanup.
+	* Framework/PCProjectLauncher.m: Cleanup.
+	* GNUmakefile: New module.
+	* Headers/Protocols/CodeDebugger.h: New methods
+	* Modules/Debuggers/ProjectCenter/GNUmakefile: Added debugger
+	to resources.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Changes to talk to
+	debugger task
+	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm: Debugger
+	gorm file.
+
 2008-12-23  Sergii Stoian <stoyan255@gmail.com>
 
 	* Documentatio/TODO: move unfinshed tasks from 0.5 to 0.6 release

@@ -89,7 +89,8 @@ Modules/Projects/Library/Library.project \
 Modules/Projects/ResourceSet/ResourceSet.project \
 Modules/Projects/Tool/Tool.project \
 Modules/Editors/ProjectCenter/ProjectCenter.editor \
-Modules/Parsers/ProjectCenter/ProjectCenter.parser
+Modules/Parsers/ProjectCenter/ProjectCenter.parser \
+Modules/Debuggers/ProjectCenter/ProjectCenter.debugger
 
 #
 # Localization
