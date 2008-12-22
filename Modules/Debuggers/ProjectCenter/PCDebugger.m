@@ -2,6 +2,7 @@
 
 #include <AppKit/AppKit.h>
 #include "PCDebugger.h"
+#import "PCDebuggerView.h"
 
 @implementation PCDebugger
 - (id) initWithPath: (NSString *)filePath
@@ -13,6 +14,7 @@
 	{
 	  return nil;
 	}
+	[(PCDebuggerView *)debuggerView setDebugger:self];
     }
   return self;
 }
@@ -34,6 +36,13 @@
 			 arguments: NULL];
   standardInput = [debuggerTask standardInput];
   standardOutput = [debuggerTask standardOutput];
+  
+  stdInStream = fdopen([standardInput fileDescriptor], "r");
+  if (stdInStream == NULL)
+    {
+      NSLog(@"Error creating file stream input to debugger");
+      return;
+    }
 }
 
 - (void) awakeFromNib
@@ -69,5 +78,10 @@
 - (void)setPath:(NSString *)p
 {
   ASSIGN(path,p);
+}
+
+- (void)putChar:(unichar)ch
+{
+  fputc(ch, stdInStream);
 }
 @end

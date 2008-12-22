@@ -1,17 +1,23 @@
 /* All Rights reserved */
 
-#include <AppKit/AppKit.h>
-#include <Foundation/Foundation.h>
+#include <stdio.h>
 
-#include <Protocols/CodeDebugger.h>
+#import <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+
+#import <Protocols/CodeDebugger.h>
 
 @interface PCDebugger : NSObject <CodeDebugger>
 {
-  id debuggerView;
-  id debuggerWindow;
-  NSString *path;
-  NSTask *debuggerTask;
-  id standardInput;
-  id standardOutput;
+  id             debuggerView;
+  id             debuggerWindow;
+  NSString       *path;
+  NSTask         *debuggerTask;
+  NSFileHandle   *standardInput;
+  NSFileHandle   *standardOutput;
+  FILE           *stdInStream;
 }
+
+- (void)putChar:(unichar)ch;
+
 @end
