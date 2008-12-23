@@ -277,6 +277,9 @@
 
 - (void)putChar:(unichar)ch
 {
-  fputc(ch, stdInStream); 
+  NSData *data = [NSData dataWithBytes: &ch length: 1];
+  NSFileHandle *fh = [standardInput fileHandleForWriting];
+  [fh writeData: data];
+  // fputc(ch, stdInStream); 
 }
 @end
