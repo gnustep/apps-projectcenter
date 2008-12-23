@@ -21,6 +21,7 @@
   NSFileHandle   *errorReadHandle;
   BOOL           _isLogging;
   BOOL           _isErrorLogging;  
+  FILE          *stdInStream;
 }
 
 - (void)putChar:(unichar)ch;

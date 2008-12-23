@@ -25,7 +25,7 @@
 	NSLog(@"character: %c", c);
         [debugger putChar:c];
     }    
-    return [super performKeyEquivalent:theEvent];
+    return YES; // [super performKeyEquivalent:theEvent];
 }
 
 @end

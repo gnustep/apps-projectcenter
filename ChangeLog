@@ -1,3 +1,10 @@
+2008-12-22 19:56-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Add code
+	to write to the file desicriptor.
+
 2008-12-22 18:36-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* English.lproj/ProjectCenter.gorm: Minor changes.

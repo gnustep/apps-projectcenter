@@ -169,8 +169,14 @@
 
 - (void) startDebugger
 {
+  int descriptor = 0;
+
+  standardInput = [NSPipe pipe];
   standardOutput = [NSPipe pipe];
   standardError = [NSPipe pipe];
+
+  descriptor = [[standardInput fileHandleForWriting] fileDescriptor];
+  stdInStream = fdopen(descriptor, "w");
 
   readHandle = [standardOutput fileHandleForReading];
   [readHandle waitForDataInBackgroundAndNotify];
@@ -207,9 +213,11 @@
   [debuggerTask setLaunchPath: debuggerPath];
   [debuggerTask setStandardOutput: standardOutput];
   [debuggerTask setStandardError: standardError];
-    
+  [debuggerTask setStandardInput: standardInput];
+
   NS_DURING
     {
+      [self logString: @"\n=== Debugger Started ===\n" error: NO newLine:YES];
       [debuggerTask launch];
     }
   NS_HANDLER
@@ -228,7 +236,8 @@
 
 - (void) debuggerDidTerminate: (NSNotification *)notif
 {
-  [self logString: @"=== Debugger Terminated ===" error: NO newLine:YES];
+  NSLog(@"Debugger Terminated...");
+  [self logString: @"\n=== Debugger Terminated ===\n" error: NO newLine:YES];
 }
 
 - (void) awakeFromNib
@@ -268,6 +277,6 @@
 
 - (void)putChar:(unichar)ch
 {
-  // fputc(ch, stdInStream);
+  fputc(ch, stdInStream); 
 }
 @end
