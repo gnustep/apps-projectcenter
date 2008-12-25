@@ -1,3 +1,20 @@
+2008-12-25 10:30-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/GNUmakefile: Added PTYView.[hm]
+	* Modules/Debuggers/ProjectCenter/PCDebugger.[hm]: Simplified to 
+	call PCDebuggerView instance with the program to start.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.[hm]: Refactored
+	into a subclass of PTYView.
+	* Modules/Debuggers/ProjectCenter/PTYView.[hm]: pty based terminal
+	view which allows us to read and write from a pseudo-terminal.
+	The code in the master/slave methods was inspired by an example
+	given in "UNIX Network Programming" by W. Richard Stevens and also
+	Nicola Vitacolonna.
+	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm: Added
+	PTYView and made the PCDebuggerView a subclass of it.   Also made
+	the window release when closed so that the gdb process gets 
+	terminated.
+
 2008-12-22 21:51-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Write to

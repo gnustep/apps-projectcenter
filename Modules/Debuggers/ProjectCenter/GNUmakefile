@@ -27,14 +27,16 @@ ProjectCenter_RESOURCE_FILES= \
 #
 ProjectCenter_HEADERS= \
     PCDebugger.h \
-    PCDebugggerView.h 
+    PCDebugggerView.h \
+    PTYView.h
 
 #
 # Class files
 #
 ProjectCenter_OBJC_FILES= \
     PCDebugger.m \
-    PCDebuggerView.m 
+    PCDebuggerView.m \
+    PTYView.m
 
 include ../../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
