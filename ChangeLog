@@ -1,3 +1,11 @@
+2008-12-25 23:46-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCProject.m
+	* Headers/ProjectCenter/PCProject.h: Added notification 
+	for hitting a breakpoint.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Added code
+	to detect when a breakpoint is hit.
+
 2008-12-25 10:30-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/GNUmakefile: Added PTYView.[hm]

@@ -49,6 +49,8 @@ NSString
 *PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";
 NSString 
 *PCProjectDictDidSaveNotification = @"PCProjectDictDidSaveNotification";
+NSString 
+*PCProjectBreakpointNotification = @"PCProjectBreakpointNotification";
 
 @implementation PCProject
 

@@ -40,6 +40,7 @@
 
 extern NSString *PCProjectDictDidChangeNotification;
 extern NSString *PCProjectDictDidSaveNotification;
+extern NSString *PCProjectBreakpointNotification;
 
 @interface PCProject : NSObject
 {

@@ -21,6 +21,12 @@
 */
 
 #include "PCDebuggerView.h"
+#include <ProjectCenter/PCProject.h>
+#include <Foundation/NSScanner.h>
+
+#ifndef NOTIFICATION_CENTER
+#define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
+#endif
 
 @implementation PCDebuggerView
 
@@ -42,6 +48,39 @@
   if (range.location == NSNotFound)
     {
       [super logString: str newLine: newLine];
+    }
+
+  range = [str rangeOfString: @"Breakpoint"];
+  if (range.location != NSNotFound)
+    {
+      NSScanner *scanner = [NSScanner scannerWithString: str];
+      NSCharacterSet *cs = [NSCharacterSet 
+			     characterSetWithCharactersInString: @""];
+      NSString *file;
+      NSString *line;
+      int l = 0;
+
+      [scanner setCharactersToBeSkipped: cs];
+      [scanner scanUpToString: @" at " intoString: NULL];
+      [scanner scanString: @" at " intoString: NULL];
+      [scanner scanUpToString: @":" intoString: &file];
+      [scanner scanString: @":" intoString: NULL];
+      [scanner setCharactersToBeSkipped: 
+		 [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+      [scanner scanUpToCharactersFromSet:
+		 [NSCharacterSet whitespaceAndNewlineCharacterSet]
+	       intoString: &line];
+      l = [line intValue];
+      if (l != 0) // if the line is parsable, then send the notification.
+	{
+	  NSDictionary *dict = [NSDictionary 
+				 dictionaryWithObjectsAndKeys:
+				   file, @"file", line, @"line", nil];
+	  NSLog(@"dict = %@, Line = %@", dict);
+	  [NOTIFICATION_CENTER 
+	    postNotificationName: PCProjectBreakpointNotification
+	    object: dict];
+	}
     }
 }
 @end
