@@ -80,6 +80,7 @@
 	  [NOTIFICATION_CENTER 
 	    postNotificationName: PCProjectBreakpointNotification
 	    object: dict];
+	  [[self window] makeKeyAndOrderFront: self];
 	}
     }
 }

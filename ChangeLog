@@ -1,3 +1,10 @@
+2008-12-26 13:01-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m: Scroll to and select the line that
+	the debugger has stopped at.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: bring the debugger
+	window to the front when a breakpoint is detected.
+
 2008-12-26 02:25-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m
