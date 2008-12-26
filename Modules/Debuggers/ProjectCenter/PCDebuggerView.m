@@ -76,7 +76,7 @@
 	  NSDictionary *dict = [NSDictionary 
 				 dictionaryWithObjectsAndKeys:
 				   file, @"file", line, @"line", nil];
-	  NSLog(@"dict = %@, Line = %@", dict);
+	  NSLog(@"dict = %@", dict);
 	  [NOTIFICATION_CENTER 
 	    postNotificationName: PCProjectBreakpointNotification
 	    object: dict];

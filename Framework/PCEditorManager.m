@@ -28,6 +28,7 @@
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCBundleManager.h>
 #import <ProjectCenter/PCEditorManager.h>
+#import <ProjectCenter/PCProject.h>
 
 #import <ProjectCenter/PCLogController.h>
 
@@ -91,6 +92,12 @@ NSString *PCEditorDidResignActiveNotification =
 	addObserver:self 
 	   selector:@selector(editorDidChangeFileName:)
 	       name:PCEditorDidChangeFileNameNotification
+	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self 
+	   selector:@selector(debuggerDidHitBreakpoint:)
+	       name:PCProjectBreakpointNotification
 	     object:nil];
     }
 
@@ -380,6 +387,20 @@ NSString *PCEditorDidResignActiveNotification =
   
   [_editorsDict removeObjectForKey:_oldFileName];
   [_editorsDict setObject:_editor forKey:_newFileName];
+}
+
+- (void) debuggerDidHitBreakpoint: (NSNotification *)aNotif
+{
+  id object = [aNotif object];
+  NSString *fileName = [object objectForKey: @"file"];
+  NSString *filePath = [[[self project] projectPath]
+			 stringByAppendingPathComponent: fileName];
+  NSString *line = [object objectForKey: @"line"];
+  id<CodeEditor> editor = [self openEditorForFile: filePath
+				editable: YES
+				windowed: YES];
+  
+  NSLog(@"object = %@", [aNotif object]);
 }
 
 @end

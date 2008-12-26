@@ -1,3 +1,9 @@
+2008-12-26 02:25-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Changes to bring
+	up the file in which the debugger has stopped in.
+
 2008-12-25 23:46-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCProject.m
