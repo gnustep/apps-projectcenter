@@ -392,9 +392,7 @@ NSString *PCEditorDidResignActiveNotification =
 - (void) debuggerDidHitBreakpoint: (NSNotification *)aNotif
 {
   id object = [aNotif object];
-  NSString *fileName = [object objectForKey: @"file"];
-  NSString *filePath = [[[self project] projectPath]
-			 stringByAppendingPathComponent: fileName];
+  NSString *filePath = [object objectForKey: @"file"];
   NSString *line = [object objectForKey: @"line"];
   id<CodeEditor> editor = [self openEditorForFile: filePath
 				editable: YES

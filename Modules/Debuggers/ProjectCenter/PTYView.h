@@ -58,5 +58,7 @@
 
 - (void) terminate;
 
+- (void) putString: (NSString *)string;
+
 - (void) putChar:(unichar)ch;
 @end

@@ -29,6 +29,19 @@
 #endif
 
 @implementation PCDebuggerView
+/*
+- (void) runProgram: (NSString *)path
+ inCurrentDirectory: (NSString *)directory
+      withArguments: (NSArray *)array
+   logStandardError: (BOOL)logError
+{
+  [super runProgram: path
+	 inCurrentDirectory: directory
+	 withArguments: array
+	 logStandardError: logError];
+  [self putString: @"set annotate 3\n"];
+}
+*/
 
 -(void)setDebugger:(PCDebugger *)theDebugger
 {
@@ -42,46 +55,70 @@
 	   newLine:(BOOL)newLine
 {
   NSRange range;
+  BOOL printLine = YES;
+
+  range = [str rangeOfString: @"\032\032"]; // Breakpoint"];
+  if (range.location != NSNotFound)
+    {
+      NSScanner *scanner = [NSScanner scannerWithString: str];      
+      NSCharacterSet *empty = [NSCharacterSet characterSetWithCharactersInString: @""];
+      NSString *file = nil;
+      NSString *line = nil;
+      NSString *bytes = nil;
+      int l = 0, b = 0;
+      
+      [scanner setCharactersToBeSkipped: empty];
+      [scanner scanUpToString: @"\032\032" intoString: NULL];
+      [scanner scanString: @"\032\032" intoString: NULL];
+      [scanner scanUpToString: @":" intoString: &file];
+      [scanner scanString: @":" intoString: NULL];
+      [scanner scanUpToString: @":" intoString: &line];
+      if (line != nil)
+	{
+	  l = [line intValue];
+	  [scanner scanString: @":" intoString: NULL];
+	  [scanner scanUpToString: @":" intoString: &bytes];
+
+	  if (bytes != nil)
+	    {
+	      b = [bytes intValue];     
+	      if (l != 0 && b != 0) // if the line & bytes are parsable, then send the notification.
+		{
+		  NSDictionary *dict = [NSDictionary 
+					 dictionaryWithObjectsAndKeys:
+					   file, @"file", line, @"line", nil];
+		  NSLog(@"dict = %@", dict);
+		  [NOTIFICATION_CENTER 
+		    postNotificationName: PCProjectBreakpointNotification
+		    object: dict];
+		  [[self window] makeKeyAndOrderFront: self];
+		  printLine = NO;
+		}
+	    }
+	}
+    }
 
   // FIXME: Filter this error, until we find a better way to deal with it.
   range = [str rangeOfString: @"[tcsetpgrp failed in terminal_inferior:"];
-  if (range.location == NSNotFound)
+  if (range.location != NSNotFound)
+    {
+      printLine = NO;
+    }
+
+  // if the line is not filtered, print it...
+  if(printLine)
     {
       [super logString: str newLine: newLine];
     }
+}
 
-  range = [str rangeOfString: @"Breakpoint"];
-  if (range.location != NSNotFound)
-    {
-      NSScanner *scanner = [NSScanner scannerWithString: str];
-      NSCharacterSet *cs = [NSCharacterSet 
-			     characterSetWithCharactersInString: @""];
-      NSString *file;
-      NSString *line;
-      int l = 0;
+- (void) setCurrentFile: (NSString *)fileName
+{
+  ASSIGN(currentFile,fileName);
+}
 
-      [scanner setCharactersToBeSkipped: cs];
-      [scanner scanUpToString: @" at " intoString: NULL];
-      [scanner scanString: @" at " intoString: NULL];
-      [scanner scanUpToString: @":" intoString: &file];
-      [scanner scanString: @":" intoString: NULL];
-      [scanner setCharactersToBeSkipped: 
-		 [NSCharacterSet whitespaceAndNewlineCharacterSet]];
-      [scanner scanUpToCharactersFromSet:
-		 [NSCharacterSet whitespaceAndNewlineCharacterSet]
-	       intoString: &line];
-      l = [line intValue];
-      if (l != 0) // if the line is parsable, then send the notification.
-	{
-	  NSDictionary *dict = [NSDictionary 
-				 dictionaryWithObjectsAndKeys:
-				   file, @"file", line, @"line", nil];
-	  NSLog(@"dict = %@", dict);
-	  [NOTIFICATION_CENTER 
-	    postNotificationName: PCProjectBreakpointNotification
-	    object: dict];
-	  [[self window] makeKeyAndOrderFront: self];
-	}
-    }
+- (NSString *) currentFile
+{
+  return currentFile;
 }
 @end

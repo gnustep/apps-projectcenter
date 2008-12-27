@@ -23,12 +23,22 @@
 #include "PTYView.h"
 
 @class PCDebugger;
+@class NSString;
+
+typedef enum _PCDebuggerState {
+  PCDebuggerPrePrompt,
+  PCDebuggerPrompt,
+  PCDebuggerPostPrompt
+} PCDebuggerState;
 
 @interface PCDebuggerView : PTYView
 {
   PCDebugger *debugger;
+  NSString *currentFile;
+  PCDebuggerState debuggerState;
 }
 
--(void)setDebugger:(PCDebugger *)theDebugger;
-
+- (void) setDebugger:(PCDebugger *)theDebugger;
+- (void) setCurrentFile: (NSString *)fileName;
+- (NSString *) currentFile;
 @end

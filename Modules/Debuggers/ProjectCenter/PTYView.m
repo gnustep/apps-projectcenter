@@ -216,7 +216,7 @@
  */
 - (NSString *) stopMessage
 {
-  return @"=== Task Stopped ===";
+  return @"\n=== Task Stopped ===";
 }
 
 /**
@@ -270,7 +270,7 @@
 	  [NOTIFICATION_CENTER addObserver:self 
 			       selector:@selector(taskDidTerminate:) 
 			       name:NSTaskDidTerminateNotification
-			       object:nil];
+			       object:task];
 
 	  // run the task...
 	  NS_DURING
@@ -315,6 +315,14 @@
   [super dealloc];
 }
 
+- (void) putString: (NSString *)string;
+{
+  unichar *str = (unichar *)[string cStringUsingEncoding: [NSString defaultCStringEncoding]];
+  int len = strlen((char *)str);
+  NSData *data = [NSData dataWithBytes: str length: len];
+  [master_handle writeData: data];  
+}
+
 /**
  * Put a single character into the stream.
  */
@@ -322,7 +330,7 @@
 {
   NSData *data = [NSData dataWithBytes: &ch length: 1];
   [master_handle writeData: data];
- } 
+} 
 
 /** 
  * Respond to key events and pipe them down to the debugger 

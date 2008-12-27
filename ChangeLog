@@ -1,3 +1,14 @@
+2008-12-27 00:47-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m: Changed code to use the filePath
+	that is passed in, since it is now fully qualified.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Pass the "-f" (fullname)
+	flag to gdb.  This causes gdb to give a fully qualified pathname back.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.[hm]: Code to 
+	extract the line and file information.
+	* Modules/Debuggers/ProjectCenter/PTYView.[hm]: New method
+	putString:.
+
 2008-12-26 13:01-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m: Scroll to and select the line that
