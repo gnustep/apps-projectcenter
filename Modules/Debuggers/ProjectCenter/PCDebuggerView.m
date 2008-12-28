@@ -92,6 +92,20 @@
 	}
     }
 
+  // NOTE: This works on certain versions of gdb, but we need to come up with another way of getting
+  // the process id in a more generic way.
+  range = [str rangeOfString: @"[New Thread"];
+  if (range.location != NSNotFound)
+    {
+      NSScanner *scanner = [NSScanner scannerWithString: str];      
+      NSString *process = nil;
+
+      [scanner scanUpToString: @"(LWP" intoString: NULL];
+      [scanner scanString: @"(LWP" intoString: NULL];
+      [scanner scanUpToString: @")" intoString: &process];
+      subProcessId = [process intValue];
+    }
+
   // FIXME: Filter this error, until we find a better way to deal with it.
   range = [str rangeOfString: @"[tcsetpgrp failed in terminal_inferior:"];
   if (range.location != NSNotFound)
@@ -120,7 +134,7 @@
  * lookup the process id.
  */
 /*
-- (int) lookupProcessId
+- (int) subProcessId
 {
   int task_pid = [task processIdentifier];
   int child_pid = 0;
@@ -146,13 +160,18 @@
   
   return child_pid;
 }
+*/
+
+- (int) subProcessId
+{
+  return subProcessId;
+}
 
 - (void) interrupt
 {
-  int pid = [self lookupProcessId];
+  int pid = [self subProcessId];
   kill(pid,SIGINT);
 }
-*/
 
 - (void) terminate
 {

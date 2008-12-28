@@ -1,3 +1,11 @@
+2008-12-28 11:25-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Added code
+	to do the restart and pause actions in the debugger.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.[hm]: Added
+	method subProcessId and an ivar and the logic to parse the
+	process id from debugger output.
+
 2008-12-28 02:23-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m: Remove log.

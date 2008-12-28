@@ -168,12 +168,16 @@ static NSImage  *stepOutImage = nil;
 
 - (void) pause: (id) sender
 {
+  [self setStatus: @"Stopped."];
+  [debuggerView interrupt];
 }
 
 - (void) restart: (id) sender
 {
-  [self setStatus: @"Running..."];
+  [self setStatus: @"Restarting..."];
+  [debuggerView interrupt];
   [debuggerView putString: @"run\n"];
+  [self setStatus: @"Running..."];
 }
 
 - (void) next: (id) sender

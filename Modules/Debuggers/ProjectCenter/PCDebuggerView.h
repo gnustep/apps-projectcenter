@@ -25,20 +25,15 @@
 @class PCDebugger;
 @class NSString;
 
-typedef enum _PCDebuggerState {
-  PCDebuggerPrePrompt,
-  PCDebuggerPrompt,
-  PCDebuggerPostPrompt
-} PCDebuggerState;
-
 @interface PCDebuggerView : PTYView
 {
   PCDebugger *debugger;
   NSString *currentFile;
-  PCDebuggerState debuggerState;
+  int subProcessId;
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;
+- (int) subProcessId;
 @end
