@@ -21,7 +21,14 @@ ProjectCenter_LIBRARIES_DEPEND_UPON +=
 #
 ProjectCenter_RESOURCE_FILES= \
     Resources/PCDebugger.gorm \
-    Resources/Info.table
+    Resources/Info.table \
+    Resources/go_button.png \
+    Resources/pause_button.png \
+    Resources/restart_button.png \
+    Resources/next_button.png \
+    Resources/stepin_button.png \
+    Resources/stepout_button.png 
+
 #
 # Header files
 #

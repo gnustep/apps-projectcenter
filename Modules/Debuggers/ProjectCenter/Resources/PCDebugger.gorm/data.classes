@@ -5,7 +5,8 @@
 	);
 	Outlets = (
 	    debuggerView,
-	    debuggerWindow
+	    debuggerWindow,
+	    statusField
 	);
 	Super = NSObject;
     };

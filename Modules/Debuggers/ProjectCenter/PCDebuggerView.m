@@ -21,27 +21,19 @@
 */
 
 #include "PCDebuggerView.h"
+#include "PCDebugger.h"
+
 #include <ProjectCenter/PCProject.h>
 #include <Foundation/NSScanner.h>
+
+#include <unistd.h>
+#include <signal.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
 @implementation PCDebuggerView
-/*
-- (void) runProgram: (NSString *)path
- inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
-   logStandardError: (BOOL)logError
-{
-  [super runProgram: path
-	 inCurrentDirectory: directory
-	 withArguments: array
-	 logStandardError: logError];
-  [self putString: @"set annotate 3\n"];
-}
-*/
 
 -(void)setDebugger:(PCDebugger *)theDebugger
 {
@@ -87,7 +79,9 @@
 		  NSDictionary *dict = [NSDictionary 
 					 dictionaryWithObjectsAndKeys:
 					   file, @"file", line, @"line", nil];
-		  NSLog(@"dict = %@", dict);
+		  NSString *statusString = [NSString stringWithFormat: @"Stopped, %@:%@",file,line];
+
+		  [debugger setStatus: statusString];
 		  [NOTIFICATION_CENTER 
 		    postNotificationName: PCProjectBreakpointNotification
 		    object: dict];
@@ -120,5 +114,49 @@
 - (NSString *) currentFile
 {
   return currentFile;
+}
+
+/**
+ * lookup the process id.
+ */
+/*
+- (int) lookupProcessId
+{
+  int task_pid = [task processIdentifier];
+  int child_pid = 0;
+  NSArray *entries = [[NSFileManager defaultManager] directoryContentsAtPath: @"/proc"];
+  NSEnumerator *en = [entries objectEnumerator];
+  NSString *entry = nil;
+  
+  // FIXME: I'm looking for a generic way to do this, what we have here is very /proc specific.
+  // which I don't like since it ties this functionality to systems which have /proc.
+  while((entry = [en nextObject]) != nil)
+    {
+      int pid = [entry intValue];
+      if (pid != 0)
+	{
+	  int ppid = getppid(pid);
+	  if (ppid == task_pid)
+	    {
+	      child_pid = pid;
+	      break;
+	    }
+	}
+    }
+  
+  return child_pid;
+}
+
+- (void) interrupt
+{
+  int pid = [self lookupProcessId];
+  kill(pid,SIGINT);
+}
+*/
+
+- (void) terminate
+{
+  [super terminate];
+  [debugger setStatus: @"Process ended."];
 }
 @end

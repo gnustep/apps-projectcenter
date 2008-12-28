@@ -1,3 +1,25 @@
+2008-12-28 02:23-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m: Remove log.
+	* Modules/Debuggers/ProjectCenter/GNUmakefile: Added new images
+	to resource list.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.[hm]: Added setStatus:
+	method to manage status field.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Added code
+	to handle the toolbar.
+	* Modules/Debuggers/ProjectCenter/PTYView.[hm]: Added method called
+	"terminate" so that subclasses can override how the process is
+	terminated.
+	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm: Added
+	status line.
+	* Modules/Debuggers/ProjectCenter/Resources/go_button.png
+	* Modules/Debuggers/ProjectCenter/Resources/next_button.png
+	* Modules/Debuggers/ProjectCenter/Resources/pause_button.png
+	* Modules/Debuggers/ProjectCenter/Resources/restart_button.png
+	* Modules/Debuggers/ProjectCenter/Resources/stepin_button.png
+	* Modules/Debuggers/ProjectCenter/Resources/stepout_button.png:
+	Images for debugger toolbar.
+
 2008-12-27 00:47-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m: Changed code to use the filePath

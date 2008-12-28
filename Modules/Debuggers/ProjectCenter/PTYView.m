@@ -25,6 +25,7 @@
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <signal.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -115,8 +116,8 @@
   
   //
   // Is it backspace?  If so, remove one character from the terminal to reflect
-  // the deletion.   For some reason backspace sends "\b \b", so I have to remove
-  // four characters in order to appropriately delete from the buffer.
+  // the deletion.   For some reason backspace sends multiple characters, so I have to remove
+  // one more character than what is sent in order to appropriately delete from the buffer.
   //
   range = [str rangeOfString: @"\b"];
   if (range.location != NSNotFound)
@@ -332,6 +333,11 @@
   [master_handle writeData: data];
 } 
 
+- (void) interrupt
+{
+  [task interrupt];
+}
+
 /** 
  * Respond to key events and pipe them down to the debugger 
  */ 
@@ -347,7 +353,7 @@
 
 	if (c == 3) // ETX, Control-C
 	  {
-	    [task interrupt];  // send the interrupt signal to the subtask
+	    [self interrupt];  // send the interrupt signal to the subtask
 	  }
 	else
 	  {

@@ -31,10 +31,11 @@
 {
   id             debuggerView;
   id             debuggerWindow;
+  id             statusField;
   NSString       *path;
   NSString       *debuggerPath;
-  // BOOL           _isLogging;
-  // BOOL           _isErrorLogging;
-  // FILE           *std_input;
 }
+
+- (void) setStatus: (NSString *) status;
+- (NSString *) status;
 @end

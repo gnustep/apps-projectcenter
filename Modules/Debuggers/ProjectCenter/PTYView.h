@@ -58,6 +58,8 @@
 
 - (void) terminate;
 
+- (void) interrupt;
+
 - (void) putString: (NSString *)string;
 
 - (void) putChar:(unichar)ch;

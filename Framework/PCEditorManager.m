@@ -398,7 +398,7 @@ NSString *PCEditorDidResignActiveNotification =
 				editable: YES
 				windowed: NO];
   [editor scrollToLineNumber: [line intValue]];
-  NSLog(@"object = %@", [aNotif object]);
+  // NSLog(@"object = %@", [aNotif object]);
 }
 
 @end
