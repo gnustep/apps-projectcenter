@@ -46,7 +46,7 @@ GDB := $(shell which gdb)
 ADDITIONAL_CPPFLAGS +=
 
 # Additional flags to pass to the Objective-C compiler
-ADDITIONAL_OBJCFLAGS += -W -Wno-unused-parameter -DDEVELOPMENT\
+ADDITIONAL_OBJCFLAGS += -W -DDEVELOPMENT\
                         -DPCDefaultBuildTool=@"\"$(GMAKE)\"" \
                         -DPCDefaultDebugger=@"\"$(GDB)\""
 
