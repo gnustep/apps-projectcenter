@@ -27,9 +27,12 @@
 #define _PCProjectDebugger_h_
 
 #include <AppKit/AppKit.h>
+#include <Protocols/CodeDebugger.h>
 
 @class PCProject;
 @class PCButton;
+
+@protocol CodeDebugger;
 
 @interface PCProjectLauncher : NSObject
 {
@@ -47,6 +50,7 @@
   NSFileHandle  *errorReadHandle;
   NSTask        *launchTask;
 
+  id<CodeDebugger> debugger;
   BOOL          _isRunning;
   BOOL          _isDebugging;
 }

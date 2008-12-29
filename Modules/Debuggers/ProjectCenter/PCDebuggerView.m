@@ -176,6 +176,10 @@
 - (void) terminate
 {
   [super terminate];
-  [debugger setStatus: @"Process ended."];
+}
+
+- (void) mouseDown: (NSEvent *)event
+{
+  // do nothing...
 }
 @end

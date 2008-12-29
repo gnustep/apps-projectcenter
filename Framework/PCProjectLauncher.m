@@ -33,8 +33,6 @@
 #include <ProjectCenter/PCButton.h>
 #include <ProjectCenter/PCLogController.h>
 
-#include <Protocols/CodeDebugger.h>
-
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
@@ -163,6 +161,7 @@ enum {
 #endif
   RELEASE (componentView);
   RELEASE (textAttributes);
+  RELEASE (debugger);
 
   [super dealloc];
 }
@@ -211,7 +210,6 @@ enum {
   NSString                   *gdbPath = nil;
   NSFileManager              *fm = [NSFileManager defaultManager];
   PCBundleManager *bundleManager = [[project projectManager] bundleManager];
-  id<CodeDebugger> debugger;
 
   // Check if project type is executable
   if (![project isExecutable])

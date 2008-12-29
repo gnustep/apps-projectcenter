@@ -208,6 +208,12 @@ static NSImage  *stepOutImage = nil;
 {
   return [statusField stringValue];
 }
+
+- (void) dealloc
+{
+  [debuggerWindow close];
+  [super dealloc];
+}
 @end
 
 @implementation PCDebugger (NSToolbarDelegate)

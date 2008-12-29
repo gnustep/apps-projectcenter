@@ -1,3 +1,13 @@
+2008-12-29 00:30-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCProjectLauncher.m: Remove local variable for debugger from
+	method.  Also add it to the launcher dealloc method.
+	* Headers/ProjectCenter/PCProjectLauncher.h: Add an ivar for the debugger.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Add dealloc to shut down
+	the debugger window when it's dealloc.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Don't set status when
+	terminated, since it causes a crash.
+
 2008-12-28 11:25-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Added code
