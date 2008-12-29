@@ -111,7 +111,7 @@ static NSImage  *stepOutImage = nil;
 {
   [debuggerView runProgram: debuggerPath
 		inCurrentDirectory: [path stringByDeletingLastPathComponent]
-		withArguments: [[NSArray alloc] initWithObjects: @"-f", @"--args", path, nil]
+		withArguments: [[NSArray alloc] initWithObjects: @"-f", path, nil]
 		logStandardError: YES];
 }   
 
