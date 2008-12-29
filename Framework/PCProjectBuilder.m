@@ -702,7 +702,7 @@
 - (void)updateErrorsCountField
 {
   NSString *string;
-  NSString *errorsString = [NSString stringWithString:@""];;
+  NSString *errorsString = [NSString stringWithString:@""];
   NSString *warningsString = [NSString stringWithString:@""];
 
   if (errorsCount > 0)
