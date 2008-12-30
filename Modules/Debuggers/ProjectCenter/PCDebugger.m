@@ -34,6 +34,8 @@ static NSImage	*restartImage = nil;
 static NSImage	*nextImage = nil;
 static NSImage  *stepInImage = nil;
 static NSImage  *stepOutImage = nil;
+static NSImage  *upImage = nil;
+static NSImage  *downImage = nil;
 
 @implementation PCDebugger
 + (void) initialize
@@ -73,6 +75,16 @@ static NSImage  *stepOutImage = nil;
       if (path != nil)
 	{
 	  stepOutImage = [[NSImage alloc] initWithContentsOfFile: path];
+	}
+      path = [bundle pathForImageResource: @"up_button"];
+      if (path != nil)
+	{
+	  upImage = [[NSImage alloc] initWithContentsOfFile: path];
+	}
+      path = [bundle pathForImageResource: @"down_button"];
+      if (path != nil)
+	{
+	  downImage = [[NSImage alloc] initWithContentsOfFile: path];
 	}
     }
 }
@@ -198,6 +210,18 @@ static NSImage  *stepOutImage = nil;
   [debuggerView putString: @"finish\n"];  
 }
 
+- (void) up: (id) sender
+{
+  [self setStatus: @"Up to calling method."];
+  [debuggerView putString: @"up\n"];  
+}
+
+- (void) down: (id) sender
+{
+  [self setStatus: @"Down to called method."];
+  [debuggerView putString: @"down\n"];  
+}
+
 // Status..
 - (void) setStatus: (NSString *) status
 {
@@ -247,7 +271,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
       [toolbarItem setImage: restartImage];
       [toolbarItem setTarget: self];
       [toolbarItem setAction: @selector(restart:)];     
-      [toolbarItem setTag: 1];
+      [toolbarItem setTag: 2];
     }
   else if([itemIdentifier isEqual: @"NextItem"])
     {
@@ -255,7 +279,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
       [toolbarItem setImage: nextImage];
       [toolbarItem setTarget: self];
       [toolbarItem setAction: @selector(next:)];     
-      [toolbarItem setTag: 2];
+      [toolbarItem setTag: 3];
     }
   else if([itemIdentifier isEqual: @"StepIntoItem"])
     {
@@ -263,7 +287,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
       [toolbarItem setImage: stepInImage];
       [toolbarItem setTarget: self];
       [toolbarItem setAction: @selector(stepInto:)];     
-      [toolbarItem setTag: 3];
+      [toolbarItem setTag: 4];
     }
   else if([itemIdentifier isEqual: @"StepOutItem"])
     {
@@ -271,7 +295,23 @@ willBeInsertedIntoToolbar: (BOOL)flag
       [toolbarItem setImage: stepOutImage];
       [toolbarItem setTarget: self];
       [toolbarItem setAction: @selector(stepOut:)];     
-      [toolbarItem setTag: 4];
+      [toolbarItem setTag: 5];
+    }
+  else if([itemIdentifier isEqual: @"UpItem"])
+    {
+      [toolbarItem setLabel: @"Up"];
+      [toolbarItem setImage: upImage];
+      [toolbarItem setTarget: self];
+      [toolbarItem setAction: @selector(up:)];     
+      [toolbarItem setTag: 6];
+    }
+  else if([itemIdentifier isEqual: @"DownItem"])
+    {
+      [toolbarItem setLabel: @"Down"];
+      [toolbarItem setImage: downImage];
+      [toolbarItem setTarget: self];
+      [toolbarItem setAction: @selector(down:)];     
+      [toolbarItem setTag: 7];
     }
 
   return toolbarItem;
@@ -285,6 +325,8 @@ willBeInsertedIntoToolbar: (BOOL)flag
 		  @"NextItem", 
 		  @"StepIntoItem", 
 		  @"StepOutItem", 
+		  @"UpItem", 
+		  @"DownItem", 
 		  nil];
 }
 
@@ -296,6 +338,8 @@ willBeInsertedIntoToolbar: (BOOL)flag
 		  @"NextItem", 
 		  @"StepIntoItem", 
 		  @"StepOutItem", 
+		  @"UpItem", 
+		  @"DownItem", 
 		  nil];
 }
 
@@ -307,6 +351,8 @@ willBeInsertedIntoToolbar: (BOOL)flag
 		  @"NextItem", 
 		  @"StepIntoItem", 
 		  @"StepOutItem", 
+		  @"UpItem", 
+		  @"DownItem", 
 		  nil];
 }
 @end

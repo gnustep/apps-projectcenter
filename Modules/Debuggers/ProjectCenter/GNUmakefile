@@ -27,7 +27,9 @@ ProjectCenter_RESOURCE_FILES= \
     Resources/restart_button.png \
     Resources/next_button.png \
     Resources/stepin_button.png \
-    Resources/stepout_button.png 
+    Resources/stepout_button.png \
+    Resources/up_button.png \
+    Resources/down_button.png 
 
 #
 # Header files

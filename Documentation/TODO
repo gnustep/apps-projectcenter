@@ -44,7 +44,7 @@ ProjectCenter 0.6
 -----------------
 
 - Create new Info panel                                         [done!]
-- Implement support for integrated debugging                    casamento/mottola
+- Implement support for integrated debugging                    [90% done]
 - change project type from file to bundle                       casamento/mottola
 - Finish FileNameIcon (draggable, files can be dragged to it)   stoyan
 - Review all situations when dialogs must be  popped up         stoyan
