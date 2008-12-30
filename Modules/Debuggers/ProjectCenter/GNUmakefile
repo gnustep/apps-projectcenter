@@ -23,6 +23,7 @@ ProjectCenter_RESOURCE_FILES= \
     Resources/PCDebugger.gorm \
     Resources/Info.table \
     Resources/go_button.png \
+    Resources/continue_button.png \
     Resources/pause_button.png \
     Resources/restart_button.png \
     Resources/next_button.png \

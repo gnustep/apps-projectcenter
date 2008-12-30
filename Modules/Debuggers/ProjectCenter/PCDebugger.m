@@ -30,6 +30,7 @@
 
 static NSImage	*goImage = nil;
 static NSImage	*pauseImage = nil;
+static NSImage	*continueImage = nil;
 static NSImage	*restartImage = nil;
 static NSImage	*nextImage = nil;
 static NSImage  *stepInImage = nil;
@@ -55,6 +56,11 @@ static NSImage  *downImage = nil;
       if (path != nil)
 	{
 	  pauseImage = [[NSImage alloc] initWithContentsOfFile: path];
+	}
+      path = [bundle pathForImageResource: @"continue_button"];
+      if (path != nil)
+	{
+	  continueImage = [[NSImage alloc] initWithContentsOfFile: path];
 	}
       path = [bundle pathForImageResource: @"restart_button"];
       if (path != nil)
@@ -184,6 +190,12 @@ static NSImage  *downImage = nil;
   [debuggerView interrupt];
 }
 
+- (void) continue: (id) sender
+{
+  [self setStatus: @"Continue..."];
+  [debuggerView putString: @"continue\n"];
+}
+
 - (void) restart: (id) sender
 {
   [self setStatus: @"Restarting..."];
@@ -265,6 +277,14 @@ willBeInsertedIntoToolbar: (BOOL)flag
       [toolbarItem setAction: @selector(pause:)];     
       [toolbarItem setTag: 1];
     }
+  else if([itemIdentifier isEqual: @"ContinueItem"])
+    {
+      [toolbarItem setLabel: @"Continue"];
+      [toolbarItem setImage: continueImage];
+      [toolbarItem setTarget: self];
+      [toolbarItem setAction: @selector(continue:)];     
+      [toolbarItem setTag: 1];
+    }
   else if([itemIdentifier isEqual: @"RestartItem"])
     {
       [toolbarItem setLabel: @"Restart"];
@@ -321,6 +341,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
 {
   return [NSArray arrayWithObjects: @"GoItem", 
 		  @"PauseItem", 
+		  @"ContinueItem", 
 		  @"RestartItem", 
 		  @"NextItem", 
 		  @"StepIntoItem", 
@@ -334,6 +355,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
 { 
   return [NSArray arrayWithObjects: @"GoItem", 
 		  @"PauseItem", 
+		  @"ContinueItem", 
 		  @"RestartItem", 
 		  @"NextItem", 
 		  @"StepIntoItem", 
@@ -347,6 +369,7 @@ willBeInsertedIntoToolbar: (BOOL)flag
 { 
   return [NSArray arrayWithObjects: @"GoItem", 
 		  @"PauseItem", 
+		  @"ContinueItem", 
 		  @"RestartItem", 
 		  @"NextItem", 
 		  @"StepIntoItem", 

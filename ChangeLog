@@ -1,3 +1,8 @@
+2008-12-29 22:27-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/GNUmakefile: Add continue icon.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Add continue method.
+
 2008-12-29 20:23-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Documentation/TODO: Update progress.
