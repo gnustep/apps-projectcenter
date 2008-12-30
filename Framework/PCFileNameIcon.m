@@ -122,12 +122,22 @@
 
 - (void)draggingExited:(id <NSDraggingInfo>)sender
 {
+  NSLog(@"Dragging exited");
 }
 
 // -- After the image is released
 - (BOOL)prepareForDragOperation:(id <NSDraggingInfo>)sender
 {
+  NSPasteboard *pb = [sender draggingPasteboard];
+  NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
+
   NSLog(@"Prepare for drag operation");
+
+  if (delegate && 
+      [delegate respondsToSelector:@selector(prepareForDraggingOf:)])
+    {
+      return [delegate prepareForDraggingOf:paths];
+    }
   return YES;
 }
 
@@ -138,11 +148,27 @@
 
   NSLog(@"performDragOperation: %@", paths);
 
-  return NO;
+  if (delegate && 
+      [delegate respondsToSelector:@selector(performDraggingOf:)])
+    {
+      return [delegate performDraggingOf:paths];
+    }
+
+  return YES;
 }
 
-- (void)concludeDragOperation:(id <NSDraggingInfo>)sendera
+- (void)concludeDragOperation:(id <NSDraggingInfo>)sender
 {
+  NSPasteboard *pb = [sender draggingPasteboard];
+  NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
+
+  NSLog(@"Conclude drag operation");
+
+  if (delegate && 
+      [delegate respondsToSelector:@selector(concludeDraggingOf:)])
+    {
+      [delegate concludeDraggingOf:paths];
+    }
 }
 
 @end

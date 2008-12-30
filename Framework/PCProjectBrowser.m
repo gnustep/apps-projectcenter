@@ -685,7 +685,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
   NSLog(@"PCBrowser: canPerformDraggingOf -> %@", category);
 
-  if (!category)
+  if (!category || ([self nameOfSelectedFile] != nil))
     {
       return NO;
     }
@@ -695,6 +695,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       return NO;
     }
 
+  // Check if we can accept files of such types
   while ((s = [e nextObject]))
     {
       if (![fileTypes containsObject:[s pathExtension]])
@@ -704,6 +705,29 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
 
   return YES;
+}
+
+- (BOOL)prepareForDraggingOf:(NSArray *)paths
+{
+  return YES;
+}
+
+- (BOOL)performDraggingOf:(NSArray *)paths
+{
+  NSString     *category = [self nameOfSelectedCategory];
+  NSString     *categoryKey = [project keyForCategory:category];
+  NSEnumerator *pathsEnum = [paths objectEnumerator];
+  NSString     *file = nil;
+
+  while ((file = [[pathsEnum nextObject] lastPathComponent]))
+    {
+      if (![project doesAcceptFile:file forKey:categoryKey])
+	{
+	  return NO;
+	}
+    }
+
+  return [project addAndCopyFiles:paths forKey:categoryKey];
 }
 
 @end

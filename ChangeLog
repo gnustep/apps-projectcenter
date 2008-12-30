@@ -1,3 +1,12 @@
+2008-12-31  Sergii Stoian <stoyan255@gmail.com>
+	
+	* Framework/PCFileNameIcon.m:
+	* Headers/ProjectCenter/PCFileNameIcon.h:
+	  Implementation of dragging functionality.
+
+	* Framework/PCProjectBrowser.m: Implement file icon delegate methods.
+	  Dragging files to category icon adds files to project.
+
 2008-12-30 Richard frith-Macdonald <rfm"gnu.org>
 
 	* PCMenuController.m:
