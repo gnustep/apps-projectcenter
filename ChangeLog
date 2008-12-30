@@ -1,3 +1,8 @@
+2008-12-29 22:29-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/Resources/continue_button.png:
+	Add image.
+
 2008-12-29 22:27-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/GNUmakefile: Add continue icon.
