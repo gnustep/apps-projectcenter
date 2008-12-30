@@ -26,7 +26,7 @@
 #ifndef _PCSplitView_h_
 #define _PCSplitView_h_
 
-#include <AppKit/NSSplitView.h>
+#import <AppKit/NSSplitView.h>
 
 @interface PCSplitView : NSSplitView
 {

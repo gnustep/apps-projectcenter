@@ -141,7 +141,7 @@ typedef int PCProjInfoBits;
 // ==== Project keys
 //=============================================================================
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 static NSString * const PCLastEditing          = @"LAST_EDITING";
 

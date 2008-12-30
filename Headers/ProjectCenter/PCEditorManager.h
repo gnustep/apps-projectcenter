@@ -26,10 +26,10 @@
 #ifndef _PCEditorManager_h_
 #define _PCEditorManager_h_
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
-#include <Protocols/CodeEditor.h>
-#include <Protocols/CodeParser.h>
+#import <Protocols/CodeEditor.h>
+#import <Protocols/CodeParser.h>
 
 @class PCProjectManager;
 

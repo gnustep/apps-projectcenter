@@ -20,9 +20,9 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include "ObjCMethodHandler.h"
+#import "ObjCMethodHandler.h"
 
 @implementation ObjCMethodHandler
 

@@ -26,8 +26,8 @@
 #ifndef _PCProjectInspector_h_
 #define _PCProjectInspector_h_
 
-#include <ProjectCenter/PCFileNameField.h>
-#include <ProjectCenter/PCFileNameIcon.h>
+#import <ProjectCenter/PCFileNameField.h>
+#import <ProjectCenter/PCFileNameIcon.h>
 
 @class PCProjectManager;
 @class PCProjectBrowser;

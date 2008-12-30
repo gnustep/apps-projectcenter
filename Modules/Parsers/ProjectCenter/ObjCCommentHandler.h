@@ -25,8 +25,8 @@
 
 #define EQUAL(str) ([element isEqualToString: str])
 
-#include <CodeHandler.h>
-#include <Foundation/NSString.h>
+#import <CodeHandler.h>
+#import <Foundation/NSString.h>
 
 @class NSString;
 

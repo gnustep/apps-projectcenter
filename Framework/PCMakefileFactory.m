@@ -23,9 +23,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCMakefileFactory.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCMakefileFactory.h>
 
 #define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
 #define COMMENT_RESOURCES    @"\n\n#\n# Resource files\n#\n"

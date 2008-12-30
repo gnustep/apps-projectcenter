@@ -23,27 +23,27 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCPrefController.h>
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCPrefController.h>
+#import <ProjectCenter/PCLogController.h>
 
-#include <ProjectCenter/PCBundleManager.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCFileCreator.h>
-#include <ProjectCenter/PCEditorManager.h>
-#include <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCBundleManager.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCFileCreator.h>
+#import <ProjectCenter/PCEditorManager.h>
+#import <ProjectCenter/PCProjectManager.h>
 
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectInspector.h>
-#include <ProjectCenter/PCProjectEditor.h>
-#include <ProjectCenter/PCProjectBuilderPanel.h>
-#include <ProjectCenter/PCProjectLauncherPanel.h>
-#include <ProjectCenter/PCProjectLoadedFilesPanel.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectInspector.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectBuilderPanel.h>
+#import <ProjectCenter/PCProjectLauncherPanel.h>
+#import <ProjectCenter/PCProjectLoadedFilesPanel.h>
 
-#include "Protocols/ProjectType.h"
-#include "Protocols/CodeEditor.h"
+#import "Protocols/ProjectType.h"
+#import "Protocols/CodeEditor.h"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 

@@ -25,7 +25,7 @@
 #ifndef _CodeParserProtocol_h_
 #define _CodeParserProtocol_h_
 
-#include <Foundation/NSObject.h>
+#import <Foundation/NSObject.h>
 
 @class PCEditor;
 

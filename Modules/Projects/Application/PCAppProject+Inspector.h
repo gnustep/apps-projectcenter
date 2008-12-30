@@ -25,7 +25,7 @@
 #ifndef _PCAppProject_Inspector_h_
 #define _PCAppProject_Inspector_h_
 
-#include "PCAppProject.h"
+#import "PCAppProject.h"
 
 @interface PCAppProject (Inspector)
 

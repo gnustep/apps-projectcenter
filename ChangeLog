@@ -1,3 +1,94 @@
+2008-12-30 Richard frith-Macdonald <rfm"gnu.org>
+
+	* PCMenuController.m:
+	* Framework/PCProjectManager.m:
+	* Framework/PCBundleManager.m:
+	* Framework/PCMakefileFactory.m:
+	* Framework/PCProject.m:
+	* Framework/PCProjectLauncherPanel.m:
+	* Framework/PCFileManager.m:
+	* Framework/PCButton.m:
+	* Framework/PCProjectBuilder.m:
+	* Framework/PCProjectLoadedFilesPanel.m:
+	* Framework/PCFileNameField.m:
+	* Framework/PCSplitView.m:
+	* Framework/PCProjectLauncher.m:
+	* Framework/PCAddFilesPanel.m:
+	* Framework/Resources/class.template:
+	* Framework/Resources/header.template:
+	* Framework/Resources/cfile.template:
+	* Framework/PCProjectBuilderPanel.m:
+	* Framework/PCFileCreator.m:
+	* PCAppController.m:
+	* PCFindController.m:
+	* ProjectCenter_main.m:
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.h:
+	* Modules/Parsers/ProjectCenter/ObjCCommentHandler.h:
+	* Modules/Parsers/ProjectCenter/PCParser.h:
+	* Modules/Parsers/ProjectCenter/ObjCClassHandler.h:
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.m:
+	* Modules/Parsers/ProjectCenter/ObjCCommentHandler.m:
+	* Modules/Parsers/ProjectCenter/CodeHandler.h:
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m:
+	* Modules/Debuggers/ProjectCenter/PTYView.m:
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.h:
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h:
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m:
+	* Modules/Debuggers/ProjectCenter/PTYView.h:
+	* Modules/Projects/Application/PCAppProject.h:
+	* Modules/Projects/Application/PCAppProject+Inspector.h:
+	* Modules/Projects/Application/PCAppProject.m:
+	* Modules/Projects/Application/PCAppProject+Inspector.m:
+	* Modules/Projects/Application/Resources/AppController.m:
+	* Modules/Projects/Application/Resources/main.m:
+	* Modules/Projects/Application/Resources/AppController.h:
+	* Modules/Projects/ResourceSet/PCResourceSetProject.h:
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m:
+	* Modules/Projects/Library/PCLibProject.h:
+	* Modules/Projects/Library/PCLibProject.m:
+	* Modules/Projects/Aggregate/PCAggregateProject.h:
+	* Modules/Projects/Aggregate/PCAggregateProject.m:
+	* Modules/Projects/Bundle/PCBundleProject.h:
+	* Modules/Projects/Bundle/PCBundleProject.m:
+	* Modules/Projects/Framework/PCFrameworkProject.m:
+	* Modules/Projects/Framework/PCFrameworkProject.h:
+	* Modules/Projects/Tool/PCToolProject.m:
+	* Modules/Projects/Tool/Resources/main.m:
+	* Modules/Projects/Tool/PCToolProject.h:
+	* Headers/PCMenuController.h:
+	* Headers/Protocols/CodeDebugger.h:
+	* Headers/Protocols/CodeEditor.h:
+	* Headers/Protocols/CodeParser.h:
+	* Headers/Protocols/ProjectType.h:
+	* Headers/ProjectCenter/PCProject.h:
+	* Headers/ProjectCenter/PCProjectLauncherPanel.h:
+	* Headers/ProjectCenter/PCProjectBrowser.h:
+	* Headers/ProjectCenter/PCFileManager.h:
+	* Headers/ProjectCenter/PCButton.h:
+	* Headers/ProjectCenter/PCProjectBuilder.h:
+	* Headers/ProjectCenter/PCDefines.h:
+	* Headers/ProjectCenter/PCProjectEditor.h:
+	* Headers/ProjectCenter/PCEditorManager.h:
+	* Headers/ProjectCenter/PCProjectLoadedFilesPanel.h:
+	* Headers/ProjectCenter/ProjectCenter.h:
+	* Headers/ProjectCenter/PCLogController.h:
+	* Headers/ProjectCenter/PCSplitView.h:
+	* Headers/ProjectCenter/PCProjectLauncher.h:
+	* Headers/ProjectCenter/PCAddFilesPanel.h:
+	* Headers/ProjectCenter/PCProjectBuilderPanel.h:
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	* Headers/ProjectCenter/PCFileCreator.h:
+	* Headers/ProjectCenter/PCPrefController.h:
+	* Headers/ProjectCenter/PCProjectManager.h:
+	* Headers/ProjectCenter/PCProjectLoadedFiles.h:
+	* Headers/ProjectCenter/PCBundleManager.h:
+	* Headers/ProjectCenter/PCMakefileFactory.h:
+	* Headers/PCInfoController.h:
+	* Headers/PCAppController.h:
+	* PCInfoController.m:
+	Update to use #import rather than #include now that it is no longer
+	deprecated and is the officially preferred mechanism.
+
 2008-12-29 22:29-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/Resources/continue_button.png:

@@ -23,8 +23,8 @@
 #ifndef _CodeHandler_H_
 #define _CodeHandler_H_
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSString.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
 
 typedef enum _CommentType {
   NoComment,

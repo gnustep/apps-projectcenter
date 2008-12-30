@@ -22,9 +22,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include <ProjectCenter/PCFileNameField.h>
+#import <ProjectCenter/PCFileNameField.h>
 
 NSString *PCFileNameFieldNoFiles = @"No files selected";
 

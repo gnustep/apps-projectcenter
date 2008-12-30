@@ -23,7 +23,7 @@
 #ifndef _PCPREFCONTROLLER_H
 #define _PCPREFCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 #define PCSavePeriodDidChangeNotification @"PCSavePeriodDidChangeNotification"
 #define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"

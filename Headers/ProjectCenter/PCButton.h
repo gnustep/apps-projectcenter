@@ -25,7 +25,7 @@
 #ifndef _PCButton_h_
 #define _PCButton_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 /*
  * Button

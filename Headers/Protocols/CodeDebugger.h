@@ -25,8 +25,8 @@
 #ifndef _CodeDebugger_h_
 #define _CodeDebugger_h_
 
-#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @protocol CodeDebugger <NSObject>
 

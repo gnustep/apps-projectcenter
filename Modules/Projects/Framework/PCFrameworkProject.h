@@ -30,9 +30,9 @@
 #ifndef _PCFrameworkProject_h
 #define _PCFrameworkProject_h
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCProject.h>
-#include <Protocols/ProjectType.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCProject.h>
+#import <Protocols/ProjectType.h>
 
 @class PCMakefileFactory;
 

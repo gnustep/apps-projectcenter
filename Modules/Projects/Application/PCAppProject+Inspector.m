@@ -22,9 +22,9 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCMakefileFactory.h>
+#import <ProjectCenter/PCMakefileFactory.h>
 
-#include "PCAppProject+Inspector.h"
+#import "PCAppProject+Inspector.h"
 
 // ----------------------------------------------------------------------------
 // --- Customized text field

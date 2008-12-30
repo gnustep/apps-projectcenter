@@ -25,7 +25,7 @@
 #ifndef _PCLaunchPanel_h_
 #define _PCLaunchPanel_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 

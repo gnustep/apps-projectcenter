@@ -26,7 +26,7 @@
 #ifndef _PCMakefileFactory_h_
 #define _PCMakefileFactory_h_
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 @class PCProject;
 

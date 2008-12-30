@@ -30,11 +30,11 @@
 #ifndef _PCToolProject_h
 #define _PCToolProject_h
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCDefines.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCDefines.h>
 
-#include <Protocols/ProjectType.h>
+#import <Protocols/ProjectType.h>
 
 @class PCMakefileFactory;
 

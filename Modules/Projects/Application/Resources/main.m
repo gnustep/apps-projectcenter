@@ -22,7 +22,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 int 
 main(int argc, const char *argv[])

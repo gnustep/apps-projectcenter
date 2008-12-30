@@ -31,10 +31,10 @@
 //       - GNUSTEP_SYSTEM_LIBRARY/Bundles/ProjectCenter
 //         (NSApplicationSupportDirectory)
 
-#include <ProjectCenter/PCBundleManager.h>
-#include <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCBundleManager.h>
+#import <ProjectCenter/PCDefines.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
 @implementation PCBundleManager
 

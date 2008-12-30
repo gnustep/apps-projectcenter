@@ -26,7 +26,7 @@
 #ifndef _PCProjectManager_h_
 #define _PCProjectManager_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCBundleManager;
 @class PCFileManager;

@@ -25,7 +25,7 @@
 #ifndef _$UCFILENAME$_H_
 #define _$UCFILENAME$_H_
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 @interface $FILENAME$ : NSObject
 {

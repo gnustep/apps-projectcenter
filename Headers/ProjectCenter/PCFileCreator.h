@@ -26,7 +26,7 @@
 #ifndef _PCFileCreator_h_
 #define _PCFileCreator_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 #define ProtocolFile	@"Objective-C Protocol"
 #define ObjCClass	@"Objective-C Class"

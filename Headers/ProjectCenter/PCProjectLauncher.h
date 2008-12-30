@@ -26,8 +26,8 @@
 #ifndef _PCProjectDebugger_h_
 #define _PCProjectDebugger_h_
 
-#include <AppKit/AppKit.h>
-#include <Protocols/CodeDebugger.h>
+#import <AppKit/AppKit.h>
+#import <Protocols/CodeDebugger.h>
 
 @class PCProject;
 @class PCButton;

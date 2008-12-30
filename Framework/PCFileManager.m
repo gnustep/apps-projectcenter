@@ -23,15 +23,15 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCFileCreator.h>
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCAddFilesPanel.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCFileCreator.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCAddFilesPanel.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
 @implementation PCFileManager
 

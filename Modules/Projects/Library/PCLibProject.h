@@ -26,10 +26,10 @@
 #ifndef _PCLibProject_h
 #define _PCLibProject_h
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProject.h>
-#include <Protocols/ProjectType.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProject.h>
+#import <Protocols/ProjectType.h>
 
 @class PCMakefileFactory;
 

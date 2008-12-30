@@ -23,12 +23,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCFileCreator.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCFileCreator.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
 static PCFileCreator *_creator = nil;
 static NSDictionary  *dict = nil;

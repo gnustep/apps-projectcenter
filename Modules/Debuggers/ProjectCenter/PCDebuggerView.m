@@ -20,14 +20,14 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include "PCDebuggerView.h"
-#include "PCDebugger.h"
+#import "PCDebuggerView.h"
+#import "PCDebugger.h"
 
-#include <ProjectCenter/PCProject.h>
-#include <Foundation/NSScanner.h>
+#import <ProjectCenter/PCProject.h>
+#import <Foundation/NSScanner.h>
 
-#include <unistd.h>
-#include <signal.h>
+#import <unistd.h>
+#import <signal.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]

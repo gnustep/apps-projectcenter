@@ -30,12 +30,12 @@
 #ifndef _PCAppProject_h_
 #define _PCAppProject_h_
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectInspector.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectInspector.h>
 
-#include <Protocols/ProjectType.h>
+#import <Protocols/ProjectType.h>
 
 @interface PCAppTextField : NSTextField
 {

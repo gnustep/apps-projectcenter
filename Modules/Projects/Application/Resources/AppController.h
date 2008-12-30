@@ -27,9 +27,9 @@
 #ifndef _PCAPPPROJ_APPCONTROLLER_H
 #define _PCAPPPROJ_APPCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 // Uncomment if your application is Renaissance-based
-//#include <Renaissance/Renaissance.h>
+//#import <Renaissance/Renaissance.h>
 
 @interface AppController : NSObject
 {

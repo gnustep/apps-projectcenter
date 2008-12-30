@@ -25,20 +25,20 @@
 #ifndef _ProjectCenter_h_
 #define _ProjectCenter_h_
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCBundleManager.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCMakefileFactory.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCBundleManager.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCMakefileFactory.h>
 
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectLoadedFiles.h>
-#include <ProjectCenter/PCProjectEditor.h>
-#include <ProjectCenter/PCProjectBuilder.h>
-#include <ProjectCenter/PCProjectLauncher.h>
-#include <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectLoadedFiles.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectBuilder.h>
+#import <ProjectCenter/PCProjectLauncher.h>
+#import <ProjectCenter/PCProjectEditor.h>
 
 #endif
 

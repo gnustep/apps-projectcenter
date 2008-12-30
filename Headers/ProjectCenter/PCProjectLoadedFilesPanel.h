@@ -25,7 +25,7 @@
 #ifndef _PCLoadedFilesPanel_h_
 #define _PCLoadedFilesPanel_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 

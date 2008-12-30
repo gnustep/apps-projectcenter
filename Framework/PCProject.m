@@ -27,23 +27,23 @@
 // TODO: Take care of Libraries(gnustep-gui, gnustep-base) 
 //       and Non Project Files
 
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCDefines.h>
 
-#include <ProjectCenter/PCProjectWindow.h>
-#include <ProjectCenter/PCProjectBrowser.h>
-#include <ProjectCenter/PCProjectLoadedFiles.h>
+#import <ProjectCenter/PCProjectWindow.h>
+#import <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCProjectLoadedFiles.h>
 
-#include <ProjectCenter/PCProjectInspector.h>
-#include <ProjectCenter/PCProjectBuilder.h>
-#include <ProjectCenter/PCProjectEditor.h>
-#include <ProjectCenter/PCProjectLauncher.h>
+#import <ProjectCenter/PCProjectInspector.h>
+#import <ProjectCenter/PCProjectBuilder.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <ProjectCenter/PCProjectLauncher.h>
 
-#include <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCLogController.h>
 
-#include <Protocols/CodeEditor.h>
+#import <Protocols/CodeEditor.h>
 
 NSString 
 *PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";

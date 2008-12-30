@@ -23,7 +23,7 @@
 #ifndef _PCINFOCONTROLLER_H
 #define _PCINFOCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @interface PCInfoController : NSObject
 {

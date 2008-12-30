@@ -26,8 +26,8 @@
 #ifndef _PCFileManager_h_
 #define _PCFileManager_h_
 
-//#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
+//#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @class PCProject;
 @class PCProjectManager;

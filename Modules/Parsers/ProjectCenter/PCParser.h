@@ -23,13 +23,13 @@
 #ifndef _CodeParser_H_
 #define _CodeParser_H_
 
-#include <Foundation/NSObject.h>
-#include <Foundation/NSString.h>
+#import <Foundation/NSObject.h>
+#import <Foundation/NSString.h>
 
-#include <Protocols/CodeParser.h>
+#import <Protocols/CodeParser.h>
 
-#include "CodeHandler.h"
-#include "ObjCMethodHandler.h"
+#import "CodeHandler.h"
+#import "ObjCMethodHandler.h"
 
 @interface PCParser : NSObject <CodeParser>
 {

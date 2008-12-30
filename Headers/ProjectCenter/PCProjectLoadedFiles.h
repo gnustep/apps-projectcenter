@@ -26,7 +26,7 @@
 #ifndef _PCProjectLoadedFiles_h_
 #define _PCProjectLoadedFiles_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProject;
 

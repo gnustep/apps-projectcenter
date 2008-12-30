@@ -23,7 +23,7 @@
 #ifndef _PCMENUCONTROLLER_H
 #define _PCMENUCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 @class PCFileManager;

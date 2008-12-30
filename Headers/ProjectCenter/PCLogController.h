@@ -23,7 +23,7 @@
 #ifndef _PCLOGCONTROLLER_H
 #define _PCLOGCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 #define INFO	0
 #define STATUS	1

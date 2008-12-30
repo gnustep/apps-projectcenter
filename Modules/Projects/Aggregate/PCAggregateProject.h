@@ -25,9 +25,9 @@
 #ifndef _PCAggregateProject_h
 #define _PCAggregateProject_h
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCProject.h>
-#include <Protocols/ProjectType.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCProject.h>
+#import <Protocols/ProjectType.h>
 
 @class PCMakefileFactory;
 

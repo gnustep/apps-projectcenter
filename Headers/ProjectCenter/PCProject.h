@@ -26,7 +26,7 @@
 #ifndef _PCProject_h_
 #define _PCProject_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 @class PCProjectWindow;

@@ -25,8 +25,8 @@
 #ifndef _CodeEditor_h_
 #define _CodeEditor_h_
 
-#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @protocol CodeEditor <NSObject>
 

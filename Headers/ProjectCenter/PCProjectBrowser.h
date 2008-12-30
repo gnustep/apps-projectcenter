@@ -26,7 +26,7 @@
 #ifndef _PCProjectBrowser_h_
 #define _PCProjectBrowser_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 extern NSString *PCBrowserDidSetPathNotification;
 

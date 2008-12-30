@@ -31,7 +31,7 @@
  	       and therefore PC remains open for future extensions!
 */
 
-#include <Foundation/Foundation.h>
+#import <Foundation/Foundation.h>
 
 @class PCProject;
 

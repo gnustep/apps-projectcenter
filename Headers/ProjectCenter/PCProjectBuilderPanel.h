@@ -25,7 +25,7 @@
 #ifndef _PCProjectBuilderPanel_h_
 #define _PCProjectBuilderPanel_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 

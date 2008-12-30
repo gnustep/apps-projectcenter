@@ -23,9 +23,9 @@
 #ifndef _ObjCMethodHandler_H_
 #define _ObjCMethodHandler_H_
 
-#include "CodeHandler.h"
+#import "CodeHandler.h"
 
-#include "ObjCCommentHandler.h"
+#import "ObjCCommentHandler.h"
 
 /**
  * MethodStart MethodSymbol   MethodReturnValue        MethodName      MethodEnd

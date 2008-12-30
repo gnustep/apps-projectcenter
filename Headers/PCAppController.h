@@ -23,7 +23,7 @@
 #ifndef _PCAPPCONTROLLER_H
 #define _PCAPPCONTROLLER_H
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProjectManager;
 @class PCFileManager;

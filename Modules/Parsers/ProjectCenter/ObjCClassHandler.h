@@ -23,9 +23,9 @@
 #ifndef _ObjCClassHandler_H_
 #define _ObjCClassHandler_H_
 
-#include "CodeHandler.h"
+#import "CodeHandler.h"
 
-#include "ObjCCommentHandler.h"
+#import "ObjCCommentHandler.h"
 
 /**
  * ClassStart  ClassSymbol  ClassName  ClassSuper  ClassProto   | ClassCategory

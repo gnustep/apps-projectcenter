@@ -26,7 +26,7 @@
 #ifndef _PCProjectBuilder_h_
 #define _PCProjectBuilder_h_
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
 @class PCProject;
 @class PCButton;

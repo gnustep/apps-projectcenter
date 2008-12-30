@@ -25,8 +25,8 @@
 #ifndef _PCAddFilesPanel_h_
 #define _PCAddFilesPanel_h_
 
-//#include <Foundation/Foundation.h>
-#include <AppKit/AppKit.h>
+//#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 @interface PCAddFilesPanel : NSOpenPanel
 {

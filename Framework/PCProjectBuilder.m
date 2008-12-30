@@ -23,24 +23,24 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <AppKit/AppKit.h>
+#import <AppKit/AppKit.h>
 
-#include <ProjectCenter/PCDefines.h>
-#include <ProjectCenter/PCSplitView.h>
-#include <ProjectCenter/PCButton.h>
+#import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCSplitView.h>
+#import <ProjectCenter/PCButton.h>
 
-#include <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCFileManager.h>
 
-#include <ProjectCenter/PCProjectManager.h>
-#include <ProjectCenter/PCProject.h>
-#include <ProjectCenter/PCProjectBuilder.h>
-#include <ProjectCenter/PCProjectBuilderOptions.h>
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectBuilder.h>
+#import <ProjectCenter/PCProjectBuilderOptions.h>
 
-#include <ProjectCenter/PCProjectEditor.h>
-#include <Protocols/CodeEditor.h>
+#import <ProjectCenter/PCProjectEditor.h>
+#import <Protocols/CodeEditor.h>
 
-#include <ProjectCenter/PCLogController.h>
-#include <ProjectCenter/PCPrefController.h>
+#import <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCPrefController.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]

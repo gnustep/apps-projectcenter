@@ -30,9 +30,9 @@
 #ifndef _PCBundleProject_h
 #define _PCBundleProject_h
 
-#include <AppKit/AppKit.h>
-#include <ProjectCenter/PCProject.h>
-#include <Protocols/ProjectType.h>
+#import <AppKit/AppKit.h>
+#import <ProjectCenter/PCProject.h>
+#import <Protocols/ProjectType.h>
 
 @class PCMakefileFactory;
 

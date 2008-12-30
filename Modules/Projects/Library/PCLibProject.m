@@ -23,12 +23,12 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#include <ProjectCenter/PCMakefileFactory.h>
-#include <ProjectCenter/PCFileCreator.h>
-#include <ProjectCenter/PCFileManager.h>
-#include <ProjectCenter/PCProjectBrowser.h>
+#import <ProjectCenter/PCMakefileFactory.h>
+#import <ProjectCenter/PCFileCreator.h>
+#import <ProjectCenter/PCFileManager.h>
+#import <ProjectCenter/PCProjectBrowser.h>
 
-#include "PCLibProject.h"
+#import "PCLibProject.h"
 
 @implementation PCLibProject
 

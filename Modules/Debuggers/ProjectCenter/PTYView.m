@@ -20,12 +20,12 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#include <PTYView.h>
+#import <PTYView.h>
 
-#include <fcntl.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <signal.h>
+#import <fcntl.h>
+#import <sys/stat.h>
+#import <unistd.h>
+#import <signal.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
