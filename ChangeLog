@@ -1,3 +1,10 @@
+2009-01-01 13:08-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/GNUmakefile
+	* Modules/Debuggers/ProjectCenter/PTYView.h
+	* Modules/Debuggers/ProjectCenter/PTYView.m: Change code to use
+	openpty(...).
+
 2008-12-31  Sergii Stoian <stoyan255@gmail.com>
 	
 	* Framework/PCFileNameIcon.m:

@@ -48,5 +48,8 @@ ProjectCenter_OBJC_FILES= \
     PCDebuggerView.m \
     PTYView.m
 
+
+ADDITIONAL_NATIVE_LIBS += util
+
 include ../../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make

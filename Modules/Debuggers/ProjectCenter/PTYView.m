@@ -22,13 +22,94 @@
 
 #import <PTYView.h>
 
-#import <fcntl.h>
 #import <sys/stat.h>
-#import <unistd.h>
 #import <signal.h>
+
+#import <stdio.h> /* for stderr and perror*/
+#import <errno.h> /* for int errno */
+#import <fcntl.h>
+#import <sys/termios.h>
+#import <sys/types.h>
+#import <unistd.h>
+#import <stropts.h>
+#import <stdlib.h>
+#import <string.h>
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
+#endif
+
+#if 0
+int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, const struct winsize *winp)
+{
+    int fdm, fds;
+    char *slaveName;
+    
+    fdm = open("/dev/ptmx", O_RDWR); /* open master */
+    if (fdm == -1)
+    {
+    	perror("openpty:open(master)");
+	return -1;
+    }
+    if(grantpt(fdm))                    /* grant access to the slave */
+    {
+    	perror("openpty:grantpt(master)");
+	close(fdm);
+	return -1;
+    }
+    if(unlockpt(fdm))                /* unlock the slave terminal */
+    {
+    	perror("openpty:unlockpt(master)");
+	close(fdm);
+	return -1;
+    }
+    
+    slaveName = ptsname(fdm);        /* get name of the slave */
+    if (slaveName == NULL)
+    {
+    	perror("openpty:ptsname(master)");
+	close(fdm);
+	return -1;
+    }
+    if (name)                        /* of name ptr not null, copy it name back */
+        strcpy(name, slaveName);
+    
+    fds = open(slaveName, O_RDWR | O_NOCTTY); /* open slave */
+    if (fds == -1)
+    {
+    	perror("openpty:open(slave)");
+	close (fdm);
+	return -1;
+    }
+    
+    /* ldterm and ttcompat are automatically pushed on the stack on some systems*/
+#ifdef __SOLARIS__
+    if (ioctl(fds, I_PUSH, "ptem") == -1) /* pseudo terminal module */
+    {
+    	perror("openpty:ioctl(I_PUSH, ptem");
+	close(fdm);
+	close(fds);
+	return -1;
+    }
+    if (ioctl(fds, I_PUSH, "ldterm") == -1)  /* ldterm must stay atop ptem */
+    {
+	perror("forkpty:ioctl(I_PUSH, ldterm");
+	close(fdm);
+	close(fds);
+	return -1;
+    }
+#endif
+    
+    /* set terminal parameters if present */
+    // if (termp)
+    //	ioctl(fds, TCSETS, termp);
+    //if (winp)
+    //    ioctl(fds, TIOCSWINSZ, winp);
+    
+    *amaster = fdm;
+    *aslave = fds;
+    return 0;
+}
 #endif
 
 @implementation PTYView
@@ -51,6 +132,7 @@
  */
 - (int) master
 {
+#if 0
   struct stat buff;
   static char hex[] = "0123456789abcdef"; 
   static char pty[] = "pqrs";
@@ -77,7 +159,17 @@
 	}
     }
 
-  return(-1); 
+  return(-1);
+#else
+  char *ptyname = NULL;
+  int fd = 0;
+  int sl = 0;
+  if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
+    {
+      NSLog(@"Call to openpty(...) failed.");
+    }
+  return master_fd;
+#endif 
 }
 
 /**
@@ -85,6 +177,7 @@
  */
 - (int) slave:(int)master_fd
 {
+#if 0
   int fd;
   
   // change to t, for slave tty.
@@ -95,6 +188,9 @@
       return(-1);
     }
   return(fd);
+#else
+  return slave_fd;
+#endif
 }
 
 /**
@@ -228,8 +324,6 @@
       withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
-  int master_fd, slave_fd;
-
   task = [[NSTask alloc] init];
   [task setArguments: array];
   [task setCurrentDirectoryPath: directory];
