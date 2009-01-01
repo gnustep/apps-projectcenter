@@ -1,3 +1,8 @@
+2009-01-01 16:05-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm:
+	Change the status bar size and set minimum window size.
+
 2009-01-01 13:08-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/GNUmakefile
