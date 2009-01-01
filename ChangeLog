@@ -1,3 +1,8 @@
+2009-01-01 17:41-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/Resources/Info.table: Add blank
+	to file extension so that tools can be debugged as well.
+
 2009-01-01 16:05-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm:
