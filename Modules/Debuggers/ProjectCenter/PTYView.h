@@ -25,7 +25,6 @@
 
 @interface PTYView : NSTextView
 {
-  char pty_name[12]; /* "/dev/[pt]tyXY" = 10 chars + null byte */
   NSTask *task;
   NSFileHandle *master_handle;
   NSFileHandle *slave_handle;
@@ -33,9 +32,7 @@
   int master_fd, slave_fd;
 }
 
-- (int)master;
-
-- (int)slave: (int)master;
+- (int)openpty;
 
 - (void)logString:(NSString *)str
           newLine:(BOOL)newLine;

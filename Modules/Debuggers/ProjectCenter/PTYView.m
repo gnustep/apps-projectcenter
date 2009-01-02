@@ -39,7 +39,17 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-#if 0
+/* check for solaris */
+#if defined (__SVR4) && defined (__sun)
+#define __SOLARIS__ 1
+#define USE_FORKPTY_REPLACEMENT 1
+#endif
+
+#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__))
+#  include <pty.h>
+#endif
+
+#ifdef USE_FORKPTY_REPLACEMENT
 int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, const struct winsize *winp)
 {
     int fdm, fds;
@@ -114,83 +124,15 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 
 @implementation PTYView
 /**
- * Instantiate this view.
- */
-- (id) initWithCoder: (NSCoder *)coder
-{
-  self = [super initWithCoder: coder];
-  if(self != nil)
-    {
-      // initialize the pty name field.
-      strcpy(pty_name, "/dev/ptyXY");    
-    }
-  return self;
-}
-
-/**
  * Creates master device. 
  */
-- (int) master
+- (int) openpty
 {
-#if 0
-  struct stat buff;
-  static char hex[] = "0123456789abcdef"; 
-  static char pty[] = "pqrs";
-  int i, fd;
-  char *p;
-
-  for (p = pty; *p != 0; p++) 
-    {
-      pty_name[8] = *p; 
-      pty_name[9] = '0'; 
-      
-      if (stat(pty_name, &buff) < 0)
-	{
-	  break;
-	}
-
-      for (i = 0; i < 16; i++) 
-	{
-	  pty_name[9] = hex[i]; 
-	  if ((fd = open(pty_name, O_RDWR)) >= 0) 
-	    {
-	      return(fd); 
-	    }
-	}
-    }
-
-  return(-1);
-#else
-  char *ptyname = NULL;
-  int fd = 0;
-  int sl = 0;
   if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
     {
       NSLog(@"Call to openpty(...) failed.");
     }
   return master_fd;
-#endif 
-}
-
-/**
- * Open the slave half of a pseudo-terminal.
- */
-- (int) slave:(int)master_fd
-{
-#if 0
-  int fd;
-  
-  // change to t, for slave tty.
-  pty_name[5] = 't'; 
-  if ((fd = open(pty_name, O_RDWR)) < 0) 
-    {
-      close(master_fd);
-      return(-1);
-    }
-  return(fd);
-#else
-  return slave_fd;
-#endif
 }
 
 /**
@@ -329,10 +271,9 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
   [task setCurrentDirectoryPath: directory];
   [task setLaunchPath: path];
 
-  master_fd = [self master];
+  master_fd = [self openpty];
   if(master_fd > 0)
     {
-      slave_fd = [self slave: master_fd];
       if(slave_fd > 0)
 	{
 	  slave_handle = [[NSFileHandle alloc] initWithFileDescriptor: slave_fd]; 

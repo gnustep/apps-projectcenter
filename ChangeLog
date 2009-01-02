@@ -1,3 +1,9 @@
+2009-01-01 19:40-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/PTYView.[mh]: Changes to use
+	new openpty replacement code on systems which don't have
+	openpty, otherwise use the built-in version.
+
 2009-01-01 17:41-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/Resources/Info.table: Add blank
