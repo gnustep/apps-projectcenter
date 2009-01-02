@@ -32,8 +32,6 @@
 @class PCProject;
 @class PCButton;
 
-@protocol CodeDebugger;
-
 @interface PCProjectLauncher : NSObject
 {
   PCProject     *project;           // Not retained!

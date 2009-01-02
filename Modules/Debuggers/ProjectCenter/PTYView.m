@@ -31,9 +31,12 @@
 #import <sys/termios.h>
 #import <sys/types.h>
 #import <unistd.h>
-#import <stropts.h>
 #import <stdlib.h>
 #import <string.h>
+
+#if !defined(__OpenBSD__)
+#import <stropts.h>
+#endif
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -45,7 +48,7 @@
 #define USE_FORKPTY_REPLACEMENT 1
 #endif
 
-#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__))
+#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__)) && !(defined (__OpenBSD__))
 #  include <pty.h>
 #endif
 
