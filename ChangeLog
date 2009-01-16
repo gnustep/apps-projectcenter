@@ -3,6 +3,9 @@
 	* Framework/GNUmakefile: Include PCFileNameField.h and
 	PCFileNameIcon.h in ProjectCenter_HEADER_FILES as 
 	referenced by PCProjectInspector.h [fixes bug #21619]
+	* Framework/PCProject.m: 
+	(fileTypesForCategoryKey:): add "nib" as recognizable interface 
+	file type.
 
 2009-01-13 Riccardo Mottola <rmottola@users.sf.net>
 
