@@ -49,6 +49,9 @@ ProjectCenter_HEADER_FILES = \
   PCProjectLoadedFiles.h \
   PCProjectLoadedFilesPanel.h \
   \
+  PCFileNameField.h \
+  PCFileNameIcon.h \
+  \
   PCPrefController.h \
   PCLogController.h
 

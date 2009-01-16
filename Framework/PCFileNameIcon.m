@@ -33,6 +33,7 @@
 - (void)awakeFromNib
 {
   filePath = nil;
+//  [self setEditable:NO]; // prevents dragging
   [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
   [self 
     registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
@@ -44,7 +45,7 @@
 
   filePath = nil;
   [self setRefusesFirstResponder:YES];
-  [self setEditable:NO];
+//  [self setEditable:NO]; // prevents dragging
   [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
 
   return self;
@@ -86,6 +87,14 @@
 	{
 	  [fileNameField setStringValue:[delegate fileNameIconTitle]];
 	}
+      if ([delegate respondsToSelector:@selector(isFileNameIconDraggable)])
+	{
+	  [self setEditable:[delegate isFileNameIconDraggable]];
+	}
+/*      if ([delegate respondsToSelector:@selector(fileNameIconTitle)])
+	{
+	  [fileNameField setStringValue:[delegate fileNameIconTitle]];
+	}*/
     }
 }
 
@@ -169,6 +178,12 @@
     {
       [delegate concludeDraggingOf:paths];
     }
+}
+
+// --- NSDraggingSource protocol methods
+- (void)draggedImage:(NSImage *)anImage beganAt:(NSPoint)aPoint
+{
+  NSLog(@"Icon dragging started");
 }
 
 @end

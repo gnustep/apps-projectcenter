@@ -43,12 +43,16 @@
 
 @interface PCFileNameIcon (FileNameIconDelegate)
 
+// --- NSDraggingDestination protocol methods
 - (NSImage *)fileNameIconImage;
 - (NSString *)fileNameIconTitle;
 - (BOOL)canPerformDraggingOf:(NSArray *)paths;
 - (BOOL)prepareForDraggingOf:(NSArray *)paths;
 - (BOOL)performDraggingOf:(NSArray *)paths;
 - (BOOL)concludeDraggingOf:(NSArray *)paths;
+
+// --- NSDraggingSource protocol methods
+- (void)draggedImage:(NSImage *)anImage beganAt:(NSPoint)aPoint;
 
 @end
 

@@ -26,7 +26,7 @@
 #ifndef _PCBundleManager_h_
 #define _PCBundleManager_h_
 
-#import <AppKit/AppKit.h>
+#include <AppKit/AppKit.h>
 
 @interface PCBundleManager : NSObject
 {
