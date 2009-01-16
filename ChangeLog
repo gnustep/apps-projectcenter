@@ -1,8 +1,16 @@
+2009-01-17  Yavor Doganov  <yavor@gnu.org> 
+
+        * Framework/GNUmakefile:
+        (ProjectCenter_LIBRARIES_DEPEND_UPON): Define to `$(OBJC_LIBS)
+        $(FND_LIBS) $(GUI_LIBS)' to avoid unresolved symbols. Fixes
+	bug #23792.
+
 2009-01-17  Sergii Stoian <stoyan255@gmail.com>
 	
-	* Framework/GNUmakefile: Include PCFileNameField.h and
-	PCFileNameIcon.h in ProjectCenter_HEADER_FILES as 
-	referenced by PCProjectInspector.h [fixes bug #21619]
+	* Framework/GNUmakefile:
+	(ProjectCenter_HEADER_FILES): Include PCFileNameField.h and
+	PCFileNameIcon.h in  as referenced by PCProjectInspector.h.
+	Fixes bug #21619.
 	* Framework/PCProject.m: 
 	(fileTypesForCategoryKey:): add "nib" as recognizable interface 
 	file type.

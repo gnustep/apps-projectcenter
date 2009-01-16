@@ -13,7 +13,7 @@ ProjectCenter_CURRENT_VERSION_NAME = 0.5.0
 ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
 ProjectCenter_HEADER_FILES_DIR = ../Headers/ProjectCenter
 
-ProjectCenter_LIBRARIES_DEPEND_UPON += -lgnustep-gui
+ProjectCenter_LIBRARIES_DEPEND_UPON += $(OBJC_LIBS) $(FND_LIBS) $(GUI_LIBS)
 
 #
 # Subprojects
