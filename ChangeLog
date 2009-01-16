@@ -2,7 +2,7 @@
 	
 	* Framework/GNUmakefile: Include PCFileNameField.h and
 	PCFileNameIcon.h in ProjectCenter_HEADER_FILES as 
-	referenced by PCProjectInspector.h
+	referenced by PCProjectInspector.h [fixes bug #21619]
 
 2009-01-13 Riccardo Mottola <rmottola@users.sf.net>
 
