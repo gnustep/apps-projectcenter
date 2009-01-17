@@ -59,7 +59,6 @@
 
 - (void)awakeFromNib
 {
-  [[NSApp mainMenu] setTitle:@"$PROJECTNAME$"];
 }
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotif

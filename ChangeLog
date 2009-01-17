@@ -14,6 +14,9 @@
 	* Framework/PCProject.m: 
 	(fileTypesForCategoryKey:): add "nib" as recognizable interface 
 	file type.
+	* Modules/Projects/Application/Resources/AppController.m:
+	(awakeFromNib:): Remove setting menu title for better GORM
+	integration (Thanks to German Arias).
 
 2009-01-13 Riccardo Mottola <rmottola@users.sf.net>
 
