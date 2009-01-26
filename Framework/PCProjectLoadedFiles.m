@@ -27,7 +27,6 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectEditor.h>
 
-#import <ProjectCenter/PCPrefController.h>
 #import <ProjectCenter/PCLogController.h>
 
 #import <Protocols/CodeEditor.h>

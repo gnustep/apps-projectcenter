@@ -98,7 +98,8 @@ Modules/Debuggers/ProjectCenter/ProjectCenter.debugger
 ProjectCenter_LOCALIZED_RESOURCE_FILES = \
 ProjectCenter.gorm \
 Info.gorm \
-FindPanel.gorm
+FindPanel.gorm \
+Preferences.gorm
 
 ProjectCenter_LANGUAGES = \
 English
@@ -110,7 +111,8 @@ English
 ProjectCenter_HEADERS = \
 Headers/PCAppController.h \
 Headers/PCInfoController.h \
-Headers/PCMenuController.h
+Headers/PCMenuController.h \
+Headers/PCPrefController.h
 
 #
 # Class files
@@ -119,6 +121,7 @@ ProjectCenter_OBJC_FILES = \
 PCAppController.m \
 PCInfoController.m \
 PCMenuController.m \
+PCPrefController.m \
 TextFinder.m \
 ProjectCenter_main.m
 

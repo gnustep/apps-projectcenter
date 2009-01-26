@@ -19,13 +19,13 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
-#import <ProjectCenter/PCPrefController.h>
 #import <ProjectCenter/PCLogController.h>
 #import <ProjectCenter/PCFileManager.h>
 
 #import "PCAppController.h"
 #import "PCMenuController.h"
 #import "PCInfoController.h"
+#import "PCPrefController.h"
 
 #import <ProjectCenter/ProjectCenter.h>
 

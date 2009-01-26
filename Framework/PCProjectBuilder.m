@@ -40,7 +40,7 @@
 #import <Protocols/CodeEditor.h>
 
 #import <ProjectCenter/PCLogController.h>
-#import <ProjectCenter/PCPrefController.h>
+#import <Protocols/Preferences.h>
 
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]
@@ -454,11 +454,14 @@
 // --- Actions
 - (BOOL)prebuildCheck
 {
-  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
-  PCFileManager    *pcfm = [PCFileManager defaultManager];
-  NSFileManager    *fm = [NSFileManager defaultManager];
-  NSString         *buildDir = [prefs objectForKey:RootBuildDirectory];
-  NSString         *projectBuildDir;
+//  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSString           *buildDir = [prefs objectForKey:RootBuildDirectory];
+  PCFileManager      *pcfm = [PCFileManager defaultManager];
+  NSFileManager      *fm = [NSFileManager defaultManager];
+  NSString           *projectBuildDir;
+
+  NSLog (@"BuildDir = %@", buildDir);
 
   // Checking prerequisites
   if ([project isProjectChanged])

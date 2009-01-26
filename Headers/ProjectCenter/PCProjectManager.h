@@ -28,6 +28,8 @@
 
 #import <AppKit/AppKit.h>
 
+#import <Protocols/Preferences.h>
+
 @class PCBundleManager;
 @class PCFileManager;
 @class PCEditorManager;
@@ -45,7 +47,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 @interface PCProjectManager : NSObject
 {
   id                  delegate;
-  id                  prefController;
+  id <PCPreferences>  prefController;
 
   PCBundleManager     *bundleManager;
   NSMutableDictionary *projectTypes;
@@ -91,7 +93,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (void)setDelegate:(id)aDelegate;
 - (id)delegate;
 - (void)setPrefController:(id)aController;
-- (id)prefController;
+- (id <PCPreferences>)prefController;
 
 - (void)createProjectTypeAccessaryView;
 - (NSMutableDictionary *)loadProjectTypesInfo;

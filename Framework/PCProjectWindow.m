@@ -38,7 +38,7 @@
 #import <ProjectCenter/PCProjectLoadedFiles.h>
 #import <ProjectCenter/PCProjectInspector.h>
 
-#import <ProjectCenter/PCPrefController.h>
+#import <Protocols/Preferences.h>
 #import <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectWindow
@@ -338,7 +338,9 @@
   NSView  *view = [[project projectBuilder] componentView];
   NSPanel *buildPanel = [[project projectManager] buildPanel];
   
-  if ([[[PCPrefController sharedPCPreferences] objectForKey:SeparateBuilder]
+/*  if ([[[PCPrefController sharedPCPreferences] objectForKey:SeparateBuilder]
+      isEqualToString: @"YES"])*/
+  if ([[[[project projectManager] prefController] objectForKey:SeparateBuilder]
       isEqualToString: @"YES"])
     {
       if ([customView contentView] == view)

@@ -24,7 +24,6 @@
 */
 
 #import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCPrefController.h>
 #import <ProjectCenter/PCLogController.h>
 
 #import <ProjectCenter/PCBundleManager.h>
@@ -127,7 +126,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   prefController = aController;
 }
 
-- (id)prefController
+- (id <PCPreferences>)prefController
 {
   return prefController;
 }
@@ -198,8 +197,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSTimeInterval interval;
 
-  interval = [[[PCPrefController sharedPCPreferences] 
-    objectForKey:AutoSavePeriod] intValue];
+/*  interval = [[[PCPrefController sharedPCPreferences] 
+    objectForKey:AutoSavePeriod] intValue];*/
+
+  interval = [[prefController objectForKey:AutoSavePeriod] intValue];
 
   if (interval > 0 && saveTimer == nil)
     {

@@ -25,8 +25,7 @@
 
 #import <AppKit/AppKit.h>
 
-#define PCSavePeriodDidChangeNotification @"PCSavePeriodDidChangeNotification"
-#define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"
+#import <Protocols/Preferences.h>
 
 #ifndef PCDefaultBuildTool 
 #define PCDefaultBuildTool @"/usr/bin/make"
@@ -36,7 +35,7 @@
 #define PCDefaultDebugger @"/usr/bin/gdb"
 #endif
 
-@interface PCPrefController : NSObject
+@interface PCPrefController : NSObject <PCPreferences>
 {
   IBOutlet NSPanel       *panel;
   IBOutlet NSPopUpButton *popupButton;
@@ -94,8 +93,8 @@
 - (void)setDefaultValues;
 - (void)loadPreferences;
 
-- (NSDictionary *)preferencesDict;
-- (id)objectForKey:(NSString *)key;
+//- (NSDictionary *)preferencesDict;
+//- (id)objectForKey:(NSString *)key;
 - (NSString *)selectFileWithTypes:(NSArray *)types;
 - (void)showPanel:(id)sender;
 
