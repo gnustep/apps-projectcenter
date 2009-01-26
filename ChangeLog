@@ -1,3 +1,19 @@
+2009-01-27  Sergii Stoian <stoyan255@gmail.com>
+	
+	* Framework/GNUmakefile: Remove Preferences.gorm, 
+	Headers/PCPrefController.h, PCPrefController.m
+	* GNUmakefile: Add Preferences.gorm, Headers/PCPrefController.h,
+	PCPrefController.m
+	* Framework/PCProjectManager.m: Access PCPrefController via var
+	preController which is set by PCAppController.
+	* Framework/PCProjectLoadedFiles.m: Remove #import of
+	PCPrefController.h which is not used.
+	* Framework/PCProjectBuilder.m: Access PCPrefController via
+	PCProjectManager.
+	* Framework/PCProjectWindow.m: ditto.
+	* Framework/GNUmakefile.preamble: Remove -W from ADDITIONAL_OBJCFLAGS.
+	It removes useless warnings from GNUstep libraries.
+
 2009-01-17  Yavor Doganov  <yavor@gnu.org> 
 
         * Framework/GNUmakefile:
