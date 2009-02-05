@@ -60,7 +60,8 @@
 	    iconColumn,
 	    roleColumn,
 	    classColumn,
-	    appTypeField
+	    appTypeField,
+	    helpText
 	);
 	Super = NSObject;
     };
@@ -70,5 +71,12 @@
 	Outlets = (
 	);
 	Super = NSTextField;
+    };
+    PCFileNameIcon = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSImageView;
     };
 }

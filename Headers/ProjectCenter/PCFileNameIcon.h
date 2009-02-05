@@ -29,10 +29,9 @@
 
 @interface PCFileNameIcon : NSImageView
 {
-  NSString    *filePath;
-  NSTextField *fileNameField;
-
-  id          delegate;
+  NSString     *filePath;
+  NSTextField  *fileNameField;
+  id           delegate;
 }
 
 - (void)setFileNameField:(NSTextField *)field;
@@ -46,6 +45,7 @@
 // --- NSDraggingDestination protocol methods
 - (NSImage *)fileNameIconImage;
 - (NSString *)fileNameIconTitle;
+- (NSString *)fileNameIconPath;
 - (BOOL)canPerformDraggingOf:(NSArray *)paths;
 - (BOOL)prepareForDraggingOf:(NSArray *)paths;
 - (BOOL)performDraggingOf:(NSArray *)paths;

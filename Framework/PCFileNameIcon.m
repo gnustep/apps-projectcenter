@@ -33,8 +33,9 @@
 - (void)awakeFromNib
 {
   filePath = nil;
+  [self setRefusesFirstResponder:YES];
 //  [self setEditable:NO]; // prevents dragging
-  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
+//  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
   [self 
     registerForDraggedTypes:[NSArray arrayWithObject:NSFilenamesPboardType]];
 }
@@ -46,14 +47,14 @@
   filePath = nil;
   [self setRefusesFirstResponder:YES];
 //  [self setEditable:NO]; // prevents dragging
-  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
+//  [self setImage:[NSImage imageNamed:@"ProjectCenter"]];
 
   return self;
 }
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"PCFileNameIcon: dealloc");
 #endif
 
@@ -61,6 +62,7 @@
 
   RELEASE(fileNameField);
   RELEASE(delegate);
+  RELEASE(filePath);
 
   [super dealloc];
 }
@@ -72,7 +74,7 @@
 
 - (void)setDelegate:(id)object
 {
-  delegate = object;
+  ASSIGN(delegate, object);
 }
 
 - (void)updateIcon
@@ -83,22 +85,44 @@
 	{
 	  [self setImage:[delegate fileNameIconImage]];
 	}
-      if ([delegate respondsToSelector:@selector(fileNameIconTitle)])
+      if ((fileNameField != nil) &&
+	  [delegate respondsToSelector:@selector(fileNameIconTitle)])
 	{
 	  [fileNameField setStringValue:[delegate fileNameIconTitle]];
 	}
-      if ([delegate respondsToSelector:@selector(isFileNameIconDraggable)])
+      if ([delegate respondsToSelector:@selector(fileNameIconPath)])
 	{
-	  [self setEditable:[delegate isFileNameIconDraggable]];
+	  ASSIGN(filePath, [delegate fileNameIconPath]);
 	}
-/*      if ([delegate respondsToSelector:@selector(fileNameIconTitle)])
-	{
-	  [fileNameField setStringValue:[delegate fileNameIconTitle]];
-	}*/
     }
 }
 
 // --- Drag and drop
+
+- (void)mouseDown:(NSEvent *)theEvent
+{
+  NSArray      *fileList = [NSArray arrayWithObjects:filePath, nil];
+  NSPasteboard *pboard = [NSPasteboard pasteboardWithName:NSDragPboard];
+  NSPoint      dragPosition;
+
+  [pboard declareTypes:[NSArray arrayWithObject:NSFilenamesPboardType]
+		 owner:nil];
+  [pboard setPropertyList:fileList forType:NSFilenamesPboardType];
+
+  // Start the drag operation
+  dragPosition = [self convertPoint:[theEvent locationInWindow]
+			   fromView:nil];
+  dragPosition.x -= 16;
+  dragPosition.y -= 16;
+
+  [self dragImage:[self image]
+	       at:dragPosition
+	   offset:NSZeroSize
+	    event:theEvent
+       pasteboard:pboard
+	   source:self
+	slideBack:YES];
+}
 
 // --- NSDraggingDestination protocol methods
 // -- Before the image is released
@@ -108,7 +132,7 @@
   NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
   unsigned int draggingOp = NSDragOperationNone;
 
-  NSLog(@"Dragging entered");
+//  NSLog(@"Dragging entered: %@", paths);
 
   if (![paths isKindOfClass:[NSArray class]] || [paths count] == 0)
     {
@@ -181,9 +205,10 @@
 }
 
 // --- NSDraggingSource protocol methods
-- (void)draggedImage:(NSImage *)anImage beganAt:(NSPoint)aPoint
+
+- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
-  NSLog(@"Icon dragging started");
+  return NSDragOperationCopy;
 }
 
 @end

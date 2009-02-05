@@ -675,6 +675,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return PCFileNameFieldNoFiles;
 }
 
+- (NSString *)fileNameIconPath
+{
+  NSString *fileName = [self nameOfSelectedFile];
+  NSString *category = [self nameOfSelectedCategory];
+
+  return [project pathForFile:fileName 
+		       forKey:[project keyForCategory:category]];
+}
+
 - (BOOL)canPerformDraggingOf:(NSArray *)paths
 {
   NSString     *category = [self nameOfSelectedCategory];

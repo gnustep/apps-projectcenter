@@ -34,6 +34,7 @@
 #import <ProjectCenter/PCDefines.h>
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectInspector.h>
+#import <ProjectCenter/PCFileNameIcon.h>
 
 #import <Protocols/ProjectType.h>
 
@@ -54,10 +55,9 @@
   IBOutlet PCAppTextField *helpFileField;
   IBOutlet PCAppTextField *mainNIBField;
 
-  IBOutlet NSImageView    *iconView;
+  IBOutlet NSTextView     *helpText;
+  IBOutlet PCFileNameIcon *iconView;
   NSImage                 *icon;
-  IBOutlet NSButton       *setFieldButton;
-  IBOutlet NSButton       *clearFieldButton;
 
   IBOutlet NSButton       *docTypesButton;
 

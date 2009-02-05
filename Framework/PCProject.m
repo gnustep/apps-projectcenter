@@ -89,7 +89,7 @@ NSString
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"PCProject %@: dealloc", projectName);
 #endif
   

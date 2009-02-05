@@ -120,7 +120,7 @@
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"PCAppProject: dealloc");
 #endif
 
@@ -356,7 +356,7 @@
       [self clearAppIcon:self];
       if ([super renameFile:ff toFile:tf] == YES)
 	{
-	  [self setAppIconWithImageAtPath:
+	  [self setAppIconWithFileAtPath:
 	    [[self dirForCategoryKey:categoryKey] 
 	      stringByAppendingPathComponent:tf]];
 	  success = YES;

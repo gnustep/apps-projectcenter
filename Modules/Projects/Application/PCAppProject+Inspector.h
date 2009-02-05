@@ -32,30 +32,28 @@
 // ----------------------------------------------------------------------------
 // --- User Interface
 // ----------------------------------------------------------------------------
-- (void)createProjectAttributes;
 - (NSView *)projectAttributesView;
 
 // ----------------------------------------------------------------------------
 // --- Actions
 // ----------------------------------------------------------------------------
+- (void)setAppType:(id)sender;
 - (void)setAppClass:(id)sender;
-- (void)setFile:(id)sender;
-- (void)clearFile:(id)sender;
-- (void)setAppIcon:(id)sender;
+
 - (void)clearAppIcon:(id)sender;
-- (void)setHelpFile:(id)sender;
+- (BOOL)setAppIconWithFileAtPath:(NSString *)path;
+
 - (void)clearHelpFile:(id)sender;
-- (BOOL)setAppIconWithImageAtPath:(NSString *)path;
-- (void)setMainNib:(id)sender;
-- (BOOL)setMainNibWithFileAtPath:(NSString *)path;
+
 - (void)clearMainNib:(id)sender;
+- (BOOL)setMainNibWithFileAtPath:(NSString *)path;
 
 - (void)setDocBasedApp:(id)sender;
 
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView;
-- (id)            tableView: (NSTableView *)aTableView
-  objectValueForTableColumn: (NSTableColumn *)aTableColumn
-                        row: (int)rowIndex;
+- (id)            tableView:(NSTableView *)aTableView
+  objectValueForTableColumn:(NSTableColumn *)aTableColumn
+                        row:(int)rowIndex;
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
@@ -68,6 +66,14 @@
 // ----------------------------------------------------------------------------
 - (void)updateInspectorValues:(NSNotification *)aNotif;
 - (void)tfGetFocus:(NSNotification *)aNotif;
+
+@end
+
+@interface PCAppProject (FileNameIconDelegate)
+
+- (BOOL)canPerformDraggingOf:(NSArray *)paths;
+- (BOOL)prepareForDraggingOf:(NSArray *)paths;
+- (BOOL)performDraggingOf:(NSArray *)paths;
 
 @end
 

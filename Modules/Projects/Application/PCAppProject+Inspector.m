@@ -22,6 +22,7 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#import <Foundation/NSFileManager.h>
 #import <ProjectCenter/PCMakefileFactory.h>
 
 #import "PCAppProject+Inspector.h"
@@ -81,38 +82,38 @@ cleanup(NSMutableDictionary *m, NSString *k)
 
 - (void)awakeFromNib
 {
+  [[NSNotificationCenter defaultCenter] addObserver:self
+                                           selector:@selector(tfGetFocus:)
+                                               name:PCITextFieldGetFocus
+                                             object:nil];
+
+  // Icon view
+  [iconView setImage:nil];
+  [iconView setDelegate:self];
+
+  // Help text view
+  [helpText setDrawsBackground:NO];
+  [helpText setTextColor:[NSColor darkGrayColor]];
+  [helpText setFont:[NSFont systemFontOfSize:11.0]];
+  [helpText setText:@"Click on the field and drop file in the box above"];
+
+  // Document types buttons
+  [addDocTypeButton setRefusesFirstResponder:YES];
+  [removeDocTypeButton setRefusesFirstResponder:YES];
   [docBasedAppButton setRefusesFirstResponder:YES];
 
+  [self setDocBasedApp:docBasedAppButton];
+  
   [docBasedAppButton setState:
-    ([[projectDict objectForKey: PCDocumentBasedApp]
-     isEqualToString: @"YES"]) ? NSOnState : NSOffState];
+    ([[projectDict objectForKey:PCDocumentBasedApp]
+     isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+
+  [self updateInspectorValues:nil];
 }
 
 // ----------------------------------------------------------------------------
 // --- User Interface
 // ----------------------------------------------------------------------------
-
-- (void)createProjectAttributes
-{
-  // TFs Buttons
-  [setFieldButton setRefusesFirstResponder: YES];
-  [clearFieldButton setRefusesFirstResponder: YES];
-
-  // Document types buttons
-  [addDocTypeButton setRefusesFirstResponder: YES];
-  [removeDocTypeButton setRefusesFirstResponder: YES];
-  [docBasedAppButton setRefusesFirstResponder: YES];
-
-  [self setDocBasedApp: docBasedAppButton];
-  
-  [[NSNotificationCenter defaultCenter] addObserver: self
-                                           selector: @selector(tfGetFocus:)
-                                               name: PCITextFieldGetFocus
-                                             object: nil];
-  [projectAttributesView retain];
-
-  [self updateInspectorValues: nil];
-}
 
 - (NSView *)projectAttributesView
 {
@@ -123,7 +124,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
 	  NSLog(@"PCAppProject: error loading Inspector NIB!");
 	  return nil;
 	}
-      [self createProjectAttributes];
+      [projectAttributesView retain];
     }
 
   return projectAttributesView;
@@ -133,248 +134,119 @@ cleanup(NSMutableDictionary *m, NSString *k)
 // --- Actions
 // ----------------------------------------------------------------------------
 
-- (void)setAppType: (id)sender
+- (void)setAppType:(id)sender
 {
   NSString       *appType = [appTypeField stringValue];
-  NSMutableArray *libs = [[projectDict objectForKey: PCLibraries] mutableCopy];
+  NSMutableArray *libs = [[projectDict objectForKey:PCLibraries] mutableCopy];
 
-  if ([appType isEqualToString: @"Renaissance"])
+  if ([appType isEqualToString:@"Renaissance"])
     {
-      [libs addObject: @"Renaissance"];
+      [libs addObject:@"Renaissance"];
     }
   else
     {
-      [libs removeObject: @"Renaissance"];
+      [libs removeObject:@"Renaissance"];
     }
 
-  [self setProjectDictObject: libs forKey: PCLibraries notify: YES];
+  [self setProjectDictObject:libs forKey:PCLibraries notify:YES];
   RELEASE(libs);
-  [self setProjectDictObject: appType forKey: PCAppType notify: YES];
+  [self setProjectDictObject:appType forKey:PCAppType notify:YES];
 }
 
-- (void)setAppClass: (id)sender
+- (void)setAppClass:(id)sender
 {
-  [self setProjectDictObject: [appClassField stringValue]
-                      forKey: PCPrincipalClass
-		      notify: YES];
-}
-
-- (void)setIconViewImage: (NSImage *)image
-{
-  [iconView setImage: nil];
-  [iconView display];
-
-  if (image == nil)
-    {
-      return;
-    }
-
-  [iconView setImage: image];
-  [iconView display];
-}
-
-- (void)setFile: (id)sender
-{
-  if (!activeTextField)
-    {
-      return;
-    }
-
-  if (activeTextField == appImageField)
-    {
-      [self setAppIcon: self];
-    }
-  else if (activeTextField == helpFileField)
-    {
-      [self setHelpFile: self];
-    }
-  else if (activeTextField == mainNIBField)
-    {
-      [self setMainNib: self];
-    }
-}
-
-- (void)clearFile: (id)sender
-{
-  if (!activeTextField)
-    {
-      return;
-    }
-
-  if (activeTextField == appImageField)
-    {
-      [self clearAppIcon: self];
-    }
-  else if (activeTextField == helpFileField)
-    {
-      [self clearHelpFile: self];
-    }
-  else if (activeTextField == mainNIBField)
-    {
-      [self clearMainNib: self];
-    }
-  [self setIconViewImage: nil];
+  [self setProjectDictObject:[appClassField stringValue]
+                      forKey:PCPrincipalClass
+		      notify:YES];
 }
 
 // Application Icon
-- (void)setAppIcon: (id)sender
+- (void)clearAppIcon:(id)sender
 {
-  int         result;  
-  NSArray     *fileTypes = [NSImage imageFileTypes];
-  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-  NSString    *dir = nil;
-
-  [openPanel setAllowsMultipleSelection: NO];
-  [openPanel setTitle: @"Set Application Icon"];
+  [appImageField setStringValue:@""];
+  [infoDict setObject:@"" forKey:@"NSIcon"];
+  [infoDict setObject:@"" forKey:@"ApplicationIcon"];
   
-  dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey: @"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory: dir
-                                      file: nil 
-                                     types: fileTypes];
+  [self setProjectDictObject:@"" forKey:PCAppIcon notify:YES];
+}
 
-  if (result == NSOKButton)
+- (BOOL)setAppIconWithFileAtPath:(NSString *)path
+{
+  NSImage       *image = [[NSImage alloc] initWithContentsOfFile:path];
+  NSString      *imageName = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSArray       *fileTypes = [self fileTypesForCategoryKey:PCImages];
+
+  NSLog(@"setAppIconWithFileAtPath -- %@", path);
+
+  // TODO: GNUstep bug - NSImage should return nil if image cannot
+  // be created, but it doesn't
+  if (!path || !image || ![fm fileExistsAtPath:path]
+       || ![fileTypes containsObject:[path pathExtension]])
     {
-      NSString *imageFilePath = [[openPanel filenames] objectAtIndex: 0];
-
-      if (![self setAppIconWithImageAtPath: imageFilePath])
-	{
-	  NSRunAlertPanel(@"Error while opening file!", 
-			  @"Couldn't open %@", @"OK", nil, nil,imageFilePath);
-	}
-    }  
-}
-
-- (void)setHelpFile: (id)sender
-{
-  int         result;  
-  NSArray     *fileTypes = [NSArray arrayWithObjects:
-    @"rtfd", @"rtf", @"txt", nil];
-  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-  NSString    *dir = nil;
-
-  [openPanel setAllowsMultipleSelection: NO];
-  [openPanel setTitle: @"Set Help File"];
-  
-  dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey: @"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory: dir
-                                      file: nil 
-                                     types: fileTypes];
-
-  if (result == NSOKButton)
-    {
-      NSString *path = [[openPanel filenames] objectAtIndex: 0];
-      NSString *file = [path lastPathComponent];
-
-      [helpFileField setStringValue: file];
-
-      [self addAndCopyFiles: [NSArray arrayWithObject: path]
-		     forKey: PCDocuFiles];
-  
-      [infoDict setObject: file forKey: @"GSHelpContentsFile"];
-      [self setProjectDictObject: file forKey: PCHelpFile notify: YES];
-    }  
-}
-
-- (void)clearAppIcon: (id)sender
-{
-  [appImageField setStringValue: @""];
-  [infoDict setObject: @"" forKey: @"NSIcon"];
-  [infoDict setObject: @"" forKey: @"ApplicationIcon"];
-  
-  [self setProjectDictObject: @"" forKey: PCAppIcon notify: YES];
-}
-
-- (void)clearHelpFile: (id)sender
-{
-  [infoDict removeObjectForKey: @"GSHelpContentsFile"];
-  [self setProjectDictObject: @"" forKey: PCHelpFile notify: YES];
-}
-
-- (BOOL)setAppIconWithImageAtPath: (NSString *)path
-{
-  NSImage  *image = nil;
-  NSString *imageName = nil;
-
-  if (!(image = [[NSImage alloc] initWithContentsOfFile: path]))
-    {
+      [iconView setImage:nil];
+      [self clearAppIcon:self];
       return NO;
     }
 
+  // TODO: Image nil here even if 'path' exists. Why? It results in
+  // empty imageView on drag&drop operation.
+  [iconView setImage:image];
+
   imageName = [path lastPathComponent];
+  [appImageField setStringValue:imageName];
 
-  [appImageField setStringValue: imageName];
-
-  [self setIconViewImage: image];
-
-  [self addAndCopyFiles: [NSArray arrayWithObject: path] forKey: PCImages];
+  [self addAndCopyFiles:[NSArray arrayWithObject:path] forKey:PCImages];
   
-  [infoDict setObject: imageName forKey: @"NSIcon"];
-  [infoDict setObject: imageName forKey: @"ApplicationIcon"];
+  [infoDict setObject:imageName forKey:@"NSIcon"];
+  [infoDict setObject:imageName forKey:@"ApplicationIcon"];
 
-  [self setProjectDictObject: imageName forKey: PCAppIcon notify: YES];
+  [self setProjectDictObject:imageName forKey:PCAppIcon notify:YES];
 
   return YES;
 }
 
-// Main Interface File
-- (void)setMainNib: (id)sender
+// Help file
+- (void)clearHelpFile:(id)sender
 {
-  int         result;
-  NSOpenPanel *openPanel = [NSOpenPanel openPanel];
-  NSString    *dir = nil;
-  NSArray     *types = nil;
+  [infoDict removeObjectForKey:@"GSHelpContentsFile"];
+  [self setProjectDictObject:@"" forKey:PCHelpFile notify:YES];
+}
 
-  [openPanel setAllowsMultipleSelection: NO];
-  [openPanel setTitle: @"Set Main Interface File"];
-  if ([[projectDict objectForKey: PCAppType] isEqualToString: @"GORM"])
-    {
-      types = [NSArray arrayWithObject: @"gorm"];
-    }
-  else
-    {
-      types = [NSArray arrayWithObject: @"gsmarkup"];
-    }
-  
-  dir = [[NSUserDefaults standardUserDefaults]
-    objectForKey: @"LastOpenDirectory"];
-  result = [openPanel runModalForDirectory: dir file: nil types: types];
+// Main Interface File
+- (void)clearMainNib: (id)sender
+{
+  [mainNIBField setStringValue:@""];
+  [infoDict setObject:@"" forKey:@"NSMainNibFile"];
 
-  if (result == NSOKButton)
-    {
-      NSString *file = [[openPanel filenames] objectAtIndex: 0];
-
-      if (![self setMainNibWithFileAtPath: file])
-	{
-	  NSRunAlertPanel(@"Error while opening file!", 
-			  @"Couldn't open %@", @"OK", nil, nil,file);
-	}
-    }  
+  [self setProjectDictObject:@"" forKey:PCMainInterfaceFile notify:YES];
 }
 
 - (BOOL)setMainNibWithFileAtPath: (NSString *)path
 {
-  NSString *nibName = [path lastPathComponent];
+  NSString      *nibName = [path lastPathComponent];
+  NSFileManager *fm = [NSFileManager defaultManager];
+  NSArray       *fileTypes = [self fileTypesForCategoryKey:PCInterfaces];
 
-  [self setIconViewImage: [[NSWorkspace sharedWorkspace] iconForFile: path]];
+  // TODO: check if it's interface file and it exists
+  if (![fm fileExistsAtPath:path]
+      || ![fileTypes containsObject:[path pathExtension]])
+    {
+      [iconView setImage:nil];
+      [self clearMainNib:self];
+      return NO;
+    }
 
-  [self addAndCopyFiles: [NSArray arrayWithObject: path] forKey: PCInterfaces];
-  [infoDict setObject: nibName forKey: @"NSMainNibFile"];
+  [iconView setImage:[[NSWorkspace sharedWorkspace] iconForFile:path]];
 
-  [self setProjectDictObject: nibName forKey: PCMainInterfaceFile notify: YES];
+  [self addAndCopyFiles:[NSArray arrayWithObject: path] forKey:PCInterfaces];
+  [infoDict setObject:nibName forKey:@"NSMainNibFile"];
 
-  [mainNIBField setStringValue: nibName];
+  [self setProjectDictObject:nibName forKey:PCMainInterfaceFile notify:YES];
+
+  [mainNIBField setStringValue:nibName];
 
   return YES;
-}
-
-- (void)clearMainNib: (id)sender
-{
-  [mainNIBField setStringValue: @""];
-  [infoDict setObject: @"" forKey: @"NSMainNibFile"];
-
-  [self setProjectDictObject: @"" forKey: PCMainInterfaceFile notify: YES];
 }
 
 // Document Types
@@ -683,15 +555,15 @@ cleanup(NSMutableDictionary *m, NSString *k)
 //  NSLog (@"PCAppProject: updateInspectorValues");
 
   // Project Attributes view
-  [appTypeField selectItemWithTitle: [projectDict objectForKey: PCAppType]];
-  [appClassField setStringValue: [projectDict objectForKey: PCPrincipalClass]];
+  [appTypeField selectItemWithTitle:[projectDict objectForKey:PCAppType]];
+  [appClassField setStringValue:[projectDict objectForKey: PCPrincipalClass]];
 
-  [appImageField setStringValue: [projectDict objectForKey: PCAppIcon]];
-  [helpFileField setStringValue: [projectDict objectForKey: PCHelpFile]];
+  [appImageField setStringValue:[projectDict objectForKey:PCAppIcon]];
+  [helpFileField setStringValue:[projectDict objectForKey:PCHelpFile]];
   [mainNIBField setStringValue:
-    [projectDict objectForKey: PCMainInterfaceFile]];
+    [projectDict objectForKey:PCMainInterfaceFile]];
 
-  docTypesItems = [projectDict objectForKey: PCDocumentTypes];
+  docTypesItems = [projectDict objectForKey:PCDocumentTypes];
   [docTypesList reloadData];
 }
 
@@ -707,6 +579,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
   id       anObject = [aNotif object];
   NSString *file = nil;
   NSString *path = nil;
+  NSImage  *image = nil;
 
   
   if (anObject != appImageField 
@@ -723,10 +596,9 @@ cleanup(NSMutableDictionary *m, NSString *k)
 
       if (![file isEqualToString: @""])
 	{
-	  path = [self dirForCategoryKey: PCImages];
-	  path = [path stringByAppendingPathComponent: file];
-	  [self setIconViewImage: [[NSImage alloc]
-          initWithContentsOfFile: path]];
+	  path = [self dirForCategoryKey:PCImages];
+	  path = [path stringByAppendingPathComponent:file];
+	  image = [[NSImage alloc] initWithContentsOfFile:path];
 	}
       activeTextField = appImageField;
     }
@@ -738,42 +610,118 @@ cleanup(NSMutableDictionary *m, NSString *k)
     {
       file = [mainNIBField stringValue];
       
-      if (![file isEqualToString: @""])
+      if (![file isEqualToString:@""])
 	{
-	  path = [projectPath stringByAppendingPathComponent: file];
-	  [self setIconViewImage: [[NSWorkspace sharedWorkspace]
-	             iconForFile: path]];
+	  path = [projectPath stringByAppendingPathComponent:file];
+	  image = [[NSWorkspace sharedWorkspace] iconForFile:path];
 	}
       activeTextField = mainNIBField;
     }
 
-  [setFieldButton setEnabled: YES];
-  [clearFieldButton setEnabled: YES];
+  [iconView setImage:image];
 }
 
-- (void)controlTextDidEndEditing: (NSNotification *)aNotification
+- (void)controlTextDidEndEditing:(NSNotification *)aNotification
 {
   NSControl *anObject = [aNotification object];
   id        target = [anObject target];
   SEL       action = [anObject action];
+  NSString  *fileName;
+  NSString  *filePath;
 
-  if (anObject == appImageField
-    || anObject == helpFileField
-    || anObject == mainNIBField)
+  if (anObject != appImageField
+      && anObject != helpFileField
+      && anObject != mainNIBField)
     {
-      activeTextField = nil;
-      [self setIconViewImage: nil];
-
-      [setFieldButton setEnabled: NO];
-      [clearFieldButton setEnabled: NO];
+      if ([target respondsToSelector:action])
+	{
+	  [target performSelector:action withObject:anObject];
+	}
 
       return;
     }
 
-  if ([target respondsToSelector: action])
+  fileName = [anObject stringValue];
+  if (anObject == appImageField)
     {
-      [target performSelector: action withObject: anObject];
+      filePath = [self pathForFile:fileName forKey:PCImages];
+      [self setAppIconWithFileAtPath:filePath];
     }
+  else if (anObject == helpFileField)
+    {
+    }
+  else if (anObject == mainNIBField)
+    {
+      filePath = [self pathForFile:fileName forKey:PCInterfaces];
+      [self setMainNibWithFileAtPath:filePath];
+    }
+}
+
+@end
+
+@implementation PCAppProject (FileNameIconDelegate)
+
+- (BOOL)canPerformDraggingOf:(NSArray *)paths
+{
+  NSString     *categoryKey;
+  NSArray      *fileTypes;
+  NSEnumerator *e = [paths objectEnumerator];
+  NSString     *s;
+
+  if (activeTextField == appImageField)
+    {
+      categoryKey = PCImages;
+    }
+  else if (activeTextField == helpFileField)
+    {
+      return NO;
+    }
+  else if (activeTextField == mainNIBField)
+    {
+      categoryKey = PCInterfaces;
+    }
+  else
+    {
+      return NO;
+    }
+
+  NSLog(@"PCAppProject: canPerformDraggingOf -> %@", 
+  [self projectFileFromFile:[paths objectAtIndex:0] forKey:categoryKey]);
+
+  fileTypes = [self fileTypesForCategoryKey:categoryKey];
+
+  // Check if we can accept files of such types
+  while ((s = [e nextObject]))
+    {
+      if (![fileTypes containsObject:[s pathExtension]])
+	{
+	  return NO;
+	}
+    }
+
+  return YES;
+}
+
+- (BOOL)prepareForDraggingOf:(NSArray *)paths
+{
+  return YES;
+}
+
+- (BOOL)performDraggingOf:(NSArray *)paths
+{
+  if (activeTextField == appImageField)
+    {
+      [self setAppIconWithFileAtPath:[paths objectAtIndex:0]];
+    }
+  else if (activeTextField == helpFileField)
+    {
+    }
+  else if (activeTextField == mainNIBField)
+    {
+      [self setMainNibWithFileAtPath:[paths objectAtIndex:0]];
+    }
+
+  return YES;
 }
 
 @end
