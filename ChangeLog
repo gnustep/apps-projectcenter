@@ -1,3 +1,21 @@
+2009-02-06  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProject.m:
+	(dealloc): Replace DEVELOPMENT with DEBUG
+	* Framework/PCProjectBrowser.m:
+	(fileNameIconPath): Implement new method.
+	* Framework/PCFileNameIcon.m:
+	(mouseDown:) Finish drag&drop implementation.
+	(init): Do not set image by default.
+	(dealloc): Replace DEVELOPMENT with DEBUG.
+	(setDelegate:): Use ASSIGN.
+	(updateIcon): Cleanup.
+	* Framework/English.lproj/ProjectInspector.gorm: Remove
+	'Hide on deactivate' attribute to panel. It allows drag&drop
+	operations for external applications (e.g. Workspace).
+	* Modules/Projects/Application/PCAppProject.*: Use PCFileNameIcon
+	in inspector to use drag&drop functionality. Cleanup.
+
 2009-01-27  Sergii Stoian <stoyan255@gmail.com>
 	
 	* Framework/GNUmakefile: Remove Preferences.gorm, 
