@@ -182,7 +182,7 @@
 // 2. "/Subprojects/Project/Classes/Class.m/- init"
 // 3. "/Library/gnustep-gui"
 - (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
-			       windowed:(BOOL)windowed
+    				   windowed:(BOOL)windowed
 {
   NSArray        *pathArray = [categoryPath pathComponents];
   NSString       *pathLastObject = [pathArray lastObject];
@@ -212,25 +212,13 @@
 
   // Set the 'editor' var either by requesting already opened
   // editor or by creating the new one.
-  editor = [self editorForFile:filePath];
-  if (editor)
+  editor = [self openEditorForFile:filePath 
+			  editable:editable 
+			  windowed:windowed];
+  if (!editor)
     {
-      // It seems double click occured in browser
-      if (windowed)
-	{
-	  [editor setWindowed:windowed];
-	}
-    }
-  else 
-    {
-      editor = [self openEditorForFile:filePath 
-			      editable:editable 
-			      windowed:windowed];
-      if (!editor)
-	{
-	  NSLog(@"We don't have editor for file: %@", fileName);
-	  return nil;
-	}
+      NSLog(@"We don't have editor for file: %@", fileName);
+      return nil;
     }
 
   // Category path was changed by user's clicking inside browser.

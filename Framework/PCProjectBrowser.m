@@ -394,8 +394,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)doubleClick:(id)sender
 {
+  NSString    *category = [self nameOfSelectedCategory];
   id          selectedCell;
-  NSString    *category;
   NSString    *fileName;
   PCProject   *activeProject;
   NSString    *key;
@@ -403,14 +403,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSWorkspace *workspace;
   NSString    *appName, *type;
   
-  if ((sender != browser) ||
-      [[self nameOfSelectedCategory] isEqualToString:@"Libraries"])
+  if ((sender != browser) || [category isEqualToString:@"Libraries"])
     {
       return;
     }
 
   selectedCell = [sender selectedCell];
-  category = [self nameOfSelectedCategory];
   fileName = [[sender selectedCell] stringValue];
   activeProject = [[project projectManager] activeProject];
   key = [activeProject keyForCategory:category];
@@ -430,13 +428,10 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       // name will be returned according that setting. Otherwise
       // 'ProjectCenter.app' will be returned accoring to NSTypes
       // from Info-gnustep.plist file of PC.
-      if(foundApp == NO)
+      if(foundApp == NO || [appName isEqualToString:@"ProjectCenter.app"])
 	{
-	  if (appName == nil || [appName isEqualToString:@"ProjectCenter.app"])
-	    {
-	      [[project projectEditor] openEditorForCategoryPath:[browser path]
-				       windowed:YES];
-	    }
+	  [[activeProject projectEditor] openEditorForCategoryPath:[self path]
+							  windowed:YES];
 	}
       else
 	{

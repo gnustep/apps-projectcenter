@@ -46,8 +46,8 @@ ProjectCenter 0.6
 - Create new Info panel                                         [done!]
 - Implement support for integrated debugging                    [90% done]
 - change project type from file to bundle                       casamento/mottola
-- Finish FileNameIcon (draggable, files can be dragged to it)   stoyan
-- Review all situations when dialogs must be  popped up         stoyan
+- Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
+- Review all situations when dialogs must be popped up          stoyan
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 - More options for file creation                                stoyan
 --- Project Editor ---------------------------------------------
@@ -60,6 +60,8 @@ ProjectCenter 0.6
   - Implement interaction with Editor (errors, warnings)        stoyan
 - Think about imlementing pending adding/removal of files       ???
 - New icons. Need volonteers!!!                                 ???
+- Split "Application GORM" and "Application Renaissance"
+  project types                                                 ???
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
 

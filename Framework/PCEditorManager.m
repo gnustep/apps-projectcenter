@@ -106,9 +106,9 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
-#endif
+#ifdef DEBUG
   NSLog (@"PCEditorManager: dealloc");
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
@@ -149,8 +149,6 @@ NSString *PCEditorDidResignActiveNotification =
   id<CodeEditor>  editor;
   id<CodeParser>  parser;
 
-  NSLog(@"EditorManager: openEditorForFile: \"%@\"", filePath);
-
   // Determine if file not exist or file is directory
   if (![fm fileExistsAtPath:filePath isDirectory:&isDir] || isDir)
     {
@@ -165,7 +163,9 @@ NSString *PCEditorDidResignActiveNotification =
       return nil;
     }
 
-  if (!(editor = [_editorsDict objectForKey:filePath]))
+  NSLog(@"EditorManager 1: %@", _editorsDict);
+  editor = [_editorsDict objectForKey:filePath];
+  if (editor == nil)
     {
       NSLog(@"Opening new editor");
       // Editor
@@ -193,12 +193,9 @@ NSString *PCEditorDidResignActiveNotification =
       [_editorsDict setObject:editor forKey:filePath];
       RELEASE(editor);
     }
-
+      
   [editor setWindowed:windowed];
-
-  [self orderFrontEditorForFile:filePath];
-
-  NSLog(@"EditorManager: %@", _editorsDict);
+//  [self orderFrontEditorForFile:filePath];
 
   return editor;
 }

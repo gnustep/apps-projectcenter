@@ -119,7 +119,7 @@
 }
 
 - (void)dealloc
-{
+{ // TODO: Never called. Should be fixed.
 #ifdef DEBUG
   NSLog (@"PCAppProject: dealloc");
 #endif

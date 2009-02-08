@@ -355,7 +355,7 @@
 	}
 
       // File related menu items
-      if ([menuTitle isEqualToString: @"File"])
+      if ([menuTitle isEqualToString: @"File"] && !editorIsActive)
 	{
 	  if ([[menuItem title] isEqualToString:@"New in Project"]) return NO;
 	  if ([[menuItem title] isEqualToString:@"Save"]) return NO;

@@ -44,8 +44,8 @@
 
   windowWidth = [[NSFont userFixedPitchFontOfSize:0.0] widthOfString:@"A"];
   windowWidth *= 80;
-  windowWidth += 35+80;
-  rect = NSMakeRect(100,100,windowWidth,320);
+  windowWidth += 35;
+  rect = NSMakeRect(0,0,windowWidth,320);
 
   _window = [[NSWindow alloc] initWithContentRect:rect
                                         styleMask:style
@@ -54,6 +54,7 @@
   [_window setReleasedWhenClosed:YES];
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];
+  [_window center];
   rect = [[_window contentView] frame];
   
   // Scroll view
@@ -241,8 +242,6 @@
   NSMutableDictionary *attributes = [NSMutableDictionary new];
   NSFont              *font;
 
-  NSLog(@"PCEditor: openFileAtPath");
-
   // Inform about future file opening
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillOpenNotification
@@ -274,7 +273,7 @@
   [_storage setAttributedString:attributedString];
   RELEASE(attributedString);
 
-  [self _createInternalView];
+//  [self _createInternalView];
 /*  if (categoryPath) // category == nil if we're non project editor
     {
       NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
@@ -375,11 +374,19 @@
 
 - (NSView *)editorView 
 {
+  if (!_intScrollView)
+    {
+      [self _createInternalView];
+    }
   return _intEditorView;
 }
 
 - (NSView *)componentView
 {
+  if (!_intScrollView)
+    {
+      [self _createInternalView];
+    }
   return _intScrollView;
 }
 
@@ -689,7 +696,7 @@
 			    @"Save and Close", @"Don't save", @"Cancel", 
 			    [_path lastPathComponent]);
 
-      if (ret == YES)
+      if (ret == YES) // Save and Close
 	{
 	  if ([self saveFile] == NO)
 	    {
@@ -734,7 +741,7 @@
 	}
       else
 	{
-	  return [self closeFile:_window save:YES];
+    	  return [self closeFile:sender save:YES];
 	}
     }
 
@@ -743,18 +750,19 @@
 
 - (void)windowDidBecomeKey:(NSNotification *)aNotification
 {
-  if ([[aNotification object] isEqual:_window] && [_window isVisible])
+/*  if ([[aNotification object] isEqual:_window] && [_window isVisible])
     {
       [_window makeFirstResponder:_extEditorView];
-    }
+    }*/
 }
 
 - (void)windowDidResignKey:(NSNotification *)aNotification
 {
-  if ([[aNotification object] isEqual:_window] && [_window isVisible])
+/*  if ([[aNotification object] isEqual:_window] && [_window isVisible])
     {
       [_window makeFirstResponder:_extEditorView];
-    }
+    }*/
+  [self resignFirstResponder:_extEditorView];
 }
 
 // ===========================================================================

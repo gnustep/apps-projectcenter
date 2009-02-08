@@ -1006,11 +1006,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)openFileAtPath:(NSString *)filePath
 {
+  PCEditorManager *em = [self editorManager];
+
   if (filePath != nil)
     {
-      [[self editorManager] openEditorForFile:filePath 
-				     editable:YES
-				     windowed:YES];
+      [em openEditorForFile:filePath 
+		   editable:YES
+		   windowed:YES];
+      [em orderFrontEditorForFile:filePath];
     }
 }
 
