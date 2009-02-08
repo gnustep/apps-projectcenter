@@ -1,3 +1,30 @@
+2009-02-08  Sergii Stoian <stoyan255@gmail.com>
+
+	* PCMenuController.m:
+	(validateMenuItem:): Enable "File" menu items for files opened
+	witout project. It fixes bug #25311 (now file saved).
+	* Framework/PCProjectManager.m:
+	(openFileAtPath:): Call to orderFrontEditorForFile: explicitly because
+	of last change in PCEditorManager.
+	* Framework/PCProjectBrowser.m:
+	doubleClick:): Do not open file in separate window with PCProjectEditor
+	not PCProjectManager.
+	* Framework/PCProjectEditor.m:
+	(openEditorForCategoryPath:windowed:): Cleanup.
+	* Framework/PCEditorManager.m:
+	(openEditorForFile:editable:windowed:): Remove call to
+	orderFrontEditorForFile:.
+	* Modules/Editors/ProjectCenter/PCEditor.m:
+	(_createWindow): Modify default size and position of window.
+	(openFileAtPath:editorManager:editable:): Remove creation of internal view.
+	Create it when first requested (editorView and componentView methods).
+	(windowDidBecomeKey:) No need to set first responder. It seems first
+	responder remembered by window correctly.
+	(windowDidResignKey:): Call resignFirstResponder: to notify others.
+	* Modules/Projects/Application/PCAppProject.m:
+	(dealloc): TODO added.
+	* Documentation/TODO: Mark "Finish FileNameIcon..." task as done.
+
 2009-02-06  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProject.m:
