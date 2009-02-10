@@ -56,7 +56,9 @@ static NSDictionary  *dict = nil;
 
       // Objective C Class
       descr = [NSString stringWithString:
-	@"Generic Objective-C class.\n\nThis is a plain subclass of NSObject which includes only Foundation.h."];
+	@"Generic Objective-C class.\n\n"
+	"This is a plain subclass of NSObject which includes"
+	" only Foundation.h."];
       template = [bundle pathForResource:@"class" ofType:@"template"];
       classDict = [NSDictionary dictionaryWithObjectsAndKeys:
 	PCClasses, @"ProjectKey",
@@ -131,8 +133,6 @@ static NSDictionary  *dict = nil;
         gsmarkupDict, GSMarkupFile,
 	nil];
     }
-
-  [dict writeToFile:@"PCFileTypes.plist" atomically:NO];
 
   return _creator;
 }
