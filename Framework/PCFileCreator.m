@@ -46,50 +46,79 @@ static NSDictionary  *dict = nil;
       NSDictionary *protocolDict;
       NSDictionary *gsmarkupDict;
       NSString     *descr;
+      NSString     *template;
+      NSBundle     *bundle;
 
       _creator = [[[self class] alloc] init];
+      bundle = [NSBundle bundleForClass:[self class]];
 
       // Setting up the dictionary needed for registration!
-      descr = [NSString stringWithString:@"Generic Objective-C class.\n\nThis is a plain subclass of NSObject which includes only Foundation.h."];
-      classDict = [NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
-        PCClasses,@"ProjectKey",
-        descr,@"TypeDescription",
-        nil];
 
-      descr = [NSString stringWithString:@"Generic Objective-C header.\n\nThis is a plain interface subclassing NSObject. The file includes Foundation.h"];
+      // Objective C Class
+      descr = [NSString stringWithString:
+	@"Generic Objective-C class.\n\nThis is a plain subclass of NSObject which includes only Foundation.h."];
+      template = [bundle pathForResource:@"class" ofType:@"template"];
+      classDict = [NSDictionary dictionaryWithObjectsAndKeys:
+	PCClasses, @"ProjectKey",
+	descr, @"TypeDescription",
+	template,@"TemplateFile",
+	nil];
+
+      // Objective C Header
+      descr = [NSString stringWithString:
+	@"Generic Objective-C header.\n\n"
+	"This is a plain interface subclassing NSObject."
+	" The file includes Foundation.h"];
+      template = [bundle pathForResource:@"header" ofType:@"template"];
       headerDict =[NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
         PCHeaders,@"ProjectKey",
         descr,@"TypeDescription",
+	template,@"TemplateFile",
         nil];
 
-      descr = [NSString stringWithString:@"Generic ANSI-C implementation file.\n\nThis file contains no Objective-C dependency in any form."];
+      // C File
+      descr = [NSString stringWithString:
+	@"Generic ANSI-C implementation file.\n\n"
+	"This file contains no Objective-C dependency in any form."];
+      template = [bundle pathForResource:@"cfile" ofType:@"template"];
       ccDict = [NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
         PCOtherSources,@"ProjectKey",
         descr,@"TypeDescription",
+	template,@"TemplateFile",
         nil];
 
-      descr = [NSString stringWithString:@"Generic ANSI-C header.\n\nThis file contains no Objective-C dependency in any form."];
+      // C Header
+      descr = [NSString stringWithString:
+	@"Generic ANSI-C header.\n\n"
+	"This file contains no Objective-C dependency in any form."];
+      template = [bundle pathForResource:@"cheader" ofType:@"template"];
       chDict = [NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
         PCHeaders,@"ProjectKey",
         descr,@"TypeDescription",
+	template,@"TemplateFile",
         nil];
 
-      descr = [NSString stringWithString:@"Generic Objective-C protocol.\n\nThis is common Objective-C protocol, comparable i.e. to a Java interface."];
+      // Objective C Protocol
+      descr = [NSString stringWithString:
+	@"Generic Objective-C protocol.\n\n"
+	"This is common Objective-C protocol, comparable"
+	" i.e. to a Java interface."];
+      template = [bundle pathForResource:@"protocol" ofType:@"template"];
       protocolDict = [NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
         PCHeaders,@"ProjectKey",
         descr,@"TypeDescription",
+	template,@"TemplateFile",
         nil];
 
-      descr = [NSString stringWithString:@"Generic GSMarkup File.\n\nThis is the interface description of GNUstep Renaissance."];
+      // GSMarkup
+      descr = [NSString stringWithString:
+	@"Generic GSMarkup File.\n\n"
+	"This is the interface description of GNUstep Renaissance."];
+      template = [bundle pathForResource:@"gsmarkup" ofType:@"template"];
       gsmarkupDict =[NSDictionary dictionaryWithObjectsAndKeys:
-	_creator,@"Creator",
         PCGSMarkupFiles,@"ProjectKey",
         descr,@"TypeDescription",
+	template, @"TemplateFile",
         nil];
 
 
@@ -102,6 +131,8 @@ static NSDictionary  *dict = nil;
         gsmarkupDict, GSMarkupFile,
 	nil];
     }
+
+  [dict writeToFile:@"PCFileTypes.plist" atomically:NO];
 
   return _creator;
 }
@@ -134,23 +165,28 @@ static NSDictionary  *dict = nil;
   [self showNewFilePanel];
 }
 
-- (NSDictionary *)createFileOfType:(NSString *)type 
-                              path:(NSString *)path 
-		           project:(PCProject *)aProject
+- (void)createFileOfType:(NSString *)fileType
+		    path:(NSString *)path
+		 project:(PCProject *)project
 {
-  PCFileManager       *pcfm = [PCFileManager defaultManager];
-  NSString            *_file = nil;
-  NSString            *newFile = nil;
+  NSDictionary *newFiles;
+
+  newFiles = [self filesToCreateForFileOfType:fileType 
+					 path:path
+			    withComplementary:YES];
+
+  [self createFiles:newFiles inProject:project];
+}
+
+- (NSDictionary *)filesToCreateForFileOfType:(NSString *)type
+					path:(NSString *)path
+			   withComplementary:(BOOL)complementary
+{
   NSMutableDictionary *files = nil;
-  NSBundle            *bundle = nil;
+  NSString            *newFile = nil;
 
   // A class and possibly a header
   files = [NSMutableDictionary dictionaryWithCapacity:2];
-
-  PCLogStatus(self, @"create %@ at %@", type, path);
-
-  bundle = [NSBundle bundleForClass:[self class]];
-  newFile = [path copy];
 
   // Remove file extension from "path"
   if (![[path pathExtension] isEqualToString: @""])
@@ -158,87 +194,80 @@ static NSDictionary  *dict = nil;
       path = [path stringByDeletingPathExtension];
     }
   
-  /*
-   * Objective-C Class
-   */
+  // Objective-C Class
   if ([type isEqualToString:ObjCClass]) 
     {
-      _file = [bundle pathForResource:@"class" ofType:@"template"];
       newFile = [path stringByAppendingPathExtension:@"m"];
-      [pcfm copyFile:_file toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:ObjCClass forKey:newFile];
+      [files setObject:[dict objectForKey:ObjCClass] forKey:newFile];
     }
-
-  /*
-   * Objective-C Header
-   * When creating Objective C Class file also create Objective C Header file
-   */
-  if ([type isEqualToString:ObjCHeader] ||
-      [type isEqualToString:ObjCClass])
+  // C File
+  else if ([type isEqualToString:CFile]) 
     {
-      _file = [bundle pathForResource:@"header" ofType:@"template"];
-      newFile = [path stringByAppendingPathExtension:@"h"];
-      [pcfm copyFile:_file toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:ObjCHeader forKey:newFile];
-    }
-
-  /*
-   * C File
-   */
-  if ([type isEqualToString:CFile]) 
-    {
-      _file = [bundle pathForResource:@"cfile" ofType:@"template"];
       newFile = [path stringByAppendingPathExtension:@"c"];
-      [pcfm copyFile:_file toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:CFile forKey:newFile];
+      [files setObject:[dict objectForKey:CFile] forKey:newFile];
     }
 
-  /*
-   * C Header
-   * When creating C file also create C Header file
-   */
+  // C Header
+  // When creating C file also create C Header file
   if ([type isEqualToString:CHeader] ||
-      [type isEqualToString:CFile]) 
+      ([type isEqualToString:CFile] && complementary)) 
     {
-      _file = [bundle pathForResource:@"cheader" ofType:@"template"];
       newFile = [path stringByAppendingPathExtension:@"h"];
-      [pcfm copyFile:_file toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:CHeader forKey:newFile];
+      [files setObject:[dict objectForKey:CHeader] forKey:newFile];
     }
-  /*
-   * GSMarkup
-   */
+  // Objective-C Header
+  // When creating Objective C Class file also create Objective C Header file
+  else if ([type isEqualToString:ObjCHeader] ||
+	   ([type isEqualToString:ObjCClass] && complementary))
+    {
+      newFile = [path stringByAppendingPathExtension:@"h"];
+      [files setObject:[dict objectForKey:ObjCHeader] forKey:newFile];
+    }
+  // GSMarkup
   else if ([type isEqualToString:GSMarkupFile])
     {
-      _file = [bundle pathForResource:@"gsmarkup" ofType:@"template"];
       newFile = [path stringByAppendingPathExtension:@"gsmarkup"];
-      [pcfm copyFile:_file toFile:newFile];
-      [files setObject:GSMarkupFile forKey:newFile];
+      [files setObject:[dict objectForKey:GSMarkupFile] forKey:newFile];
     }
-  /*
-   * Objective-C Protocol
-   */
+  // Objective-C Protocol
   else if ([type isEqualToString:ProtocolFile]) 
     {
-      _file = [bundle pathForResource:@"protocol" ofType:@"template"];
       newFile = [path stringByAppendingPathExtension:@"h"];
-      [pcfm copyFile:_file toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [files setObject:ProtocolFile forKey:newFile];
+      [files setObject:[dict objectForKey:ProtocolFile] forKey:newFile];
     }
 
-  /*
-   * Notify the browser!
-   */
+  return files;
+}
+
+- (BOOL)createFiles:(NSDictionary *)fileList
+	  inProject:(PCProject *)aProject
+{
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  NSEnumerator   *enumerator = [[fileList allKeys] objectEnumerator];
+  NSString       *template = nil;
+  NSString       *newFile = nil;
+  NSDictionary   *fileType = nil;
+  NSString       *key = nil;
+
+  while ((newFile = [enumerator nextObject])) 
+    {
+      fileType = [fileList objectForKey:newFile];
+      key = [fileType objectForKey:@"ProjectKey"];
+      template = [fileType objectForKey:@"TemplateFile"];
+
+      [pcfm copyFile:template toFile:newFile];
+      [self replaceTagsInFileAtPath:newFile withProject:aProject];
+      [aProject addFiles:[NSArray arrayWithObject:newFile]
+   		  forKey:key
+		  notify:YES];
+    }
+
+  // Notify the browser!
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:@"ProjectDictDidChangeNotification"
                   object:self];
 
-  return files;
+  return YES;
 }
 
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
@@ -321,7 +350,6 @@ static NSDictionary  *dict = nil;
     	{
 	  [newFilePanel center];
 	}
-      [newFilePanel center];
       [nfImage setImage:[NSApp applicationIconImage]];
       [nfTypePB setRefusesFirstResponder:YES];
       [nfTypePB removeAllItems];
@@ -329,8 +357,9 @@ static NSDictionary  *dict = nil;
 	[[dict allKeys] 
 	  sortedArrayUsingSelector:@selector(caseInsensitiveCompare:)]];
       [nfTypePB selectItemAtIndex:0];
-      [nfCancleButton setRefusesFirstResponder:YES];
+      [nfCancelButton setRefusesFirstResponder:YES];
       [nfCreateButton setRefusesFirstResponder:YES];
+      [nfAddHeaderButton setRefusesFirstResponder:YES];
       [newFilePanel setDefaultButtonCell:[nfCreateButton cell]];
     }
 
@@ -339,29 +368,50 @@ static NSDictionary  *dict = nil;
   [newFilePanel makeKeyAndOrderFront:self];
   [nfNameField setStringValue:@""];
   [newFilePanel makeFirstResponder:nfNameField];
+
+  [newFilePanel setLevel:NSModalPanelWindowLevel];
+  [NSApp runModalForWindow:newFilePanel];
 }
 
 - (void)closeNewFilePanel:(id)sender
 {
   [newFilePanel orderOut:self];
+  [NSApp stopModal];
+
   activeProject = nil;
 }
 
 - (void)createFile:(id)sender
 {
-  [self createFile];
-  [self closeNewFilePanel:self];
-  activeProject = nil;
+  if ([self createFile])
+    {
+      [self closeNewFilePanel:self];
+    }
+  else
+    {
+      [newFilePanel makeKeyAndOrderFront:self];
+    }
 }
 
 - (void)newFilePopupChanged:(id)sender
 {
-  NSString     *type = [sender titleOfSelectedItem];
-  NSDictionary *creator = [dict objectForKey:type];
+  NSString     *typeTitle = [sender titleOfSelectedItem];
+  NSDictionary *fileType = [dict objectForKey:typeTitle];
 
-  if (type)
+  if (!fileType)
     {
-      [nfDescriptionTV setString:[creator objectForKey:@"TypeDescription"]];
+      return;
+    }
+
+  [nfDescriptionTV setString:[fileType objectForKey:@"TypeDescription"]];
+  if ([typeTitle isEqualToString:ObjCClass] || 
+      [typeTitle isEqualToString:CFile])
+    {
+      [nfAddHeaderButton setEnabled:YES];
+    }
+  else
+    {
+      [nfAddHeaderButton setEnabled:NO];
     }
 }
 
@@ -383,52 +433,72 @@ static NSDictionary  *dict = nil;
     }
 }
 
-- (void)createFile
+- (BOOL)createFile
 {
-  NSString     *path = nil;
-  NSString     *fileName = [nfNameField stringValue];
-  NSString     *fileType = [nfTypePB titleOfSelectedItem];
-  NSDictionary *fileDict = [dict objectForKey:fileType];
-  NSString     *projectKey = [fileDict objectForKey:@"ProjectKey"];
+  NSString      *fileName = [nfNameField stringValue];
+  NSString      *fileType = [nfTypePB titleOfSelectedItem];
+  NSString      *path = nil;
+  NSString      *key = nil;
+  NSDictionary  *newFiles = nil;
+  NSEnumerator  *enumerator = nil;
+  NSString      *filePath = nil;
+  NSFileManager *fm = [NSFileManager defaultManager];
 
-//  PCLogInfo(self, @"[createFile] %@", fileName);
+/*  NSLog(@"PCFileCreator: [createFile] %@ in category: %@", 
+	fileName, projectKey);*/
 
-  if ([activeProject doesAcceptFile:fileName forKey:projectKey]) 
-    {
-      path = [[activeProject projectPath] 
-	stringByAppendingPathComponent:fileName];
-    }
-
-//  PCLogInfo(self, @"creating file at %@", path);
-
+  path = [[activeProject projectPath] stringByAppendingPathComponent:fileName];
   // Create file
   if (path) 
     {
-      NSDictionary  *newFiles = nil;
-      NSEnumerator  *enumerator;
-      NSString      *aFile;
+      // Get file list for creation
+      newFiles = [self 
+	filesToCreateForFileOfType:fileType 
+			      path:path
+		 withComplementary:[nfAddHeaderButton state]==NSOnState ? YES : NO];
 
-      // Do it finally...
-      newFiles = [self createFileOfType:fileType
-				   path:path
-				project:activeProject];
-
-      // Add files to a project
+      // Check if project already has files with such names
       enumerator = [[newFiles allKeys] objectEnumerator]; 
-      while ((aFile = [enumerator nextObject])) 
+      while ((filePath = [enumerator nextObject])) 
 	{
-	  fileType = [newFiles objectForKey:aFile];
-	  fileDict = [dict objectForKey:fileType];
-	  projectKey = [fileDict objectForKey:@"ProjectKey"];
-	   
-	  if ([activeProject doesAcceptFile:aFile forKey:projectKey]) 
+	  key = [[newFiles objectForKey:filePath] objectForKey:@"ProjectKey"];
+	  fileName = [filePath lastPathComponent];
+	  if (![activeProject doesAcceptFile:fileName forKey:key]) 
 	    {
-	      [activeProject addFiles:[NSArray arrayWithObject:aFile]
-			       forKey:projectKey
-			       notify:YES];
+	      NSRunAlertPanel(@"New File in Project", 
+			      @"Project %@ already has file %@ in %@",
+			      @"OK", nil, nil, 
+			      [activeProject projectName], fileName, key);
+	      return NO;
+	    }
+	  if ([fm fileExistsAtPath:filePath])
+	    {
+	      int  ret;
+
+	      ret = NSRunAlertPanel
+		(@"New File in Project", 
+		 @"Project directory %@ already has file %@.\n"
+		 "Do you want to overwrite it?",
+		 @"Stop", @"Overwrite", nil, 
+		 [filePath stringByDeletingLastPathComponent], 
+		 fileName);
+
+	      if (ret == NSAlertDefaultReturn) // Stop
+		{
+		  return NO;
+		}
+	      else // Overwrite. Remove destination of copy operation
+		{
+		  [fm removeFileAtPath:filePath handler:nil];
+		}
 	    }
 	}
+
+      // Create files
+      return [self createFiles:newFiles inProject:activeProject];
     }
+
+  return NO;
 }
 
 @end

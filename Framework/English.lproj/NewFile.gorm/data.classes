@@ -21,7 +21,8 @@
 	    nfDescriptionTV,
 	    nfNameField,
 	    nfCancelButton,
-	    nfCreateButton
+	    nfCreateButton,
+	    nfAddHeaderButton
 	);
 	Super = NSObject;
     };

@@ -48,8 +48,9 @@
   IBOutlet NSPopUpButton *nfTypePB;
   IBOutlet NSTextView    *nfDescriptionTV;
   IBOutlet NSTextField   *nfNameField;
-  IBOutlet NSButton      *nfCancleButton;
+  IBOutlet NSButton      *nfCancelButton;
   IBOutlet NSButton      *nfCreateButton;
+  IBOutlet NSButton      *nfAddHeaderButton;
 }
 
 + (id)sharedCreator;
@@ -57,10 +58,17 @@
 - (NSDictionary *)creatorDictionary;
 
 - (void)newFileInProject:(PCProject *)aProject;
-// The implementation needs some heavy cleanup!
-- (NSDictionary *)createFileOfType:(NSString *)type
-                              path:(NSString *)path
-			   project:(PCProject *)aProject;
+
+- (void)createFileOfType:(NSString *)fileType
+		    path:(NSString *)path
+		 project:(PCProject *)project;
+
+// Return list of file paths for creation
+- (NSDictionary *)filesToCreateForFileOfType:(NSString *)type
+					path:(NSString *)path
+			   withComplementary:(BOOL)complementary;
+- (BOOL)createFiles:(NSDictionary *)fileList
+	  inProject:(PCProject *)aProject;
 
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
                     withProject:(PCProject *)aProject;
@@ -74,7 +82,7 @@
 - (void)createFile:(id)sender;
 - (void)newFilePopupChanged:(id)sender;
 - (void)controlTextDidChange:(NSNotification *)aNotif;
-- (void)createFile;
+- (BOOL)createFile;
 
 @end
 

@@ -489,7 +489,7 @@ NSString
     {
       int ret;
 
-      ret = NSRunAlertPanel(@"Alert",
+      ret = NSRunAlertPanel(@"Close Project",
 			    @"Project or subprojects are modified",
 			    @"Save and Close",@"Don't save",@"Cancel");
       switch (ret)
@@ -1145,9 +1145,9 @@ NSString
     {
       if (![fileManager copyFiles:fileList intoDirectory:directory])
 	{
-	  NSRunAlertPanel(@"Alert",
-			  @"Error adding files to project %@!",
-			  @"OK", nil, nil, projectName);
+	  NSRunAlertPanel(@"Add File(s)",
+			  @"Error adding files %@ to project %@!",
+			  @"OK", nil, nil, fileList, projectName);
 	  return NO;
 	}
 
@@ -1156,9 +1156,9 @@ NSString
       if (![fileManager copyFiles:complementaryFiles 
 	            intoDirectory:complementaryDir])
 	{
-	  NSRunAlertPanel(@"Alert",
-			  @"Error adding complementary files to project %@!",
-			  @"OK", nil, nil, projectName);
+	  NSRunAlertPanel(@"Add File(s)",
+			  @"Error adding files %@ to project %@!",
+			  @"OK", nil, nil, complementaryFiles, projectName);
 	  return NO;
 	}
     }

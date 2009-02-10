@@ -734,7 +734,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
       if (!(project = [self createProjectOfType:projectType path:filePath]))
 	{
-	  NSRunAlertPanel(@"Attention!",
+	  NSRunAlertPanel(@"New Project",
 			  @"Failed to create %@!",
 			  @"OK",nil,nil,filePath);
 	}
@@ -759,7 +759,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   // Save PC.project and the makefiles!
   if ([rootProject save] == NO)
     {
-      NSRunAlertPanel(@"Attention!",
+      NSRunAlertPanel(@"Save Project",
 		      @"Couldn't save project %@!", 
 		      @"OK",nil,nil,[activeProject projectName]);
       return NO;
@@ -857,7 +857,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
       if ([categoryKey isEqualToString:PCLibraries])
 	{
-	  ret = NSRunAlertPanel(@"Remove",
+	  ret = NSRunAlertPanel(@"Remove File",
 				@"Remove libraries from Project?",
 				@"Remove",
 				@"Cancel",
@@ -865,7 +865,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
       else
 	{
-	  ret = NSRunAlertPanel(@"Remove",
+	  ret = NSRunAlertPanel(@"Remove File",
 				removeString,
 				@"...from Project and Disk",
 				@"...from Project only",
@@ -900,7 +900,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 	  if (!ret)
 	    {
-	      NSRunAlertPanel(@"Alert",
+	      NSRunAlertPanel(@"Remove File",
 			      @"Error removing files from project %@!",
 			      @"OK", nil, nil, [activeProject projectName]);
 	      return NO;
@@ -908,7 +908,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  else if (flag) 
 	    {
 	      // Save project because we've removed file(s) from disk
-	      // Should be fixed later (add pending removal of files?)
+	      // TODO: Should be fixed later (add pending removal of files?)
 	      [activeProject save];
 	    }
 	}
@@ -1161,17 +1161,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [nsNameField setStringValue:@""];
   [nsPanel makeFirstResponder:nsNameField];
 
+  [nsPanel setLevel:NSModalPanelWindowLevel];
+  [NSApp runModalForWindow:nsPanel];
+
   return YES;
 }
 
 - (void)closeNewSubprojectPanel:(id)sender
 {
   [nsPanel orderOut:self];
+  [NSApp stopModal];
 }
 
 - (BOOL)createSubproject:(id)sender
 {
-  [nsPanel orderOut:self];
+  [self closeNewSubprojectPanel:self];
 
   return [self createSubproject];
 }

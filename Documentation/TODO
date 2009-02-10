@@ -47,9 +47,9 @@ ProjectCenter 0.6
 - Implement support for integrated debugging                    [90% done]
 - change project type from file to bundle                       casamento/mottola
 - Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
-- Review all situations when dialogs must be popped up          stoyan
+- More options for file creation                                [done!]
+- Review all situations when dialogs must be popped up          [50% done]
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
-- More options for file creation                                stoyan
 --- Project Editor ---------------------------------------------
   - Implement indentation                                       stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
