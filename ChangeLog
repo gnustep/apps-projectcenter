@@ -1,3 +1,13 @@
+2009-02-10  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m: Corrections in alert panel names.
+	  Make "Add Files" panel run in modal mode.
+	* Framework/PCProject.m: Corrections in alert panel names.
+	* Framework/PCFileCreator.[mh]: Partial rewrite. Check existance of
+	files wich will be added. Make panel run in modal mode. 
+	Add "Add Header File" option button.
+	* Documentation/TODO: Update.
+
 2009-02-08  Sergii Stoian <stoyan255@gmail.com>
 
 	* PCMenuController.m:

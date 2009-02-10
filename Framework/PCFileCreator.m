@@ -404,6 +404,7 @@ static NSDictionary  *dict = nil;
     }
 
   [nfDescriptionTV setString:[fileType objectForKey:@"TypeDescription"]];
+  [nfAddHeaderButton setState:NSOffState];
   if ([typeTitle isEqualToString:ObjCClass] || 
       [typeTitle isEqualToString:CFile])
     {
@@ -443,6 +444,7 @@ static NSDictionary  *dict = nil;
   NSEnumerator  *enumerator = nil;
   NSString      *filePath = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
+  BOOL          complementary;
 
 /*  NSLog(@"PCFileCreator: [createFile] %@ in category: %@", 
 	fileName, projectKey);*/
@@ -452,10 +454,10 @@ static NSDictionary  *dict = nil;
   if (path) 
     {
       // Get file list for creation
-      newFiles = [self 
-	filesToCreateForFileOfType:fileType 
-			      path:path
-		 withComplementary:[nfAddHeaderButton state]==NSOnState ? YES : NO];
+      complementary = [nfAddHeaderButton state]==NSOnState ? YES : NO;
+      newFiles = [self filesToCreateForFileOfType:fileType 
+			       		     path:path
+				withComplementary:complementary];
 
       // Check if project already has files with such names
       enumerator = [[newFiles allKeys] objectEnumerator]; 
