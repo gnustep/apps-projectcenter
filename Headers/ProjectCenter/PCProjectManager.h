@@ -139,17 +139,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 - (PCProject *)convertLegacyProject:(NSMutableDictionary *)pDict
                              atPath:(NSString *)aPath;
-			    
 // Returns the loaded project if the builder class is known, nil else.
 - (PCProject *)loadProjectAt:(NSString *)aPath;
-
 // Invokes loadProjectAt to load the project properly.
 - (BOOL)openProjectAt:(NSString *)aPath;
-
+- (void)openProject;
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath;
-
-- (void)openProject;
 - (void)newProject;
 - (BOOL)saveProject;
 
@@ -205,13 +201,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 @interface PCProjectManager (Subprojects)
 
-- (BOOL)newSubproject;
-- (BOOL)addSubproject;
+- (BOOL)openNewSubprojectPanel;
 - (void)closeNewSubprojectPanel:(id)sender;
-- (BOOL)createSubproject:(id)sender;
+
+- (void)createSubproject:(id)sender;
 - (PCProject *)createSubprojectOfType:(NSString *)projectType 
                                  path:(NSString *)aPath;
-- (BOOL)createSubproject;
+- (BOOL)addSubproject;
 @end
 
 #endif

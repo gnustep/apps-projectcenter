@@ -139,7 +139,7 @@
 // Subproject
 - (void)subprojectNew:(id)sender
 {
-  [projectManager newSubproject];
+  [projectManager openNewSubprojectPanel];
 }
 
 - (void)subprojectAdd:(id)sender

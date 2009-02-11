@@ -150,9 +150,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString  *name = nil;
   int       i;
 
+  // Name of subproject selected: change path to be ended with 'Subprojects'
+  // category of superproject.
+  // But: path '/Subproject/Foo' and '/Subprojects/Foo/Subprojects' will
+  // return the same category 'Subprojects' and active project will be 'Foo'
+  // in both cases
   if ([lastPathElement isEqualToString:[activeProject projectName]])
     {
-      return [activeProject projectName];
+      activeProject = [activeProject superProject];
+      rootCategories = [activeProject rootCategories];
     }
 
   if (([rootCategories containsObject:lastPathElement]
@@ -374,12 +380,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   browserPath = [self path];
   filePath = [self pathToSelectedFile];
 
-//  NSLog(@"browserPath: %@ forProject: %@", 
-//	browserPath, [activeProject projectName]);
+  NSLog(@"category: %@ forProject: %@", 
+	category, [activeProject projectName]);
 
-//  if ([[self selectedFiles] count] == 1
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
+      ![category isEqualToString:[activeProject projectName]] &&
       ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
     {
 //      NSLog(@"[click] category: %@ filePath: %@", category, filePath);

@@ -568,9 +568,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       projectClassName = [projectTypes objectForKey:projectTypeName];
       if (projectClassName == nil)
 	{
-	  NSRunAlertPanel(@"Load Project",
-			  @"Project type '%@' is not supported!",
-			  @"OK",nil,nil,projectTypeName); 
+	  NSRunAlertPanel(@"Open Project",
+			  @"Project type '%@' is not supported!\n"
+			  "Report the bug, please!",
+			  @"OK", nil, nil, projectTypeName); 
 	  return nil;
 	}
       project = [bundleManager objectForClassName:projectClassName
@@ -578,10 +579,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 					 protocol:@protocol(ProjectType)];
     }
 
-  if (![project openWithDictionaryAt:aPath]) 
+  if (!project || ![project openWithDictionaryAt:aPath]) 
     {
-      NSRunAlertPanel(@"Load Project",
-    		      @"Could not load project '%@'!",
+      NSRunAlertPanel(@"Open Project",
+    		      @"Unable to open project '%@'.\nReport bug, please!",
     		      @"OK",nil,nil,aPath); 
       return nil;
     }
@@ -646,6 +647,31 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return NO;
 }
 
+- (void)openProject
+{
+  NSArray  *files = nil;
+  NSString *filePath = nil;
+  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+
+  files = [fileManager filesOfTypes:fileTypes
+			  operation:PCOpenProjectOperation
+			   multiple:NO
+			      title:@"Open Project"
+			    accView:nil];
+  filePath = [files objectAtIndex:0];
+
+  if (filePath != nil)
+    {
+      if (![self openProjectAt:filePath]);
+	{
+	  // No need to open alert panel.
+	  // Panel was opened in openProjectAt:->loadProjectAt: method.
+	  return;
+	}
+      [[activeProject projectWindow] makeKeyAndOrderFront:self];
+    }
+}
+
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath
 {
@@ -666,18 +692,30 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 //  NSLog(@"%@ CLASS: %@", className, projectCreator);
   if (!projectCreator)
     {
+      NSRunAlertPanel(@"New Project",
+		      @"Could not create project directory %@.\n"
+		      "No project creator. Report the bug, please!",
+		      @"OK", nil, nil, aPath); 
       return nil;
     }
 
   // Create project directory
   if (![[PCFileManager defaultManager] createDirectoriesIfNeededAtPath:aPath])
     {
+      NSRunAlertPanel(@"New Project",
+		      @"Could not create project directory %@.\n"
+		      "Check permissions of the directory where you"
+		      " want to create a project",
+		      @"OK", nil, nil, aPath); 
       return nil;
     }
 
   // Create project
   if (!(project = [projectCreator createProjectAt:aPath])) 
     {
+      NSRunAlertPanel(@"New Project",
+		      @"Project %@ could not be created.\nReport bug, please!",
+		      @"OK",nil,nil,[project projectName]); 
       return nil;
     }
 
@@ -685,31 +723,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [self startSaveTimer];
 
   return project;
-}
-
-- (void)openProject
-{
-  NSArray  *files = nil;
-  NSString *filePath = nil;
-  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
-
-  files = [fileManager filesOfTypes:fileTypes
-			  operation:PCOpenProjectOperation
-			   multiple:NO
-			      title:@"Open Project"
-			    accView:nil];
-  filePath = [files objectAtIndex:0];
-
-  if (filePath != nil)
-    {
-      [self openProjectAt:filePath];
-      [[activeProject projectWindow] makeKeyAndOrderFront:self];
-
-/*      NSRunAlertPanel(@"Attention!",
-		      @"Couldn't open project %@!",
-		      @"OK",nil,nil,
-		      [filePath stringByDeletingLastPathComponent]);*/
-    }
 }
 
 - (void)newProject
@@ -734,9 +747,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
       if (!(project = [self createProjectOfType:projectType path:filePath]))
 	{
-	  NSRunAlertPanel(@"New Project",
-			  @"Failed to create %@!",
-			  @"OK",nil,nil,filePath);
+	  // No need to open alert panel. Alert panel was already opened
+	  // in createProjectOfType:path: method.
+	  return;
 	}
 
       [loadedProjects setObject:project forKey:[project projectName]];
@@ -761,7 +774,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       NSRunAlertPanel(@"Save Project",
 		      @"Couldn't save project %@!", 
-		      @"OK",nil,nil,[activeProject projectName]);
+		      @"OK", nil, nil, [activeProject projectName]);
       return NO;
     }
 
@@ -829,6 +842,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString       *removeString = nil;
   NSMutableArray *subprojs = [NSMutableArray array];
   unsigned       i;
+
+  NSLog(@"Root active project '%@' category '%@'", 
+	[project projectName], category);
 
   // Determining target project
   if ([categoryKey isEqualToString:PCSubprojects])
@@ -908,7 +924,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  else if (flag) 
 	    {
 	      // Save project because we've removed file(s) from disk
-	      // TODO: Should be fixed later (add pending removal of files?)
+	      // TODO: Maybe fix it later? (add pending removal of files)
 	      [activeProject save];
 	    }
 	}
@@ -1028,7 +1044,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			      title:@"Open File"
 			    accView:nil];
   filePath = [files objectAtIndex:0];
-  [self openFileAtPath:filePath];
+  if (filePath)
+    {
+      [self openFileAtPath:filePath];
+    }
 }
 
 - (void)newFile
@@ -1049,13 +1068,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   files = [fileManager filesOfTypes:nil
 			  operation:PCSaveFileOperation
 			   multiple:NO
-			      title:@"Save As..."
+			      title:@"Save File As..."
 			    accView:nil];
   filePath = [files objectAtIndex:0];
 
   if (filePath != nil && ![[activeProject projectEditor] saveFileAs:filePath]) 
     {
-      NSRunAlertPanel(@"Alert", @"Couldn't save file to\n%@!",
+      NSRunAlertPanel(@"Save File As", 
+		      @"Unable to save file as\n%@!",
 		      @"OK", nil, nil, filePath);
       return NO;
     }
@@ -1091,13 +1111,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   files = [fileManager filesOfTypes:nil
 			  operation:PCSaveFileOperation
 			   multiple:NO
-			      title:@"Save To..."
+			      title:@"Save File To..."
 			    accView:nil];
   filePath = [files objectAtIndex:0];
 
   if (filePath != nil && ![[activeProject projectEditor] saveFileTo:filePath]) 
     {
-      NSRunAlertPanel(@"Alert", @"Couldn't save file to\n%@!",
+      NSRunAlertPanel(@"Save File To", 
+		      @"Unable to save file to\n%@!",
 		      @"OK", nil, nil, filePath);
       return NO;
     }
@@ -1128,7 +1149,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 @implementation PCProjectManager (Subprojects)
 
-- (BOOL)newSubproject
+- (BOOL)openNewSubprojectPanel
 {
 //  PCLogInfo(self, @"newSubproject");
 
@@ -1136,7 +1157,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       if ([NSBundle loadNibNamed:@"NewSubproject" owner:self] == NO)
 	{
-	  PCLogError(self, @"error loading NewSubproject NIB!");
+	  NSRunAlertPanel(@"New Subproject",
+			  @"Internal error!"
+			  " Install ProjectCenter again, please.",
+			  @"OK", nil, nil);
 	  return NO;
 	}
 
@@ -1173,19 +1197,23 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [NSApp stopModal];
 }
 
-- (BOOL)createSubproject:(id)sender
-{
-  [self closeNewSubprojectPanel:self];
-
-  return [self createSubproject];
-}
-
-- (BOOL)createSubproject
+- (void)createSubproject:(id)sender
 {
   PCProject *subproject = nil;
   NSString  *spName = [nsNameField stringValue];
   NSString  *spPath = nil;
   NSString  *spType = [nsTypePB titleOfSelectedItem];
+
+  // Check if subproject with entered name already exists.
+  if (![activeProject doesAcceptFile:spName forKey:PCSubprojects])
+    {
+      NSRunAlertPanel(@"New Subproject",
+		      @"Subproject with name %@ already exists in project %@",
+		      @"OK", nil, nil, spName, [activeProject projectName]);
+      return;
+    }
+
+  [self closeNewSubprojectPanel:self];
 
   if (![[spName pathExtension] isEqualToString:@"subproj"])
     {
@@ -1201,7 +1229,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   // Create subproject
   subproject = [self createSubprojectOfType:spType path:spPath];
 
-  return YES;
+  return;
 }
 
 - (PCProject *)createSubprojectOfType:(NSString *)projectType 
@@ -1210,19 +1238,16 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *className = [projectTypes objectForKey:projectType];
   PCProject<ProjectType> *projectCreator;
   PCProject              *subproject = nil;
-/*  NSString  *subprojectName = [aPath lastPathComponent];
-
-  if ((project = [activeProject objectForKey:projectName]) != nil)
-    {
-      [[project projectWindow] makeKeyAndOrderFront:self];
-      return project;
-    }*/
 
   projectCreator = [bundleManager objectForClassName:className 
 					  bundleType:@"project"
 					    protocol:@protocol(ProjectType)];
   if (!(subproject = [projectCreator createProjectAt:aPath])) 
     {
+      NSRunAlertPanel(@"New Subproject",
+		      @"Internal error!"
+		      " Install ProjectCenter again, please.",
+		      @"OK", nil, nil);
       return nil;
     }
   [subproject setIsSubproject:YES];
@@ -1237,13 +1262,18 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)controlTextDidChange:(NSNotification *)aNotif
 {
+  NSString *tfString = nil;
+  NSArray  *subprojectList = nil;
+
   if ([aNotif object] != nsNameField)
     {
       return;
     }
     
-  // TODO: Add check for valid subproject named
-  if ([[nsNameField stringValue] length] > 0)
+  // Check for valid subproject names
+  tfString = [nsNameField stringValue];
+  subprojectList = [[activeProject projectDict] objectForKey:PCSubprojects];
+  if (![subprojectList containsObject:tfString])
     {
       [nsCreateButton setEnabled:YES];
     }
