@@ -1,3 +1,10 @@
+2009-02-12 11:58-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCProjectManager.m: openProject to correct 
+	bug #25565.   There was an extra semi-colon after the if
+	statement in this method which was causing it to return
+	before bringing the project window to the front.
+
 2009-02-11 19:45-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCEditorManager.m: Switch to editor and line in the

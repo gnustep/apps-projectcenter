@@ -662,7 +662,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if (filePath != nil)
     {
-      if (![self openProjectAt:filePath]);
+      if (![self openProjectAt:filePath])
 	{
 	  // No need to open alert panel.
 	  // Panel was opened in openProjectAt:->loadProjectAt: method.
