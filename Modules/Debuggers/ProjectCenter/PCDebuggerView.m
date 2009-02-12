@@ -106,6 +106,27 @@
       subProcessId = [process intValue];
     }
 
+  // Check certain status messages from GDB and set the state correctly.
+  range = [str rangeOfString: @"Starting program:"];
+  if (range.location != NSNotFound)
+    {
+      [debugger setStatus: @"Running..."];
+    }
+
+  // Check certain status messages from GDB and set the state correctly.
+  range = [str rangeOfString: @"Program recieved signal:"];
+  if (range.location != NSNotFound)
+    {
+      [debugger setStatus: @"Stopped"];
+    }
+
+  // Check certain status messages from GDB and set the state correctly.
+  range = [str rangeOfString: @"Terminated"];
+  if (range.location != NSNotFound)
+    {
+      [debugger setStatus: @"Terminated"];
+    }
+
   // FIXME: Filter this error, until we find a better way to deal with it.
   range = [str rangeOfString: @"[tcsetpgrp failed in terminal_inferior:"];
   if (range.location != NSNotFound)

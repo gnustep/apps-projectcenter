@@ -1,19 +1,34 @@
+2009-02-11 19:45-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCEditorManager.m: Switch to editor and line in the
+	-debuggerDidHitBreakpoint: method.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: Minor cleanup.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Changes to
+	-[PCDebuggerView logString:newLine:] to detect state and change
+	it on debugger window.
+	* Modules/Debuggers/ProjectCenter/Resources/PCDebugger.gorm:
+	Left justify the status field.
+
 2009-02-11  Sergii Stoian <stoyan255@gmail.com>
+
 	* PCMenuController.m:
 	(subprojectNew): Use renamed [projectManager openNewSubprojectPanel]
 	method.
-	* Framework/PCProjectManager.m: Change all alert panel names according to
-	operation performed. Edit messages text of alert panels. Cleanup.
-	(newSubproject): Rename to openNewSubprojectPanel which is more informative.
-	(createSubproject): Change method definition to createSubproject:(id)sender
-	and merge code with old createSubproject:(id)sender.
-	(controlTextDidChange:): Activate 'Create' button only if subproject with
-	enetered name doesn't exist in project.
+	* Framework/PCProjectManager.m: Change all alert panel names 
+	according to operation performed. Edit messages text of alert 
+	panels. Cleanup.
+	(newSubproject): Rename to openNewSubprojectPanel which is 
+	more informative. (createSubproject): Change method definition 
+	to createSubproject:(id)sender and merge code with old 
+	createSubproject:(id)sender.  (controlTextDidChange:): Activate 
+	'Create' button only if subproject with entered name doesn't 
+	exist in project.
 	* Framework/PCProjectBrowser.m:
-	(nameOfSelectedCategory): Fix bug which prevent from removing subprojects.
-	Now selected category is checked against superproject category list. When
-	subproject name selected, name of superproject's category is returned. As
-	side effect ProjectBrowser tries to load editor for selected subproject's
+	(nameOfSelectedCategory): Fix bug which prevent from removing 
+	subprojects.  Now selected category is checked against superproject 
+	category list. When subproject name selected, name of superproject's 
+	category is returned. As side effect ProjectBrowser tries to load 
+	editor for selected subproject's
 	name. Need to fix.
 	
 2009-02-10  Sergii Stoian <stoyan255@gmail.com>

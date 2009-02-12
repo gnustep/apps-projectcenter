@@ -141,7 +141,6 @@ static NSImage  *downImage = nil;
   [debuggerWindow setToolbar: toolbar];
   RELEASE(toolbar);
 
-  [toolbar setUsesStandardBackgroundColor: YES];
   [debuggerView setFont: [NSFont userFixedPitchFontOfSize: 0]];
   [debuggerWindow setFrameAutosaveName: @"PCDebuggerWindow"];
   [self setStatus: @"Idle."];

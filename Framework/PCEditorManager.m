@@ -394,8 +394,8 @@ NSString *PCEditorDidResignActiveNotification =
   id<CodeEditor> editor = [self openEditorForFile: filePath
 				editable: YES
 				windowed: NO];
+  [self orderFrontEditorForFile:filePath];
   [editor scrollToLineNumber: [line intValue]];
-  // NSLog(@"object = %@", [aNotif object]);
 }
 
 @end
