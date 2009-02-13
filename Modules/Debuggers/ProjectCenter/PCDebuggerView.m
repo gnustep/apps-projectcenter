@@ -114,7 +114,7 @@
     }
 
   // Check certain status messages from GDB and set the state correctly.
-  range = [str rangeOfString: @"Program recieved signal:"];
+  range = [str rangeOfString: @"Program received signal"];
   if (range.location != NSNotFound)
     {
       [debugger setStatus: @"Stopped"];

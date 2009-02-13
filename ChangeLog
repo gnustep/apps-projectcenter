@@ -1,3 +1,8 @@
+2009-02-12 23:03-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Correct
+	mispelling of search string.
+
 2009-02-12 11:58-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCProjectManager.m: openProject to correct 
