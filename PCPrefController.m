@@ -348,7 +348,7 @@ static PCPrefController *_prefCtrllr = nil;
   // Load saved prefs
   [self loadPreferences];
 
-  [panel orderFront:self];
+  [panel makeKeyAndOrderFront:self];
 }
 
 //

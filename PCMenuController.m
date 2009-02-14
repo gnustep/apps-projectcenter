@@ -87,7 +87,7 @@
 
 - (void)showInfoPanel:(id)sender
 {
-  [[[NSApp delegate] infoController] showInfoWindow:sender];
+  [[appController infoController] showInfoWindow:sender];
 }
 
 - (void)showEditorPanel:(id)sender

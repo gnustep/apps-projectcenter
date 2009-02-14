@@ -641,6 +641,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  [[project projectWindow] showProjectLoadedFiles:self];
 	}
+
+      [[project projectWindow] makeKeyAndOrderFront:self];
+
       return YES;
     }
 
@@ -662,13 +665,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
   if (filePath != nil)
     {
-      if (![self openProjectAt:filePath])
-	{
-	  // No need to open alert panel.
-	  // Panel was opened in openProjectAt:->loadProjectAt: method.
-	  return;
-	}
-      [[activeProject projectWindow] makeKeyAndOrderFront:self];
+      [self openProjectAt:filePath];
     }
 }
 

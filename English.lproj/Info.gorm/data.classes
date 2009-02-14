@@ -1,3 +1,12 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
+    PCInfoController = {
+	Actions = (
+	);
+	Outlets = (
+	    infoWindow,
+	    versionField
+	);
+	Super = NSObject;
+    };
 }

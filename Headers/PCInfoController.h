@@ -27,8 +27,9 @@
 
 @interface PCInfoController : NSObject
 {
-    id infoWindow;
-    NSDictionary *infoDict;
+  id infoWindow;
+  id versionField;
+  NSDictionary *infoDict;
 }
 
 - (id)init;

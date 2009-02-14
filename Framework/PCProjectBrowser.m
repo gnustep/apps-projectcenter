@@ -150,8 +150,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString  *name = nil;
   int       i;
 
-  // Name of subproject selected: change path to be ended with 'Subprojects'
-  // category of superproject.
+  // Name of subproject selected: Change active project to superproject
+  // to check category against superproject's catgory list.
   // But: path '/Subproject/Foo' and '/Subprojects/Foo/Subprojects' will
   // return the same category 'Subprojects' and active project will be 'Foo'
   // in both cases

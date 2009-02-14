@@ -134,7 +134,7 @@ static PCLogController *_logCtrllr = nil;
 
 - (void)showPanel
 {
-  [panel orderFront:self];
+  [panel makeKeyAndOrderFront:self];
 }
 
 - (void)logMessage:(NSString *)text withTag:(int)tag sender:(id)sender;
