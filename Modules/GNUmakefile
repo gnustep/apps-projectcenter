@@ -32,8 +32,14 @@ SUBPROJECTS = \
 	Projects/ResourceSet 	\
         Projects/Tool        	\
 	Editors/ProjectCenter	\
-	Parsers/ProjectCenter	\
-	Debuggers/ProjectCenter
+	Parsers/ProjectCenter
+
+# Do not compile the Debuggers/ProjectCenter module on MinGW since I'm
+# told at the moment it doesn't even compile there.
+ifneq ($(GNUSTEP_TARGET_OS), mingw32)
+  SUBPROJECTS += Debuggers/ProjectCenter
+endif
+
 
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 

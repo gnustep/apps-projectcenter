@@ -1,3 +1,8 @@
+2009-02-14  Nicola Pero <nicola.pero@meta-innovation.com>
+
+	* Modules/GNUmakefile (SUBPROJECTS): Removed
+	Debuggers/ProjectCenter on MinGW since it doesn't compile there.
+
 2009-02-12 23:03-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Correct
