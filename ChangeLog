@@ -1,3 +1,8 @@
+2009-02-15 14:14-EST Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Detect when the
+	program has stopped or exited so that status can be displayed.
+
 2009-02-15  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBrowser.m:
