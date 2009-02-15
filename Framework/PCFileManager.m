@@ -150,13 +150,17 @@ static PCFileManager *_mgr = nil;
       directoryPath = [toFile stringByDeletingLastPathComponent];
       if ([self createDirectoriesIfNeededAtPath:directoryPath] == NO)
 	{
-	  NSLog(@"PCFileManager: createDirectoriesIfNeededAtPath: == NO");
+	  NSRunAlertPanel(@"Copy File",
+			  @"Couldn't create directories at path %@",
+			  @"Ok",nil,nil, directoryPath);
 	  return NO;
 	}
 
       if ([fm copyPath:file toPath:toFile handler:self] == NO)
 	{
-	  NSLog(@"PCFileManager: copyPath:toPath: == NO");
+	  NSRunAlertPanel(@"Copy File",
+			  @"Couldn't copy file %@ to %@",
+			  @"Ok",nil,nil, file, toFile);
 	  return NO;
 	}
     }
@@ -176,7 +180,7 @@ static PCFileManager *_mgr = nil;
   path = [directory stringByAppendingPathComponent:[file lastPathComponent]];
 
   if (![self copyFile:file toFile:path])
-    {
+    { // No need to open aler panel here
       return NO;
     }
 
@@ -234,6 +238,9 @@ static PCFileManager *_mgr = nil;
     {
       if ([fm removeFileAtPath:path handler:nil] == NO)
 	{
+	  NSRunAlertPanel(@"Remove Directory",
+			  @"Couldn't remove empty directory at path %@",
+			  @"Ok",nil,nil, path);
 	  return NO;
 	}
       path = [path stringByDeletingLastPathComponent];
@@ -257,7 +264,9 @@ static PCFileManager *_mgr = nil;
   path = [directory stringByAppendingPathComponent:file];
   if (![fm removeFileAtPath:path handler:nil])
     {
-      NSLog(@"PCFileManager: removeFileAtPath: == NO");
+      NSRunAlertPanel(@"Remove File",
+		      @"Couldn't remove file at path %@",
+		      @"Ok",nil,nil, path);
       return NO;
     }
 
@@ -310,6 +319,9 @@ static PCFileManager *_mgr = nil;
     }
   else
     {
+      NSRunAlertPanel(@"Move File",
+		      @"Couldn't move file %@ to %@",
+		      @"Ok",nil,nil, file, directory);
       return NO;
     }
 

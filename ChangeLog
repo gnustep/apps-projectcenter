@@ -1,3 +1,35 @@
+2009-02-15  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBrowser.m:
+	(click:): Do not call editor if subproject name selected.
+	(fileNameIconImage): Set "FileProject" icon if subproject name selected.
+	* Framework/PCProjectManager.m: Remove unused methods projectPath and
+	selectedFileName.
+	* Framework/PCFileManager.m: Add alert panels if operation ends with 
+	error.
+	* Framework/PCMakefileFactory.m: Add alert panels on error of creating
+	files.
+	* Framework/PCProjectBuilder.m: Review all situations when alert panels
+	should be opened. Panels text corrected according to OpenStep UIG.
+
+2009-02-14  Sergii Stoian <stoyan255@gmail.com>
+
+	* PCMenuController.m:
+	(showInfoPanel:): Use appController intead of [NSApp delegate].
+	* GNUmakefile: Change version to 0.5.1.
+	* Resources/Info-gnustep.plist: ditto.
+	* Framework/PCProjectManager.m:
+	(open): Move ordering front project window for here...
+	(openProjectAt:): to here.
+	* Framework/PCProjectBrowser.m:
+	(nameOfSelectedCategory): Edit comment text.
+	* Framework/PCLogController.m:
+	(showPanel): Call makeKeyAndOrderFront instead of orderFront.
+	* Headers/PCInfoController.[hm]:
+	(showInfoWindow:): Get version info from Info-gnustep.plist.
+	* PCPrefController.m:
+	(showPanel:): Call makeKeyAndOrderFront instead of orderFront.
+
 2009-02-14  Nicola Pero <nicola.pero@meta-innovation.com>
 
 	* Modules/GNUmakefile (SUBPROJECTS): Removed

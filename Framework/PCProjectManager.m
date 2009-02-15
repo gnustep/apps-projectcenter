@@ -74,7 +74,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	     object:nil];
 
       fileManager = [[PCFileManager alloc] initWithProjectManager:self];
-
     }
 
   return self;
@@ -333,16 +332,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSPanel *)projectFinderPanel
 {
   return findPanel;
-}
-
-- (NSString *)projectPath
-{
-  return [activeProject projectPath];
-}
-
-- (NSString *)selectedFileName
-{
-  return [[activeProject projectBrowser] nameOfSelectedFile];
 }
 
 // ============================================================================
@@ -771,7 +760,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       NSRunAlertPanel(@"Save Project",
 		      @"Couldn't save project %@!", 
-		      @"OK", nil, nil, [activeProject projectName]);
+		      @"OK", nil, nil, [rootProject projectName]);
       return NO;
     }
 

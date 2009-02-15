@@ -231,8 +231,9 @@
 
   if (!makePath || ![[NSFileManager defaultManager] fileExistsAtPath:makePath])
     {
-      NSRunAlertPanel(@"Build terminated",
-  		      @"Build tool not found.\nFile \"%@\" doesn't exist!",
+      NSRunAlertPanel(@"Project Build",
+  		      @"Build tool '%@' not found.\n"
+		      "Build process terminated.",
   		      @"OK", nil, nil, makePath);
       return NO;
     }
@@ -373,9 +374,9 @@
   if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
       objectForKey:PromptOnClean] isEqualToString:@"YES"])
     {
-      if (NSRunAlertPanel(@"Clean Project?",
+      if (NSRunAlertPanel(@"Project Clean",
 			  @"Do you really want to clean project '%@'?",
-			  @"Yes", @"No", nil, [project projectName])
+			  @"Clean", @"Stop", nil, [project projectName])
 	  == NSAlertAlternateReturn)
 	{
 	  [cleanButton setState:NSOffState];
@@ -454,7 +455,6 @@
 // --- Actions
 - (BOOL)prebuildCheck
 {
-//  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
   id <PCPreferences> prefs = [[project projectManager] prefController];
   NSString           *buildDir = [prefs objectForKey:RootBuildDirectory];
   PCFileManager      *pcfm = [PCFileManager defaultManager];
@@ -466,16 +466,23 @@
   // Checking prerequisites
   if ([project isProjectChanged])
     {
-      if (NSRunAlertPanel(@"Project Changed!",
-			  @"Should it be saved first?",
-			  @"Yes", @"No", nil) == NSAlertDefaultReturn) 
+      int ret;
+      ret = NSRunAlertPanel(@"Project Build",
+  			    @"Project was changed and not saved.\n"
+  			    "Do you want to save project before building it?",
+  			    @"Save Project", @"Stop Build", nil);
+      if (ret == NSAlertDefaultReturn)
 	{
 	  [project save];
+	}
+      else
+	{
+	  return NO;
 	}
     }
   else
     {
-      // Synchronize PC.project and generated files just for case
+      // Synchronize PC.project and generate files
       [project save];
     }
 
@@ -502,9 +509,6 @@
 {
   NSPipe *logPipe;
   NSPipe *errorPipe;
-
-  // TODO: Support build options!!!
-  //  NSDictionary        *optionDict = [project buildOptions];
 
   // Checking build conditions
   if ([self prebuildCheck] == NO)

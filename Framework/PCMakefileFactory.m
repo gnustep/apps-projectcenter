@@ -226,12 +226,15 @@ static PCMakefileFactory *_factory = nil;
 
   // Write the new file to disc!
   mfl = [projectPath stringByAppendingPathComponent:@"GNUmakefile.preamble"];
-  if ([mfp writeToFile:mfl atomically:YES]) 
+  if (![mfp writeToFile:mfl atomically:YES]) 
     {
-      return YES;
+      NSRunAlertPanel(@"Create Makefile",
+		      @"Couldn't create %@",
+		      @"Ok",nil,nil, mfl);
+      return NO;
     }
 
-  return NO;
+  return YES;
 }
 
 - (BOOL)createPostambleForProject:(PCProject *)project
@@ -246,7 +249,15 @@ static PCMakefileFactory *_factory = nil;
   postamble = [[project projectPath] 
     stringByAppendingPathComponent:@"GNUmakefile.postamble"];
 
-  return [fm copyPath:template toPath:postamble handler:nil];
+  if (![fm copyPath:template toPath:postamble handler:nil])
+    {
+      NSRunAlertPanel(@"Create Makefile",
+		      @"Couldn't create %@",
+		      @"Ok",nil,nil, postamble);
+      return NO;
+    }
+
+  return YES;
 }
 
 - (void)appendString:(NSString *)aString

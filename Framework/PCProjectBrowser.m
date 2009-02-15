@@ -368,6 +368,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   PCProject      *activeProject;
   NSString       *browserPath;
   NSString       *filePath;
+  NSString       *fileName;
 
   if (sender != browser)
     {
@@ -379,13 +380,14 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   activeProject = [[project projectManager] activeProject];
   browserPath = [self path];
   filePath = [self pathToSelectedFile];
+  fileName = [self nameOfSelectedFile];
 
   NSLog(@"category: %@ forProject: %@", 
 	category, [activeProject projectName]);
 
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
-      ![category isEqualToString:[activeProject projectName]] &&
+      ![fileName isEqualToString:[activeProject projectName]] &&
       ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
     {
 //      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
@@ -565,11 +567,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (NSImage *)fileNameIconImage
 {
-  NSString *categoryName = nil;
-  NSString *fileName = nil;
-  NSString *fileExtension = nil;
-  NSString *iconName = nil;
-  NSImage  *icon = nil;
+  NSString  *categoryName = nil;
+  NSString  *fileName = nil;
+  NSString  *fileExtension = nil;
+  NSString  *iconName = nil;
+  NSImage   *icon = nil;
+  PCProject *activeProject = [[project projectManager] activeProject];
 
   fileName = [self nameOfSelectedFile];
   if (fileName)
@@ -592,7 +595,9 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     {
       iconName = [[NSString alloc] initWithString:@"MultiFiles"];
     }
-  else if (!categoryName && !fileName) // Nothing selected
+  // Nothing or subproject name selected
+  else if ((!categoryName && !fileName) ||
+	   [fileName isEqualToString:[activeProject projectName]]) 
     {
       iconName = [[NSString alloc] initWithString:@"FileProject"];
     }

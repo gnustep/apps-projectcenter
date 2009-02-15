@@ -119,15 +119,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (NSPanel *)buildPanel;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;
-- (NSString *)projectPath;
-- (NSString *)selectedFileName;
 
 // ============================================================================
 // ==== Project management
 // ============================================================================
 
-// Returns all currently loaded projects. They are stored with their absolut
-// paths as the keys.
+// Returns all currently loaded projects. They are stored with their absolute
+// paths as keys.
 - (NSMutableDictionary *)loadedProjects;
 - (PCProject *)activeProject;
 - (PCProject *)rootActiveProject;

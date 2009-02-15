@@ -48,26 +48,28 @@ ProjectCenter 0.6
 - change project type from file to bundle                       casamento/mottola
 - Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
 - More options for file creation                                [done!]
-- Review all situations when dialogs must be popped up          [50% done]
+- Review all situations when dialogs must be popped up          [75% done]
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 --- Project Editor ---------------------------------------------
-  - Implement indentation                                       stoyan
-  - Implement interaction with Builder (errors, warnings)       stoyan
-  - undo inside editor                                          ???
   - go to line                                                  ???
+  - Implement interaction with Builder (errors, warnings)       stoyan
+  - Implement indentation                                       stoyan
+  - undo inside editor                                          ???
 --- Project Builder --------------------------------------------
-  - Finish parsing gcc output (make errors, etc.)
   - Implement interaction with Editor (errors, warnings)        stoyan
+  - Finish parsing gcc output (make errors, etc.)
 - Think about imlementing pending adding/removal of files       ???
-- New icons. Need volonteers!!!                                 ???
 - Split "Application GORM" and "Application Renaissance"
   project types                                                 ???
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
+- New icons. Need volonteers!!!                                 ???
 
 ProjectCenter 0.7
 -----------------
 
+- Add support for browsing 'Library' category entries           ???
+- Add support for non-project files                             ???
 - An initial project wide find feature                          ???
 - Better integration with other tools (GORM)                    ???
 - CVS/SVN integration                                           ???
