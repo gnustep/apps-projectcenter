@@ -89,6 +89,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 // ==== Intialization & deallocation
 // ============================================================================
 - (id)init;
+- (BOOL)close;
 - (void)dealloc;
 - (void)setDelegate:(id)aDelegate;
 - (id)delegate;

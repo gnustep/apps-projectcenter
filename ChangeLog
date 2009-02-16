@@ -1,3 +1,24 @@
+2009-02-16  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m:
+	(close): Implemented. Closes not only project but also non
+	project files editors.
+	* Framework/PCProject.m: Clean and alert panels in various situations.
+	* Framework/PCProjectEditor.m: Move closeAllEditors, saveEditedFiles:,
+	saveAllFiles and saveFileAs: methods to PCEditorManager.
+	(saveFileAs:): Use superclass method.
+	* Framework/PCEditorManager.m: Adopt moved methods.
+	(modifiedFiles): Implemented. Return array of file paths.
+	(hasModifiedFiles): Implemented for future use (e.g. prebuild check
+	in ProjectBuilder).
+	(reviewUnsaved:): Implemented. Go through modified files' editors
+	and close which results in opening of alert "Save?" panels.
+	* PCAppController.m: 
+	(applicationShouldTerminate:): Use PCProjectManager close method
+	instead of closeAllProjects.
+	* Modules/Editors/ProjectCenter/PCEditor.m:
+	(_createWindow): Set "edited" flag according to current state.
+
 2009-02-15 14:14-EST Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Detect when the

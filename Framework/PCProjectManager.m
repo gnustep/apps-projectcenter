@@ -79,6 +79,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return self;
 }
 
+- (BOOL)close
+{
+  if ([self closeAllProjects] == NO)
+    {
+      return NO;
+    }
+
+  if ((editorManager != nil) && ([editorManager closeAllEditors] == NO))
+    {
+      return NO;
+    }
+
+  return YES;
+}
+
 - (void)dealloc
 {
 #ifdef DEVELOPMENT

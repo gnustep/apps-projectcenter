@@ -77,6 +77,9 @@
   [_window setContentView:_extScrollView];
   [_window makeFirstResponder:_extEditorView];
   RELEASE(_extScrollView);
+
+  // Honor "edited" state
+  [_window setDocumentEdited:_isEdited];
 }
 
 - (void)_createInternalView
@@ -613,6 +616,12 @@
 	postNotificationName:PCEditorDidSaveNotification
 	  	      object:self];
     }
+  else
+    {
+      NSRunAlertPanel(@"Save File",
+		      @"Couldn't save file '%@'!",
+		      @"OK", nil, nil, [_path lastPathComponent]);
+    }
 
   return saved;
 }
@@ -659,9 +668,31 @@
   return YES;
 }
 
+// FIXME: Do we really need this method?
 - (BOOL)closeFile:(id)sender save:(BOOL)save
 {
-  if ((save == NO) || [self editorShouldClose])
+  if (save == YES)
+    {
+      [self saveFileIfNeeded];
+    }
+
+  // Close window first if visible
+  if (_isWindowed && [_window isVisible] && (sender != _window))
+    {
+      [_window close];
+    }
+
+  // Inform about closing
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCEditorDidCloseNotification
+		  object:self];
+
+  return YES;
+}
+
+- (BOOL)close:(id)sender
+{
+  if ([self editorShouldClose] == YES)
     {
       // Close window first if visible
       if (_isWindowed && [_window isVisible] && (sender != _window))
@@ -684,7 +715,7 @@
 {
   if (_isEdited)
     {
-      BOOL ret;
+      int ret;
 
       if (_isWindowed && [_window isVisible])
 	{
@@ -692,31 +723,24 @@
 	}
 
       ret = NSRunAlertPanel(@"Close File",
-			    @"File %@ has been modified",
+			    @"File has been modified. Save?",
 			    @"Save and Close", @"Don't save", @"Cancel", 
 			    [_path lastPathComponent]);
-
-      if (ret == YES) // Save and Close
+      switch (ret)
 	{
+	case NSAlertDefaultReturn: // Save And Close
 	  if ([self saveFile] == NO)
 	    {
-	      NSRunAlertPanel(@"Close file",
-		    	      @"Error when saving file '%@'!",
-		    	      @"OK", nil, nil, [_path lastPathComponent]);
 	      return NO;
 	    }
-	  else
-	    {
-	      return YES;
-	    }
-	}
-      else if (ret == NO) // Close but don't save
-	{
-	  return YES;
-	}
-      else               // Cancel closing
-	{
+	  break;
+
+	case NSAlertAlternateReturn: // Don't save
+	  break;
+
+	case NSAlertOtherReturn: // Cancel
 	  return NO;
+	  break;
 	}
 
       [self setIsEdited:NO];
@@ -741,7 +765,7 @@
 	}
       else
 	{
-    	  return [self closeFile:sender save:YES];
+    	  return [self close:sender];
 	}
     }
 

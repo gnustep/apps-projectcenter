@@ -128,7 +128,7 @@ NSString *PCEditorDidResignActiveNotification =
 }
 
 // ===========================================================================
-// ==== Project and Editor handling
+// ==== Editor handling
 // ===========================================================================
 
 - (id<CodeEditor>)editorForFile:(NSString *)filePath
@@ -236,7 +236,7 @@ NSString *PCEditorDidResignActiveNotification =
       return;
     }
 
-  [_activeEditor closeFile:self save:YES];
+  [_activeEditor close:sender];
 }
 
 - (void)closeEditorForFile:(NSString *)file
@@ -245,14 +245,125 @@ NSString *PCEditorDidResignActiveNotification =
 
   if ([_editorsDict count] > 0 && (editor = [_editorsDict objectForKey:file]))
     {
-      [editor closeFile:self save:YES];
-      [_editorsDict removeObjectForKey:file];
+      [editor close:self];
     }
 }
 
+- (NSArray *)modifiedFiles
+{
+  NSEnumerator   *enumerator = [_editorsDict keyEnumerator];
+  NSString       *key = nil;
+  id<CodeEditor> editor;
+  NSMutableArray *modifiedFiles = [[NSMutableArray alloc] init];
+
+  while ((key = [enumerator nextObject]))
+    {
+      editor = [_editorsDict objectForKey:key];
+      if ([editor isEdited])
+	{
+	  [modifiedFiles addObject:key];
+	}
+    }
+
+  return AUTORELEASE((NSArray *)modifiedFiles);
+}
+
+- (BOOL)hasModifiedFiles
+{
+  if ([[self modifiedFiles] count])
+    {
+      return YES;
+    }
+
+  return NO;
+}
+
+- (BOOL)reviewUnsaved:(NSArray *)modifiedFiles
+{
+  NSEnumerator   *enumerator = [modifiedFiles objectEnumerator];
+  NSString       *filePath;
+  id<CodeEditor> editor;
+
+  while ((filePath = [enumerator nextObject]))
+    {
+      editor = [_editorsDict objectForKey:filePath];
+
+      [self orderFrontEditorForFile:filePath];
+
+      if ([editor close:self] == NO)
+	{ // Operation should be aborted
+	  return NO;
+	}
+    }
+
+  return YES;
+}
+
+- (BOOL)closeAllEditors
+{
+  NSArray *modifiedFiles = [self modifiedFiles];
+  int     ret;
+
+  if ([modifiedFiles count])
+    {
+      ret = NSRunAlertPanel(@"Close",
+			    @"Project has unsaved files.",
+			    @"Review Unsaved", 
+			    @"Close Anyway", 
+			    @"Save and Close");
+      switch (ret)
+	{
+	case NSAlertDefaultReturn: // Review Unsaved
+	  if ([self reviewUnsaved:modifiedFiles] == NO)
+	    { // Operation was canceled
+	      return NO;
+	    }
+	  break;
+
+	case NSAlertAlternateReturn: // Close Anyway
+	  break;
+
+	case NSAlertOtherReturn: // Save and Close
+	  if ([self saveAllFiles] == NO)
+	    {
+	      return NO;
+	    }
+	  break;
+	}
+    }
+
+  [_editorsDict removeAllObjects];
+
+  return YES;
+}
+
 // ===========================================================================
-// ==== Active editor file handling
+// ==== File handling
 // ===========================================================================
+
+- (BOOL)saveAllFiles
+{
+  NSEnumerator   *enumerator = [_editorsDict keyEnumerator];
+  id<CodeEditor> editor;
+  NSString       *key;
+  BOOL           ret = YES;
+
+  while ((key = [enumerator nextObject]))
+    {
+      editor = [_editorsDict objectForKey:key];
+
+      if ([editor saveFileIfNeeded] == NO)
+	{
+	  ret = NSRunAlertPanel(@"Save Files",
+				@"Couldn't save file '%@'.\n"
+				"Operation stopped.",
+				@"Ok",nil,nil);
+	  return NO;
+	}
+    }
+
+  return ret;
+}
 
 - (BOOL)saveFile
 {

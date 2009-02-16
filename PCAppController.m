@@ -165,10 +165,8 @@
       quit = [projectManager saveAllProjects];
     }
 
-  // Close all loaded projects
-  quit = [projectManager closeAllProjects];
-
-  if (quit == NO)
+  // Close ProjectManager (projects, editors, etc.)
+  if ([projectManager close] == NO)
     {
       return NO;
     }

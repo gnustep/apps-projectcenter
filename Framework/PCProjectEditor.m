@@ -279,112 +279,20 @@
     }
 }
 
-// Called by PCProject. After that retainCount goes down and [self dealloc]
-// called by autorelease mechanism
-- (BOOL)closeAllEditors
-{
-  NSEnumerator   *enumerator = [_editorsDict keyEnumerator];
-  id<CodeEditor> editor;
-  NSString       *key = nil;
-  NSMutableArray *editedFiles = [[NSMutableArray alloc] init];
-
-  while ((key = [enumerator nextObject]))
-    {
-      editor = [_editorsDict objectForKey:key];
-      if ([editor isEdited])
-	{
-	  [editedFiles addObject:[key lastPathComponent]];
-	}
-      else
-	{
-	  [editor closeFile:self save:YES];
-	}
-    }
-
-  // TODO: Order panel with list of changed files
-  if ([editedFiles count])
-    {
-      if ([self saveEditedFiles:(NSArray *)editedFiles] == NO)
-	{
-	  return NO;
-	}
-    }
-
-  [_editorsDict removeAllObjects];
-
-  return YES;
-}
-
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
-- (BOOL)saveEditedFiles:(NSArray *)files
-{
-  int ret;
-
-  ret = NSRunAlertPanel(@"Alert",
-			@"Project has modified files\n%@",
-			@"Save and Close",@"Close",@"Don't close",
-			files);
-  switch (ret)
-    {
-    case NSAlertDefaultReturn:
-      if ([self saveAllFiles] == NO)
-	{
-	  return NO;
-	}
-      break;
-
-    case NSAlertAlternateReturn:
-      // Close files without saving
-      break;
-
-    case NSAlertOtherReturn:
-      return NO;
-      break;
-    }
-    
-  return YES;
-}
-
-// TODO: move to PCEditorManager
-- (BOOL)saveAllFiles
-{
-  NSEnumerator   *enumerator = [_editorsDict keyEnumerator];
-  id<CodeEditor> editor;
-  NSString       *key;
-  BOOL           ret = YES;
-
-  while ((key = [enumerator nextObject]))
-    {
-      editor = [_editorsDict objectForKey:key];
-
-      if ([editor saveFileIfNeeded] == NO)
-	{
-	  ret = NO;
-	}
-    }
-
-  return ret;
-}
-
 - (BOOL)saveFileAs:(NSString *)file
 {
   id<CodeEditor> editor = [self activeEditor];
+  NSString       *categoryPath = nil;
+  BOOL           res;
 
   if (editor != nil)
     {
-      BOOL     res;
-      BOOL     iw = [editor isWindowed];
-      NSString *categoryPath = [editor categoryPath];
-      
-      res = [editor saveFileTo:file];
-      [editor closeFile:self save:NO];
-
-      editor = [self openEditorForFile:file 
-			      editable:YES // fixme
-			      windowed:iw];
+      categoryPath = [editor categoryPath];
+      res = [super saveFileAs:file];
       [editor setCategoryPath:categoryPath];
 
       return res;

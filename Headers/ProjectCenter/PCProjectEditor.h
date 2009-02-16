@@ -71,14 +71,11 @@
                                    windowed:(BOOL)windowed;
 
 - (void)orderFrontEditorForFile:(NSString *)path;
-- (BOOL)closeAllEditors;
 
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
-- (BOOL)saveEditedFiles:(NSArray *)files;
-- (BOOL)saveAllFiles;
 - (BOOL)saveFileAs:(NSString *)file;
 
 // ===========================================================================

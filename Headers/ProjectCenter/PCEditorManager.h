@@ -67,10 +67,16 @@
 - (void)closeActiveEditor:(id)sender;
 - (void)closeEditorForFile:(NSString *)file;
 
+- (NSArray *)modifiedFiles;
+- (BOOL)hasModifiedFiles;
+- (BOOL)reviewUnsaved:(NSArray *)modifiedFiles;
+- (BOOL)closeAllEditors;
+
 // ===========================================================================
 // ==== File handling
 // ===========================================================================
 
+- (BOOL)saveAllFiles;
 - (BOOL)saveFile;
 - (BOOL)saveFileAs:(NSString *)file;
 - (BOOL)saveFileTo:(NSString *)file;

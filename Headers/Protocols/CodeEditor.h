@@ -75,6 +75,7 @@
 - (BOOL)saveFileTo:(NSString *)path;
 - (BOOL)revertFileToSaved;
 - (BOOL)closeFile:(id)sender save:(BOOL)save;
+- (BOOL)close:(id)sender;
    
 // ===========================================================================
 // ==== Parser and scrolling

@@ -432,8 +432,8 @@ NSString
   // Remove backup file if exists
   if ([fm fileExistsAtPath:backup] && ![fm removeFileAtPath:backup handler:nil])
     {
-      NSRunAlertPanel(@"Save project",
-		      @"Error removing the old project backup!",
+      NSRunAlertPanel(@"Save Project",
+		      @"Couldn't remove the old project backup file",
 		      @"OK",nil,nil);
       return NO;
     }
@@ -443,8 +443,8 @@ NSString
     {
       if ([fm copyPath:file toPath:backup handler:nil] == NO)
 	{
-	  NSRunAlertPanel(@"Save project",
-			  @"Error when saving project backup file!",
+	  NSRunAlertPanel(@"Save Project",
+			  @"Couldn't save project backup file",
 			  @"OK",nil,nil);
 	  return NO;
 	}
@@ -455,6 +455,9 @@ NSString
                   forKey:PCLastEditing];
   if ([projectDict writeToFile:file atomically:YES] == NO)
     {
+      NSRunAlertPanel(@"Save Project",
+		      @"Couldn't save project file",
+		      @"OK",nil,nil,projectName);
       return NO;
     }
 
@@ -465,9 +468,9 @@ NSString
   // Save GNUmakefile
   if ([self writeMakefile] == NO)
     {
-      NSRunAlertPanel(@"Save project",
-		      @"Error when writing makefile for project %@",
-		      @"OK",nil,nil,projectName);
+      NSRunAlertPanel(@"Save Project",
+		      @"Couldn't write GNUmakefile",
+		      @"OK",nil,nil);
       return NO;
     }
 
@@ -493,7 +496,7 @@ NSString
 
       ret = NSRunAlertPanel(@"Close Project",
 			    @"Project or subprojects are modified",
-			    @"Save and Close",@"Don't save",@"Cancel");
+			    @"Save and Close",@"Don't save",@"Stop");
       switch (ret)
 	{
 	case NSAlertDefaultReturn:
