@@ -18,6 +18,8 @@
 	instead of closeAllProjects.
 	* Modules/Editors/ProjectCenter/PCEditor.m:
 	(_createWindow): Set "edited" flag according to current state.
+	* Framework/PCProjectBuilder.m:
+	(prebuildCheck): Check if project has edited files.
 
 2009-02-15 14:14-EST Gregory John Casamento <greg_casamento@yahoo.com>
 

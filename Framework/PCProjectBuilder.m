@@ -460,10 +460,11 @@
   PCFileManager      *pcfm = [PCFileManager defaultManager];
   NSFileManager      *fm = [NSFileManager defaultManager];
   NSString           *projectBuildDir;
+  PCProjectEditor    *projectEditor;
 
   NSLog (@"BuildDir = %@", buildDir);
 
-  // Checking prerequisites
+  // Checking for project 'edited' state 
   if ([project isProjectChanged])
     {
       int ret;
@@ -484,6 +485,34 @@
     {
       // Synchronize PC.project and generate files
       [project save];
+    }
+
+  // Checking if edited files exist
+  projectEditor = [project projectEditor];
+  if ([projectEditor hasModifiedFiles])
+    {
+      int             ret;
+
+      ret = NSRunAlertPanel(@"Project Build",
+  			    @"Project has unsaved files.\n"
+  			    "Do you want to save files before build a project?",
+  			    @"Review Unsaved", @"Build Anyway", @"Stop Build");
+      switch (ret)
+	{
+	case NSAlertDefaultReturn: // Review Unsaved
+	  if ([projectEditor reviewUnsaved:[projectEditor modifiedFiles]] == NO)
+	    { // Operation was canceled
+	      return NO;
+	    }
+	  break;
+
+	case NSAlertAlternateReturn: // Build Anyway
+	  break;
+
+	case NSAlertOtherReturn: // Stop Build
+      	  return NO;
+	  break;
+	}
     }
 
   // Get make tool path
