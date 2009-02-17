@@ -1,3 +1,14 @@
+2009-02-17  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilder.m: Cleanup.
+	* Framework/PCEditorManager.m:
+	(openEditorForFile:editable:windowed:): Add alert panel that
+	ordeder front when file to open doesn't exist. Remove commented
+	out call to [self orderFrontEditorForFile:filePath] (this method
+	should be called directly to PCEditorManager or PCProjectEditor
+	classes).
+	* Documentation/TODO: Added "Fix reported bugs" to list.
+
 2009-02-16  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m:

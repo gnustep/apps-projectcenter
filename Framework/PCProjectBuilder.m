@@ -232,7 +232,7 @@
   if (!makePath || ![[NSFileManager defaultManager] fileExistsAtPath:makePath])
     {
       NSRunAlertPanel(@"Project Build",
-  		      @"Build tool '%@' not found.\n"
+  		      @"Build tool '%@' not found. Check preferences.\n"
 		      "Build process terminated.",
   		      @"OK", nil, nil, makePath);
       return NO;
@@ -461,24 +461,24 @@
   NSFileManager      *fm = [NSFileManager defaultManager];
   NSString           *projectBuildDir;
   PCProjectEditor    *projectEditor;
-
-  NSLog (@"BuildDir = %@", buildDir);
+  int                ret;
 
   // Checking for project 'edited' state 
   if ([project isProjectChanged])
     {
-      int ret;
       ret = NSRunAlertPanel(@"Project Build",
   			    @"Project was changed and not saved.\n"
   			    "Do you want to save project before building it?",
   			    @"Save Project", @"Stop Build", nil);
-      if (ret == NSAlertDefaultReturn)
+      switch (ret)
 	{
-	  [project save];
-	}
-      else
-	{
+	case NSAlertDefaultReturn: // Stop Build
 	  return NO;
+	  break;
+
+	case NSAlertAlternateReturn: // Save Project
+	  [project save];
+	  break;
 	}
     }
   else
@@ -491,26 +491,18 @@
   projectEditor = [project projectEditor];
   if ([projectEditor hasModifiedFiles])
     {
-      int             ret;
-
       ret = NSRunAlertPanel(@"Project Build",
   			    @"Project has unsaved files.\n"
   			    "Do you want to save files before build a project?",
-  			    @"Review Unsaved", @"Build Anyway", @"Stop Build");
+  			    @"Stop Build", @"Save and Build", nil);
       switch (ret)
 	{
-	case NSAlertDefaultReturn: // Review Unsaved
-	  if ([projectEditor reviewUnsaved:[projectEditor modifiedFiles]] == NO)
-	    { // Operation was canceled
-	      return NO;
-	    }
-	  break;
-
-	case NSAlertAlternateReturn: // Build Anyway
-	  break;
-
-	case NSAlertOtherReturn: // Stop Build
+	case NSAlertDefaultReturn: // Stop Build
       	  return NO;
+	  break;
+
+	case NSAlertAlternateReturn: // Save and Build
+	  [projectEditor saveAllFiles];
 	  break;
 	}
     }
@@ -521,6 +513,7 @@
       return NO;
     }
 
+  NSLog (@"BuildDir = %@", buildDir);
   // Create root build directory if not exist
   projectBuildDir = [NSString stringWithFormat:@"%@.build", 
 		  [project projectName]];
@@ -1161,6 +1154,7 @@
   if (editor)
     {
       position = NSPointFromString([error objectForKey:@"Position"]);
+      [projectEditor orderFrontEditorForFile:[error objectForKey:@"File"]];
       [editor scrollToLineNumber:(unsigned int)position.x];
 
 /*      NSLog(@"%i: %@(%@): %@", 

@@ -152,18 +152,21 @@ NSString *PCEditorDidResignActiveNotification =
   // Determine if file not exist or file is directory
   if (![fm fileExistsAtPath:filePath isDirectory:&isDir] || isDir)
     {
-      NSLog(@"%@ doesn't exist!", filePath);
+      NSRunAlertPanel(@"Open Editor",
+		      @"Couldn't open editor for file '%@'.\n"
+		      "File doesn't exist.",
+		      @"Ok", nil, nil, filePath);
       return nil;
     }
 
   // Determine if file is text file
   if (![[PCFileManager defaultManager] isTextFile:filePath])
     {
-      NSLog(@"%@ is not plan text file!", filePath);
+      NSLog(@"%@ is not plain text file!", filePath);
       return nil;
     }
 
-  NSLog(@"EditorManager 1: %@", _editorsDict);
+//  NSLog(@"EditorManager 1: %@", _editorsDict);
   editor = [_editorsDict objectForKey:filePath];
   if (editor == nil)
     {
@@ -195,7 +198,6 @@ NSString *PCEditorDidResignActiveNotification =
     }
       
   [editor setWindowed:windowed];
-//  [self orderFrontEditorForFile:filePath];
 
   return editor;
 }
