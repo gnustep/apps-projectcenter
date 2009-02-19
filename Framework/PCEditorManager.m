@@ -306,6 +306,8 @@ NSString *PCEditorDidResignActiveNotification =
   NSArray *modifiedFiles = [self modifiedFiles];
   int     ret;
 
+  NSLog(@"[PCEditorManager] modified files: %@", modifiedFiles);
+
   if ([modifiedFiles count])
     {
       ret = NSRunAlertPanel(@"Close",

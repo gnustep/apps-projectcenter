@@ -469,7 +469,7 @@
       ret = NSRunAlertPanel(@"Project Build",
   			    @"Project was changed and not saved.\n"
   			    "Do you want to save project before building it?",
-  			    @"Save Project", @"Stop Build", nil);
+  			    @"Stop Build", @"Save and Build", nil);
       switch (ret)
 	{
 	case NSAlertDefaultReturn: // Stop Build
