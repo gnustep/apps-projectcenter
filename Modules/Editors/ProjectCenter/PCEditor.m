@@ -723,7 +723,7 @@
 	}
 
       ret = NSRunAlertPanel(@"Close File",
-			    @"File has been modified. Save?",
+			    @"File %@ has been modified. Save?",
 			    @"Save and Close", @"Don't save", @"Cancel", 
 			    [_path lastPathComponent]);
       switch (ret)

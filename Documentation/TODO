@@ -48,7 +48,7 @@ ProjectCenter 0.6
 - change project type from file to bundle                       casamento/mottola
 - Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
 - More options for file creation                                [done!]
-- Review all situations when dialogs must be popped up          [75% done]
+- Review all situations when dialogs must be popped up          [done!]
 - Check all textfields if 'scrollable' attribute set            stoyan
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 --- Project Editor ---------------------------------------------

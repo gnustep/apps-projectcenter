@@ -31,6 +31,7 @@
 #import <ProjectCenter/PCProject.h>
 
 #import <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCSaveModified.h>
 
 NSString *PCEditorDidChangeFileNameNotification = 
           @"PCEditorDidChangeFileNameNotification";
@@ -304,35 +305,15 @@ NSString *PCEditorDidResignActiveNotification =
 - (BOOL)closeAllEditors
 {
   NSArray *modifiedFiles = [self modifiedFiles];
-  int     ret;
-
-  NSLog(@"[PCEditorManager] modified files: %@", modifiedFiles);
 
   if ([modifiedFiles count])
     {
-      ret = NSRunAlertPanel(@"Close",
-			    @"Project has unsaved files.",
-			    @"Review Unsaved", 
-			    @"Close Anyway", 
-			    @"Save and Close");
-      switch (ret)
+      if (!PCRunSaveModifiedFilesPanel(self, 
+				       @"Save and Close",
+				       @"Close Anyway",
+				       @"Cancel"))
 	{
-	case NSAlertDefaultReturn: // Review Unsaved
-	  if ([self reviewUnsaved:modifiedFiles] == NO)
-	    { // Operation was canceled
-	      return NO;
-	    }
-	  break;
-
-	case NSAlertAlternateReturn: // Close Anyway
-	  break;
-
-	case NSAlertOtherReturn: // Save and Close
-	  if ([self saveAllFiles] == NO)
-	    {
-	      return NO;
-	    }
-	  break;
+	  return NO;
 	}
     }
 
@@ -501,7 +482,7 @@ NSString *PCEditorDidResignActiveNotification =
   [_editorsDict setObject:_editor forKey:_newFileName];
 }
 
-- (void) debuggerDidHitBreakpoint: (NSNotification *)aNotif
+- (void)debuggerDidHitBreakpoint:(NSNotification *)aNotif
 {
   id object = [aNotif object];
   NSString *filePath = [object objectForKey: @"file"];

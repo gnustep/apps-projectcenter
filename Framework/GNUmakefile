@@ -118,7 +118,7 @@ ProjectCenter_LOCALIZED_RESOURCE_FILES = \
   ProjectDescription.gorm \
   FileAttributes.gorm \
   LogPanel.gorm \
-  SaveModifiedFiles.gorm 
+  SaveModified.gorm 
 
 
 ProjectCenter_LANGUAGES = \

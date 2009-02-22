@@ -59,7 +59,7 @@ BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
 {
   if ([NSBundle loadNibNamed:@"SaveModified" owner:self] == NO)
     {
-      NSLog(@"Error loading SaveModifiedFiles NIB file!");
+      NSLog(@"Error loading SaveModified NIB file!");
       return NO;
     }
 
