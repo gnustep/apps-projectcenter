@@ -49,19 +49,19 @@ ProjectCenter 0.6
 - Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
 - More options for file creation                                [done!]
 - Review all situations when dialogs must be popped up          [done!]
-- Check all textfields if 'scrollable' attribute set            stoyan
+- Check all textfields if 'scrollable' attribute set            [done!] 
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
 --- Project Editor ---------------------------------------------
-  - go to line                                                  ???
+  - go to line                                                  stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
   - Implement indentation                                       stoyan
-  - undo inside editor                                          ???
+  - undo inside editor                                          stoyan
 --- Project Builder --------------------------------------------
   - Implement interaction with Editor (errors, warnings)        stoyan
   - Finish parsing gcc output (make errors, etc.)               stoyan
 - Think about imlementing pending adding/removal of files       ???
-- Split "Application GORM" and "Application Renaissance"
-  project types                                                 ???
+- Split "Application" to "Application GORM" and 
+  "Application Renaissance" project types                       ???
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
 - Fix reported bugs                                             ???
