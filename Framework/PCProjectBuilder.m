@@ -38,6 +38,7 @@
 
 #import <ProjectCenter/PCProjectEditor.h>
 #import <Protocols/CodeEditor.h>
+#import <ProjectCenter/PCSaveModifiedFiles.h>
 
 #import <ProjectCenter/PCLogController.h>
 #import <Protocols/Preferences.h>
@@ -491,7 +492,18 @@
   projectEditor = [project projectEditor];
   if ([projectEditor hasModifiedFiles])
     {
-      ret = NSRunAlertPanel(@"Project Build",
+      PCSaveModifiedFiles *saveModified = [[PCSaveModifiedFiles alloc] init];
+
+      if (![saveModified openWithEditorManager:projectEditor
+			     defaultButtonText:@"Save and Build"
+			   alternateButtonText:@"Build Anyway"
+			       otherButtonText:@"Cancel"])
+	{
+	  RELEASE(saveModified);
+	  return NO;
+	}
+      RELEASE(saveModified);
+/*      ret = NSRunAlertPanel(@"Project Build",
   			    @"Project has unsaved files.\n"
   			    "Do you want to save files before build a project?",
   			    @"Stop Build", @"Save and Build", nil);
@@ -504,7 +516,7 @@
 	case NSAlertAlternateReturn: // Save and Build
 	  [projectEditor saveAllFiles];
 	  break;
-	}
+	}*/
     }
 
   // Get make tool path

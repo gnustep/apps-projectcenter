@@ -33,6 +33,7 @@ ProjectCenter_HEADER_FILES = \
   PCAddFilesPanel.h \
   PCFileCreator.h \
   PCMakefileFactory.h \
+  PCSaveModifiedFiles.h \
   \
   PCProjectManager.h \
   PCProject.h \
@@ -65,6 +66,7 @@ ProjectCenter_OBJC_FILES = \
   PCFileManager.m \
   PCAddFilesPanel.m \
   PCFileCreator.m \
+  PCSaveModifiedFiles.m \
   \
   PCProjectManager.m \
   PCProject.m \
@@ -116,7 +118,8 @@ ProjectCenter_LOCALIZED_RESOURCE_FILES = \
   ProjectDescription.gorm \
   FileAttributes.gorm \
   LogPanel.gorm \
-  Preferences.gorm
+  SaveModifiedFiles.gorm 
+
 
 ProjectCenter_LANGUAGES = \
 English

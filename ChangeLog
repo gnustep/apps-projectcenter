@@ -1,3 +1,12 @@
+2009-02-22  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCSaveModifiedFiles.m:
+	* Framework/English.lproj/SaveModifiedFiles.gorm:
+	* Headers/ProjectCenter/PCSaveModifiedFiles.m:
+	Add initial implementation of "Save Modified Files" panel.
+	* Framework/PCProjectBuilder.m:
+	(prebuildCheck): Use PCSaveModifiedFiles.
+
 2009-02-19  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBuilder.m:
