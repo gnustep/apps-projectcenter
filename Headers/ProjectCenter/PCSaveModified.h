@@ -23,8 +23,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCSaveModifiedFiles_h_
-#define _PCSaveModifiedFiles_h_
+#ifndef _PCSaveModified_h_
+#define _PCSaveModified_h_
 
 #import <AppKit/AppKit.h>
 

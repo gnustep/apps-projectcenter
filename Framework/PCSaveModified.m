@@ -25,7 +25,7 @@
 
 #import <ProjectCenter/PCEditorManager.h>
 
-#import <ProjectCenter/PCSaveModifiedFiles.h>
+#import <ProjectCenter/PCSaveModified.h>
 
 BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
 				 NSString *defaultText,
@@ -57,7 +57,7 @@ BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
 	       alternateButtonText:(NSString *)alternateText
 		   otherButtonText:(NSString *)otherText
 {
-  if ([NSBundle loadNibNamed:@"SaveModifiedFiles" owner:self] == NO)
+  if ([NSBundle loadNibNamed:@"SaveModified" owner:self] == NO)
     {
       NSLog(@"Error loading SaveModifiedFiles NIB file!");
       return NO;

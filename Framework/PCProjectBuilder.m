@@ -38,7 +38,7 @@
 
 #import <ProjectCenter/PCProjectEditor.h>
 #import <Protocols/CodeEditor.h>
-#import <ProjectCenter/PCSaveModifiedFiles.h>
+#import <ProjectCenter/PCSaveModified.h>
 
 #import <ProjectCenter/PCLogController.h>
 #import <Protocols/Preferences.h>
