@@ -27,15 +27,36 @@
 
 #import <ProjectCenter/PCSaveModifiedFiles.h>
 
-@implementation PCSaveModifiedFiles
-
-- (BOOL)openWithEditorManager:(PCEditorManager *)manager
-	    defaultButtonText:(NSString *)defaultText
-	  alternateButtonText:(NSString *)alternateText
-	      otherButtonText:(NSString *)otherText
+BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
+				 NSString *defaultText,
+				 NSString *alternateText,
+				 NSString *otherText)
 {
-  NSArray *filesToSave = nil;
+  PCSaveModified *saveModifiedPanel;
+  BOOL           result;
 
+  if (!(saveModifiedPanel = [[PCSaveModified alloc] init]))
+    {
+      return NO;
+    }
+
+  result = [saveModifiedPanel saveFilesWithEditorManager:manager
+				       defaultButtonText:defaultText
+				     alternateButtonText:alternateText
+					 otherButtonText:otherText];
+  RELEASE(saveModifiedPanel);
+
+  return result;
+}
+
+
+@implementation PCSaveModified
+
+- (BOOL)saveFilesWithEditorManager:(PCEditorManager *)manager
+		 defaultButtonText:(NSString *)defaultText
+	       alternateButtonText:(NSString *)alternateText
+		   otherButtonText:(NSString *)otherText
+{
   if ([NSBundle loadNibNamed:@"SaveModifiedFiles" owner:self] == NO)
     {
       NSLog(@"Error loading SaveModifiedFiles NIB file!");
@@ -49,7 +70,7 @@
   [filesList setHeaderView:nil];
   [filesList setDataSource:self];
   [filesList setTarget:self];
-//  [filesList selectAll];
+  [filesList selectAll:self];
   [filesList reloadData];
 
   // Buttons
@@ -63,7 +84,7 @@
 
   if (clickedButton == defaultButton)
     {
-      // save files
+      [self saveSelectedFiles];
       return YES;
     }
   else if (clickedButton == alternateButton)
@@ -75,15 +96,13 @@
       return NO;
     }
 
-  NSLog(@"MODAL is not BLOCKING!!!");
-
   return YES;
 }
 
 - (void)dealloc
 {
 #ifdef DEBUG
-  NSLog(@"PCSaveModifiedFiles: dealloc");
+  NSLog(@"PCSaveModified: dealloc");
 #endif
   RELEASE(panel);
 
@@ -92,6 +111,19 @@
 
 - (BOOL)saveSelectedFiles
 {
+  NSArray      *modifiedFiles = [editorManager modifiedFiles];
+  NSIndexSet   *selectedRows = [filesList selectedRowIndexes];
+  NSArray      *filesToSave = [modifiedFiles objectsAtIndexes:selectedRows];
+  NSEnumerator *enumerator = [filesToSave objectEnumerator];
+  NSString     *filePath = nil;
+
+  NSLog(@"SaveModified|filesToSave: %@", filesToSave);
+
+  while ((filePath = [enumerator nextObject]))
+    {
+      [[editorManager editorForFile:filePath] saveFileIfNeeded];
+    }
+
   return YES;
 }
 
@@ -102,6 +134,9 @@
   [panel close];
 }
 
+// ============================================================================
+// ==== TableView delegate
+// ============================================================================
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (aTableView != filesList)

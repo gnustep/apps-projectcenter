@@ -492,31 +492,13 @@
   projectEditor = [project projectEditor];
   if ([projectEditor hasModifiedFiles])
     {
-      PCSaveModifiedFiles *saveModified = [[PCSaveModifiedFiles alloc] init];
-
-      if (![saveModified openWithEditorManager:projectEditor
-			     defaultButtonText:@"Save and Build"
-			   alternateButtonText:@"Build Anyway"
-			       otherButtonText:@"Cancel"])
+      if (!PCRunSaveModifiedFilesPanel(projectEditor, 
+				       @"Save and Build",
+				       @"Build Anyway",
+				       @"Cancel"))
 	{
-	  RELEASE(saveModified);
 	  return NO;
 	}
-      RELEASE(saveModified);
-/*      ret = NSRunAlertPanel(@"Project Build",
-  			    @"Project has unsaved files.\n"
-  			    "Do you want to save files before build a project?",
-  			    @"Stop Build", @"Save and Build", nil);
-      switch (ret)
-	{
-	case NSAlertDefaultReturn: // Stop Build
-      	  return NO;
-	  break;
-
-	case NSAlertAlternateReturn: // Save and Build
-	  [projectEditor saveAllFiles];
-	  break;
-	}*/
     }
 
   // Get make tool path

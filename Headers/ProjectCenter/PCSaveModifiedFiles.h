@@ -28,7 +28,12 @@
 
 #import <AppKit/AppKit.h>
 
-@interface PCSaveModifiedFiles : NSObject
+BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
+				 NSString *defaultText,
+				 NSString *alternateText,
+				 NSString *otherText);
+
+@interface PCSaveModified : NSObject
 {
   PCEditorManager *editorManager;
 
@@ -39,21 +44,24 @@
   NSButton        *otherButton;
 
   NSButton        *clickedButton;
-
 }
 
-- (BOOL)openWithEditorManager:(PCEditorManager *)manager
-	    defaultButtonText:(NSString *)defaultText
-	  alternateButtonText:(NSString *)alternateText
-	      otherButtonText:(NSString *)otherText;
+- (BOOL)saveFilesWithEditorManager:(PCEditorManager *)manager
+		 defaultButtonText:(NSString *)defaultText
+	       alternateButtonText:(NSString *)alternateText
+		   otherButtonText:(NSString *)otherText;
 - (void)dealloc;
 
+- (BOOL)saveSelectedFiles;
+
+// TableView delegate
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView;
 
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
                         row:(int)rowIndex;
 @end
+
 
 #endif 
 
