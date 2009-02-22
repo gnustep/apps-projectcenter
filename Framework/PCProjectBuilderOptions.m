@@ -75,7 +75,6 @@
   // Setup build arguments field
   args = [[project projectDict] objectForKey:PCBuilderArguments];
   [buildArgsField setStringValue:[args componentsJoinedByString:@" "]];
-  [optionsPanel makeFirstResponder:buildArgsField];
 
   // Setup option buttons
   [verboseButton setRefusesFirstResponder:YES];
@@ -119,6 +118,7 @@
   [optionsPanel setFrame:opRect display:NO];
 
   [optionsPanel makeKeyAndOrderFront:nil];
+  [optionsPanel makeFirstResponder:buildArgsField];
 }
 
 - (NSString *)buildTarget

@@ -1,3 +1,11 @@
+2009-02-23  Sergii Stoian <stoyan255@gmail.com>
+
+	* Set all textfields attributes to 'scrollable'.
+	* Framework/PCProjectBuilderOptions.m: Set first reponder
+	after panel is ordereder (call to makeFirstResponder: in
+	awakeFromNib prevents textfield from draw its' border. 
+	GNUstep bug?).
+
 2009-02-22  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCSaveModifiedFiles.m: Change to more generic
