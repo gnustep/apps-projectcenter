@@ -51,20 +51,20 @@ ProjectCenter 0.6
 - Review all situations when dialogs must be popped up          [done!]
 - Check all textfields if 'scrollable' attribute set            [done!] 
 - Rewrite Preferences (3rd party sections etc.)                 stoyan
+--- Project Builder --------------------------------------------
+  - Finish parsing gcc output (make errors, etc.)               stoyan
+  - Implement interaction with Editor (errors, warnings)        stoyan
 --- Project Editor ---------------------------------------------
   - go to line                                                  stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
   - Implement indentation                                       stoyan
   - undo inside editor                                          stoyan
---- Project Builder --------------------------------------------
-  - Implement interaction with Editor (errors, warnings)        stoyan
-  - Finish parsing gcc output (make errors, etc.)               stoyan
 - Think about imlementing pending adding/removal of files       ???
 - Split "Application" to "Application GORM" and 
   "Application Renaissance" project types                       ???
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
-- Fix reported bugs                                             ???
+- Process reported bugs                                         ???
 - New icons. Need volonteers!!!                                 ???
 
 ProjectCenter 0.7
@@ -72,14 +72,20 @@ ProjectCenter 0.7
 
 - Add support for browsing 'Library' category entries           ???
 - Add support for non-project files                             ???
+- Implement symbols indexing. This feature touches Browser
+  (class and method list) and Editor (autocompletion)           ???
+- Implement Plist editor for editing project files              ???
 - An initial project wide find feature                          ???
 - Better integration with other tools (GORM)                    ???
-- CVS/SVN integration                                           ???
+- Think about adopting existing directory tree (more flexible
+  directory configurations)                                     ???
 
 ProjectCenter 0.8
 -----------------
 
+- Implement code folding in Editor                              ???
 - Initial user documentation                                    ???
+- CVS/SVN integration                                           ???
 - Direct code documentation (using autogsdoc)                   ???
 
 ProjectCenter 0.9
