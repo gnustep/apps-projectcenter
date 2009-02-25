@@ -32,7 +32,8 @@ SUBPROJECTS = \
 	Projects/ResourceSet 	\
         Projects/Tool        	\
 	Editors/ProjectCenter	\
-	Parsers/ProjectCenter
+	Parsers/ProjectCenter   \
+	Preferences/Build
 
 # Do not compile the Debuggers/ProjectCenter module on MinGW since I'm
 # told at the moment it doesn't even compile there.

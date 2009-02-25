@@ -34,11 +34,15 @@
 
 - (NSDictionary *)preferencesDict;
 - (id)objectForKey:(NSString *)key;
+- (void)setObject:(id)anObject forKey:(NSString *)aKey;
 
 @end
 
-@protocol PCPrefSection <NSObject>
+@protocol PCPrefsSection <NSObject>
 
+- (void)setPrefController:(id <PCPreferences>)prefs;
+- (void)loadDefaults;
+- (NSView *)view;
 
 @end
 

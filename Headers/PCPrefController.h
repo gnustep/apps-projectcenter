@@ -27,28 +27,19 @@
 
 #import <Protocols/Preferences.h>
 
-#ifndef PCDefaultBuildTool 
-#define PCDefaultBuildTool @"/usr/bin/make"
-#endif
-
 #ifndef PCDefaultDebugger
 #define PCDefaultDebugger @"/usr/bin/gdb"
 #endif
 
 @interface PCPrefController : NSObject <PCPreferences>
 {
+  NSUserDefaults         *userDefaults;
+
   IBOutlet NSPanel       *panel;
   IBOutlet NSPopUpButton *popupButton;
   IBOutlet NSBox         *sectionsView;
 
-  IBOutlet NSBox         *buildingView;
-  IBOutlet NSTextField   *successField;
-  IBOutlet NSButton      *setSuccessButton;
-  IBOutlet NSTextField   *failureField;
-  IBOutlet NSButton      *setFailureButton;
-  IBOutlet NSTextField   *rootBuildDirField;
-  IBOutlet NSButton      *rootBuildDirButton;
-  IBOutlet NSButton      *promptOnClean;
+  NSMutableDictionary    *sectionsDict;
 
   IBOutlet NSBox         *savingView;
   IBOutlet NSButton      *saveOnQuit;
@@ -64,8 +55,6 @@
   IBOutlet NSButton      *promptWhenQuit;
   IBOutlet NSButton      *deleteCache;
   IBOutlet NSButton      *fullPathInFilePanels;
-  IBOutlet NSTextField   *buildToolField;
-  IBOutlet NSButton      *buildToolButton;
   IBOutlet NSTextField   *debuggerField;
   IBOutlet NSButton      *debuggerButton;
   IBOutlet NSTextField   *editorField;
@@ -99,11 +88,6 @@
 - (void)showPanel:(id)sender;
 
 - (void)popupChanged:(id)sender;
-
-- (void)setSuccessSound:(id)sender;
-- (void)setFailureSound:(id)sender;
-- (void)setRootBuildDir:(id)sender;
-- (void)setPromptOnClean:(id)sender;
 
 - (void)setSaveOnQuit:(id)sender;
 - (void)setKeepBackup:(id)sender;

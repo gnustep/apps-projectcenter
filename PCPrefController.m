@@ -22,6 +22,7 @@
 
 #import <ProjectCenter/PCDefines.h>
 #import <ProjectCenter/PCLogController.h>
+#import <ProjectCenter/PCBundleManager.h>
 
 #import "PCPrefController.h"
 #import <Protocols/Preferences.h>
@@ -58,8 +59,14 @@ static PCPrefController *_prefCtrllr = nil;
     }
     
   // The prefs from the defaults
-  prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-  preferencesDict = [[NSMutableDictionary alloc] initWithDictionary:prefs];
+
+  userDefaults = [NSUserDefaults standardUserDefaults];
+  RETAIN(userDefaults);
+
+  preferencesDict = [[NSMutableDictionary alloc] 
+    initWithDictionary:[userDefaults dictionaryRepresentation]];
+
+  [userDefaults setPersistentDomain:preferencesDict forName:@"ProjectCenter"];
 
   if ([preferencesDict objectForKey:@"Version"] == nil)
     {
@@ -79,7 +86,6 @@ static PCPrefController *_prefCtrllr = nil;
   
   RELEASE(panel);
 
-  RELEASE(buildingView);
   RELEASE(savingView);
   RELEASE(keyBindingsView);
   RELEASE(miscView);
@@ -100,12 +106,6 @@ static PCPrefController *_prefCtrllr = nil;
 
   [preferencesDict setObject:@"0.4" forKey:@"Version"];
   
-  // Building
-  [preferencesDict setObject:@"" forKey:SuccessSound];
-  [preferencesDict setObject:@"" forKey:FailureSound];
-  [preferencesDict setObject:@"YES" forKey:PromptOnClean];
-  [preferencesDict setObject:@"" forKey:RootBuildDirectory];
-
   // Saving
   [preferencesDict setObject:@"YES" forKey:SaveOnQuit];
   [preferencesDict setObject:@"YES" forKey:KeepBackup];
@@ -118,7 +118,6 @@ static PCPrefController *_prefCtrllr = nil;
   [preferencesDict setObject:@"YES" forKey:PromptOnQuit];
   [preferencesDict setObject:@"YES" forKey:DeleteCacheWhenQuitting];
   [preferencesDict setObject:@"YES" forKey:FullPathInFilePanels];
-  [preferencesDict setObject:@"/usr/bin/make" forKey:BuildTool];
   [preferencesDict setObject:@"/usr/bin/gdb" forKey:Debugger];
   [preferencesDict setObject:@"ProjectCenter" forKey:Editor];
 
@@ -140,27 +139,10 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (void)loadPreferences
 {
-  NSDictionary *prefs;
   NSString     *val;
   NSString     *defValue = @"";
 
-  prefs = [[NSUserDefaults standardUserDefaults] dictionaryRepresentation];
-  [preferencesDict addEntriesFromDictionary: prefs];
-  
   // Fill in the defaults
-
-  // Building
-  [successField setStringValue: 
-    (val = [preferencesDict objectForKey:SuccessSound]) ? val : defValue];
-  [failureField setStringValue: 
-    (val = [preferencesDict objectForKey:FailureSound]) ? val : defValue];
-
-  [promptOnClean setState:
-    ([[preferencesDict objectForKey:PromptOnClean] 
-     isEqualToString: @"YES"]) ? NSOnState : NSOffState];
-
-  [rootBuildDirField setStringValue: 
-    (val = [preferencesDict objectForKey:RootBuildDirectory]) ? val : defValue];
 
   // Saving
   [saveOnQuit setState:
@@ -207,8 +189,6 @@ static PCPrefController *_prefCtrllr = nil;
     ([[preferencesDict objectForKey: FullPathInFilePanels] 
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
 
-  [buildToolField setStringValue:
-    (val = [preferencesDict objectForKey:BuildTool]) ? val : PCDefaultBuildTool];
   [debuggerField setStringValue:
     (val = [preferencesDict objectForKey: Debugger]) ? val : PCDefaultDebugger];
   [editorField setStringValue:
@@ -251,8 +231,6 @@ static PCPrefController *_prefCtrllr = nil;
   NSArray  *tabMatrixCells;
   unsigned i;
   
-  [promptOnClean setRefusesFirstResponder:YES];
-  
   [saveOnQuit setRefusesFirstResponder:YES];
   [keepBackup setRefusesFirstResponder:YES];
 
@@ -279,12 +257,22 @@ static PCPrefController *_prefCtrllr = nil;
 // Accessory
 - (NSDictionary *)preferencesDict
 {
-  return preferencesDict;
+  return [userDefaults dictionaryRepresentation];
 }
 
 - (id)objectForKey:(NSString *)key
 {
-  return [preferencesDict objectForKey:key];
+  return [userDefaults objectForKey:key];
+}
+
+- (void)setObject:(id)anObject forKey:(NSString *)aKey
+{
+  [userDefaults setObject:anObject forKey:aKey];
+  [userDefaults synchronize];
+
+  [[NSNotificationCenter defaultCenter] 
+    postNotificationName:PCPreferencesDidChangeNotification
+                  object:self];
 }
 
 - (NSString *)selectFileWithTypes:(NSArray *)types
@@ -314,6 +302,32 @@ static PCPrefController *_prefCtrllr = nil;
   return file;
 }
 
+- (void)loadPrefsSections
+{
+  PCBundleManager  *bundleManager = [[PCBundleManager alloc] init];
+  NSDictionary     *bundlesInfo;
+  NSEnumerator     *enumerator;
+  NSString         *bundlePath;
+  NSString         *sectionName;
+  id<PCPrefsSection> section;
+
+  sectionsDict = [[NSMutableDictionary alloc] init];
+
+  bundlesInfo = [bundleManager infoForBundlesType:@"preferences"];
+  enumerator = [[bundlesInfo allKeys] objectEnumerator];
+  while ((bundlePath = [enumerator nextObject]))
+    {
+      sectionName = [[bundlesInfo objectForKey:bundlePath] 
+				  objectForKey:@"Name"];
+      section = [bundleManager 
+	objectForBundleWithName:sectionName
+			   type:@"preferences"
+		       protocol:@protocol(PCPrefsSection)];
+      [section setPrefController:self];
+      [sectionsDict setObject:section forKey:sectionName];
+    }
+}
+
 - (void)showPanel:(id)sender
 {
   if (panel == nil 
@@ -328,25 +342,14 @@ static PCPrefController *_prefCtrllr = nil;
     {
       [panel center];
     }
-  RETAIN(buildingView);
-  RETAIN(savingView);
-  RETAIN(keyBindingsView);
-  RETAIN(miscView);
-  RETAIN(interfaceView);
+
+  [self loadPrefsSections];
 
   // The popup and selected view
   [popupButton removeAllItems];
-  [popupButton addItemWithTitle:@"Building"];
-  [popupButton addItemWithTitle:@"Saving"];
-  [popupButton addItemWithTitle:@"Key Bindings"];
-  [popupButton addItemWithTitle:@"Miscellaneous"];
-  [popupButton addItemWithTitle:@"Interface"];
-
-  [popupButton selectItemWithTitle:@"Building"];
+  [popupButton addItemsWithTitles:[sectionsDict allKeys]];
+  [popupButton selectItemAtIndex:0];
   [self popupChanged:popupButton];
-
-  // Load saved prefs
-  [self loadPreferences];
 
   [panel makeKeyAndOrderFront:self];
 }
@@ -354,109 +357,14 @@ static PCPrefController *_prefCtrllr = nil;
 //
 - (void)popupChanged:(id)sender
 {
-  NSView *view = nil;
+  id<PCPrefsSection> section;
+  NSView             *view;
 
-  switch ([sender indexOfSelectedItem]) 
-    {
-    case 0:
-      view = buildingView;
-      break;
-    case 1:
-      view = savingView;
-      break;
-    case 2:
-      view = keyBindingsView;
-      break;
-    case 3:
-      view = miscView;
-      break;
-    case 4:
-      view = interfaceView;
-      break;
-    }
+  section = [sectionsDict objectForKey:[sender titleOfSelectedItem]];
+  view = [section view];
 
   [sectionsView setContentView:view];
-  [sectionsView display];
-}
-
-// Building
-- (void)setSuccessSound:(id)sender
-{
-  NSArray *types = [NSArray arrayWithObjects:@"snd",@"au",@"wav",nil];
-  NSString *path = [self selectFileWithTypes:types];
-
-  if (path)
-    {
-      [successField setStringValue: path];
-
-      [[NSUserDefaults standardUserDefaults] setObject:path
-	                                        forKey:SuccessSound];
-      [preferencesDict setObject:path forKey:SuccessSound];
-    }
-}
-
-- (void)setFailureSound:(id)sender
-{
-  NSArray  *types = [NSArray arrayWithObjects:@"snd",@"au",@"wav",nil];
-  NSString *path = [self selectFileWithTypes:types];
-
-  if (path)
-    {
-      [failureField setStringValue:path];
-
-      [[NSUserDefaults standardUserDefaults] setObject:path
-	                                        forKey:FailureSound];
-      [preferencesDict setObject:path forKey:FailureSound];
-    }
-}
-
-- (void)setRootBuildDir:(id)sender
-{
-  NSString *path;
-
-  if (sender == rootBuildDirButton)
-    {
-      path = [self selectFileWithTypes:nil];
-      [rootBuildDirField setStringValue:path];
-    }
-  else
-    {
-      path = [rootBuildDirField stringValue];
-    }
-
-  if (path)
-    {
-      [[NSUserDefaults standardUserDefaults] setObject:path 
-						forKey:RootBuildDirectory];
-      [preferencesDict setObject:path 
-			  forKey:RootBuildDirectory];
-    }
-}
-
-- (void)setPromptOnClean:(id)sender
-{
-  NSUserDefaults *def = nil;
-
-  if (promptOnClean == nil)
-    {// HACK!!! need to be fixed in GNUstep
-      promptOnClean = sender;
-      return;
-    }
-
-  def = [NSUserDefaults standardUserDefaults];
-  switch ([sender state])
-    {
-    case NSOffState:
-      [def setObject:@"NO" forKey:PromptOnClean];
-      break;
-    case NSOnState:
-      [def setObject:@"YES" forKey:PromptOnClean];
-      break;
-    }
-  [def synchronize];
-
-  [preferencesDict setObject:[def objectForKey:PromptOnClean] 
-                      forKey:PromptOnClean];
+//  [sectionsView display];
 }
 
 // Saving
@@ -661,38 +569,6 @@ static PCPrefController *_prefCtrllr = nil;
 
   [preferencesDict setObject:[def objectForKey:FullPathInFilePanels] 
                       forKey:FullPathInFilePanels];
-}
-
-- (void)setBuildTool:(id)sender
-{
-  NSString *path;
- 
-  if (sender == buildToolButton)
-    {
-      path = [self selectFileWithTypes:nil];
-      [buildToolField setStringValue:path];
-    }
-  else
-    {
-      path = [buildToolField stringValue];
-    } 
-
- 
-  if ([path isEqualToString:@""] || !path)
-    {
-      [buildToolField setStringValue:PCDefaultBuildTool];
-      path = [buildToolField stringValue];
-    }
-  else if (!path || ![[NSFileManager defaultManager] fileExistsAtPath:path])
-    {
-      [buildToolField selectText:self];
-      NSRunAlertPanel(@"Build Tool not found!",
-		      @"File %@ doesn't exist!",
-      		      @"OK", nil, nil, path);
-    }
-
-  [[NSUserDefaults standardUserDefaults] setObject:path forKey:BuildTool];
-  [preferencesDict setObject:path forKey:BuildTool];
 }
 
 - (void)setDebugger:(id)sender

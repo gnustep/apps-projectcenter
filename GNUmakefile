@@ -90,7 +90,8 @@ Modules/Projects/ResourceSet/ResourceSet.project \
 Modules/Projects/Tool/Tool.project \
 Modules/Editors/ProjectCenter/ProjectCenter.editor \
 Modules/Parsers/ProjectCenter/ProjectCenter.parser \
-Modules/Debuggers/ProjectCenter/ProjectCenter.debugger
+Modules/Debuggers/ProjectCenter/ProjectCenter.debugger \
+Modules/Preferences/Build/Build.preferences
 
 #
 # Localization

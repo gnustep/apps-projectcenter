@@ -1,0 +1,35 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "setBuildTool:",
+	    "setFailureSound:",
+	    "setPromptOnClean:",
+	    "setRootBuildDir:",
+	    "setSuccessSound:"
+	);
+	Super = NSObject;
+    };
+    PCBuildPrefs = {
+	Actions = (
+	    "setPromptOnClean:",
+	    "setFailureSound:",
+	    "setRootBuildDir:",
+	    "setSuccessSound:",
+	    "setBuildTool:"
+	);
+	Outlets = (
+	    buildingView,
+	    failureField,
+	    promptOnClean,
+	    rootBuildDirField,
+	    setRootBuildDirButton,
+	    setFailureButton,
+	    setSuccessButton,
+	    successField,
+	    buildToolField,
+	    setBuildToolButton
+	);
+	Super = NSObject;
+    };
+}
