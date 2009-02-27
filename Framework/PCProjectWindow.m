@@ -41,6 +41,9 @@
 #import <Protocols/Preferences.h>
 #import <ProjectCenter/PCLogController.h>
 
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 @implementation PCProjectWindow
 
 // ============================================================================

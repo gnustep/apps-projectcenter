@@ -37,7 +37,8 @@ enum {
     PCOpenFileOperation,
     PCSaveFileOperation,
     PCAddFileOperation,
-    PCOpenProjectOperation
+    PCOpenProjectOperation,
+    PCOpenDirectoryOperation
 };
 
 @interface PCFileManager : NSObject

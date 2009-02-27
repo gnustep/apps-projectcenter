@@ -32,6 +32,8 @@
 #import <Protocols/CodeEditor.h>
 #import <ProjectCenter/PCProjectLoadedFiles.h>
 
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 @implementation PCProjectLoadedFiles
 
 - (id)initWithProject:(PCProject *)aProj 

@@ -40,8 +40,9 @@
 
 @protocol PCPrefsSection <NSObject>
 
-- (void)setPrefController:(id <PCPreferences>)prefs;
-- (void)loadDefaults;
+- (id)initWithPrefController:(id <PCPreferences>)aPrefs;
+- (void)setDefaults;
+- (void)readPreferences;
 - (NSView *)view;
 
 @end

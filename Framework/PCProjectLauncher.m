@@ -33,6 +33,8 @@
 #import <ProjectCenter/PCButton.h>
 #import <ProjectCenter/PCLogController.h>
 
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif

@@ -29,30 +29,6 @@
 #define PC_EXTERN       extern
 #define PRIVATE_EXTERN  __private_extern__
 
-#define SuccessSound                    @"SuccessSound"
-#define FailureSound                    @"FailureSound"
-#define RootBuildDirectory              @"RootBuildDirectory"
-#define PromptOnClean                   @"PromtOnClean"
-#define SaveOnQuit                      @"SaveOnQuit"
-#define KeepBackup                      @"KeepBackup"
-#define AutoSavePeriod                  @"AutoSavePeriod"
-#define TabBehaviour                    @"TabBehaviour"
-#define TabSpaces                       @"TabSpaces"
-#define PromptOnQuit                    @"PromtOnQuit"
-#define DeleteCacheWhenQuitting         @"DeleteBuildCacheWhenQuitting"
-#define FullPathInFilePanels            @"FullPathInFilePanels"
-#define BuildTool                       @"BuildTool"
-#define Debugger                        @"Debugger"
-#define Editor                          @"Editor"
-#define SeparateBuilder			@"SeparateBuilder"
-#define SeparateLauncher		@"SeparateLauncher"
-#define SeparateLoadedFiles             @"SeparateLoadedFiles"
-#define SeparateEditor			@"SeparateEditor"
-#define EditorLines			@"EditorLines"
-#define EditorColumns			@"EditorColumns"
-#define RememberWindows                 @"RememberWindows"
-#define DisplayLog                      @"DisplayLog"
-
 #define Compiler                        @"Compiler"
 #define BundlePaths                     @"BundlePaths"
 

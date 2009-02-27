@@ -43,6 +43,8 @@
 #import <ProjectCenter/PCLogController.h>
 #import <Protocols/Preferences.h>
 
+#import "../Modules/Preferences/Build/PCBuildPrefs.h"
+
 #ifndef IMAGE
 #define IMAGE(X) [NSImage imageNamed: X]
 #endif

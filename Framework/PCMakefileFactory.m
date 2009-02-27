@@ -27,6 +27,8 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCMakefileFactory.h>
 
+#import "../Modules/Preferences/Build/PCBuildPrefs.h"
+
 #define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
 #define COMMENT_RESOURCES    @"\n\n#\n# Resource files\n#\n"
 #define COMMENT_CLASSES      @"\n\n#\n# Class files\n#\n"

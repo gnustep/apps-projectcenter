@@ -1,0 +1,33 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "setEditor:",
+	    "setDebugger:",
+	    "setDeleteCache:",
+	    "setFullPathInFilePanels:",
+	    "setPromptWhenQuit:"
+	);
+	Super = NSObject;
+    };
+    PCMiscPrefs = {
+	Actions = (
+	    "setEditor:",
+	    "setDebugger:",
+	    "setDeleteCache:",
+	    "setFullPathInFilePanels:",
+	    "setPromptWhenQuit:"
+	);
+	Outlets = (
+	    debuggerButton,
+	    debuggerField,
+	    deleteCache,
+	    editorButton,
+	    editorField,
+	    fullPathInFilePanels,
+	    miscView,
+	    promptWhenQuit
+	);
+	Super = NSObject;
+    };
+}

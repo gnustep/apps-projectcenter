@@ -26,33 +26,31 @@
 #import <AppKit/AppKit.h>
 #import <Protocols/Preferences.h>
 
-#ifndef PCDefaultBuildTool 
-#define PCDefaultBuildTool @"/usr/bin/make"
-#endif
+#define SeparateBuilder     @"SeparateBuilder"
+#define SeparateLauncher    @"SeparateLauncher"
+#define SeparateLoadedFiles @"SeparateLoadedFiles"
+#define SeparateEditor      @"SeparateEditor"
+#define EditorLines         @"EditorLines"
+#define EditorColumns       @"EditorColumns"
+#define RememberWindows     @"RememberWindows"
+#define DisplayLog          @"DisplayLog"
 
-#define SuccessSound       @"SuccessSound"
-#define FailureSound       @"FailureSound"
-#define RootBuildDirectory @"RootBuildDirectory"
-#define BuildTool          @"BuildTool"
-#define PromptOnClean      @"PromtOnClean"
-
-@interface PCBuildPrefs : NSObject <PCPrefsSection>
+@interface PCInterfacePrefs : NSObject <PCPrefsSection>
 {
   id <PCPreferences>   prefs;
 
-  IBOutlet NSBox       *buildingView;
+  IBOutlet NSBox       *interfaceView;
 
-  IBOutlet NSTextField *successField;
-  IBOutlet NSButton    *setSuccessButton;
-  IBOutlet NSTextField *failureField;
-  IBOutlet NSButton    *setFailureButton;
+  IBOutlet NSButton    *separateBuilder;
+  IBOutlet NSButton    *separateLauncher;
+  IBOutlet NSButton    *separateEditor;
+  IBOutlet NSButton    *separateLoadedFiles;
 
-  IBOutlet NSTextField *rootBuildDirField;
-  IBOutlet NSButton    *setRootBuildDirButton;
-  IBOutlet NSTextField *buildToolField;
-  IBOutlet NSButton    *setBuildToolButton;
+  IBOutlet NSTextField *editorLinesField;
+  IBOutlet NSTextField *editorColumnsField;
 
-  IBOutlet NSButton    *promptOnClean;
+  IBOutlet NSButton    *rememberWindows;
+  IBOutlet NSButton    *displayLog;
 }
 
 @end

@@ -91,7 +91,10 @@ Modules/Projects/Tool/Tool.project \
 Modules/Editors/ProjectCenter/ProjectCenter.editor \
 Modules/Parsers/ProjectCenter/ProjectCenter.parser \
 Modules/Debuggers/ProjectCenter/ProjectCenter.debugger \
-Modules/Preferences/Build/Build.preferences
+Modules/Preferences/Build/Build.preferences \
+Modules/Preferences/Saving/Saving.preferences \
+Modules/Preferences/Misc/Misc.preferences \
+Modules/Preferences/Interface/Interface.preferences
 
 #
 # Localization

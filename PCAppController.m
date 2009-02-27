@@ -27,6 +27,11 @@
 #import "PCInfoController.h"
 #import "PCPrefController.h"
 
+#import "Modules/Preferences/Build/PCBuildPrefs.h"
+#import "Modules/Preferences/Saving/PCSavingPrefs.h"
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 #import <ProjectCenter/ProjectCenter.h>
 
 @implementation PCAppController

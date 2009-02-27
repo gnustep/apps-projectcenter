@@ -27,10 +27,6 @@
 
 #import <Protocols/Preferences.h>
 
-#ifndef PCDefaultDebugger
-#define PCDefaultDebugger @"/usr/bin/gdb"
-#endif
-
 @interface PCPrefController : NSObject <PCPreferences>
 {
   NSUserDefaults         *userDefaults;
@@ -41,34 +37,6 @@
 
   NSMutableDictionary    *sectionsDict;
 
-  IBOutlet NSBox         *savingView;
-  IBOutlet NSButton      *saveOnQuit;
-  IBOutlet NSButton      *keepBackup;
-  IBOutlet NSSlider      *autosaveSlider;
-  IBOutlet NSTextField   *autosaveField;
-  
-  IBOutlet NSBox         *keyBindingsView;
-  IBOutlet NSMatrix      *tabMatrix;
-  IBOutlet NSButton      *tabSpacesField;
-  
-  IBOutlet NSBox         *miscView;
-  IBOutlet NSButton      *promptWhenQuit;
-  IBOutlet NSButton      *deleteCache;
-  IBOutlet NSButton      *fullPathInFilePanels;
-  IBOutlet NSTextField   *debuggerField;
-  IBOutlet NSButton      *debuggerButton;
-  IBOutlet NSTextField   *editorField;
-
-  IBOutlet NSBox         *interfaceView;
-  IBOutlet NSButton      *separateBuilder;
-  IBOutlet NSButton      *separateLauncher;
-  IBOutlet NSButton      *separateEditor;
-  IBOutlet NSButton      *separateLoadedFiles;
-  IBOutlet NSTextField   *editorLinesField;
-  IBOutlet NSTextField   *editorColumnsField;
-  IBOutlet NSButton      *rememberWindows;
-  IBOutlet NSButton      *displayLog;
-  
   IBOutlet NSBox         *bundlesView;
   IBOutlet NSTextField   *bundlePathField;
   
@@ -79,31 +47,11 @@
 
 - (id)init;
 - (void)dealloc;
-- (void)setDefaultValues;
-- (void)loadPreferences;
 
-//- (NSDictionary *)preferencesDict;
-//- (id)objectForKey:(NSString *)key;
-- (NSString *)selectFileWithTypes:(NSArray *)types;
+- (void)loadPrefsSections;
 - (void)showPanel:(id)sender;
 
 - (void)popupChanged:(id)sender;
-
-- (void)setSaveOnQuit:(id)sender;
-- (void)setKeepBackup:(id)sender;
-- (void)setSavePeriod:(id)sender;
-
-- (void)setPromptWhenQuit:(id)sender;
-- (void)setDeleteCache:(id)sender;
-- (void)setFullPathInFilePanels:(id)sender;
-- (void)setDebugger:(id)sender;
-- (void)setEditor:(id)sender;
-
-- (void)setDisplayPanels:(id)sender;
-- (void)setEditorSize:(id)sender;
-- (void)setEditorSizeEnabled:(BOOL)yn;
-- (void)setRememberWindows:(id)sender;
-- (void)setDisplayLog:(id)sender;
 
 @end
 

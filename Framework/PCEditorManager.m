@@ -33,6 +33,8 @@
 #import <ProjectCenter/PCLogController.h>
 #import <ProjectCenter/PCSaveModified.h>
 
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+
 NSString *PCEditorDidChangeFileNameNotification = 
           @"PCEditorDidChangeFileNameNotification";
 

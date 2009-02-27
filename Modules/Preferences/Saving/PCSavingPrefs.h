@@ -26,33 +26,20 @@
 #import <AppKit/AppKit.h>
 #import <Protocols/Preferences.h>
 
-#ifndef PCDefaultBuildTool 
-#define PCDefaultBuildTool @"/usr/bin/make"
-#endif
+#define SaveOnQuit     @"SaveOnQuit"
+#define KeepBackup     @"KeepBackup"
+#define AutoSavePeriod @"AutoSavePeriod"
 
-#define SuccessSound       @"SuccessSound"
-#define FailureSound       @"FailureSound"
-#define RootBuildDirectory @"RootBuildDirectory"
-#define BuildTool          @"BuildTool"
-#define PromptOnClean      @"PromtOnClean"
-
-@interface PCBuildPrefs : NSObject <PCPrefsSection>
+@interface PCSavingPrefs : NSObject <PCPrefsSection>
 {
   id <PCPreferences>   prefs;
 
-  IBOutlet NSBox       *buildingView;
+  IBOutlet NSBox       *savingView;
 
-  IBOutlet NSTextField *successField;
-  IBOutlet NSButton    *setSuccessButton;
-  IBOutlet NSTextField *failureField;
-  IBOutlet NSButton    *setFailureButton;
-
-  IBOutlet NSTextField *rootBuildDirField;
-  IBOutlet NSButton    *setRootBuildDirButton;
-  IBOutlet NSTextField *buildToolField;
-  IBOutlet NSButton    *setBuildToolButton;
-
-  IBOutlet NSButton    *promptOnClean;
+  IBOutlet NSButton    *saveOnQuit;
+  IBOutlet NSButton    *keepBackup;
+  IBOutlet NSSlider    *autosaveSlider;
+  IBOutlet NSTextField *autosaveField;
 }
 
 @end

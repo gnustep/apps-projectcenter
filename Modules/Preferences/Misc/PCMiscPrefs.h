@@ -26,33 +26,29 @@
 #import <AppKit/AppKit.h>
 #import <Protocols/Preferences.h>
 
-#ifndef PCDefaultBuildTool 
-#define PCDefaultBuildTool @"/usr/bin/make"
+#ifndef PCDefaultDebugger
+#define PCDefaultDebugger @"/usr/bin/gdb"
 #endif
 
-#define SuccessSound       @"SuccessSound"
-#define FailureSound       @"FailureSound"
-#define RootBuildDirectory @"RootBuildDirectory"
-#define BuildTool          @"BuildTool"
-#define PromptOnClean      @"PromtOnClean"
+#define PromptOnQuit            @"PromtOnQuit"
+#define DeleteCacheWhenQuitting @"DeleteBuildCacheWhenQuitting"
+#define FullPathInFilePanels    @"FullPathInFilePanels"
+#define Debugger                @"Debugger"
+#define Editor                  @"Editor"
 
-@interface PCBuildPrefs : NSObject <PCPrefsSection>
+@interface PCMiscPrefs : NSObject <PCPrefsSection>
 {
   id <PCPreferences>   prefs;
 
-  IBOutlet NSBox       *buildingView;
+  IBOutlet NSBox       *miscView;
 
-  IBOutlet NSTextField *successField;
-  IBOutlet NSButton    *setSuccessButton;
-  IBOutlet NSTextField *failureField;
-  IBOutlet NSButton    *setFailureButton;
-
-  IBOutlet NSTextField *rootBuildDirField;
-  IBOutlet NSButton    *setRootBuildDirButton;
-  IBOutlet NSTextField *buildToolField;
-  IBOutlet NSButton    *setBuildToolButton;
-
-  IBOutlet NSButton    *promptOnClean;
+  IBOutlet NSButton    *promptWhenQuit;
+  IBOutlet NSButton    *deleteCache;
+  IBOutlet NSButton    *fullPathInFilePanels;
+  IBOutlet NSTextField *debuggerField;
+  IBOutlet NSButton    *debuggerButton;
+  IBOutlet NSTextField *editorField;
+  IBOutlet NSTextField *editorButton;
 }
 
 @end

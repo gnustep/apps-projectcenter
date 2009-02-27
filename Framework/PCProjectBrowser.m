@@ -33,6 +33,8 @@
 
 #import <ProjectCenter/PCLogController.h>
 
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 @implementation PCProjectBrowser

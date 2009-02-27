@@ -44,6 +44,9 @@
 #import "Protocols/ProjectType.h"
 #import "Protocols/CodeEditor.h"
 
+#import "Modules/Preferences/Saving/PCSavingPrefs.h"
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 @implementation PCProjectManager

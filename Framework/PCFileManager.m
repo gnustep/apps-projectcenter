@@ -365,6 +365,12 @@ static PCFileManager *_mgr = nil;
       [panel setCanChooseDirectories:YES];
       lastOpenDir = [ud objectForKey:@"ProjectOpenLastDirectory"];
       break;
+    case PCOpenDirectoryOperation: 
+      panel = [NSOpenPanel openPanel];
+      [panel setCanChooseFiles:NO];
+      [panel setCanChooseDirectories:YES];
+      lastOpenDir = [ud objectForKey:@"FileOpenLastDirectory"];
+      break;
     case PCAddFileOperation: 
       if (addFilesPanel == nil)
 	{
@@ -442,7 +448,9 @@ static PCFileManager *_mgr = nil;
 
   panel = [self _panelForOperation:op title:title accView:accessoryView];
 
-  if ((op == PCOpenFileOperation) || (op == PCOpenProjectOperation))
+  if ((op == PCOpenFileOperation) || 
+      (op == PCOpenProjectOperation) || 
+      (op == PCOpenDirectoryOperation))
     {
       [panel setAllowsMultipleSelection:yn];
 

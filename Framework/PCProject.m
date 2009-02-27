@@ -45,6 +45,9 @@
 
 #import <Protocols/CodeEditor.h>
 
+#import "Modules/Preferences/Saving/PCSavingPrefs.h"
+#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+
 NSString 
 *PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";
 NSString 

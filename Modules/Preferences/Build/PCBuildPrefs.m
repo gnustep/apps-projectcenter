@@ -34,7 +34,7 @@
 // --- Init and free
 // ----------------------------------------------------------------------------
 
-- (id)init
+- (id)initWithPrefController:(id <PCPreferences>)aPrefs
 {
   self = [super init];
 
@@ -42,6 +42,9 @@
     {
       NSLog(@"PCBuildPrefs: error loading NIB file!");
     }
+
+  prefs = aPrefs;
+
   RETAIN(buildingView);
 
   return self;
@@ -58,14 +61,34 @@
   [promptOnClean setRefusesFirstResponder:YES];
 }
 
-- (void)setPrefController:(id <PCPreferences>)aPrefs
+- (void)dealloc
+{
+#ifdef DEBUG
+  NSLog (@"PCBuildPrefs: dealloc");
+#endif
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  RELEASE(buildingView);
+
+  [super dealloc];
+}
+
+// Protocol
+- (void)setDefaults
+{
+  [prefs setObject:@"" forKey:SuccessSound];
+  [prefs setObject:@"" forKey:FailureSound];
+  [prefs setObject:@"" forKey:RootBuildDirectory];
+  [prefs setObject:PCDefaultBuildTool forKey:BuildTool];
+  [prefs setObject:@"YES" forKey:PromptOnClean];
+}
+
+- (void)readPreferences
 {
   NSString *val;
   int      state;
 
-  prefs = aPrefs;
-
-  // Building
   if (!(val = [prefs objectForKey:SuccessSound]))
     val = @"";
   [successField setStringValue:val];
@@ -86,29 +109,6 @@
   [promptOnClean setState:state];
 }
 
-- (void)loadDefaults
-{
-  [prefs setObject:@"" forKey:SuccessSound];
-  [prefs setObject:@"" forKey:FailureSound];
-  [prefs setObject:@"" forKey:RootBuildDirectory];
-  [prefs setObject:PCDefaultBuildTool forKey:BuildTool];
-  [prefs setObject:@"YES" forKey:PromptOnClean];
-}
-
-- (void)dealloc
-{
-#ifdef DEBUG
-  NSLog (@"PCBuildPrefs: dealloc");
-#endif
-
-  [[NSNotificationCenter defaultCenter] removeObserver:self];
-
-  RELEASE(buildingView);
-
-  [super dealloc];
-}
-
-// Protocol
 - (NSView *)view
 {
   return buildingView;
@@ -121,16 +121,36 @@
   NSArray  *files;
   NSString *path;
 
-  files = [[PCFileManager defaultManager] filesOfTypes:types
-					     operation:PCOpenFileOperation
-					      multiple:NO
-						 title:@"Set Success Sound"
-					       accView:nil];
-  if ((path = [files objectAtIndex:0]))
+  if ((sender == successField))
+    {
+      path = [successField stringValue];
+    }
+  else
+    {
+      files = [[PCFileManager defaultManager] 
+	filesOfTypes:types
+	   operation:PCOpenFileOperation
+	    multiple:NO
+	       title:@"Choose Success Sound"
+	     accView:nil];
+      path = [files objectAtIndex:0];
+    }
+
+/*    {
+      NSSound *sound;
+
+      sound = [[NSSound alloc] initWithContentsOfFile:path byReference:YES];
+      [sound play];
+      RELEASE(sound);
+    }*/
+
+  if (path)
     {
       [successField setStringValue:path];
       [prefs setObject:path forKey:SuccessSound];
     }
+
+  [[buildingView window] makeFirstResponder:successField];
 }
 
 - (void)setFailureSound:(id)sender
@@ -139,17 +159,28 @@
   NSArray  *files;
   NSString *path;
 
-  files = [[PCFileManager defaultManager] filesOfTypes:types
-					     operation:PCOpenFileOperation
-					      multiple:NO
-						 title:@"Set Failure Sound"
-					       accView:nil];
+  if ((sender == failureField))
+    {
+      path = [failureField stringValue];
+    }
+  else
+    {
+      files = [[PCFileManager defaultManager] 
+	filesOfTypes:types
+	   operation:PCOpenFileOperation
+	    multiple:NO
+	       title:@"Choose Failure Sound"
+	     accView:nil];
+      path = [files objectAtIndex:0];
+    }
 
-  if ((path = [files objectAtIndex:0]))
+  if (path)
     {
       [failureField setStringValue:path];
       [prefs setObject:path forKey:FailureSound];
     }
+
+  [[buildingView window] makeFirstResponder:failureField];
 }
 
 - (void)setRootBuildDir:(id)sender
@@ -157,17 +188,28 @@
   NSArray  *files;
   NSString *path;
 
-  files = [[PCFileManager defaultManager] filesOfTypes:nil
-					     operation:PCOpenProjectOperation
-					      multiple:NO
-						 title:@"Set Build Directory"
-					       accView:nil];
+  if ((sender == rootBuildDirField))
+    {
+      path = [rootBuildDirField stringValue];
+    }
+  else
+    {
+      files = [[PCFileManager defaultManager] 
+	filesOfTypes:nil
+	   operation:PCOpenDirectoryOperation
+	    multiple:NO
+	       title:@"Choose Build Directory"
+	     accView:nil];
+      path = [files objectAtIndex:0];
+    }
 
-  if ((path = [files objectAtIndex:0]))
+  if (path)
     {
       [rootBuildDirField setStringValue:path];
       [prefs setObject:path forKey:RootBuildDirectory];
     }
+
+  [[buildingView window] makeFirstResponder:rootBuildDirField];
 }
 
 - (void)setBuildTool:(id)sender
@@ -175,17 +217,28 @@
   NSArray  *files;
   NSString *path;
 
-  files = [[PCFileManager defaultManager] filesOfTypes:nil
-					     operation:PCOpenFileOperation
-					      multiple:NO
-						 title:@"Set Build Tool"
-					       accView:nil];
+  if ((sender == buildToolField))
+    {
+      path = [buildToolField stringValue];
+    }
+  else
+    {
+      files = [[PCFileManager defaultManager] 
+	filesOfTypes:nil
+	   operation:PCOpenFileOperation
+	    multiple:NO
+	       title:@"Choose Build Tool"
+	     accView:nil];
+      path = [files objectAtIndex:0];
+    }
 
-  if ((path = [files objectAtIndex:0]))
+  if (path)
     {
       [buildToolField setStringValue:path];
       [prefs setObject:path forKey:BuildTool];
     }
+
+  [[buildingView window] makeFirstResponder:buildToolField];
 }
 
 - (void)setPromptOnClean:(id)sender
