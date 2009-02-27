@@ -1,3 +1,12 @@
+2009-02-27  Sergii Stoian <stoyan255@gmail.com>
+
+	* Rewriting of preferences was finished. Now prefereces sections
+	are implemented as modules "Modules/Preferences/*".
+
+2009-02-25  Sergii Stoian <stoyan255@gmail.com>
+
+	* Rewriting of preferences was started.
+	
 2009-02-23  Sergii Stoian <stoyan255@gmail.com>
 
 	* Set all textfields attributes to 'scrollable'.
