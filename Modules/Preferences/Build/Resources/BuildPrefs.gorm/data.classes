@@ -30,7 +30,8 @@
 	    setSuccessButton,
 	    successField,
 	    buildToolField,
-	    setBuildToolButton
+	    setBuildToolButton,
+	    deleteCache
 	);
 	Super = NSObject;
     };
