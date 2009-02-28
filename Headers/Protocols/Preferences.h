@@ -32,7 +32,6 @@
 
 @protocol PCPreferences <NSObject>
 
-- (NSDictionary *)preferencesDict;
 - (id)objectForKey:(NSString *)key;
 - (void)setObject:(id)anObject forKey:(NSString *)aKey;
 

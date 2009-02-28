@@ -69,6 +69,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification 
 	     object:nil];
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self
+	   selector:@selector(loadPreferences:)
+	       name:PCPreferencesDidChangeNotification
+	     object:nil];
+      [self loadPreferences:nil];
     }
 
   return self;
@@ -85,6 +92,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   RELEASE(browser);
 
   [super dealloc];
+}
+
+- (void)loadPreferences:(NSNotification *)aNotification
+{
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSString           *val;
+
+  val = [prefs objectForKey:SeparateEditor];
+  editorIsSeperate = ([val isEqualToString:@"YES"]) ? YES : NO;
 }
 
 // ============================================================================
@@ -365,19 +381,17 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)click:(id)sender
 {
-  NSUserDefaults *ud;
-  NSString       *category;
-  PCProject      *activeProject;
-  NSString       *browserPath;
-  NSString       *filePath;
-  NSString       *fileName;
+  NSString  *category;
+  PCProject *activeProject;
+  NSString  *browserPath;
+  NSString  *filePath;
+  NSString  *fileName;
 
   if (sender != browser)
     {
       return;
     }
 
-  ud = [NSUserDefaults standardUserDefaults];
   category = [self nameOfSelectedCategory];
   activeProject = [[project projectManager] activeProject];
   browserPath = [self path];
@@ -390,7 +404,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
       ![fileName isEqualToString:[activeProject projectName]] &&
-      ![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"])
+      !editorIsSeperate)
     {
 //      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
       [[activeProject projectEditor] openEditorForCategoryPath:browserPath

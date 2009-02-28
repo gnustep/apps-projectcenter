@@ -122,6 +122,18 @@ NSString
   [super dealloc];
 }
 
+- (void)loadPreferences:(NSNotification *)aNotification
+{
+  id <PCPreferences> prefs = [projectManager prefController];
+  NSString           *val;
+
+  val = [prefs objectForKey:RememberWindows];
+  rememberWindows = ([val isEqualToString:@"YES"]) ? YES : NO;
+  
+  val = [prefs objectForKey:KeepBackup];
+  keepBackup = ([val isEqualToString:@"YES"]) ? YES : NO;
+}
+
 // ============================================================================
 // ==== Project handling
 // ============================================================================
@@ -322,7 +334,6 @@ NSString
 
 - (BOOL)saveProjectWindowsAndPanels
 {
-  NSUserDefaults      *ud = [NSUserDefaults standardUserDefaults];
   NSMutableDictionary *windows = [NSMutableDictionary dictionary];
   NSString            *projectFile = nil;
   NSMutableDictionary *projectFileDict = nil;
@@ -350,7 +361,7 @@ NSString
               forKey:@"ProjectBrowser"];
 
   // Write to file and exit if prefernces wasn't set to save panels
-  if (![[ud objectForKey:RememberWindows] isEqualToString:@"YES"])
+  if (rememberWindows)
     {
       [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
       [projectFileDict writeToFile:projectFile atomically:YES];
@@ -421,9 +432,6 @@ NSString
   NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
   NSString       *backup = [file stringByAppendingPathExtension:@"backup"];
   NSFileManager  *fm = [NSFileManager defaultManager];
-  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-  NSString       *keepBackup = [defs objectForKey:KeepBackup];
-  BOOL           shouldKeep = [keepBackup isEqualToString:@"YES"];
   int            spCount = [loadedSubprojects count];
   int            i;
 
@@ -442,7 +450,7 @@ NSString
     }
 
   // Save backup
-  if (shouldKeep == YES && [fm isReadableFileAtPath:file]) 
+  if ((keepBackup == YES) && [fm isReadableFileAtPath:file]) 
     {
       if ([fm copyPath:file toPath:backup handler:nil] == NO)
 	{
@@ -596,6 +604,13 @@ NSString
     {
       projectWindow = [[PCProjectWindow alloc] initWithProject:self];
     }
+
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector(loadPreferences:)
+	   name:PCPreferencesDidChangeNotification
+	 object:nil];
+  [self loadPreferences:nil];
 }
 
 - (PCProjectWindow *)projectWindow

@@ -97,11 +97,14 @@ NSString *PCEditorDidResignActiveNotification =
 	       name:PCEditorDidChangeFileNameNotification
 	     object:nil];
 
+      // Debugger
       [[NSNotificationCenter defaultCenter]
 	addObserver:self 
 	   selector:@selector(debuggerDidHitBreakpoint:)
 	       name:PCProjectBreakpointNotification
 	     object:nil];
+
+      // Preferences
     }
 
   return self;
@@ -115,6 +118,7 @@ NSString *PCEditorDidResignActiveNotification =
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
+  RELEASE(editorName);
   RELEASE(_editorsDict);
 
   [super dealloc];
@@ -128,6 +132,20 @@ NSString *PCEditorDidResignActiveNotification =
 - (void)setProjectManager:(PCProjectManager *)aProjectManager
 {
   _projectManager = aProjectManager;
+
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector(loadPreferences:)
+	   name:PCPreferencesDidChangeNotification
+	 object:nil];
+  [self loadPreferences:nil];
+}
+
+- (void)loadPreferences:(NSNotification *)aNotification
+{
+  id <PCPreferences> prefs = [_projectManager prefController];
+
+  ASSIGN(editorName, [prefs objectForKey:Editor]);
 }
 
 // ===========================================================================
@@ -146,8 +164,6 @@ NSString *PCEditorDidResignActiveNotification =
   NSFileManager   *fm = [NSFileManager defaultManager];
   BOOL            isDir;
   PCBundleManager *bundleManager = [_projectManager bundleManager];
-  NSUserDefaults  *ud = [NSUserDefaults standardUserDefaults];
-  NSString        *ed = [ud objectForKey:Editor];
   NSString        *fileName = [filePath lastPathComponent];
   id<CodeEditor>  editor;
   id<CodeParser>  parser;
@@ -158,14 +174,17 @@ NSString *PCEditorDidResignActiveNotification =
       NSRunAlertPanel(@"Open Editor",
 		      @"Couldn't open editor for file '%@'.\n"
 		      "File doesn't exist.",
-		      @"Ok", nil, nil, filePath);
+		      @"Close", nil, nil, filePath);
       return nil;
     }
 
   // Determine if file is text file
   if (![[PCFileManager defaultManager] isTextFile:filePath])
     {
-      NSLog(@"%@ is not plain text file!", filePath);
+      NSRunAlertPanel(@"Open Editor",
+		      @"Couldn't open editor for file '%@'.\n"
+		      "File is not plain text.",
+		      @"Close", nil, nil, filePath);
       return nil;
     }
 
@@ -173,9 +192,9 @@ NSString *PCEditorDidResignActiveNotification =
   editor = [_editorsDict objectForKey:filePath];
   if (editor == nil)
     {
-      NSLog(@"Opening new editor");
+      NSLog(@"Opening new editor. Editor: %@", editorName);
       // Editor
-      editor = [bundleManager objectForBundleWithName:ed
+      editor = [bundleManager objectForBundleWithName:editorName
 						 type:@"editor"
 					     protocol:@protocol(CodeEditor)];
       if (editor == nil)
@@ -184,7 +203,10 @@ NSString *PCEditorDidResignActiveNotification =
 	    objectForBundleWithName:@"ProjectCenter"
 			       type:@"editor"
 			   protocol:@protocol(CodeEditor)];
-	  return nil;
+	  if (editor == nil)
+	    {
+	      return nil;
+	    }
 	}
 
       // Parser

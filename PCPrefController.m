@@ -60,11 +60,6 @@ static PCPrefController *_prefCtrllr = nil;
   userDefaults = [NSUserDefaults standardUserDefaults];
   RETAIN(userDefaults);
 
-  preferencesDict = [[NSMutableDictionary alloc] 
-    initWithDictionary:[userDefaults dictionaryRepresentation]];
-
-  [userDefaults setPersistentDomain:preferencesDict forName:@"ProjectCenter"];
-
   if ([userDefaults objectForKey:@"Version"] == nil)
     {
       PCLogInfo(self, @"setDefaultValues");
@@ -91,8 +86,6 @@ static PCPrefController *_prefCtrllr = nil;
   NSLog(@"PCPrefController: dealloc");
 #endif
   
-  RELEASE(preferencesDict);
-  
   RELEASE(panel);
 
   [[NSUserDefaults standardUserDefaults] synchronize];
@@ -105,11 +98,6 @@ static PCPrefController *_prefCtrllr = nil;
 }
 
 // Accessory
-- (NSDictionary *)preferencesDict
-{
-  return [userDefaults dictionaryRepresentation];
-}
-
 - (id)objectForKey:(NSString *)key
 {
   return [userDefaults objectForKey:key];

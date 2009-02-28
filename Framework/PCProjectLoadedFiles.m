@@ -24,6 +24,7 @@
 */
 
 #import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectEditor.h>
 
@@ -38,7 +39,11 @@
 
 - (id)initWithProject:(PCProject *)aProj 
 {
+  id <PCPreferences> prefs;
+
   NSAssert(aProj, @"Project is mandatory!");
+
+  prefs = [[aProj projectManager] prefController];
 
   PCLogStatus(self, @"init");
   
@@ -75,8 +80,7 @@
       [filesScroll setDocumentView:filesList];
       [filesScroll setHasHorizontalScroller:NO];
       [filesScroll setHasVerticalScroller:YES];
-      if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-  	  objectForKey:SeparateLoadedFiles] isEqualToString:@"NO"])
+      if ([[prefs objectForKey:SeparateLoadedFiles] isEqualToString:@"NO"])
 	{
 	  [filesScroll setBorderType:NSBezelBorder];
 	}

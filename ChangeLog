@@ -1,3 +1,29 @@
+2009-03-01  Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m:
+	* Framework/PCProjectLoadedFiles.m:
+	* Framework/PCMakefileFactory.m:
+	* Framework/PCProject.m:
+	* Framework/PCFileManager.m:
+	* Framework/PCProjectBrowser.m:
+	* Framework/PCButton.m:
+	* Framework/PCProjectBuilder.m:
+	* Framework/PCEditorManager.m:
+	* Framework/PCLogController.m:
+	* Framework/PCProjectLauncher.m:
+	* Framework/PCProjectWindow.m:
+	* PCAppController.m:
+	* Modules/Preferences/Build/PCBuildPrefs.m:
+	* Modules/Preferences/Interface/PCInterfacePrefs.m:
+	* Headers/Protocols/Preferences.h:
+	* Headers/ProjectCenter/PCProject.h:
+	* Headers/ProjectCenter/PCProjectBrowser.h:
+	* Headers/ProjectCenter/PCProjectBuilder.h:
+	* Headers/ProjectCenter/PCEditorManager.h:
+	* Headers/PCPrefController.h:
+	* PCPrefController.m: Use new preferences system instead of
+	direct using of NSUserDefaults.
+
 2009-02-27  Sergii Stoian <stoyan255@gmail.com>
 
 	* Rewriting of preferences was finished. Now prefereces sections

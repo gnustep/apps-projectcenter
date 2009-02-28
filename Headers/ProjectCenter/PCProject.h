@@ -52,6 +52,10 @@ extern NSString *PCProjectBreakpointNotification;
   PCProjectBuilder     *projectBuilder;
   PCProjectLauncher    *projectLauncher;
 
+  // Preferences
+  BOOL                 rememberWindows;
+  BOOL                 keepBackup;
+
   NSMutableDictionary  *projectDict;
   NSString             *projectName;
   NSString             *projectPath;
@@ -79,6 +83,7 @@ extern NSString *PCProjectBreakpointNotification;
 //- (id)initWithProjectDictionary:(NSDictionary *)dict path:(NSString *)path;
 - (PCProject *)openWithDictionaryAt:(NSString *)path;
 - (void)dealloc;
+- (void)loadPreferences:(NSNotification *)aNotification;
 
 // ============================================================================
 // ==== Project handling

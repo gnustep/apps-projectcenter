@@ -46,7 +46,13 @@ typedef enum _ErrorLevel {
   PCProject       *project;
   PCProjectBuilderOptions *buildOptions;
 
-  NSString        *makePath;
+  // Preferences
+  NSString        *successSound;
+  NSString        *failureSound;
+  NSString        *buildTool;
+  NSString        *rootBuildDir;
+  BOOL            promptOnClean;
+
   NSString        *buildStatus;
   NSMutableString *buildStatusTarget;
   NSMutableString *buildTarget;
@@ -98,7 +104,7 @@ typedef enum _ErrorLevel {
 - (void)dealloc;
 
 - (NSView *)componentView;
-- (BOOL)setMakePath;
+- (void)loadPreferences:(NSNotification *)aNotification;
 - (void)updateTargetField;
 
 // --- Accessory

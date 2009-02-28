@@ -38,6 +38,8 @@
   PCProjectManager    *_projectManager;
   NSMutableDictionary *_editorsDict;
   id<CodeEditor>      _activeEditor;
+
+  NSString            *editorName;
 }
 
 // ===========================================================================
@@ -48,6 +50,7 @@
 - (void)dealloc;
 - (PCProjectManager *)projectManager;
 - (void)setProjectManager:(PCProjectManager *)aProjectManager;
+- (void)loadPreferences:(NSNotification *)aNotification;
 
 // ===========================================================================
 // ==== Project and Editor handling

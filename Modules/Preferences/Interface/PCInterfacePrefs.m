@@ -164,20 +164,26 @@
   NSString *key;
   NSString *state;
 
+  NSLog(@"PCInterfacePrefs: setDisplayPanels");
+
   if (sender == separateBuilder)
     {
+      NSLog(@"PCInterfacePrefs: separateBuilder");
       key = [NSString stringWithString:SeparateBuilder];
     }
   else if (sender == separateLauncher)
     {
+      NSLog(@"PCInterfacePrefs: separateLauncher");
       key = [NSString stringWithString:SeparateLauncher];
     }
   else if (sender == separateEditor)
     {
+      NSLog(@"PCInterfacePrefs: separateEditor");
       key = [NSString stringWithString:SeparateEditor];
     }
   else if (sender == separateLoadedFiles)
     {
+      NSLog(@"PCInterfacePrefs: separateLoadedFiles");
       key = [NSString stringWithString:SeparateLoadedFiles];
     }
 

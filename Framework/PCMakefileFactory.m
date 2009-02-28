@@ -24,9 +24,11 @@
 */
 
 #import <ProjectCenter/PCDefines.h>
+#import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCMakefileFactory.h>
 
+#import <Protocols/Preferences.h>
 #import "../Modules/Preferences/Build/PCBuildPrefs.h"
 
 #define COMMENT_HEADERS      @"\n\n#\n# Header files\n#\n"
@@ -61,8 +63,8 @@ static PCMakefileFactory *_factory = nil;
 
 - (void)createMakefileForProject:(PCProject *)project
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *buildDir = [ud objectForKey:RootBuildDirectory];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSString           *buildDir = [prefs objectForKey:RootBuildDirectory];
   NSString       *prName = [project projectName];
   NSString       *buildName = [prName stringByAppendingPathExtension:@"build"];
   NSString       *instDir = [[project projectDict] objectForKey:PCInstallDir];

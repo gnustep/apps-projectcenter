@@ -37,12 +37,13 @@
 //- (id)initWithFrame:(NSRect)frameRect
 - (id)initWithCoder:(NSCoder *)coder
 {
+  NSLog(@"PCButton: initWithCoder");
 //  self = [super initWithFrame:frameRect];
   self = [super initWithCoder:coder];
-  [_cell setGradientType:NSGradientConvexWeak];
+  [_cell setGradientType:NSGradientConcaveWeak];
   [_cell setImageDimsWhenDisabled:YES];
   [self setImagePosition:NSImageOnly];
-  [self setFont:[NSFont systemFontOfSize:10.0]];
+  [self setFont:[NSFont systemFontOfSize:[NSFont smallSystemFontSize]]];
   [self setRefusesFirstResponder:YES];
 
   _hasTooltips = NO;

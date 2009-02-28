@@ -80,6 +80,12 @@
 	  PCLogError(self, @"error loading Builder NIB file!");
 	  return nil;
 	}
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self
+	   selector:@selector(loadPreferences:)
+	       name:PCPreferencesDidChangeNotification
+	     object:nil];
+      [self loadPreferences:nil];
     }
 
   return self;
@@ -91,17 +97,21 @@
   NSLog (@"PCProjectBuilder: dealloc");
 #endif
 
-  [buildStatusTarget release];
-  [buildTarget release];
-  [buildArgs release];
-  [makePath release];
+  RELEASE(buildStatusTarget);
+  RELEASE(buildTarget);
+  RELEASE(buildArgs);
+
+  RELEASE(successSound);
+  RELEASE(failureSound);
+  RELEASE(rootBuildDir);
+  RELEASE(buildTool);
 
 //  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
 //  PCLogInfo(self, @"RC: %i", [self retainCount]);
-  [componentView release];
-  [errorArray release];
-  [errorString release];
-  [buildOptions release];
+  RELEASE(componentView);
+  RELEASE(errorArray);
+  RELEASE(errorString);
+  RELEASE(buildOptions);
 
   [super dealloc];
 }
@@ -228,21 +238,19 @@
   return componentView;
 }
 
-- (BOOL)setMakePath
+- (void)loadPreferences:(NSNotification *)aNotification
 {
-  makePath = [[NSUserDefaults standardUserDefaults] objectForKey:BuildTool];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSString           *val;
 
-  if (!makePath || ![[NSFileManager defaultManager] fileExistsAtPath:makePath])
-    {
-      NSRunAlertPanel(@"Project Build",
-  		      @"Build tool '%@' not found. Check preferences.\n"
-		      "Build process terminated.",
-  		      @"OK", nil, nil, makePath);
-      return NO;
-    }
+  ASSIGN(successSound, [prefs objectForKey:SuccessSound]);
+  ASSIGN(failureSound, [prefs objectForKey:FailureSound]);
 
-  [makePath retain];
-  return YES;
+  ASSIGN(rootBuildDir, [prefs objectForKey:RootBuildDirectory]);
+  ASSIGN(buildTool, [prefs objectForKey:BuildTool]);
+
+  val = [prefs objectForKey:PromptOnClean];
+  promptOnClean = ([val isEqualToString:@"YES"]) ? YES : NO;
 }
 
 - (void)updateTargetField
@@ -369,13 +377,14 @@
 
 - (void)startClean:(id)sender
 {
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+
   if ([self stopMake:self] == YES)
     {// We've just stopped build process
       return;
     }
 
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-      objectForKey:PromptOnClean] isEqualToString:@"YES"])
+  if ([[prefs objectForKey:PromptOnClean] isEqualToString:@"YES"])
     {
       if (NSRunAlertPanel(@"Project Clean",
 			  @"Do you really want to clean project '%@'?",
@@ -458,13 +467,11 @@
 // --- Actions
 - (BOOL)prebuildCheck
 {
-  id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSString           *buildDir = [prefs objectForKey:RootBuildDirectory];
-  PCFileManager      *pcfm = [PCFileManager defaultManager];
-  NSFileManager      *fm = [NSFileManager defaultManager];
-  NSString           *projectBuildDir;
-  PCProjectEditor    *projectEditor;
-  int                ret;
+  PCFileManager   *pcfm = [PCFileManager defaultManager];
+  NSFileManager   *fm = [NSFileManager defaultManager];
+  NSString        *buildDir;
+  PCProjectEditor *projectEditor;
+  int             ret;
 
   // Checking for project 'edited' state 
   if ([project isProjectChanged])
@@ -503,21 +510,22 @@
 	}
     }
 
-  // Get make tool path
-  if (![self setMakePath])
+  // Check build tool path
+  if (!buildTool || ![fm fileExistsAtPath:buildTool])
     {
+      NSRunAlertPanel(@"Project Build",
+  		      @"Build tool '%@' not found. Check preferences.\n"
+		      "Build will be terminated.",
+  		      @"Close", nil, nil, buildTool);
       return NO;
     }
 
-  NSLog (@"BuildDir = %@", buildDir);
   // Create root build directory if not exist
-  projectBuildDir = [NSString stringWithFormat:@"%@.build", 
-		  [project projectName]];
-  projectBuildDir = [buildDir stringByAppendingPathComponent:projectBuildDir];
-  if (![fm fileExistsAtPath:buildDir] ||
-      ![fm fileExistsAtPath:projectBuildDir])
+  buildDir = [NSString stringWithFormat:@"%@.build", [project projectName]];
+  buildDir = [rootBuildDir stringByAppendingPathComponent:buildDir];
+  if (![fm fileExistsAtPath:rootBuildDir] || ![fm fileExistsAtPath:buildDir])
     {
-      [pcfm createDirectoriesIfNeededAtPath:projectBuildDir];
+      [pcfm createDirectoriesIfNeededAtPath:buildDir];
     }
 
   return YES;
@@ -574,7 +582,7 @@
   makeTask = [[NSTask alloc] init];
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[project projectPath]];
-  [makeTask setLaunchPath:makePath];
+  [makeTask setLaunchPath:buildTool];
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
 

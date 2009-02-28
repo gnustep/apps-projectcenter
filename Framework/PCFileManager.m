@@ -31,6 +31,7 @@
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCAddFilesPanel.h>
 
+#import <Protocols/Preferences.h>
 #import <ProjectCenter/PCLogController.h>
 
 @implementation PCFileManager
@@ -340,9 +341,9 @@ static PCFileManager *_mgr = nil;
 		   title:(NSString *)title
 		 accView:(NSView *)accessoryView
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *lastOpenDir;
-  id             panel;
+  id <PCPreferences> prefs = [projectManager prefController];
+  NSString           *lastOpenDir;
+  id                 panel;
 
   operation = op;
 
@@ -352,24 +353,24 @@ static PCFileManager *_mgr = nil;
       panel = [NSOpenPanel openPanel];
       [panel setCanChooseFiles:YES];
       [panel setCanChooseDirectories:NO];
-      lastOpenDir = [ud objectForKey:@"FileOpenLastDirectory"];
+      lastOpenDir = [prefs objectForKey:@"FileOpenLastDirectory"];
       break;
     case PCSaveFileOperation: 
       panel = [NSSavePanel savePanel];
-      lastOpenDir = [ud objectForKey:@"FileSaveLastDirectory"];
+      lastOpenDir = [prefs objectForKey:@"FileSaveLastDirectory"];
       break;
     case PCOpenProjectOperation: 
       panel = [NSOpenPanel openPanel];
       [panel setAllowsMultipleSelection:NO];
       [panel setCanChooseFiles:YES];
       [panel setCanChooseDirectories:YES];
-      lastOpenDir = [ud objectForKey:@"ProjectOpenLastDirectory"];
+      lastOpenDir = [prefs objectForKey:@"ProjectOpenLastDirectory"];
       break;
     case PCOpenDirectoryOperation: 
       panel = [NSOpenPanel openPanel];
       [panel setCanChooseFiles:NO];
       [panel setCanChooseDirectories:YES];
-      lastOpenDir = [ud objectForKey:@"FileOpenLastDirectory"];
+      lastOpenDir = [prefs objectForKey:@"FileOpenLastDirectory"];
       break;
     case PCAddFileOperation: 
       if (addFilesPanel == nil)
@@ -377,7 +378,7 @@ static PCFileManager *_mgr = nil;
 	  addFilesPanel = [PCAddFilesPanel addFilesPanel];
 	}
       panel = addFilesPanel;
-      lastOpenDir = [ud objectForKey:@"FileAddLastDirectory"];
+      lastOpenDir = [prefs objectForKey:@"FileAddLastDirectory"];
       break;
     default:
       return nil;
@@ -406,8 +407,8 @@ static PCFileManager *_mgr = nil;
 
 - (void)_saveLastDirectoryForPanel:(id)panel
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-  NSString       *key = nil;
+  id <PCPreferences> prefs = [projectManager prefController];
+  NSString           *key = nil;
 
   switch (operation)
     {
@@ -429,7 +430,7 @@ static PCFileManager *_mgr = nil;
 
   if (key != nil)
     {
-      [ud setObject:[panel directory] forKey:key];
+      [prefs setObject:[panel directory] forKey:key];
     }
 }
 

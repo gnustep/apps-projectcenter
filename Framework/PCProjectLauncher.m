@@ -206,11 +206,10 @@ enum {
 
 - (void)debug:(id)sender
 {
-  NSString                   *projectName = [project projectName];
-  NSString                   *fp = nil;
-  NSString                   *pn = nil;
-  NSString                   *gdbPath = nil;
-  NSFileManager              *fm = [NSFileManager defaultManager];
+  NSString        *projectName = [project projectName];
+  NSString        *fp = nil;
+  NSString        *gdbPath = nil;
+  NSFileManager   *fm = [NSFileManager defaultManager];
   PCBundleManager *bundleManager = [[project projectManager] bundleManager];
 
   // Check if project type is executable
@@ -250,15 +249,15 @@ enum {
   if ([fm isExecutableFileAtPath:fp] == NO)
     {
       NSRunAlertPanel(@"Debug",
-		      @"No executable!  Please build the project first.",
-		      @"Abort",nil,nil,pn);
+		      @"No executable! Please build the project first.",
+		      @"Close",nil,nil);
       [debugButton setState:NSOffState];
       return;
     }
 
 
   // Debugger
-  gdbPath = [[NSUserDefaults standardUserDefaults] objectForKey:Debugger];
+  gdbPath = [[[project projectManager] prefController] objectForKey:Debugger];
   if (gdbPath == nil)
     {
       gdbPath = [NSString stringWithString:@"/usr/bin/gdb"];
@@ -266,9 +265,9 @@ enum {
 
   if ([fm isExecutableFileAtPath:gdbPath] == NO)
     {
-      NSRunAlertPanel(@"Attention!",
-		      @"Invalid debugger specified: %@!",
-		      @"Abort",nil,nil,gdbPath);
+      NSRunAlertPanel(@"Debug",
+		      @"Specified debugger `%@` cannot be executed!",
+		      @"Close",nil,nil,gdbPath);
       [debugButton setState:NSOffState];
       return;
     }

@@ -114,7 +114,7 @@ static PCLogController *_logCtrllr = nil;
       [panel center];
     }
 
-  font = [NSFont userFixedPitchFontOfSize: 10.0];
+  font = [NSFont userFixedPitchFontOfSize:[NSFont smallSystemFontSize]];
   textAttributes =
     [NSMutableDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
   [textAttributes retain];

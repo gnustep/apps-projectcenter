@@ -31,16 +31,14 @@
 {
   NSUserDefaults         *userDefaults;
 
+  NSMutableDictionary    *sectionsDict;
+
   IBOutlet NSPanel       *panel;
   IBOutlet NSPopUpButton *popupButton;
   IBOutlet NSBox         *sectionsView;
 
-  NSMutableDictionary    *sectionsDict;
-
   IBOutlet NSBox         *bundlesView;
   IBOutlet NSTextField   *bundlePathField;
-  
-  NSMutableDictionary    *preferencesDict;
 }
 
 + (PCPrefController *)sharedPCPreferences;

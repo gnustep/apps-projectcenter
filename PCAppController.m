@@ -52,7 +52,8 @@
       // Termporary workaround to initialize defaults values
       prefController = [PCPrefController sharedPCPreferences];
       logController  = [PCLogController sharedLogController];
-      
+
+      // It's our entry point to Framework
       projectManager = [[PCProjectManager alloc] init];
       [projectManager setDelegate:self];
       [projectManager setPrefController:prefController];
@@ -147,31 +148,31 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
-  NSString *poq;
-  NSString *soq;
-  BOOL     quit;
+  NSString *promptOnQuit;
+  NSString *saveOnQuit;
+  BOOL     quit = YES;
 
-  poq = [[NSUserDefaults standardUserDefaults] objectForKey:PromptOnQuit];
-  soq = [[NSUserDefaults standardUserDefaults] objectForKey:SaveOnQuit];
-  if ([poq isEqualToString:@"YES"])
+  promptOnQuit = [prefController objectForKey:PromptOnQuit];
+  saveOnQuit = [prefController objectForKey:SaveOnQuit];
+  if ([promptOnQuit isEqualToString:@"YES"])
     {
-      if (NSRunAlertPanel(@"Quit!",
+      if (NSRunAlertPanel(@"Quit",
 			  @"Do you really want to quit ProjectCenter?",
-			  @"No", @"Yes", nil))
+			  @"Cancel", @"Quit", nil))
 	{
 	  return NO;
 	}
 
     }
 
-  // Save projects if preferences tells that
-  if ([soq isEqualToString:@"YES"])
+  // Save projects unconditionally if preferences tells that
+  if ([saveOnQuit isEqualToString:@"YES"])
     {
       quit = [projectManager saveAllProjects];
     }
 
   // Close ProjectManager (projects, editors, etc.)
-  if ([projectManager close] == NO)
+  if ((quit == NO) || ([projectManager close] == NO))
     {
       return NO;
     }
@@ -185,32 +186,40 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  NSString      *deleteCache;
   NSFileManager *fm;
   PCFileManager *pcfm;
   NSString      *rootBuildDir;
   NSArray       *rootBuildDirList;
+  NSEnumerator  *enumerator;
+  NSString      *buildItem;
 
-#ifdef DEVELOPMENT
-  NSLog (@"--- Application WILL terminate");
+#ifdef DEBUG
+  NSLog(@"--- Application WILL terminate");
 #endif
 
-
-  if ([[ud stringForKey:DeleteCacheWhenQuitting] isEqualToString:@"YES"]) 
+  deleteCache = [prefController objectForKey:DeleteCacheWhenQuitting];
+  if ([deleteCache isEqualToString:@"YES"]) 
     {
       fm = [NSFileManager defaultManager];
       pcfm = [PCFileManager defaultManager];
 
       rootBuildDir = [prefController objectForKey:RootBuildDirectory];
       rootBuildDirList = [fm directoryContentsAtPath:rootBuildDir];
-      NSLog(@"The following files will be removed from directory \"%@\": %@",
-	    rootBuildDir, rootBuildDirList);
-      [pcfm removeFiles:rootBuildDirList 
-	  fromDirectory:rootBuildDir
-      removeDirsIfEmpty:NO];
-    }
 
-  [ud synchronize];
+      enumerator = [rootBuildDirList objectEnumerator];
+      while ((buildItem = [enumerator nextObject]))
+	{
+	  if([[buildItem pathExtension] isEqualToString:@"build"])
+	    {
+	      NSLog(@"Remove build directory %@/%@",
+		    rootBuildDir, buildItem);
+	      [pcfm removeFile:buildItem
+		 fromDirectory:rootBuildDir removeDirsIfEmpty:YES];
+	    }
+	}
+
+    }
 
   //--- Cleanup
   if (doConnection)
@@ -225,7 +234,7 @@
   RELEASE(menuController);
   RELEASE(projectManager);
 
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"--- Application WILL terminate.END");
 #endif
 }

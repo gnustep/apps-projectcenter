@@ -274,20 +274,20 @@
 
 - (BOOL)hasCustomView
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
 
   _hasCustomView = NO;
   
-  if (![[ud objectForKey:SeparateEditor] isEqualToString:@"YES"]
-      && [[ud objectForKey:Editor] isEqualToString:@"ProjectCenter"])
+  if (![[prefs objectForKey:SeparateEditor] isEqualToString:@"YES"]
+      && [[prefs objectForKey:Editor] isEqualToString:@"ProjectCenter"])
     {
       _hasCustomView = YES;
     }
-  if (![[ud objectForKey:SeparateBuilder] isEqualToString:@"YES"])
+  if (![[prefs objectForKey:SeparateBuilder] isEqualToString:@"YES"])
     {
       _hasCustomView = YES;
     }
-  if (![[ud objectForKey:SeparateLauncher] isEqualToString:@"YES"])
+  if (![[prefs objectForKey:SeparateLauncher] isEqualToString:@"YES"])
     {
       _hasCustomView = YES;
     }
@@ -297,16 +297,11 @@
 
 - (BOOL)hasLoadedFilesView
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSString           *val;
 
-  if (![[ud objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
-    {
-      _hasLoadedFilesView = YES;
-    }
-  else
-    {
-      _hasLoadedFilesView = NO;
-    }
+  val = [prefs objectForKey:SeparateLoadedFiles];
+  _hasLoadedFilesView = ([val isEqualToString:@"YES"]) ? NO : YES;
 
   return _hasLoadedFilesView;
 }
@@ -364,14 +359,14 @@
 
 - (void)showProjectLaunch:(id)sender
 {
-  NSView  *view = nil;
-  NSPanel *launchPanel = nil;
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSView             *view = nil;
+  NSPanel            *launchPanel = nil;
 
   view = [[project projectLauncher] componentView];
   launchPanel = [[project projectManager] launchPanel];
 
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-           objectForKey: SeparateLauncher] isEqualToString: @"YES"])
+  if ([[prefs objectForKey:SeparateLauncher] isEqualToString: @"YES"])
     {
       if ([customView contentView] == view)
 	{
@@ -562,7 +557,7 @@
 
 - (void)preferencesDidChange:(NSNotification *)aNotif
 {
-  NSDictionary *prefsDict = [[aNotif object] preferencesDict];
+  id <PCPreferences> prefs = [aNotif object];
  
   PCLogStatus(self, @"Preferences did change");
  
@@ -579,9 +574,8 @@
       customView = nil;
     }
 
-
   // Project Builder
-  if ([[prefsDict objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
+  if ([[prefs objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
     {
       // Project Build is sepearate and visible in project window
       if ([[[project projectBuilder] componentView] window] == projectWindow)
@@ -600,7 +594,7 @@
     }
 
   // Project Launcher
-  if ([[prefsDict objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"])
+  if ([[prefs objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"])
     {
       if ([[[project projectLauncher] componentView] window] == projectWindow)
 	{

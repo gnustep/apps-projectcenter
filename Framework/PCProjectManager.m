@@ -300,10 +300,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSPanel *)loadedFilesPanel
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-
-  if (!loadedFilesPanel
-      && [[ud objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
+  if (!loadedFilesPanel 
+      && [[prefController objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
     {
       loadedFilesPanel = 
 	[[PCProjectLoadedFilesPanel alloc] initWithProjectManager:self];
@@ -314,19 +312,16 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  if ([[[[NSUserDefaults standardUserDefaults] dictionaryRepresentation]
-              objectForKey: SeparateLoadedFiles] isEqualToString: @"YES"])
+  if ([[prefController objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
     {
-      [[self loadedFilesPanel] orderFront: nil];
+      [[self loadedFilesPanel] orderFront:nil];
     }
 }
 
 - (NSPanel *)buildPanel
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-
   if (!buildPanel
-      && [[ud objectForKey:SeparateBuilder] isEqualToString:@"YES"])
+      && [[prefController objectForKey:SeparateBuilder] isEqualToString:@"YES"])
     {
       buildPanel = [[PCProjectBuilderPanel alloc] initWithProjectManager:self];
     }
@@ -336,10 +331,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSPanel *)launchPanel
 {
-  NSUserDefaults *ud = [NSUserDefaults standardUserDefaults];
-
   if (!launchPanel
-      && [[ud objectForKey:SeparateLauncher] isEqualToString:@"YES"])
+      && [[prefController objectForKey:SeparateLauncher] isEqualToString:@"YES"])
     {
       launchPanel = [[PCProjectLauncherPanel alloc] initWithProjectManager:self];
     }
@@ -398,12 +391,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)saveAllProjectsIfNeeded
 {
-  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-
 //  PCLogInfo(self, @"saveAllProjectsIfNeeded");
 
   // If this method was called not by NSTimer, check if we should save projects
-  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
     {
       [self saveAllProjects];
     }
@@ -986,9 +977,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)closeProject
 {
-  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
-
-  if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
     {
       [activeProject save];
     }
@@ -1000,14 +989,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   PCProject      *project = nil;
   NSEnumerator   *enumerator = [loadedProjects objectEnumerator];
-  NSUserDefaults *defs = [NSUserDefaults standardUserDefaults];
 
 //  PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
 
   while ([loadedProjects count] > 0)
     {
       project = [enumerator nextObject];
-      if ([[defs objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+      if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
 	{
 	  [project save];
 	}

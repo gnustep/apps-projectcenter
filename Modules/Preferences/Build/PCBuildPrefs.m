@@ -252,6 +252,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
+  NSLog(@"Set PromptOnClean to %@", state);
   [prefs setObject:state forKey:PromptOnClean];
 }
 
