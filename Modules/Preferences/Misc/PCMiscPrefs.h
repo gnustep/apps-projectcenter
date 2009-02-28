@@ -31,7 +31,6 @@
 #endif
 
 #define PromptOnQuit            @"PromtOnQuit"
-#define DeleteCacheWhenQuitting @"DeleteBuildCacheWhenQuitting"
 #define FullPathInFilePanels    @"FullPathInFilePanels"
 #define Debugger                @"Debugger"
 #define Editor                  @"Editor"
@@ -43,7 +42,6 @@
   IBOutlet NSBox       *miscView;
 
   IBOutlet NSButton    *promptWhenQuit;
-  IBOutlet NSButton    *deleteCache;
   IBOutlet NSButton    *fullPathInFilePanels;
   IBOutlet NSTextField *debuggerField;
   IBOutlet NSButton    *debuggerButton;

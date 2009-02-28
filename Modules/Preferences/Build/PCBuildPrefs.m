@@ -58,6 +58,7 @@
   [setRootBuildDirButton setRefusesFirstResponder:YES];
   [setBuildToolButton setRefusesFirstResponder:YES];
 
+  [deleteCache setRefusesFirstResponder:YES];
   [promptOnClean setRefusesFirstResponder:YES];
 }
 
@@ -81,6 +82,7 @@
   [prefs setObject:@"" forKey:FailureSound];
   [prefs setObject:@"" forKey:RootBuildDirectory];
   [prefs setObject:PCDefaultBuildTool forKey:BuildTool];
+  [prefs setObject:@"YES" forKey:DeleteCacheWhenQuitting];
   [prefs setObject:@"YES" forKey:PromptOnClean];
 }
 
@@ -103,6 +105,10 @@
   if (!(val = [prefs objectForKey:BuildTool]))
     val = PCDefaultBuildTool;
   [buildToolField setStringValue:val];
+
+  val = [prefs objectForKey:DeleteCacheWhenQuitting];
+  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  [deleteCache setState:state];
 
   val = [prefs objectForKey:PromptOnClean];
   state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
@@ -239,6 +245,20 @@
     }
 
   [[buildingView window] makeFirstResponder:buildToolField];
+}
+
+- (void)setDeleteCache:(id)sender
+{
+  NSString *state;
+
+  if (deleteCache == nil)
+    {// HACK!!! need to be fixed in GNUstep
+      deleteCache = sender;
+      return;
+    }
+
+  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
+  [prefs setObject:state forKey:DeleteCacheWhenQuitting];
 }
 
 - (void)setPromptOnClean:(id)sender

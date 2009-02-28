@@ -53,7 +53,6 @@
 - (void)awakeFromNib
 {
   [promptWhenQuit setRefusesFirstResponder:YES];
-  [deleteCache setRefusesFirstResponder:YES];
   [fullPathInFilePanels setRefusesFirstResponder:YES];
 
   [debuggerButton setRefusesFirstResponder:YES];
@@ -77,7 +76,6 @@
 - (void)setDefaults
 {
   [prefs setObject:@"YES" forKey:PromptOnQuit];
-  [prefs setObject:@"YES" forKey:DeleteCacheWhenQuitting];
   [prefs setObject:@"YES" forKey:FullPathInFilePanels];
   [prefs setObject:@"/usr/bin/gdb" forKey:Debugger];
   [prefs setObject:@"ProjectCenter" forKey:Editor];
@@ -91,10 +89,6 @@
   val = [prefs objectForKey:PromptOnQuit];
   state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
   [promptWhenQuit setState:state];
-
-  val = [prefs objectForKey:DeleteCacheWhenQuitting];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
-  [deleteCache setState:state];
 
   val = [prefs objectForKey:FullPathInFilePanels];
   state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
@@ -127,20 +121,6 @@
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
   [prefs setObject:state forKey:PromptOnQuit];
-}
-
-- (void)setDeleteCache:(id)sender
-{
-  NSString *state;
-
-  if (deleteCache == nil)
-    {// HACK!!! need to be fixed in GNUstep
-      deleteCache = sender;
-      return;
-    }
-
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DeleteCacheWhenQuitting];
 }
 
 - (void)setFullPathInFilePanels:(id)sender

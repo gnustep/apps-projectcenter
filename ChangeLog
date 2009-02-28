@@ -1,3 +1,15 @@
+2009-03-01 00:47  Sergii Stoian <stoyan255@gmail.com>
+
+	* Modules/Preferences/Build/PCBuildPrefs.h:
+	* Modules/Preferences/Build/PCBuildPrefs.m:
+	* Modules/Preferences/Build/Resources/BuildPrefs.gorm:
+	Move "Remove files in root build directory on quit" option
+	from here...
+	* Modules/Preferences/Misc/PCMiscPrefs.h:
+	* Modules/Preferences/Misc/PCMiscPrefs.m:
+	* Modules/Preferences/Misc/Resources/MiscPrefs.gorm:
+	to here.
+
 2009-03-01  Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m:

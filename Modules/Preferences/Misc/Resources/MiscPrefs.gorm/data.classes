@@ -4,7 +4,6 @@
 	Actions = (
 	    "setEditor:",
 	    "setDebugger:",
-	    "setDeleteCache:",
 	    "setFullPathInFilePanels:",
 	    "setPromptWhenQuit:"
 	);
@@ -14,7 +13,6 @@
 	Actions = (
 	    "setEditor:",
 	    "setDebugger:",
-	    "setDeleteCache:",
 	    "setFullPathInFilePanels:",
 	    "setPromptWhenQuit:"
 	);

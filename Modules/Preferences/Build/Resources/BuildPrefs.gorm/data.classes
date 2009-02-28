@@ -2,6 +2,7 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
+	    "setDeleteCache:",
 	    "setBuildTool:",
 	    "setFailureSound:",
 	    "setPromptOnClean:",
@@ -16,7 +17,8 @@
 	    "setFailureSound:",
 	    "setRootBuildDir:",
 	    "setSuccessSound:",
-	    "setBuildTool:"
+	    "setBuildTool:",
+	    "setDeleteCache:"
 	);
 	Outlets = (
 	    buildingView,

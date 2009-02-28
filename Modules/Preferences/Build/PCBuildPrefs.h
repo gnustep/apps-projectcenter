@@ -30,11 +30,12 @@
 #define PCDefaultBuildTool @"/usr/bin/make"
 #endif
 
-#define SuccessSound       @"SuccessSound"
-#define FailureSound       @"FailureSound"
-#define RootBuildDirectory @"RootBuildDirectory"
-#define BuildTool          @"BuildTool"
-#define PromptOnClean      @"PromtOnClean"
+#define SuccessSound            @"SuccessSound"
+#define FailureSound            @"FailureSound"
+#define RootBuildDirectory      @"RootBuildDirectory"
+#define BuildTool               @"BuildTool"
+#define DeleteCacheWhenQuitting @"DeleteBuildCacheWhenQuitting"
+#define PromptOnClean           @"PromtOnClean"
 
 @interface PCBuildPrefs : NSObject <PCPrefsSection>
 {
@@ -52,6 +53,7 @@
   IBOutlet NSTextField *buildToolField;
   IBOutlet NSButton    *setBuildToolButton;
 
+  IBOutlet NSButton    *deleteCache;
   IBOutlet NSButton    *promptOnClean;
 }
 
