@@ -32,8 +32,6 @@
 #define SeparateEditor      @"SeparateEditor"
 #define EditorLines         @"EditorLines"
 #define EditorColumns       @"EditorColumns"
-#define RememberWindows     @"RememberWindows"
-#define DisplayLog          @"DisplayLog"
 
 @interface PCInterfacePrefs : NSObject <PCPrefsSection>
 {
@@ -48,9 +46,6 @@
 
   IBOutlet NSTextField *editorLinesField;
   IBOutlet NSTextField *editorColumnsField;
-
-  IBOutlet NSButton    *rememberWindows;
-  IBOutlet NSButton    *displayLog;
 }
 
 @end

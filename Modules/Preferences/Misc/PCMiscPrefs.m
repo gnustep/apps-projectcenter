@@ -54,6 +54,8 @@
 {
   [promptWhenQuit setRefusesFirstResponder:YES];
   [fullPathInFilePanels setRefusesFirstResponder:YES];
+  [rememberWindows setRefusesFirstResponder:YES];
+  [displayLog setRefusesFirstResponder:YES];
 
   [debuggerButton setRefusesFirstResponder:YES];
   [editorButton setRefusesFirstResponder:YES];
@@ -77,6 +79,9 @@
 {
   [prefs setObject:@"YES" forKey:PromptOnQuit];
   [prefs setObject:@"YES" forKey:FullPathInFilePanels];
+  [prefs setObject:@"YES" forKey:RememberWindows];
+  [prefs setObject:@"NO" forKey:DisplayLog];
+
   [prefs setObject:@"/usr/bin/gdb" forKey:Debugger];
   [prefs setObject:@"ProjectCenter" forKey:Editor];
 }
@@ -93,6 +98,14 @@
   val = [prefs objectForKey:FullPathInFilePanels];
   state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
   [fullPathInFilePanels setState:state];
+
+  val = [prefs objectForKey:RememberWindows];
+  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  [rememberWindows setState:state];
+     
+  val = [prefs objectForKey:DisplayLog];
+  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  [displayLog setState:state];
 
   if (!(val = [prefs objectForKey:Debugger]))
     val = PCDefaultDebugger;
@@ -135,6 +148,34 @@
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
   [prefs setObject:state forKey:FullPathInFilePanels];
+}
+
+- (void)setRememberWindows:(id)sender
+{
+  NSString *state;
+
+  if (rememberWindows == nil)
+    {
+      rememberWindows = sender;
+      return;
+    }
+
+  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
+  [prefs setObject:state forKey:RememberWindows];
+}
+
+- (void)setDisplayLog:(id)sender
+{
+  NSString *state;
+
+  if (displayLog == nil)
+    {
+      displayLog = sender;
+      return;
+    }
+
+  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
+  [prefs setObject:state forKey:DisplayLog];
 }
 
 - (void)setDebugger:(id)sender

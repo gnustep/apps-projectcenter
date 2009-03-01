@@ -69,9 +69,6 @@
   [separateLauncher setRefusesFirstResponder:YES];
   [separateEditor setRefusesFirstResponder:YES];
   [separateLoadedFiles setRefusesFirstResponder:YES];
-
-  [rememberWindows setRefusesFirstResponder:YES];
-  [displayLog setRefusesFirstResponder:YES];
 }
 
 - (void)setEditorSizeEnabled:(BOOL)yn
@@ -106,9 +103,6 @@
   
   [prefs setObject:@"30" forKey:EditorLines];
   [prefs setObject:@"80" forKey:EditorColumns];
-
-  [prefs setObject:@"YES" forKey:RememberWindows];
-  [prefs setObject:@"NO" forKey:DisplayLog];
 }
 
 - (void)readPreferences
@@ -143,14 +137,6 @@
     {
       [self setEditorSizeEnabled:NO];
     }*/
-
-  val = [prefs objectForKey:RememberWindows];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
-  [rememberWindows setState:state];
-     
-  val = [prefs objectForKey:DisplayLog];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
-  [displayLog setState:state];
 }
 
 - (NSView *)view
@@ -221,34 +207,6 @@
     }
 
   [prefs setObject:val forKey:key];
-}
-
-- (void)setRememberWindows:(id)sender
-{
-  NSString *state;
-
-  if (rememberWindows == nil)
-    {
-      rememberWindows = sender;
-      return;
-    }
-
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:RememberWindows];
-}
-
-- (void)setDisplayLog:(id)sender
-{
-  NSString *state;
-
-  if (displayLog == nil)
-    {
-      displayLog = sender;
-      return;
-    }
-
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DisplayLog];
 }
 
 @end

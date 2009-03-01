@@ -30,10 +30,12 @@
 #define PCDefaultDebugger @"/usr/bin/gdb"
 #endif
 
-#define PromptOnQuit            @"PromtOnQuit"
-#define FullPathInFilePanels    @"FullPathInFilePanels"
-#define Debugger                @"Debugger"
-#define Editor                  @"Editor"
+#define PromptOnQuit         @"PromtOnQuit"
+#define FullPathInFilePanels @"FullPathInFilePanels"
+#define RememberWindows      @"RememberWindows"
+#define DisplayLog           @"DisplayLog"
+#define Debugger             @"Debugger"
+#define Editor               @"Editor"
 
 @interface PCMiscPrefs : NSObject <PCPrefsSection>
 {
@@ -43,6 +45,9 @@
 
   IBOutlet NSButton    *promptWhenQuit;
   IBOutlet NSButton    *fullPathInFilePanels;
+  IBOutlet NSButton    *rememberWindows;
+  IBOutlet NSButton    *displayLog;
+
   IBOutlet NSTextField *debuggerField;
   IBOutlet NSButton    *debuggerButton;
   IBOutlet NSTextField *editorField;

@@ -2,10 +2,12 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
-	    "setEditor:",
+	    "setDisplayLog:",
 	    "setDebugger:",
+	    "setEditor:",
 	    "setFullPathInFilePanels:",
-	    "setPromptWhenQuit:"
+	    "setPromptWhenQuit:",
+	    "setRememberWindows:"
 	);
 	Super = NSObject;
     };
@@ -14,17 +16,20 @@
 	    "setEditor:",
 	    "setDebugger:",
 	    "setFullPathInFilePanels:",
-	    "setPromptWhenQuit:"
+	    "setPromptWhenQuit:",
+	    "setDisplayLog:",
+	    "setRememberWindows:"
 	);
 	Outlets = (
 	    debuggerButton,
 	    debuggerField,
-	    deleteCache,
 	    editorButton,
 	    editorField,
 	    fullPathInFilePanels,
 	    miscView,
-	    promptWhenQuit
+	    promptWhenQuit,
+	    displayLog,
+	    rememberWindows
 	);
 	Super = NSObject;
     };
