@@ -173,7 +173,7 @@ NSString *PCEditorDidResignActiveNotification =
     {
       NSRunAlertPanel(@"Open Editor",
 		      @"Couldn't open editor for file '%@'.\n"
-		      "File doesn't exist.",
+		      @"File doesn't exist.",
 		      @"Close", nil, nil, filePath);
       return nil;
     }
@@ -183,7 +183,7 @@ NSString *PCEditorDidResignActiveNotification =
     {
       NSRunAlertPanel(@"Open Editor",
 		      @"Couldn't open editor for file '%@'.\n"
-		      "File is not plain text.",
+		      @"File is not plain text.",
 		      @"Close", nil, nil, filePath);
       return nil;
     }
@@ -365,7 +365,7 @@ NSString *PCEditorDidResignActiveNotification =
 	{
 	  ret = NSRunAlertPanel(@"Save Files",
 				@"Couldn't save file '%@'.\n"
-				"Operation stopped.",
+				@"Operation stopped.",
 				@"Ok",nil,nil);
 	  return NO;
 	}

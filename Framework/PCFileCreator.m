@@ -57,8 +57,8 @@ static NSDictionary  *dict = nil;
       // Objective C Class
       descr = [NSString stringWithString:
 	@"Generic Objective-C class.\n\n"
-	"This is a plain subclass of NSObject which includes"
-	" only Foundation.h."];
+	@"This is a plain subclass of NSObject which includes"
+	@" only Foundation.h."];
       template = [bundle pathForResource:@"class" ofType:@"template"];
       classDict = [NSDictionary dictionaryWithObjectsAndKeys:
 	PCClasses, @"ProjectKey",
@@ -69,8 +69,8 @@ static NSDictionary  *dict = nil;
       // Objective C Header
       descr = [NSString stringWithString:
 	@"Generic Objective-C header.\n\n"
-	"This is a plain interface subclassing NSObject."
-	" The file includes Foundation.h"];
+	@"This is a plain interface subclassing NSObject."
+	@" The file includes Foundation.h"];
       template = [bundle pathForResource:@"header" ofType:@"template"];
       headerDict =[NSDictionary dictionaryWithObjectsAndKeys:
         PCHeaders,@"ProjectKey",
@@ -81,7 +81,7 @@ static NSDictionary  *dict = nil;
       // C File
       descr = [NSString stringWithString:
 	@"Generic ANSI-C implementation file.\n\n"
-	"This file contains no Objective-C dependency in any form."];
+	@"This file contains no Objective-C dependency in any form."];
       template = [bundle pathForResource:@"cfile" ofType:@"template"];
       ccDict = [NSDictionary dictionaryWithObjectsAndKeys:
         PCOtherSources,@"ProjectKey",
@@ -92,7 +92,7 @@ static NSDictionary  *dict = nil;
       // C Header
       descr = [NSString stringWithString:
 	@"Generic ANSI-C header.\n\n"
-	"This file contains no Objective-C dependency in any form."];
+	@"This file contains no Objective-C dependency in any form."];
       template = [bundle pathForResource:@"cheader" ofType:@"template"];
       chDict = [NSDictionary dictionaryWithObjectsAndKeys:
         PCHeaders,@"ProjectKey",
@@ -103,8 +103,8 @@ static NSDictionary  *dict = nil;
       // Objective C Protocol
       descr = [NSString stringWithString:
 	@"Generic Objective-C protocol.\n\n"
-	"This is common Objective-C protocol, comparable"
-	" i.e. to a Java interface."];
+	@"This is common Objective-C protocol, comparable"
+	@" i.e. to a Java interface."];
       template = [bundle pathForResource:@"protocol" ofType:@"template"];
       protocolDict = [NSDictionary dictionaryWithObjectsAndKeys:
         PCHeaders,@"ProjectKey",
@@ -115,7 +115,7 @@ static NSDictionary  *dict = nil;
       // GSMarkup
       descr = [NSString stringWithString:
 	@"Generic GSMarkup File.\n\n"
-	"This is the interface description of GNUstep Renaissance."];
+	@"This is the interface description of GNUstep Renaissance."];
       template = [bundle pathForResource:@"gsmarkup" ofType:@"template"];
       gsmarkupDict =[NSDictionary dictionaryWithObjectsAndKeys:
         PCGSMarkupFiles,@"ProjectKey",
@@ -480,7 +480,7 @@ static NSDictionary  *dict = nil;
 	      ret = NSRunAlertPanel
 		(@"New File in Project", 
 		 @"Project directory %@ already has file %@.\n"
-		 "Do you want to overwrite it?",
+		 @"Do you want to overwrite it?",
 		 @"Stop", @"Overwrite", nil, 
 		 [filePath stringByDeletingLastPathComponent], 
 		 fileName);

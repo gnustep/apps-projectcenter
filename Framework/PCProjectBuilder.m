@@ -478,7 +478,7 @@
     {
       ret = NSRunAlertPanel(@"Project Build",
   			    @"Project was changed and not saved.\n"
-  			    "Do you want to save project before building it?",
+  			    @"Do you want to save project before building it?",
   			    @"Stop Build", @"Save and Build", nil);
       switch (ret)
 	{
@@ -515,7 +515,7 @@
     {
       NSRunAlertPanel(@"Project Build",
   		      @"Build tool '%@' not found. Check preferences.\n"
-		      "Build will be terminated.",
+		      @"Build will be terminated.",
   		      @"Close", nil, nil, buildTool);
       return NO;
     }

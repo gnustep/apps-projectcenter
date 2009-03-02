@@ -206,8 +206,8 @@ NSString
 
       NSRunAlertPanel(@"Open Project!", 
 		      @"The project file was converted from previous version!\n"
-		      "Please make sure that every project attribute contain"
-		      " valid values!", 
+		      @"Please make sure that every project attribute contain"
+		      @" valid values!", 
 		      @"OK",nil,nil);
     }
 }

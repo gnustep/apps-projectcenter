@@ -568,7 +568,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  NSRunAlertPanel(@"Open Project",
 			  @"Project type '%@' is not supported!\n"
-			  "Report the bug, please!",
+			  @"Report the bug, please!",
 			  @"OK", nil, nil, projectTypeName); 
 	  return nil;
 	}
@@ -689,7 +689,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       NSRunAlertPanel(@"New Project",
 		      @"Could not create project directory %@.\n"
-		      "No project creator. Report the bug, please!",
+		      @"No project creator. Report the bug, please!",
 		      @"OK", nil, nil, aPath); 
       return nil;
     }
@@ -699,8 +699,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       NSRunAlertPanel(@"New Project",
 		      @"Could not create project directory %@.\n"
-		      "Check permissions of the directory where you"
-		      " want to create a project",
+		      @"Check permissions of the directory where you"
+		      @" want to create a project",
 		      @"OK", nil, nil, aPath); 
       return nil;
     }
@@ -1151,7 +1151,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  NSRunAlertPanel(@"New Subproject",
 			  @"Internal error!"
-			  " Install ProjectCenter again, please.",
+			  @" Install ProjectCenter again, please.",
 			  @"OK", nil, nil);
 	  return NO;
 	}
@@ -1238,7 +1238,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     {
       NSRunAlertPanel(@"New Subproject",
 		      @"Internal error!"
-		      " Install ProjectCenter again, please.",
+		      @" Install ProjectCenter again, please.",
 		      @"OK", nil, nil);
       return nil;
     }
