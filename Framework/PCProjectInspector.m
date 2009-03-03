@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2009 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -555,6 +555,7 @@
   [authorsList setHeaderView:nil];
   [authorsList addTableColumn:authorsColumn];
   [authorsList setDataSource:self];
+  [authorsList setDelegate:self];
 
   //
   [authorsScroll setDocumentView:authorsList];
@@ -931,6 +932,14 @@
 
       [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
     }
+}
+
+- (void) tableView: (NSTableView*)aTableView
+   willDisplayCell: (id)aCell
+    forTableColumn: (NSTableColumn*)aTableColumn
+               row: (int)rowIndex
+{
+  [(NSTextFieldCell *)aCell setScrollable:YES];
 }
 
 @end

@@ -1,3 +1,7 @@
+2009-03-03 Riccardo Mottola <rmottola@users.sf.net>
+
+	* Framework/PCProjectInspector.m: allow authors inside table to scroll during editing
+
 2009-03-02 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Framework/PCProject.m,
