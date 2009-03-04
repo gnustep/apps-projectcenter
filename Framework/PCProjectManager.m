@@ -452,7 +452,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSLog(@"Convert legacy");
 
   // Gorm project type doesn't exists anymore
-  if ([projectClassName isEqualToString:@"PCGormProj"])
+  if ([projectClassName isEqualToString:@"PCGormProj"] ||
+      [projectClassName isEqualToString:@"PCAppProj"])
     {
       projectTypeName = [NSString stringWithString:@"Application"];
       projectClassName = [projectTypes objectForKey:projectTypeName];

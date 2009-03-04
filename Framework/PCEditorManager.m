@@ -181,10 +181,12 @@ NSString *PCEditorDidResignActiveNotification =
   // Determine if file is text file
   if (![[PCFileManager defaultManager] isTextFile:filePath])
     {
-      NSRunAlertPanel(@"Open Editor",
+      // TODO: Do not open alert panel for now. Internal editor
+      // for non text files must not be opened. Review PCProjectBrowser.
+/*      NSRunAlertPanel(@"Open Editor",
 		      @"Couldn't open editor for file '%@'.\n"
 		      @"File is not plain text.",
-		      @"Close", nil, nil, filePath);
+		      @"Close", nil, nil, filePath);*/
       return nil;
     }
 
