@@ -1,6 +1,33 @@
+2009-03-03 00:08 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBrowser.m: Stop using 'SeparateEditor'
+	prefernce. Remove use of preferences code.
+	(doubleClick:): Change support of external editor (add support for
+	.app editors).
+	* Framework/PCProjectWindow.m: Start implementing two-mode handling of
+	tear-off windows. New handling will support two modes: 1. all windows
+	are opened inside projet window and 2. Build, Launch/Debug, Loaded
+	Files (Project Find in future) are opened as tear-off windows. This
+	simplifiles the code and in my opinion more intuitive then current 
+	implementation.
+	* Modules/Editors/ProjectCenter/PCEditor.m:
+	(_createWindow): Change window attribute ReleasedWhenClosed to NO.
+	* PCPrefController.m: Add new parameter 'notify' to method setObject.
+	This parameter is usefull for situation when open and save panels 
+	saves its values. For example: when project are opened 'Open Project' 
+	panel save last	opened dir to PC prefernces and post notificaion 
+	about prefs changes. Newly created objects of projects may lead to 
+	PC segfault.
+	* Modules/Preferences/Build/PCBuildPrefs.m,
+	* Modules/Preferences/Interface/PCInterfacePrefs.m,
+	* Modules/Preferences/Saving/PCSavingPrefs.m,
+	* Modules/Preferences/Misc/PCMiscPrefs.m,
+	* Framework/PCFileManager: Use new preferences setObject method.
+
 2009-03-03 Riccardo Mottola <rmottola@users.sf.net>
 
-	* Framework/PCProjectInspector.m: allow authors inside table to scroll during editing
+	* Framework/PCProjectInspector.m: allow authors inside table 
+	to scroll during editing
 
 2009-03-02 Riccardo Mottola <rmottola@users.sf.net>
 
