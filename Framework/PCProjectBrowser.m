@@ -33,7 +33,7 @@
 
 #import <ProjectCenter/PCLogController.h>
 
-#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
 NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
@@ -69,13 +69,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	   selector:@selector(projectDictDidChange:)
 	       name:PCProjectDictDidChangeNotification 
 	     object:nil];
-
-      [[NSNotificationCenter defaultCenter]
-	addObserver:self
-	   selector:@selector(loadPreferences:)
-	       name:PCPreferencesDidChangeNotification
-	     object:nil];
-      [self loadPreferences:nil];
     }
 
   return self;
@@ -92,15 +85,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   RELEASE(browser);
 
   [super dealloc];
-}
-
-- (void)loadPreferences:(NSNotification *)aNotification
-{
-  id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSString           *val;
-
-  val = [prefs objectForKey:SeparateEditor];
-  editorIsSeperate = ([val isEqualToString:@"YES"]) ? YES : NO;
 }
 
 // ============================================================================
@@ -403,8 +387,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
-      ![fileName isEqualToString:[activeProject projectName]] &&
-      !editorIsSeperate)
+      ![fileName isEqualToString:[activeProject projectName]])
     {
 //      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
       [[activeProject projectEditor] openEditorForCategoryPath:browserPath
@@ -424,6 +407,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   PCProject   *activeProject;
   NSString    *key;
   NSString    *filePath;
+  id <PCPreferences> prefs = [[project projectManager] prefController];
   NSWorkspace *workspace;
   NSString    *appName, *type;
   
@@ -445,7 +429,8 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
       workspace = [NSWorkspace sharedWorkspace];
       foundApp = [workspace getInfoForFile:filePath 
-			    application:&appName type:&type];
+			    application:&appName 
+				   type:&type];
       // NSLog (@"Open file: %@ with app: %@", filePath, appName);
 
       // If 'Editor' role was set in .GNUstepExtPrefs application
@@ -454,8 +439,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       // from Info-gnustep.plist file of PC.
       if(foundApp == NO || [appName isEqualToString:@"ProjectCenter.app"])
 	{
-	  [[activeProject projectEditor] openEditorForCategoryPath:[self path]
-							  windowed:YES];
+	  appName = [prefs objectForKey:Editor];
+
+	  if (![appName isEqualToString:@"ProjectCenter"])
+	    {
+	      [workspace openFile:filePath 
+		  withApplication:appName];
+	    }
+	  else
+	    {
+	      [[activeProject projectEditor] 
+		openEditorForCategoryPath:[self path]
+				 windowed:YES];
+	    }
 	}
       else
 	{

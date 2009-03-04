@@ -96,13 +96,13 @@
 // Protocol
 - (void)setDefaults
 {
-  [prefs setObject:@"YES" forKey:SeparateBuilder];
-  [prefs setObject:@"YES" forKey:SeparateLauncher];
-  [prefs setObject:@"NO" forKey:SeparateEditor];
-  [prefs setObject:@"YES" forKey:SeparateLoadedFiles];
+  [prefs setObject:@"YES" forKey:SeparateBuilder notify:NO];
+  [prefs setObject:@"YES" forKey:SeparateLauncher notify:NO];
+  [prefs setObject:@"NO" forKey:SeparateEditor notify:NO];
+  [prefs setObject:@"YES" forKey:SeparateLoadedFiles notify:NO];
   
-  [prefs setObject:@"30" forKey:EditorLines];
-  [prefs setObject:@"80" forKey:EditorColumns];
+  [prefs setObject:@"30" forKey:EditorLines notify:NO];
+  [prefs setObject:@"80" forKey:EditorColumns notify:NO];
 }
 
 - (void)readPreferences
@@ -187,7 +187,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:key];
+  [prefs setObject:state forKey:key notify:YES];
 }
 
 - (void)setEditorSize:(id)sender
@@ -206,7 +206,7 @@
       val = [editorColumnsField stringValue];
     }
 
-  [prefs setObject:val forKey:key];
+  [prefs setObject:val forKey:key notify:YES];
 }
 
 @end

@@ -36,8 +36,6 @@ extern NSString *PCBrowserDidSetPathNotification;
 {
   PCProject *project;
   NSBrowser *browser;
-
-  BOOL      editorIsSeperate;
 }
 
 // ============================================================================
@@ -46,7 +44,6 @@ extern NSString *PCBrowserDidSetPathNotification;
 
 - (id)initWithProject:(PCProject *)aProject;
 - (void)dealloc;
-- (void)loadPreferences:(NSNotification *)aNotification;
 
 // ============================================================================
 // ==== Accessory methods

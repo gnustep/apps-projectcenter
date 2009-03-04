@@ -430,7 +430,7 @@ static PCFileManager *_mgr = nil;
 
   if (key != nil)
     {
-      [prefs setObject:[panel directory] forKey:key];
+      [prefs setObject:[panel directory] forKey:key notify:NO];
     }
 }
 

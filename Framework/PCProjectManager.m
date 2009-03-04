@@ -99,7 +99,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"PCProjectManager: dealloc");
 #endif
 

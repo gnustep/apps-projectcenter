@@ -78,12 +78,12 @@
 // Protocol
 - (void)setDefaults
 {
-  [prefs setObject:@"" forKey:SuccessSound];
-  [prefs setObject:@"" forKey:FailureSound];
-  [prefs setObject:@"" forKey:RootBuildDirectory];
-  [prefs setObject:PCDefaultBuildTool forKey:BuildTool];
-  [prefs setObject:@"YES" forKey:DeleteCacheWhenQuitting];
-  [prefs setObject:@"YES" forKey:PromptOnClean];
+  [prefs setObject:@"" forKey:SuccessSound notify:NO];
+  [prefs setObject:@"" forKey:FailureSound notify:NO];
+  [prefs setObject:@"" forKey:RootBuildDirectory notify:NO];
+  [prefs setObject:PCDefaultBuildTool forKey:BuildTool notify:NO];
+  [prefs setObject:@"YES" forKey:DeleteCacheWhenQuitting notify:NO];
+  [prefs setObject:@"YES" forKey:PromptOnClean notify:NO];
 }
 
 - (void)readPreferences
@@ -153,7 +153,7 @@
   if (path)
     {
       [successField setStringValue:path];
-      [prefs setObject:path forKey:SuccessSound];
+      [prefs setObject:path forKey:SuccessSound notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:successField];
@@ -183,7 +183,7 @@
   if (path)
     {
       [failureField setStringValue:path];
-      [prefs setObject:path forKey:FailureSound];
+      [prefs setObject:path forKey:FailureSound notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:failureField];
@@ -212,7 +212,7 @@
   if (path)
     {
       [rootBuildDirField setStringValue:path];
-      [prefs setObject:path forKey:RootBuildDirectory];
+      [prefs setObject:path forKey:RootBuildDirectory notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:rootBuildDirField];
@@ -241,7 +241,7 @@
   if (path)
     {
       [buildToolField setStringValue:path];
-      [prefs setObject:path forKey:BuildTool];
+      [prefs setObject:path forKey:BuildTool notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:buildToolField];
@@ -258,7 +258,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DeleteCacheWhenQuitting];
+  [prefs setObject:state forKey:DeleteCacheWhenQuitting notify:YES];
 }
 
 - (void)setPromptOnClean:(id)sender
@@ -273,7 +273,7 @@
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
   NSLog(@"Set PromptOnClean to %@", state);
-  [prefs setObject:state forKey:PromptOnClean];
+  [prefs setObject:state forKey:PromptOnClean notify:YES];
 }
 
 @end

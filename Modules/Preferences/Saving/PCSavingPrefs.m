@@ -58,9 +58,9 @@
 
 - (void)setDefaults
 {
-  [prefs setObject:@"YES" forKey:SaveOnQuit];
-  [prefs setObject:@"YES" forKey:KeepBackup];
-  [prefs setObject:@"120" forKey:AutoSavePeriod];
+  [prefs setObject:@"YES" forKey:SaveOnQuit notify:NO];
+  [prefs setObject:@"YES" forKey:KeepBackup notify:NO];
+  [prefs setObject:@"120" forKey:AutoSavePeriod notify:NO];
 }
 
 - (void)readPreferences
@@ -113,7 +113,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:SaveOnQuit];
+  [prefs setObject:state forKey:SaveOnQuit notify:YES];
 }
 
 - (void)setKeepBackup:(id)sender
@@ -127,7 +127,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:KeepBackup];
+  [prefs setObject:state forKey:KeepBackup notify:YES];
 }
 
 - (void)setSavePeriod:(id)sender
@@ -140,7 +140,7 @@
     }
 
   periodString = [autosaveField stringValue];
-  [prefs setObject:periodString forKey:AutoSavePeriod];
+  [prefs setObject:periodString forKey:AutoSavePeriod notify:YES];
 
   // TODO: Check if this can be replaced with generic notification
   // posted by PCPrefsController

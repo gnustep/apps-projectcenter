@@ -33,7 +33,7 @@
 @protocol PCPreferences <NSObject>
 
 - (id)objectForKey:(NSString *)key;
-- (void)setObject:(id)anObject forKey:(NSString *)aKey;
+- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify;
 
 @end
 

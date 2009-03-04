@@ -143,10 +143,10 @@
    * Custom view
    * View where non-separated Builder, Launcher, Editor goes.
    */ 
-  if ([self hasCustomView])
-    {
+//  if ([self hasCustomView])
+//    {
       [self _createCustomView];
-    }
+//    }
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -272,6 +272,11 @@
 // ==== Accessory methods
 // ============================================================================
 
+// TODO: Should be removed when two modes will be implemented:
+// Build, Launch and Loaded Files are tear-off and tear-on.
+// Custom view is always shown because editor always opened on
+// one click in Browser. External editor will be opened only on
+// double click.
 - (BOOL)hasCustomView
 {
   id <PCPreferences> prefs = [[project projectManager] prefController];
@@ -336,8 +341,6 @@
   NSView  *view = [[project projectBuilder] componentView];
   NSPanel *buildPanel = [[project projectManager] buildPanel];
   
-/*  if ([[[PCPrefController sharedPCPreferences] objectForKey:SeparateBuilder]
-      isEqualToString: @"YES"])*/
   if ([[[[project projectManager] prefController] objectForKey:SeparateBuilder]
       isEqualToString: @"YES"])
     {
@@ -555,13 +558,18 @@
   [self makeKeyWindow];*/
 }
 
+// TODO: Review determining of tear-off panels. Current implementation
+// loads Build, Launch and Loaded Files to check visibility status.
+// It is incorrect behaviour; Build. Launch and LoadedFiles initialized
+// even if not in use.
 - (void)preferencesDidChange:(NSNotification *)aNotif
 {
   id <PCPreferences> prefs = [aNotif object];
  
   PCLogStatus(self, @"Preferences did change");
- 
-  //--- Add Custom view
+
+// See comment to _createCustomView
+/*  //--- Add Custom view
   if ([self hasCustomView] && customView == nil)
     {
       [self _createCustomView];
@@ -572,7 +580,7 @@
       [customView removeFromSuperview];
       [h_split adjustSubviews];
       customView = nil;
-    }
+    }*/
 
   // Project Builder
   if ([[prefs objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
@@ -880,25 +888,25 @@
   vSplitRect = [browserView frame];
   vSplitRect.origin.x = 0;
   vSplitRect.origin.y = 0;
-  if (![self hasCustomView])
+/*  if (![self hasCustomView])
     {
       vSplitRect.size = hSplitSize;
     }
   else
-    {
+    {*/
       vSplitRect.size.width = hSplitSize.width;
-    }
+/*    }*/
   [v_split setFrame:vSplitRect];
   
   // Custom view (Editor|Builder|Launcher)
-  if ([self hasCustomView])
-    {
+/*  if ([self hasCustomView])
+    {*/
       boxRect.origin.x = 0;
       boxRect.origin.y = vSplitRect.size.height + [h_split dividerThickness];
       boxRect.size.width = hSplitSize.width;
       boxRect.size.height = hSplitSize.height - boxRect.origin.y;
       [customView setFrame:boxRect];
-    }
+//    }
 }
 
 - (void)         splitView:(NSSplitView *)sender

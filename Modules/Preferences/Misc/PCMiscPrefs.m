@@ -77,13 +77,13 @@
 // Protocol
 - (void)setDefaults
 {
-  [prefs setObject:@"YES" forKey:PromptOnQuit];
-  [prefs setObject:@"YES" forKey:FullPathInFilePanels];
-  [prefs setObject:@"YES" forKey:RememberWindows];
-  [prefs setObject:@"NO" forKey:DisplayLog];
+  [prefs setObject:@"YES" forKey:PromptOnQuit notify:NO];
+  [prefs setObject:@"YES" forKey:FullPathInFilePanels notify:NO];
+  [prefs setObject:@"YES" forKey:RememberWindows notify:NO];
+  [prefs setObject:@"NO" forKey:DisplayLog notify:NO];
 
-  [prefs setObject:@"/usr/bin/gdb" forKey:Debugger];
-  [prefs setObject:@"ProjectCenter" forKey:Editor];
+  [prefs setObject:@"/usr/bin/gdb" forKey:Debugger notify:NO];
+  [prefs setObject:@"ProjectCenter" forKey:Editor notify:NO];
 }
 
 - (void)readPreferences
@@ -133,7 +133,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:PromptOnQuit];
+  [prefs setObject:state forKey:PromptOnQuit notify:YES];
 }
 
 - (void)setFullPathInFilePanels:(id)sender
@@ -147,7 +147,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:FullPathInFilePanels];
+  [prefs setObject:state forKey:FullPathInFilePanels notify:YES];
 }
 
 - (void)setRememberWindows:(id)sender
@@ -161,7 +161,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:RememberWindows];
+  [prefs setObject:state forKey:RememberWindows notify:YES];
 }
 
 - (void)setDisplayLog:(id)sender
@@ -175,7 +175,7 @@
     }
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DisplayLog];
+  [prefs setObject:state forKey:DisplayLog notify:YES];
 }
 
 - (void)setDebugger:(id)sender
@@ -231,7 +231,7 @@
 
   // Set
   [debuggerField setStringValue:path];
-  [prefs setObject:path forKey:Debugger];
+  [prefs setObject:path forKey:Debugger notify:YES];
 }
 
 - (void)setEditor:(id)sender
@@ -240,13 +240,14 @@
   NSString      *path;
   NSString      *editorPath;
   NSFileManager *fm = [NSFileManager defaultManager];
+  NSWorkspace   *ws = [NSWorkspace sharedWorkspace];
 
   // Choose
   if ((sender == debuggerField))
     {
       path = [debuggerField stringValue];
     }
-  else
+  else if ([path = [editorField stringValue] isEqualToString:@""])
     {
       files = [[PCFileManager defaultManager] 
 	filesOfTypes:nil
@@ -267,15 +268,15 @@
     }
 
   // Check
-  if (path && ![path isEqualToString:@"ProjectCenter"])
+  if (path && ![ws fullPathForApplication:path])
     {
       editorPath = [[path componentsSeparatedByString:@" "] objectAtIndex:0];
       if (![fm fileExistsAtPath:editorPath])
 	{
 	  [editorField selectText:self];
 	  NSRunAlertPanel(@"Set Editor",
-	    		  @"File %@ doesn't exist!\n"
-			  "Setting field to default value.",
+	    		  @"Editor %@ doesn't exist!\n"
+			  @"Setting field to default value.",
 	    		  @"Close", nil, nil, path);
 	  path = @"";
 	}
@@ -299,7 +300,7 @@
 
   // Set
   [editorField setStringValue:path];
-  [prefs setObject:path forKey:Editor];
+  [prefs setObject:path forKey:Editor notify:YES];
 }
 
 @end

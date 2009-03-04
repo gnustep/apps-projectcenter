@@ -100,6 +100,7 @@
   RELEASE(buildStatusTarget);
   RELEASE(buildTarget);
   RELEASE(buildArgs);
+  RELEASE(buildOptions);
 
   RELEASE(successSound);
   RELEASE(failureSound);
@@ -111,7 +112,6 @@
   RELEASE(componentView);
   RELEASE(errorArray);
   RELEASE(errorString);
-  RELEASE(buildOptions);
 
   [super dealloc];
 }

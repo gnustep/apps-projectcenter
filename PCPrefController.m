@@ -68,7 +68,7 @@ static PCPrefController *_prefCtrllr = nil;
 
       // Clean preferences
       [NSUserDefaults resetStandardUserDefaults];
-      [self setObject:@"0.5" forKey:@"Version"];
+      [self setObject:@"0.5" forKey:@"Version" notify:NO];
 
       // Make preferences modules load default values
       [[sectionsDict allValues] 
@@ -103,14 +103,17 @@ static PCPrefController *_prefCtrllr = nil;
   return [userDefaults objectForKey:key];
 }
 
-- (void)setObject:(id)anObject forKey:(NSString *)aKey
+- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify
 {
   [userDefaults setObject:anObject forKey:aKey];
   [userDefaults synchronize];
 
-  [[NSNotificationCenter defaultCenter] 
-    postNotificationName:PCPreferencesDidChangeNotification
-                  object:self];
+  if (notify)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCPreferencesDidChangeNotification
+		      object:self];
+    }
 }
 
 - (void)loadPrefsSections

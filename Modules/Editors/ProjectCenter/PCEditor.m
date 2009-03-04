@@ -51,7 +51,7 @@
                                         styleMask:style
                                           backing:NSBackingStoreBuffered
                                             defer:YES];
-  [_window setReleasedWhenClosed:YES];
+  [_window setReleasedWhenClosed:NO];
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];
   [_window center];
