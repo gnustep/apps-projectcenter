@@ -1,5 +1,15 @@
 2009-03-03 00:08 Sergii Stoian <stoyan255@gmail.com>
 
+	* Framework/PCProjectManager.m:
+	(convertLegacyProject:atPath:): Correctly convert legacy application
+	project.
+	* Framework/PCEditorManager.m;
+	(openEditorForFile:editable:windowed:): Don't open lert panel if file
+	is not text file. Situation when editor for non text files called to 
+	be opened must be reviewd.
+
+2009-03-03 00:08 Sergii Stoian <stoyan255@gmail.com>
+
 	* Framework/PCProjectBrowser.m: Stop using 'SeparateEditor'
 	prefernce. Remove use of preferences code.
 	(doubleClick:): Change support of external editor (add support for
