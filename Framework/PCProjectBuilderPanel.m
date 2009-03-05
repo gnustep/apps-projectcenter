@@ -95,8 +95,8 @@
       [contentBox display];
     }
 
-/*  PCLogInfo(self, @"orderFront: %@ -> %@", 
-	    builderView, [builderView superview]);*/
+/*  NSLog(self, @"orderFront: %@ -> %@", 
+  	builderView, [builderView superview]);*/
 
   [panel orderFront:self];
 }

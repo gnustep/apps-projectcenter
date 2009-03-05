@@ -55,10 +55,11 @@ ProjectCenter 0.6
   - Finish parsing gcc output (make errors, etc.)               stoyan
   - Implement interaction with Editor (errors, warnings)        stoyan
 --- Project Editor ---------------------------------------------
-  - go to line                                                  stoyan
+  - review situations when editor is opened                     stoyan
+  - implement go to line                                        stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
   - Implement indentation                                       stoyan
-  - undo inside editor                                          stoyan
+  - implement undo inside editor                                stoyan
 - Think about imlementing pending adding/removal of files       ???
 - Split "Application" to "Application GORM" and 
   "Application Renaissance" project types                       ???
@@ -74,6 +75,7 @@ ProjectCenter 0.7
 - Add support for non-project files                             ???
 - Implement symbols indexing. This feature touches Browser
   (class and method list) and Editor (autocompletion)           ???
+- Editor: implement autocompletion                              ???
 - Implement Plist editor for editing project files              ???
 - An initial project wide find feature                          ???
 - Better integration with other tools (GORM)                    ???

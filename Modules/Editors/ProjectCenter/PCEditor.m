@@ -212,6 +212,7 @@
   RELEASE(_categoryPath);
   RELEASE(_intScrollView);
   RELEASE(_storage);
+  RELEASE(_window);
 
 //  RELEASE(parserClasses);
   RELEASE(parserMethods);

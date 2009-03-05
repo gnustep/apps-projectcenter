@@ -34,6 +34,7 @@
 #define FullPathInFilePanels @"FullPathInFilePanels"
 #define RememberWindows      @"RememberWindows"
 #define DisplayLog           @"DisplayLog"
+#define UseTearOffWindows    @"UseTearOffWindows"
 #define Debugger             @"Debugger"
 #define Editor               @"Editor"
 
@@ -47,6 +48,7 @@
   IBOutlet NSButton    *fullPathInFilePanels;
   IBOutlet NSButton    *rememberWindows;
   IBOutlet NSButton    *displayLog;
+  IBOutlet NSButton    *useTearOffWindows;
 
   IBOutlet NSTextField *debuggerField;
   IBOutlet NSButton    *debuggerButton;

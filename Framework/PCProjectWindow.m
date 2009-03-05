@@ -338,11 +338,11 @@
 
 - (void)showProjectBuild:(id)sender
 {
-  NSView  *view = [[project projectBuilder] componentView];
-  NSPanel *buildPanel = [[project projectManager] buildPanel];
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSView             *view = [[project projectBuilder] componentView];
+  NSPanel            *buildPanel = [[project projectManager] buildPanel];
   
-  if ([[[[project projectManager] prefController] objectForKey:SeparateBuilder]
-      isEqualToString: @"YES"])
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       if ([customView contentView] == view)
 	{
@@ -369,13 +369,13 @@
   view = [[project projectLauncher] componentView];
   launchPanel = [[project projectManager] launchPanel];
 
-  if ([[prefs objectForKey:SeparateLauncher] isEqualToString: @"YES"])
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       if ([customView contentView] == view)
 	{
 	  [self showProjectEditor:self];
 	}
-      [launchPanel orderFront: nil];
+      [launchPanel orderFront:nil];
     }
   else
     {
@@ -389,14 +389,22 @@
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  NSPanel      *panel = [[project projectManager] loadedFilesPanel];
-  NSScrollView *componentView;
+  id <PCPreferences> prefs = [[project projectManager] prefController];
+  NSPanel            *panel = [[project projectManager] loadedFilesPanel];
+  NSScrollView       *componentView;
 
   componentView = (NSScrollView *)[[project projectLoadedFiles] componentView];
       
 //  PCLogInfo(self, @"showProjectLoadedFiles");
 
-  if ([self hasLoadedFilesView])
+//  if ([self hasLoadedFilesView])
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+    {
+      [componentView setBorderType:NSNoBorder];
+      [panel orderFront:nil];
+      [v_split adjustSubviews];
+    }
+  else
     {
       if (panel && [panel isVisible])
 	{
@@ -406,12 +414,6 @@
       [componentView setBorderType:NSBezelBorder];
       [componentView setFrame:NSMakeRect(0,0,128,130)];
       [v_split addSubview:[[project projectLoadedFiles] componentView]];
-      [v_split adjustSubviews];
-    }
-  else
-    {
-      [componentView setBorderType:NSNoBorder];
-      [panel orderFront:nil];
       [v_split adjustSubviews];
     }
 }
@@ -582,6 +584,48 @@
       customView = nil;
     }*/
 
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+    {
+      // Project Build 
+      if ([[[project projectBuilder] componentView] window] == projectWindow)
+	{
+	  [self showProjectBuild:self];
+	}
+      // Project Launch
+      if ([[[project projectLauncher] componentView] window] == projectWindow)
+	{
+	  [self showProjectLaunch:self];
+	}
+      // Loaded Files
+      if ([[v_split subviews] count] == 2)
+	{
+	  [self showProjectLoadedFiles:self];
+	}
+      [loadedFilesButton setEnabled:YES];
+    }
+  else
+    {
+      NSPanel *buildPanel = [[project projectManager] buildPanel];
+      NSPanel *launchPanel = [[project projectManager] launchPanel];
+      
+      // Project Build 
+      if ([buildPanel isVisible] == YES)
+	{
+	  [self showProjectBuild:self];
+	}
+      // Project Launch
+      if ([launchPanel isVisible] == YES)
+	{
+	  [self showProjectLaunch:self];
+	}
+      // Loaded Files
+      if ([[v_split subviews] count] == 1)
+	{
+	  [self showProjectLoadedFiles:self];
+	}
+      [loadedFilesButton setEnabled:NO];
+    }
+/*
   // Project Builder
   if ([[prefs objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
     {
@@ -635,7 +679,7 @@
 	  [self showProjectLoadedFiles:self];
 	}
       [loadedFilesButton setEnabled:YES];
-    }
+    }*/
 }
 
 - (void)browserDidSetPath:(NSNotification *)aNotif

@@ -56,6 +56,7 @@
   [fullPathInFilePanels setRefusesFirstResponder:YES];
   [rememberWindows setRefusesFirstResponder:YES];
   [displayLog setRefusesFirstResponder:YES];
+  [useTearOffWindows setRefusesFirstResponder:YES];
 
   [debuggerButton setRefusesFirstResponder:YES];
   [editorButton setRefusesFirstResponder:YES];
@@ -81,6 +82,7 @@
   [prefs setObject:@"YES" forKey:FullPathInFilePanels notify:NO];
   [prefs setObject:@"YES" forKey:RememberWindows notify:NO];
   [prefs setObject:@"NO" forKey:DisplayLog notify:NO];
+  [prefs setObject:@"YES" forKey:UseTearOffWindows notify:NO];
 
   [prefs setObject:@"/usr/bin/gdb" forKey:Debugger notify:NO];
   [prefs setObject:@"ProjectCenter" forKey:Editor notify:NO];
@@ -106,6 +108,10 @@
   val = [prefs objectForKey:DisplayLog];
   state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
   [displayLog setState:state];
+
+  val = [prefs objectForKey:UseTearOffWindows];
+  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  [useTearOffWindows setState:state];
 
   if (!(val = [prefs objectForKey:Debugger]))
     val = PCDefaultDebugger;
@@ -176,6 +182,20 @@
 
   state = ([sender state] == NSOffState) ? @"NO" : @"YES";
   [prefs setObject:state forKey:DisplayLog notify:YES];
+}
+
+- (void)setUseTearOffWindows:(id)sender
+{
+  NSString *state;
+
+  if (useTearOffWindows == nil)
+    {
+      useTearOffWindows = sender;
+      return;
+    }
+
+  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
+  [prefs setObject:state forKey:UseTearOffWindows notify:YES];
 }
 
 - (void)setDebugger:(id)sender

@@ -1,4 +1,17 @@
-2009-03-03 00:08 Sergii Stoian <stoyan255@gmail.com>
+2009-03-05 02:43 Sergii Stoian <stoyan255@gmail.com>
+
+	* ChangeLog: Update.
+	* Modules/Preferences/Misc/PCMiscPrefs.h,
+	* Modules/Preferences/Misc/PCMiscPrefs.m,
+	* Modules/Preferences/Misc/Resources/MiscPrefs.gorm/data.classes,
+	* Modules/Preferences/Misc/Resources/MiscPrefs.gorm/objects.gorm:
+	Add new setting UseTearOffWindows.
+	* Framework/PCProjectWindow.m: Use new setting.
+	* Modules/Editors/ProjectCenter/PCEditor.m:
+	(dealloc): Add releasing _window.
+	* Documentation/TODO: Update.
+
+2009-03-05 01:01 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m:
 	(convertLegacyProject:atPath:): Correctly convert legacy application
@@ -8,7 +21,7 @@
 	is not text file. Situation when editor for non text files called to 
 	be opened must be reviewd.
 
-2009-03-03 00:08 Sergii Stoian <stoyan255@gmail.com>
+2009-03-05 00:08 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBrowser.m: Stop using 'SeparateEditor'
 	prefernce. Remove use of preferences code.
