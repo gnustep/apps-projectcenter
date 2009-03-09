@@ -77,8 +77,6 @@
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
-- (BOOL)hasCustomView;
-- (BOOL)hasLoadedFilesView;
 - (NSView *)customContentView;
 - (void)setCustomContentView:(NSView *)subview;
 - (void)updateStatusLineWithText:(NSString *)text;

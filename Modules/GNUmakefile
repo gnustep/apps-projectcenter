@@ -39,7 +39,7 @@ SUBPROJECTS = \
 	Preferences/Build       \
 	Preferences/Saving      \
 	Preferences/Misc        \
-	Preferences/Interface
+	Preferences/EditorFSC
 
 # Do not compile the Debuggers/ProjectCenter module on MinGW since I'm
 # told at the moment it doesn't even compile there.

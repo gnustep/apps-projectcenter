@@ -97,6 +97,8 @@
   NSLog (@"PCProjectBuilder: dealloc");
 #endif
 
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
   RELEASE(buildStatusTarget);
   RELEASE(buildTarget);
   RELEASE(buildArgs);
@@ -130,6 +132,9 @@
 
   [componentView retain];
   [componentView removeFromSuperview];
+
+  NSLog(@"ProjectBuilder awakeFromNib: componentView RC:%i", 
+	[componentView retainCount]);
 
   /*
    * 4 build Buttons

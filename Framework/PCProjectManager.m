@@ -45,7 +45,7 @@
 #import "Protocols/CodeEditor.h"
 
 #import "Modules/Preferences/Saving/PCSavingPrefs.h"
-#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
@@ -301,7 +301,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSPanel *)loadedFilesPanel
 {
   if (!loadedFilesPanel 
-      && [[prefController objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
+      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       loadedFilesPanel = 
 	[[PCProjectLoadedFilesPanel alloc] initWithProjectManager:self];
@@ -312,7 +312,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  if ([[prefController objectForKey:SeparateLoadedFiles] isEqualToString:@"YES"])
+  if ([[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       [[self loadedFilesPanel] orderFront:nil];
     }
@@ -321,7 +321,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSPanel *)buildPanel
 {
   if (!buildPanel
-      && [[prefController objectForKey:SeparateBuilder] isEqualToString:@"YES"])
+      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       buildPanel = [[PCProjectBuilderPanel alloc] initWithProjectManager:self];
     }
@@ -332,7 +332,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (NSPanel *)launchPanel
 {
   if (!launchPanel
-      && [[prefController objectForKey:SeparateLauncher] isEqualToString:@"YES"])
+      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       launchPanel = [[PCProjectLauncherPanel alloc] initWithProjectManager:self];
     }

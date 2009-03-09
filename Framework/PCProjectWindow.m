@@ -44,6 +44,8 @@
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
 #import "Modules/Preferences/Interface/PCInterfacePrefs.h"
 
+#import <math.h>
+
 @implementation PCProjectWindow
 
 // ============================================================================
@@ -68,6 +70,7 @@
 
 - (void)awakeFromNib
 {
+  id <PCPreferences> prefs = [[project projectManager] prefController];
   NSRect rect;
 
   [buildButton setToolTip:@"Project Builder"];
@@ -82,7 +85,7 @@
 
   [loadedFilesButton setToolTip:@"Loaded Files"];
   [loadedFilesButton setImage:IMAGE(@"Files")];
-  if ([self hasLoadedFilesView])
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
     {
       [loadedFilesButton setEnabled:NO];
     }
@@ -131,7 +134,7 @@
   /*
    * LoadedFiles
    */
-  if ([self hasLoadedFilesView])
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
     {
       [self showProjectLoadedFiles:self];
     }
@@ -143,10 +146,7 @@
    * Custom view
    * View where non-separated Builder, Launcher, Editor goes.
    */ 
-//  if ([self hasCustomView])
-//    {
-      [self _createCustomView];
-//    }
+  [self _createCustomView];
 }
 
 - (id)initWithProject:(PCProject *)owner 
@@ -277,40 +277,6 @@
 // Custom view is always shown because editor always opened on
 // one click in Browser. External editor will be opened only on
 // double click.
-- (BOOL)hasCustomView
-{
-  id <PCPreferences> prefs = [[project projectManager] prefController];
-
-  _hasCustomView = NO;
-  
-  if (![[prefs objectForKey:SeparateEditor] isEqualToString:@"YES"]
-      && [[prefs objectForKey:Editor] isEqualToString:@"ProjectCenter"])
-    {
-      _hasCustomView = YES;
-    }
-  if (![[prefs objectForKey:SeparateBuilder] isEqualToString:@"YES"])
-    {
-      _hasCustomView = YES;
-    }
-  if (![[prefs objectForKey:SeparateLauncher] isEqualToString:@"YES"])
-    {
-      _hasCustomView = YES;
-    }
-
-  return _hasCustomView;
-}
-
-- (BOOL)hasLoadedFilesView
-{
-  id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSString           *val;
-
-  val = [prefs objectForKey:SeparateLoadedFiles];
-  _hasLoadedFilesView = ([val isEqualToString:@"YES"]) ? NO : YES;
-
-  return _hasLoadedFilesView;
-}
-
 - (NSView *)customContentView
 {
   return [customView contentView];
@@ -341,18 +307,27 @@
   id <PCPreferences> prefs = [[project projectManager] prefController];
   NSView             *view = [[project projectBuilder] componentView];
   NSPanel            *buildPanel = [[project projectManager] buildPanel];
+  PCProject          *rootActiveProject;
+
+  rootActiveProject = [[project projectManager] rootActiveProject];
   
+  NSLog(@"ProjectWindow showProjectBuild: componentView RC:%i", 
+	[view retainCount]);
+
   if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       if ([customView contentView] == view)
 	{
 	  [self showProjectEditor:self];
 	}
-      [buildPanel orderFront:nil];
+      if (rootActiveProject == project)
+	{
+	  [buildPanel orderFront:nil];
+	}
     }
   else
     {
-      if ([buildPanel isVisible])
+      if ((rootActiveProject == project) && [buildPanel isVisible])
 	{
 	  [buildPanel close];
 	}
@@ -391,29 +366,35 @@
 {
   id <PCPreferences> prefs = [[project projectManager] prefController];
   NSPanel            *panel = [[project projectManager] loadedFilesPanel];
+  PCProject          *rootActiveProject;
   NSScrollView       *componentView;
 
+  rootActiveProject = [[project projectManager] rootActiveProject];
   componentView = (NSScrollView *)[[project projectLoadedFiles] componentView];
       
 //  PCLogInfo(self, @"showProjectLoadedFiles");
 
-//  if ([self hasLoadedFilesView])
   if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
     {
       [componentView setBorderType:NSNoBorder];
-      [panel orderFront:nil];
+      [componentView removeFromSuperview];
+      if (rootActiveProject == project)
+	{
+	  [panel orderFront:nil];
+	}
       [v_split adjustSubviews];
     }
   else
     {
-      if (panel && [panel isVisible])
+      if ((rootActiveProject == project) && panel && [panel isVisible])
 	{
 	  [panel close];
 	}
 
       [componentView setBorderType:NSBezelBorder];
-      [componentView setFrame:NSMakeRect(0,0,128,130)];
-      [v_split addSubview:[[project projectLoadedFiles] componentView]];
+      // Preserve width of view in panel
+//      [componentView setFrame:NSMakeRect(0,0,128,130)];
+      [v_split addSubview:componentView];
       [v_split adjustSubviews];
     }
 }
@@ -570,18 +551,9 @@
  
   PCLogStatus(self, @"Preferences did change");
 
-// See comment to _createCustomView
-/*  //--- Add Custom view
-  if ([self hasCustomView] && customView == nil)
+/*  if ([[project projectManager] rootActiveProject] != project)
     {
-      [self _createCustomView];
-    }
-  //--- Remove Custom view
-  if (![self hasCustomView] && customView != nil)
-    {
-      [customView removeFromSuperview];
-      [h_split adjustSubviews];
-      customView = nil;
+      return;
     }*/
 
   if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
@@ -625,61 +597,6 @@
 	}
       [loadedFilesButton setEnabled:NO];
     }
-/*
-  // Project Builder
-  if ([[prefs objectForKey:@"SeparateBuilder"] isEqualToString:@"YES"])
-    {
-      // Project Build is sepearate and visible in project window
-      if ([[[project projectBuilder] componentView] window] == projectWindow)
-	{
-	  [self showProjectBuild:self];
-	}
-    }
-  else
-    {
-      NSPanel *buildPanel = [[project projectManager] buildPanel];
-      
-      if ([buildPanel isVisible] == YES)
-	{
-	  [self showProjectBuild:self];
-	}
-    }
-
-  // Project Launcher
-  if ([[prefs objectForKey:@"SeparateLauncher"] isEqualToString:@"YES"])
-    {
-      if ([[[project projectLauncher] componentView] window] == projectWindow)
-	{
-	  [self showProjectLaunch:self];
-	}
-    }
-  else
-    {
-      NSPanel *launchPanel = [[project projectManager] launchPanel];
-      
-      if ([launchPanel isVisible] == YES)
-	{
-	  [self showProjectLaunch:self];
-	}
-    }
-
-  // Loaded Files view
-  if ([self hasLoadedFilesView])
-    {
-      if ([[v_split subviews] count] == 1)
-	{
-	  [self showProjectLoadedFiles:self];
-	}
-      [loadedFilesButton setEnabled:NO];
-    }
-  else 
-    {
-      if ([[v_split subviews] count] == 2)
-	{
-	  [self showProjectLoadedFiles:self];
-	}
-      [loadedFilesButton setEnabled:YES];
-    }*/
 }
 
 - (void)browserDidSetPath:(NSNotification *)aNotif
@@ -852,8 +769,15 @@
   NSDictionary *projectDict = nil;
   NSDictionary *windowsDict = nil;
   NSString     *browserString = nil;
-  NSRect       browserRect;
+  NSRect       browserRect = NSMakeRect(0,0,0,0);
   NSRect       boxRect;
+
+//  NSLog(@"resizeVerticalSubiewsWithOldSize entered split view width: %f, height %f", splitSize.width, splitSize.height);
+
+  boxRect = [v_split frame];
+  boxRect.size.width = floorf(boxRect.size.width);
+  boxRect.size.height = floorf(boxRect.size.height);
+  [v_split setFrame:boxRect];
 
   if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
     {
@@ -870,43 +794,59 @@
       if (windowsDict != nil)
 	{
 	  browserString = [windowsDict objectForKey:@"ProjectBrowser"];
+	  NSLog(@"Browser size '%@'", browserString);
 	  if (browserString != nil && ![browserString isEqualToString:@""])
 	    {
 	      browserRect = NSRectFromString(browserString);
 	    }
 	}
-      else
+      // Unable to restore browser frame
+      if (browserRect.size.width == 0 && browserRect.size.height == 0)
 	{
-	  browserRect = NSMakeRect(0, 0, splitSize.width, splitSize.height);
+	  browserRect = NSMakeRect(0, 0, 
+				   floorf(splitSize.width), 
+				   floorf(splitSize.height));
 	}
+      [browserView setFrame:browserRect];
     }
 
   // Use saved frame of ProjectBrowser only first time. Every time window is
   // resized use new size of subviews.
-  if (_splitViewsRestored)
+/*  if (_splitViewsRestored)
     {
       browserRect = [[[project projectBrowser] view] frame];
       browserRect.size.height = splitSize.height;
-      if (![self hasLoadedFilesView])
+      if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
 	{
 	  browserRect.size.width = splitSize.width;
 	}
     }
 
   // Browser
-//  NSLog(@"browser %@", NSStringFromRect(browserRect));
-  [browserView setFrame:browserRect];
+  NSLog(@"%@ browser %@",
+	[project projectName], NSStringFromRect(browserRect));
+  [browserView setFrame:browserRect];*/
 
   // Loaded Files 
-  if ([self hasLoadedFilesView])
+/*  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
     {
       boxRect.origin.x = browserRect.size.width + [v_split dividerThickness];
       boxRect.origin.y = 0;
       boxRect.size.width = [v_split frame].size.width - boxRect.origin.x;
       boxRect.size.height = [v_split frame].size.height;
-//      NSLog(@"loadedFiles %@", NSStringFromRect(boxRect));
+
+      if (boxRect.size.width < 60)
+	{
+	  boxRect.size.width = 60;
+	  boxRect.origin.x = [v_split frame].size.width - boxRect.size.width;
+	}
+
+      NSLog(@"%@ loadedFiles %@",
+	    [project projectName], NSStringFromRect(boxRect));
       [[[project projectLoadedFiles] componentView] setFrame:boxRect];
-    }
+    }*/
+
+  [v_split adjustSubviews];
 
   _splitViewsRestored = YES;
 }
@@ -919,6 +859,8 @@
   NSRect vSplitRect;
   NSRect boxRect;
   
+  NSLog(@"resizeHorizontalSubiewsWithOldSize entered split view width: %f, height %f", splitSize.width, splitSize.height);
+
   if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
     {
       return;

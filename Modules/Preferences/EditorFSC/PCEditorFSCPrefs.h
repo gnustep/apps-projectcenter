@@ -26,27 +26,43 @@
 #import <AppKit/AppKit.h>
 #import <Protocols/Preferences.h>
 
-#define SeparateBuilder     @"SeparateBuilder"
-#define SeparateLauncher    @"SeparateLauncher"
-#define SeparateLoadedFiles @"SeparateLoadedFiles"
-#define SeparateEditor      @"SeparateEditor"
-#define EditorLines         @"EditorLines"
-#define EditorColumns       @"EditorColumns"
+#define EditorPlainTextFont     @"EditorPlainTextFont"
+#define EditorPlainTextFontSize @"EditorPlainTextFontSize"
+#define EditorRichTextFont      @"EditorRichTextFont"
+#define EditorRichTextFontSize  @"EditorRichTextFontSize"
 
-@interface PCInterfacePrefs : NSObject <PCPrefsSection>
+#define EditorLines             @"EditorLines"
+#define EditorColumns           @"EditorColumns"
+
+#define EditorForegroundColor   @"EditorForegroundColor"
+#define EditorBackgroundColor   @"EditorBackgroundColor"
+#define EditorSelectionColor    @"EditorSelectionColor"
+
+
+@interface PCEditorFSCPrefs : NSObject <PCPrefsSection>
 {
   id <PCPreferences>   prefs;
 
-  IBOutlet NSBox       *interfaceView;
+  IBOutlet NSBox       *editorFSCView;
 
-  IBOutlet NSButton    *separateBuilder;
-  IBOutlet NSButton    *separateLauncher;
-  IBOutlet NSButton    *separateEditor;
-  IBOutlet NSButton    *separateLoadedFiles;
+  IBOutlet NSButton    *plainTextFontButton;
+  IBOutlet NSTextField *plainTextFontField;
+  IBOutlet NSButton    *richTextFontButton;
+  IBOutlet NSTextField *richTextFontField;
 
   IBOutlet NSTextField *editorLinesField;
   IBOutlet NSTextField *editorColumnsField;
+
+  IBOutlet NSColorWell *foregroundColorWell;
+  IBOutlet NSColorWell *backgroundColorWell;
+  IBOutlet NSColorWell *selectionColorWell;
 }
+
+- (void)setEditorPlainTextFont:(id)sender;
+- (void)setEditorRichTextFont:(id)sender;
+
+- (void)setEditorSize:(id)sender;
+- (void)setEditorColor:(id)sender;
 
 @end
 

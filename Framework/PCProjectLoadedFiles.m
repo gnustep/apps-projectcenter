@@ -33,7 +33,7 @@
 #import <Protocols/CodeEditor.h>
 #import <ProjectCenter/PCProjectLoadedFiles.h>
 
-#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
 @implementation PCProjectLoadedFiles
 
@@ -80,7 +80,7 @@
       [filesScroll setDocumentView:filesList];
       [filesScroll setHasHorizontalScroller:NO];
       [filesScroll setHasVerticalScroller:YES];
-      if ([[prefs objectForKey:SeparateLoadedFiles] isEqualToString:@"NO"])
+      if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
 	{
 	  [filesScroll setBorderType:NSBezelBorder];
 	}

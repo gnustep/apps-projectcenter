@@ -29,6 +29,8 @@
 
 #import <ProjectCenter/PCLogController.h>
 
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+
 @implementation PCProjectBuilderPanel
 
 - (void)awakeFromNib
@@ -92,7 +94,6 @@
   if (!([contentBox contentView] == builderView))
     {
       [contentBox setContentView:builderView];
-      [contentBox display];
     }
 
 /*  NSLog(self, @"orderFront: %@ -> %@", 
@@ -114,8 +115,15 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *rootProject = [projectManager rootActiveProject];
+  PCProject          *rootProject;
+  id <PCPreferences> prefs = [projectManager prefController];
 
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+    {
+      return;
+    }
+
+  rootProject = [projectManager rootActiveProject];
   if (rootProject == currentProject)
     {
       return;
@@ -142,6 +150,13 @@
 - (BOOL)isVisible
 {
   return [panel isVisible];
+}
+
+// --- Panel delgate
+- (BOOL)windowShouldClose:(id)sender
+{
+  [contentBox setContentView:emptyBox];
+  return YES;
 }
 
 @end

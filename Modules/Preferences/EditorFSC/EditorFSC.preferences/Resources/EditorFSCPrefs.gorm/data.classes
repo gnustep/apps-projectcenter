@@ -1,0 +1,24 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    PCEditorFSCPrefs = {
+	Actions = (
+	    "setEditorPlainTextFont:",
+	    "setEditorRichTextFont:",
+	    "setEditorSize:",
+	    "setEditorColor:"
+	);
+	Outlets = (
+	    editorFSCView,
+	    plainTextFontButton,
+	    plainTextFontField,
+	    richTextFontButton,
+	    richTextFontField,
+	    editorLinesField,
+	    editorColumnsField,
+	    foregroundColorWell,
+	    backgroundColorWell,
+	    selectionColorWell
+	);
+	Super = NSObject;
+    };
+}

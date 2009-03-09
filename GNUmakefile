@@ -94,7 +94,7 @@ Modules/Debuggers/ProjectCenter/ProjectCenter.debugger \
 Modules/Preferences/Build/Build.preferences \
 Modules/Preferences/Saving/Saving.preferences \
 Modules/Preferences/Misc/Misc.preferences \
-Modules/Preferences/Interface/Interface.preferences
+Modules/Preferences/EditorFSC/EditorFSC.preferences
 
 #
 # Localization

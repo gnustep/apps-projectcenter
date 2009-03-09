@@ -1,6 +1,0 @@
-﻿{
-  Type = "Preferences";
-  Name = "Interface";
-  Description = "ProjectCenter interface options.";
-  PrincipalClassName = "PCInterfacePrefs";
-}

@@ -29,6 +29,8 @@
 
 #import <ProjectCenter/PCLogController.h>
 
+#import "Modules/Preferences/Misc/PCMiscPrefs.h"
+
 @implementation PCProjectLauncherPanel
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
@@ -123,8 +125,15 @@
 
 - (void)activeProjectDidChange:(NSNotification *)aNotif
 {
-  PCProject *rootProject = [projectManager rootActiveProject];
+  PCProject          *rootProject;
+  id <PCPreferences> prefs = [projectManager prefController];
 
+  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+    {
+      return;
+    }
+
+  rootProject = [projectManager rootActiveProject];
   if (rootProject == currentProject)
     {
       return;
