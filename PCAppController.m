@@ -30,7 +30,6 @@
 #import "Modules/Preferences/Build/PCBuildPrefs.h"
 #import "Modules/Preferences/Saving/PCSavingPrefs.h"
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
-#import "Modules/Preferences/Interface/PCInterfacePrefs.h"
 
 #import <ProjectCenter/ProjectCenter.h>
 
