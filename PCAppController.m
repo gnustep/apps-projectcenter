@@ -132,7 +132,7 @@
 {
 //  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
 
-  if ([[prefController objectForKey:DisplayLog] isEqualToString:@"YES"])
+  if ([prefController boolForKey:DisplayLog])
     {
       [logController showPanel];
     }
@@ -147,13 +147,9 @@
 
 - (BOOL)applicationShouldTerminate:(id)sender
 {
-  NSString *promptOnQuit;
-  NSString *saveOnQuit;
-  BOOL     quit = YES;
+  BOOL quit = YES;
 
-  promptOnQuit = [prefController objectForKey:PromptOnQuit];
-  saveOnQuit = [prefController objectForKey:SaveOnQuit];
-  if ([promptOnQuit isEqualToString:@"YES"])
+  if ([prefController boolForKey:PromptOnQuit])
     {
       if (NSRunAlertPanel(@"Quit",
 			  @"Do you really want to quit ProjectCenter?",
@@ -165,7 +161,7 @@
     }
 
   // Save projects unconditionally if preferences tells that
-  if ([saveOnQuit isEqualToString:@"YES"])
+  if ([prefController boolForKey:SaveOnQuit])
     {
       quit = [projectManager saveAllProjects];
     }
@@ -185,7 +181,6 @@
 
 - (void)applicationWillTerminate:(NSNotification *)notification
 {
-  NSString      *deleteCache;
   NSFileManager *fm;
   PCFileManager *pcfm;
   NSString      *rootBuildDir;
@@ -197,13 +192,12 @@
   NSLog(@"--- Application WILL terminate");
 #endif
 
-  deleteCache = [prefController objectForKey:DeleteCacheWhenQuitting];
-  if ([deleteCache isEqualToString:@"YES"]) 
+  if ([prefController boolForKey:DeleteCacheWhenQuitting]) 
     {
       fm = [NSFileManager defaultManager];
       pcfm = [PCFileManager defaultManager];
 
-      rootBuildDir = [prefController objectForKey:RootBuildDirectory];
+      rootBuildDir = [prefController stringForKey:RootBuildDirectory];
       rootBuildDirList = [fm directoryContentsAtPath:rootBuildDir];
 
       enumerator = [rootBuildDirList objectEnumerator];

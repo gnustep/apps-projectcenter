@@ -21,4 +21,18 @@
 	);
 	Super = NSObject;
     };
+    PCEditorFSCPrefsFontButton = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSButton;
+    };
+    PCEditorFSCPrefsView = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSBox;
+    };
 }

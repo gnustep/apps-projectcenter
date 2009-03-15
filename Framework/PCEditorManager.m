@@ -145,7 +145,7 @@ NSString *PCEditorDidResignActiveNotification =
 {
   id <PCPreferences> prefs = [_projectManager prefController];
 
-  ASSIGN(editorName, [prefs objectForKey:Editor]);
+  ASSIGN(editorName, [prefs stringForKey:Editor]);
 }
 
 // ===========================================================================

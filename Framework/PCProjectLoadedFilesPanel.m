@@ -128,7 +128,7 @@
   PCProject          *rootProject;
   id <PCPreferences> prefs = [projectManager prefController];
 
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+  if (![prefs boolForKey:UseTearOffWindows])
     {
       return;
     }

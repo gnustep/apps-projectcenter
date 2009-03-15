@@ -439,7 +439,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
       // from Info-gnustep.plist file of PC.
       if(foundApp == NO || [appName isEqualToString:@"ProjectCenter.app"])
 	{
-	  appName = [prefs objectForKey:Editor];
+	  appName = [prefs stringForKey:Editor];
 
 	  if (![appName isEqualToString:@"ProjectCenter"])
 	    {

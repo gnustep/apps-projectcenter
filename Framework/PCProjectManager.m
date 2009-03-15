@@ -217,7 +217,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 /*  interval = [[[PCPrefController sharedPCPreferences] 
     objectForKey:AutoSavePeriod] intValue];*/
 
-  interval = [[prefController objectForKey:AutoSavePeriod] intValue];
+  interval = [[prefController stringForKey:AutoSavePeriod] intValue];
 
   if (interval > 0 && saveTimer == nil)
     {
@@ -300,8 +300,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSPanel *)loadedFilesPanel
 {
-  if (!loadedFilesPanel 
-      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if (!loadedFilesPanel && [prefController boolForKey:UseTearOffWindows])
     {
       loadedFilesPanel = 
 	[[PCProjectLoadedFilesPanel alloc] initWithProjectManager:self];
@@ -312,7 +311,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)showProjectLoadedFiles:(id)sender
 {
-  if ([[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if ([prefController boolForKey:UseTearOffWindows])
     {
       [[self loadedFilesPanel] orderFront:nil];
     }
@@ -320,8 +319,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSPanel *)buildPanel
 {
-  if (!buildPanel
-      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if (!buildPanel && [prefController boolForKey:UseTearOffWindows])
     {
       buildPanel = [[PCProjectBuilderPanel alloc] initWithProjectManager:self];
     }
@@ -331,8 +329,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (NSPanel *)launchPanel
 {
-  if (!launchPanel
-      && [[prefController objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if (!launchPanel && [prefController boolForKey:UseTearOffWindows])
     {
       launchPanel = [[PCProjectLauncherPanel alloc] initWithProjectManager:self];
     }
@@ -394,7 +391,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 //  PCLogInfo(self, @"saveAllProjectsIfNeeded");
 
   // If this method was called not by NSTimer, check if we should save projects
-  if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([prefController boolForKey:SaveOnQuit])
     {
       [self saveAllProjects];
     }
@@ -978,7 +975,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)closeProject
 {
-  if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+  if ([prefController boolForKey:SaveOnQuit])
     {
       [activeProject save];
     }
@@ -996,7 +993,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   while ([loadedProjects count] > 0)
     {
       project = [enumerator nextObject];
-      if ([[prefController objectForKey:SaveOnQuit] isEqualToString:@"YES"])
+      if ([prefController boolForKey:SaveOnQuit])
 	{
 	  [project save];
 	}

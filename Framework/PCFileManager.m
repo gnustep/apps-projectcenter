@@ -353,24 +353,24 @@ static PCFileManager *_mgr = nil;
       panel = [NSOpenPanel openPanel];
       [panel setCanChooseFiles:YES];
       [panel setCanChooseDirectories:NO];
-      lastOpenDir = [prefs objectForKey:@"FileOpenLastDirectory"];
+      lastOpenDir = [prefs stringForKey:@"FileOpenLastDirectory"];
       break;
     case PCSaveFileOperation: 
       panel = [NSSavePanel savePanel];
-      lastOpenDir = [prefs objectForKey:@"FileSaveLastDirectory"];
+      lastOpenDir = [prefs stringForKey:@"FileSaveLastDirectory"];
       break;
     case PCOpenProjectOperation: 
       panel = [NSOpenPanel openPanel];
       [panel setAllowsMultipleSelection:NO];
       [panel setCanChooseFiles:YES];
       [panel setCanChooseDirectories:YES];
-      lastOpenDir = [prefs objectForKey:@"ProjectOpenLastDirectory"];
+      lastOpenDir = [prefs stringForKey:@"ProjectOpenLastDirectory"];
       break;
     case PCOpenDirectoryOperation: 
       panel = [NSOpenPanel openPanel];
       [panel setCanChooseFiles:NO];
       [panel setCanChooseDirectories:YES];
-      lastOpenDir = [prefs objectForKey:@"FileOpenLastDirectory"];
+      lastOpenDir = [prefs stringForKey:@"FileOpenLastDirectory"];
       break;
     case PCAddFileOperation: 
       if (addFilesPanel == nil)
@@ -378,7 +378,7 @@ static PCFileManager *_mgr = nil;
 	  addFilesPanel = [PCAddFilesPanel addFilesPanel];
 	}
       panel = addFilesPanel;
-      lastOpenDir = [prefs objectForKey:@"FileAddLastDirectory"];
+      lastOpenDir = [prefs stringForKey:@"FileAddLastDirectory"];
       break;
     default:
       return nil;
@@ -430,7 +430,7 @@ static PCFileManager *_mgr = nil;
 
   if (key != nil)
     {
-      [prefs setObject:[panel directory] forKey:key notify:NO];
+      [prefs setString:[panel directory] forKey:key notify:NO];
     }
 }
 

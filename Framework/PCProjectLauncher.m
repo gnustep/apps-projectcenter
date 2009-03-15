@@ -257,7 +257,7 @@ enum {
 
 
   // Debugger
-  gdbPath = [[[project projectManager] prefController] objectForKey:Debugger];
+  gdbPath = [[[project projectManager] prefController] stringForKey:Debugger];
   if (gdbPath == nil)
     {
       gdbPath = [NSString stringWithString:@"/usr/bin/gdb"];

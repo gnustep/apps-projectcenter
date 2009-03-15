@@ -125,13 +125,9 @@ NSString
 - (void)loadPreferences:(NSNotification *)aNotification
 {
   id <PCPreferences> prefs = [projectManager prefController];
-  NSString           *val;
 
-  val = [prefs objectForKey:RememberWindows];
-  rememberWindows = ([val isEqualToString:@"YES"]) ? YES : NO;
-  
-  val = [prefs objectForKey:KeepBackup];
-  keepBackup = ([val isEqualToString:@"YES"]) ? YES : NO;
+  rememberWindows = [prefs boolForKey:RememberWindows];
+  keepBackup = [prefs boolForKey:KeepBackup];
 }
 
 // ============================================================================

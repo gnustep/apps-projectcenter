@@ -246,16 +246,14 @@
 - (void)loadPreferences:(NSNotification *)aNotification
 {
   id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSString           *val;
 
-  ASSIGN(successSound, [prefs objectForKey:SuccessSound]);
-  ASSIGN(failureSound, [prefs objectForKey:FailureSound]);
+  ASSIGN(successSound, [prefs stringForKey:SuccessSound]);
+  ASSIGN(failureSound, [prefs stringForKey:FailureSound]);
 
-  ASSIGN(rootBuildDir, [prefs objectForKey:RootBuildDirectory]);
-  ASSIGN(buildTool, [prefs objectForKey:BuildTool]);
+  ASSIGN(rootBuildDir, [prefs stringForKey:RootBuildDirectory]);
+  ASSIGN(buildTool, [prefs stringForKey:BuildTool]);
 
-  val = [prefs objectForKey:PromptOnClean];
-  promptOnClean = ([val isEqualToString:@"YES"]) ? YES : NO;
+  promptOnClean = [prefs boolForKey:PromptOnClean];
 }
 
 - (void)updateTargetField
@@ -382,14 +380,12 @@
 
 - (void)startClean:(id)sender
 {
-  id <PCPreferences> prefs = [[project projectManager] prefController];
-
   if ([self stopMake:self] == YES)
     {// We've just stopped build process
       return;
     }
 
-  if ([[prefs objectForKey:PromptOnClean] isEqualToString:@"YES"])
+  if (promptOnClean)
     {
       if (NSRunAlertPanel(@"Project Clean",
 			  @"Do you really want to clean project '%@'?",

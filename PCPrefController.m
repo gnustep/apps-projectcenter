@@ -62,20 +62,12 @@ static PCPrefController *_prefCtrllr = nil;
 
   if ([userDefaults objectForKey:@"Version"] == nil)
     {
-      PCLogInfo(self, @"setDefaultValues");
-
-      [self loadPrefsSections];
-
       // Clean preferences
       [NSUserDefaults resetStandardUserDefaults];
-      [self setObject:@"0.5" forKey:@"Version" notify:NO];
-
-      // Make preferences modules load default values
-      [[sectionsDict allValues] 
-	makeObjectsPerformSelector:@selector(setDefaults)];
-
-      [userDefaults synchronize];
+      [self setString:@"0.5" forKey:@"Version" notify:NO];
     }
+
+  [self loadPrefsSections];
 
   return self;
 }
@@ -98,14 +90,107 @@ static PCPrefController *_prefCtrllr = nil;
 }
 
 // Accessory
-- (id)objectForKey:(NSString *)key
+- (NSString *)stringForKey:(NSString *)key
 {
-  return [userDefaults objectForKey:key];
+  return [self stringForKey:key defaultValue:nil];
 }
 
-- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify
+- (NSString *)stringForKey:(NSString *)key
+	      defaultValue:(NSString *)defaultValue
 {
-  [userDefaults setObject:anObject forKey:aKey];
+  NSString *stringValue = [userDefaults objectForKey:key];
+
+  if (stringValue)
+    {
+      return stringValue;
+    }
+  else
+    {
+      [self setString:defaultValue forKey:key notify:NO];
+      return defaultValue;
+    }
+}
+
+- (BOOL)boolForKey:(NSString *)key
+{
+  return [self boolForKey:key defaultValue:-1];
+}
+
+- (BOOL)boolForKey:(NSString *)key
+      defaultValue:(BOOL)defaultValue
+{
+  NSString *stringValue = [userDefaults objectForKey:key];
+
+  if (stringValue)
+    {
+      return [stringValue boolValue];
+    }
+  else
+    {
+      [self setBool:defaultValue forKey:key notify:NO];
+      return defaultValue;
+    }
+}
+
+- (float)floatForKey:(NSString *)key
+{
+  return [self floatForKey:key defaultValue:0.0];
+}
+
+- (float)floatForKey:(NSString *)key defaultValue:(float)defaultValue
+{
+  NSString *stringValue = [userDefaults objectForKey:key];
+
+  if (stringValue)
+    {
+      return [stringValue floatValue];
+    }
+  else
+    {
+      [self setFloat:defaultValue forKey:key notify:NO];
+      return defaultValue;
+    }
+}
+
+- (void)setString:(NSString *)stringValue 
+	   forKey:(NSString *)aKey
+	   notify:(BOOL)notify
+{
+  [userDefaults setObject:stringValue forKey:aKey];
+  [userDefaults synchronize];
+
+  if (notify)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCPreferencesDidChangeNotification
+		      object:self];
+    }
+}
+
+- (void)setBool:(BOOL)boolValue
+	 forKey:(NSString *)aKey
+	 notify:(BOOL)notify
+{
+  NSString *stringValue = boolValue ? @"YES" : @"NO";
+
+  [userDefaults setObject:stringValue forKey:aKey];
+  [userDefaults synchronize];
+
+  if (notify)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCPreferencesDidChangeNotification
+		      object:self];
+    }
+}
+
+- (void)setFloat:(float)floatValue
+	  forKey:(NSString *)aKey
+	  notify:(BOOL)notify
+{
+  NSString *stringValue = [NSString stringWithFormat:@"%0.1f", floatValue];
+
+  [userDefaults setObject:stringValue forKey:aKey];
   [userDefaults synchronize];
 
   if (notify)
@@ -141,6 +226,8 @@ static PCPrefController *_prefCtrllr = nil;
       [section readPreferences];
       [sectionsDict setObject:section forKey:sectionName];
     }
+
+  [userDefaults synchronize];
 }
 
 - (void)showPanel:(id)sender
@@ -181,6 +268,11 @@ static PCPrefController *_prefCtrllr = nil;
 
   [sectionsView setContentView:view];
 //  [sectionsView display];
+}
+
+- (void)changeFont:(id)sender
+{
+  NSLog(@"PCPrefController: changeFont");
 }
 
 @end

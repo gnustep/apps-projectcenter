@@ -76,42 +76,29 @@
 }
 
 // Protocol
-- (void)setDefaults
-{
-  [prefs setObject:@"" forKey:SuccessSound notify:NO];
-  [prefs setObject:@"" forKey:FailureSound notify:NO];
-  [prefs setObject:@"" forKey:RootBuildDirectory notify:NO];
-  [prefs setObject:PCDefaultBuildTool forKey:BuildTool notify:NO];
-  [prefs setObject:@"YES" forKey:DeleteCacheWhenQuitting notify:NO];
-  [prefs setObject:@"YES" forKey:PromptOnClean notify:NO];
-}
-
 - (void)readPreferences
 {
   NSString *val;
+  BOOL     bVal;
   int      state;
 
-  if (!(val = [prefs objectForKey:SuccessSound]))
-    val = @"";
+  val = [prefs stringForKey:SuccessSound defaultValue:@""];
   [successField setStringValue:val];
-  if (!(val = [prefs objectForKey:FailureSound]))
-    val = @"";
+  val = [prefs stringForKey:FailureSound defaultValue:@""];
   [failureField setStringValue:val];
 
-  if (!(val = [prefs objectForKey:RootBuildDirectory]))
-    val = @"";
+  val = [prefs stringForKey:RootBuildDirectory defaultValue:@""];
   [rootBuildDirField setStringValue:val];
 
-  if (!(val = [prefs objectForKey:BuildTool]))
-    val = PCDefaultBuildTool;
+  val = [prefs stringForKey:BuildTool defaultValue:PCDefaultBuildTool];
   [buildToolField setStringValue:val];
 
-  val = [prefs objectForKey:DeleteCacheWhenQuitting];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:DeleteCacheWhenQuitting defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [deleteCache setState:state];
 
-  val = [prefs objectForKey:PromptOnClean];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:PromptOnClean defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [promptOnClean setState:state];
 }
 
@@ -153,7 +140,7 @@
   if (path)
     {
       [successField setStringValue:path];
-      [prefs setObject:path forKey:SuccessSound notify:YES];
+      [prefs setString:path forKey:SuccessSound notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:successField];
@@ -183,7 +170,7 @@
   if (path)
     {
       [failureField setStringValue:path];
-      [prefs setObject:path forKey:FailureSound notify:YES];
+      [prefs setString:path forKey:FailureSound notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:failureField];
@@ -212,7 +199,7 @@
   if (path)
     {
       [rootBuildDirField setStringValue:path];
-      [prefs setObject:path forKey:RootBuildDirectory notify:YES];
+      [prefs setString:path forKey:RootBuildDirectory notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:rootBuildDirField];
@@ -241,7 +228,7 @@
   if (path)
     {
       [buildToolField setStringValue:path];
-      [prefs setObject:path forKey:BuildTool notify:YES];
+      [prefs setString:path forKey:BuildTool notify:YES];
     }
 
   [[buildingView window] makeFirstResponder:buildToolField];
@@ -249,7 +236,7 @@
 
 - (void)setDeleteCache:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (deleteCache == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -257,13 +244,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DeleteCacheWhenQuitting notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:DeleteCacheWhenQuitting notify:YES];
 }
 
 - (void)setPromptOnClean:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (promptOnClean == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -271,9 +258,8 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  NSLog(@"Set PromptOnClean to %@", state);
-  [prefs setObject:state forKey:PromptOnClean notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:PromptOnClean notify:YES];
 }
 
 @end

@@ -32,15 +32,37 @@
 
 @protocol PCPreferences <NSObject>
 
-- (id)objectForKey:(NSString *)key;
-- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify;
+- (NSString *)stringForKey:(NSString *)key;
+- (NSString *)stringForKey:(NSString *)key
+	      defaultValue:(NSString *)defaultValue;
+
+- (BOOL)boolForKey:(NSString *)key;
+- (BOOL)boolForKey:(NSString *)key 
+      defaultValue:(BOOL)defaultValue;
+
+- (float)floatForKey:(NSString *)key;
+- (float)floatForKey:(NSString *)key
+	defaultValue:(float)defaultValue;
+
+- (void)setString:(NSString *)stringValue 
+	   forKey:(NSString *)aKey
+	   notify:(BOOL)notify;
+- (void)setBool:(BOOL)boolValue
+	 forKey:(NSString *)aKey
+	 notify:(BOOL)notify;
+- (void)setFloat:(float)floatValue
+	  forKey:(NSString *)aKey
+	  notify:(BOOL)notify;
+
+//- (id)objectForKey:(NSString *)key;
+//- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify;
 
 @end
 
 @protocol PCPrefsSection <NSObject>
 
 - (id)initWithPrefController:(id <PCPreferences>)aPrefs;
-- (void)setDefaults;
+//- (void)setDefaults;
 - (void)readPreferences;
 - (NSView *)view;
 

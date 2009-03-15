@@ -28,6 +28,30 @@
 
 #import "PCEditorFSCPrefs.h"
 
+// ----------------------------------------------------------------------------
+// --- PCEditorFSCPrefsFontButton created to forward changeFont: message
+// --- to PCEditorFSCPrefs class
+// ----------------------------------------------------------------------------
+
+@interface PCEditorFSCPrefsFontButton : NSButton
+{
+}
+@end
+@implementation PCEditorFSCPrefsFontButton
+
+- (void)changeFont:(id)sender
+{
+  [[_cell target] changeFont:sender];
+}
+
+- (BOOL)resignFirstResponder
+{
+  [[NSFontPanel sharedFontPanel] close];
+  return YES;
+}
+
+@end
+
 @implementation PCEditorFSCPrefs
 
 // ----------------------------------------------------------------------------
@@ -44,6 +68,8 @@
     }
 
   prefs = aPrefs;
+  currentPlainFont = nil;
+  currentRichFont = nil;
 
   RETAIN(editorFSCView);
 
@@ -65,56 +91,97 @@
 
 - (void)awakeFromNib
 {
-  [plainTextFontButton setRefusesFirstResponder:YES];
-  [plainTextFontField setDelegate:self];
-  [richTextFontButton setRefusesFirstResponder:YES];
+  [plainTextFontButton setTarget:self];
+  [plainTextFontField setAllowsEditingTextAttributes:YES];
+
+  [richTextFontButton setTarget:self];
+  [richTextFontField setAllowsEditingTextAttributes:YES];
 }
 
-// Protocol
-- (void)setDefaults
+// ----------------------------------------------------------------------------
+// --- Utility methods
+// ----------------------------------------------------------------------------
+
+- (void)pickFont:(NSFont *)currentFont
 {
-  [prefs setObject:@"30" forKey:EditorLines notify:NO];
-  [prefs setObject:@"80" forKey:EditorColumns notify:NO];
+  NSFontManager *fontManager = [NSFontManager sharedFontManager];
+
+  [fontManager setSelectedFont:currentPlainFont isMultiple:NO];
+  [fontManager orderFrontFontPanel:self];
 }
 
+- (void)changeFont:(id)sender
+{
+  NSButton *button = (NSButton *)[[editorFSCView window] firstResponder];
+  int      buttonTag;
+  NSFont   *font;
+  NSString *fontString;
+
+  if (![button isKindOfClass:[NSButton class]])
+    {
+      return;
+    }
+
+  font = [sender convertFont:currentPlainFont];
+  fontString = [NSString stringWithFormat:@"%@ %0.1f", 
+	     [font fontName], [font pointSize]];
+
+  buttonTag = [button tag];
+  if (buttonTag == 0) // plain text font button
+    {
+      [plainTextFontField setStringValue:fontString];
+      [plainTextFontField setFont:font];
+      [prefs setString:[font fontName] forKey:EditorPlainTextFont notify:YES];
+      [prefs setFloat:[font pointSize] 
+	       forKey:EditorPlainTextFontSize
+	       notify:YES];
+    }
+  else if (buttonTag == 1) // rich text font button
+    {
+      [richTextFontField setStringValue:fontString];
+      [richTextFontField setFont:font];
+      [prefs setString:[font fontName] forKey:EditorRichTextFont notify:YES];
+      [prefs setFloat:[font pointSize] 
+	       forKey:EditorRichTextFontSize
+	       notify:YES];
+    }
+}
+
+// ----------------------------------------------------------------------------
+// --- Protocol
+// ----------------------------------------------------------------------------
 - (void)readPreferences
 {
+  NSString *fontName;
+  float    fontSize;
+  NSFont   *plainFont = [NSFont userFixedPitchFontOfSize:0.0];
+  NSFont   *richFont = [NSFont systemFontOfSize:0.0];
   NSString *val;
-  NSNumber *fval;
-  NSFont   *font;
 
   // Plain text font
-  font = [NSFont userFixedPitchFontOfSize:0.0];
-  if (!(val = [prefs objectForKey:EditorPlainTextFont]))
-    {
-      val = [font fontName];
-    }
-  if (!(val = [prefs objectForKey:EditorPlainTextFontSize]))
-    {
-      fval = [NSNumber numberWithFloat:[font pointSize]];
-    }
-  [plainTextFontField setStringValue:
-	  [NSString stringWithFormat:@"%@ %0.1f", val, [fval floatValue]]];
+  fontName = [prefs stringForKey:EditorPlainTextFont 
+		    defaultValue:[plainFont fontName]];
+  fontSize = [prefs floatForKey:EditorPlainTextFontSize 
+		   defaultValue:[plainFont pointSize]];
+  currentPlainFont = [NSFont fontWithName:fontName size:fontSize];
+  [plainTextFontField setStringValue:[NSString stringWithFormat:@"%@ %0.1f", 
+    [currentPlainFont fontName], [currentPlainFont pointSize]]];
+  [plainTextFontField setFont:currentPlainFont];
 
-/*  // Rich text font
-  font = [NSFont systemFontOfSize:0.0];
-  if (!(val = [prefs objectForKey:EditorRichTextFont]))
-    {
-      val = [font fontName];
-    }
-  if (!(fval = [prefs objectForKey:EditorRichTextFontSize]))
-    {
-      fval = [font pointSize];
-    }
-  [richTextFontField setStringValue:
-	 [NSString stringWithFormat:@"%@ %0.1f", val, fval];*/
+  // Rich text font
+  fontName = [prefs stringForKey:EditorRichTextFont 
+		    defaultValue:[richFont fontName]];
+  fontSize = [prefs floatForKey:EditorRichTextFontSize
+		   defaultValue:[richFont pointSize]];
+  currentRichFont = [NSFont fontWithName:fontName size:fontSize];
+  [richTextFontField setStringValue:[NSString stringWithFormat:@"%@ %0.1f", 
+    [currentRichFont fontName], [currentRichFont pointSize]]];
+  [richTextFontField setFont:currentRichFont];
 
   // Editor window size
-  if (!(val = [prefs objectForKey:EditorLines]))
-    val = @"30";
+  val = [prefs stringForKey:EditorLines defaultValue:@"30"];
   [editorLinesField setStringValue:val];
-  if (!(val = [prefs objectForKey:EditorColumns]))
-    val = @"80";
+  val = [prefs stringForKey:EditorColumns defaultValue:@"80"];
   [editorColumnsField setStringValue:val];
 }
 
@@ -123,29 +190,26 @@
   return editorFSCView;
 }
 
-// Actions
+// ----------------------------------------------------------------------------
+// --- Actions
+// ----------------------------------------------------------------------------
+
 - (void)setEditorPlainTextFont:(id)sender
 {
-  NSFontManager *fm = [NSFontManager sharedFontManager];
-  NSFont        *currentFont;
-
-  [[editorFSCView window] makeFirstResponder:plainTextFontField];
-  currentFont = [NSFont 
-    fontWithName:[prefs objectForKey:EditorPlainTextFont] 
-	    size:[[prefs objectForKey:EditorPlainTextFontSize] floatValue]];
-
-  [fm setSelectedFont:currentFont isMultiple:NO];
-  [fm orderFrontFontPanel:self];
+  [[editorFSCView window] makeFirstResponder:plainTextFontButton];
+  [self pickFont:currentPlainFont];
 }
 
 - (void)setEditorRichTextFont:(id)sender
 {
+  [[editorFSCView window] makeFirstResponder:richTextFontButton];
+  [self pickFont:currentRichFont];
 }
 
 - (void)setEditorSize:(id)sender
 {
-  NSString *val = nil;
-  NSString *key = nil;
+  NSString *val;
+  NSString *key;
   
   if (sender == editorLinesField)
     {
@@ -158,19 +222,11 @@
       val = [editorColumnsField stringValue];
     }
 
-  [prefs setObject:val forKey:key notify:YES];
+  [prefs setString:val forKey:key notify:YES];
 }
 
 - (void)setEditorColor:(id)sender
 {
-}
-
--(void)changeFont:(id)sender
-{
-  NSLog(@"%@: Font: '%@ %0.1f'", [sender className],
-	[[NSFont userFixedPitchFontOfSize:0.0] fontName], 
-	[[NSFont userFixedPitchFontOfSize:0.0] pointSize]);
-
 }
 
 @end

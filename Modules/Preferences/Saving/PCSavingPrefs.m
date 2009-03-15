@@ -56,32 +56,6 @@
   [keepBackup setRefusesFirstResponder:YES];
 }
 
-- (void)setDefaults
-{
-  [prefs setObject:@"YES" forKey:SaveOnQuit notify:NO];
-  [prefs setObject:@"YES" forKey:KeepBackup notify:NO];
-  [prefs setObject:@"120" forKey:AutoSavePeriod notify:NO];
-}
-
-- (void)readPreferences
-{
-  NSString *val;
-  int      state;
-
-  if (!(val = [prefs objectForKey:AutoSavePeriod]))
-    val = @"120";
-  [autosaveField setStringValue:val];
-  [autosaveSlider setFloatValue:[val floatValue]];
-
-  val = [prefs objectForKey:SaveOnQuit];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
-  [saveOnQuit setState:state];
-
-  val = [prefs objectForKey:KeepBackup];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
-  [keepBackup setState:state];
-}
-
 - (void)dealloc
 {
 #ifdef DEBUG
@@ -96,6 +70,25 @@
 }
 
 // Protocol
+- (void)readPreferences
+{
+  NSString *val;
+  BOOL     bVal;
+  int      state;
+
+  val = [prefs stringForKey:AutoSavePeriod defaultValue:@"120"];
+  [autosaveField setStringValue:val];
+  [autosaveSlider setFloatValue:[val floatValue]];
+
+  bVal = [prefs boolForKey:SaveOnQuit defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
+  [saveOnQuit setState:state];
+
+  bVal = [prefs boolForKey:KeepBackup defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
+  [keepBackup setState:state];
+}
+
 - (NSView *)view
 {
   return savingView;
@@ -104,7 +97,7 @@
 // Actions
 - (void)setSaveOnQuit:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (saveOnQuit == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -112,13 +105,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:SaveOnQuit notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:SaveOnQuit notify:YES];
 }
 
 - (void)setKeepBackup:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (keepBackup == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -126,13 +119,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:KeepBackup notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:KeepBackup notify:YES];
 }
 
 - (void)setSavePeriod:(id)sender
 {
-  NSString *periodString = nil;
+  NSString *periodString;
   
   if (sender == autosaveSlider)
     {
@@ -140,7 +133,7 @@
     }
 
   periodString = [autosaveField stringValue];
-  [prefs setObject:periodString forKey:AutoSavePeriod notify:YES];
+  [prefs setString:periodString forKey:AutoSavePeriod notify:YES];
 
   // TODO: Check if this can be replaced with generic notification
   // posted by PCPrefsController
@@ -148,8 +141,6 @@
     postNotificationName:PCSavePeriodDidChangeNotification
                   object:periodString];
 }
-
-
 
 @end
 

@@ -84,7 +84,7 @@
 
   [loadedFilesButton setToolTip:@"Loaded Files"];
   [loadedFilesButton setImage:IMAGE(@"Files")];
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+  if (![prefs boolForKey:UseTearOffWindows])
     {
       [loadedFilesButton setEnabled:NO];
     }
@@ -133,7 +133,7 @@
   /*
    * LoadedFiles
    */
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+  if (![prefs boolForKey:UseTearOffWindows])
     {
       [self showProjectLoadedFiles:self];
     }
@@ -313,7 +313,7 @@
   NSLog(@"ProjectWindow showProjectBuild: componentView RC:%i", 
 	[view retainCount]);
 
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if ([prefs boolForKey:UseTearOffWindows])
     {
       if ([customView contentView] == view)
 	{
@@ -343,7 +343,7 @@
   view = [[project projectLauncher] componentView];
   launchPanel = [[project projectManager] launchPanel];
 
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if ([prefs boolForKey:UseTearOffWindows])
     {
       if ([customView contentView] == view)
 	{
@@ -373,7 +373,7 @@
       
 //  PCLogInfo(self, @"showProjectLoadedFiles");
 
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if ([prefs boolForKey:UseTearOffWindows])
     {
       [componentView setBorderType:NSNoBorder];
       [componentView removeFromSuperview];
@@ -555,7 +555,7 @@
       return;
     }*/
 
-  if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"YES"])
+  if ([prefs boolForKey:UseTearOffWindows])
     {
       // Project Build 
       if ([[[project projectBuilder] componentView] window] == projectWindow)

@@ -56,6 +56,9 @@
   IBOutlet NSColorWell *foregroundColorWell;
   IBOutlet NSColorWell *backgroundColorWell;
   IBOutlet NSColorWell *selectionColorWell;
+
+  NSFont               *currentPlainFont;
+  NSFont               *currentRichFont;
 }
 
 - (void)setEditorPlainTextFont:(id)sender;

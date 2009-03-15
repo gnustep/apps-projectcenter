@@ -64,7 +64,7 @@ static PCMakefileFactory *_factory = nil;
 - (void)createMakefileForProject:(PCProject *)project
 {
   id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSString           *buildDir = [prefs objectForKey:RootBuildDirectory];
+  NSString       *buildDir = [prefs stringForKey:RootBuildDirectory];
   NSString       *prName = [project projectName];
   NSString       *buildName = [prName stringByAppendingPathExtension:@"build"];
   NSString       *instDir = [[project projectDict] objectForKey:PCInstallDir];

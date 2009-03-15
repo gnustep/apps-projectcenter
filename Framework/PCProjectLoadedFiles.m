@@ -80,7 +80,7 @@
       [filesScroll setDocumentView:filesList];
       [filesScroll setHasHorizontalScroller:NO];
       [filesScroll setHasVerticalScroller:YES];
-      if ([[prefs objectForKey:UseTearOffWindows] isEqualToString:@"NO"])
+      if (![prefs boolForKey:UseTearOffWindows])
 	{
 	  [filesScroll setBorderType:NSBezelBorder];
 	}

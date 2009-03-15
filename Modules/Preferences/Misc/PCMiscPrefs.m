@@ -76,49 +76,36 @@
 }
 
 // Protocol
-- (void)setDefaults
-{
-  [prefs setObject:@"YES" forKey:PromptOnQuit notify:NO];
-  [prefs setObject:@"YES" forKey:FullPathInFilePanels notify:NO];
-  [prefs setObject:@"YES" forKey:RememberWindows notify:NO];
-  [prefs setObject:@"NO" forKey:DisplayLog notify:NO];
-  [prefs setObject:@"YES" forKey:UseTearOffWindows notify:NO];
-
-  [prefs setObject:@"/usr/bin/gdb" forKey:Debugger notify:NO];
-  [prefs setObject:@"ProjectCenter" forKey:Editor notify:NO];
-}
-
 - (void)readPreferences
 {
   NSString *val;
+  BOOL     bVal;
   int      state;
 
-  val = [prefs objectForKey:PromptOnQuit];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:PromptOnQuit defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [promptWhenQuit setState:state];
 
-  val = [prefs objectForKey:FullPathInFilePanels];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:FullPathInFilePanels defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [fullPathInFilePanels setState:state];
 
-  val = [prefs objectForKey:RememberWindows];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:RememberWindows defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [rememberWindows setState:state];
      
-  val = [prefs objectForKey:DisplayLog];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:DisplayLog defaultValue:NO];
+  state = bVal ? NSOnState : NSOffState;
   [displayLog setState:state];
 
-  val = [prefs objectForKey:UseTearOffWindows];
-  state = [val isEqualToString:@"YES"] ? NSOnState : NSOffState;
+  bVal = [prefs boolForKey:UseTearOffWindows defaultValue:YES];
+  state = bVal ? NSOnState : NSOffState;
   [useTearOffWindows setState:state];
 
-  if (!(val = [prefs objectForKey:Debugger]))
-    val = PCDefaultDebugger;
+  val = [prefs stringForKey:Debugger defaultValue:PCDefaultDebugger];
   [debuggerField setStringValue:val];
 
-  if (!(val = [prefs objectForKey:Editor]))
-    val = @"ProjectCenter";
+  val = [prefs stringForKey:Editor defaultValue:@"ProjectCenter"];
   [editorField setStringValue:val];
 }
 
@@ -130,7 +117,7 @@
 // Actions
 - (void)setPromptWhenQuit:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (promptWhenQuit == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -138,13 +125,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:PromptOnQuit notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:PromptOnQuit notify:YES];
 }
 
 - (void)setFullPathInFilePanels:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (fullPathInFilePanels == nil)
     {// HACK!!! need to be fixed in GNUstep
@@ -152,13 +139,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:FullPathInFilePanels notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:FullPathInFilePanels notify:YES];
 }
 
 - (void)setRememberWindows:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (rememberWindows == nil)
     {
@@ -166,13 +153,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:RememberWindows notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:RememberWindows notify:YES];
 }
 
 - (void)setDisplayLog:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (displayLog == nil)
     {
@@ -180,13 +167,13 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:DisplayLog notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:DisplayLog notify:YES];
 }
 
 - (void)setUseTearOffWindows:(id)sender
 {
-  NSString *state;
+  BOOL state;
 
   if (useTearOffWindows == nil)
     {
@@ -194,8 +181,8 @@
       return;
     }
 
-  state = ([sender state] == NSOffState) ? @"NO" : @"YES";
-  [prefs setObject:state forKey:UseTearOffWindows notify:YES];
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:UseTearOffWindows notify:YES];
 }
 
 - (void)setDebugger:(id)sender
@@ -251,7 +238,7 @@
 
   // Set
   [debuggerField setStringValue:path];
-  [prefs setObject:path forKey:Debugger notify:YES];
+  [prefs setString:path forKey:Debugger notify:YES];
 }
 
 - (void)setEditor:(id)sender
@@ -278,9 +265,6 @@
       path = [files objectAtIndex:0];
     }
   
-//  [separateEditor setEnabled:YES];
-//  [self setEditorSizeEnabled:YES];
-
   [[miscView window] makeFirstResponder:editorField];
   if (!path)
     {
@@ -309,8 +293,6 @@
 	    		  @"Close", nil, nil, path);
 	  path = @"";
 	}
-//      [separateEditor setEnabled:NO];
-//      [self setEditorSizeEnabled:NO];
     }
   
   if ([path isEqualToString:@""] || !path)
@@ -320,7 +302,7 @@
 
   // Set
   [editorField setStringValue:path];
-  [prefs setObject:path forKey:Editor notify:YES];
+  [prefs setString:path forKey:Editor notify:YES];
 }
 
 @end
