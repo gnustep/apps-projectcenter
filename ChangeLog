@@ -1,3 +1,34 @@
+2009-03-15 02:14 Sergii Stoian <stoyan255@gmail.com>
+
+	* * Headers/Protocols/Preferences.h: Add new methods.
+	* PCPrefController.m: Implemented set/get of preferences value
+	dependent. All values are stored in preferences as NSString values 
+	and converted upon request to specified type.
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m: Use new methods of
+	PCPrefController. Implemented setting of editor fonts.
+	(setDefaults): Removed.
+
+	* Modules/Preferences/Build/PCBuildPrefs.m,
+	* Modules/Preferences/Misc/PCMiscPrefs.m,
+	* Modules/Preferences/Saving/PCSavingPrefs.m: Use new methods of
+	PCPrefController.
+	(setDefaults): Removed.
+
+	* Framework/PCProjectLoadedFiles.m,
+	* Framework/PCMakefileFactory.m,
+	* Framework/PCProject.m,
+	* Framework/PCProjectLauncherPanel.m,
+	* Framework/PCFileManager.m,
+	* Framework/PCProjectBrowser.m,
+	* Framework/PCProjectBuilder.m,
+	* Framework/PCEditorManager.m,
+	* Framework/PCProjectLoadedFilesPanel.m,
+	* Framework/PCProjectLauncher.m,
+	* Framework/PCProjectBuilderPanel.m,
+	* Framework/PCProjectWindow.m,
+	* PCAppController.m,
+	* Framework/PCProjectManager.m: Use new methods of PCPrefController.
+
 2009-03-05 02:43 Sergii Stoian <stoyan255@gmail.com>
 
 	* ChangeLog: Update.
