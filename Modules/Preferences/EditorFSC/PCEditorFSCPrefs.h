@@ -59,6 +59,9 @@
 
   NSFont               *currentPlainFont;
   NSFont               *currentRichFont;
+  NSColor              *currentBackgroundColor;
+  NSColor              *currentForegroundColor;
+  NSColor              *currentSelectionColor;
 }
 
 - (void)setEditorPlainTextFont:(id)sender;

@@ -7,9 +7,9 @@ include $(GNUSTEP_MAKEFILES)/common.make
 #
 # Framework
 #
-VERSION = 0.5.0
+VERSION = 0.5.3
 FRAMEWORK_NAME = ProjectCenter
-ProjectCenter_CURRENT_VERSION_NAME = 0.5.0
+ProjectCenter_CURRENT_VERSION_NAME = 0.5.3
 ProjectCenter_DEPLOY_WITH_CURRENT_VERSION = yes
 ProjectCenter_HEADER_FILES_DIR = ../Headers/ProjectCenter
 

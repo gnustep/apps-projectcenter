@@ -27,9 +27,6 @@
 #import "PCPrefController.h"
 #import <Protocols/Preferences.h>
 
-// TODO: rewrite it as PCPreferences, use +sharedPreferences instead of
-// [NSUserDefaults standardUserDefaults] in every part of ProjectCenter
-
 @implementation PCPrefController
 
 // ===========================================================================

@@ -54,15 +54,11 @@
 	  forKey:(NSString *)aKey
 	  notify:(BOOL)notify;
 
-//- (id)objectForKey:(NSString *)key;
-//- (void)setObject:(id)anObject forKey:(NSString *)aKey notify:(BOOL)notify;
-
 @end
 
 @protocol PCPrefsSection <NSObject>
 
 - (id)initWithPrefController:(id <PCPreferences>)aPrefs;
-//- (void)setDefaults;
 - (void)readPreferences;
 - (NSView *)view;
 

@@ -214,9 +214,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSTimeInterval interval;
 
-/*  interval = [[[PCPrefController sharedPCPreferences] 
-    objectForKey:AutoSavePeriod] intValue];*/
-
   interval = [[prefController stringForKey:AutoSavePeriod] intValue];
 
   if (interval > 0 && saveTimer == nil)

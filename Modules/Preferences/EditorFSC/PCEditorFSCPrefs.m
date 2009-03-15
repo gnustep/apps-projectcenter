@@ -23,8 +23,7 @@
 // License along with this library; if not, write to the Free Software 
 // Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 
-#import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCFileManager.h>
+#import <AppKit/NSColorSpace.h>
 
 #import "PCEditorFSCPrefs.h"
 
@@ -147,6 +146,33 @@
     }
 }
 
+- (NSColor *)colorFromString:(NSString *)colorString
+{
+  NSArray  *colorComponents;
+  NSString *colorSpaceName;
+  NSColor  *color;
+
+  colorComponents = [colorString componentsSeparatedByString:@" "];
+  colorSpaceName = [colorComponents objectAtIndex:0];
+
+  if ([colorSpaceName isEqualToString:@"White"]) // Treat as WhiteColorSpace
+    {
+      color = [NSColor 
+	colorWithCalibratedWhite:[[colorComponents objectAtIndex:1] floatValue]
+       			   alpha:1.0];
+    }
+  else if ([colorSpaceName isEqualToString:@"RGB"]) // Treat as RGBColorSpace
+    {
+      color = [NSColor 
+	colorWithCalibratedRed:[[colorComponents objectAtIndex:1] floatValue]
+			 green:[[colorComponents objectAtIndex:2] floatValue]
+			  blue:[[colorComponents objectAtIndex:3] floatValue]
+			 alpha:1.0];
+    }
+
+  return color;
+}
+
 // ----------------------------------------------------------------------------
 // --- Protocol
 // ----------------------------------------------------------------------------
@@ -183,6 +209,19 @@
   [editorLinesField setStringValue:val];
   val = [prefs stringForKey:EditorColumns defaultValue:@"80"];
   [editorColumnsField setStringValue:val];
+
+  // Colors
+  val = [prefs stringForKey:EditorForegroundColor defaultValue:@"White 0.0"];
+  currentForegroundColor = [self colorFromString:val];
+  [foregroundColorWell setColor:currentForegroundColor];
+
+  val = [prefs stringForKey:EditorBackgroundColor defaultValue:@"White 1.0"];
+  currentBackgroundColor = [self colorFromString:val];
+  [backgroundColorWell setColor:currentBackgroundColor];
+
+  val = [prefs stringForKey:EditorSelectionColor defaultValue:@"White 0.66"];
+  currentSelectionColor = [self colorFromString:val];
+  [selectionColorWell setColor:currentSelectionColor];
 }
 
 - (NSView *)view
@@ -227,6 +266,63 @@
 
 - (void)setEditorColor:(id)sender
 {
+  NSColor  *color;
+  NSColor  *currentColor;
+  NSString *colorString;
+  NSString *key;
+  NSString *colorSpaceName;
+
+  if (sender == foregroundColorWell)
+    {
+      NSLog(@"foregroundColorWell");
+      color = [foregroundColorWell color];
+      currentColor = currentForegroundColor;
+      key = EditorForegroundColor;
+    }
+  else if (sender == backgroundColorWell)
+    {
+      NSLog(@"backgroundColorWell");
+      color = [backgroundColorWell color];
+      currentColor = currentBackgroundColor;
+      key = EditorBackgroundColor;
+    }
+  else if (sender == selectionColorWell)
+    {
+      NSLog(@"selectionColorWell");
+      color = [selectionColorWell color];
+      currentColor = currentSelectionColor;
+      key = EditorSelectionColor;
+    }
+
+  colorSpaceName =  [color colorSpaceName];
+  NSLog(@"Color's colorspace name: '%@'", colorSpaceName);
+  if ([colorSpaceName isEqualToString:@"NSCalibratedRGBColorSpace"])
+    {
+/*      [sender setColor:currentColor];
+      NSRunAlertPanel(@"Set Color", 
+		      @"Please, use RGB color.\n"
+		      @"Color in color well left unchanged",
+		      @"Close", nil, nil);*/
+      colorString = [NSString stringWithFormat:@"RGB %0.1f %0.1f %0.1f",
+		  [color redComponent], 
+		  [color greenComponent],
+		  [color blueComponent]];
+    }
+  else if ([colorSpaceName isEqualToString:@"NSCalibratedWhiteColorSpace"])
+    {
+      colorString = [NSString stringWithFormat:@"White %0.1f", 
+		  [color whiteComponent]];
+    }
+  else
+    {
+      return;
+    }
+
+  currentColor = color;
+
+  NSLog(@"Selected color: '%@'", colorString);
+
+  [prefs setString:colorString forKey:key notify:YES];
 }
 
 @end
