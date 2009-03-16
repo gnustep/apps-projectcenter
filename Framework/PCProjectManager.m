@@ -617,7 +617,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
 
       [loadedProjects setObject:project forKey:projectName];
-      [self setActiveProject:project];
       [project setProjectManager:self];
 
       // Windows and panels
@@ -636,6 +635,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
 
       [[project projectWindow] makeKeyAndOrderFront:self];
+
+      [self setActiveProject:project];
 
       return YES;
     }

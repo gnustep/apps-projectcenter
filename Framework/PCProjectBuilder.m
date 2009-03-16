@@ -57,9 +57,11 @@
 
 - (id)initWithProject:(PCProject *)aProject
 {
-  NSAssert(aProject, @"No project specified!");
+#ifdef DEBUG
+  NSLog (@"PCProjectBuilder: initWithProject");
+#endif
 
-//  PCLogInfo(self, @"initWithProject %@", [aProject projectName]);
+  NSAssert(aProject, @"No project specified!");
   
   if ((self = [super init]))
     {
@@ -93,11 +95,16 @@
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
+#ifdef DEBUG
   NSLog (@"PCProjectBuilder: dealloc");
 #endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  if ([componentView superview])
+    {
+      [componentView removeFromSuperview];
+    }
 
   RELEASE(buildStatusTarget);
   RELEASE(buildTarget);
@@ -109,11 +116,14 @@
   RELEASE(rootBuildDir);
   RELEASE(buildTool);
 
-//  PCLogInfo(self, @"componentView RC: %i", [componentView retainCount]);
-//  PCLogInfo(self, @"RC: %i", [self retainCount]);
+//  NSLog(@"Project Builder--> componentView RC: %i", 
+//	[componentView retainCount]);
+
   RELEASE(componentView);
   RELEASE(errorArray);
   RELEASE(errorString);
+
+//  NSLog(@"Project Builder--> RC: %i", [self retainCount]);
 
   [super dealloc];
 }
@@ -128,13 +138,13 @@
       return;
     }
 
-  NSLog(@"ProjectBuilder awakeFromNib");
+//  NSLog(@"ProjectBuilder awakeFromNib");
 
   [componentView retain];
   [componentView removeFromSuperview];
 
-  NSLog(@"ProjectBuilder awakeFromNib: componentView RC:%i", 
-	[componentView retainCount]);
+//  NSLog(@"ProjectBuilder awakeFromNib: componentView RC:%i", 
+//	[componentView retainCount]);
 
   /*
    * 4 build Buttons

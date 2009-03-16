@@ -251,7 +251,7 @@ static NSNotificationCenter *nc = nil;
 
   // Save the old position
   op = p;
-  NSLog(@"SplitView: entering knob loop");
+//  NSLog(@"SplitView: entering knob loop");
 //--- Dragging start ----------------------------------------------------------
   // user is moving the knob loop until left mouse up
   while ([e type] != NSLeftMouseUp)

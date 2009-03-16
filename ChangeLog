@@ -1,6 +1,17 @@
+2009-03-17 02:14 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m:
+	(openProjectAt:): Setactive project to loaded after all initalization
+	completed.
+	* Framework/PCProject.m:
+	(saveProjectWindowsAndPanels): Save project windows and panels
+	according to preferences setting.
+	(close:): Remove unsused code.
+	* Framework/PCProjectBuilder.m: Cleanup.
+
 2009-03-15 02:14 Sergii Stoian <stoyan255@gmail.com>
 
-	* * Headers/Protocols/Preferences.h: Add new methods.
+	* Headers/Protocols/Preferences.h: Add new methods.
 	* PCPrefController.m: Implemented set/get of preferences value
 	dependent. All values are stored in preferences as NSString values 
 	and converted upon request to specified type.

@@ -310,8 +310,8 @@
 
   rootActiveProject = [[project projectManager] rootActiveProject];
   
-  NSLog(@"ProjectWindow showProjectBuild: componentView RC:%i", 
-	[view retainCount]);
+//  NSLog(@"ProjectWindow showProjectBuild: componentView RC:%i", 
+//	[view retainCount]);
 
   if ([prefs boolForKey:UseTearOffWindows])
     {
@@ -548,7 +548,7 @@
 {
   id <PCPreferences> prefs = [aNotif object];
  
-  PCLogStatus(self, @"Preferences did change");
+  NSLog(@"ProjectWindow: Preferences did change");
 
 /*  if ([[project projectManager] rootActiveProject] != project)
     {
@@ -858,7 +858,7 @@
   NSRect vSplitRect;
   NSRect boxRect;
   
-  NSLog(@"resizeHorizontalSubiewsWithOldSize entered split view width: %f, height %f", splitSize.width, splitSize.height);
+//  NSLog(@"resizeHorizontalSubiewsWithOldSize entered split view width: %f, height %f", splitSize.width, splitSize.height);
 
   if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
     {

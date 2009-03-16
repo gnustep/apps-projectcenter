@@ -209,8 +209,8 @@
   bundlePaths = [bundlesInfo allKeys];
   enumerator = [bundlePaths objectEnumerator];
 
-  NSLog(@"Bundle fullpath method #1: %@", 
-	[[self resourcePath] stringByAppendingPathComponent:bundleName]);
+//  NSLog(@"Bundle fullpath method #1: %@", 
+//	[[self resourcePath] stringByAppendingPathComponent:bundleName]);
 
   while ((bundleFullPath = [enumerator nextObject]))
     {
@@ -220,7 +220,7 @@
 	}
     }
 
-  NSLog(@"Bundle fullpath method #2: %@", bundleFullPath);
+//  NSLog(@"Bundle fullpath method #2: %@", bundleFullPath);
 
   return bundleFullPath;
 }

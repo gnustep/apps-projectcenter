@@ -37,8 +37,7 @@
 //- (id)initWithFrame:(NSRect)frameRect
 - (id)initWithCoder:(NSCoder *)coder
 {
-  NSLog(@"PCButton: initWithCoder");
-//  self = [super initWithFrame:frameRect];
+//  NSLog(@"PCButton: initWithCoder");
   self = [super initWithCoder:coder];
   [_cell setGradientType:NSGradientConcaveWeak];
   [_cell setImageDimsWhenDisabled:YES];

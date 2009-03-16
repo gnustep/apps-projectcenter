@@ -110,8 +110,8 @@ NSString
   RELEASE(projectBrowser);
   RELEASE(projectLoadedFiles);
   RELEASE(projectEditor);
-  if (projectBuilder) RELEASE(projectBuilder);
-  if (projectLauncher) RELEASE(projectLauncher);
+  TEST_RELEASE(projectBuilder);
+  TEST_RELEASE(projectLauncher);
 
   if (isSubproject == YES)
     {
@@ -357,13 +357,12 @@ NSString
               forKey:@"ProjectBrowser"];
 
   // Write to file and exit if prefernces wasn't set to save panels
-  if (rememberWindows)
+  if (!rememberWindows)
     {
       [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
       [projectFileDict writeToFile:projectFile atomically:YES];
       return YES;
     }
-
 
   // Project Build
   if (projectBuilder && [[projectManager buildPanel] isVisible])
@@ -543,12 +542,6 @@ NSString
       return NO;
     }
 
-  // Project Builder
-/*  if (projectBuilder)
-    {
-      [projectBuilder release];
-    }*/
-  
   // Project window
   if (sender != projectWindow)
     {
