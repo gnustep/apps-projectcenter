@@ -1,3 +1,19 @@
+2009-03-19 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectManager.m: 
+	(dealloc): Replace if() check with TEST_RELEASE.
+	(openFileAtPath:): Use class variable instead of method's local.
+	(saveFile): Call saveFile to project editor if project is active and
+	project window has key state. Call non-project editor manager
+	otherwise.
+	* PCPrefController.m:
+	(stringForKey:defaultValue:): Set value to non-existent key only if
+	defaultValue is not 'nil' ('nil' when called via stringForKey:
+	method).
+	(boolForKey:defaultValue:): Set value to non-existent key only if
+	defaultValue has positive value (has '-1' when called via boolForKey:
+	method).
+
 2009-03-17 02:14 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m:
