@@ -101,11 +101,13 @@ static PCPrefController *_prefCtrllr = nil;
     {
       return stringValue;
     }
-  else
+  else if (defaultValue)
     {
       [self setString:defaultValue forKey:key notify:NO];
       return defaultValue;
     }
+
+  return defaultValue; // returns nil
 }
 
 - (BOOL)boolForKey:(NSString *)key
@@ -122,11 +124,13 @@ static PCPrefController *_prefCtrllr = nil;
     {
       return [stringValue boolValue];
     }
-  else
+  else if (defaultValue > 0)
     {
       [self setBool:defaultValue forKey:key notify:NO];
       return defaultValue;
     }
+
+  return defaultValue; // returns -1
 }
 
 - (float)floatForKey:(NSString *)key

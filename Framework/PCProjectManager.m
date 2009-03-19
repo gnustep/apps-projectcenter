@@ -118,12 +118,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   RELEASE(projectTypeAccessaryView);
   RELEASE(fileTypeAccessaryView);
 
-  if (editorManager)    RELEASE(editorManager);
+  TEST_RELEASE(editorManager);
 
-  if (projectInspector) RELEASE(projectInspector);
-  if (loadedFilesPanel) RELEASE(loadedFilesPanel);
-  if (buildPanel)       RELEASE(buildPanel);
-  if (launchPanel)      RELEASE(launchPanel);
+  TEST_RELEASE(projectInspector);
+  TEST_RELEASE(loadedFilesPanel);
+  TEST_RELEASE(buildPanel);
+  TEST_RELEASE(launchPanel);
 
   [super dealloc];
 }
@@ -1010,14 +1010,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (void)openFileAtPath:(NSString *)filePath
 {
-  PCEditorManager *em = [self editorManager];
+  editorManager = [self editorManager];
 
   if (filePath != nil)
     {
-      [em openEditorForFile:filePath 
-		   editable:YES
-		   windowed:YES];
-      [em orderFrontEditorForFile:filePath];
+      [editorManager openEditorForFile:filePath 
+			      editable:YES
+			      windowed:YES];
+      [editorManager orderFrontEditorForFile:filePath];
     }
 }
 
@@ -1045,7 +1045,17 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)saveFile
 {
-  return [[activeProject projectEditor] saveFile];
+  // We have active project and its window is key
+  if (activeProject && [[activeProject projectWindow] isKeyWindow])
+    {
+      return [[[activeProject projectEditor] activeEditor] saveFile];
+    }
+  else if (editorManager)
+    {
+      return [[editorManager activeEditor] saveFile];
+    }
+
+  return NO;
 }
 
 - (BOOL)saveFileAs
