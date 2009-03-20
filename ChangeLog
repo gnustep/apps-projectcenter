@@ -1,3 +1,21 @@
+2009-03-20 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProject.m:
+	(buildTargets): Return default build targets only if project file
+	doesn't contains list of them.
+	* Framework/PCProjectBuilder.m:
+	(prebuildCheck): Create build directory only if preference was set.
+	(build:): Set initial "=== started ===" string.
+	* Framework/PCProjectInspector.m:
+	(createBuildAttributes): Set target and action for table view.
+	(searchOrderPopupDidChange:): Add support for "Build Targets".
+	(setSearchOrderButtonsState): Enable "Remove" button only if item 
+	in list was selected.
+	(syncSearchOrder): Add support for "Build Targets".
+	* Documentation/TODO: Add some tasks and update status of others.
+	* Headers/ProjectCenter/PCDefines.h: Add key for build targets
+	support.
+
 2009-03-19 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectManager.m: 
