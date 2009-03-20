@@ -163,7 +163,7 @@ static NSString * const PCSearchHeaders        = @"SEARCH_HEADER_DIRS";
 static NSString * const PCSearchLibs           = @"SEARCH_LIB_DIRS";
 
 // Project Builder options
-static NSString * const PCBuilderOptions       = @"BUILDER_OPTIONS";
+static NSString * const PCBuilderTargets       = @"BUILDER_TARGETS";
 static NSString * const PCBuilderArguments     = @"BUILDER_ARGS";
 static NSString * const PCBuilderDebug         = @"BUILDER_DEBUG";
 static NSString * const PCBuilderStrip         = @"BUILDER_STRIP";

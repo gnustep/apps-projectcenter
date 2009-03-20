@@ -52,7 +52,10 @@ ProjectCenter 0.6
 - Check all textfields if 'scrollable' attribute set            [done!] 
 - Rewrite Preferences (3rd party sections etc.)                 [done!]
 --- Project Builder --------------------------------------------
-  - Finish parsing gcc output (make errors, etc.)               stoyan
+  - Review build, compiler, linker options setting 
+    (Build Options, Inspector)                                  stoyan
+  - Finish parsing build output (compiler errors/warnings, 
+    make errors, gnustep-make verbose mode)                     stoyan
   - Implement interaction with Editor (errors, warnings)        stoyan
 --- Project Editor ---------------------------------------------
   - review situations when editor is opened                     stoyan
@@ -60,13 +63,15 @@ ProjectCenter 0.6
   - Implement interaction with Builder (errors, warnings)       stoyan
   - Implement indentation                                       stoyan
   - implement undo inside editor                                stoyan
-  - Add and use basic editor preferences (fonts, colors, sizes) [25% done]
-- Think about imlementing pending adding/removal of files       ???
+  - Add and use basic editor preferences (fonts, colors, sizes) [50% done]
 - Split "Application" to "Application GORM" and 
-  "Application Renaissance" project types                       ???
+  "Application Renaissance" project types                       stoyan
+- Review all sections of Project Inspector for correct 
+  behaviour                                                     stoyan
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
 - Process reported bugs                                         ???
+- Think about imlementing pending adding/removal of files       ???
 - New icons. Need volonteers!!!                                 ???
 
 ProjectCenter 0.7

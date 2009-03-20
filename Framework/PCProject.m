@@ -701,7 +701,18 @@ NSString
 
 - (NSArray *)buildTargets
 {
-  return [[self projectBundleInfoTable] objectForKey:@"BuildTargets"];
+  NSArray *buildTargets = [projectDict objectForKey:PCBuilderTargets];
+
+  if (!buildTargets)
+    {
+      buildTargets = 
+	[[self projectBundleInfoTable] objectForKey:@"BuildTargets"];
+      [self setProjectDictObject:buildTargets
+			  forKey:PCBuilderTargets
+			  notify:NO];
+    }
+
+  return buildTargets;
 }
 
 - (NSArray *)sourceFileKeys

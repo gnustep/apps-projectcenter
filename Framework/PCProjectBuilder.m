@@ -187,9 +187,9 @@
   [errorOutput addTableColumn:errorColumn];
   [errorOutput setDataSource:self];
   [errorOutput setBackgroundColor:[NSColor colorWithDeviceRed:0.88
-                                                             green:0.76 
-                                                              blue:0.60 
-                                                             alpha:1.0]];
+			                                green:0.76 
+			                                 blue:0.60 
+			                                alpha:1.0]];
   [errorOutput setDrawsGrid:NO];
   [errorOutput setTarget:self];
   [errorOutput setAction:@selector(errorItemClick:)];
@@ -206,8 +206,7 @@
   /*
    *  Log output
    */
-  logScroll = [[NSScrollView alloc] 
-    initWithFrame:NSMakeRect (0, 0, 480, 133)];
+  logScroll = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,0,480,133)];
   [logScroll setHasHorizontalScroller:NO];
   [logScroll setHasVerticalScroller:YES];
   [logScroll setBorderType:NSBezelBorder];
@@ -237,9 +236,9 @@
    * Split view
    */
   [split addSubview:errorScroll];
-  RELEASE (errorScroll);
+  RELEASE(errorScroll);
   [split addSubview:logScroll];
-  RELEASE (logScroll);
+  RELEASE(logScroll);
 
 //  [split adjustSubviews];
 //  [componentView addSubview:split];
@@ -532,11 +531,16 @@
     }
 
   // Create root build directory if not exist
-  buildDir = [NSString stringWithFormat:@"%@.build", [project projectName]];
-  buildDir = [rootBuildDir stringByAppendingPathComponent:buildDir];
-  if (![fm fileExistsAtPath:rootBuildDir] || ![fm fileExistsAtPath:buildDir])
+  if (rootBuildDir && ![rootBuildDir isEqualToString:@""])
     {
-      [pcfm createDirectoriesIfNeededAtPath:buildDir];
+      buildDir = [NSString 
+	stringWithFormat:@"%@.build", [project projectName]];
+      buildDir = [rootBuildDir stringByAppendingPathComponent:buildDir];
+      if (![fm fileExistsAtPath:rootBuildDir] || 
+	  ![fm fileExistsAtPath:buildDir])
+	{
+	  [pcfm createDirectoriesIfNeededAtPath:buildDir];
+	}
     }
 
   return YES;
@@ -596,6 +600,11 @@
   [makeTask setLaunchPath:buildTool];
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
+
+  [self logString:
+    [NSString stringWithFormat:@"=== %@ started ===", buildStatusTarget]
+   	    error:NO
+	  newLine:YES];
 
   NS_DURING
     {

@@ -377,6 +377,9 @@
   // Table
   [searchOrderList setCornerView:nil];
   [searchOrderList setHeaderView:nil];
+  [searchOrderList setTarget:self];
+  [searchOrderList setAction:@selector(searchOrderClick:)];
+//  [searchOrderColumn setEditable:NO];
 
   // Buttons
   [self setSearchOrderButtonsState];
@@ -390,15 +393,19 @@
 {
   NSString *selectedTitle = [sender titleOfSelectedItem];
   
-  if ([selectedTitle isEqualToString: @"Header Directories Search Order"])
+  if ([selectedTitle isEqualToString:@"Header Directories Search Order"])
     {
       ASSIGN(searchItems, searchHeaders);
     }
-  else if ([selectedTitle isEqualToString: @"Library Directories Search Order"])
+  else if ([selectedTitle isEqualToString:@"Library Directories Search Order"])
     {
       ASSIGN(searchItems, searchLibs);
     }
-  else
+  else if ([selectedTitle isEqualToString:@"Build Targets"])
+    {
+      ASSIGN(searchItems,[project buildTargets]);
+    }
+  else  
     {
       ASSIGN(searchItems,nil);
     }
@@ -415,8 +422,6 @@
 
 - (void)searchOrderClick:(id)sender
 {
-  // Warning! NSTableView doesn't call action method
-  // TODO: Fix NSTableView (NSCell/NSActionCell?)
   [self setSearchOrderButtonsState];
 }
 
@@ -425,8 +430,6 @@
   // Disable until implemented
   [searchOrderSet setEnabled:NO];
 
-  return; // See searchOrderClick
-  
   if ([searchOrderList selectedRow] == -1)
     {
       [searchOrderRemove setEnabled:NO];
@@ -472,17 +475,20 @@
   pIndex = [searchOrderPopup indexOfSelectedItem];
   switch (pIndex)
     {
-    case 0:
+    case 0: // Headers
       [project setProjectDictObject:searchItems
                              forKey:PCSearchHeaders
 			     notify:YES];
       break;
-    case 1:
+    case 1: // Libraries
       [project setProjectDictObject:searchItems
                              forKey:PCSearchLibs
 			     notify:YES];
       break;
-    case 2:
+    case 2: // Targets
+      [project setProjectDictObject:searchItems
+                             forKey:PCBuilderTargets
+			     notify:YES];
       return;
     }
 }
