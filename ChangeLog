@@ -1,8 +1,16 @@
+2009-03-22 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilderOptions.m:
+	(initWithProject:): Listen to PCProjectDictDidChangeNotification
+	notification.
+	(awakeFromNib): Move loading of project properties from here...
+	(loadProjectProperties): ...to here. This is a notification action.
+
 2009-03-20 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProject.m:
 	(buildTargets): Return default build targets only if project file
-	doesn't contains list of them.
+	doesn't contain list of them.
 	* Framework/PCProjectBuilder.m:
 	(prebuildCheck): Create build directory only if preference was set.
 	(build:): Set initial "=== started ===" string.
