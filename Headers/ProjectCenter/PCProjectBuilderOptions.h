@@ -45,6 +45,8 @@
 - (void)show:(NSRect)builderRect;
 - (NSString *)buildTarget;
 
+- (void)loadProjectProperties:(NSNotification *)aNotif;
+
 @end
 
 @interface PCProjectBuilderOptions (Delegate)

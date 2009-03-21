@@ -58,42 +58,36 @@
     {
       project = aProject;
       delegate = aDelegate;
+
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self
+	   selector:@selector(loadProjectProperties:)
+	       name:PCProjectDictDidChangeNotification
+	     object:nil];
     }
 
   return self;
 }
 
+- (void)dealloc
+{
+#ifdef DEBUG
+  NSLog (@"PCProjectBuilderOptions: dealloc");
+#endif
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
+
+  [super dealloc];
+}
+
 - (void)awakeFromNib
 {
-  NSArray *args;
-
-  // Setup target popup
-  [targetPopup removeAllItems];
-  [targetPopup addItemsWithTitles:[project buildTargets]];
-  [targetPopup selectItemAtIndex:0];
-
-  // Setup build arguments field
-  args = [[project projectDict] objectForKey:PCBuilderArguments];
-  [buildArgsField setStringValue:[args componentsJoinedByString:@" "]];
-
-  // Setup option buttons
   [verboseButton setRefusesFirstResponder:YES];
   [debugButton setRefusesFirstResponder:YES];
   [stripButton setRefusesFirstResponder:YES];
   [sharedLibsButton setRefusesFirstResponder:YES];
 
-  [self _setStateForButton:verboseButton
-		       key:PCBuilderVerbose
-	      defaultState:NSOffState];
-  [self _setStateForButton:debugButton
-		       key:PCBuilderDebug
-	      defaultState:NSOnState];
-  [self _setStateForButton:stripButton
-		       key:PCBuilderStrip
-	      defaultState:NSOffState];
-  [self _setStateForButton:sharedLibsButton
-		       key:PCBuilderSharedLibs
-	      defaultState:NSOnState];
+  [self loadProjectProperties:nil];
 }
 
 - (void)show:(NSRect)builderRect
@@ -169,6 +163,34 @@
     key = PCBuilderSharedLibs;
 
   [project setProjectDictObject:value forKey:key notify:YES];
+}
+
+- (void)loadProjectProperties:(NSNotification *)aNotif
+{
+  NSArray *args;
+
+  // Setup target popup
+  [targetPopup removeAllItems];
+  [targetPopup addItemsWithTitles:[project buildTargets]];
+  [targetPopup selectItemAtIndex:0];
+
+  // Setup build arguments field
+  args = [[project projectDict] objectForKey:PCBuilderArguments];
+  [buildArgsField setStringValue:[args componentsJoinedByString:@" "]];
+
+  // Setup option buttons
+  [self _setStateForButton:verboseButton
+		       key:PCBuilderVerbose
+	      defaultState:NSOffState];
+  [self _setStateForButton:debugButton
+		       key:PCBuilderDebug
+	      defaultState:NSOnState];
+  [self _setStateForButton:stripButton
+		       key:PCBuilderStrip
+	      defaultState:NSOffState];
+  [self _setStateForButton:sharedLibsButton
+		       key:PCBuilderSharedLibs
+	      defaultState:NSOnState];
 }
 
 @end
