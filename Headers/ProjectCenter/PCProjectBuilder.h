@@ -126,19 +126,22 @@ typedef enum _ErrorLevel {
 - (void)build:(id)sender;
 //- (void)buildDidTerminate;
 
-- (void)logStdOut:(NSNotification *)aNotif;
-- (void)logErrOut:(NSNotification *)aNotif;
+@end
+
+@interface PCProjectBuilder (Logging)
 
 - (void)updateErrorsCountField;
+
+- (void)logStdOut:(NSNotification *)aNotif;
+- (void)logErrOut:(NSNotification *)aNotif;
+- (void)logBuildString:(NSString *)string newLine:(BOOL)newLine;
+- (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end
 
 @interface PCProjectBuilder (BuildLogging)
 
 - (void)parseBuildLine:(NSString *)string;
-
-- (void)logString:(NSString *)string error:(BOOL)yn newLine:(BOOL)newLine;
-- (void)logData:(NSData *)data error:(BOOL)yn;
 
 @end
 

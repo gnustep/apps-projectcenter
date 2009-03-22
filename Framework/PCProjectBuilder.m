@@ -601,10 +601,9 @@
   [makeTask setStandardOutput:logPipe];
   [makeTask setStandardError:errorPipe];
 
-  [self logString:
+  [self logBuildString:
     [NSString stringWithFormat:@"=== %@ started ===", buildStatusTarget]
-   	    error:NO
-	  newLine:YES];
+	       newLine:YES];
 
   NS_DURING
     {
@@ -626,7 +625,9 @@
 
 - (void)buildDidTerminate:(NSNotification *)aNotif
 {
-  int status;
+  int      status;
+  NSString *logString;
+  NSString *statusString;
 
   if ([aNotif object] != makeTask)
     {
@@ -665,32 +666,29 @@
 
   if (status == 0)
     {
-      [self logString: 
-	[NSString stringWithFormat:@"=== %@ succeeded! ===", buildStatusTarget] 
-	                     error:NO
-			   newLine:YES];
-      [statusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ succeeded", [project projectName], buildStatusTarget]];
+      logString = [NSString stringWithFormat:@"=== %@ succeeded! ===", 
+		buildStatusTarget];
+      statusString = [NSString stringWithFormat:@"%@ - %@ succeeded", 
+		   [project projectName], buildStatusTarget];
     } 
   else
     {
-      [self logString: 
-	[NSString stringWithFormat:@"=== %@ terminated! ===", buildStatusTarget]
-	                     error:NO
-			   newLine:YES];
+      logString = [NSString stringWithFormat:@"=== %@ terminated! ===", 
+		buildStatusTarget];
       if (errorsCount > 0)
 	{
-	  [statusField setStringValue:[NSString stringWithFormat: 
+	  statusString = [NSString stringWithFormat: 
 	    @"%@ - %@ failed (%i errors)", 
-	    [project projectName], buildStatusTarget, errorsCount]];
+	    [project projectName], buildStatusTarget, errorsCount];
 	}
       else
 	{
-	  [statusField setStringValue:[NSString stringWithFormat: 
-	    @"%@ - %@ failed", 
-	    [project projectName], buildStatusTarget]];
+	  statusString = [NSString stringWithFormat:@"%@ - %@ failed", 
+		       [project projectName], buildStatusTarget];
 	}
     }
+  [statusField setStringValue:statusString];
+  [self logBuildString:logString newLine:YES];
 
   // Run post process if configured
 /*  if (status && postProcess)
@@ -704,6 +702,54 @@
   [self cleanupAfterMake];
 }
 
+// --- BuilderOptions delgate
+- (void)targetDidSet:(NSString *)target
+{
+  [buildTarget setString:target];
+  [self updateTargetField];
+}
+
+@end
+
+@implementation PCProjectBuilder (Logging)
+
+- (void)updateErrorsCountField
+{
+  NSString *string;
+  NSString *errorsString = [NSString stringWithString:@""];
+  NSString *warningsString = [NSString stringWithString:@""];
+
+  if (errorsCount > 0)
+    {
+      if (errorsCount > 1)
+	{
+	  errorsString = [NSString stringWithFormat:@"%i errors", 
+		       errorsCount];
+	}
+      else
+	{
+	  errorsString = [NSString stringWithString:@"1 error"];
+	}
+    }
+
+  if (warningsCount > 0)
+    {
+      if (warningsCount > 1)
+	{
+	  warningsString = [NSString stringWithFormat:@"%i warnings", 
+			 warningsCount];
+	}
+      else
+	{
+	  warningsString = [NSString stringWithString:@"1 warning"];
+	}
+    }
+
+  string = [NSString stringWithFormat:@"%@ %@", errorsString, warningsString];
+  [errorsCountField setStringValue:string];
+}
+
+// --- Data notifications
 - (void)logStdOut:(NSNotification *)aNotif
 {
   NSData *data;
@@ -752,76 +798,26 @@
     }
 }
 
-- (void)updateErrorsCountField
+// --- Logging and dispatching
+- (void)logBuildString:(NSString *)str
+	       newLine:(BOOL)newLine
 {
-  NSString *string;
-  NSString *errorsString = [NSString stringWithString:@""];
-  NSString *warningsString = [NSString stringWithString:@""];
-
-  if (errorsCount > 0)
-    {
-      if (errorsCount > 1)
-	{
-	  errorsString = [NSString stringWithFormat:@"%i errors", 
-		       errorsCount];
-	}
-      else
-	{
-	  errorsString = [NSString stringWithString:@"1 error"];
-	}
-    }
-
-  if (warningsCount > 0)
-    {
-      if (warningsCount > 1)
-	{
-	  warningsString = [NSString stringWithFormat:@"%i warnings", 
-			 warningsCount];
-	}
-      else
-	{
-	  warningsString = [NSString stringWithString:@"1 warning"];
-	}
-    }
-
-  string = [NSString stringWithFormat:@"%@ %@", errorsString, warningsString];
-  [errorsCountField setStringValue:string];
-}
-
-// --- BuilderOptions delgate
-- (void)targetDidSet:(NSString *)target
-{
-  [buildTarget setString:target];
-  [self updateTargetField];
-}
-
-@end
-
-@implementation PCProjectBuilder (BuildLogging)
-
-- (void)logString:(NSString *)str
-            error:(BOOL)yn
-	  newLine:(BOOL)newLine
-{
-//  NSTextView *out = (yn) ? errorOutput : logOutput;
-  NSTextView *out = logOutput;
-
-  [out replaceCharactersInRange:
-    NSMakeRange([[out string] length],0) withString:str];
+  [logOutput replaceCharactersInRange:
+    NSMakeRange([[logOutput string] length],0) withString:str];
 
   if (newLine)
     {
-      [out replaceCharactersInRange:
-	NSMakeRange([[out string] length], 0) withString:@"\n"];
+      [logOutput replaceCharactersInRange:
+	NSMakeRange([[logOutput string] length], 0) withString:@"\n"];
     }
   else
     {
-      [out replaceCharactersInRange:
-	NSMakeRange([[out string] length], 0) withString:@" "];
+      [logOutput replaceCharactersInRange:
+	NSMakeRange([[logOutput string] length], 0) withString:@" "];
     }
 
-  [out scrollRangeToVisible:NSMakeRange([[out string] length], 0)];
-  [out setNeedsDisplay:YES];
+  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput string] length], 0)];
+  [logOutput setNeedsDisplay:YES];
 }
 
 - (void)logData:(NSData *)data
@@ -864,7 +860,7 @@
 		  [self logErrorString:lineString];
 		}
 	    }
-	  [self logString:lineString error:yn newLine:NO];
+	  [self logBuildString:lineString newLine:NO];
 	}
       else
 	{
@@ -876,6 +872,11 @@
   RELEASE(dataString);
 }
 
+@end
+
+@implementation PCProjectBuilder (BuildLogging)
+
+// Standard out is parsed for detection of directory, file, etc.
 - (void)parseBuildLine:(NSString *)string
 {
   NSArray  *components = [string componentsSeparatedByString:@" "];

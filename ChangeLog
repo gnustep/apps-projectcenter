@@ -13,6 +13,12 @@
 	added
 	in the future.
 	* Documentation/TODO: Rearrange some items. Update state.
+	* Framework/PCProjectBuilder.m: Some rearrangement of log methods.
+	Category 'Logging' is for general logging methods, 'BuildLogging'
+	for stantard output processing, 'ErrorLogging' for error output
+	processing.
+	(logBuildString:newLine:): New name of logString:error:newLine:.
+	Use new name across the file.
 
 2009-03-20 Sergii Stoian <stoyan255@gmail.com>
 
