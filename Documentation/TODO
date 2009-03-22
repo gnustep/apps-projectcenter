@@ -53,10 +53,12 @@ ProjectCenter 0.6
 - Rewrite Preferences (3rd party sections etc.)                 [done!]
 --- Project Builder --------------------------------------------
   - Review build, compiler, linker options setting 
-    (Build Options, Inspector)                                  stoyan
+    (Build Options, Inspector)                                  [done!]
   - Finish parsing build output (compiler errors/warnings, 
     make errors, gnustep-make verbose mode)                     stoyan
-  - Implement interaction with Editor (errors, warnings)        stoyan
+  - Finish interaction with Editor (errors, warnings)           stoyan
+  - Add support for running configurable(Build Options) 
+    command  before and after make                              stoyan
 --- Project Editor ---------------------------------------------
   - review situations when editor is opened                     stoyan
   - implement go to line                                        stoyan
@@ -64,10 +66,12 @@ ProjectCenter 0.6
   - Implement indentation                                       stoyan
   - implement undo inside editor                                stoyan
   - Add and use basic editor preferences (fonts, colors, sizes) [50% done]
+--- Project Inspector ------------------------------------------
+  - Make sections as loadable bundles                           stoyan
+  - Finish functionality of all sections                        stoyan
+  - Review all sections for correct  behaviour                  stoyan
 - Split "Application" to "Application GORM" and 
   "Application Renaissance" project types                       stoyan
-- Review all sections of Project Inspector for correct 
-  behaviour                                                     stoyan
 - Add "Palette" project type                                    ???
 - Add "Component" project type                                  ???
 - Process reported bugs                                         ???
@@ -77,34 +81,38 @@ ProjectCenter 0.6
 ProjectCenter 0.7
 -----------------
 
+- Finish suppor of integrated debugging                         ???
 - Add support for browsing 'Library' category entries           ???
 - Add support for non-project files                             ???
 - Implement symbols indexing. This feature touches Browser
   (class and method list) and Editor (autocompletion)           ???
 - Editor: implement autocompletion                              ???
-- Implement Plist editor for editing project files              ???
 - An initial project wide find feature                          ???
-- Better integration with other tools (GORM)                    ???
-- Think about adopting existing directory tree (more flexible
-  directory configurations)                                     ???
+- Better integration with other tools (GORM). DevKit?           ???
 
 ProjectCenter 0.8
 -----------------
 
 - Implement code folding in Editor                              ???
-- Initial user documentation                                    ???
-- CVS/SVN integration                                           ???
 - Direct code documentation (using autogsdoc)                   ???
+- Think about adopting existing directory tree (more flexible
+  directory configurations)                                     ???
 
 ProjectCenter 0.9
 -----------------
 
 - ProjectCenter localization                                    ???
+- Initial user documentation                                    ???
+- Implement Plist editor for editing project files              ???
 - An initial class browser/documentation feature                ???
 
 ProjectCenter 1.0
 -----------------
 
-  Version 1.0 is aimed at stabilising and optimising existing 
+Version 1.0 is aimed at stabilising and optimising existing 
 features. There will not be any new features since 0.9.
+
+After 1.0
+---------
+- CVS/SVN integration                                           ???
 

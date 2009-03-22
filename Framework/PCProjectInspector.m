@@ -159,16 +159,16 @@
   switch([sender indexOfSelectedItem]) 
     {
     case 0:
-      [inspectorView setContentView: buildAttributesView];
+      [inspectorView setContentView:buildAttributesView];
       break;
     case 1:
-      [inspectorView setContentView: projectAttributesView];
+      [inspectorView setContentView:projectAttributesView];
       break;
     case 2:
-      [inspectorView setContentView: projectDescriptionView];
+      [inspectorView setContentView:projectDescriptionView];
       break;
     case 3:
-      [inspectorView setContentView: fileAttributesView];
+      [inspectorView setContentView:fileAttributesView];
       break;
     }
 
@@ -410,10 +410,12 @@
       ASSIGN(searchItems,nil);
     }
 
+  [searchOrderList reloadData];
+  [searchOrderList deselectAll:self];
+  [searchOrderTF setStringValue:@""];
+
   // Enable/disable buttons according to selected/not selected item
   [self setSearchOrderButtonsState];
-
-  [searchOrderList reloadData];
 }
 
 - (void)searchOrderDoubleClick:(id)sender
@@ -422,13 +424,27 @@
 
 - (void)searchOrderClick:(id)sender
 {
+  int row = [searchOrderList selectedRow];
+  [searchOrderTF setStringValue:[searchItems objectAtIndex:row]];
+  [searchOrderTF selectText:self];
   [self setSearchOrderButtonsState];
 }
 
 - (void)setSearchOrderButtonsState
 {
-  // Disable until implemented
+  // "Set..." button is always off until functionality will be implemented
   [searchOrderSet setEnabled:NO];
+
+  // After loadable inspectors implementation make it work by
+  // detection of text field becoming first responder.
+/*  if ([inspectorPanel firstResponder] == searchOrderTF)
+    {
+      [searchOrderAdd setEnabled:YES];
+    }
+  else
+    {
+      [searchOrderAdd setEnabled:NO];
+    }*/
 
   if ([searchOrderList selectedRow] == -1)
     {
@@ -460,6 +476,11 @@
 - (void)addSearchOrder:(id)sender
 {
   NSString *value = [searchOrderTF stringValue];
+
+  if ([value isEqualToString:@""])
+    {
+      return;
+    }
 
   [searchItems addObject:value];
   [searchOrderTF setStringValue:@""];
