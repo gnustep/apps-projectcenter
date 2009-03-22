@@ -5,6 +5,14 @@
 	notification.
 	(awakeFromNib): Move loading of project properties from here...
 	(loadProjectProperties): ...to here. This is a notification action.
+	* Framework/PCProjectInspector.m:
+	(searchOrderPopupDidChange:): Clean selection in list. Clean text
+	field.
+	(searchOrderClick:): Show value of selected item in text field.
+	(addSearchOrder:): Add check for entered value. More checking will be
+	added
+	in the future.
+	* Documentation/TODO: Rearrange some items. Update state.
 
 2009-03-20 Sergii Stoian <stoyan255@gmail.com>
 
