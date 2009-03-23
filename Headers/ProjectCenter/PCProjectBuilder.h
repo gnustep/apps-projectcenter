@@ -53,6 +53,9 @@ typedef enum _ErrorLevel {
   NSString        *rootBuildDir;
   BOOL            promptOnClean;
 
+  // Options panel
+  BOOL            verboseBuilding;
+
   NSString        *buildStatus;
   NSMutableString *buildStatusTarget;
   NSMutableString *buildTarget;
@@ -96,8 +99,7 @@ typedef enum _ErrorLevel {
   // Output logging
   NSTextView      *logOutput;
   NSMutableString *currentBuildFile;
-  NSMutableArray  *currentBuildPath;
-
+  NSMutableString *currentBuildPath;
 }
 
 - (id)initWithProject:(PCProject *)aProject;
@@ -134,14 +136,20 @@ typedef enum _ErrorLevel {
 
 - (void)logStdOut:(NSNotification *)aNotif;
 - (void)logErrOut:(NSNotification *)aNotif;
-- (void)logBuildString:(NSString *)string newLine:(BOOL)newLine;
-- (void)logData:(NSData *)data error:(BOOL)yn;
+- (void)logData:(NSData *)data error:(BOOL)isError;
 
 @end
 
 @interface PCProjectBuilder (BuildLogging)
 
-- (void)parseBuildLine:(NSString *)string;
+// --- Parsing utilities
+- (BOOL)line:(NSString *)lineString startsWithString:(NSString *)substring;
+- (NSArray *)componentsOfLine:(NSString *)lineString;
+- (void)parseMakeLine:(NSString *)lineString;
+- (void)parseCompilerLine:(NSString *)lineString;
+
+- (void)logBuildString:(NSString *)string newLine:(BOOL)newLine;
+- (NSString *)parseBuildLine:(NSString *)string;
 
 @end
 

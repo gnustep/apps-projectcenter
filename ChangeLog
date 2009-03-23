@@ -1,3 +1,19 @@
+2009-03-23 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilder.m: Change type of currentBuildPath var 
+	to NSMutableString.
+	(buildArguments): Always use messages=yes argument internally.
+	"Verbose ouput" option (Build Options panel) just toogle if build
+	shows as with make argument 'messages=yes' or not.
+	(line:startsWithString:): Implemented line start detection.
+	(parseMakeLine:): Inital implementation of parsing make tool
+	output.
+	(parseCompilerLine:): Add for future implementation.
+	(logBuildString:newLine:): Remove error: argument as it's not used.
+	Method outputs to build view.
+	(parseBuildLine:): Add implementation of entry point of build output
+	parsing.
+
 2009-03-22 Sergii Stoian <stoyan255@gmail.com>
 
 	* Framework/PCProjectBuilderOptions.m:

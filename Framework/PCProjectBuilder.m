@@ -335,11 +335,7 @@
 
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
 
-  // Get arguments from options
-  if ([[projectDict objectForKey:PCBuilderVerbose] isEqualToString:@"YES"])
-    { // default is 'messages=no'
-      [args addObject:@"messages=yes"];
-    }
+  // --- Get arguments from options
   if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"NO"])
     { // default is 'debug=yes'
       [args addObject:@"debug=no"];
@@ -351,6 +347,18 @@
   if ([[projectDict objectForKey:PCBuilderSharedLibs] isEqualToString:@"NO"])
     { // default is 'shared=yes'
       [args addObject:@"shared=no"];
+    }
+  // Always add 'messages=yes' argument. Build output parsing assumes this.
+  [args addObject:@"messages=yes"];
+  // "Verbose ouput" option (Build Options panel) just toogle if build shows
+  // as with argument 'messages=yes' or not.
+  if ([[projectDict objectForKey:PCBuilderVerbose] isEqualToString:@"YES"])
+    {
+      verboseBuilding = YES;
+    }
+  else
+    {
+      verboseBuilding = NO;
     }
 
   return args;
@@ -376,8 +384,8 @@
   nextEL = ELNone;
   lastIndentString = @"";
 
-  currentBuildPath = [[NSMutableArray alloc] initWithCapacity:1];
-  [currentBuildPath addObject:[project projectPath]];
+  currentBuildPath = [[NSMutableString alloc] 
+    initWithString:[project projectPath]];
   currentBuildFile = [[NSMutableString alloc] initWithString:@""];
 
   buildStatus = [NSString stringWithString:@"Building..."];
@@ -750,6 +758,7 @@
 }
 
 // --- Data notifications
+// Both methods make call to logData:error:
 - (void)logStdOut:(NSNotification *)aNotif
 {
   NSData *data;
@@ -798,30 +807,9 @@
     }
 }
 
-// --- Logging and dispatching
-- (void)logBuildString:(NSString *)str
-	       newLine:(BOOL)newLine
-{
-  [logOutput replaceCharactersInRange:
-    NSMakeRange([[logOutput string] length],0) withString:str];
-
-  if (newLine)
-    {
-      [logOutput replaceCharactersInRange:
-	NSMakeRange([[logOutput string] length], 0) withString:@"\n"];
-    }
-  else
-    {
-      [logOutput replaceCharactersInRange:
-	NSMakeRange([[logOutput string] length], 0) withString:@" "];
-    }
-
-  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput string] length], 0)];
-  [logOutput setNeedsDisplay:YES];
-}
-
+// --- Dispatching
 - (void)logData:(NSData *)data
-          error:(BOOL)yn
+          error:(BOOL)isError
 {
   NSString *dataString;
   NSRange  newLineRange;
@@ -835,6 +823,8 @@
   // Process new data
   lineRange.location = 0;
   [errorString appendString:dataString];
+  // 'errorString' collects data across logData:error: calls until 
+  // new line character is appeared.
   while (newLineRange.location != NSNotFound)
     {
       newLineRange = [errorString rangeOfString:@"\n"];
@@ -852,15 +842,14 @@
 	  [errorString deleteCharactersInRange:lineRange];
 
 	  // Send it
-	  if (_isBuilding)
+	  if (_isBuilding && isError)
 	    {
-	      [self parseBuildLine:lineString];
-	      if (yn)
-		{
-		  [self logErrorString:lineString];
-		}
+    	      [self logErrorString:lineString];
 	    }
-	  [self logBuildString:lineString newLine:NO];
+	  else
+	    {
+	      [self logBuildString:lineString newLine:NO];
+	    }
 	}
       else
 	{
@@ -876,41 +865,156 @@
 
 @implementation PCProjectBuilder (BuildLogging)
 
-// Standard out is parsed for detection of directory, file, etc.
-- (void)parseBuildLine:(NSString *)string
+// --- Parsing utilities
+- (BOOL)line:(NSString *)lineString startsWithString:(NSString *)substring
 {
-  NSArray  *components = [string componentsSeparatedByString:@" "];
+  int      position = 0;
+  NSRange  range = NSMakeRange(position,1);
 
-  if (!components)
+  while ([[lineString substringFromRange:range] isEqualToString:@" "])
+    {
+      range.location = ++position;
+    }
+
+/*  NSLog(@"Line '%@' position: %i substring '%@'", 
+	lineString, position, substring);*/
+
+  range = [lineString rangeOfString:substring];
+  if ((range.location == NSNotFound) ||
+      (range.location != position))
+    {
+      return NO;
+    }
+
+  return YES;
+}
+
+// Clean leading spaces and return cleaned array of components
+- (NSArray *)componentsOfLine:(NSString *)lineString
+{
+  NSArray        *lineComponents;
+  NSMutableArray *tempComponents;
+
+  lineComponents = [lineString componentsSeparatedByString:@" "];
+  tempComponents = [NSMutableArray arrayWithArray:lineComponents];
+
+  while ([[tempComponents objectAtIndex:0] isEqualToString:@""])
+    {
+      [tempComponents removeObjectAtIndex:0];
+    }
+
+  return tempComponents;
+}
+
+// Line starts with 'gmake' or 'make'.
+// Changes 'currentBuildPath' if line starts with 
+// "Entering directory" or "Leaving directory".
+// For example: 
+// gmake[1]: Entering directory '/Users/me/Project/Subproject.subproj'
+- (void)parseMakeLine:(NSString *)lineString
+{
+  NSMutableArray *makeLineComponents;
+  NSString       *makeLine;
+  NSString       *pathComponent;
+  NSString       *path;
+
+  makeLineComponents = [NSMutableArray 
+    arrayWithArray:[lineString componentsSeparatedByString:@" "]];
+
+  // Don't check for item at index 0 contents (it's 'gmake[1]:' or 'make[1]:') 
+  // just remove it.
+  [makeLineComponents removeObjectAtIndex:0];
+  makeLine = [makeLineComponents componentsJoinedByString:@" "];
+
+  if ([self line:makeLine startsWithString:@"Entering directory"])
+    {
+      pathComponent = [makeLineComponents objectAtIndex:2];
+      path = [pathComponent
+	substringWithRange:NSMakeRange(1,[pathComponent length]-3)]; 
+//      NSLog(@"Go down to %@", path);
+      [currentBuildPath setString:path];
+    }
+  else if ([self line:makeLine startsWithString:@"Leaving directory"])
+    {
+//      NSLog(@"Go up from %@", [makeLineComponents objectAtIndex:2]);
+      [currentBuildPath 
+	setString:[currentBuildPath stringByDeletingLastPathComponent]];
+    }
+  NSLog(@"Current build path: %@", currentBuildPath);
+}
+
+- (void)parseCompilerLine:(NSString *)lineString
+{
+}
+// --- Parsing utilities end
+
+// Log output
+- (void)logBuildString:(NSString *)string
+	       newLine:(BOOL)newLine
+{
+  NSString *logString;
+
+  if (_isCleaning)
+    {
+      logString = string;
+    }
+  else if (!(logString = [self parseBuildLine:string]))
     {
       return;
     }
 
-  if ([components containsObject:@"Compiling"] &&
-      [components containsObject:@"file"])
-    {
-      NSLog(@"Current build file: %@", [components objectAtIndex:3]);
-      [currentBuildFile setString:[components objectAtIndex:3]];
-    }
-  else if ([components containsObject:@"Entering"] &&
-	   [components containsObject:@"directory"])
-    {
-      NSString *path;
-      NSString *pathComponent = [components objectAtIndex:3];
+  [logOutput replaceCharactersInRange:
+    NSMakeRange([[logOutput string] length],0) withString:logString];
 
-      NSLog(@"Go down to %@", pathComponent);
-      path = [pathComponent
-	substringWithRange:NSMakeRange(1,[pathComponent length]-3)]; 
-      [currentBuildPath addObject:path];
-      NSLog(@"%@", [currentBuildPath lastObject]);
-    }
-  else if ([components containsObject:@"Leaving"] &&
-	   [components containsObject:@"directory"])
+  if (newLine)
     {
-      NSLog(@"Go up from %@", [components objectAtIndex:3]);
-      [currentBuildPath removeLastObject];
-      NSLog(@"%@", [currentBuildPath lastObject]);
+      [logOutput replaceCharactersInRange:
+	NSMakeRange([[logOutput string] length], 0) withString:@"\n"];
     }
+/*  else
+    {
+      [logOutput replaceCharactersInRange:
+	NSMakeRange([[logOutput string] length], 0) withString:@" "];
+    }*/
+
+  [logOutput scrollRangeToVisible:NSMakeRange([[logOutput string] length], 0)];
+  [logOutput setNeedsDisplay:YES];
+}
+
+// Standard out is parsed for detection of directory, file, etc.
+// Gets complete line (ended with '\n') as argument
+- (NSString *)parseBuildLine:(NSString *)string
+{
+  NSArray *components = [self componentsOfLine:string];
+
+  if (!components)
+    {
+      return nil;
+    }
+
+  if ([self line:string startsWithString:@"gmake"] ||
+      [self line:string startsWithString:@"make"])
+    {
+      [self parseMakeLine:string];
+    }
+  else if ([self line:string startsWithString:@"gcc"])
+    {
+      [self parseCompilerLine:string];
+      // Should return:
+      // 'Compiling ...'
+      // 'Linking ...'
+      // 'Creating ...'
+      // 'Copying ...'
+    }
+  else if ([self line:string startsWithString:@"Making all"] ||
+	   [self line:string startsWithString:@"==="])
+    {
+      NSLog(@"%@", string);
+      return string;
+    }
+
+  // return nil;
+  return string;
 }
 
 @end
@@ -929,7 +1033,6 @@
       [errorOutput scrollRowToVisible:[errorArray count]-1];
     }
 }
-
 
 - (NSString *)lineTail:(NSString*)line afterString:(NSString*)string
 {
@@ -1003,7 +1106,7 @@
       NSString *substr;
 
       // file and includedFile
-      file = [[currentBuildPath lastObject] 
+      file = [currentBuildPath  
 	stringByAppendingPathComponent:currentBuildFile];
       if (lastEL == ELIncluded 
 	  || [[components objectAtIndex:0] isEqualToString:lastIncludedFile])
