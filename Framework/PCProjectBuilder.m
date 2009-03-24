@@ -33,6 +33,7 @@
 
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCProject.h>
+#import <ProjectCenter/PCProjectWindow.h>
 #import <ProjectCenter/PCProjectBuilder.h>
 #import <ProjectCenter/PCProjectBuilderOptions.h>
 
@@ -451,10 +452,14 @@
 
 - (void)cleanupAfterMake
 {
+  NSString *statusString;
+
   if (_isBuilding || _isCleaning)
     {
-      [statusField setStringValue:[NSString stringWithFormat: 
-	@"%@ - %@ terminated", [project projectName], buildStatusTarget]];
+      statusString =[NSString stringWithFormat: 
+	@"%@ - %@ terminated", [project projectName], buildStatusTarget];
+      [statusField setStringValue:statusString];
+      [[project projectWindow] updateStatusLineWithText:statusString];
     }
 
   // Restore buttons state
@@ -591,6 +596,7 @@
   warningsCount = 0;
 
   [statusField setStringValue:buildStatus];
+  [[project projectWindow] updateStatusLineWithText:buildStatus];
 
   // Run make task
   [logOutput setString:@""];
@@ -696,6 +702,7 @@
 	}
     }
   [statusField setStringValue:statusString];
+  [[project projectWindow] updateStatusLineWithText:statusString];
   [self logBuildString:logString newLine:YES];
 
   // Run post process if configured
@@ -846,7 +853,7 @@
 	    {
     	      [self logErrorString:lineString];
 	    }
-	  else
+	  else // Cleaning or building output string
 	    {
 	      [self logBuildString:lineString newLine:NO];
 	    }
@@ -943,8 +950,29 @@
   NSLog(@"Current build path: %@", currentBuildPath);
 }
 
-- (void)parseCompilerLine:(NSString *)lineString
+// Should return:
+// 'Compiling ...'
+// 'Linking ...'
+// Also updates currentBuildFile
+- (NSString *)parseCompilerLine:(NSString *)lineString
 {
+  NSArray  *lineComponents = [self componentsOfLine:lineString];
+  NSString *outputString = nil;
+
+  if ([lineComponents containsObject:@"-c"])
+    {
+      [currentBuildFile setString:[lineComponents objectAtIndex:1]];
+      outputString = [NSString 
+	stringWithFormat:@" Compiling %@...\n", currentBuildFile];
+    }
+  else if ([lineComponents containsObject:@"-rdynamic"])
+    {
+      outputString = [NSString 
+	stringWithFormat:@" Linking %@...\n", 
+	[lineComponents objectAtIndex:[lineComponents indexOfObject:@"-o"]+1]];
+    }
+
+  return outputString;
 }
 // --- Parsing utilities end
 
@@ -985,13 +1013,15 @@
 // Gets complete line (ended with '\n') as argument
 - (NSString *)parseBuildLine:(NSString *)string
 {
-  NSArray *components = [self componentsOfLine:string];
+  NSArray  *components = [self componentsOfLine:string];
+  NSString *parsedString = nil;
 
   if (!components)
     {
       return nil;
     }
 
+  // Do current path detection
   if ([self line:string startsWithString:@"gmake"] ||
       [self line:string startsWithString:@"make"])
     {
@@ -999,28 +1029,35 @@
     }
   else if ([self line:string startsWithString:@"gcc"])
     {
-      [self parseCompilerLine:string];
-      // Should return:
-      // 'Compiling ...'
-      // 'Linking ...'
-      // 'Creating ...'
-      // 'Copying ...'
+      parsedString = [self parseCompilerLine:string];
     }
   else if ([self line:string startsWithString:@"Making all"] ||
 	   [self line:string startsWithString:@"==="])
     {
-      NSLog(@"%@", string);
-      return string;
+      parsedString = string;
     }
 
-  // return nil;
-  return string;
+  if (parsedString && ![self line:parsedString startsWithString:@"==="])
+    {
+      [statusField setStringValue:parsedString];
+      [[project projectWindow] updateStatusLineWithText:parsedString];
+    }
+
+  if (verboseBuilding)
+    {
+      return string;
+    }
+  else
+    {
+      return parsedString;
+    }
 }
 
 @end
 
 @implementation PCProjectBuilder (ErrorLogging)
 
+// Entry point for error logging
 - (void)logErrorString:(NSString *)string
 {
   NSArray *items;
@@ -1034,6 +1071,7 @@
     }
 }
 
+// Used for warning or error message retrieval
 - (NSString *)lineTail:(NSString*)line afterString:(NSString*)string
 {
   NSRange substrRange;
@@ -1242,6 +1280,7 @@
   return items;
 }
 
+// --- Error output table delegate methods
 - (int)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (errorArray != nil && aTableView == errorOutput)

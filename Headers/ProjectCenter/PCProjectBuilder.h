@@ -146,7 +146,7 @@ typedef enum _ErrorLevel {
 - (BOOL)line:(NSString *)lineString startsWithString:(NSString *)substring;
 - (NSArray *)componentsOfLine:(NSString *)lineString;
 - (void)parseMakeLine:(NSString *)lineString;
-- (void)parseCompilerLine:(NSString *)lineString;
+- (NSString *)parseCompilerLine:(NSString *)lineString;
 
 - (void)logBuildString:(NSString *)string newLine:(BOOL)newLine;
 - (NSString *)parseBuildLine:(NSString *)string;
