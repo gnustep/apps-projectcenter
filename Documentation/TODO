@@ -96,14 +96,14 @@ ProjectCenter 0.8
 - Implement code folding in Editor                              ???
 - Direct code documentation (using autogsdoc)                   ???
 - Think about adopting existing directory tree (more flexible
-  directory configurations)                                     ???
+  directory configurations) [bug #22008]                        ???
 
 ProjectCenter 0.9
 -----------------
 
 - ProjectCenter localization                                    ???
 - Initial user documentation                                    ???
-- Implement Plist editor for editing project files              ???
+- Implement Plist editor for editing project files[bug #22124]  ???
 - An initial class browser/documentation feature                ???
 
 ProjectCenter 1.0
