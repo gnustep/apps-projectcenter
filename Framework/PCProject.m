@@ -334,9 +334,8 @@ NSString
   NSString            *projectFile = nil;
   NSMutableDictionary *projectFileDict = nil;
 
-  projectFile = [projectPath stringByAppendingPathComponent:@"PC.project"];
-  projectFileDict = [NSMutableDictionary 
-    dictionaryWithContentsOfFile:projectFile];
+  projectFile = [projectPath stringByAppendingPathComponent:[NSUserName() stringByAppendingPathExtension:@"project"]];
+  projectFileDict = [[NSMutableDictionary alloc] initWithCapacity:4];
 
   // Project Window
   [windows setObject:[projectWindow stringWithSavedFrame]
@@ -413,11 +412,14 @@ NSString
   // Don't notify about projectDict changes
   [projectDict setObject:windows forKey:@"PC_WINDOWS"];
 
-  // Now save it directly to PC.project file
+  // Now save it directly to username.project file
   [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
+
   [projectFileDict writeToFile:projectFile atomically:YES];
   
 //  PCLogInfo(self, @"Windows and geometries saved");
+
+  [projectFileDict release];
 
   return YES;
 }
