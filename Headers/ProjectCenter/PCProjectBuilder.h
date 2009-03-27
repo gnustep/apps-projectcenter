@@ -63,8 +63,10 @@ typedef enum _ErrorLevel {
   SEL             postProcess;
   NSTask          *makeTask;
 
-  NSFileHandle    *readHandle;
-  NSFileHandle    *errorReadHandle;
+  NSPipe          *stdOutPipe;
+  NSPipe          *stdErrorPipe;
+  NSFileHandle    *stdOutHandle;
+  NSFileHandle    *stdErrorHandle;
 
   BOOL            _isBuilding;
   BOOL            _isCleaning;

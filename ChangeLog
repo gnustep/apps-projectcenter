@@ -1,3 +1,21 @@
+2009-03-28 Sergii Stoian <stoyan255@gmail.com>
+
+	* Framework/PCProjectBuilder.m: 
+	(updateTargetField): Process args correctly when it has nil value.
+	(startBuild): Move initializing of currentBuildPath and 
+	currentBuildFile from here...
+	(build:):...to here. Rename pipes and handles vars to more appropriate
+	names. Initialize pipes with alloc, init.
+	(startClean): Use buildArguments as in startBuild method.
+	(stopMake:): It seems that [makeTask isRunning] works correctly -
+	use it. Remove comment.
+	(cleanupAfterMake): Use _isBuilding and _isCleaning vars to detect
+	running mode. Release currentBuildPath and currentBuildFile here.
+	(buildDidTerminate): Release pipes here.
+	(logData:error:): Initialize newLineRange.location before entering
+	cycle.
+	(logBuildString:newLine:): Cleanup.
+
 2009-03-27 03:00-EDT Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/PCProject.m: Implement openWrapperAtPath:

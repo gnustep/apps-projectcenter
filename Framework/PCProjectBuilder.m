@@ -274,6 +274,8 @@
   args = [[[project projectDict] objectForKey:PCBuilderArguments] 
     componentsJoinedByString:@" "];
 
+  if (!args) args = @" ";
+
   s = [NSString stringWithFormat:@"%@ with args '%@'", buildTarget, args];
 
   [targetField setStringValue:s];
@@ -373,21 +375,16 @@
       return;
     }
 
-  [buildArgs addObject:buildTarget];
-
   // Set build arguments
+  [buildArgs addObject:buildTarget];
   [buildArgs addObjectsFromArray:[self buildArguments]];
  
-  NSLog(@"ProjectBuilder arguments: %@", buildArgs);
+//  NSLog(@"ProjectBuilder arguments: %@", buildArgs);
 
   currentEL = ELNone;
   lastEL = ELNone;
   nextEL = ELNone;
   lastIndentString = @"";
-
-  currentBuildPath = [[NSMutableString alloc] 
-    initWithString:[project projectPath]];
-  currentBuildFile = [[NSMutableString alloc] initWithString:@""];
 
   buildStatus = [NSString stringWithString:@"Building..."];
   [buildStatusTarget setString:@"Build"];
@@ -415,9 +412,12 @@
 	}
     }
 
+  // Set build arguments
+  [buildArgs addObject:@"clean"];
+  [buildArgs addObjectsFromArray:[self buildArguments]];
+
   buildStatus = [NSString stringWithString:@"Cleaning..."];
   [buildStatusTarget setString:@"Clean"];
-  [buildArgs addObject:@"clean"];
   [buildButton setEnabled:NO];
   [self build:self];
   _isCleaning = YES;
@@ -425,9 +425,7 @@
 
 - (BOOL)stopMake:(id)sender
 {
-  // [makeTask isRunning] doesn't work here.
-  // "waitpid 7045, result -1, error No child processes" is printed.
-  if (makeTask)
+  if (makeTask && [makeTask isRunning])
     {
       PCLogStatus(self, @"task will terminate");
       NS_DURING
@@ -463,12 +461,12 @@
     }
 
   // Restore buttons state
-  if ([buildStatusTarget isEqualToString:@"Build"])
+  if (_isBuilding)
     {
       [buildButton setState:NSOffState];
       [cleanButton setEnabled:YES];
     }
-  else if ([buildStatusTarget isEqualToString:@"Clean"])
+  else if (_isCleaning)
     {
       [cleanButton setState:NSOffState];
       [buildButton setEnabled:YES];
@@ -477,11 +475,8 @@
   [buildArgs removeAllObjects];
   [buildStatusTarget setString:@"Default"];
 
-  if (_isBuilding)
-    {
-      [currentBuildPath release];
-      [currentBuildFile release];
-    }
+  [currentBuildPath release];
+  [currentBuildFile release];
 
   _isBuilding = NO;
   _isCleaning = NO;
@@ -561,9 +556,6 @@
 
 - (void)build:(id)sender
 {
-  NSPipe *logPipe;
-  NSPipe *errorPipe;
-
   // Checking build conditions
   if ([self prebuildCheck] == NO)
     {
@@ -571,26 +563,32 @@
       return;
     }
 
+  // Make runtime vars
+  currentBuildPath = [[NSMutableString alloc] 
+    initWithString:[project projectPath]];
+  currentBuildFile = [[NSMutableString alloc] initWithString:@""];
+
   // Prepearing to building
-  logPipe = [NSPipe pipe];
-  readHandle = [logPipe fileHandleForReading];
-  [readHandle waitForDataInBackgroundAndNotify];
+  _isLogging = YES;
+  stdOutPipe = [[NSPipe alloc] init];
+  stdOutHandle = [stdOutPipe fileHandleForReading];
+  [stdOutHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver:self 
                           selector:@selector(logStdOut:)
 			      name:NSFileHandleDataAvailableNotification
-			    object:readHandle];
-  _isLogging = YES;
+			    object:stdOutHandle];
 
-  errorPipe = [NSPipe pipe];
-  errorReadHandle = [errorPipe fileHandleForReading];
-  [errorReadHandle waitForDataInBackgroundAndNotify];
+  _isErrorLogging = YES;
+  stdErrorPipe = [[NSPipe alloc] init];
+  stdErrorHandle = [stdErrorPipe fileHandleForReading];
+  [stdErrorHandle waitForDataInBackgroundAndNotify];
 
   [NOTIFICATION_CENTER addObserver:self 
                           selector:@selector(logErrOut:) 
 			      name:NSFileHandleDataAvailableNotification
-			    object:errorReadHandle];
-  _isErrorLogging = YES;
+			    object:stdErrorHandle];
+
   [errorsCountField setStringValue:[NSString stringWithString:@""]];
   errorsCount = 0;
   warningsCount = 0;
@@ -612,8 +610,8 @@
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[project projectPath]];
   [makeTask setLaunchPath:buildTool];
-  [makeTask setStandardOutput:logPipe];
-  [makeTask setStandardError:errorPipe];
+  [makeTask setStandardOutput:stdOutPipe];
+  [makeTask setStandardError:stdErrorPipe];
 
   [self logBuildString:
     [NSString stringWithFormat:@"=== %@ started ===", buildStatusTarget]
@@ -666,16 +664,21 @@
   NS_ENDHANDLER
  
   // Finish task
+  // TODO: Strange behaviour of pipe and file handlers alloc/release. Also
+  // they have big retain count here (2 or 3). Why? Notification retains it?
   RELEASE(makeTask);
   makeTask = nil;
 
-  // Wait for logging end
+  // Wait while logging ends
   while (_isLogging || _isErrorLogging) 
     {
       [[NSRunLoop currentRunLoop] runMode:NSDefaultRunLoopMode
 			       beforeDate:[NSDate distantFuture]];
     }
-    
+
+  RELEASE(stdOutPipe);
+  RELEASE(stdErrorPipe);
+
   [self updateErrorsCountField];
 
   if (status == 0)
@@ -712,8 +715,6 @@
       postProcess = NULL;
     }*/
 
-  _isBuilding = NO;
-  _isCleaning = NO;
   [self cleanupAfterMake];
 }
 
@@ -765,28 +766,26 @@
 }
 
 // --- Data notifications
-// Both methods make call to logData:error:
+// Both methods make call to dipatcher logData:error:
 - (void)logStdOut:(NSNotification *)aNotif
 {
   NSData *data;
 
-//  NSLog(@"logStdOut");
-
-  if ((data = [readHandle availableData]) && [data length] > 0)
+  if ((data = [stdOutHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:NO];
     }
 
   if (makeTask)
     {
-      [readHandle waitForDataInBackgroundAndNotify];
+      [stdOutHandle waitForDataInBackgroundAndNotify];
     }
   else
     {
-      _isLogging = NO;
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
-			           object:readHandle];
+			           object:stdOutHandle];
+      _isLogging = NO;
     }
 }
 
@@ -794,23 +793,21 @@
 {
   NSData *data;
 
-//  NSLog(@"logErrOut");
-  
-  if ((data = [errorReadHandle availableData]) && [data length] > 0)
+  if ((data = [stdErrorHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:YES];
     }
 
   if (makeTask)
     {
-      [errorReadHandle waitForDataInBackgroundAndNotify];
+      [stdErrorHandle waitForDataInBackgroundAndNotify];
     }
   else
     {
-      _isErrorLogging = NO;
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
-			           object:errorReadHandle];
+			           object:stdErrorHandle];
+      _isErrorLogging = NO;
     }
 }
 
@@ -829,9 +826,10 @@
 			    
   // Process new data
   lineRange.location = 0;
-  [errorString appendString:dataString];
+  newLineRange.location = 0;
   // 'errorString' collects data across logData:error: calls until 
   // new line character is appeared.
+  [errorString appendString:dataString];
   while (newLineRange.location != NSNotFound)
     {
       newLineRange = [errorString rangeOfString:@"\n"];
@@ -848,12 +846,15 @@
 	  lineString = [errorString substringWithRange:lineRange];
 	  [errorString deleteCharactersInRange:lineRange];
 
-	  // Send it
+	  // Send it to error view
+	  // Do not process make errors in other mode but building. Maybe
+	  // some day...
 	  if (_isBuilding && isError)
 	    {
     	      [self logErrorString:lineString];
 	    }
-	  else // Cleaning or building output string
+	  // Cleaning or building standard out string
+	  if (!isError || verboseBuilding)
 	    {
 	      [self logBuildString:lineString newLine:NO];
 	    }
@@ -925,6 +926,8 @@
   NSString       *pathComponent;
   NSString       *path;
 
+//  NSLog(@"parseMakeLine: %@", lineString);
+
   makeLineComponents = [NSMutableArray 
     arrayWithArray:[lineString componentsSeparatedByString:@" "]];
 
@@ -947,7 +950,7 @@
       [currentBuildPath 
 	setString:[currentBuildPath stringByDeletingLastPathComponent]];
     }
-  NSLog(@"Current build path: %@", currentBuildPath);
+//  NSLog(@"Current build path: %@", currentBuildPath);
 }
 
 // Should return:
@@ -980,13 +983,9 @@
 - (void)logBuildString:(NSString *)string
 	       newLine:(BOOL)newLine
 {
-  NSString *logString;
+  NSString *logString = [self parseBuildLine:string];
 
-  if (_isCleaning)
-    {
-      logString = string;
-    }
-  else if (!(logString = [self parseBuildLine:string]))
+  if (!logString)
     {
       return;
     }
@@ -999,11 +998,6 @@
       [logOutput replaceCharactersInRange:
 	NSMakeRange([[logOutput string] length], 0) withString:@"\n"];
     }
-/*  else
-    {
-      [logOutput replaceCharactersInRange:
-	NSMakeRange([[logOutput string] length], 0) withString:@" "];
-    }*/
 
   [logOutput scrollRangeToVisible:NSMakeRange([[logOutput string] length], 0)];
   [logOutput setNeedsDisplay:YES];
@@ -1021,19 +1015,18 @@
       return nil;
     }
 
-  // Do current path detection
   if ([self line:string startsWithString:@"gmake"] ||
       [self line:string startsWithString:@"make"])
-    {
+    {// Do current path detection
       [self parseMakeLine:string];
     }
   else if ([self line:string startsWithString:@"gcc"])
-    {
+    {// Parse compiler output
       parsedString = [self parseCompilerLine:string];
     }
-  else if ([self line:string startsWithString:@"Making all"] ||
+  else if ([self line:string startsWithString:@"Making"] ||
 	   [self line:string startsWithString:@"==="])
-    {
+    {// It's a gnustep-make and self output
       parsedString = string;
     }
 
