@@ -205,13 +205,10 @@
 // --- PCProject overridings
 //----------------------------------------------------------------------------
 
-- (PCProject *)openWithDictionaryAt:(NSString *)path
+- (PCProject *)openWithWrapperAt:(NSString *)path
 {
-  NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
-
-  [self assignProjectDict:dict atPath:path];
+  [super openWithWrapperAt: path];
   [self loadInfoFile];
-
   return self;
 }
 

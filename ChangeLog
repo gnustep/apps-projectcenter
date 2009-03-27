@@ -1,3 +1,14 @@
+2009-03-27 03:00-EDT Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/PCProject.m: Implement openWrapperAtPath:
+	* Framework/PCProjectManager.m: Change method call to use
+	openWrapperAtPath:
+	* Headers/ProjectCenter/PCProject.h: Add wrapperPath ivar.
+	* Modules/Projects/Application/PCAppProject.m:
+	Change method to call super.
+	* Modules/Projects/Tool/PCToolProject.m: Change method to 
+	call super.
+
 2009-03-27 01:18-EDT Gregory John Casamento <greg_casamento@yahoo.com>
 
 	* Framework/English.lproj/Builder.gorm: Update icons for stop and

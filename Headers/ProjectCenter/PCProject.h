@@ -74,6 +74,7 @@ extern NSString *PCProjectBreakpointNotification;
   PCProject            *rootProject;
   PCProject            *superProject;
   NSFileWrapper        *projectFileWrapper;
+  NSString             *wrapperPath;
 }
 
 // ============================================================================
@@ -81,8 +82,7 @@ extern NSString *PCProjectBreakpointNotification;
 // ============================================================================
 
 - (id)init;
-//- (id)initWithProjectDictionary:(NSDictionary *)dict path:(NSString *)path;
-- (PCProject *)openWithDictionaryAt:(NSString *)path;
+- (PCProject *)openWithWrapperAt:(NSString *)path;
 - (void)dealloc;
 - (void)loadPreferences:(NSNotification *)aNotification;
 

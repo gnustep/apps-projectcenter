@@ -572,7 +572,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 					 protocol:@protocol(ProjectType)];
     }
 
-  if (!project || ![project openWithDictionaryAt:aPath]) 
+  if (!project || ![project openWithWrapperAt:aPath]) 
     {
       NSRunAlertPanel(@"Open Project",
     		      @"Unable to open project '%@'.\nReport bug, please!",
@@ -648,7 +648,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSArray  *files = nil;
   NSString *filePath = nil;
-  NSArray  *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
+  NSArray  *fileTypes = [NSArray arrayWithObjects:@"pcproj",@"project",nil];
 
   files = [fileManager filesOfTypes:fileTypes
 			  operation:PCOpenProjectOperation

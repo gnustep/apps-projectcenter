@@ -84,11 +84,55 @@ NSString
   return self;
 }
 
-- (PCProject *)openWithDictionaryAt:(NSString *)path
+- (PCProject *)openWithWrapperAt:(NSString *)path
 {
-  NSDictionary *dict = [NSDictionary dictionaryWithContentsOfFile:path];
+  NSString *aPath = path;
 
-  [self assignProjectDict:dict atPath:path];
+  if([[aPath lastPathComponent] isEqual: @"PC.project"])
+    {
+      NSString *newPath = [aPath stringByDeletingLastPathComponent];
+      if([[[newPath lastPathComponent] pathExtension] 
+	   isEqual: @"pcproj"] == NO)
+	{	  
+	  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
+
+	  projectFileWrapper = [[NSFileWrapper alloc] 
+				 initDirectoryWithFileWrappers: 
+				   [NSMutableDictionary dictionaryWithCapacity: 3]];
+	  [projectFileWrapper addRegularFileWithContents:
+				[NSData dataWithBytes: [[dict description] cString]
+					length: [[dict description] length]]
+			      preferredFilename: @"PC.project"];
+	  [self assignProjectDict: dict
+		atPath: path];
+
+	  return self;
+	}
+      else
+	{
+	  aPath = newPath;
+	}
+    }
+
+  projectFileWrapper = [[NSFileWrapper alloc] initWithPath: aPath];
+  if(projectFileWrapper != nil)
+    {
+      NSDictionary *wrappers = [projectFileWrapper fileWrappers];
+      NSData *data = [[wrappers objectForKey: @"PC.project"] regularFileContents];
+      NSData *userData = [[wrappers objectForKey: [NSUserName() stringByAppendingPathExtension: @"project"]]
+			   regularFileContents];
+      NSMutableDictionary *dict = [[[[NSString alloc] initWithData: data
+						      encoding: NSASCIIStringEncoding] 
+				     propertyList] mutableCopy];
+      NSDictionary *udict = [[[NSString alloc] initWithData: userData
+					       encoding: NSASCIIStringEncoding] 
+			      propertyList];
+
+      [dict addEntriesFromDictionary: udict]; 
+      [self assignProjectDict:dict atPath: aPath];
+
+      return self;
+    }
 
   return self;
 }
@@ -151,7 +195,8 @@ NSString
   projectDict = [[NSMutableDictionary alloc] initWithDictionary:pDict];
 
   // Project path
-  if ([[pPath lastPathComponent] isEqualToString:@"PC.project"])
+  if ([[pPath lastPathComponent] isEqualToString:@"PC.project"] ||
+      [[[pPath lastPathComponent] pathExtension] isEqualToString:@"pcproj"])
     {
       [self setProjectPath:[pPath stringByDeletingLastPathComponent]];
     }
@@ -337,7 +382,7 @@ NSString
   NSString            *projectFile = nil;
   NSMutableDictionary *projectFileDict = nil;
 
-  projectFile = [projectPath stringByAppendingPathComponent:[NSUserName() stringByAppendingPathExtension:@"project"]];
+  projectFile = [NSUserName() stringByAppendingPathExtension:@"project"];
   projectFileDict = [[NSMutableDictionary alloc] initWithCapacity:4];
 
   // Project Window
@@ -407,8 +452,16 @@ NSString
   // Now save it directly to username.project file
   [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
 
-  [projectFileDict writeToFile:projectFile atomically:YES];
+  // add the file and write the wrapper.
+  [projectFileWrapper addRegularFileWithContents:
+			[NSData dataWithBytes: [[projectFileDict description] cString]
+				length: [[projectFileDict description] length]]
+		      preferredFilename: projectFile];
+  [projectFileWrapper writeToFile: wrapperPath 
+		      atomically: YES 
+		      updateFilenames: YES];
   
+  // release
   [projectFileDict release];
 
   return YES;
@@ -420,13 +473,17 @@ NSString
   int            spCount = [loadedSubprojects count];
   int            i;
   NSString *wrapperFile = [projectName stringByAppendingPathExtension: @"pcproj"];
-  NSString *wrapperPath = [projectPath stringByAppendingPathComponent: wrapperFile];
   NSString *file = @"PC.project";
   NSString *backup = [wrapperPath stringByAppendingPathExtension:@"backup"];
-  
+  NSMutableDictionary *dict = [projectDict mutableCopy];
+
+  // remove key..
+  [dict removeObjectForKey: @"PC_WINDOWS"];
+
   // initialize the wrapper...
   projectFileWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers: 
 						[NSMutableDictionary dictionaryWithCapacity: 3]];  
+  wrapperPath = [projectPath stringByAppendingPathComponent: wrapperFile];
 
   // load subprojects...
   for (i = 0; i < spCount; i++)
@@ -461,8 +518,8 @@ NSString
   [projectDict setObject: [[NSCalendarDate date] description]
                   forKey: PCLastEditing];
   [projectFileWrapper addRegularFileWithContents:
-			[NSData dataWithBytes: [[projectDict description] cString]
-				length: [[projectDict description] length]]
+			[NSData dataWithBytes: [[dict description] cString]
+				length: [[dict description] length]]
 		      preferredFilename: file];
   if ([projectFileWrapper
 	writeToFile:wrapperPath
