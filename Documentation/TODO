@@ -45,7 +45,7 @@ ProjectCenter 0.6
 
 - Create new Info panel                                         [done!]
 - Implement support for integrated debugging                    [90% done]
-- change project type from file to bundle                       casamento/mottola
+- change project type from file to bundle                       [done!] casamento/mottola
 - Finish FileNameIcon (draggable, files can be dragged to it)   [done!]
 - More options for file creation                                [done!]
 - Review all situations when dialogs must be popped up          [done!]
@@ -76,7 +76,7 @@ ProjectCenter 0.6
 - Add "Component" project type                                  ???
 - Process reported bugs                                         ???
 - Think about imlementing pending adding/removal of files       ???
-- New icons. Need volonteers!!!                                 ???
+- New icons. Need volunteers!!!                                 ???
 
 ProjectCenter 0.7
 -----------------
