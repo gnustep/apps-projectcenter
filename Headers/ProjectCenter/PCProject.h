@@ -73,6 +73,7 @@ extern NSString *PCProjectBreakpointNotification;
   BOOL                 isSubproject;
   PCProject            *rootProject;
   PCProject            *superProject;
+  NSFileWrapper        *projectFileWrapper;
 }
 
 // ============================================================================

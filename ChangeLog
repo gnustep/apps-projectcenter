@@ -1,6 +1,15 @@
+2009-03-27 01:18-EDT Gregory John Casamento <greg_casamento@yahoo.com>
+
+	* Framework/English.lproj/Builder.gorm: Update icons for stop and
+	options.
+	* Framework/PCProject.m: Added code to put files into packages when
+	saving.
+	* Headers/ProjectCenter/PCProject.h: Added ivar for file wrapper.
+
 2009-03-27 Riccardo Mottola <rmottola@users.sf.net>
 
-	* Framework/PCProject.m: save windows placements to a separate file with the username as name
+	* Framework/PCProject.m: save windows placements to a separate 
+	file with the username as name
 
 2009-03-24 Sergii Stoian <stoyan255@gmail.com>
 

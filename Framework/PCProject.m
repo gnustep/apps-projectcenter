@@ -48,6 +48,9 @@
 #import "Modules/Preferences/Saving/PCSavingPrefs.h"
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
+// #import <AppKit/NSFileWrapper.h>
+// #import <Foundation/NSData.h>
+
 NSString 
 *PCProjectDictDidChangeNotification = @"PCProjectDictDidChangeNotification";
 NSString 
@@ -385,17 +388,6 @@ NSString
       [windows removeObjectForKey:@"ProjectLaunch"];
     }
 
-  // Project Inspector
-/*  if ([[projectManager inspectorPanel] isVisible])
-    {
-      [windows setObject:[[projectManager inspectorPanel] stringWithSavedFrame]
-                  forKey:@"ProjectInspector"];
-    }
-  else
-    {
-      [windows removeObjectForKey:@"ProjectInspector"];
-    }*/
-
   // Loaded Files
   if (projectLoadedFiles && [[projectManager loadedFilesPanel] isVisible])
     {
@@ -417,8 +409,6 @@ NSString
 
   [projectFileDict writeToFile:projectFile atomically:YES];
   
-//  PCLogInfo(self, @"Windows and geometries saved");
-
   [projectFileDict release];
 
   return YES;
@@ -426,12 +416,19 @@ NSString
 
 - (BOOL)save
 {
-  NSString *file = [projectPath stringByAppendingPathComponent:@"PC.project"];
-  NSString       *backup = [file stringByAppendingPathExtension:@"backup"];
   NSFileManager  *fm = [NSFileManager defaultManager];
   int            spCount = [loadedSubprojects count];
   int            i;
+  NSString *wrapperFile = [projectName stringByAppendingPathExtension: @"pcproj"];
+  NSString *wrapperPath = [projectPath stringByAppendingPathComponent: wrapperFile];
+  NSString *file = @"PC.project";
+  NSString *backup = [wrapperPath stringByAppendingPathExtension:@"backup"];
+  
+  // initialize the wrapper...
+  projectFileWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers: 
+						[NSMutableDictionary dictionaryWithCapacity: 3]];  
 
+  // load subprojects...
   for (i = 0; i < spCount; i++)
     {
       [[loadedSubprojects objectAtIndex:i] save];
@@ -447,9 +444,11 @@ NSString
     }
 
   // Save backup
-  if ((keepBackup == YES) && [fm isReadableFileAtPath:file]) 
+  if ((keepBackup == YES) && [fm isReadableFileAtPath: wrapperPath]) 
     {
-      if ([fm copyPath:file toPath:backup handler:nil] == NO)
+      if ([fm copyPath: wrapperPath 
+	      toPath: backup 
+	      handler:nil] == NO)
 	{
 	  NSRunAlertPanel(@"Save Project",
 			  @"Couldn't save project backup file",
@@ -459,9 +458,16 @@ NSString
     }
 
   // Save project file
-  [projectDict setObject:[[NSCalendarDate date] description]
-                  forKey:PCLastEditing];
-  if ([projectDict writeToFile:file atomically:YES] == NO)
+  [projectDict setObject: [[NSCalendarDate date] description]
+                  forKey: PCLastEditing];
+  [projectFileWrapper addRegularFileWithContents:
+			[NSData dataWithBytes: [[projectDict description] cString]
+				length: [[projectDict description] length]]
+		      preferredFilename: file];
+  if ([projectFileWrapper
+	writeToFile:wrapperPath
+	atomically:YES 
+	updateFilenames: YES] == NO)
     {
       NSRunAlertPanel(@"Save Project",
 		      @"Couldn't save project file",
