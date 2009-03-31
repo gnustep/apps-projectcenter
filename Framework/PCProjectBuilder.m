@@ -26,7 +26,6 @@
 #import <AppKit/AppKit.h>
 
 #import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCSplitView.h>
 #import <ProjectCenter/PCButton.h>
 
 #import <ProjectCenter/PCFileManager.h>

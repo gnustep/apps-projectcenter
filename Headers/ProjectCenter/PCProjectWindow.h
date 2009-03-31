@@ -34,7 +34,6 @@
 @class PCProjectBrowser;
 @class PCProjectLoadedFiles;
 @class PCButton;
-@class PCSplitView;
 
 @interface PCProjectWindow : NSObject
 {
@@ -55,8 +54,8 @@
 
   NSView      *browserView;
 
-  PCSplitView *h_split;
-  PCSplitView *v_split;
+  NSSplitView *h_split;
+  NSSplitView *v_split;
 
   NSBox       *customView;
   NSResponder *firstResponder;

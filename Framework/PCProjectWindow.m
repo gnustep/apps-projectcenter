@@ -24,7 +24,6 @@
 */
 
 #import <ProjectCenter/PCDefines.h>
-#import <ProjectCenter/PCSplitView.h>
 #import <ProjectCenter/PCButton.h>
 
 #import <ProjectCenter/PCProjectManager.h>
@@ -119,7 +118,7 @@
     {
       rect.size.height = 185;
     }
-  v_split = [[PCSplitView alloc] initWithFrame:rect];
+  v_split = [[NSSplitView alloc] initWithFrame:rect];
   [v_split setAutoresizingMask:(NSViewWidthSizable | NSViewHeightSizable)];
   [v_split setVertical:YES];
   [v_split setDelegate:self];
