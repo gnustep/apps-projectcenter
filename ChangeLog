@@ -1,3 +1,14 @@
+﻿2009-04-15 Sergii Stoian <stoyan255@gmail.com>
+	
+	* Framework/PCProjectBuilder.m:
+	(-startBuild:), (-startClean:): Move _isBuilding and _isCleaning vars
+	before build: method call for correct determination in cleanupAfterMake
+	method.
+	(build:): Initialize build time vars before call to preBuildChecj 
+	method.
+	* Framework/PCProjectBuilderOptions.m: Do not notify when changing 
+	project properties (build options).
+
 2009-03-31 Riccardo Mottola <rmottola@users.sf.net>
 	
 	* PCSplitView: removed and replaced with standard NSSplitView in all instances

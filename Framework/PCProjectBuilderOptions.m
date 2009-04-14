@@ -143,7 +143,7 @@
   [args removeObject:@""];
   [args removeObject:@" "];
 
-  [project setProjectDictObject:args forKey:PCBuilderArguments notify:YES];
+  [project setProjectDictObject:args forKey:PCBuilderArguments notify:NO];
 
   [delegate targetDidSet:[targetPopup titleOfSelectedItem]];
 }
@@ -162,7 +162,7 @@
   if (sender == sharedLibsButton)
     key = PCBuilderSharedLibs;
 
-  [project setProjectDictObject:value forKey:key notify:YES];
+  [project setProjectDictObject:value forKey:key notify:NO];
 }
 
 - (void)loadProjectProperties:(NSNotification *)aNotif

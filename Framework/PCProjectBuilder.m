@@ -388,8 +388,8 @@
   buildStatus = [NSString stringWithString:@"Building..."];
   [buildStatusTarget setString:@"Build"];
   [cleanButton setEnabled:NO];
-  [self build:self];
   _isBuilding = YES;
+  [self build:self];
 }
 
 - (void)startClean:(id)sender
@@ -418,8 +418,8 @@
   buildStatus = [NSString stringWithString:@"Cleaning..."];
   [buildStatusTarget setString:@"Clean"];
   [buildButton setEnabled:NO];
-  [self build:self];
   _isCleaning = YES;
+  [self build:self];
 }
 
 - (BOOL)stopMake:(id)sender
@@ -464,21 +464,21 @@
     {
       [buildButton setState:NSOffState];
       [cleanButton setEnabled:YES];
+      _isBuilding = NO;
     }
   else if (_isCleaning)
     {
       [cleanButton setState:NSOffState];
       [buildButton setEnabled:YES];
+      _isCleaning = NO;
     }
 
   [buildArgs removeAllObjects];
   [buildStatusTarget setString:@"Default"];
 
+  // Initiated in [self build:]
   [currentBuildPath release];
   [currentBuildFile release];
-
-  _isBuilding = NO;
-  _isCleaning = NO;
 }
 
 // --- Actions
@@ -555,17 +555,18 @@
 
 - (void)build:(id)sender
 {
+  // Make runtime vars
+  // Released in [self cleanupAfterMake]
+  currentBuildPath = [[NSMutableString alloc] 
+    initWithString:[project projectPath]];
+  currentBuildFile = [[NSMutableString alloc] initWithString:@""];
+
   // Checking build conditions
   if ([self prebuildCheck] == NO)
     {
       [self cleanupAfterMake];
       return;
     }
-
-  // Make runtime vars
-  currentBuildPath = [[NSMutableString alloc] 
-    initWithString:[project projectPath]];
-  currentBuildFile = [[NSMutableString alloc] initWithString:@""];
 
   // Prepearing to building
   _isLogging = YES;
@@ -645,7 +646,7 @@
       return;
     }
 
-  NSLog(@"task did terminate");
+//  NSLog(@"task did terminate");
 
   [NOTIFICATION_CENTER removeObserver:self 
 			         name:NSTaskDidTerminateNotification
