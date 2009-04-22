@@ -476,6 +476,7 @@ NSString
   NSString *file = @"PC.project";
   NSString *backup = [wrapperPath stringByAppendingPathExtension:@"backup"];
   NSMutableDictionary *dict = [projectDict mutableCopy];
+  NSData *dictData = nil;
 
   // remove key..
   [dict removeObjectForKey: @"PC_WINDOWS"];
@@ -515,11 +516,12 @@ NSString
     }
 
   // Save project file
+  dictData = [NSPropertyListSerialization dataFromPropertyList: dict
+					  format: NSPropertyListOpenStepFormat
+					  errorDescription: NULL];
   [projectDict setObject: [[NSCalendarDate date] description]
-                  forKey: PCLastEditing];
-  [projectFileWrapper addRegularFileWithContents:
-			[NSData dataWithBytes: [[dict description] cString]
-				length: [[dict description] length]]
+	       forKey: PCLastEditing];
+  [projectFileWrapper addRegularFileWithContents: dictData
 		      preferredFilename: file];
   if ([projectFileWrapper
 	writeToFile:wrapperPath

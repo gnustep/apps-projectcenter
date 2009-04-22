@@ -1,3 +1,10 @@
+2009-04-22 16:31-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCProject.m: Changes to make plist output in
+	human readable format.
+	* Resources/Info-gnustep.plist: Changes to read C++ files using
+	C editor.
+
 ﻿2009-04-15 Sergii Stoian <stoyan255@gmail.com>
 	
 	* Framework/PCProjectBuilder.m:
@@ -11,7 +18,8 @@
 
 2009-03-31 Riccardo Mottola <rmottola@users.sf.net>
 	
-	* PCSplitView: removed and replaced with standard NSSplitView in all instances
+	* PCSplitView: removed and replaced with standard NSSplitView in all 
+	instances
 	
 2009-03-28 Sergii Stoian <stoyan255@gmail.com>
 

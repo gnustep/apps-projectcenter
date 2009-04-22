@@ -58,7 +58,7 @@
       NSIcon = ProjectCenter.editor/Resources/FileC.tiff;
       NSName = GSPCCType;
       NSRole = Editor;
-      NSUnixExtensions = ( c );
+      NSUnixExtensions = ( c, C, cp, cpp, c++ );
     }
   );
   URL = "See http://www.gnustep.org/";
