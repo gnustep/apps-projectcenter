@@ -1,3 +1,10 @@
+2009-04-27 17:09-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCProjectManager.m: Remove logic requiring projectWindow
+	to be key in order to save file.   This was causing files in 
+	tear-off editors to not be saved.  This change is in the saveFile
+	method.
+
 2009-04-22 16:31-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCProject.m: Changes to make plist output in

@@ -1045,8 +1045,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
 - (BOOL)saveFile
 {
-  // We have active project and its window is key
-  if (activeProject && [[activeProject projectWindow] isKeyWindow])
+  if (activeProject) 
     {
       return [[[activeProject projectEditor] activeEditor] saveFile];
     }
