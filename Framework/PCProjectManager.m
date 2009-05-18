@@ -546,7 +546,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *projectClassName = nil;
   PCProject<ProjectType> *project = nil;
 
-  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
+  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
+  if(projectFile == nil)
+    {
+      NSString *altPath = [[[aPath stringByDeletingLastPathComponent] stringByDeletingLastPathComponent]
+			    stringByAppendingPathComponent: @"PC.project"];
+      projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:altPath]; 
+    }
   
   // For compatibility with 0.3.x projects
   project = [self convertLegacyProject:projectFile atPath:aPath];

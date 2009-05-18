@@ -1551,9 +1551,11 @@ NSString
       // Subproject not found in array, load it
       if (sp == nil)
 	{
+	  NSString *pname = [NSString stringWithFormat: @"%@.pcproj",name];
 	  spFile = [projectPath stringByAppendingPathComponent:name];
 	  spFile = [spFile stringByAppendingPathExtension:@"subproj"];
-	  spFile = [spFile stringByAppendingPathComponent:@"PC.project"];
+	  spFile = [spFile stringByAppendingPathComponent: pname];
+	  spFile = [spFile stringByAppendingPathComponent: @"PC.project"];
 /*	  PCLogInfo(self, @"Not found! Load subproject: %@ at path: %@",
 		    name, spFile);*/
 	  sp = [projectManager loadProjectAt:spFile];

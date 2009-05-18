@@ -1,3 +1,10 @@
+2009-05-18 17:27-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCProject.m: Add new project directory name.
+	* Framework/PCProjectManager.m: Fix issue reported with loading of
+	subprojects from an aggregate project.   Changed loadProjectAt: method
+	to handle both the current and old file locations.
+
 2009-04-27 17:09-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCProjectManager.m: Remove logic requiring projectWindow
