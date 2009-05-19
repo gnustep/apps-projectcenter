@@ -167,9 +167,10 @@ NSString *PCEditorDidResignActiveNotification =
   NSString        *fileName = [filePath lastPathComponent];
   id<CodeEditor>  editor;
   id<CodeParser>  parser;
+  BOOL exists = [fm fileExistsAtPath:filePath isDirectory:&isDir];
 
   // Determine if file not exist or file is directory
-  if (![fm fileExistsAtPath:filePath isDirectory:&isDir] || isDir)
+  if (!exists)
     {
       NSRunAlertPanel(@"Open Editor",
 		      @"Couldn't open editor for file '%@'.\n"
@@ -179,52 +180,68 @@ NSString *PCEditorDidResignActiveNotification =
     }
 
   // Determine if file is text file
-  if (![[PCFileManager defaultManager] isTextFile:filePath])
+  if(isDir == NO)
     {
-      // TODO: Do not open alert panel for now. Internal editor
-      // for non text files must not be opened. Review PCProjectBrowser.
-/*      NSRunAlertPanel(@"Open Editor",
-		      @"Couldn't open editor for file '%@'.\n"
-		      @"File is not plain text.",
-		      @"Close", nil, nil, filePath);*/
-      return nil;
+      if (![[PCFileManager defaultManager] isTextFile:filePath] && !isDir)
+	{
+	  // TODO: Do not open alert panel for now. Internal editor
+	  // for non text files must not be opened. Review PCProjectBrowser.
+	  /*      NSRunAlertPanel(@"Open Editor",
+		  @"Couldn't open editor for file '%@'.\n"
+		  @"File is not plain text.",
+		  @"Close", nil, nil, filePath);*/
+	  return nil;
+	}
     }
 
 //  NSLog(@"EditorManager 1: %@", _editorsDict);
-  editor = [_editorsDict objectForKey:filePath];
+  editor = [_editorsDict objectForKey: filePath];
   if (editor == nil)
     {
       NSLog(@"Opening new editor. Editor: %@", editorName);
       // Editor
       editor = [bundleManager objectForBundleWithName:editorName
-						 type:@"editor"
-					     protocol:@protocol(CodeEditor)];
+			      type:@"editor"
+			      protocol:@protocol(CodeEditor)];
       if (editor == nil)
 	{
 	  editor = [bundleManager 
-	    objectForBundleWithName:@"ProjectCenter"
-			       type:@"editor"
-			   protocol:@protocol(CodeEditor)];
+		     objectForBundleWithName:@"ProjectCenter"
+		     type:@"editor"
+		     protocol:@protocol(CodeEditor)];
 	  if (editor == nil)
 	    {
 	      return nil;
 	    }
 	}
-
+      
       // Parser
       parser = [bundleManager objectForBundleType:@"parser"
-					 protocol:@protocol(CodeParser)
-					 fileName:fileName];
-      [editor setParser:parser];
-      [editor openFileAtPath:filePath 
-	       editorManager:self 
-		    editable:editable];
-
-      [_editorsDict setObject:editor forKey:filePath];
-      RELEASE(editor);
+			      protocol:@protocol(CodeParser)
+			      fileName:fileName];
+      if(parser != nil)
+	{
+	  [editor setParser:parser];
+	  [editor openFileAtPath:filePath 
+		  editorManager:self 
+		  editable:editable];
+	  [_editorsDict setObject:editor forKey:filePath];
+	  RELEASE(editor);
+	}
+      else
+	{
+	  //
+	  // If we don't have an editor or a parser, we fall back to opening the
+	  // file with the editor designated by the system.
+	  //
+	  [[NSWorkspace sharedWorkspace] openFile: filePath];
+	}
     }
-      
-  [editor setWindowed:windowed];
+  
+  if(editor != nil)
+    {
+      [editor setWindowed:windowed];
+    }
 
   return editor;
 }
