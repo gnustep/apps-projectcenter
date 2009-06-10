@@ -403,7 +403,7 @@ NSString
   [windows setObject:NSStringFromRect([[projectBrowser view] frame])
               forKey:@"ProjectBrowser"];
 
-  // Write to file and exit if prefernces wasn't set to save panels
+  // Write to file and exit if preferences wasn't set to save panels
   if (!rememberWindows)
     {
       [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
@@ -452,6 +452,9 @@ NSString
   // Now save it directly to username.project file
   [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
 
+  [projectFileDict setObject: [[NSCalendarDate date] description]
+	       forKey: PCLastEditing];
+
   // add the file and write the wrapper.
   [projectFileWrapper addRegularFileWithContents:
 			[NSData dataWithBytes: [[projectFileDict description] cString]
@@ -480,6 +483,7 @@ NSString
 
   // remove key..
   [dict removeObjectForKey: @"PC_WINDOWS"];
+  [dict removeObjectForKey: PCLastEditing];
 
   // initialize the wrapper...
   projectFileWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers: 
@@ -519,8 +523,6 @@ NSString
   dictData = [NSPropertyListSerialization dataFromPropertyList: dict
 					  format: NSPropertyListOpenStepFormat
 					  errorDescription: NULL];
-  [projectDict setObject: [[NSCalendarDate date] description]
-	       forKey: PCLastEditing];
   [projectFileWrapper addRegularFileWithContents: dictData
 		      preferredFilename: file];
   if ([projectFileWrapper
