@@ -171,7 +171,7 @@
       // Window
       [projectWindow setFrameAutosaveName:@"ProjectWindow"];
 
-      pcWindows = [[project projectDict] objectForKey:@"PC_WINDOWS"];
+      pcWindows = [[project projectDict] objectForKey:PCWindows];
       windowFrame = [pcWindows objectForKey:@"ProjectWindow"];
 //      PCLogInfo(self, @"window frame %@", windowFrame);
       if (windowFrame != nil)
@@ -788,7 +788,7 @@
   if (!_splitViewsRestored)
     {
       projectDict = [project projectDict];
-      windowsDict = [projectDict objectForKey:@"PC_WINDOWS"];
+      windowsDict = [projectDict objectForKey:PCWindows];
       if (windowsDict != nil)
 	{
 	  browserString = [windowsDict objectForKey:@"ProjectBrowser"];

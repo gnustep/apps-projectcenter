@@ -626,7 +626,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [project setProjectManager:self];
 
       // Windows and panels
-      wap = [pDict objectForKey:@"PC_WINDOWS"];
+      wap = [pDict objectForKey:PCWindows];
       if ([[wap allKeys] containsObject:@"ProjectBuild"])
 	{
 	  [[project projectWindow] showProjectBuild:self];

@@ -406,7 +406,7 @@ NSString
   // Write to file and exit if preferences wasn't set to save panels
   if (!rememberWindows)
     {
-      [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
+      [projectFileDict setObject:windows forKey:PCWindows];
       [projectFileDict writeToFile:projectFile atomically:YES];
       return YES;
     }
@@ -447,10 +447,10 @@ NSString
 
   // Set to project dict for case if project changed
   // Don't notify about projectDict changes
-  [projectDict setObject:windows forKey:@"PC_WINDOWS"];
+  [projectDict setObject:windows forKey:PCWindows];
 
   // Now save it directly to username.project file
-  [projectFileDict setObject:windows forKey:@"PC_WINDOWS"];
+  [projectFileDict setObject:windows forKey:PCWindows];
 
   [projectFileDict setObject: [[NSCalendarDate date] description]
 	       forKey: PCLastEditing];
@@ -482,7 +482,7 @@ NSString
   NSData *dictData = nil;
 
   // remove key..
-  [dict removeObjectForKey: @"PC_WINDOWS"];
+  [dict removeObjectForKey: PCWindows];
   [dict removeObjectForKey: PCLastEditing];
 
   // initialize the wrapper...

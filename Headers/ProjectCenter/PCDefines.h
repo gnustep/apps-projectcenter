@@ -120,6 +120,7 @@ typedef int PCProjInfoBits;
 #import <Foundation/Foundation.h>
 
 static NSString * const PCLastEditing          = @"LAST_EDITING";
+static NSString * const PCWindows              = @"PC_WINDOWS";
 
 static NSString * const PCClasses              = @"CLASS_FILES";
 static NSString * const PCHeaders              = @"HEADER_FILES";
