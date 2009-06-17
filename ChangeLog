@@ -1,3 +1,8 @@
+2009-05-19 17:13-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Resources/Info-gnustep.plist: Added PCProjectFileType to the
+	entry for pcproj to allow opening of bundles.
+
 2009-06-10 Riccardo Mottola
 	
 	* Framework/PCProject.m,
@@ -9,7 +14,8 @@
 2009-06-10 Riccardo Mottola
 	
 	* Framework/PCProject.m
-	save last editing in user file inside the wrapper and not main project file
+	save last editing in user file inside the wrapper and not 
+	main project file
 	
 2009-05-19 17:13-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
