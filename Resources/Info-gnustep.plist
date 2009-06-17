@@ -32,7 +32,7 @@
       NSDocumentClass = PCProjectDocument;
       NSHumanReadableName = "GNUstep project";
       NSIcon = FileProject.tiff;
-      NSName = GSPCFileType;
+      NSName = GSPCProjectFileType;
       NSRole = Editor;
       NSUnixExtensions = ( pcproj );
     },
