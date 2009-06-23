@@ -112,7 +112,7 @@
   if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
       || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
     {
-      [projectManager openProjectAt:fileName];
+      [projectManager openProjectAt: fileName makeActive: YES];
       [[[projectManager activeProject] projectWindow] 
 	makeKeyAndOrderFront:self];
     }
@@ -120,7 +120,7 @@
     {
       [projectManager openFileAtPath:fileName];
     }
-
+  
   return YES;
 }
 

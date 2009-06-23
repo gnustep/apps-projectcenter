@@ -417,6 +417,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 // ==== Project actions
 // ============================================================================
 
+
 - (PCProject *)convertLegacyProject:(NSMutableDictionary *)pDict
                              atPath:(NSString *)aPath
 {
@@ -432,7 +433,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *_2file = nil;
   NSString               *_resFile = nil;
   unsigned               i = 0;
-  PCProject<ProjectType> *project = nil;
+  PCProject              *project = nil;
   NSMutableArray         *otherResArray = nil;
   NSString               *plistFile = nil;
 
@@ -539,94 +540,88 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return project;
 }
 
-- (PCProject *)loadProjectAt:(NSString *)aPath
+- (PCProject *)openProjectAt:(NSString *)aPath makeActive: (BOOL)flag
 {
-  NSMutableDictionary    *projectFile = nil;
-  NSString               *projectTypeName = nil;
-  NSString               *projectClassName = nil;
-  PCProject<ProjectType> *project = nil;
-
-  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
-  if(projectFile == nil)
-    {
-      NSString *altPath = [[[aPath stringByDeletingLastPathComponent] stringByDeletingLastPathComponent]
-			    stringByAppendingPathComponent: @"PC.project"];
-      projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:altPath]; 
-    }
-  
-  // For compatibility with 0.3.x projects
-  project = [self convertLegacyProject:projectFile atPath:aPath];
-  if (project)
-    {// Project was converted and created PC*Project with alloc&init
-      aPath = [[aPath stringByDeletingLastPathComponent]
-	stringByAppendingPathComponent:@"PC.project"];
-    }
-  else
-    {// No conversion were taken
-      projectTypeName = [projectFile objectForKey:PCProjectType];
-      projectClassName = [projectTypes objectForKey:projectTypeName];
-      if (projectClassName == nil)
-	{
-	  NSRunAlertPanel(@"Open Project",
-			  @"Project type '%@' is not supported!\n"
-			  @"Report the bug, please!",
-			  @"OK", nil, nil, projectTypeName); 
-	  return nil;
-	}
-      project = [bundleManager objectForClassName:projectClassName
-				       bundleType:@"project"
-					 protocol:@protocol(ProjectType)];
-    }
-
-  if (!project || ![project openWithWrapperAt:aPath]) 
-    {
-      NSRunAlertPanel(@"Open Project",
-    		      @"Unable to open project '%@'.\nReport bug, please!",
-    		      @"OK",nil,nil,aPath); 
-      return nil;
-    }
-
-  PCLogStatus(self, @"Project %@ loaded as %@", 
-	      [project projectName], [project projectTypeName]);
-
-  // Started only if there's not save timer yet
-  [self startSaveTimer];
-  [project validateProjectDict];
-
-  return project;
-}
-
-- (BOOL)openProjectAt:(NSString *)aPath
-{
-  NSDictionary *pDict = [NSDictionary dictionaryWithContentsOfFile:aPath];
-  NSString     *projectName = nil;
   PCProject    *project = nil;
   NSDictionary *wap = nil;
-  BOOL         isDir = NO;
-
-  projectName = [pDict objectForKey:PCProjectName];
-
-  if ((project = [loadedProjects objectForKey:projectName]) != nil)
-    {
-      [[project projectWindow] makeKeyAndOrderFront:self];
-      return YES;
-    }
-
-  if ([[NSFileManager defaultManager] fileExistsAtPath:aPath 
-                                           isDirectory:&isDir] && !isDir) 
-    {
-      project = [self loadProjectAt:aPath];
-
+  
+  if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) == nil)
+    {  
+      NSMutableDictionary    *projectFile = nil;
+      NSString               *projectTypeName = nil;
+      NSString               *projectClassName = nil;
+      BOOL         isDir = NO;
+      BOOL         exists = [[NSFileManager defaultManager] fileExistsAtPath:aPath 
+							    isDirectory: &isDir];
+      if (!exists)
+	{
+	  return nil;
+	}
+      
+      if (!isDir)
+	{
+	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];	  
+	}
+      else
+	{
+	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: [aPath stringByAppendingPathComponent: @"PC.project"]];
+	}
+      
+      if(projectFile == nil)
+	{
+	  return nil;
+	}
+      
+      // For compatibility with 0.3.x projects
+      project = [self convertLegacyProject: projectFile atPath: aPath];
+      if (project)
+	{// Project was converted and created PC*Project with alloc&init
+	  aPath = [[aPath stringByDeletingLastPathComponent]
+		    stringByAppendingPathComponent:@"PC.project"];
+	}
+      else
+	{// No conversion were taken
+	  projectTypeName = [projectFile objectForKey:PCProjectType];
+	  projectClassName = [projectTypes objectForKey:projectTypeName];
+	  if (projectClassName == nil)
+	    {
+	      NSRunAlertPanel(@"Open Project",
+			      @"Project type '%@' is not supported!\n"
+			      @"Report the bug, please!",
+			      @"OK", nil, nil, projectTypeName); 
+	      return nil;
+	    }
+	}
+      
+      project = [bundleManager objectForClassName:projectClassName
+			       bundleType:@"project"
+			       protocol:@protocol(ProjectType)];
+      
+      if (!project || ![project openWithWrapperAt:aPath]) 
+	{
+	  NSRunAlertPanel(@"Open Project",
+			  @"Unable to open project '%@'.\nReport bug, please!",
+			  @"OK",nil,nil,aPath); 
+	  return nil;
+	}
+      
+      PCLogStatus(self, @"Project %@ loaded as %@", 
+		  [project projectName], [project projectTypeName]);
+      
+      // Started only if there's not save timer yet
+      [self startSaveTimer];
+      [project validateProjectDict];
+      
       if (!project) 
 	{
-	  return NO;
+	  return nil;
 	}
-
-      [loadedProjects setObject:project forKey:projectName];
+      
+      [loadedProjects setObject:project forKey: [project projectPath]];
       [project setProjectManager:self];
-
+      
       // Windows and panels
-      wap = [pDict objectForKey:PCWindows];
+      wap = [projectFile objectForKey:PCWindows];
       if ([[wap allKeys] containsObject:@"ProjectBuild"])
 	{
 	  [[project projectWindow] showProjectBuild:self];
@@ -639,33 +634,43 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{
 	  [[project projectWindow] showProjectLoadedFiles:self];
 	}
-
-      [[project projectWindow] makeKeyAndOrderFront:self];
-
-      [self setActiveProject:project];
-
-      return YES;
+      
+      if (flag)
+	{
+	  [[project projectWindow] makeKeyAndOrderFront:self];
+	  [self setActiveProject: project];
+	}
     }
-
-  return NO;
+  
+  return project;
 }
 
 - (void)openProject
 {
   NSArray  *files = nil;
-  NSString *filePath = nil;
+  NSString *filePath = nil, *temp = nil;
   NSArray  *fileTypes = [NSArray arrayWithObjects:@"pcproj",@"project",nil];
+  NSEnumerator *en = nil;
 
   files = [fileManager filesOfTypes:fileTypes
 			  operation:PCOpenProjectOperation
 			   multiple:NO
 			      title:@"Open Project"
 			    accView:nil];
+
   filePath = [files objectAtIndex:0];
+  en = [files objectEnumerator];
+  while((temp = [en nextObject]) != nil)
+    {
+      if([[temp pathExtension] isEqual: @"pcproj"])
+	{
+	  filePath = temp;
+	}
+    }
 
   if (filePath != nil)
     {
-      [self openProjectAt:filePath];
+      [self openProjectAt:filePath makeActive: YES];
     }
 }
 
@@ -675,9 +680,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *className = [projectTypes objectForKey:projectType];
   PCProject<ProjectType> *projectCreator;
   PCProject              *project = nil;
-  NSString               *projectName = [aPath lastPathComponent];
 
-  if ((project = [loadedProjects objectForKey:projectName]) != nil)
+  if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) != nil)
     {
       [[project projectWindow] makeKeyAndOrderFront:self];
       return project;
@@ -749,7 +753,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return;
 	}
 
-      [loadedProjects setObject:project forKey:[project projectName]];
+      [loadedProjects setObject:project forKey: [project projectPath]];
       [self setActiveProject:project];
       [[project projectWindow] orderFront:self];
     }
@@ -937,16 +941,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (void)closeProject:(PCProject *)aProject
 {
   PCProject *currentProject = nil;
-  NSString  *projectName = [aProject projectName];
 
-  currentProject = [loadedProjects objectForKey:projectName];
+  currentProject = [loadedProjects objectForKey: [aProject projectPath]];
   if (!currentProject)
     {
       return;
     }
 
   // Remove it from the loaded projects!
-  [loadedProjects removeObjectForKey:projectName];
+  [loadedProjects removeObjectForKey: [aProject projectPath]];
 
   if ([loadedProjects count] == 0)
     {

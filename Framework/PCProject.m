@@ -84,56 +84,46 @@ NSString
   return self;
 }
 
-- (PCProject *)openWithWrapperAt:(NSString *)path
+- (PCProject *)openWithWrapperAt:(NSString *)aPath
 {
-  NSString *aPath = path;
-
-  if([[aPath lastPathComponent] isEqual: @"PC.project"])
+  BOOL isDir = NO;
+  BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath: aPath 
+						isDirectory: &isDir];
+  if(isDir && exists)
     {
-      NSString *newPath = [aPath stringByDeletingLastPathComponent];
-      if([[[newPath lastPathComponent] pathExtension] 
-	   isEqual: @"pcproj"] == NO)
-	{	  
-	  NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
-
-	  projectFileWrapper = [[NSFileWrapper alloc] 
-				 initDirectoryWithFileWrappers: 
-				   [NSMutableDictionary dictionaryWithCapacity: 3]];
-	  [projectFileWrapper addRegularFileWithContents:
-				[NSData dataWithBytes: [[dict description] cString]
-					length: [[dict description] length]]
-			      preferredFilename: @"PC.project"];
-	  [self assignProjectDict: dict
-		atPath: path];
-
-	  return self;
-	}
-      else
+      projectFileWrapper = [[NSFileWrapper alloc] initWithPath: aPath];
+      if(projectFileWrapper != nil)
 	{
-	  aPath = newPath;
+	  NSDictionary *wrappers = [projectFileWrapper fileWrappers];
+	  NSData *data = [[wrappers objectForKey: @"PC.project"] regularFileContents];
+	  NSData *userData = [[wrappers objectForKey: [NSUserName() stringByAppendingPathExtension: @"project"]]
+			       regularFileContents];
+	  NSMutableDictionary *dict = [[[[NSString alloc] initWithData: data
+							  encoding: NSASCIIStringEncoding] 
+					 propertyList] mutableCopy];
+	  NSDictionary *udict = [[[NSString alloc] initWithData: userData
+						   encoding: NSASCIIStringEncoding] 
+				  propertyList];
+	  
+	  [dict addEntriesFromDictionary: udict]; 
+	  [self assignProjectDict:dict atPath: aPath];
 	}
     }
-
-  projectFileWrapper = [[NSFileWrapper alloc] initWithPath: aPath];
-  if(projectFileWrapper != nil)
+  else
     {
-      NSDictionary *wrappers = [projectFileWrapper fileWrappers];
-      NSData *data = [[wrappers objectForKey: @"PC.project"] regularFileContents];
-      NSData *userData = [[wrappers objectForKey: [NSUserName() stringByAppendingPathExtension: @"project"]]
-			   regularFileContents];
-      NSMutableDictionary *dict = [[[[NSString alloc] initWithData: data
-						      encoding: NSASCIIStringEncoding] 
-				     propertyList] mutableCopy];
-      NSDictionary *udict = [[[NSString alloc] initWithData: userData
-					       encoding: NSASCIIStringEncoding] 
-			      propertyList];
-
-      [dict addEntriesFromDictionary: udict]; 
-      [self assignProjectDict:dict atPath: aPath];
-
-      return self;
+      NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
+      
+      projectFileWrapper = [[NSFileWrapper alloc] 
+			     initDirectoryWithFileWrappers: 
+			       [NSMutableDictionary dictionaryWithCapacity: 3]];
+      [projectFileWrapper addRegularFileWithContents:
+			    [NSData dataWithBytes: [[dict description] cString]
+				    length: [[dict description] length]]
+			  preferredFilename: @"PC.project"];
+      [self assignProjectDict: dict
+	    atPath: aPath];
     }
-
+  
   return self;
 }
 
@@ -1560,7 +1550,7 @@ NSString
 	  spFile = [spFile stringByAppendingPathComponent: @"PC.project"];
 /*	  PCLogInfo(self, @"Not found! Load subproject: %@ at path: %@",
 		    name, spFile);*/
-	  sp = [projectManager loadProjectAt:spFile];
+	  sp = [projectManager openProjectAt:spFile makeActive:NO];
 	  if (sp)
 	    {
 	      [sp setIsSubproject:YES];

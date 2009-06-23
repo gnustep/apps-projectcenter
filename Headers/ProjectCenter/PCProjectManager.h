@@ -138,10 +138,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 - (PCProject *)convertLegacyProject:(NSMutableDictionary *)pDict
                              atPath:(NSString *)aPath;
-// Returns the loaded project if the builder class is known, nil else.
-- (PCProject *)loadProjectAt:(NSString *)aPath;
-// Invokes loadProjectAt to load the project properly.
-- (BOOL)openProjectAt:(NSString *)aPath;
+- (PCProject *)openProjectAt:(NSString *)aPath makeActive: (BOOL)flag;
 - (void)openProject;
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath;
