@@ -753,10 +753,6 @@ NSString
   return NO;
 }
 
-- (NSString *)execToolName
-{
-  return [[self projectBundleInfoTable] objectForKey:@"ExecToolName"];
-}
 
 - (NSArray *)buildTargets
 {

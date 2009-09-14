@@ -138,7 +138,6 @@ extern NSString *PCProjectBreakpointNotification;
 - (Class)builderClass;
 - (NSString *)projectDescription;
 - (BOOL)isExecutable;
-- (NSString *)execToolName;
 - (BOOL)canHavePublicHeaders;
 - (NSArray *)publicHeaders;
 - (void)setHeaderFile:(NSString *)file public:(BOOL)yn;

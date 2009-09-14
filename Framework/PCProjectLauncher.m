@@ -286,24 +286,38 @@ enum {
 
 - (void)run:(id)sender
 {
-  NSMutableArray *args = [[NSMutableArray alloc] init];
-  NSPipe         *logPipe;
-  NSPipe         *errorPipe;
-  NSString       *openPath;
+  NSMutableArray  *args = [[NSMutableArray alloc] init];
+  NSPipe          *logPipe;
+  NSPipe          *errorPipe;
+  NSMutableString *executablePath;
+
+  executablePath = [NSMutableString string];
+  [executablePath appendString:[project projectPath]];
 
   // Check if project type is executable
   if ([project isExecutable])
     {
-      openPath = [project execToolName];
-      if ([openPath isEqualToString: @"openapp"])
+      NSString *prjType;
+
+      prjType = [project projectTypeName];
+      NSLog(@"project is executable");
+      if ([prjType isEqualToString: @"Application"])
 	{
-	  /* openapp ./MyApplication.app */
-	  [args addObject: [NSString stringWithFormat: @"./%@", [project projectName]]];
+          /* MyApplication.app/MyApplication */
+          [executablePath appendString:@"/"];
+          [executablePath appendString:[project projectName]];
+          [executablePath appendString:@".app/"];
+	  [executablePath appendString:[project projectName]];
+	}
+      else if ([prjType isEqualToString: @"Tool"])
+	{
+	  /* obj/MyTool */
+          [executablePath appendString:@"/obj/"];
+          [executablePath appendString:[project projectName]];
 	}
       else
 	{
-	  /* opentool MyTool */
-	  [args addObject: [project projectName]];
+	  NSLog(@"Unknown project type to execute: %@", prjType);
 	}
     }
   else 
@@ -314,7 +328,7 @@ enum {
       [runButton setState:NSOffState];
       return;
     }
-
+  NSLog(@"executable launch path: %@", executablePath);
   // [makeTask isRunning] doesn't work here.
   // "waitpid 7045, result -1, error No child processes" is printed.
   if (launchTask)
@@ -357,7 +371,7 @@ enum {
                             object:launchTask];  
   [launchTask setArguments:args];  
   [launchTask setCurrentDirectoryPath:[project projectPath]];
-  [launchTask setLaunchPath:openPath];
+  [launchTask setLaunchPath:executablePath];
   [launchTask setStandardOutput:logPipe];
   [launchTask setStandardError:errorPipe];
   [launchTask launch];
