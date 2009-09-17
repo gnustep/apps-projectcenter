@@ -1,10 +1,9 @@
 2009-09-17  Nicola Pero  <nicola.pero@meta-innovation.com>
 
 	* Framework/PCMakefileFactory.m ([-createMakefileForProject:]): If
-	GNUSTEP_INSTALLATION_DOMAIN is not set, output a commented out
-	GNUSTEP_INSTALLATION_DOMAIN line so that the default is used but
-	people will still find out that the option exists if they look at
-	the file.
+	GNUSTEP_INSTALLATION_DOMAIN is not set, do not output it.  This is
+	what was already happening, but the code seemed to assume
+	otherwise.
 
 2009-09-17  Nicola Pero  <nicola.pero@meta-innovation.com>
 

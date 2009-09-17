@@ -99,19 +99,11 @@ static PCMakefileFactory *_factory = nil;
 	[NSString stringWithFormat: @"\nGNUSTEP_INSTALLATION_DOMAIN = %@\n",
 	  instDir]];
     }
-  else if ([instDir isEqualToString: @""])
-    {
-      /* This should not be specified; gnustep-make will use the
-       * default - normally, but not necessarily, LOCAL.
-       * We output a commented line here so that people looking
-       * at the file will know that this option exists, and 
-       * if they want to change it, will search for it in
-       * ProjectCenter.
-       */
-      [mfile appendString:
-	[NSString stringWithFormat: @"\n# GNUSTEP_INSTALLATION_DOMAIN = LOCAL\n",
-	  instDir]];
-    }
+
+  /* If GNUSTEP_INSTALLATION_DOMAIN was not set explicitly by the
+   * user, it shoudl not be specified; gnustep-make will use the
+   * default - normally, but not necessarily, LOCAL.
+   */
   
   [mfile appendString: @"\ninclude $(GNUSTEP_MAKEFILES)/common.make\n"];
 
