@@ -558,10 +558,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return nil;
 	}
       
-      if ([aPath rangeOfString: @" "] != NSNotFound ||
-	  [aPath rangeOfString: @"\t"] != NSNotFound ||
-	  [aPath rangeOfString: @"\r"] != NSNotFound ||
-	  [aPath rangeOfString: @"\n"] != NSNotFound)
+      if ([aPath rangeOfString: @" "].location != NSNotFound ||
+	  [aPath rangeOfString: @"\t"].location != NSNotFound ||
+	  [aPath rangeOfString: @"\r"].location != NSNotFound ||
+	  [aPath rangeOfString: @"\n"].location != NSNotFound)
 	{
 	  if (NSRunAlertPanel 
 	      (@"Open Project",
@@ -759,10 +759,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   filePath = [files objectAtIndex:0];
   if (filePath != nil) 
     {
-      if ([filePath rangeOfString: @" "] != NSNotFound ||
-	  [filePath rangeOfString: @"\t"] != NSNotFound ||
-	  [filePath rangeOfString: @"\r"] != NSNotFound ||
-	  [filePath rangeOfString: @"\n"] != NSNotFound)
+      if ([filePath rangeOfString: @" "].location != NSNotFound ||
+	  [filePath rangeOfString: @"\t"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\r"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\n"].location != NSNotFound)
 	{
 	  if (NSRunAlertPanel 
 	      (@"New Project",
