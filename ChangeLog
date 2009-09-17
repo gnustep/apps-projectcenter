@@ -1,4 +1,20 @@
-2009-09-15 Richard frith-Macdonald <rfm"gnu.org>
+2009-09-17  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* Framework/PCMakefileFactory.m ([-createMakefileForProject:]): If
+	GNUSTEP_INSTALLATION_DOMAIN is not set, output a commented out
+	GNUSTEP_INSTALLATION_DOMAIN line so that the default is used but
+	people will still find out that the option exists if they look at
+	the file.
+
+2009-09-17  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	Old patch from Markus Hitter <mah@jump-ing.de>, updated to the
+	current code:
+	* Framework/PCProjectManager.m ([-openProjectAt:makeActive:]): Pop
+	up a warning panel if the project path includes a whitespace.
+	([-newProject]): Same change.
+
+2009-09-15 Richard frith-Macdonald <rfm@gnu.org>
 
 	* Framework/PCMakefileFactory.m: generate makefiles with standard
 	preamble to determine GNUSTEP_MAKEFILES if possible, and warn if

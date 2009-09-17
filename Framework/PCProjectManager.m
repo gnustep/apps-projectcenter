@@ -558,6 +558,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return nil;
 	}
       
+      if ([aPath rangeOfString: @" "] != NSNotFound ||
+	  [aPath rangeOfString: @"\t"] != NSNotFound ||
+	  [aPath rangeOfString: @"\r"] != NSNotFound ||
+	  [aPath rangeOfString: @"\n"] != NSNotFound)
+	{
+	  if (NSRunAlertPanel 
+	      (@"Open Project",
+	       @"Are you sure you want to open a project with whitespace in it's path?\n"
+	       @"GNUstep's build environment currently can't handle that reliably.",
+	       @"OK", @"Cancel", nil) != NSAlertDefaultReturn)
+	    {
+	      return nil;
+	    }
+	}
+
       if (!isDir)
 	{
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];	  
@@ -744,6 +759,21 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   filePath = [files objectAtIndex:0];
   if (filePath != nil) 
     {
+      if ([filePath rangeOfString: @" "] != NSNotFound ||
+	  [filePath rangeOfString: @"\t"] != NSNotFound ||
+	  [filePath rangeOfString: @"\r"] != NSNotFound ||
+	  [filePath rangeOfString: @"\n"] != NSNotFound)
+	{
+	  if (NSRunAlertPanel 
+	      (@"New Project",
+	       @"Are you sure you want to create a project with whitespace in it's path?\n"
+	       @"GNUstep's build environment currently can't handle that reliably.",
+	       @"OK", @"Cancel", nil) != NSAlertDefaultReturn)
+	    {
+	      return;
+	    }
+	}
+      
       projectType = [projectTypePopup titleOfSelectedItem];
 
       if (!(project = [self createProjectOfType:projectType path:filePath]))
