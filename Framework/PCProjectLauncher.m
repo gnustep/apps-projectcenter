@@ -289,10 +289,9 @@ enum {
   NSMutableArray  *args = [[NSMutableArray alloc] init];
   NSPipe          *logPipe;
   NSPipe          *errorPipe;
-  NSMutableString *executablePath;
+  NSString        *executablePath;
 
-  executablePath = [NSMutableString string];
-  [executablePath appendString:[project projectPath]];
+  executablePath = [NSMutableString stringWithString:[project projectPath]];
 
   // Check if project type is executable
   if ([project isExecutable])
@@ -304,16 +303,15 @@ enum {
       if ([prjType isEqualToString: @"Application"])
 	{
           /* MyApplication.app/MyApplication */
-          [executablePath appendString:@"/"];
-          [executablePath appendString:[project projectName]];
-          [executablePath appendString:@".app/"];
-	  [executablePath appendString:[project projectName]];
+          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
+          executablePath = [executablePath stringByAppendingString:@".app"];
+	  executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
 	}
       else if ([prjType isEqualToString: @"Tool"])
 	{
 	  /* obj/MyTool */
-          [executablePath appendString:@"/obj/"];
-          [executablePath appendString:[project projectName]];
+          executablePath = [executablePath stringByAppendingPathComponent:@"obj"];
+          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
 	}
       else
 	{
