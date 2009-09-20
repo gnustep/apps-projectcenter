@@ -1,3 +1,10 @@
+2009-09-20 03:45-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCMakefileFactory.m: Check if buildDir is nil before 
+	generating the BUILD_DIR directive in the make file.   Sometimes
+	this is coming up with (nil) on Windows which is causing the build
+	phase to fail.
+
 2009-09-19 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Images/Options.tiff

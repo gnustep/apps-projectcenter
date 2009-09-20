@@ -107,7 +107,7 @@ static PCMakefileFactory *_factory = nil;
   
   [mfile appendString: @"\ninclude $(GNUSTEP_MAKEFILES)/common.make\n"];
 
-  if (![buildDir isEqualToString: @""])
+  if (![buildDir isEqualToString: @""] && buildDir != nil)
     {
       [mfile appendString:
         [NSString stringWithFormat: @"\nGNUSTEP_BUILD_DIR = %@\n",
