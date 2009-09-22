@@ -718,7 +718,7 @@
   [self cleanupAfterMake];
 }
 
-// --- BuilderOptions delgate
+// --- BuilderOptions delegate
 - (void)targetDidSet:(NSString *)target
 {
   [buildTarget setString:target];
@@ -1144,7 +1144,8 @@
 	{// first message after "In file included from"
 //	  NSLog(@"Inlcuded File: %@", file);
 	  includedFile = [components objectAtIndex:0];
-      	  file = includedFile;
+      	  file = 
+	    [currentBuildPath stringByAppendingPathComponent:includedFile];
 	  currentEL = ELIncludedError;
 	}
       else
