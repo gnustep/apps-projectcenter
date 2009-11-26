@@ -10,7 +10,7 @@
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either
-   version 2 of the License, or (at your option) any later version.
+   version 3 of the License, or (at your option) any later version.
  
    This application is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -30,12 +30,12 @@ main(int argc, const char *argv[])
 // Uncomment if your application is Renaissance application
 /*  CREATE_AUTORELEASE_POOL (pool);
   [NSApplication sharedApplication];
-  [NSApp setDelegate:[AppController new]];
+  [NSApp setDelegate: [AppController new]];
 
   #ifdef GNUSTEP
-    [NSBundle loadGSMarkupNamed:@"MainMenu-GNUstep"  owner:[NSApp delegate]];
+    [NSBundle loadGSMarkupNamed: @"MainMenu-GNUstep"  owner: [NSApp delegate]];
   #else
-    [NSBundle loadGSMarkupNamed:@"MainMenu-OSX"  owner:[NSApp delegate]];
+    [NSBundle loadGSMarkupNamed: @"MainMenu-OSX"  owner: [NSApp delegate]];
   #endif
    
   RELEASE (pool);

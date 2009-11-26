@@ -1,7 +1,7 @@
 /* 
    Project: $PROJECTNAME$
 
-   Copyright (C) $YEAR$ Free Software Foundation
+   Copyright (C)  $YEAR$ Free Software Foundation
 
    Author: $FULLUSERNAME$
 
@@ -12,7 +12,7 @@
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either
-   version 2 of the License, or (at your option) any later version.
+   version 3 of the License, or (at your option)  any later version.
  
    This application is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -28,7 +28,7 @@
 
 @implementation AppController
 
-+ (void)initialize
++ (void) initialize
 {
   NSMutableDictionary *defaults = [NSMutableDictionary dictionary];
 
@@ -40,11 +40,11 @@
    *
    */
   
-  [[NSUserDefaults standardUserDefaults] registerDefaults:defaults];
+  [[NSUserDefaults standardUserDefaults] registerDefaults: defaults];
   [[NSUserDefaults standardUserDefaults] synchronize];
 }
 
-- (id)init
+- (id) init
 {
   if ((self = [super init]))
     {
@@ -52,36 +52,37 @@
   return self;
 }
 
-- (void)dealloc
+- (void) dealloc
 {
   [super dealloc];
 }
 
-- (void)awakeFromNib
+- (void) awakeFromNib
 {
 }
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotif
+- (void) applicationDidFinishLaunching: (NSNotification *)aNotif
 {
 // Uncomment if your application is Renaissance-based
-//  [NSBundle loadGSMarkupNamed:@"Main" owner:self];
+//  [NSBundle loadGSMarkupNamed: @"Main" owner: self];
 }
 
-- (BOOL)applicationShouldTerminate:(id)sender
+- (BOOL) applicationShouldTerminate: (id)sender
 {
   return YES;
 }
 
-- (void)applicationWillTerminate:(NSNotification *)aNotif
+- (void) applicationWillTerminate: (NSNotification *)aNotif
 {
 }
 
-- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
+- (BOOL) application: (NSApplication *)application
+	    openFile: (NSString *)fileName
 {
   return NO;
 }
 
-- (void)showPrefPanel:(id)sender
+- (void) showPrefPanel: (id)sender
 {
 }
 

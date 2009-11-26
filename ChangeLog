@@ -1,3 +1,12 @@
+2009-11-26 Richard frith-Macdonald <rfm@gnu.org>
+
+	* Modules/Projects/Application/Resources/AppController.m:
+	* Modules/Projects/Application/Resources/main.m:
+	* Modules/Projects/Application/Resources/AppController.h:
+	* Modules/Projects/Tool/Resources/main.m:
+	Update to conform to coding standards and to use GPL 3 as
+	default copyleft.
+
 2009-09-20 03:45-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCMakefileFactory.m: Check if buildDir is nil before 

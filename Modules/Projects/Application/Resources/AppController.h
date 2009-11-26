@@ -1,7 +1,7 @@
 /* 
    Project: $PROJECTNAME$
 
-   Copyright (C) $YEAR$ Free Software Foundation
+   Copyright (C)  $YEAR$ Free Software Foundation
 
    Author: $FULLUSERNAME$
 
@@ -12,7 +12,7 @@
    This application is free software; you can redistribute it and/or
    modify it under the terms of the GNU General Public
    License as published by the Free Software Foundation; either
-   version 2 of the License, or (at your option) any later version.
+   version 3 of the License, or (at your option)  any later version.
  
    This application is distributed in the hope that it will be useful,
    but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -35,19 +35,20 @@
 {
 }
 
-+ (void)initialize;
++ (void)  initialize;
 
-- (id)init;
-- (void)dealloc;
+- (id) init;
+- (void) dealloc;
 
-- (void)awakeFromNib;
+- (void) awakeFromNib;
 
-- (void)applicationDidFinishLaunching:(NSNotification *)aNotif;
-- (BOOL)applicationShouldTerminate:(id)sender;
-- (void)applicationWillTerminate:(NSNotification *)aNotif;
-- (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName;
+- (void) applicationDidFinishLaunching: (NSNotification *)aNotif;
+- (BOOL) applicationShouldTerminate: (id)sender;
+- (void) applicationWillTerminate: (NSNotification *)aNotif;
+- (BOOL) application: (NSApplication *)application
+	    openFile: (NSString *)fileName;
 
-- (void)showPrefPanel:(id)sender;
+- (void) showPrefPanel: (id)sender;
 
 @end
 
