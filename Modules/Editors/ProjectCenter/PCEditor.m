@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2004 Free Software Foundation
+   Copyright (C) 2002-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -145,6 +146,10 @@
   [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
 
   [ev setEditable:_isEditable];
+
+  // Activate undo
+  [ev setAllowsUndo: YES];
+
   [[NSNotificationCenter defaultCenter]
     addObserver:self 
        selector:@selector(textDidChange:)
@@ -801,6 +806,11 @@
   if ([object isKindOfClass:[PCEditorView class]]
       && (object == _intEditorView || object == _extEditorView))
     {
+      if (![self hasUndoManager])
+        {
+          [self updateChangeCount: NSChangeDone];
+      }
+
       if (_isEdited == NO)
 	{
 	  [[NSNotificationCenter defaultCenter]

@@ -1,3 +1,8 @@
+2010-03-06 Riccardo Mottola <rmottola@users.sf.net>
+
+	* Modules\Editors\ProjectCenter\PCEditor.m: setup undo on the editor
+	view
+
 2009-11-26 Richard frith-Macdonald <rfm@gnu.org>
 
 	* Modules/Projects/Application/Resources/AppController.m:
@@ -16,7 +21,7 @@
 
 2009-09-19 Riccardo Mottola <rmottola@users.sf.net>
 
-	* Images/Options.tiff
+	* Images/Options.tiff:
 	Added new icon, drawn by me.
 	
 2009-09-18 Riccardo Mottola <rmottola@users.sf.net>
