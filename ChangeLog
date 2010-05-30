@@ -1,3 +1,10 @@
+2010-05-30 01:54-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/English.lproj/SaveModified.gorm: Correct issues with 
+	Gorm file.
+	* Framework/PCSaveModified.m: Use setTitle: instead of setStringValue:
+	to set the titles of the buttons.
+	
 2010-05-30 01:44-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m: Temporarily comment out

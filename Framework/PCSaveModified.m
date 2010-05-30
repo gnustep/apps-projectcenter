@@ -74,9 +74,9 @@ BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
   [filesList reloadData];
 
   // Buttons
-  [defaultButton setStringValue:defaultText];
-  [alternateButton setStringValue:alternateText];
-  [otherButton setStringValue:otherText];
+  [defaultButton setTitle:defaultText];
+  [alternateButton setTitle:alternateText];
+  [otherButton setTitle:otherText];
 
   [panel makeKeyAndOrderFront:self];
 
