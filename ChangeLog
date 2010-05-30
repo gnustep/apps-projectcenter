@@ -1,3 +1,12 @@
+2010-05-30 03:17-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Projects/Application/Resources/AppController.h
+	* Modules/Projects/Application/Resources/AppController.m
+	* Modules/Projects/Tool/Resources/main.m: Remove licensing
+	and copyright information from these since we don't want to 
+	assume that the user will be writing a GPLv3 program owned by the
+	FSF (while that would be nice) it's not correct to assume it.
+
 2010-05-30 01:54-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/English.lproj/SaveModified.gorm: Correct issues with 
