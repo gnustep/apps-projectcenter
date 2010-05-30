@@ -806,10 +806,12 @@
   if ([object isKindOfClass:[PCEditorView class]]
       && (object == _intEditorView || object == _extEditorView))
     {
+      /*
       if (![self hasUndoManager])
         {
           [self updateChangeCount: NSChangeDone];
-      }
+	}
+      */
 
       if (_isEdited == NO)
 	{

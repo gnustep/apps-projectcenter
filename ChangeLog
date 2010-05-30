@@ -1,3 +1,9 @@
+2010-05-30 01:44-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Editors/ProjectCenter/PCEditor.m: Temporarily comment out
+	previous change util we find the proper fix as it was preventing 
+	files from being saved.
+
 2010-03-06 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Modules\Editors\ProjectCenter\PCEditor.m: setup undo on the editor
