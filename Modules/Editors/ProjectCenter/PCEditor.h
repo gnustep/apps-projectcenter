@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2004 Free Software Foundation
+   Copyright (C) 2002-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -95,6 +96,9 @@
   // further changes to the text view and infinite recursive invocations
   // of this method.
   BOOL editorTextViewIsPressingKey;
+
+  // keep one undo manager for the editor
+  NSUndoManager *undoManager;
 }
 
 - (BOOL)editorShouldClose;

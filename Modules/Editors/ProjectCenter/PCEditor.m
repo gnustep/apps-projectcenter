@@ -199,6 +199,8 @@
       isCharacterHighlit = NO;
       highlited_chars[0] = -1;
       highlited_chars[1] = -1;
+
+      undoManager = [[NSUndoManager alloc] init];
     }
 
   return self;
@@ -228,6 +230,8 @@
   RELEASE(textColor);
   RELEASE(backgroundColor);
   RELEASE(readOnlyColor);
+
+  RELEASE(undoManager);
 
   [super dealloc];
 }
@@ -795,6 +799,13 @@
   [self resignFirstResponder:_extEditorView];
 }
 
+
+- (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)window
+{
+  return undoManager;
+}
+
+
 // ===========================================================================
 // ==== TextView (_intEditorView, _extEditorView) delegate
 // ===========================================================================
@@ -806,13 +817,6 @@
   if ([object isKindOfClass:[PCEditorView class]]
       && (object == _intEditorView || object == _extEditorView))
     {
-      /*
-      if (![self hasUndoManager])
-        {
-          [self updateChangeCount: NSChangeDone];
-	}
-      */
-
       if (_isEdited == NO)
 	{
 	  [[NSNotificationCenter defaultCenter]
