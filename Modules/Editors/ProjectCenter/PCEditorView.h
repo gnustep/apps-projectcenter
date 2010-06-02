@@ -4,7 +4,9 @@
     Interface declaration of the EditorTextView class for the
     ProjectManager application.
 
-    Copyright (C) 2005  Saso Kiselkov
+    Copyright (C) 2005-2010 Free Software Foundation
+      Saso Kiselkov
+      Riccardo Mottola
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -23,11 +25,13 @@
 
 #import <AppKit/NSTextView.h>
 
+#import <Protocols/CodeEditorView.h>
+
 @class NSColor;
 @class PCEditor;
 @class SyntaxHighlighter;
 
-@interface PCEditorView : NSTextView
+@interface PCEditorView : NSTextView <CodeEditorView>
 {
   PCEditor          *editor;
   SyntaxHighlighter *highlighter;

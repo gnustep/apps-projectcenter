@@ -4,7 +4,10 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005  Saso Kiselkov, Serg Stoyan
+    Copyright (C) 2005-2010 Free Software Foundation
+      Saso Kiselkov
+      Serg Stoyan
+      Riccardo Mottola
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -439,6 +442,11 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 - (void)setEditor:(PCEditor *)anEditor
 {
   editor = anEditor;
+}
+
+- (PCEditor *)editor
+{
+  return editor;
 }
 
 - (void)awakeFromNib

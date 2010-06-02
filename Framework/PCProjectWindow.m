@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -38,9 +38,11 @@
 #import <ProjectCenter/PCProjectInspector.h>
 
 #import <Protocols/Preferences.h>
+#import <Protocols/CodeEditorView.h>
 #import <ProjectCenter/PCLogController.h>
 
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
+
 
 #import <math.h>
 
@@ -754,6 +756,18 @@
 
 - (void)windowWillClose:(NSNotification *)aNotification
 {
+}
+
+- (NSUndoManager *)windowWillReturnUndoManager:(NSWindow *)window
+{
+  id responder;
+
+  responder = [window firstResponder];
+  if ([responder conformsToProtocol: @protocol(CodeEditorView)])
+    {
+      return [[responder editor] windowWillReturnUndoManager: window];
+    }
+  return nil;
 }
 
 // ============================================================================
