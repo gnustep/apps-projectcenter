@@ -10,6 +10,9 @@
 	* Framework/PCProjectWindow.m:
 	Return the view's editor undo manager.
 
+	* Modules/Preferences/Misc/PCMiscPrefs.m:
+	declare strintg constants with @
+
 2010-06-01 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Modules\Editors\ProjectCenter\PCEditor.m,

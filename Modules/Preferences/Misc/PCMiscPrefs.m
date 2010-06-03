@@ -217,7 +217,7 @@
     {
       NSRunAlertPanel(@"Set Debugger Tool",
 		      @"File %@ doesn't exist!\n"
-		      "Setting field to default value.",
+		      @"Setting field to default value.",
       		      @"Close", nil, nil, path);
       path = @"";
     } 
@@ -225,7 +225,7 @@
     {
       NSRunAlertPanel(@"Set Debugger Tool",
 		      @"File %@ exists but is not executable!\n"
-		      "Setting field to default value.",
+		      @"Setting field to default value.",
 		      @"Close", nil, nil, path);
       path = @"";
     }
@@ -288,7 +288,7 @@
 	  [editorField selectText:self];
 	  NSRunAlertPanel(@"Set Editor",
 	    		  @"File %@ exists but is not executable!\n"
-			  "Setting field to default value.",
+			  @"Setting field to default value.",
 	    		  @"Close", nil, nil, path);
 	  path = @"";
 	}
