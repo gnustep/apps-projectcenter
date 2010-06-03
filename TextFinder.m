@@ -308,10 +308,13 @@ static id sharedFindObject = nil;
     }
   else
     {
-      [[text textStorage]
-	replaceCharactersInRange:[text selectedRange]
-		      withString:[replaceTextField stringValue]];
-      [text didChangeText];
+      NSRange r = [text rangeForUserTextChange];
+      NSString *s = [replaceTextField stringValue];
+      if ([text shouldChangeTextInRange:r replacementString:s])
+	{
+	  [[text textStorage] replaceCharactersInRange:r withString:s];
+	  [text didChangeText];
+	}
     }
 
   [statusField setStringValue:@""];

@@ -1,3 +1,8 @@
+2010-06-04 Riccardo Mottola <rmottola@users.sf.net>
+
+	* TextFinder.m:
+	check before replacing and allow undo (by Wolfgang Lux)
+
 2010-06-03 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Headers/Protocols/CodeEditorView.h:
