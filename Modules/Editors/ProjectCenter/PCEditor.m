@@ -209,10 +209,11 @@
 - (void)dealloc
 {
 #ifdef DEVELOPMENT
-#endif
   NSLog(@"PCEditor: %@ dealloc", [_path lastPathComponent]);
+#endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [_window close];
 
   // _window is setReleasedWhenClosed:YES
   RELEASE(_path);

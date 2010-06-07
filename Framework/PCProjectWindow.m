@@ -264,6 +264,7 @@
 #endif
 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [projectWindow close];
 
   [super dealloc];
 }

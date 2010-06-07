@@ -1,3 +1,11 @@
+2010-06-07  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Framework/PCProjectWindow.m (-dealloc):
+	* Modules/Editors/ProjectCenter/PCEditor.m (-dealloc):
+	Attempt to prevent crashes when a project is closed by ensuring
+	that project and editor windows are closed before their owners are
+	deallocated.
+
 2010-06-04 Riccardo Mottola <rmottola@users.sf.net>
 
 	* TextFinder.m:
