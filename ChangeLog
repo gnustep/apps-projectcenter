@@ -1,5 +1,10 @@
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
+	* Framework/PCProject.m (-fileTypesForCategoryKey:): Add .dylib to
+	the list of known library extensions.
+
+2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
 	* Modules/Projects/Application/PCAppProject.m (-writeMakefile):
 	* Modules/Projects/Bundle/PCBundleProject.m (-writeMakefile):
 	* Modules/Projects/Framework/PCFrameworkProject.m (-writeMakefile):

@@ -986,7 +986,7 @@ NSString
     }
   else if ([key isEqualToString:PCLibraries])
     {
-      return [NSArray arrayWithObjects:@"so",@"a",@"lib",nil];
+      return [NSArray arrayWithObjects:@"so",@"a",@"lib",@"dylib",nil];
     }
 
   return nil;
