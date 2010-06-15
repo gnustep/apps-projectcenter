@@ -633,25 +633,25 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
       
       [loadedProjects setObject:project forKey: [project projectPath]];
-      [project setProjectManager:self];
-      
-      // Windows and panels
-      wap = [projectFile objectForKey:PCWindows];
-      if ([[wap allKeys] containsObject:@"ProjectBuild"])
-	{
-	  [[project projectWindow] showProjectBuild:self];
-	}
-      if ([[wap allKeys] containsObject:@"ProjectLaunch"])
-	{
-	  [[project projectWindow] showProjectLaunch:self];
-	}
-      if ([[wap allKeys] containsObject:@"LoadedFiles"])
-	{
-	  [[project projectWindow] showProjectLoadedFiles:self];
-	}
-      
       if (flag)
 	{
+	  [project setProjectManager:self];
+	  
+	  // Windows and panels
+	  wap = [projectFile objectForKey:PCWindows];
+	  if ([[wap allKeys] containsObject:@"ProjectBuild"])
+	    {
+	      [[project projectWindow] showProjectBuild:self];
+	    }
+	  if ([[wap allKeys] containsObject:@"ProjectLaunch"])
+	    {
+	      [[project projectWindow] showProjectLaunch:self];
+	    }
+	  if ([[wap allKeys] containsObject:@"LoadedFiles"])
+	    {
+	      [[project projectWindow] showProjectLoadedFiles:self];
+	    }
+	  
 	  [[project projectWindow] makeKeyAndOrderFront:self];
 	  [self setActiveProject: project];
 	}
@@ -1023,13 +1023,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 - (BOOL)closeAllProjects
 {
   PCProject      *project = nil;
-  NSEnumerator   *enumerator = [loadedProjects objectEnumerator];
+  NSEnumerator   *enumerator = [[loadedProjects allValues] objectEnumerator];
 
 //  PCLogInfo(self, @"loaded %i projects", [loadedProjects count]);
 
-  while ([loadedProjects count] > 0)
+  while ((project = [enumerator nextObject]) != nil)
     {
-      project = [enumerator nextObject];
       if ([prefController boolForKey:SaveOnQuit])
 	{
 	  [project save];

@@ -1,3 +1,14 @@
+2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Framework/PCProjectManager.m(-openProjectAt:makeActive:):
+	Prevent a crash when opening a subproject by not creating a new
+	project window for the subproject. This window is immediately
+	released again when the new project's super project is set anyway.
+
+	* Framework/PCProjectManager.m(-closeAllProjects): Fix bug where
+	PC would not quit after opening a subproject due to a bogus
+	enumerator loop.
+
 2010-06-07  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProjectWindow.m (-dealloc):
