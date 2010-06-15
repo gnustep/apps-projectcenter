@@ -1,5 +1,16 @@
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
+	* Modules/Projects/Application/PCAppProject.m (-writeMakefile):
+	* Modules/Projects/Bundle/PCBundleProject.m (-writeMakefile):
+	* Modules/Projects/Framework/PCFrameworkProject.m (-writeMakefile):
+	* Modules/Projects/Library/PCLibProject.m (-writeMakefile):
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m (-writeMakefile)
+	* Modules/Projects/Tool/PCToolProject.m (-writeMakefile):
+	Fix bug	where PC could include some localized resources in the
+	RESOURCE_FILES Makefile variable.
+
+2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
 	* Framework/PCProjectManager.m(-openProjectAt:makeActive:):
 	Prevent a crash when opening a subproject by not creating a new
 	project window for the subproject. This window is immediately

@@ -207,14 +207,12 @@
       [resources addObjectsFromArray:[projectDict objectForKey:key]];
     }
   // Remove localized resource files from gathered array
-  count = [resources count];
   localizedResources = [projectDict objectForKey:PCLocalizedResources];
-  for (i = 0; i < count; i++)
+  for (i = [resources count] - 1; i >= 0; i--)
     {
       if ([localizedResources containsObject:[resources objectAtIndex:i]])
 	{
 	  [resources removeObjectAtIndex:i];
-	  count--;
 	}
     }
   [mf appendResources:resources inDir:@"Resources"];
@@ -266,6 +264,13 @@
       [mff appendString:
 	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
         projectName]];
+    }
+  else if (![installDir isAbsolutePath] &&
+	   [installDir characterAtIndex:0] != '$')
+    {
+      [mff appendString:
+	[NSString stringWithFormat:@"%@_COPY_INTO_DIR = %@\n",
+        projectName, installDir]];
     }
   else
     {
