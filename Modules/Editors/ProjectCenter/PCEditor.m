@@ -212,6 +212,10 @@
   NSLog(@"PCEditor: %@ dealloc", [_path lastPathComponent]);
 #endif
 
+  [_extEditorView setEditor: nil];
+  [_window setDelegate: nil];
+
+
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   [_window close];
 
@@ -850,7 +854,10 @@
   editorTextViewIsPressingKey = YES;
 //  NSLog(@"Will pressing key");
 
-  [self unhighlightCharacter];
+  if (sender == _intEditorView || sender == _extEditorView)
+    [self unhighlightCharacter: sender];
+  else
+    NSLog(@"PCEditor: unexpected sender");
 }
 
 - (void)editorTextViewDidPressKey:sender
@@ -858,6 +865,8 @@
 //  NSLog(@"Did pressing key");
   if (sender == _intEditorView || sender == _extEditorView)
     [self computeNewParenthesisNesting: sender];
+  else
+    NSLog(@"PCEditor: unexpected sender");
 
   editorTextViewIsPressingKey = NO;
 }
@@ -1212,10 +1221,10 @@ unsigned int FindDelimiterInString(NSString * string,
 
 @implementation PCEditor (Parenthesis)
 
-- (void)unhighlightCharacter
+- (void)unhighlightCharacter: (NSTextView *)editorView
 {
   int           i;
-  NSTextStorage *textStorage = [_intEditorView textStorage];
+  NSTextStorage *textStorage = [editorView textStorage];
 
   [textStorage beginEditing];
 
@@ -1225,7 +1234,6 @@ unsigned int FindDelimiterInString(NSString * string,
       NSRange       r = NSMakeRange(highlited_chars[i], 1);
 //      NSRange       r = NSMakeRange(highlitCharacterLocation, i);
 
-//      NSLog(@"unhighlight");
 
       isCharacterHighlit = NO;
 
@@ -1271,7 +1279,7 @@ unsigned int FindDelimiterInString(NSString * string,
   [textStorage endEditing];
 }
 
-- (void)highlightCharacterAt:(unsigned int)location
+- (void)highlightCharacterAt:(unsigned int)location inEditor: (NSTextView *)editorView
 {
   int i;
 
@@ -1280,7 +1288,7 @@ unsigned int FindDelimiterInString(NSString * string,
 //  if (isCharacterHighlit == NO)
   if (i < 2)
     {
-      NSTextStorage *textStorage = [_intEditorView textStorage];
+      NSTextStorage *textStorage = [editorView textStorage];
       NSRange       r = NSMakeRange(location, 1);
       NSRange       tmp;
 
@@ -1290,7 +1298,7 @@ unsigned int FindDelimiterInString(NSString * string,
       highlited_chars[i] = location;
 
       isCharacterHighlit = YES;
-
+      NSAssert(textStorage, @"textstorage can't be nil");
       [textStorage beginEditing];
 
       // store the previous character's attributes
@@ -1337,7 +1345,7 @@ unsigned int FindDelimiterInString(NSString * string,
   selectedRange = [editorView selectedRange];
 
   // make sure we un-highlight a previously highlit delimiter
-  [self unhighlightCharacter];
+  [self unhighlightCharacter :editorView];
 
   // if we have a character at the selected location, check
   // to see if it is a delimiter character
@@ -1367,8 +1375,8 @@ unsigned int FindDelimiterInString(NSString * string,
           // and in case a delimiter is found, highlight it
           if (result != NSNotFound)
             {
-              [self highlightCharacterAt:selectedRange.location];
-              [self highlightCharacterAt:result];
+              [self highlightCharacterAt:selectedRange.location inEditor:editorView];
+              [self highlightCharacterAt:result inEditor:editorView];
             }
         }
     }

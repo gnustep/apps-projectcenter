@@ -5,6 +5,14 @@
 	* Modules/Editors/ProjectCenter/PCEditor+Document.m
 	Clean up parenthesis highlighting.
 
+	* Modules/Editors/ProjectCenter/PCEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Fix highlighting for standalone editors.
+
+	* Modules/Editors/ProjectCenter/PCEditor+Document.m
+	Deleted
+
+
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProject.m (-fileTypesForCategoryKey:): Add .dylib to

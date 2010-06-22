@@ -149,8 +149,8 @@
 
 @interface PCEditor (Parenthesis)
 
-- (void)unhighlightCharacter;
-- (void)highlightCharacterAt:(unsigned int)location;
+- (void)unhighlightCharacter: (NSTextView *)editorView;
+- (void)highlightCharacterAt:(unsigned int)location inEditor: (NSTextView *)editorView;
 - (void)computeNewParenthesisNesting: (NSTextView *)editorView;
 
 @end
