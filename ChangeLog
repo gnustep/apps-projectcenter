@@ -12,7 +12,9 @@
 	* Modules/Editors/ProjectCenter/PCEditor+Document.m
 	Deleted
 
-
+	* Framework/PCProjectWindow.m
+	Removed floorf() in favour of nothing or truncation.
+	
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProject.m (-fileTypesForCategoryKey:): Add .dylib to

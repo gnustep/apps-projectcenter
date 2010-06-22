@@ -788,8 +788,6 @@
 //  NSLog(@"resizeVerticalSubiewsWithOldSize entered split view width: %f, height %f", splitSize.width, splitSize.height);
 
   boxRect = [v_split frame];
-  boxRect.size.width = floorf(boxRect.size.width);
-  boxRect.size.height = floorf(boxRect.size.height);
   [v_split setFrame:boxRect];
 
   if (splitSize.width == oldSize.width && splitSize.height == oldSize.height)
@@ -816,9 +814,7 @@
       // Unable to restore browser frame
       if (browserRect.size.width == 0 && browserRect.size.height == 0)
 	{
-	  browserRect = NSMakeRect(0, 0, 
-				   floorf(splitSize.width), 
-				   floorf(splitSize.height));
+	  browserRect = NSMakeRect(0, 0, splitSize.width, splitSize.height);
 	}
       [browserView setFrame:browserRect];
     }
