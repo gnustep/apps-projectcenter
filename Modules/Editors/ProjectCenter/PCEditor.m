@@ -837,7 +837,11 @@
 {
   if (editorTextViewIsPressingKey == NO)
     {
-      [self computeNewParenthesisNesting];
+      id object;
+
+      object = [notification object];
+      if (object == _intEditorView || object == _extEditorView)
+	[self computeNewParenthesisNesting: object];
     }
 }
 
@@ -852,7 +856,8 @@
 - (void)editorTextViewDidPressKey:sender
 {
 //  NSLog(@"Did pressing key");
-  [self computeNewParenthesisNesting];
+  if (sender == _intEditorView || sender == _extEditorView)
+    [self computeNewParenthesisNesting: sender];
 
   editorTextViewIsPressingKey = NO;
 }
@@ -1318,7 +1323,7 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-- (void)computeNewParenthesisNesting
+- (void)computeNewParenthesisNesting: (NSTextView *)editorView
 {
   NSRange  selectedRange;
   NSString *myString;
@@ -1328,19 +1333,18 @@ unsigned int FindDelimiterInString(NSString * string,
       return;
     }
 
-  selectedRange = [_intEditorView selectedRange];
+  NSAssert(editorView, @"computeNewParenthesis: editorView is nil");
+  selectedRange = [editorView selectedRange];
 
   // make sure we un-highlight a previously highlit delimiter
   [self unhighlightCharacter];
 
   // if we have a character at the selected location, check
   // to see if it is a delimiter character
-  myString = [_intEditorView string];
+  myString = [editorView string];
   if (selectedRange.length <= 1 && [myString length] > selectedRange.location)
     {
       unichar c;
-      // we must initialize these explicitly in order to make
-      // gcc shut up about flow control
       unichar oppositeDelimiter = 0;
       BOOL    searchBackwards = NO;
 

@@ -1,3 +1,10 @@
+2010-06-22 Riccardo Mottola
+
+	* Modules/Editors/ProjectCenter/PCEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	* Modules/Editors/ProjectCenter/PCEditor+Document.m
+	Clean up parenthesis highlighting.
+
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProject.m (-fileTypesForCategoryKey:): Add .dylib to

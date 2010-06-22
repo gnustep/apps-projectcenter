@@ -24,9 +24,6 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
-#ifndef _PCEditor_h_
-#define _PCEditor_h_
-
 #import <AppKit/AppKit.h>
 
 #import <Protocols/CodeEditor.h>
@@ -154,9 +151,6 @@
 
 - (void)unhighlightCharacter;
 - (void)highlightCharacterAt:(unsigned int)location;
-- (void)computeNewParenthesisNesting;
+- (void)computeNewParenthesisNesting: (NSTextView *)editorView;
 
 @end
-
-#endif // _PCEDITOR_H_
-

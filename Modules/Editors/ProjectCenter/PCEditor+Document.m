@@ -245,58 +245,6 @@ unsigned int FindDelimiterInString(NSString * string,
     }
 }
 
-- (void)computeNewParenthesisNesting
-{
-  NSRange selectedRange;
-  NSString * myString;
-
-  if ([[NSUserDefaults standardUserDefaults] boolForKey: @"DontTrackNesting"])
-    {
-      return;
-    }
-
-  selectedRange = [textView selectedRange];
-
-  // make sure we un-highlight a previously highlit delimiter
-  [self unhighlightCharacter];
-
-  // if we have a character at the selected location, check
-  // to see if it is a delimiter character
-  myString = [textView string];
-  if (selectedRange.length <= 1 && [myString length] > selectedRange.location)
-    {
-      unichar c;
-      // we must initialize these explicitly in order to make
-      // gcc shut up about flow control
-      unichar oppositeDelimiter = 0;
-      BOOL searchBackwards = NO;
-
-      c = [myString characterAtIndex: selectedRange.location];
-
-      // if it is, search for the opposite delimiter in a range
-      // of at most 1000 characters around it in either forward
-      // or backward direction (depends on the kind of delimiter
-      // we're searching for).
-      if (CheckDelimiter(c, &oppositeDelimiter, &searchBackwards))
-        {
-          unsigned int result;
-
-          result = FindDelimiterInString(myString,
-                                         oppositeDelimiter,
-                                         c,
-                                         selectedRange.location,
-                                         searchBackwards);
-
-          // and in case a delimiter is found, highlight it
-          if (result != NSNotFound)
-            {
-              [self highlightCharacterAt: result];
-            }
-        }
-    }
-}
-
-
 // --- State
 
 - (void)updateMiniwindowIconToEdited:(BOOL)flag
