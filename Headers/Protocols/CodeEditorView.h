@@ -28,6 +28,6 @@
 
 @protocol CodeEditorView
 
-- (id <CodeEditor>)editor;
+- (NSObject <CodeEditor> *)editor;
 
 @end
