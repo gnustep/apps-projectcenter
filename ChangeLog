@@ -1,3 +1,9 @@
+2010-07-07 14:49-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m:
+	Fixed issue where if there is no pid it would attempt to stop
+	the current process.
+
 2010-06-24 Riccardo Mottola
 
 	* Headers/Protocols/CodeEditorView.h

@@ -198,9 +198,12 @@
 - (void) interrupt
 {
   int pid = [self subProcessId];
+  if(pid != 0)
+    {
 #ifndef	__MINGW32__
-  kill(pid,SIGINT);
+      kill(pid,SIGINT);
 #endif
+    }
 }
 
 - (void) terminate
