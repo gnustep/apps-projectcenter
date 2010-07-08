@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -575,7 +575,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
       if (!isDir)
 	{
-	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];	  
+	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
+          if(projectFile == nil)
+	    return nil;
+      
+          // For compatibility with 0.3.x projects
+          project = [self convertLegacyProject: projectFile atPath: aPath];	  
 	}
       else
 	{
@@ -583,12 +588,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
       
       if(projectFile == nil)
-	{
 	  return nil;
-	}
       
-      // For compatibility with 0.3.x projects
-      project = [self convertLegacyProject: projectFile atPath: aPath];
+
       if (project)
 	{// Project was converted and created PC*Project with alloc&init
 	  aPath = [[aPath stringByDeletingLastPathComponent]

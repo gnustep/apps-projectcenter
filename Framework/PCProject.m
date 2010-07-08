@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -1543,9 +1543,7 @@ NSString
 	  spFile = [projectPath stringByAppendingPathComponent:name];
 	  spFile = [spFile stringByAppendingPathExtension:@"subproj"];
 	  spFile = [spFile stringByAppendingPathComponent: pname];
-	  spFile = [spFile stringByAppendingPathComponent: @"PC.project"];
-/*	  PCLogInfo(self, @"Not found! Load subproject: %@ at path: %@",
-		    name, spFile);*/
+
 	  sp = [projectManager openProjectAt:spFile makeActive:NO];
 	  if (sp)
 	    {

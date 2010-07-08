@@ -1,3 +1,9 @@
+2010-07-08 Riccardo Mottola
+
+	* Framework/PCProject.m
+	* Framework/PCProjectManager.m
+	When opening a subproject pass the bundle name, or it gets concerted.
+
 2010-07-07 14:49-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m:
@@ -25,7 +31,7 @@
 
 	* Framework/PCProjectWindow.m
 	Removed floorf() in favour of nothing or truncation.
-	
+
 2010-06-15  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProject.m (-fileTypesForCategoryKey:): Add .dylib to
