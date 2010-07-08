@@ -224,6 +224,7 @@ NSString
     {
       if ([aDict objectForKey:key] == nil)
 	{
+	  PCLogInfo(self, @"invalid dict entry for key %@", key);
 	  return NO;
 	}
     }
