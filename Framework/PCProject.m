@@ -105,7 +105,8 @@ NSString
 						   encoding: NSASCIIStringEncoding] 
 				  propertyList];
 	  
-	  [dict addEntriesFromDictionary: udict]; 
+	  if (udict != nil)
+	    [dict addEntriesFromDictionary: udict]; 
 	  [self assignProjectDict:dict atPath: aPath];
 	}
     }
