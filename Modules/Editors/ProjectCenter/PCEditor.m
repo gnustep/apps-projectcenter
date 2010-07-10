@@ -622,6 +622,14 @@
     postNotificationName:PCEditorWillSaveNotification
 		  object:self];
 
+  // Send the notification to Gorm...
+  if([[_path pathExtension] isEqual: @"h"])
+    {
+      [[NSDistributedNotificationCenter defaultCenter]
+	postNotificationName: @"GormParseClassNotification"
+	object: _path];
+    }
+
   saved = [[_storage string] writeToFile:_path atomically:YES];
  
   if (saved == YES)
