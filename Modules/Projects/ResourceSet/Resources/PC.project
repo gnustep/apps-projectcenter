@@ -4,7 +4,6 @@
     LINKEROPTIONS = "";
     CREATION_DATE = "";
     LANGUAGE = "English";
-    LAST_EDITING = "";
     MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)";
     INSTALLDIR = "$(HOME)/GNUstep";
     OBJC_COMPILEROPTIONS = "";
