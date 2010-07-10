@@ -10,7 +10,6 @@
     IMAGES = ();
     LANGUAGE = "English";
     USER_LANGUAGES = ();
-    LAST_EDITING = "";
     LIBRARIES = ("gnustep-base");
     LOCALIZED_RESOURCES = ();
     MAKEFILEDIR = "$(GNUSTEP_MAKEFILES)";

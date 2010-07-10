@@ -1,3 +1,13 @@
+2010-07-20 Riccardo Mottola
+
+	* Modules/Projects/Application/Resources/PC.project
+	* Modules/Projects/Library/Resources/PC.project
+	* Modules/Projects/Aggregate/Resources/PC.project
+	* Modules/Projects/Bundle/Resources/PC.project
+	* Modules/Projects/Framework/Resources/PC.project
+	* Modules/Projects/Tool/Resources/PC.project
+	Remove LAST_EDITING from project template. It is not needed for validation.
+
 2010-07-10 01:20-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m: in -save implemented 
