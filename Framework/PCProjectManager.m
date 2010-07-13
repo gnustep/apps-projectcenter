@@ -444,7 +444,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return nil;
     }
 
-  NSLog(@"Convert legacy");
+  PCLogInfo(self, @"Converting legacy project");
 
   // Gorm project type doesn't exists anymore
   if ([projectClassName isEqualToString:@"PCGormProj"] ||
@@ -516,6 +516,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
       [fm movePath:_file toPath:_2file handler:nil];
     }
+
+  /* remove non meaningful keys */
+  [pDict removeObjectForKey: PCWindows];
+  [pDict removeObjectForKey: PCLastEditing];
 
   // GNUmakefiles will be generated in [PCProject initWithProjectDictionary:]
 

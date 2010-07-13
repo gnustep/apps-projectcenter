@@ -1,4 +1,9 @@
-2010-07-20 Riccardo Mottola
+2010-07-13 Riccardo Mottola <rmottola@users.sf.net>
+
+	* Framework/PCProjectManager.m
+	Log conversion into PC log and not console. Remove unneded keys.
+
+2010-07-10 Riccardo Mottola
 
 	* Modules/Projects/Application/Resources/PC.project
 	* Modules/Projects/Library/Resources/PC.project
@@ -10,8 +15,8 @@
 
 2010-07-10 01:20-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
-	* Modules/Editors/ProjectCenter/PCEditor.m: in -save implemented 
-	simple mechanism for propagating changes in classes to Gorm when 
+	* Modules/Editors/ProjectCenter/PCEditor.m: in -save implemented
+	simple mechanism for propagating changes in classes to Gorm when
 	updating a header file.
 
 2010-07-08 Riccardo Mottola
