@@ -64,7 +64,7 @@ ProjectCenter 0.6
   - implement go to line                                        stoyan
   - Implement interaction with Builder (errors, warnings)       stoyan
   - Implement indentation                                       stoyan
-  - implement undo inside editor                                stoyan
+  - implement undo inside editor                                [done!] 
   - Add and use basic editor preferences (fonts, colors, sizes) [50% done]
 --- Project Inspector ------------------------------------------
   - Make sections as loadable bundles                           stoyan
