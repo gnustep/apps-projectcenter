@@ -1,3 +1,45 @@
+2010-07-31 Sergii Stoian <stoyan255@ukr.net>
+	* Framework/PCProject.m:
+	(-assignProjectDict:): Fix setting projectPath to project
+	dir (not to *.pcproj dir).
+	* Framework/PCFilemanager.m:
+	(-filesOfTypes:operation:multiple:title:accView:): Set allowed
+	file types to panel of types is not nil.
+	(-panel:isValidFilename): Use set allowed file types to panel.
+
+2010-07-30 Sergii Stoian <stoyan255@ukr.net>
+	* Framework/PCProject.m:
+	(-subprojectWithName:): Pass to openProjectAt: subproject dir.
+	openProjectat: can now handle this situation.
+	* Framework/PCProjectManager.m:
+	(-openProjectAt:): Implement handling of 'aPath' argument as 
+	project file and as project dir. Select *.pcproj if exists then
+	try to load PC.project.
+	(-openProject): Implement intelligent selection of project file
+	when selected *.pcproj, PC.project or project dir.
+	* Framework/PCFilemanager.m:
+	(-filesOfTypes:operation:multiple:title:accView:): Remove code
+	specific for opening projects (moved to PCProjectManager's 
+	openProject).
+	(-panel:isValidFilename): Fix handling project file detection.
+	(-filesWithExtension:atPath:includeDirs:): New method. Returns
+	list of files with specified extension. Also returns dirs if 
+	'includeDirs' set to YES.
+
+2010-07-28 Sergii Stoian <stoyan255@ukr.net>
+	* Framework/PCProject.m:
+	(close:): Fix closing of subprojects. Remove subproject from 
+	Projectmanager's list of loaded projects.
+	* Framework/PCLogController.m:
+	(-init): Change font size to systemFontSize.
+
+2010-07-24 Sergii Stoian <stoyan255@ukr.net>
+	* Headers/ProjectCenter/PCProjectBuilder.m:
+	* Framework/PCProjectBuilder.m:
+	(cleanupAfterMake:): Added new argument (NSString) to method
+	containing current status text. Before status text in project window
+	always stated "...terminated".
+
 2010-07-13 Riccardo Mottola <rmottola@users.sf.net>
 
 	* Framework/PCProjectManager.m

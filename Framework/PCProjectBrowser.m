@@ -382,14 +382,17 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   filePath = [self pathToSelectedFile];
   fileName = [self nameOfSelectedFile];
 
-  NSLog(@"category: %@ forProject: %@", 
-	category, [activeProject projectName]);
+  NSLog(@"[click]category: %@ forProject: %@ fileName: %@", 
+	category, [activeProject projectName], fileName);
 
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
-      ![fileName isEqualToString:[activeProject projectName]])
+      ![fileName isEqualToString:[activeProject projectName]] &&
+      ![category isEqualToString:@"Subprojects"] &&
+      ![category isEqualToString:@"Libraries"]
+      )
     {
-//      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
+      NSLog(@"[click] category: %@ filePath: %@", category, filePath);
       [[activeProject projectEditor] openEditorForCategoryPath:browserPath
 					    	      windowed:NO];
     }

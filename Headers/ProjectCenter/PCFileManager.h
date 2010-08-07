@@ -125,9 +125,16 @@ enum {
 
 @end
 
-@interface PCFileManager (FileType)
+@interface PCFileManager (Misc)
 
 - (BOOL)isTextFile:(NSString *)filename;
+
+// Return list of files and directories absolute paths that has 
+// specified 'extension' at directory 'dirPath'. If 'incDirs'
+// has value YES also include directories in this list.
+- (NSArray *)filesWithExtension:(NSString *)extension
+	     		 atPath:(NSString *)dirPath
+     		    includeDirs:(BOOL)incDirs;
 
 @end
 #endif

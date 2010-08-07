@@ -447,14 +447,14 @@
   [buildOptions show:[[componentView window] frame]];
 }
 
-- (void)cleanupAfterMake
+- (void)cleanupAfterMake:(NSString *)statusString
 {
-  NSString *statusString;
+//  NSString *statusString;
 
   if (_isBuilding || _isCleaning)
     {
-      statusString =[NSString stringWithFormat: 
-	@"%@ - %@ terminated", [project projectName], buildStatusTarget];
+//      statusString =[NSString stringWithFormat: 
+//	@"%@ - %@ terminated", [project projectName], buildStatusTarget];
       [statusField setStringValue:statusString];
       [[project projectWindow] updateStatusLineWithText:statusString];
     }
@@ -564,7 +564,8 @@
   // Checking build conditions
   if ([self prebuildCheck] == NO)
     {
-      [self cleanupAfterMake];
+      [self cleanupAfterMake:[NSString stringWithFormat: 
+	@"%@ - %@ terminated", [project projectName], buildStatusTarget]];
       return;
     }
 
@@ -715,7 +716,7 @@
       postProcess = NULL;
     }*/
 
-  [self cleanupAfterMake];
+  [self cleanupAfterMake:statusString];
 }
 
 // --- BuilderOptions delegate

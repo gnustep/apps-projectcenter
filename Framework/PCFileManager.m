@@ -442,30 +442,21 @@ static PCFileManager *_mgr = nil;
 {
   id             panel;
   NSMutableArray *fileList = [[NSMutableArray alloc] init];
-  NSString       *file;
-  NSFileManager  *fm = [NSFileManager defaultManager];
-  BOOL           isDir;
-  int            result;
+  int            result = -10;
 
   panel = [self _panelForOperation:op title:title accView:accessoryView];
+  if (types != nil)
+    {
+      [panel setAllowedFileTypes:types];
+    }
 
   if ((op == PCOpenFileOperation) || 
       (op == PCOpenProjectOperation) || 
       (op == PCOpenDirectoryOperation))
     {
-      [panel setAllowsMultipleSelection:yn];
-
       if ((result = [panel runModalForTypes:types]) == NSOKButton) 
 	{
 	  [fileList addObjectsFromArray:[panel filenames]];
-
-	  file = [fileList objectAtIndex:0];
-	  if (op == PCOpenProjectOperation &&
-	      [fm fileExistsAtPath:file isDirectory:&isDir] && isDir)
-	    {
-	      file = [file stringByAppendingPathComponent:@"PC.project"];
-	      [fileList insertObject:file atIndex:0];
-	    }
 	}
     }
   else if (op == PCSaveFileOperation)
@@ -570,17 +561,26 @@ static PCFileManager *_mgr = nil;
 {
   NSFileManager *fm = [NSFileManager defaultManager];
   BOOL          isDir;
-  NSString      *file;
+  NSEnumerator  *e = nil;
+  NSArray       *tempList = nil;
+  NSString      *tempExtension = nil;
 
   if (operation == PCOpenProjectOperation)
     {
       if ([fm fileExistsAtPath:filename isDirectory:&isDir] && isDir)
 	{
-	  file = [filename stringByAppendingPathComponent:@"PC.project"];
-	  if ([fm fileExistsAtPath:file])
+	  e = [[sender allowedFileTypes] objectEnumerator]; 
+	  while ((tempExtension = [e nextObject]) != nil)
 	    {
-	      return YES;
+	      tempList = [self filesWithExtension:tempExtension
+				  	   atPath:filename 
+				      includeDirs:YES];
+	      if ([tempList count] > 0)
+		{
+		  return YES;
+		}
 	    }
+
 	  return NO;
 	}
     }
@@ -590,7 +590,7 @@ static PCFileManager *_mgr = nil;
 
 @end
 
-@implementation PCFileManager (FileType)
+@implementation PCFileManager (Misc)
 
 /**
  * Returns YES if the file identified by `filename' is a text file,
@@ -632,6 +632,33 @@ static PCFileManager *_mgr = nil;
     }
 
   return (((double) printable / n) > 0.9);
+}
+
+- (NSArray *)filesWithExtension:(NSString *)extension
+	     		 atPath:(NSString *)dirPath
+     		    includeDirs:(BOOL)incDirs
+{
+  NSFileManager  *fm = [NSFileManager defaultManager];
+  NSMutableArray *filesList = [[NSMutableArray alloc] init];
+  NSEnumerator   *e = nil;
+  NSString       *temp = nil;
+  BOOL           isDir;
+
+  e = [[fm directoryContentsAtPath:dirPath] objectEnumerator];
+  while ((temp = [e nextObject]) != nil)
+    {
+      if ([fm fileExistsAtPath:temp isDirectory:&isDir] && isDir && !incDirs)
+	{
+	  continue;
+	}
+
+      if ([[temp pathExtension] isEqual:extension])
+	{
+	  [filesList addObject:[dirPath stringByAppendingPathComponent:temp]];
+	}
+    }
+
+  return [filesList autorelease];
 }
 
 @end

@@ -124,7 +124,7 @@ typedef enum _ErrorLevel {
 - (void)startClean:(id)sender;
 - (BOOL)stopMake:(id)sender;
 - (void)showOptionsPanel:(id)sender;
-- (void)cleanupAfterMake;
+- (void)cleanupAfterMake:(NSString *)statusString;
 
 - (BOOL)prebuildCheck;
 - (void)build:(id)sender;

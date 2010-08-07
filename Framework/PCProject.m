@@ -175,9 +175,11 @@ NSString
 // --- Dictionary
 - (BOOL)assignProjectDict:(NSDictionary *)pDict atPath:(NSString *)pPath
 {
+  NSString *tempPath = nil;
+
   NSAssert(pDict,@"No valid project dictionary!");
 
-  PCLogStatus(self, @"assignProjectDict");
+  PCLogStatus(self, @"assignProjectDict at %@", pPath);
 
   if (projectDict)
     {
@@ -189,7 +191,12 @@ NSString
   if ([[pPath lastPathComponent] isEqualToString:@"PC.project"] ||
       [[[pPath lastPathComponent] pathExtension] isEqualToString:@"pcproj"])
     {
-      [self setProjectPath:[pPath stringByDeletingLastPathComponent]];
+      tempPath = [pPath stringByDeletingLastPathComponent];
+      if ([[tempPath pathExtension] isEqualToString:@"pcproj"])
+	{
+	  tempPath = [tempPath stringByDeletingLastPathComponent];
+	}
+      [self setProjectPath:tempPath];
     }
   else
     {
@@ -593,6 +600,7 @@ NSString
 
   if (isSubproject == YES)
     {
+      [projectManager closeProject:self];
       return YES;
     }
 
@@ -1519,7 +1527,7 @@ NSString
   int       i;
   PCProject *sp = nil;
   NSString  *spName = nil;
-  NSString  *spFile = nil;
+  NSString  *spPath = nil;
 
   // Subproject in project but not loaded
   if ([[projectDict objectForKey:PCSubprojects] containsObject:name])
@@ -1541,12 +1549,10 @@ NSString
       // Subproject not found in array, load it
       if (sp == nil)
 	{
-	  NSString *pname = [NSString stringWithFormat: @"%@.pcproj",name];
-	  spFile = [projectPath stringByAppendingPathComponent:name];
-	  spFile = [spFile stringByAppendingPathExtension:@"subproj"];
-	  spFile = [spFile stringByAppendingPathComponent: pname];
+	  spPath = [projectPath stringByAppendingPathComponent:name];
+	  spPath = [spPath stringByAppendingPathExtension:@"subproj"];
 
-	  sp = [projectManager openProjectAt:spFile makeActive:NO];
+	  sp = [projectManager openProjectAt:spPath makeActive:NO];
 	  if (sp)
 	    {
 	      [sp setIsSubproject:YES];
