@@ -1,3 +1,10 @@
+2010-08-10 Sergii Stoian <stoyan255@ukr.net>
+	* Framework/PCProjectBrowser.m:
+	(-nameOfSelectedCategory): Return 'nil' if name of subproject
+	selected. Add comments.
+	(-nameOfSelectedFile): Check if category is selected.
+	(-click:): check if category is selected.
+
 2010-07-31 Sergii Stoian <stoyan255@ukr.net>
 	* Framework/PCProject.m:
 	(-assignProjectDict:): Fix setting projectPath to project

@@ -107,8 +107,9 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 //  NSLog(@"---> Selected: %@: category: %@", name, category);
 
-  if ([[browser selectedCells] count] != 1
-      || [name isEqualToString:category])
+  if ([[browser selectedCells] count] != 1 ||
+      !category || 
+      [name isEqualToString:category])
     {
       return nil;
     }
@@ -142,7 +143,12 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return path;
 }
 
-// Returns nil of multiple categories selected
+// Returns 'nil' if selected:
+// - root project (browser path is @"/")
+// - multiple categories
+// - name of subproject
+// Should not call any of the nameOf... or pathTo... methods to prevent
+// cyclic recursion.
 - (NSString *)nameOfSelectedCategory
 {
   NSArray   *pathArray = [[browser path] componentsSeparatedByString:@"/"];
@@ -157,12 +163,14 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   // But: path '/Subproject/Foo' and '/Subprojects/Foo/Subprojects' will
   // return the same category 'Subprojects' and active project will be 'Foo'
   // in both cases
-  if ([lastPathElement isEqualToString:[activeProject projectName]])
+//      ![[self nameOfSelectedFile] isEqualToString:lastPathElement])
+/*  if ([lastPathElement isEqualToString:[activeProject projectName]])
     {
       activeProject = [activeProject superProject];
       rootCategories = [activeProject rootCategories];
-    }
+    }*/
 
+  // Multiple categories selected
   if (([rootCategories containsObject:lastPathElement]
 	  && [[browser selectedCells] count] > 1))
     {
@@ -176,6 +184,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	  name = [pathArray objectAtIndex:i];
 	  break;
 	}
+    }
+
+  // Subproject's name selected
+  if ([name isEqualToString:@"Subprojects"] &&
+      [lastPathElement isEqualToString:[activeProject projectName]])
+    {
+      return nil;
     }
   
   return name;
@@ -382,13 +397,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   filePath = [self pathToSelectedFile];
   fileName = [self nameOfSelectedFile];
 
-  NSLog(@"[click]category: %@ forProject: %@ fileName: %@", 
+  NSLog(@"[click] category: %@ forProject: %@ fileName: %@", 
 	category, [activeProject projectName], fileName);
 
+//  ![fileName isEqualToString:[activeProject projectName]] &&
   if (filePath &&
       [filePath isEqualToString:browserPath] && 
-      ![fileName isEqualToString:[activeProject projectName]] &&
-      ![category isEqualToString:@"Subprojects"] &&
+      category &&
       ![category isEqualToString:@"Libraries"]
       )
     {
