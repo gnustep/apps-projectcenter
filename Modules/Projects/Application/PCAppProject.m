@@ -159,11 +159,8 @@
 
   // Customise the project
   [self setProjectPath:path];
-  [self setProjectName:[path lastPathComponent]];
-  if ([[projectName pathExtension] isEqualToString:@"subproj"])
-    {
-      projectName = [projectName stringByDeletingPathExtension];
-    }
+  [self setProjectName:[[path lastPathComponent] stringByDeletingPathExtension]];
+
   [projectDict setObject:projectName forKey:PCProjectName];
   [projectDict setObject:[[NSCalendarDate date] description]
 		  forKey:PCCreationDate];
