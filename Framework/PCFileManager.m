@@ -376,6 +376,7 @@ static PCFileManager *_mgr = nil;
       if (addFilesPanel == nil)
 	{
 	  addFilesPanel = [PCAddFilesPanel addFilesPanel];
+	  [addFilesPanel setTreatsFilePackagesAsDirectories: YES]; 
 	}
       panel = addFilesPanel;
       lastOpenDir = [prefs stringForKey:@"FileAddLastDirectory"];

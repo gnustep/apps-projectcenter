@@ -1,3 +1,7 @@
+2010-11-16 German Arias <german@xelalug.org>
+	* Framework/PCFileManager.m: Allow open .project directories
+	to add files placed at project directory in AddFiles panel.
+
 2010-11-05 German Arias <german@xelalug.org>
 	* Modules/Projects/Application/PCAppProject.m: 
 	(-createProjectAt:) Delete the extension on the	project 
