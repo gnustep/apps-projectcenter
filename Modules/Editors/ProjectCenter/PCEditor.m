@@ -284,8 +284,7 @@
   [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
 
   text  = [NSString stringWithContentsOfFile:_path];
-  [attributedString initWithString:text attributes:attributes];
-  //
+  attributedString = [attributedString initWithString:text attributes:attributes];
 
   _storage = [[NSTextStorage alloc] init];
   [_storage setAttributedString:attributedString];
