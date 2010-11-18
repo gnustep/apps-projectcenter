@@ -506,6 +506,7 @@
       }
     }
 
+  methodRange = NSMakeRange(0, 0);
   enumerator = [parserMethods objectEnumerator];
   while ((method = [enumerator nextObject]))
     {
@@ -928,6 +929,7 @@
 
   NSLog(@"SCROLL to class: \"%@\"", className);
 
+  classNameRange = NSMakeRange(0, 0);
   enumerator = [parserClasses objectEnumerator];
   while ((class = [enumerator nextObject]))
     {
@@ -955,6 +957,7 @@
 
   NSLog(@"SCROLL to method: \"%@\"", methodName);
 
+  methodNameRange = NSMakeRange(0, 0);
   enumerator = [parserMethods objectEnumerator];
   while ((method = [enumerator nextObject]))
     {

@@ -9,6 +9,9 @@
 	* Framework/PCProject.m:
 	Fix memory leak.
 
+	* Modules/Editors/ProjectCenter/PCEditor.m:
+	Initialize range to ensure it does not contain garbage.
+
 2010-11-16 German Arias <german@xelalug.org>
 	* Framework/PCFileManager.m: Allow open .project directories
 	to add files placed at project directory in AddFiles panel.
