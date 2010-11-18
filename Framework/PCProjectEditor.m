@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2004 Free Software Foundation
+   Copyright (C) 2002-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -193,7 +194,6 @@
   NSString       *filePath = nil;
   BOOL           editable = YES;
   id<CodeEditor> editor;
-  NSString       *firstSymbol = nil;
 
   fileName = [[[[_project projectBrowser] pathFromSelectedCategory] 
     pathComponents] objectAtIndex:2];
@@ -232,7 +232,6 @@
   NSLog(@"lastObject[1]: %@", 
   [pathLastObject substringWithRange:NSMakeRange(0,1)]);*/
 
-  firstSymbol = [pathLastObject substringToIndex:1];
   if ([pathLastObject isEqualToString:@"/"])
     {
       pathLastObject = [pathArray objectAtIndex:[pathArray count]-2];
