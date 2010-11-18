@@ -502,6 +502,7 @@ NSString
       NSRunAlertPanel(@"Save Project",
 		      @"Couldn't remove the old project backup file",
 		      @"OK",nil,nil);
+      [dict release];
       return NO;
     }
 
