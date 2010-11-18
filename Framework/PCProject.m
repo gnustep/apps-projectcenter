@@ -408,6 +408,7 @@ NSString
     {
       [projectFileDict setObject:windows forKey:PCWindows];
       [projectFileDict writeToFile:projectFile atomically:YES];
+      [projectFileDict release];
       return YES;
     }
 
