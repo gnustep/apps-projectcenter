@@ -1,8 +1,11 @@
 2010-11-18 Riccardo Mottola
 
-	* Modules/Editors/ProjectCenter/PCEditor.m
+	* Modules/Editors/ProjectCenter/PCEditor.m:
 	Init could return a different object, take it in account.
 	
+	* Framework/PCProjectEditor.m:
+	Remove useless instruction and assignment.
+
 2010-11-16 German Arias <german@xelalug.org>
 	* Framework/PCFileManager.m: Allow open .project directories
 	to add files placed at project directory in AddFiles panel.

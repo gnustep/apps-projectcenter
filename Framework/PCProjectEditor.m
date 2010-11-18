@@ -336,7 +336,6 @@
       NSString       *lastEditorKey = [[_editorsDict allKeys] lastObject];
       id<CodeEditor> lastEditor = [_editorsDict objectForKey:lastEditorKey];
 
-      lastEditorKey = [[_editorsDict allKeys] lastObject];
       [_componentView setContentView:[lastEditor componentView]];
       [[_project projectWindow] makeFirstResponder:[lastEditor editorView]];
     }
