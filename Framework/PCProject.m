@@ -107,6 +107,7 @@ NSString
 	  
 	  if (udict != nil)
 	    [dict addEntriesFromDictionary: udict]; 
+	  [udict release];
 	  [self assignProjectDict:dict atPath: aPath];
 	}
     }
