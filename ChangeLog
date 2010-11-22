@@ -1,4 +1,10 @@
 2010-11-21 German Arias <german@xelalug.org>
+	* Framework/PCProjectInspector.m: Set "project" and 
+	"projectDir" when the panel is loaded. And take the
+	languages to the popup from the PCUserLanguages key
+	instead of NSUserDefaults.
+
+2010-11-21 German Arias <german@xelalug.org>
 	* Framework/PCProject.m:
 	* Modules/Projects/Application/PCAppProject.m:
 	* Modules/Projects/Application/PCAggregateProject.m:

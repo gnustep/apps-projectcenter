@@ -109,6 +109,8 @@
   // Panel
   [inspectorPanel setFrameAutosaveName:@"ProjectInspector"];
   [inspectorPanel setFrameUsingName:@"ProjectInspector"];
+  project = [projectManager activeProject];
+  projectDict = [project projectDict];
   
   // PopUp
   [inspectorPopup selectItemAtIndex:0];
@@ -533,7 +535,7 @@
 
   // Languages
   [projectLanguagePB removeAllItems];
-  [projectLanguagePB addItemsWithTitles:[NSUserDefaults userLanguages]];
+  [projectLanguagePB addItemsWithTitles: [projectDict objectForKey: PCUserLanguages]];
   
   // Retain view
   [projectAttributesView retain];
