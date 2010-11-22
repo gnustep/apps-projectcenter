@@ -166,6 +166,7 @@
 		  forKey:PCCreationDate];
   [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
   [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   // Copy the project files to the provided path
   _file = [projBundle pathForResource:@"main" ofType:@"m"];

@@ -204,8 +204,6 @@ NSString
       [self setProjectPath:pPath];
     }
 
-  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
-
   [self setProjectName:[projectDict objectForKey:PCProjectName]];
   [self writeMakefile];
   [self save];

@@ -117,6 +117,7 @@
       projectName = [projectName stringByDeletingPathExtension];
     }
   [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   // Copy the project files to the provided path
 

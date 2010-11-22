@@ -118,6 +118,7 @@
                   forKey:PCCreationDate];
   [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
   [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];

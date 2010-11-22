@@ -1,3 +1,15 @@
+2010-11-21 German Arias <german@xelalug.org>
+	* Framework/PCProject.m:
+	* Modules/Projects/Application/PCAppProject.m:
+	* Modules/Projects/Application/PCAggregateProject.m:
+	* Modules/Projects/Application/PCLibProject.m:
+	* Modules/Projects/Application/PCBundleProject.m:
+	* Modules/Projects/Application/PCFrameworkProject.m:
+	* Modules/Projects/Application/PCToolProject.m:
+	* Modules/Projects/Application/PCResourceSetProject.m:	
+	Set the key PCUserLanguages when the project is created not
+	when is loaded.
+
 2010-11-18 Riccardo Mottola
 
 	* Modules/Editors/ProjectCenter/PCEditor.m:
