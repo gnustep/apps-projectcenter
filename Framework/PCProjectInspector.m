@@ -86,6 +86,7 @@
   RELEASE(projectAttributesSubview);
   RELEASE(projectAttributesView);
   RELEASE(projectDescriptionView);
+  RELEASE(projectLanguagesView);
   RELEASE(fileAttributesView);
 
   RELEASE(inspectorPanel);
@@ -123,6 +124,9 @@
 
   // Project Description
   [self createProjectDescription];
+
+  // Project Languages
+  [self createProjectLanguages];
 
   // File Attributes
   [self createFileAttributes];
@@ -170,6 +174,9 @@
       [inspectorView setContentView:projectDescriptionView];
       break;
     case 3:
+      [inspectorView setContentView:projectLanguagesView];
+      break;
+    case 4:
       [inspectorView setContentView:fileAttributesView];
       break;
     }
@@ -685,6 +692,26 @@
     [authorsList reloadData];
     [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
   }
+}
+
+// ============================================================================
+// ==== Project Languages
+// ============================================================================
+
+- (void)createProjectLanguages
+{
+  if (projectLanguagesView)
+    {
+      return;
+    }
+
+  if ([NSBundle loadNibNamed:@"ProjectLanguages" owner:self] == NO)
+    {
+      PCLogError(self, @"error loading ProjectLanguages NIB file!");
+      return;
+    }
+
+  [projectLanguagesView retain];
 }
 
 // ============================================================================

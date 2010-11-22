@@ -115,6 +115,7 @@ ProjectCenter_LOCALIZED_RESOURCE_FILES = \
   BuildAttributes.gorm \
   ProjectAttributes.gorm \
   ProjectDescription.gorm \
+  ProjectLanguages.gorm \
   FileAttributes.gorm \
   LogPanel.gorm \
   SaveModified.gorm 

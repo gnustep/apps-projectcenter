@@ -1,3 +1,15 @@
+2010-11-22 German Arias <german@xelalug.org>
+	* Framework/GNUmakefile: Added ProjectLanguages.gorm
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	* Framework/PCProjectInspector.m:
+	Added projectLanguagesView and the method create the
+	panel.
+	* Framework/English.lproj/ProjectInspector.gorm:
+	Added "ProjectLanguages" option.
+	* Framework/English.lproj/ProjectLanguages.gorm:
+	New "Project Languages" panel. At the moment this
+	is empty, I will add the content later.
+
 2010-11-21 German Arias <german@xelalug.org>
 	* Framework/PCProjectInspector.m: Set "project" and 
 	"projectDir" when the panel is loaded. And take the

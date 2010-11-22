@@ -88,6 +88,9 @@
   IBOutlet NSButton       *authorUp;
   IBOutlet NSButton       *authorDown;
 
+  // Project Languages
+  IBOutlet NSBox          *projectLanguagesView;
+
   // File Attributes
   IBOutlet NSBox           *fileAttributesView;
   IBOutlet PCFileNameIcon  *fileIconView;
@@ -152,6 +155,11 @@
 // ==== Project Description
 // ============================================================================
 - (void)createProjectDescription;
+
+// ============================================================================
+// ==== Project Languages
+// ============================================================================
+- (void)createProjectLanguages;
 
 // ============================================================================
 // ==== File Attributes
