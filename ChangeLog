@@ -1,3 +1,8 @@
+2010-11-23 Riccardo Mottola
+
+	* Framework/PCFileManager.m:
+	Initialize isDir value.
+
 2010-11-22 German Arias <german@xelalug.org>
 	* Framework/GNUmakefile: Added ProjectLanguages.gorm
 	* Headers/ProjectCenter/PCProjectInspector.h:

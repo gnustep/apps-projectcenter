@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -106,6 +106,7 @@ static PCFileManager *_mgr = nil;
    * component any more.  Else, you may end up in an infinite loop if
    * _path = @"".
    */
+  isDir = NO;
   while (_path != nil  
 	 &&  ![_path isEqualToString: _oldPath]
 	 &&  ![fm fileExistsAtPath:_path isDirectory:&isDir])
