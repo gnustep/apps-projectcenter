@@ -1,3 +1,9 @@
+2010-11-24 German Arias <german@xelalug.org>
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	* Framework/PCProjectInspector.m:
+	* Framework/English.lproj/ProjectInspector.gorm:
+	Removed "Project Languages" option on Inspector.
+
 2010-11-23 Riccardo Mottola
 
 	* Framework/PCFileManager.m:

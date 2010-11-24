@@ -89,7 +89,7 @@
   IBOutlet NSButton       *authorDown;
 
   // Project Languages
-  IBOutlet NSBox          *projectLanguagesView;
+  //IBOutlet NSBox          *projectLanguagesView;
 
   // File Attributes
   IBOutlet NSBox           *fileAttributesView;

@@ -86,7 +86,6 @@
   RELEASE(projectAttributesSubview);
   RELEASE(projectAttributesView);
   RELEASE(projectDescriptionView);
-  RELEASE(projectLanguagesView);
   RELEASE(fileAttributesView);
 
   RELEASE(inspectorPanel);
@@ -124,9 +123,6 @@
 
   // Project Description
   [self createProjectDescription];
-
-  // Project Languages
-  [self createProjectLanguages];
 
   // File Attributes
   [self createFileAttributes];
@@ -174,9 +170,6 @@
       [inspectorView setContentView:projectDescriptionView];
       break;
     case 3:
-      [inspectorView setContentView:projectLanguagesView];
-      break;
-    case 4:
       [inspectorView setContentView:fileAttributesView];
       break;
     }
@@ -698,7 +691,7 @@
 // ==== Project Languages
 // ============================================================================
 
-- (void)createProjectLanguages
+/*- (void)createProjectLanguages
 {
   if (projectLanguagesView)
     {
@@ -712,7 +705,7 @@
     }
 
   [projectLanguagesView retain];
-}
+}*/
 
 // ============================================================================
 // ==== File Attributes
