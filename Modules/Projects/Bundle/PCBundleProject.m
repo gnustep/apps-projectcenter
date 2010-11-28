@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -246,7 +247,7 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
-  NSString *installDir = [projectDict objectForKey:PCInstallDir];
+  NSString *installDomain = [projectDict objectForKey:PCInstallDomain];
 
   [mff appendString:@"\n#\n# Bundle\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
@@ -260,23 +261,14 @@
   [mff appendString:[NSString stringWithFormat:@"BUNDLE_EXTENSION = %@\n",
     [projectDict objectForKey:PCBundleExtension]]];
 
-  if ([installDir isEqualToString:@""])
+  /* FIXME %@_COPY_INTO_DIR needs to be properly reinstantiated
+     as well as %@_STANDARD_INSTALL = no  */
+
+  /* set the domain if it was specified */
+  if (!(installDomain == nil) && ![installDomain isEqualToString:@""])
     {
       [mff appendString:
-	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
-        projectName]];
-    }
-  else if (![installDir isAbsolutePath] &&
-	   [installDir characterAtIndex:0] != '$')
-    {
-      [mff appendString:
-	[NSString stringWithFormat:@"%@_COPY_INTO_DIR = %@\n",
-        projectName, installDir]];
-    }
-  else
-    {
-      [mff appendString:[NSString stringWithFormat:@"BUNDLE_INSTALL_DIR = %@\n",
-        installDir]];
+	     [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DOMAIN = %@\n", [installDomain uppercaseString]]];
     }
 }
 

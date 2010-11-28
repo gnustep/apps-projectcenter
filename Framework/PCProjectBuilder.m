@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -322,17 +323,16 @@
 - (NSArray *)buildArguments
 {
   NSDictionary   *projectDict = [project projectDict];
-  NSString       *instDir = [projectDict objectForKey:PCInstallDir];
+  NSString       *instDomain = [projectDict objectForKey:PCInstallDomain];
   NSMutableArray *args = [NSMutableArray new];
 
-  if (![instDir isEqualToString:@"LOCAL"] &&
-      ![instDir isEqualToString:@"SYSTEM"] &&
-      ![instDir isEqualToString:@"USER"] &&
-      ![instDir isEqualToString:@"NETWORK"] &&
-      ![instDir isEqualToString:@""] &&
-      ([instDir isAbsolutePath] || [instDir characterAtIndex:0] == '$'))
+  if (![instDomain isEqualToString:@"LOCAL"] &&
+      ![instDomain isEqualToString:@"SYSTEM"] &&
+      ![instDomain isEqualToString:@"USER"] &&
+      ![instDomain isEqualToString:@"NETWORK"] &&
+      ![instDomain isEqualToString:@""])
     {
-      [args addObject:[NSString stringWithFormat:@"DESTDIR=%@", instDir]];
+      [args addObject:[NSString stringWithFormat:@"INSTDOMAIN=%@", instDomain]];
     }
 
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];

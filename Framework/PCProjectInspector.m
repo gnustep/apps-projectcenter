@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2009 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -182,9 +183,9 @@
   NSString *newEntry = [sender stringValue];
 
   // Build Atributes
-  if (sender == installPathField)
+  if (sender == installDomainPopup)
     {
-      [project setProjectDictObject:newEntry forKey:PCInstallDir notify:YES];
+      [project setProjectDictObject:newEntry forKey:PCInstallDomain notify:YES];
     }
   else if (sender == cppOptField)
     {
@@ -320,8 +321,8 @@
     [projectDict objectForKey:PCCompilerOptions]];
   [ldOptField setStringValue:
     [projectDict objectForKey:PCLinkerOptions]];
-  [installPathField setStringValue:
-    [projectDict objectForKey:PCInstallDir]];
+  [installDomainPopup selectItemWithTitle:
+    [projectDict objectForKey:PCInstallDomain]];
     
   // Project Attributes
   [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -142,7 +142,7 @@ static NSString * const PCBuildTool            = @"BUILDTOOL";
 static NSString * const PCCompilerOptions      = @"COMPILEROPTIONS";
 static NSString * const PCPreprocessorOptions  = @"CPPOPTIONS";
 static NSString * const PCCreationDate         = @"CREATION_DATE";
-static NSString * const PCInstallDir           = @"INSTALLDIR";
+static NSString * const PCInstallDomain        = @"INSTALLDOMAIN";
 static NSString * const PCLinkerOptions        = @"LINKEROPTIONS";
 static NSString * const PCObjCCompilerOptions  = @"OBJC_COMPILEROPTIONS";
 static NSString * const PCPrincipalClass       = @"PRINCIPAL_CLASS";

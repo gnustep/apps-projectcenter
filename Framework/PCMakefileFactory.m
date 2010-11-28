@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2004 Free Software Foundation
+   Copyright (C) 2002-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -67,7 +67,7 @@ static PCMakefileFactory *_factory = nil;
   NSString       *buildDir = [prefs stringForKey:RootBuildDirectory];
   NSString       *prName = [project projectName];
   NSString       *buildName = [prName stringByAppendingPathExtension: @"build"];
-  NSString       *instDir = [[project projectDict] objectForKey:PCInstallDir];
+  NSString       *instDomain = [[project projectDict] objectForKey:PCInstallDomain];
 
   NSAssert(prName, @"No project name given!");
 
@@ -90,18 +90,18 @@ static PCMakefileFactory *_factory = nil;
   [mfile appendString: @" before compiling!)\n"];
   [mfile appendString: @"endif\n"];
 
-  if ([instDir isEqualToString: @"LOCAL"]
-    || [instDir isEqualToString: @"SYSTEM"]
-    || [instDir isEqualToString: @"USER"]
-    || [instDir isEqualToString: @"NETWORK"])
+  if ([instDomain isEqualToString: @"LOCAL"]
+    || [instDomain isEqualToString: @"SYSTEM"]
+    || [instDomain isEqualToString: @"USER"]
+    || [instDomain isEqualToString: @"NETWORK"])
     {
       [mfile appendString:
 	[NSString stringWithFormat: @"\nGNUSTEP_INSTALLATION_DOMAIN = %@\n",
-	  instDir]];
+	  instDomain]];
     }
 
   /* If GNUSTEP_INSTALLATION_DOMAIN was not set explicitly by the
-   * user, it shoudl not be specified; gnustep-make will use the
+   * user, it should not be specified; gnustep-make will use the
    * default - normally, but not necessarily, LOCAL.
    */
   

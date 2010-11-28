@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -343,7 +344,7 @@
 
 - (void)appendHead:(PCMakefileFactory *)mff
 {
-  NSString *installDir = [projectDict objectForKey:PCInstallDir];
+  NSString *installDomain = [projectDict objectForKey:PCInstallDomain];
 
   [mff appendString:@"\n#\n# Tool\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
@@ -355,35 +356,14 @@
   [mff appendString:[NSString stringWithFormat:@"%@_TOOL_ICON = %@\n",
     projectName, [projectDict objectForKey:PCToolIcon]]];
 
-  if ([installDir isEqualToString:@""])
+  /* FIXME %@_COPY_INTO_DIR needs to be properly reinstantiated
+     as well as %@_STANDARD_INSTALL = no  */
+
+  /* set the domain if it was specified */
+  if (!(installDomain == nil) && ![installDomain isEqualToString:@""])
     {
       [mff appendString:
-	[NSString stringWithFormat:@"%@_STANDARD_INSTALL = no\n",
-        projectName]];
-    }
-  else if (![installDir isEqualToString:@"LOCAL"] &&
-	   ![installDir isEqualToString:@"SYSTEM"] &&
-	   ![installDir isEqualToString:@"USER"] &&
-	   ![installDir isEqualToString:@"NETWORK"] &&
-	   ![installDir isAbsolutePath] &&
-	   [installDir characterAtIndex:0] != '$')
-    {
-      [mff appendString:
-	[NSString stringWithFormat:@"%@_COPY_INTO_DIR = %@\n",
-        projectName, installDir]];
-    }
-  else
-    {
-      /* IMPORTANT FIXME/TODO: We should be using GNUSTEP_INSTALLATION_DOMAIN,
-       * not GNUSTEP_INSTALLATION_DIR.  Even better, we shouldn't specify
-       * this in the GNUmakefile itself at all unless explicitly requested
-       * by the user!
-       */
-      /*
-      [mff appendString:
-	[NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DIR = %@\n",
-        installDir]];
-      */
+	     [NSString stringWithFormat:@"GNUSTEP_INSTALLATION_DOMAIN = %@\n",[installDomain uppercaseString]]];
     }
 }
 

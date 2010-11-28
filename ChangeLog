@@ -1,3 +1,17 @@
+2010-11-28 Riccardo MOttola
+
+	* Framework/PCMakefileFactory.m
+	* Framework/PCProjectBuilder.m
+	* Framework/PCProjectInspector.m
+	* Framework/English.lproj/BuildAttributes.gorm
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m
+	* Modules/Projects/Bundle/PCBundleProject.m
+	* Modules/Projects/Tool/PCToolProject.m
+	* Headers/ProjectCenter/PCDefines.h
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	Set, use and create makefiles using ain installation DOMAIN and not a directory.
+	
 2010-11-24 German Arias <german@xelalug.org>
 	* Headers/ProjectCenter/PCProjectInspector.h:
 	* Framework/PCProjectInspector.m:

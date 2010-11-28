@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004 Free Software Foundation
+   Copyright (C) 2004-2010 Free Software Foundation
 
    Authors: Serg Stoyan
 
@@ -190,7 +190,7 @@
     projectName]];
   [mff appendString:
     [NSString stringWithFormat:@"@%RESOURCE_FILES_INSTALL_DIR = %@\n",
-    [projectDict objectForKey:PCInstallDir]]];
+    [projectDict objectForKey:PCInstallDomain]]];
 }
 
 - (void)appendTail:(PCMakefileFactory *)mff

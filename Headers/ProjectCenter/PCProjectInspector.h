@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2010 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -61,7 +62,7 @@
   IBOutlet NSTextField    *objcOptField;
   IBOutlet NSTextField    *cOptField;
   IBOutlet NSTextField    *ldOptField;
-  IBOutlet NSTextField    *installPathField;
+  IBOutlet NSPopUpButton  *installDomainPopup;
   IBOutlet NSTextField    *toolField;
 
   // Project Attributes
