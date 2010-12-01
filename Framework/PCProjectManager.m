@@ -5,6 +5,7 @@
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -749,7 +750,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *className = [projectTypes objectForKey:projectType];
   PCProject<ProjectType> *projectCreator;
   PCProject              *project = nil;
-
+ 
   if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) != nil)
     {
       [[project projectWindow] makeKeyAndOrderFront:self];
@@ -810,7 +811,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			   multiple:NO
 			      title:@"New Project"
 			    accView:projectTypeAccessaryView];
-  filePath = [files objectAtIndex:0];
+  filePath = [[files objectAtIndex:0] stringByDeletingPathExtension];
   if (filePath != nil) 
     {
       if ([filePath rangeOfString: @" "].location != NSNotFound ||
