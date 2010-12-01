@@ -1,4 +1,13 @@
-2010-11-28 Riccardo MOttola
+2010-12-01 Riccardo Mottola
+
+	* Framework/PCProjectManager.m:
+	Create project in a path with the project name.
+
+	* Resources/Info-gnustep.plist,
+	* English.lproj/Info.gorm
+	Version bump.
+
+2010-11-28 Riccardo Mottola
 
 	* Framework/PCMakefileFactory.m
 	* Framework/PCProjectBuilder.m

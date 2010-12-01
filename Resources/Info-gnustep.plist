@@ -3,7 +3,7 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep Integrated Development Environment";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.5.1";
+  ApplicationRelease = "0.6.0";
   FullVersionID = "HEAD";
   Authors = (
     "Philippe C.D. Robert",
@@ -13,7 +13,8 @@
     "Nicola Pero",
     "Pierre-Yves Rivaille",
     "Adam Fedor",
-    "Gregory Jonh Casamento");
+    "Gregory Jonh Casamento",
+    "Riccardo Mottola");
   NSIcon = "ProjectCenter.tiff";
   NSExecutable = ProjectCenter;
   NSMainNibFile = ProjectCenter.gorm;
