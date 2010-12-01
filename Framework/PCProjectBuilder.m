@@ -323,17 +323,8 @@
 - (NSArray *)buildArguments
 {
   NSDictionary   *projectDict = [project projectDict];
-  NSString       *instDomain = [projectDict objectForKey:PCInstallDomain];
   NSMutableArray *args = [NSMutableArray new];
 
-  if (![instDomain isEqualToString:@"LOCAL"] &&
-      ![instDomain isEqualToString:@"SYSTEM"] &&
-      ![instDomain isEqualToString:@"USER"] &&
-      ![instDomain isEqualToString:@"NETWORK"] &&
-      ![instDomain isEqualToString:@""])
-    {
-      [args addObject:[NSString stringWithFormat:@"INSTDOMAIN=%@", instDomain]];
-    }
 
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
 

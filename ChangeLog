@@ -7,6 +7,9 @@
 	* English.lproj/Info.gorm
 	Version bump.
 
+	* Framework/PCProjectBuilder.m:
+	Removed useless INSTDOMAIN variable during build phase.
+
 2010-11-28 Riccardo Mottola
 
 	* Framework/PCMakefileFactory.m
@@ -20,7 +23,7 @@
 	* Headers/ProjectCenter/PCDefines.h
 	* Headers/ProjectCenter/PCProjectInspector.h:
 	Set, use and create makefiles using ain installation DOMAIN and not a directory.
-	
+
 2010-11-24 German Arias <german@xelalug.org>
 	* Headers/ProjectCenter/PCProjectInspector.h:
 	* Framework/PCProjectInspector.m:
