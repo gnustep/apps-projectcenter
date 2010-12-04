@@ -561,25 +561,11 @@
     }
 
   // Prepearing to building
-  _isLogging = YES;
   stdOutPipe = [[NSPipe alloc] init];
   stdOutHandle = [stdOutPipe fileHandleForReading];
-  [stdOutHandle waitForDataInBackgroundAndNotify];
 
-  [NOTIFICATION_CENTER addObserver:self 
-                          selector:@selector(logStdOut:)
-			      name:NSFileHandleDataAvailableNotification
-			    object:stdOutHandle];
-
-  _isErrorLogging = YES;
   stdErrorPipe = [[NSPipe alloc] init];
   stdErrorHandle = [stdErrorPipe fileHandleForReading];
-  [stdErrorHandle waitForDataInBackgroundAndNotify];
-
-  [NOTIFICATION_CENTER addObserver:self 
-                          selector:@selector(logErrOut:) 
-			      name:NSFileHandleDataAvailableNotification
-			    object:stdErrorHandle];
 
   [errorsCountField setStringValue:[NSString stringWithString:@""]];
   errorsCount = 0;
@@ -612,6 +598,21 @@
   NS_DURING
     {
       [makeTask launch];
+
+      // now that we know that the task is running start logging
+      [stdOutHandle waitForDataInBackgroundAndNotify];
+      [NOTIFICATION_CENTER addObserver:self 
+			      selector:@selector(logStdOut:)
+				  name:NSFileHandleDataAvailableNotification
+				object:stdOutHandle];
+      _isLogging = YES;
+
+      [stdErrorHandle waitForDataInBackgroundAndNotify];
+      [NOTIFICATION_CENTER addObserver:self 
+			      selector:@selector(logErrOut:) 
+				  name:NSFileHandleDataAvailableNotification
+				object:stdErrorHandle];
+      _isErrorLogging = YES;
     }
   NS_HANDLER
     {
@@ -620,7 +621,7 @@
 		      @"OK", nil, nil, nil);
 		      
       //Clean up after task is terminated
-      [[NSNotificationCenter defaultCenter] 
+      [NOTIFICATION_CENTER 
 	postNotificationName:NSTaskDidTerminateNotification
 	              object:makeTask];
     }
@@ -766,14 +767,11 @@
   if ((data = [stdOutHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:NO];
-    }
-
-  if (makeTask)
-    {
       [stdOutHandle waitForDataInBackgroundAndNotify];
     }
   else
     {
+      // stop logging after the task has closed the pipe
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
 			           object:stdOutHandle];
@@ -788,14 +786,11 @@
   if ((data = [stdErrorHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:YES];
-    }
-
-  if (makeTask)
-    {
       [stdErrorHandle waitForDataInBackgroundAndNotify];
     }
   else
     {
+      // stop logging after the task has closed the pipe
       [NOTIFICATION_CENTER removeObserver:self 
 			             name:NSFileHandleDataAvailableNotification
 			           object:stdErrorHandle];
