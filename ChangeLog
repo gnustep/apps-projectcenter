@@ -1,3 +1,9 @@
+2010-12-04 German Arias <german@xelalug.org>
+	
+	* Modules/Projects/Application/PCAppProject.m: 
+	Reverted a previous change since the extension "project"
+	is not used anymore.
+
 2010-12-01 Riccardo Mottola
 
 	* Framework/PCProjectManager.m:
