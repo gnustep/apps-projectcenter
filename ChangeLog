@@ -1,3 +1,10 @@
+2010-12-04  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Framework/PCProjectManager.m (-newProject):
+	Improve Riccardo's previous patch. Don't ask for a new project
+	directory with an extension project or pcproj and do not
+	arbitrarily strip extensions from the project name.
+
 2010-12-04 German Arias <german@xelalug.org>
 	
 	* Modules/Projects/Application/PCAppProject.m: 

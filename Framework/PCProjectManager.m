@@ -800,18 +800,17 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 {
   NSArray   *files;
   NSString  *filePath;
-  NSArray   *fileTypes = [NSArray arrayWithObjects:@"project",@"pcproj",nil];
   NSString  *projectType;
   PCProject *project;
 
   [self createProjectTypeAccessaryView];
   
-  files = [fileManager filesOfTypes:fileTypes
+  files = [fileManager filesOfTypes:nil
 			  operation:PCSaveFileOperation
 			   multiple:NO
 			      title:@"New Project"
 			    accView:projectTypeAccessaryView];
-  filePath = [[files objectAtIndex:0] stringByDeletingPathExtension];
+  filePath = [files objectAtIndex:0];
   if (filePath != nil) 
     {
       if ([filePath rangeOfString: @" "].location != NSNotFound ||
