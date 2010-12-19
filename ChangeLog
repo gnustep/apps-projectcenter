@@ -1,3 +1,10 @@
+2010-12-18 German Arias <german@xelalug.org>
+	
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	* Framework/PCProjectInspector.m:
+	* Framework/English.lproj/ProjectInspector.gorm:
+	Added "Project Languages" option on Inspector.
+
 2010-12-04  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProjectBuilder.m (-build:, -logStdOut:, -logErrOut:):
