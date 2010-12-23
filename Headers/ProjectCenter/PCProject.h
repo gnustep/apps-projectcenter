@@ -142,6 +142,7 @@ extern NSString *PCProjectBreakpointNotification;
 - (NSArray *)publicHeaders;
 - (void)setHeaderFile:(NSString *)file public:(BOOL)yn;
 - (NSArray *)localizedResources;
+- (NSString *)resourceDirForLanguage:(NSString *)language;
 - (void)setResourceFile:(NSString *)file localizable:(BOOL)yn;
 
 - (NSArray *)buildTargets;

@@ -1,3 +1,14 @@
+2010-12-22 German Arias <german@xelalug.org>
+	
+	* Headers/ProjectCenter/PCProject.h:
+	Added method -resourceDirForLanguage:. So we can call this
+	method to manage the languages.
+	* Headers/ProjectCenter/PCProjectInspector.h:
+	* Framework/PCProjectInspector.m:
+	* Framework/English.lproj/ProjectLanguages.gorm:
+	Added UI controls for languages at Inspector, and methods
+	-addLanguage: and -removeLanguage:.
+
 2010-12-18 German Arias <german@xelalug.org>
 	
 	* Headers/ProjectCenter/PCProjectInspector.h:

@@ -5,7 +5,8 @@
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
-	    Riccardo Mottola
+            Riccardo Mottola
+            German Arias
 
    This file is part of GNUstep.
 
@@ -58,7 +59,7 @@
        selector:@selector(updateValues:)
            name:PCProjectDictDidChangeNotification
          object:nil];
-	 
+         
   // Track Browser selection changes
   [[NSNotificationCenter defaultCenter] 
     addObserver:self
@@ -192,31 +193,33 @@
   // Build Atributes
   if (sender == installDomainPopup)
     {
-      [project setProjectDictObject:newEntry forKey:PCInstallDomain notify:YES];
+      [project setProjectDictObject:newEntry
+                             forKey:PCInstallDomain
+                             notify:YES];
     }
   else if (sender == cppOptField)
     {
       [project setProjectDictObject:newEntry
-	                     forKey:PCPreprocessorOptions
-			     notify:YES];
+                             forKey:PCPreprocessorOptions
+                             notify:YES];
     }
   else if (sender == objcOptField)
     {
       [project setProjectDictObject:newEntry
                              forKey:PCObjCCompilerOptions
-			     notify:YES];
+                             notify:YES];
     }
   else if (sender == cOptField)
     {
       [project setProjectDictObject:newEntry
                              forKey:PCCompilerOptions
-			     notify:YES];
+                             notify:YES];
     }
   else if (sender == ldOptField)
     {
       [project setProjectDictObject:newEntry
                              forKey:PCLinkerOptions
-			     notify:YES];
+                             notify:YES];
     }
   // Project Description
   else if (sender == descriptionField)
@@ -234,8 +237,8 @@
   else if (sender == licDescriptionField)
     {
       [project setProjectDictObject:newEntry
-	                     forKey:PCCopyrightDescription
-			     notify:YES];
+                             forKey:PCCopyrightDescription
+                             notify:YES];
     }
   else if (sender == urlField)
     {
@@ -282,14 +285,14 @@
   if (rootProject != project)
     {
       [inspectorPanel setTitle: [NSString stringWithFormat: 
-	@"%@ - Project Inspector", [rootProject projectName]]];
+        @"%@ - Project Inspector", [rootProject projectName]]];
     }
 
   project = [projectManager activeProject];
   projectDict = [project projectDict];
 
   PCLogStatus(self, @"Active projectChanged to %@", 
-	      [[project projectDict] objectForKey:PCProjectName]);
+              [[project projectDict] objectForKey:PCProjectName]);
 
   // 1. Get custom project attributes view
   newProjAttrSubview = [project projectAttributesView];
@@ -300,7 +303,7 @@
   else
     {
       [projectAttributesView replaceSubview:projectAttributesSubview 
-	                               with:newProjAttrSubview];
+                                       with:newProjAttrSubview];
     }
   projectAttributesSubview = newProjAttrSubview;
 
@@ -334,7 +337,11 @@
   // Project Attributes
   [projectTypeField setStringValue:[projectDict objectForKey:PCProjectType]];
   [projectNameField setStringValue:[projectDict objectForKey:PCProjectName]];
-  [projectLanguagePB selectItemWithTitle:[projectDict objectForKey:PCLanguage]];
+  [projectLanguagePB removeAllItems];
+  [projectLanguagePB addItemsWithTitles:
+    [projectDict objectForKey:PCUserLanguages]];
+  [projectLanguagePB selectItemWithTitle:
+    [projectDict objectForKey:PCLanguage]];
 
   // Project Description view
   [descriptionField setStringValue:
@@ -350,6 +357,10 @@
 
   authorsItems = [projectDict objectForKey:PCAuthors];
   [authorsList reloadData];
+  
+  //Project Languages
+  languagesItems = [projectDict objectForKey:PCUserLanguages];
+  [languagesList reloadData];
 
   // File Attributes
   [fileIconView setDelegate:[project projectBrowser]];
@@ -509,17 +520,17 @@
     case 0: // Headers
       [project setProjectDictObject:searchItems
                              forKey:PCSearchHeaders
-			     notify:YES];
+                             notify:YES];
       break;
     case 1: // Libraries
       [project setProjectDictObject:searchItems
                              forKey:PCSearchLibs
-			     notify:YES];
+                             notify:YES];
       break;
     case 2: // Targets
       [project setProjectDictObject:searchItems
                              forKey:PCBuilderTargets
-			     notify:YES];
+                             notify:YES];
       return;
     }
 }
@@ -543,7 +554,8 @@
 
   // Languages
   [projectLanguagePB removeAllItems];
-  [projectLanguagePB addItemsWithTitles: [projectDict objectForKey: PCUserLanguages]];
+  [projectLanguagePB addItemsWithTitles:
+    [projectDict objectForKey:PCUserLanguages]];
   
   // Retain view
   [projectAttributesView retain];
@@ -554,7 +566,7 @@
   NSLog(@"set current language to %@", [sender titleOfSelectedItem]);
   [project setProjectDictObject:[sender titleOfSelectedItem]
                          forKey:PCLanguage
-	  	         notify:NO];
+                           notify:NO];
   [[project projectWindow] setTitle];
 }
 
@@ -713,6 +725,94 @@
     }
 
   [projectLanguagesView retain];
+  [languagesList setDataSource:self];
+}
+
+- (void)addLanguage:(id)sender
+{
+  NSString *language = [newLanguage stringValue];
+  [newLanguage setStringValue: @""];
+  
+  //If there is a language and is new, add this
+  if (([language length] > 0) && (![languagesItems containsObject: language]))
+    {
+      //Add the language to the projectDict
+      [languagesItems addObject: language];
+      [project setProjectDictObject:languagesItems
+                             forKey:PCUserLanguages
+                             notify:YES];
+      
+      /* If there are localizable resources, copy these into the new language
+       directory */
+      if ([[projectDict objectForKey:PCLocalizedResources] count] > 0)
+        {
+          NSString *file, *englishPath, *languagePath; 
+          NSEnumerator *resources = 
+            [[projectDict objectForKey:PCLocalizedResources] objectEnumerator];
+          
+          englishPath = [project resourceDirForLanguage:@"English"];
+          languagePath = [project resourceDirForLanguage:language];
+          
+          while ((file = [resources nextObject]))
+            {
+              if ([[projectManager fileManager] copyFile:file
+                   fromDirectory:englishPath 
+                   intoDirectory:languagePath])
+                {
+                  NSLog(@"file copied: %@", file);
+                }
+            }
+        }
+    }
+}
+
+- (void)removeLanguage:(id)sender
+{
+  /* We don't remove the English language sice is needed if the app
+  isn't available at the end user language */
+  if (![[languagesItems objectAtIndex:
+       [languagesList selectedRow]] isEqualToString:@"English"])
+    {
+      NSString *language =
+        [languagesItems objectAtIndex:[languagesList selectedRow]];
+      NSString *languagePath = [project resourceDirForLanguage:language];
+      NSArray *resources = [projectDict objectForKey:PCLocalizedResources];
+      
+      /* If there are localizable resources, remove these at the language 
+      directory and the directory itsel */
+      if ([resources count] > 0)
+        {
+          if ([[projectManager fileManager] removeFiles:resources
+               fromDirectory:languagePath 
+               removeDirsIfEmpty:YES])
+            {
+              NSLog(@"removed resources for language %@",language);
+            }
+        }
+      
+      //Update the languages list
+      [languagesItems removeObject:language];
+      
+      //If the removed language is the actual PCLanguage, set English
+      if ([[projectDict objectForKey: PCLanguage] isEqualToString:language])
+        {
+          NSLog(@"set current language to English");
+          [project setProjectDictObject:@"English"
+                                 forKey:PCLanguage
+                                 notify:NO];
+        }
+      
+      //Update the projectDict
+      [project setProjectDictObject:languagesItems
+                             forKey:PCUserLanguages
+                             notify:YES];
+    }
+  else
+    {
+      NSRunAlertPanel(@"Remove Language",
+                      @"You shouldn't remove language English",
+                      @"Ok",nil,nil);
+    }   
 }
 
 // ============================================================================
@@ -787,18 +887,18 @@
 
       enumerator = [files objectEnumerator];
       while ((file = [enumerator nextObject]))
-	{
-	    if (![[file pathExtension] isEqualToString:@"h"] &&
-		![[file pathExtension] isEqualToString:@"H"])
-	    {
-	      enable = NO;
-	    }
-	}
+        {
+            if (![[file pathExtension] isEqualToString:@"h"] &&
+                ![[file pathExtension] isEqualToString:@"H"])
+            {
+              enable = NO;
+            }
+        }
 
       if (enable)
-	{
-	  [publicHeaderButton setEnabled:YES];
-	}
+        {
+          [publicHeaderButton setEnabled:YES];
+        }
     }
 
   // --- Set state of buttons
@@ -814,16 +914,16 @@
       enumerator = [files objectEnumerator];
       present_count = 0;
       while ((file = [enumerator nextObject]))
-	{
-	  if ([publicHeaders containsObject:file]) 
-	    {
-	      present_count++;
-	    }
-	}
+        {
+          if ([publicHeaders containsObject:file]) 
+            {
+              present_count++;
+            }
+        }
       if (array_count == present_count)
-	{
-	  [publicHeaderButton setState:NSOnState];
-	}
+        {
+          [publicHeaderButton setState:NSOnState];
+        }
     }
 
   // Set state of Localized Resource button
@@ -833,16 +933,16 @@
       enumerator = [files objectEnumerator];
       present_count = 0;
       while ((file = [enumerator nextObject]))
-	{
-	  if ([localizedResources containsObject:file]) 
-	    {
-	      present_count++;
-	    }
-	}
+        {
+          if ([localizedResources containsObject:file]) 
+            {
+              present_count++;
+            }
+        }
       if (array_count == present_count)
-	{
-	  [localizableButton setState:NSOnState];
-	}
+        {
+          [localizableButton setState:NSOnState];
+        }
     }
 }
 
@@ -881,7 +981,7 @@
     }
 
 /*  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
-	    [project projectName], fileName, [fileNameField stringValue]);*/
+            [project projectName], fileName, [fileNameField stringValue]);*/
 
   if ([project renameFile:fileName toFile:[fileNameField stringValue]] == NO)
     {
@@ -899,13 +999,13 @@
   while ((file = [enumerator nextObject]))
     {
       if ([sender state] == NSOffState)
-	{
-	  [project setHeaderFile:fileName public:NO];
-	}
+        {
+          [project setHeaderFile:fileName public:NO];
+        }
       else
-	{
-	  [project setHeaderFile:fileName public:YES];
-	}
+        {
+          [project setHeaderFile:fileName public:YES];
+        }
     }
 }
 
@@ -919,13 +1019,13 @@
   while ((file = [enumerator nextObject]))
     {
       if ([sender state] == NSOffState)
-	{
-	  [project setResourceFile:file localizable:NO];
-	}
+        {
+          [project setResourceFile:file localizable:NO];
+        }
       else
-	{
-	  [project setResourceFile:file localizable:YES];
-	}
+        {
+          [project setResourceFile:file localizable:YES];
+        }
     }
 }
 
@@ -952,6 +1052,10 @@
     {
       return [authorsItems count];
     }
+  else if (languagesList != nil && aTableView == languagesList)
+    {
+      return [languagesItems count];
+    }
 
   return 0;
 }
@@ -968,6 +1072,10 @@
     {
       return [authorsItems objectAtIndex:rowIndex];
     }
+  else if (languagesList != nil && aTableView == languagesList)
+    {
+      return [languagesItems objectAtIndex:rowIndex];
+    }
 
   return nil;
 }
@@ -975,15 +1083,15 @@
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
- 	       row:(int)rowIndex
+                row:(int)rowIndex
 {
   if (authorsList != nil && aTableView == authorsList)
     {
       if([authorsItems count] <= 0)
-	{
-	  return;
-	}
-	
+        {
+          return;
+        }
+        
       [authorsItems removeObjectAtIndex:rowIndex];
       [authorsItems insertObject:anObject atIndex:rowIndex];
 

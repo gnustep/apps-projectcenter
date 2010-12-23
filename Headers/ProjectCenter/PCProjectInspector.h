@@ -5,7 +5,8 @@
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
-	    Riccardo Mottola
+            Riccardo Mottola
+            German Arias
 
    This file is part of GNUstep.
 
@@ -91,6 +92,9 @@
 
   // Project Languages
   IBOutlet NSBox          *projectLanguagesView;
+  IBOutlet NSTableView    *languagesList;
+  IBOutlet NSTextField    *newLanguage;
+  NSMutableArray          *languagesItems;
 
   // File Attributes
   IBOutlet NSBox           *fileAttributesView;
@@ -161,6 +165,8 @@
 // ==== Project Languages
 // ============================================================================
 - (void)createProjectLanguages;
+- (void)addLanguage:(id)sender;
+- (void)removeLanguage:(id)sender;
 
 // ============================================================================
 // ==== File Attributes
