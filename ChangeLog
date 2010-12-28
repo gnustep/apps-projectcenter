@@ -1,3 +1,9 @@
+2010-12-28  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Framework/PCProjectBuilder.m (-buildArguments): Add either
+	debug=yes or debug=no to the arguments since the debug variable no
+	longer has a clear default for quite some time.
+
 2010-12-22 German Arias <german@xelalug.org>
 	
 	* Headers/ProjectCenter/PCProject.h:

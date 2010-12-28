@@ -329,7 +329,14 @@
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
 
   // --- Get arguments from options
-  if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"NO"])
+  if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"YES"])
+    { // there is no clear default; the default configuration of GNUstep-make
+      // uses debug=no (since release 2.2.1, it had debug=yes before), but
+      // that default can easily be changed at configuration time with the
+      // --enable-debug-by-default configure option.
+      [args addObject:@"debug=yes"];
+    }
+  else
     { // default is 'debug=yes'
       [args addObject:@"debug=no"];
     }
