@@ -105,6 +105,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
   [docBasedAppButton setState:
     ([[projectDict objectForKey:PCDocumentBasedApp]
      isEqualToString:@"YES"]) ? NSOnState : NSOffState];
+  [self setDocBasedApp:docBasedAppButton];
 
   [self updateInspectorValues:nil];
 }
