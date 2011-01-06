@@ -101,8 +101,6 @@ cleanup(NSMutableDictionary *m, NSString *k)
   [addDocTypeButton setRefusesFirstResponder:YES];
   [removeDocTypeButton setRefusesFirstResponder:YES];
   [docBasedAppButton setRefusesFirstResponder:YES];
-
-  [self setDocBasedApp:docBasedAppButton];
   
   [docBasedAppButton setState:
     ([[projectDict objectForKey:PCDocumentBasedApp]

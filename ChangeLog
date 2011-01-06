@@ -1,3 +1,10 @@
+2011-01-06  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Modules/Projects/Application/PCAppProject+Inspector.m
+	(-setDocBasedApp:):
+	Fix bug where the document based app flag was reset after opening
+	the project inspector for the first time.
+
 2010-12-28  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProjectBuilder.m (-buildArguments): Add either
