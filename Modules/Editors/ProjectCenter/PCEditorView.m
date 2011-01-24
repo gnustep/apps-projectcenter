@@ -291,6 +291,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   unichar  c, plfc, clfc;
   NSRange  wsRange;
   NSMutableString *indentString;
+  NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
   int i;
 //  int point;
 
@@ -307,7 +308,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   for (offset = line_start; offset >= 0; offset++)
     {
       c = [string characterAtIndex:offset];
-      if (!isspace(c))
+      if (![wsCharSet characterIsMember:c])
 	{
 	  wsRange = NSMakeRange(line_start, offset-line_start);
 	  break;
@@ -319,7 +320,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   for (offset = line_start; offset >= 0; offset++)
     {
       c = [string characterAtIndex:offset];
-      if (!isspace(c))
+      if (![wsCharSet characterIsMember:c])
 	{
 	  offset = offset - line_start;
 	  NSLog(@"offset: %i", offset);
@@ -337,7 +338,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
       offset -= 2; 
     }
 
-  // Get offset from BOL of pervious line
+  // Get offset from BOL of previous line
 //  offset = ComputeIndentingOffset([self string], line_start-1);
   NSLog(@"Indent offset: %i", offset);
 
@@ -348,8 +349,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
       [indentString appendString:@" "];
     }
 
-  [[self textStorage] replaceCharactersInRange:wsRange 
-				    withString:indentString];
+  if ([self shouldChangeTextInRange:wsRange
+		  replacementString:indentString])
+    [[self textStorage] replaceCharactersInRange:wsRange 
+				      withString:indentString];
 
 /*  if (location > line_start + offset)
     {
