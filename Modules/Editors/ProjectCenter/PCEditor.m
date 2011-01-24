@@ -666,6 +666,16 @@
       return YES;
     }
 
+  if (NSAlertDefaultReturn !=
+      NSRunAlertPanel(@"Revert",
+		      @"%@ has been modified.  "
+		      @"Are you sure you want to undo changes?",
+		      @"Revert", @"Cancel", nil,
+		      [_path lastPathComponent]))
+      {
+	return NO;
+      }
+
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillRevertNotification
 		  object:self];

@@ -1,5 +1,10 @@
 2011-01-24  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
+	* Modules/Editors/ProjectCenter/PCEditor.m (-revertFileToSaved):
+	Ask for confirmation before reverting.
+
+2011-01-24  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
 	* Modules/Editors/ProjectCenter/PCEditorView.m (-performIndentation):
 	Fix annoying bug where pressing the tab key would delete whole
 	empty lines. Also register insertions done by the tab key at the
