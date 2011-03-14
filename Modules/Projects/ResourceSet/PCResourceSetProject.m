@@ -188,6 +188,9 @@
   [mff appendString:@"\n#\n# Resource Set\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"RESOURCE_SET_NAME = %@\n",
     projectName]];
+  /* FIXME: This was deprecated in 2007 and has even been removed from
+     the latest gnustep-make!  The variable to use is
+     xxx_INSTALL_DIR.  */
   [mff appendString:
     [NSString stringWithFormat:@"@%RESOURCE_FILES_INSTALL_DIR = %@\n",
     [projectDict objectForKey:PCInstallDomain]]];

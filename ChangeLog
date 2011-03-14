@@ -1,3 +1,8 @@
+2011-03-14  Nicola Pero  <nicola.pero@meta-innovation.com>
+
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m
+	([PCResourceSetProject -appendHead:]): Added FIXME.
+
 2011-01-24  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m (-revertFileToSaved):
