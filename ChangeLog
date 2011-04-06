@@ -1,3 +1,9 @@
+2011-04-06  Fred Kiefer <FredKiefer@gmx.de>
+
+	* Modules/Parsers/ProjectCenter/PCParser.m [-parse]: Move the
+	selector and IMP definitions inside the method. Global IMP caching
+	is always wrong! And this broke compilation with llvm.
+
 2011-03-14  Nicola Pero  <nicola.pero@meta-innovation.com>
 
 	* Modules/Projects/ResourceSet/PCResourceSetProject.m

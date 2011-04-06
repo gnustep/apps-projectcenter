@@ -124,23 +124,21 @@ CodeType codeType(unichar *ch)
     } 
 }
 
-static SEL selString = @selector(string:);
-static SEL selNumber = @selector(number:);
-static SEL selSpaceAndNewLine = @selector(spaceAndNewLine:);
-static SEL selInvisible = @selector(invisible:);
-static SEL selSymbol = @selector(symbol:);
-
-static void (*impString)(id, SEL, id);
-static void (*impNumber)(id, SEL, id);
-static void (*impSpaceAndNewLine)(id, SEL, unichar); 
-static void (*impInvisible)(id, SEL, unichar); 
-static void (*impSymbol)(id, SEL, unichar); 
-
 - (void)parse
 {
   unsigned int i, start, end;
   CodeType startType, endType;
   NSString *out;
+  SEL selString = @selector(string:);
+  SEL selNumber = @selector(number:);
+  SEL selSpaceAndNewLine = @selector(spaceAndNewLine:);
+  SEL selInvisible = @selector(invisible:);
+  SEL selSymbol = @selector(symbol:);
+  void (*impString)(id, SEL, id);
+  void (*impNumber)(id, SEL, id);
+  void (*impSpaceAndNewLine)(id, SEL, unichar); 
+  void (*impInvisible)(id, SEL, unichar); 
+  void (*impSymbol)(id, SEL, unichar); 
 
   NSLog(@"CodeParser begin...");
 
