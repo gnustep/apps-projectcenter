@@ -3,6 +3,9 @@
 	* Headers/ProjectCenter/PCDefines.h
 	Change ifdef to detect non-gnustep.
 
+	* Framework/PCProjectInspector.m
+	Warning fix.
+
 2011-04-06  Fred Kiefer <FredKiefer@gmx.de>
 
 	* Modules/Parsers/ProjectCenter/PCParser.m [-parse]: Move the

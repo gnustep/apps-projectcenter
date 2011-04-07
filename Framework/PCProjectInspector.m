@@ -31,7 +31,7 @@
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCProjectWindow.h>
 #import <ProjectCenter/PCProjectInspector.h>
-
+#import <ProjectCenter/PCFileManager.h>
 #import <ProjectCenter/PCLogController.h>
 
 @implementation PCProjectInspector
