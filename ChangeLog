@@ -6,6 +6,9 @@
 	* Framework/PCProjectInspector.m
 	Warning fix.
 
+	* Modules/Preferences/Misc/PCMiscPrefs.m
+	Remove extra parentheses which confuse = and == warning.
+
 2011-04-06  Fred Kiefer <FredKiefer@gmx.de>
 
 	* Modules/Parsers/ProjectCenter/PCParser.m [-parse]: Move the

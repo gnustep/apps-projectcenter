@@ -1,7 +1,7 @@
 // 
 // GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 //
-// Copyright (C) 2001-2009 Free Software Foundation
+// Copyright (C) 2001-2011 Free Software Foundation
 //
 // Authors: Sergii Stoian
 //
@@ -191,7 +191,7 @@
   NSFileManager *fm = [NSFileManager defaultManager];
 
   // Choose
-  if ((sender == debuggerField))
+  if (sender == debuggerField)
     {
       path = [debuggerField stringValue];
     }
@@ -249,7 +249,7 @@
   NSWorkspace   *ws = [NSWorkspace sharedWorkspace];
 
   // Choose
-  if ((sender == debuggerField))
+  if (sender == debuggerField)
     {
       path = [debuggerField stringValue];
     }
