@@ -46,7 +46,7 @@
 //=============================================================================
 // ==== MacOS X portability defines
 //=============================================================================
-#ifndef GNUSTEP_BASE_VERSION
+#ifndef GNUSTEP
 
 #define RETAIN(object)          [object retain]
 #define RELEASE(object)         [object release]
