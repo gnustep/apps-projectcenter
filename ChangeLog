@@ -1,3 +1,8 @@
+2011-04-28 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCFileManager.m:
+	Correct cast according to ctypes caveats.
+
 2011-04-07 Riccardo Mottola <rm@gnu.org>
 
 	* Headers/ProjectCenter/PCDefines.h

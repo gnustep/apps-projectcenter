@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2011 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -627,7 +627,7 @@ static PCFileManager *_mgr = nil;
   buf = [data bytes];
   for (i = printable = 0, n = [data length]; i < n; i++)
     {
-      if (isprint(buf[i]) || isspace(buf[i]))
+      if (isprint((int)(unsigned char)buf[i]) || isspace((int)(unsigned char)buf[i]))
 	{
 	  printable++;
 	}
