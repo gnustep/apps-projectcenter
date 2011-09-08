@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004 Free Software Foundation
+   Copyright (C) 2004-2011 Free Software Foundation
 
    Authors: Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -93,7 +94,7 @@ static PCAddFilesPanel *addFilesPanel = nil;
 {
   NSString  *path = nil;
 
-  ASSIGN(_fileTypes, fileTypes);
+  [super setAllowedFileTypes: fileTypes];
 
   path = [_browser path];
   [self validateVisibleColumns];
