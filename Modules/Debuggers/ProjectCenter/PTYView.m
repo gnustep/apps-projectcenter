@@ -1,7 +1,7 @@
 /*
 **  PTYView
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2012 Free Software Foundation
 **
 **  Author: Gregory Casamento <greg_casamento@yahoo.com>
 **
@@ -20,22 +20,30 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#import <PTYView.h>
 
-#import <sys/stat.h>
-#import <signal.h>
 
-#import <stdio.h> /* for stderr and perror*/
-#import <errno.h> /* for int errno */
-#import <fcntl.h>
-#import <sys/termios.h>
-#import <sys/types.h>
-#import <unistd.h>
-#import <stdlib.h>
-#import <string.h>
+#include <sys/stat.h>
+#include <signal.h>
 
-#if !defined(__OpenBSD__)
-#import <stropts.h>
+#include <stdio.h> /* for stderr and perror*/
+#include <errno.h> /* for int errno */
+#include <fcntl.h>
+#include <sys/types.h>
+
+#if defined (__FreeBSD__)
+#include <sys/ioctl.h>
+#include <termios.h>
+#include <libutil.h>
+#else
+#include <sys/termios.h>
+#endif
+
+#include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
+
+#if !defined(__OpenBSD__) && !defined(__FreeBSD__)
+#include <stropts.h>
 #endif
 
 #ifndef NOTIFICATION_CENTER
@@ -48,9 +56,11 @@
 #define USE_FORKPTY_REPLACEMENT 1
 #endif
 
-#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__)) && !(defined (__OpenBSD__))
+#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__)) && !(defined (__OpenBSD__)) && !(defined(__FreeBSD__))
 #  include <pty.h>
 #endif
+
+#import "PTYView.h"
 
 #ifdef USE_FORKPTY_REPLACEMENT
 int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, const struct winsize *winp)
