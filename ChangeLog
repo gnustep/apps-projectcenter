@@ -1,3 +1,8 @@
+2012-04-20 Riccardo Motto.a <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PTYView.m
+	NetBSD doesn't support streams either.
+
 2012-04-17 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.m

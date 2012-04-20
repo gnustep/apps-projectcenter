@@ -42,7 +42,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(__OpenBSD__) && !defined(__FreeBSD__)
+#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !(defined (__NetBSD__))
 #include <stropts.h>
 #endif
 
