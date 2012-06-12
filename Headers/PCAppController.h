@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2012 Free Software Foundation
    
    This file is part of GNUstep.
 
@@ -72,7 +72,7 @@
 - (void)applicationWillFinishLaunching:(NSNotification *)notification;
 - (void)applicationDidFinishLaunching:(NSNotification *)notification;
 
-- (BOOL)applicationShouldTerminate:(id)sender;
+- (NSApplicationTerminateReply)applicationShouldTerminate:(id)sender;
 - (void)applicationWillTerminate:(NSNotification *)notification;
 
 @end

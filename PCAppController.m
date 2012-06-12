@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2012 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -145,9 +145,9 @@
                   object:nil];
 }
 
-- (BOOL)applicationShouldTerminate:(id)sender
+- (NSApplicationTerminateReply)applicationShouldTerminate:(id)sender
 {
-  BOOL quit = YES;
+  NSApplicationTerminateReply quit = NSTerminateNow;
 
   if ([prefController boolForKey:PromptOnQuit])
     {
@@ -155,7 +155,7 @@
 			  @"Do you really want to quit ProjectCenter?",
 			  @"Cancel", @"Quit", nil))
 	{
-	  return NO;
+	  return NSTerminateLater;
 	}
 
     }
@@ -163,20 +163,21 @@
   // Save projects unconditionally if preferences tells that
   if ([prefController boolForKey:SaveOnQuit])
     {
-      quit = [projectManager saveAllProjects];
+      if(![projectManager saveAllProjects])
+        quit = NSTerminateLater;
     }
 
   // Close ProjectManager (projects, editors, etc.)
   if ((quit == NO) || ([projectManager close] == NO))
     {
-      return NO;
+      return NSTerminateLater;
     }
 
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCAppWillTerminateNotification
                   object:nil];
 
-  return YES;
+  return NSTerminateNow;
 }
 
 - (void)applicationWillTerminate:(NSNotification *)notification

@@ -3,7 +3,7 @@
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep Integrated Development Environment";
   ApplicationIcon = "ProjectCenter.tiff";
-  ApplicationRelease = "0.6.0";
+  ApplicationRelease = "0.6.1";
   FullVersionID = "HEAD";
   Authors = (
     "Philippe C.D. Robert",
@@ -63,6 +63,6 @@
     }
   );
   URL = "See http://www.gnustep.org/";
-  Copyright = "Copyright (C) 1999 - 2008 Free Software Foundation";
+  Copyright = "Copyright (C) 1999 - 2012 Free Software Foundation";
   CopyrightDescription = "Released under the GNU General Public License 3.0 or later";
 }

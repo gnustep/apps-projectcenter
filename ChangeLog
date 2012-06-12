@@ -3,6 +3,10 @@
 	* Framework/PCProjectWindow.m
 	Use centerScanRect to avoid strange problems with AA text in editor.
 
+	* Headers/PCAppController.h
+	* PCAppController.m
+	Update applicationShouldTerminate signature.
+
 2012-04-20 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.m

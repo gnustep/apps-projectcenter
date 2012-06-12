@@ -16,7 +16,7 @@ include $(GNUSTEP_MAKEFILES)/common.make
 #
 # Main application
 #
-VERSION = 0.6.0
+VERSION = 0.6.1
 APP_NAME = ProjectCenter
 ProjectCenter_APPLICATION_ICON = Images/ProjectCenter.tiff
 
