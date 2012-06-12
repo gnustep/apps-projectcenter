@@ -103,7 +103,7 @@
   [statusLine setStringValue:@""];
     
   /*
-   * Hosrizontal split view
+   * Horizontal split view
    */
   rect = [[projectWindow contentView] frame];
   rect.size.height -= 62;
