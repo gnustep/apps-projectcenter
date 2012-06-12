@@ -434,6 +434,7 @@
 	  // from/to superview
 	  RETAIN(h_split);
 	  [h_split removeFromSuperview];
+          rect = [cView centerScanRect: rect];
 	  [h_split setFrame:rect];
 	  [cView addSubview:h_split];
 	  RELEASE(h_split);
@@ -447,6 +448,7 @@
 	  RETAIN(v_split);
 	  [v_split removeFromSuperview];
 	  [v_split setFrame:rect];
+          rect = [cView centerScanRect: rect];
 	  [cView addSubview:v_split];
 	  RELEASE(v_split);
 	}
@@ -471,6 +473,7 @@
 	  // Hack. See above
 	  RETAIN(h_split);
 	  [h_split removeFromSuperview];
+          rect = [cView centerScanRect: rect];
 	  [h_split setFrame:rect];
 	  [cView addSubview:h_split];
 	  RELEASE(h_split);
@@ -891,6 +894,7 @@
     {*/
       vSplitRect.size.width = hSplitSize.width;
 /*    }*/
+  vSplitRect = [browserView centerScanRect: vSplitRect];
   [v_split setFrame:vSplitRect];
   
   // Custom view (Editor|Builder|Launcher)
@@ -900,6 +904,7 @@
       boxRect.origin.y = vSplitRect.size.height + [h_split dividerThickness];
       boxRect.size.width = hSplitSize.width;
       boxRect.size.height = hSplitSize.height - boxRect.origin.y;
+      boxRect = [customView centerScanRect: boxRect];
       [customView setFrame:boxRect];
 //    }
 }

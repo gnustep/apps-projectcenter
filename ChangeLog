@@ -1,4 +1,9 @@
-2012-04-20 Riccardo Motto.a <rm@gnu.org>
+2012-06-12 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectWindow.m
+	Use centerScanRect to avoid strange problems with AA text in editor.
+
+2012-04-20 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.m
 	NetBSD doesn't support streams either.
