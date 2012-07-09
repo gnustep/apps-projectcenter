@@ -1,3 +1,9 @@
+2012-07-09  Serg Stoyan  <stoyan255@ukr.net>
+
+	* Framework/PCProjectInspector.m: (-removeAuthor): Improve selection 
+	of author list items after item deletion. Inspired by bug #25571. 
+	Bug should be closed.
+
 2012-06-12 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectWindow.m

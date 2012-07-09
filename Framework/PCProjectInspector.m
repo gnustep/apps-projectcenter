@@ -254,8 +254,9 @@
 
 // When user ends editing of text field with Tab or changing focus, entered
 // changes should be accepted. The exception is PCFileName fields. I'm not sure
-// if this is correct implementation (action is performed twice if user ends 
-// editing with Enter key)
+// if this is correct implementation. Action is performed twice if user ends
+// editing with Enter key.
+
 - (void)controlTextDidEndEditing:(NSNotification *)aNotif
 {
   NSControl *anObject = [aNotif object];
@@ -650,17 +651,18 @@
 - (void)removeAuthor:(id)sender
 {
   int selectedRow = [authorsList selectedRow];
-  
+
   if (selectedRow >= 0)
-  {
-    [authorsItems removeObjectAtIndex:selectedRow];
-    [authorsList reloadData];
-  }
+    {
+      [authorsList selectRow:selectedRow byExtendingSelection:NO];
+      [authorsItems removeObjectAtIndex:selectedRow];
+      [authorsList reloadData];
+    }
   
   if ([authorsList selectedRow] < 0 && [authorsItems count] > 0)
-  {
-    [authorsList selectRow:[authorsItems count]-1 byExtendingSelection:NO];
-  }
+    {
+      [authorsList selectRow:[authorsItems count]-1 byExtendingSelection:NO];
+    }
 
   [project setProjectDictObject:authorsItems forKey:PCAuthors notify:YES];
 }
