@@ -870,8 +870,8 @@
 // --- Parsing utilities
 - (BOOL)line:(NSString *)lineString startsWithString:(NSString *)substring
 {
-  int      position = 0;
-  NSRange  range = NSMakeRange(position,1);
+  NSInteger position = 0;
+  NSRange   range = NSMakeRange(position,1);
 
   while ([[lineString substringFromRange:range] isEqualToString:@" "])
     {
@@ -1127,8 +1127,8 @@
     }
   else if ([components count] > 3)
     {
-      unsigned typeIndex;
-      NSString *substr;
+      NSUInteger typeIndex;
+      NSString   *substr;
 
       // file and includedFile
       file = [currentBuildPath  

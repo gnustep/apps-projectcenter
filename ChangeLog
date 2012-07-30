@@ -1,3 +1,12 @@
+2012-07-30  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Framework/PCProjectBuilder.m (-line:startsWithString:,
+	-parseErrorLine:):
+	* Modules/Editors/ProjectCenter/PCEditor.h:
+	* Modules/Editors/ProjectCenter/PCEditor.m (FindDelimiterInString,
+	-highlightCharacterAt:inEditor:): Fix for compilation on 64-bit
+	hosts.
+
 2012-07-09  Serg Stoyan  <stoyan255@ukr.net>
 
 	* Framework/PCProjectInspector.m: (-removeAuthor): Improve selection 

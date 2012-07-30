@@ -1170,19 +1170,19 @@ static inline BOOL CheckDelimiter(unichar character,
  * @return The location of the delimiter if it is found, or NSNotFound
  *      if it isn't.
  */
-unsigned int FindDelimiterInString(NSString * string,
-                                   unichar delimiter,
-                                   unichar oppositeDelimiter,
-                                   unsigned int startLocation,
-                                   BOOL searchBackwards)
+NSUInteger FindDelimiterInString(NSString * string,
+                                 unichar delimiter,
+                                 unichar oppositeDelimiter,
+                                 NSUInteger startLocation,
+                                 BOOL searchBackwards)
 {
-  unsigned int i;
-  unsigned int length;
-  unichar (*charAtIndex)(id, SEL, unsigned int);
+  NSUInteger i;
+  NSUInteger length;
+  unichar (*charAtIndex)(id, SEL, NSUInteger);
   SEL sel = @selector(characterAtIndex:);
   int nesting = 1;
 
-  charAtIndex = (unichar (*)(id, SEL, unsigned int)) [string
+  charAtIndex = (unichar (*)(id, SEL, NSUInteger)) [string
     methodForSelector: sel];
 
   if (searchBackwards)
@@ -1299,7 +1299,7 @@ unsigned int FindDelimiterInString(NSString * string,
   [textStorage endEditing];
 }
 
-- (void)highlightCharacterAt:(unsigned int)location inEditor: (NSTextView *)editorView
+- (void)highlightCharacterAt:(NSUInteger)location inEditor: (NSTextView *)editorView
 {
   int i;
 
@@ -1384,7 +1384,7 @@ unsigned int FindDelimiterInString(NSString * string,
       // we're searching for).
       if (CheckDelimiter(c, &oppositeDelimiter, &searchBackwards))
         {
-          unsigned int result;
+          NSUInteger result;
 
           result = FindDelimiterInString(myString,
                                          oppositeDelimiter,
