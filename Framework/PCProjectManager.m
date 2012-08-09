@@ -553,6 +553,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString     *projectFileType = nil;
   PCProject    *project = nil;
   NSDictionary *wap = nil;
+  NSString     *projectPathToSave;
 
   // Check project path for invalid characters
   if ([aPath rangeOfString: @" "].location != NSNotFound ||
@@ -591,7 +592,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       BOOL                isDir = NO;
       BOOL                exists = NO;
       NSArray             *tempList;
-
+ 
       exists = [[NSFileManager defaultManager] fileExistsAtPath:aPath 
 						    isDirectory:&isDir];
       if (!exists)
@@ -599,6 +600,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return nil;
 	}
 
+      projectPathToSave = projectPath;
       if (isDir)
 	{
 	  if ([projectFileType isEqualToString:@"pcproj"] == NO)
@@ -610,6 +612,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 		{
 		  aPath = [tempList objectAtIndex:0];
 		}
+	    }
+	  else
+	    {
+	      projectPathToSave = aPath;
 	    }
 	  aPath = [aPath stringByAppendingPathComponent:@"PC.project"];
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
@@ -697,7 +703,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  [[project projectWindow] makeKeyAndOrderFront:self];
 	  [self setActiveProject: project];
 	}
+      PCLogStatus(self, @"Saved opened Document as %@", projectPathToSave);
+      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL: [NSURL fileURLWithPath:projectPathToSave]];
     }
+
   
   return project;
 }

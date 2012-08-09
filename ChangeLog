@@ -1,3 +1,9 @@
+2012-08-09 Riccardo Mottola <rm@gnu.org>
+
+	* English.lproj/ProjectCenter.gorm
+	* Framework/PCProjectManager.m
+	Recent Document menu support.
+
 2012-07-30  Wolfgang Lux  <wolfgang.lux@gmail.com>
 
 	* Framework/PCProjectBuilder.m (-line:startsWithString:,
