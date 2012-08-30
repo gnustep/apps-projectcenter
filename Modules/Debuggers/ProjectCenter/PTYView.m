@@ -42,9 +42,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-#if !defined(__OpenBSD__) && !defined(__FreeBSD__) && !(defined (__NetBSD__))
-#include <stropts.h>
-#endif
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -55,6 +52,11 @@
 #define __SOLARIS__ 1
 #define USE_FORKPTY_REPLACEMENT 1
 #endif
+
+#if defined(__SOLARIS__)
+#include <stropts.h>
+#endif
+
 
 #if !(defined (__NetBSD__)) && !(defined (__SOLARIS__)) && !(defined (__OpenBSD__)) && !(defined(__FreeBSD__))
 #  include <pty.h>

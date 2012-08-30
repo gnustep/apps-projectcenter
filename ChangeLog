@@ -1,3 +1,8 @@
+2012-08-30 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PTYView.m
+	Do not include stropts.h for most OS's anymore.
+
 2012-08-09 Riccardo Mottola <rm@gnu.org>
 
 	* English.lproj/ProjectCenter.gorm
