@@ -1,3 +1,10 @@
+2012-11-22  German Arias <german@xelalug.org>
+
+	* Modules/Projects/Library/PCLibProject.m: Don't add the prefix "lib"
+	to LIBRARY_NAME, gnustep-make will add this prefix anyway. On the other
+	hand, the super class isn't able to add this prefix to
+	XXX_RESOURCE_FILES at GNUmakefile.
+
 2012-08-30 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.m

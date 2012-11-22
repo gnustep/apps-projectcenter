@@ -258,9 +258,9 @@
   // Sources
   [self appendPublicHeaders:mf];
   [mf appendClasses:[projectDict objectForKey:PCClasses]
-          forTarget:[NSString stringWithFormat:@"lib%@",projectName]];
+          forTarget:[NSString stringWithFormat:@"%@",projectName]];
   [mf appendOtherSources:[projectDict objectForKey:PCOtherSources]
-          forTarget:[NSString stringWithFormat:@"lib%@",projectName]];
+          forTarget:[NSString stringWithFormat:@"%@",projectName]];
 
   // Tail
   [self appendTail:mf];
@@ -287,12 +287,12 @@
     projectName]];
   [mff appendString:[NSString stringWithFormat:@"LIBRARY_VAR = %@\n",
     [projectName uppercaseString]]];
-  [mff appendString:[NSString stringWithFormat:@"LIBRARY_NAME = lib%@\n",
+  [mff appendString:[NSString stringWithFormat:@"LIBRARY_NAME = %@\n",
     projectName]];
-  [mff appendString:[NSString stringWithFormat:@"lib%@_HEADER_FILES_DIR = %@\n",
+  [mff appendString:[NSString stringWithFormat:@"%@_HEADER_FILES_DIR = %@\n",
     projectName,@"."]];
   [mff appendString:[NSString stringWithFormat:
-    @"lib%@_HEADER_FILES_INSTALL_DIR = /%@\n", projectName, projectName]];
+    @"%@_HEADER_FILES_INSTALL_DIR = /%@\n", projectName, projectName]];
 }
 
 - (void)appendPublicHeaders:(PCMakefileFactory *)mff
