@@ -82,7 +82,7 @@
   [super dealloc];
 }
 
-- (void)release
+- (oneway void)release
 {
   // If retain count is number of tracking rects + superview retain,
   // remove tracking rects. It seems that tracking rects retain this object.

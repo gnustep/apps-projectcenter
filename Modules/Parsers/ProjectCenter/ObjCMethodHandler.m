@@ -149,7 +149,7 @@
         {
           NotMethod;
         }
-      else if ((step == MethodName))
+      else if (step == MethodName)
         {
           [method appendString:element];
         }

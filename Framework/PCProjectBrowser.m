@@ -308,11 +308,11 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (void)reloadLastColumnAndNotify:(BOOL)yn
 {
-  int	    column = [browser lastColumn];
+  NSInteger column = [browser lastColumn];
   NSString  *category = [self nameOfSelectedCategory];
-  int       selectedColumn = [browser selectedColumn];
+  NSInteger selectedColumn = [browser selectedColumn];
   NSMatrix  *colMatrix = [browser matrixInColumn:selectedColumn];
-  int       rowCount = 0, colCount = 0, spCount = 0;
+  NSInteger rowCount = 0, colCount = 0, spCount = 0;
   PCProject *activeProject = [[project projectManager] activeProject];
   NSString  *selCellTitle = [[browser selectedCell] stringValue];
 

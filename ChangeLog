@@ -9,6 +9,12 @@
 	* Modules/Projects/Tool/PCToolProject.m
 	  shutup clang compiler warning about redunant literal
 	  string usage
+	* Modules/Preferences/Build/PCBuildPrefs.m
+	* Framework/PCButton.m
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.m
+	  shutup some clang warnings
+	* Framework/PCProjectBrowser.m
+	  NSInteger conversions
 
 2012-11-22  German Arias <german@xelalug.org>
 

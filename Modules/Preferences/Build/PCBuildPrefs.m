@@ -113,7 +113,7 @@
   NSArray  *files;
   NSString *path;
 
-  if ((sender == successField))
+  if (sender == successField)
     {
       path = [successField stringValue];
     }
@@ -151,7 +151,7 @@
   NSArray  *files;
   NSString *path;
 
-  if ((sender == failureField))
+  if (sender == failureField)
     {
       path = [failureField stringValue];
     }
@@ -180,7 +180,7 @@
   NSArray  *files;
   NSString *path;
 
-  if ((sender == rootBuildDirField))
+  if (sender == rootBuildDirField)
     {
       path = [rootBuildDirField stringValue];
     }
@@ -209,7 +209,7 @@
   NSArray  *files;
   NSString *path;
 
-  if ((sender == buildToolField))
+  if (sender == buildToolField)
     {
       path = [buildToolField stringValue];
     }
