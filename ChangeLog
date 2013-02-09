@@ -15,6 +15,8 @@
 	  shutup some clang warnings
 	* Framework/PCProjectBrowser.m
 	  NSInteger conversions
+	* Modules/Debuggers/ProjectCenter/PTYView.m
+	  Include right headers for openpty on OpenBSD
 
 2012-11-22  German Arias <german@xelalug.org>
 

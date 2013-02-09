@@ -34,6 +34,9 @@
 #include <sys/ioctl.h>
 #include <termios.h>
 #include <libutil.h>
+#elif defined (__OpenBSD__)
+#include <termios.h>
+#include <util.h>
 #else
 #include <sys/termios.h>
 #endif
