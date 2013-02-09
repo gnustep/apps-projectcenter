@@ -388,12 +388,12 @@ NSString
               forKey:@"ProjectWindow"];
   if ([projectWindow isToolbarVisible] == YES)
     {
-      [windows setObject:[NSString stringWithString:@"YES"]
+      [windows setObject:@"YES"
 	          forKey:@"ShowToolbar"];
     }
   else
     {
-      [windows setObject:[NSString stringWithString:@"NO"]
+      [windows setObject:@"NO"
                   forKey:@"ShowToolbar"];
     }
 
@@ -1047,11 +1047,11 @@ NSString
 {
   if ([type isEqualToString:@"m"] || [type isEqualToString:@"c"])
     {
-      return [NSString stringWithString:@"h"];
+      return @"h";
     }
   else if ([type isEqualToString:@"h"])
     {
-      return [NSString stringWithString:@"m"];
+      return @"m";
     }
 
   return nil;

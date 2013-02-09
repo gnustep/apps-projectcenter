@@ -429,7 +429,7 @@ static PCMakefileFactory *_factory = nil;
   int      count = [array count];
   NSString *string = nil;
   NSString *item = nil;
-  NSString *eol = [NSString stringWithString: @"\\\n"];
+  NSString *eol = @"\\\n";
 
   if (array == nil || count <= 0)
     {
@@ -449,7 +449,7 @@ static PCMakefileFactory *_factory = nil;
       [self appendString:string];
       if (i == (count-2))
 	{
-	  eol = [NSString stringWithString: @"\n"];
+	  eol = @"\n";
 	}
     }
 }
@@ -471,7 +471,7 @@ static PCMakefileFactory *_factory = nil;
   NSString *langs = [languages componentsJoinedByString: @" "];
   NSString *string = nil;
   NSString *item = nil;
-  NSString *eol = [NSString stringWithString: @"\\\n"];
+  NSString *eol = @"\\\n";
   int      i = 0;
   int      count = [resources count];
 
@@ -494,7 +494,7 @@ static PCMakefileFactory *_factory = nil;
     {
       if (i == (count-1))
 	{
-	  eol = [NSString stringWithString: @"\n"];
+	  eol = @"\n";
 	}
       item = [resources objectAtIndex:i];
       string = [NSString stringWithFormat: @"%@ %@", item, eol];

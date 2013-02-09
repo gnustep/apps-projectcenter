@@ -121,7 +121,7 @@ enum {
     NSMakeSize([stdOut frame].size.width, 1e7)];
 
   // Font
-  string  = [NSString stringWithString:@"=== Launcher ready ==="];
+  string  = @"=== Launcher ready ===";
   attributedString = 
     [[NSAttributedString alloc] initWithString:string 
                                     attributes:textAttributes];
@@ -260,7 +260,7 @@ enum {
   gdbPath = [[[project projectManager] prefController] stringForKey:Debugger];
   if (gdbPath == nil)
     {
-      gdbPath = [NSString stringWithString:@"/usr/bin/gdb"];
+      gdbPath = @"/usr/bin/gdb";
     }
 
   if ([fm isExecutableFileAtPath:gdbPath] == NO)

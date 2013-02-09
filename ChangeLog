@@ -1,3 +1,15 @@
+2013-02-09 Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
+	* Framework/PCFileCreator.m
+	* Framework/PCMakefileFactory.m
+	* Framework/PCProjectBuilder.m
+	* Framework/PCProjectLauncher.m
+	* Framework/PCProjectManager.m
+	* Framework/PCProject.m
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/Tool/PCToolProject.m
+	  shutup clang compiler warning about redunant literal
+	  string usage
+
 2012-11-22  German Arias <german@xelalug.org>
 
 	* Modules/Projects/Library/PCLibProject.m: Don't add the prefix "lib"

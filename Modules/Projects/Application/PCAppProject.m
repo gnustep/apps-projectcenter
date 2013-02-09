@@ -83,7 +83,7 @@
 {
   PCFileManager  *pcfm = [PCFileManager defaultManager];
   NSMutableArray *otherRes = nil;
-  NSString       *oldFile = [NSString stringWithString:@"Info-gnustep.plist"];
+  NSString       *oldFile = @"Info-gnustep.plist";
   NSString       *oldFilePath = nil;
   NSString       *infoFile = nil;
   NSString       *infoFilePath = nil;

@@ -383,7 +383,7 @@
   nextEL = ELNone;
   lastIndentString = @"";
 
-  buildStatus = [NSString stringWithString:@"Building..."];
+  buildStatus = @"Building...";
   [buildStatusTarget setString:@"Build"];
   [cleanButton setEnabled:NO];
   _isBuilding = YES;
@@ -413,7 +413,7 @@
   [buildArgs addObject:@"clean"];
   [buildArgs addObjectsFromArray:[self buildArguments]];
 
-  buildStatus = [NSString stringWithString:@"Cleaning..."];
+  buildStatus = @"Cleaning...";
   [buildStatusTarget setString:@"Clean"];
   [buildButton setEnabled:NO];
   _isCleaning = YES;
@@ -574,7 +574,7 @@
   stdErrorPipe = [[NSPipe alloc] init];
   stdErrorHandle = [stdErrorPipe fileHandleForReading];
 
-  [errorsCountField setStringValue:[NSString stringWithString:@""]];
+  [errorsCountField setStringValue:@""];
   errorsCount = 0;
   warningsCount = 0;
 
@@ -732,8 +732,8 @@
 - (void)updateErrorsCountField
 {
   NSString *string;
-  NSString *errorsString = [NSString stringWithString:@""];
-  NSString *warningsString = [NSString stringWithString:@""];
+  NSString *errorsString = @"";
+  NSString *warningsString = @"";
 
   if (errorsCount > 0)
     {
@@ -744,7 +744,7 @@
 	}
       else
 	{
-	  errorsString = [NSString stringWithString:@"1 error"];
+	  errorsString = @"1 error";
 	}
     }
 
@@ -757,7 +757,7 @@
 	}
       else
 	{
-	  warningsString = [NSString stringWithString:@"1 warning"];
+	  warningsString = @"1 warning";
 	}
     }
 
@@ -1077,11 +1077,11 @@
 - (NSArray *)parseErrorLine:(NSString *)string
 {
   NSArray             *components = [string componentsSeparatedByString:@":"];
-  NSString            *file = [NSString stringWithString:@""];
-  NSString            *includedFile = [NSString stringWithString:@""];
-  NSString            *position = [NSString stringWithString:@"{x=0; y=0}"];
-  NSString            *type = [NSString stringWithString:@""];
-  NSString            *message = [NSString stringWithString:@""];
+  NSString            *file = @"";
+  NSString            *includedFile = @"";
+  NSString            *position = @"{x=0; y=0}";
+  NSString            *type = @"";
+  NSString            *message = @"";
   NSMutableArray      *items = [NSMutableArray arrayWithCapacity:1];
   NSMutableDictionary *errorItem;
   NSString            *indentString = @"\t";

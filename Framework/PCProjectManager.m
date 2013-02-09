@@ -451,7 +451,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if ([projectClassName isEqualToString:@"PCGormProj"] ||
       [projectClassName isEqualToString:@"PCAppProj"])
     {
-      projectTypeName = [NSString stringWithString:@"Application"];
+      projectTypeName = @"Application";
       projectClassName = [projectTypes objectForKey:projectTypeName];
     }
 
@@ -948,12 +948,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  project = [activeProject superProject];
 	  [self setActiveProject:project];
 	}
-      removeString = [NSString stringWithString:@"Remove subprojects..."];
+      removeString = @"Remove subprojects...";
       directory = [project dirForCategoryKey:categoryKey];
     }
   else
     {
-      removeString = [NSString stringWithString:@"Remove files..."];
+      removeString = @"Remove files...";
       project = activeProject;
     }
 
