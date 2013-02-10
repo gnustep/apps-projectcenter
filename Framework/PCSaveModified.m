@@ -137,7 +137,7 @@ BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
 // ============================================================================
 // ==== TableView delegate
 // ============================================================================
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (aTableView != filesList)
     {
@@ -149,7 +149,7 @@ BOOL PCRunSaveModifiedFilesPanel(PCEditorManager *manager,
 
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex
+                        row:(NSInteger)rowIndex
 {
   if (aTableView != filesList)
     {

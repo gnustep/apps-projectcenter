@@ -65,16 +65,16 @@ typedef enum _PHSortType
 
 @interface PCProjectLoadedFiles (HistoryTableDelegate)
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
 
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex;
+                        row:(NSInteger)rowIndex;
 
 - (void)tableView:(NSTableView *)aTableView
    setObjectValue:anObject
    forTableColumn:(NSTableColumn *)aTableColumn
-              row:(int)rowIndex;
+              row:(NSInteger)rowIndex;
 
 @end
 

@@ -336,9 +336,9 @@ cleanup(NSMutableDictionary *m, NSString *k)
 
 - (void)addDocType: (id)sender
 {
-  int                 row;
+  NSInteger           row;
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity: 6];
-  int                 selectedRow = [docTypesList selectedRow];
+  NSInteger           selectedRow = [docTypesList selectedRow];
 
   setOrRemove(entry, [docTypeField stringValue], @"NSName");
   setOrRemove(entry, [docNameField stringValue], @"NSHumanReadableName");
@@ -448,14 +448,14 @@ cleanup(NSMutableDictionary *m, NSString *k)
 // --- Document Types browser
 // ----------------------------------------------------------------------------
 
-- (int)numberOfRowsInTableView: (NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView: (NSTableView *)aTableView
 {
   return [docTypesItems count];
 }
     
 - (id)            tableView: (NSTableView *)aTableView
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
-                        row: (int)rowIndex
+                        row: (NSInteger)rowIndex
 {
   NSDictionary *object = nil;
 
@@ -480,11 +480,11 @@ cleanup(NSMutableDictionary *m, NSString *k)
 - (void)tableView: (NSTableView *)aTableView
    setObjectValue: anObject
    forTableColumn: (NSTableColumn *)aTableColumn
-              row: (int)rowIndex
+              row: (NSInteger)rowIndex
 {
   NSMutableDictionary *type = nil;
   
-  if (docTypesItems == nil || [docTypesItems count] <= 0)
+  if (docTypesItems == nil || [docTypesItems count] == 0)
     {
       return;
     }
@@ -504,18 +504,18 @@ cleanup(NSMutableDictionary *m, NSString *k)
 		      notify: YES];
 }
 
-- (BOOL)tableView: (NSTableView *)aTableView shouldSelectRow: (int)rowIndex
+- (BOOL)tableView: (NSTableView *)aTableView shouldSelectRow: (NSInteger)rowIndex
 {
   [self fillFieldsForRow: rowIndex];
   return YES;
 }
 
-- (void)fillFieldsForRow: (int)rowIndex
+- (void)fillFieldsForRow: (NSInteger)rowIndex
 {
   NSMutableDictionary *type = nil;
-  int          itemCount = [docTypesItems count];
+  NSUInteger      itemCount = [docTypesItems count];
 
-  if (itemCount <= 0 || rowIndex > itemCount || rowIndex < 0)
+  if (itemCount == 0 || rowIndex > itemCount || rowIndex < 0)
     {
       [docTypeField setStringValue: @""];
       [docNameField setStringValue: @""];

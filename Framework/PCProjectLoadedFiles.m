@@ -341,7 +341,7 @@
 
 @implementation PCProjectLoadedFiles (LoadedFilesTableDelegate)
 
-- (int)numberOfRowsInTableView: (NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView: (NSTableView *)aTableView
 {
   if (aTableView != filesList)
     {
@@ -353,7 +353,7 @@
 
 - (id)            tableView: (NSTableView *)aTableView
   objectValueForTableColumn: (NSTableColumn *)aTableColumn
-                        row: (int)rowIndex
+                        row: (NSInteger)rowIndex
 {
   if (aTableView != filesList)
     {
@@ -376,7 +376,7 @@
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-               row:(int)rowIndex
+               row:(NSInteger)rowIndex
 {
 /*  NSString *path = nil;
   NSParameterAssert (rowIndex >= 0 && rowIndex < [editedFiles count]);

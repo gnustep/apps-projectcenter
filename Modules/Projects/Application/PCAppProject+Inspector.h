@@ -50,16 +50,16 @@
 
 - (void)setDocBasedApp:(id)sender;
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView;
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex;
+                        row:(NSInteger)rowIndex;
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-               row:(int)rowIndex;
+               row:(NSInteger)rowIndex;
 	       
-- (void)fillFieldsForRow:(int)rowIndex;
+- (void)fillFieldsForRow:(NSInteger)rowIndex;
 
 // ----------------------------------------------------------------------------
 // --- Notifications

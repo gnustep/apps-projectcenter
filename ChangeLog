@@ -6,6 +6,17 @@
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
 	  some more (unsigned) int -> NS(U)Integer transitions
 	  and some shutup of clang compiler warnings
+	* Framework/PCProjectBrowser.m
+	* Framework/PCSaveModified.m
+	* Framework/PCProjectLoadedFiles.m
+	* Framework/PCProjectBuilder.m
+	* Headers/ProjectCenter/PCProjectBrowser.h
+	* Headers/ProjectCenter/PCSaveModified.h
+	* Headers/ProjectCenter/PCProjectLoadedFiles.h
+	* Modules/Projects/Application/PCAppProject+Inspector.h
+	* Modules/Projects/Application/PCAppProject+Inspector.m
+	  some more (unsigned) int -> NS(U)Integer transitions
+	  not catched from clang, but found by libobjc2 in debug mode
 
 2013-02-09 Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 	* Framework/PCFileCreator.m

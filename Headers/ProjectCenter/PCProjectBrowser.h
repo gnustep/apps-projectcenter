@@ -84,7 +84,7 @@ extern NSString *PCBrowserDidSetPathNotification;
 
 @interface PCProjectBrowser (ProjectBrowserDelegate)
 
-- (void)browser:(NSBrowser *)sender createRowsForColumn:(int)column 
+- (void)browser:(NSBrowser *)sender createRowsForColumn:(NSInteger)column 
                                                inMatrix:(NSMatrix *)matrix;
 
 @end

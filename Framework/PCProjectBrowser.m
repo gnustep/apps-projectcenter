@@ -527,13 +527,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 @implementation PCProjectBrowser (ProjectBrowserDelegate)
 
 - (void)     browser:(NSBrowser *)sender
- createRowsForColumn:(int)column
+ createRowsForColumn:(NSInteger)column
 	    inMatrix:(NSMatrix *)matrix
 {
-  NSString  *pathToCol;
-  NSArray   *files;
-  int       i = 0;
-  int       count = 0;
+  NSString   *pathToCol;
+  NSArray    *files;
+  NSUInteger i = 0;
+  NSUInteger count = 0;
 
   if (sender != browser || !matrix || ![matrix isKindOfClass:[NSMatrix class]])
     {

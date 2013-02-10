@@ -1269,7 +1269,7 @@
 }
 
 // --- Error output table delegate methods
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (errorArray != nil && aTableView == errorOutput)
     {
@@ -1281,7 +1281,7 @@
     
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex
+                        row:(NSInteger)rowIndex
 {
   NSDictionary *errorItem;
 
@@ -1297,7 +1297,7 @@
 
 - (void)errorItemClick:(id)sender
 {
-  int             rowIndex = [errorOutput selectedRow];
+  NSInteger       rowIndex = [errorOutput selectedRow];
   NSDictionary    *error = [errorArray objectAtIndex:rowIndex];
   NSPoint         position;
   PCProjectEditor *projectEditor = [project projectEditor];
