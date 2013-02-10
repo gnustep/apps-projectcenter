@@ -297,7 +297,6 @@ LocateString(NSString * str,
           for (;i < r.length; i++)
             {
               unichar c = string[i];
-              unsigned int j;
 
               if (c < numSkipChars && skipChars[c])
                 {
@@ -797,7 +796,6 @@ LocateString(NSString * str,
   // need to fixup contexts?
   if (NSMaxRange(r) > lastProcessedContextIndex)
     {
-      unsigned int prevContext;
       NSRange fixupRange;
 
       fixupRange = NSMakeRange(lastProcessedContextIndex,

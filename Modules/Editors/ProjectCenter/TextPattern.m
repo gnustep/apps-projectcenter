@@ -257,6 +257,8 @@ ParseTextPatternItem (NSString *string, unsigned int *index)
   return newItem;
 }
 
+#if 0
+// not used
 static void
 DescribeTextPatternItem(TextPatternItem *item)
 {
@@ -292,7 +294,7 @@ DescribeTextPatternItem(TextPatternItem *item)
       break;
     }
 }
-
+#endif
 
 TextPattern *
 CompileTextPattern (NSString *string)

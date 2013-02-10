@@ -1044,7 +1044,7 @@
 // ==== NSTableViews
 // ============================================================================
 
-- (int)numberOfRowsInTableView:(NSTableView *)aTableView
+- (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView
 {
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
@@ -1064,7 +1064,7 @@
     
 - (id)            tableView:(NSTableView *)aTableView
   objectValueForTableColumn:(NSTableColumn *)aTableColumn
-                        row:(int)rowIndex
+                        row:(NSInteger)rowIndex
 {
   if (searchOrderList != nil && aTableView == searchOrderList)
     {
@@ -1085,11 +1085,11 @@
 - (void) tableView:(NSTableView *)aTableView
     setObjectValue:anObject
     forTableColumn:(NSTableColumn *)aTableColumn
-                row:(int)rowIndex
+                row:(NSInteger)rowIndex
 {
   if (authorsList != nil && aTableView == authorsList)
     {
-      if([authorsItems count] <= 0)
+      if([authorsItems count] == 0)
         {
           return;
         }
@@ -1104,7 +1104,7 @@
 - (void) tableView: (NSTableView*)aTableView
    willDisplayCell: (id)aCell
     forTableColumn: (NSTableColumn*)aTableColumn
-               row: (int)rowIndex
+               row: (NSInteger)rowIndex
 {
   [(NSTextFieldCell *)aCell setScrollable:YES];
 }

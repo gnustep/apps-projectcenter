@@ -161,7 +161,7 @@
 	colorWithCalibratedWhite:[[colorComponents objectAtIndex:1] floatValue]
        			   alpha:1.0];
     }
-  else if ([colorSpaceName isEqualToString:@"RGB"]) // Treat as RGBColorSpace
+  else // Treat as RGBColorSpace
     {
       color = [NSColor 
 	colorWithCalibratedRed:[[colorComponents objectAtIndex:1] floatValue]
@@ -255,7 +255,7 @@
       key = EditorLines;
       val = [editorLinesField stringValue];
     }
-  else if (sender == editorColumnsField)
+  else // editorColumnsField
     {
       key = EditorColumns;
       val = [editorColumnsField stringValue];
@@ -286,7 +286,7 @@
       currentColor = currentBackgroundColor;
       key = EditorBackgroundColor;
     }
-  else if (sender == selectionColorWell)
+  else // selectionColorWell
     {
       NSLog(@"selectionColorWell");
       color = [selectionColorWell color];

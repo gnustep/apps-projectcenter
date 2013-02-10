@@ -249,7 +249,7 @@ static NSMutableDictionary * syntaxDefinitions = nil;
 {
   if ([self init])
     {
-      unsigned int i, n;
+      NSUInteger i, n;
       NSMutableArray * contextGraphicsTmp = [NSMutableArray array],
                      * keywordGraphicsTmp = [NSMutableArray array];
 
@@ -258,7 +258,7 @@ static NSMutableDictionary * syntaxDefinitions = nil;
       // compile the syntax definition
       for (i = 0, n = [contexts count]; i < n; i++)
         {
-          unsigned int j, keywordCount, skipCount;
+          NSUInteger j, keywordCount, skipCount;
           NSDictionary * context = [contexts objectAtIndex: i];
           NSArray * ctxtKeywords, * skips;
           NSMutableArray * contextKeywordsGraphicsTmp;
@@ -268,8 +268,8 @@ static NSMutableDictionary * syntaxDefinitions = nil;
                [context objectForKey: @"Ending"] == nil) &&
               i > 0)
             {
-              NSLog(_(@"Syntax compilation error: context %i missing "
-                      @"beginning or ending symbol."));
+              NSLog(@"Syntax compilation error: context %" PRIuPTR "  missing "
+                      @"beginning or ending symbol.", i);
 
               [self release];
               return nil;
