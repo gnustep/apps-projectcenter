@@ -126,11 +126,11 @@
 
 // --- NSDraggingDestination protocol methods
 // -- Before the image is released
-- (unsigned int)draggingEntered:(id <NSDraggingInfo>)sender
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
 {
   NSPasteboard *pb = [sender draggingPasteboard];
   NSArray      *paths = [pb propertyListForType:NSFilenamesPboardType];
-  unsigned int draggingOp = NSDragOperationNone;
+  NSDragOperation draggingOp = NSDragOperationNone;
 
 //  NSLog(@"Dragging entered: %@", paths);
 
@@ -206,7 +206,7 @@
 
 // --- NSDraggingSource protocol methods
 
-- (unsigned int)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (NSDragOperation)draggingSourceOperationMaskForLocal:(BOOL)isLocal
 {
   return NSDragOperationCopy;
 }

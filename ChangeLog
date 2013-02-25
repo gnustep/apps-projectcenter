@@ -1,3 +1,7 @@
+2013-02-25: Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
+	* Framework/PCFileNameIcon.m
+	* unsigned int -> NSDragOperation
+
 2013-02-10: Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 	* Framework/PCProjectInspector.m
 	* Modules/Editors/ProjectCenter/SyntaxDefinition.m
