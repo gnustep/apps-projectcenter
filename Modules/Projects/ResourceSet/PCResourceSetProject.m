@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004-2010 Free Software Foundation
+   Copyright (C) 2004-2013 Free Software Foundation
 
    Authors: Serg Stoyan
 
@@ -128,7 +128,7 @@
   NSString          *key = nil;
   NSMutableArray    *resources = nil;
   NSArray           *localizedResources = nil;
-
+  NSLog(@" write makefile!");
   // Save the GNUmakefile backup
   [super writeMakefile];
 
@@ -188,12 +188,11 @@
   [mff appendString:@"\n#\n# Resource Set\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"RESOURCE_SET_NAME = %@\n",
     projectName]];
-  /* FIXME: This was deprecated in 2007 and has even been removed from
-     the latest gnustep-make!  The variable to use is
-     xxx_INSTALL_DIR.  */
+
+  // updated variable and path as suggested by makefile migration
+  // TODO: perhaps paths hould be created with system path separator
   [mff appendString:
-    [NSString stringWithFormat:@"@%RESOURCE_FILES_INSTALL_DIR = %@\n",
-    [projectDict objectForKey:PCInstallDomain]]];
+         [NSString stringWithFormat:@"%@_INSTALL_DIR = $(GNUSTEP_LIBRARY)/Libraries/Resources/%@\n",projectName, projectName]];
 }
 
 - (void)appendTail:(PCMakefileFactory *)mff

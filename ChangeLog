@@ -1,3 +1,8 @@
+2013-09-17 Riccardo Mottola <rm@gnustep.org>
+
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m
+	Replace deprecated make variable.
+
 2013-02-25: Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 	* Framework/PCFileNameIcon.m
 	* unsigned int -> NSDragOperation
