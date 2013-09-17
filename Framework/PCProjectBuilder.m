@@ -1175,7 +1175,7 @@
 	  NSNumber *cNumber = [NSNumber numberWithInt:cInt];
 
 	  position = [NSString stringWithFormat:@"{x=%i; y=%i}", 
-	      	   [lNumber intValue], [cNumber floatValue]];
+	      	   [lNumber intValue], [cNumber intValue]];
 	}
       // message
       substr = [NSString stringWithFormat:@"%@:", type];

@@ -3,6 +3,9 @@
 	* Modules/Projects/ResourceSet/PCResourceSetProject.m
 	Replace deprecated make variable.
 
+	* Framework/PCProjectBuilder.m
+	Fix int vs. float.
+
 2013-02-25: Sebastian Reitenbach <sebastia@l00-bugdead-prods.de>
 	* Framework/PCFileNameIcon.m
 	* unsigned int -> NSDragOperation
