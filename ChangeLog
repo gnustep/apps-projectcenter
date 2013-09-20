@@ -1,4 +1,9 @@
-2013-09-17 Riccardo Mottola <rm@gnustep.org>
+2013-09-20 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCFileCreator.m
+	Do not launch replacing if copying was not successful, avoids hang of app.
+
+2013-09-17 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/ResourceSet/PCResourceSetProject.m
 	Replace deprecated make variable.

@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2013 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -249,11 +250,13 @@ static NSDictionary  *dict = nil;
       key = [fileType objectForKey:@"ProjectKey"];
       template = [fileType objectForKey:@"TemplateFile"];
 
-      [pcfm copyFile:template toFile:newFile];
-      [self replaceTagsInFileAtPath:newFile withProject:aProject];
-      [aProject addFiles:[NSArray arrayWithObject:newFile]
-   		  forKey:key
-		  notify:YES];
+      if ([pcfm copyFile:template toFile:newFile])
+        {
+          [self replaceTagsInFileAtPath:newFile withProject:aProject];
+          [aProject addFiles:[NSArray arrayWithObject:newFile]
+                      forKey:key
+                      notify:YES];
+        }
     }
 
   // Notify the browser!
@@ -319,7 +322,7 @@ static NSDictionary  *dict = nil;
     }
 
   [file writeToFile:newFile atomically:YES];
-  [file autorelease];
+  [file release];
 }
 
 @end
@@ -439,9 +442,6 @@ static NSDictionary  *dict = nil;
   NSString      *filePath = nil;
   NSFileManager *fm = [NSFileManager defaultManager];
   BOOL          complementary;
-
-/*  NSLog(@"PCFileCreator: [createFile] %@ in category: %@", 
-	fileName, projectKey);*/
 
   path = [[activeProject projectPath] stringByAppendingPathComponent:fileName];
   // Create file
