@@ -3,6 +3,9 @@
 	* Modules/Parsers/ProjectCenter/PCParser.m
 	Fix parser check for temrination, do not look past last char.
 
+	* PCAppController.m
+	If filename is not absolute, normalize it (happens when invoking with the filename as argument to the application, e.g. 'ProjectCenter myProject').
+
 2013-09-20 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCFileCreator.m

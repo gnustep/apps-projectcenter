@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2012 Free Software Foundation
+   Copyright (C) 2001-2013 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -108,6 +108,12 @@
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
   [NSApp activateIgnoringOtherApps:YES];
+
+  if (![fileName isAbsolutePath])
+    {
+      NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
+      fileName = [cwd stringByAppendingPathComponent: fileName];
+    }
 
   if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
       || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
