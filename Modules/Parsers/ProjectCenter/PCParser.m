@@ -1,7 +1,7 @@
 /*
 **  CodeParser.m
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2013
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -127,7 +127,7 @@ CodeType codeType(unichar *ch)
 - (void)parse
 {
   unsigned int i, start, end;
-  CodeType startType, endType;
+  CodeType startType;
   NSString *out;
   SEL selString = @selector(string:);
   SEL selNumber = @selector(number:);
@@ -156,12 +156,12 @@ CodeType codeType(unichar *ch)
   start = end = 0;
   startType = codeType(_uchar+start);
 
-  for (i = 1; i < _length+1; i++)
+  for (i = 1; i <= _length; i++)
     {
       end = i;
-      endType = codeType(_uchar+end);
       
-      if ((startType != endType) || (end == _length))
+      /* check for end, but check for end char only if not at end */
+      if ((end == _length) || (startType != codeType(_uchar+end)) )
         {
           /* Check period in number */
           if ((startType == NumberCodeType) && (_uchar[end] == 0x2E))
