@@ -1,7 +1,7 @@
 /*
 **  CodeParser.h
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2013
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -35,7 +35,7 @@
 {
   id <CodeHandler> _handler;
   NSString          *_string;
-  unsigned int      _length;
+  NSUInteger        _length;
   unichar           *_uchar;
 }
 

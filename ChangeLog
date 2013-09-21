@@ -1,5 +1,11 @@
 2013-09-21 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Parsers/ProjectCenter/PCParser.h
+	* Modules/Parsers/ProjectCenter/PCParser.m
+	Transition count/length variables to NSUInteger
+
+2013-09-21 Riccardo Mottola <rm@gnu.org>
+
 	* Modules/Parsers/ProjectCenter/PCParser.m
 	Fix parser check for temrination, do not look past last char.
 

@@ -126,7 +126,7 @@ CodeType codeType(unichar *ch)
 
 - (void)parse
 {
-  unsigned int i, start, end;
+  NSUInteger i, start, end;
   CodeType startType;
   NSString *out;
   SEL selString = @selector(string:);
@@ -179,7 +179,7 @@ CodeType codeType(unichar *ch)
             }
           else if (startType == SpaceAndNewLineCodeType)
             {
-              unsigned int j, jlen = end-start/*[out length]*/;
+              NSUInteger j, jlen = end-start/*[out length]*/;
               for (j = 0; j < jlen; j++)
                 {
 		  (*impSpaceAndNewLine)(_handler, 
@@ -188,7 +188,7 @@ CodeType codeType(unichar *ch)
             }
           else if (startType == SymbolCodeType)
             {
-              unsigned int j, jlen = end-start/*[out length]*/;
+              NSUInteger j, jlen = end-start/*[out length]*/;
               for (j = 0; j < jlen; j++)
                 {
                   (*impSymbol)(_handler, selSymbol, _uchar[start+j]);
@@ -196,7 +196,7 @@ CodeType codeType(unichar *ch)
             }
           else if (startType == InvisibleCodeType)
             {
-              unsigned int j, jlen = end-start/*[out length]*/;
+              NSUInteger j, jlen = end-start/*[out length]*/;
               for (j = 0; j < jlen; j++)
                 {
                   (*impInvisible)(_handler, selInvisible, _uchar[start+j]);
