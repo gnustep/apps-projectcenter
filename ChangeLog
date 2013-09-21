@@ -1,3 +1,8 @@
+2013-09-21 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Parsers/ProjectCenter/PCParser.m
+	Fix parser check for temrination, do not look past last char.
+
 2013-09-20 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCFileCreator.m
