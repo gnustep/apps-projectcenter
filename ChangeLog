@@ -9,6 +9,14 @@
 	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.m
 	NSUInteger / NSInteger transitions for count/length variables.
 
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/Bundle/PCBundleProject.m
+	* Modules/Projects/Framework/PCFrameworkProject.m
+	* Modules/Projects/Library/PCLibProject.m
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m
+	* Modules/Projects/Tool/PCToolProject.m
+	Transition to NSUInteger.
+
 2013-09-21 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Parsers/ProjectCenter/PCParser.h

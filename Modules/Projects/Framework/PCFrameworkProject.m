@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2005 Free Software Foundation
+   Copyright (C) 2005-2013 Free Software Foundation
 
    Authors: Serg Stoyan
 
@@ -193,7 +193,7 @@
 - (BOOL)writeMakefile
 {
   PCMakefileFactory *mf = [PCMakefileFactory sharedFactory];
-  int               i,count; 
+  NSUInteger        i,count; 
   NSString          *mfl = nil;
   NSData            *mfd = nil;
   NSString          *key = nil;
@@ -233,11 +233,11 @@
     }
   // Remove localized resource files from gathered array
   localizedResources = [projectDict objectForKey:PCLocalizedResources];
-  for (i = [resources count] - 1; i >= 0; i--)
+  for (i = [resources count]; i > 0; i--)
     {
-      if ([localizedResources containsObject:[resources objectAtIndex:i]])
+      if ([localizedResources containsObject:[resources objectAtIndex:i-1]])
 	{
-	  [resources removeObjectAtIndex:i];
+	  [resources removeObjectAtIndex:i-1];
 	}
     }
   [mf appendResources:resources inDir:@"Resources"];
