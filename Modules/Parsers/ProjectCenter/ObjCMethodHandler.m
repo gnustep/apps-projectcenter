@@ -1,7 +1,7 @@
 /*
 **  ObjCMethodHandler.m
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2013
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -89,7 +89,7 @@
 
 - (void)string:(NSString *)element
 {
-  unsigned int len = [element length];
+  NSUInteger len = [element length];
 
   [super string:element];
 

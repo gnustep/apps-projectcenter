@@ -1,7 +1,7 @@
 /*
 **  ObjCMethodHandler.h
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2013
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -55,16 +55,16 @@ typedef enum _CheckStep {
 
 @interface ObjCMethodHandler : ObjCCommentHandler <CodeHandler>
 {
-  unsigned int    position;
+  NSUInteger      position;
 
   BOOL            inSpace;
   NSMutableString *method;
   NSMutableArray  *methods;
   unichar         _preSymbol;
-  unsigned        nameBeginPosition;
-  unsigned        nameEndPosition;
-  unsigned        bodyBeginPosition;
-  int             bodySymbolCount;
+  NSUInteger      nameBeginPosition;
+  NSUInteger      nameEndPosition;
+  NSUInteger      bodyBeginPosition;
+  NSInteger       bodySymbolCount;
 
   CheckStep       step;
   CheckStep       prev_step;

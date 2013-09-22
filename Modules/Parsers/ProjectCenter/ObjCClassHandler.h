@@ -1,7 +1,7 @@
 /*
 **  ObjCClassHandler.h
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2013
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -55,17 +55,17 @@ typedef enum _CS {
 
 @interface ObjCClassHandler : ObjCCommentHandler <CodeHandler>
 {
-  unsigned int    position;
+  NSUInteger      position;
 
   BOOL            inSpace;
   NSMutableString *keyword;
   NSMutableString *class;
   NSMutableArray  *classes;
   unichar         _preSymbol;
-  unsigned        nameBeginPosition;
-  unsigned        nameEndPosition;
-  unsigned        bodyBeginPosition;
-  int             bodySymbolCount;
+  NSUInteger      nameBeginPosition;
+  NSUInteger      nameEndPosition;
+  NSUInteger      bodyBeginPosition;
+  NSInteger       bodySymbolCount;
 
   CS       step;
   CS       prev_step;

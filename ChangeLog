@@ -3,6 +3,12 @@
 	* Modules/Parsers/ProjectCenter/PCParser.m
 	Do not advance start and get startType if we are at the end anyway.
 
+	* Modules/Parsers/ProjectCenter/ObjCClassHandler.h
+	* Modules/Parsers/ProjectCenter/ObjCClassHandler.m
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.h
+	* Modules/Parsers/ProjectCenter/ObjCMethodHandler.m
+	NSUInteger / NSInteger transitions for count/length variables.
+
 2013-09-21 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Parsers/ProjectCenter/PCParser.h

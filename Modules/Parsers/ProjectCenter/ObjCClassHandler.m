@@ -93,7 +93,7 @@
 
 - (void)string:(NSString *)element
 {
-  unsigned int len = [element length];
+  NSUInteger len = [element length];
 
   [super string:element];
 
