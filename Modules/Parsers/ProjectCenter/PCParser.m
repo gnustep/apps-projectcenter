@@ -202,8 +202,13 @@ CodeType codeType(unichar *ch)
                   (*impInvisible)(_handler, selInvisible, _uchar[start+j]);
                 }
             }
-          start = i;
-          startType = codeType(_uchar+start);
+          /* if we are at the end, we can getting the last stat char anyway
+             and in any case it would not be valid */
+          if (end != _length)
+            {
+              start = i;
+              startType = codeType(_uchar+start);
+            }
         }
     }
   NSLog(@"CodeParser end...");
