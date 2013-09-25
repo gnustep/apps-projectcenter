@@ -24,6 +24,8 @@
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
 
+#import <ProjectCenter/PCAuxiliaryWindow.h>
+
 #import "PCEditor.h"
 #import "PCEditorView.h"
 
@@ -48,10 +50,10 @@
   windowWidth += 35;
   rect = NSMakeRect(0,0,windowWidth,320);
 
-  _window = [[NSWindow alloc] initWithContentRect:rect
-                                        styleMask:style
-                                          backing:NSBackingStoreBuffered
-                                            defer:YES];
+  _window = [[PCAuxiliaryWindow alloc] initWithContentRect:rect
+                                                 styleMask:style
+                                                   backing:NSBackingStoreBuffered
+                                                     defer:YES];
   [_window setReleasedWhenClosed:NO];
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];

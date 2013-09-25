@@ -53,7 +53,9 @@ ProjectCenter_HEADER_FILES = \
   PCFileNameField.h \
   PCFileNameIcon.h \
   \
-  PCLogController.h
+  PCLogController.h \
+  \
+  PCAuxiliaryWindow.h
 
 #
 # Class files
@@ -87,7 +89,9 @@ ProjectCenter_OBJC_FILES = \
   PCFileNameField.m \
   PCFileNameIcon.m \
   \
-  PCLogController.m
+  PCLogController.m \
+  \
+  PCAuxiliaryWindow.m
 
 #
 # Resources

@@ -149,13 +149,40 @@
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCAppDidInitNotification
                   object:nil];
+
+  if (NSInterfaceStyleForKey(@"NSMenuInterfaceStyle", nil) ==
+      NSWindows95InterfaceStyle)
+    {
+      NSFileManager *fm = [NSFileManager defaultManager];
+      NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:
+					 @"PCExample"];
+
+      if ([fm fileExistsAtPath: path])
+	{
+	  [projectManager openProjectAt: path makeActive: YES];
+	}
+      else
+	{
+	  PCProject *project;
+
+	  project = [projectManager createProjectOfType: @"Application"
+			   path: [NSHomeDirectory() stringByAppendingPathComponent: @"PCExample"]];
+
+	  [[projectManager loadedProjects] setObject: project
+					      forKey: [project projectPath]];
+	  [projectManager setActiveProject:project];
+	  [[project projectWindow] orderFront: self];
+	}
+    }
 }
 
 - (NSApplicationTerminateReply)applicationShouldTerminate:(id)sender
 {
   NSApplicationTerminateReply quit = NSTerminateNow;
 
-  if ([prefController boolForKey:PromptOnQuit])
+  if ([prefController boolForKey:PromptOnQuit] &&
+      NSInterfaceStyleForKey(@"NSMenuInterfaceStyle", nil) !=
+      NSWindows95InterfaceStyle)
     {
       if (NSRunAlertPanel(@"Quit",
 			  @"Do you really want to quit ProjectCenter?",
@@ -226,6 +253,19 @@
     {
       [doConnection invalidate];
       RELEASE(doConnection);
+    }
+
+  if (NSInterfaceStyleForKey(@"NSMenuInterfaceStyle", nil) ==
+      NSWindows95InterfaceStyle)
+    {
+      NSFileManager *fm = [NSFileManager defaultManager];
+      NSString *path = [NSHomeDirectory() stringByAppendingPathComponent:
+					 @"PCExample"];
+
+      if ([fm fileExistsAtPath: path])
+	{
+	  [fm removeFileAtPath: path handler: nil];
+	}
     }
 
   RELEASE(infoController);

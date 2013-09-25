@@ -1,3 +1,16 @@
+2013-09-24 German Arias <germanandre@gmx.es>
+
+	* PCAppController.m (-applicationDidFinishLaunching: and
+	-applicationShouldTerminate:) Code to handle the style
+	NSWindows95InterfaceStyle.
+	* Headers/ProjectCenter/PCAuxiliaryWindow.h:
+	* Framework/PCAuxiliaryWindow.m: Add this class for auxiliary windows.
+	This is windows that don't should add the in-window menu.
+	* Framework/English.lproj/BuilderPanel.gorm:
+	* Modules/Editors/ProjectCenter/PCEditor.m: Use the new class
+	PCAuxiliaryWindow.
+	* Framework/GNUmakefile: Add new class.
+
 2013-09-22 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Parsers/ProjectCenter/PCParser.m

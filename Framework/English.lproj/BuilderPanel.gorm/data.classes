@@ -10,6 +10,13 @@
 	);
 	Super = NSObject;
     };
+    PCAuxiliaryWindow = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSWindow;
+    };
     PCProjectBuilderPanel = {
 	Actions = (
 	);
