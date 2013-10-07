@@ -53,17 +53,6 @@ static PCPrefController *_prefCtrllr = nil;
       return nil;
     }
     
-  // The prefs from the defaults
-  userDefaults = [NSUserDefaults standardUserDefaults];
-  RETAIN(userDefaults);
-
-  if ([userDefaults objectForKey:@"Version"] == nil)
-    {
-      // Clean preferences
-      [NSUserDefaults resetStandardUserDefaults];
-      [self setString:@"0.5" forKey:@"Version" notify:NO];
-    }
-
   [self loadPrefsSections];
 
   return self;
@@ -76,9 +65,6 @@ static PCPrefController *_prefCtrllr = nil;
 #endif
   
   RELEASE(panel);
-
-  [[NSUserDefaults standardUserDefaults] synchronize];
-
   [super dealloc];
 }
 
@@ -95,7 +81,8 @@ static PCPrefController *_prefCtrllr = nil;
 - (NSString *)stringForKey:(NSString *)key
 	      defaultValue:(NSString *)defaultValue
 {
-  NSString *stringValue = [userDefaults objectForKey:key];
+  NSString *stringValue = [[NSUserDefaults standardUserDefaults]
+			    objectForKey:key];
 
   if (stringValue)
     {
@@ -118,7 +105,8 @@ static PCPrefController *_prefCtrllr = nil;
 - (BOOL)boolForKey:(NSString *)key
       defaultValue:(BOOL)defaultValue
 {
-  NSString *stringValue = [userDefaults objectForKey:key];
+  NSString *stringValue = [[NSUserDefaults standardUserDefaults]
+			    objectForKey:key];
 
   if (stringValue)
     {
@@ -140,7 +128,8 @@ static PCPrefController *_prefCtrllr = nil;
 
 - (float)floatForKey:(NSString *)key defaultValue:(float)defaultValue
 {
-  NSString *stringValue = [userDefaults objectForKey:key];
+  NSString *stringValue = [[NSUserDefaults standardUserDefaults]
+			    objectForKey:key];
 
   if (stringValue)
     {
@@ -157,8 +146,8 @@ static PCPrefController *_prefCtrllr = nil;
 	   forKey:(NSString *)aKey
 	   notify:(BOOL)notify
 {
-  [userDefaults setObject:stringValue forKey:aKey];
-  [userDefaults synchronize];
+  [[NSUserDefaults standardUserDefaults] setObject:stringValue
+					    forKey:aKey];
 
   if (notify)
     {
@@ -174,8 +163,8 @@ static PCPrefController *_prefCtrllr = nil;
 {
   NSString *stringValue = boolValue ? @"YES" : @"NO";
 
-  [userDefaults setObject:stringValue forKey:aKey];
-  [userDefaults synchronize];
+  [[NSUserDefaults standardUserDefaults] setObject:stringValue
+					    forKey:aKey];
 
   if (notify)
     {
@@ -191,8 +180,8 @@ static PCPrefController *_prefCtrllr = nil;
 {
   NSString *stringValue = [NSString stringWithFormat:@"%0.1f", floatValue];
 
-  [userDefaults setObject:stringValue forKey:aKey];
-  [userDefaults synchronize];
+  [[NSUserDefaults standardUserDefaults] setObject:stringValue
+					    forKey:aKey];
 
   if (notify)
     {
@@ -227,8 +216,6 @@ static PCPrefController *_prefCtrllr = nil;
       [section readPreferences];
       [sectionsDict setObject:section forKey:sectionName];
     }
-
-  [userDefaults synchronize];
 }
 
 - (void)showPanel:(id)sender
@@ -268,7 +255,6 @@ static PCPrefController *_prefCtrllr = nil;
   view = [section view];
 
   [sectionsView setContentView:view];
-//  [sectionsView display];
 }
 
 - (void)changeFont:(id)sender

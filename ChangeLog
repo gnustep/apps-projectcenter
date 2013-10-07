@@ -1,3 +1,10 @@
+2013-10-06 German Arias <germanandre@gmx.es>
+
+	* Headers/PCPrefController.h:
+	* PCPrefController.m: Don't retain the user defaults. And don't call
+	synchronize every time, this are causing conflicts with defaults of the
+	PC windows, which stores its frames here.
+
 2013-09-24 German Arias <germanandre@gmx.es>
 
 	* PCAppController.m (-applicationDidFinishLaunching: and

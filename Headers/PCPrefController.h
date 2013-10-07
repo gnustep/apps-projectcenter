@@ -29,8 +29,6 @@
 
 @interface PCPrefController : NSObject <PCPreferences>
 {
-  NSUserDefaults         *userDefaults;
-
   NSMutableDictionary    *sectionsDict;
 
   IBOutlet NSPanel       *panel;
