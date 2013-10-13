@@ -1,3 +1,11 @@
+2013-10-13 German Arias <germanandre@gmx.es>
+
+	* English.lproj/ProjectCenter.gorm: Use the standard menu Find and
+	connect option "Line Number..." to first responder.
+	* Modules/Editors/ProjectCenter/PCEditor.m: Use Find panel.
+	* Headers/PCMenuController.h:
+	* PCMenuController.m: Remove unnecessary methods.
+
 2013-10-06 German Arias <germanandre@gmx.es>
 
 	* Headers/PCPrefController.h:

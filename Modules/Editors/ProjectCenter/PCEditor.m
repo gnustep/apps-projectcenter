@@ -139,6 +139,7 @@
   [ev setMinSize:NSMakeSize(0, 0)];
   [ev setMaxSize:NSMakeSize(1e7, 1e7)];
   [ev setRichText:YES];
+  [ev setUsesFindPanel: YES];
   [ev setVerticallyResizable:YES];
   [ev setHorizontallyResizable:NO];
   [ev setAutoresizingMask:NSViewWidthSizable|NSViewHeightSizable];

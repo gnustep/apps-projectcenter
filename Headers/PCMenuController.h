@@ -81,11 +81,6 @@
 - (void)fileRename:(id)sender;
 - (void)fileNewUntitled:(id)sender;
 
-// Edit
-/*- (void)findShowPanel:(id)sender;
-- (void)findNext:(id)sender;
-- (void)findPrevious:(id)sender;*/
-
 // Tools
 - (void)showInspector:(id)sender;
 - (void)showEditorPanel:(id)sender;

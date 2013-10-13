@@ -207,39 +207,6 @@
 		  @"OK",nil,nil);
 }
 
-// Edit
-- (void)findShowPanel:(id)sender
-{
-  [[TextFinder sharedInstance] orderFrontFindPanel:self];
-}
-
-- (void)findNext:(id)sender
-{
-  [[TextFinder sharedInstance] findNext:self];
-}
-
-- (void)findPrevious:(id)sender
-{
-  [[TextFinder sharedInstance] findPrevious:self];
-}
-
-- (void)findJumpToSelection:(id)sender
-{
-  [[TextFinder sharedInstance] jumpToSelection:self];
-}
-
-- (void)findEnterSelection:(id)sender
-{
-  [[TextFinder sharedInstance] enterSelection:self];
-}
-
-- (void)goToLine:sender
-{
-// TODO: What is the best: inline editor popup or separate panel?
-//  [[[[projectManager rootActiveProject] projectEditor] activeEditor] 
-//    goToLine:sender];
-}
-
 // Tools
 - (void)toggleToolbar:(id)sender
 {
