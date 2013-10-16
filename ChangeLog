@@ -1,3 +1,11 @@
+2013-10-15 German Arias <germanandre@gmx.es>
+
+	* TextFinder.h:
+	* TextFinder.m: Deleted.
+	* GNUmakefile: Remove TextFinder.
+	* PCMenuController.m: Remove TextFinder. Now we use the standard
+	menu Find.
+
 2013-10-13 German Arias <germanandre@gmx.es>
 
 	* English.lproj/ProjectCenter.gorm: Use the standard menu Find and

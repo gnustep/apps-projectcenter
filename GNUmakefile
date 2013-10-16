@@ -102,7 +102,6 @@ Modules/Preferences/EditorFSC/EditorFSC.preferences
 ProjectCenter_LOCALIZED_RESOURCE_FILES = \
 ProjectCenter.gorm \
 Info.gorm \
-FindPanel.gorm \
 Preferences.gorm
 
 ProjectCenter_LANGUAGES = \
@@ -126,7 +125,6 @@ PCAppController.m \
 PCInfoController.m \
 PCMenuController.m \
 PCPrefController.m \
-TextFinder.m \
 ProjectCenter_main.m
 
 -include GNUmakefile.preamble

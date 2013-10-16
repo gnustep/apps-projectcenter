@@ -29,8 +29,6 @@
 #import "PCInfoController.h"
 #import "PCPrefController.h"
 
-#import "TextFinder.h"
-
 @implementation PCMenuController
 
 - (id)init
@@ -431,20 +429,6 @@
     {
       if ([[menuItem title] isEqualToString:@"Rename"]) return NO;
     }
-
-  // Find menu items
-/*  if (editorIsActive == NO && [menuTitle isEqualToString: @"Find"])
-    {
-      if (![[[PCTextFinder sharedFinder] findPanel] isVisible])
-	{
-	  if ([[menuItem title] isEqualToString:@"Find Next"]) return NO;
-	  if ([[menuItem title] isEqualToString:@"Find Previous"]) return NO;
-	}
-      if ([[menuItem title] isEqualToString:@"Enter Selection"]) return NO;
-      if ([[menuItem title] isEqualToString:@"Jump to Selection"]) return NO;
-      if ([[menuItem title] isEqualToString:@"Line Number..."]) return NO;
-      if ([[menuItem title] isEqualToString:@"Man Page"]) return NO;
-    }*/
 
   // Toolbar
   if ([[menuItem title] isEqualToString:@"Hide Tool Bar"]
