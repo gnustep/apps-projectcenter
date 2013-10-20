@@ -1,3 +1,12 @@
+2013-10-20 German Arias <germanandre@gmx.es>
+
+	* English.lproj/Preferences.gorm:
+	* Modules/Preferences/Build/Resources/BuildPrefs.gorm:
+	* Modules/Preferences/EditorFSC/Resources/EditorFSCPrefs.gorm:
+	* Modules/Preferences/Saving/Resources/SavingPrefs.gorm:
+	* Modules/Preferences/Misc/Resources/MiscPrefs.gorm: Change the height
+	of the panel.
+
 2013-10-15 German Arias <germanandre@gmx.es>
 
 	* TextFinder.h:
