@@ -290,6 +290,7 @@ enum {
   NSPipe          *logPipe;
   NSPipe          *errorPipe;
   NSString        *executablePath;
+  NSFileManager   *fm;
 
   executablePath = [NSMutableString stringWithString:[project projectPath]];
 
@@ -327,6 +328,19 @@ enum {
       return;
     }
   NSLog(@"executable launch path: %@", executablePath);
+
+  /* now check if the executable does exist. Perhaps make failed */
+  fm = [NSFileManager defaultManager];
+  if (![fm isExecutableFileAtPath:executablePath])
+    {
+      NSRunAlertPanel(@"Run",
+		      @"The project does not have an executable",
+		      @"Close", nil, nil, nil);
+      [runButton setState:NSOffState];
+      return;
+    }
+  
+
   // [makeTask isRunning] doesn't work here.
   // "waitpid 7045, result -1, error No child processes" is printed.
   if (launchTask)

@@ -1,3 +1,8 @@
+2013-12-17 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectLauncher.m
+	Check that the executable exists before running it.
+
 2013-10-20 German Arias <germanandre@gmx.es>
 
 	* English.lproj/Preferences.gorm:
