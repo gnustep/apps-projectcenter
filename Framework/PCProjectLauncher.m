@@ -300,7 +300,6 @@ enum {
       NSString *prjType;
 
       prjType = [project projectTypeName];
-      NSLog(@"project is executable");
       if ([prjType isEqualToString: @"Application"])
 	{
           /* MyApplication.app/MyApplication */
