@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -326,6 +326,15 @@ enum {
       [runButton setState:NSOffState];
       return;
     }
+
+#ifdef  __MINGW__
+  /* On windows we need to check the .exe file */
+  if ([[executablePath pathExtension] length] == 0)
+    {
+      executablePath = [executablePath stringByAppendingPathExtension: @"exe"];
+    }
+#endif
+
   NSLog(@"executable launch path: %@", executablePath);
 
   /* now check if the executable does exist. Perhaps make failed */
