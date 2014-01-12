@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -259,10 +259,6 @@
 
 - (void)dealloc
 {
-#ifdef DEVELOPMENT
-  NSLog (@"PCProjectWindow: dealloc");
-#endif
-
   [[NSNotificationCenter defaultCenter] removeObserver:self];
   [projectWindow close];
 
@@ -720,8 +716,6 @@
 
 /*  PCLogInfo(self, @"windowDidBecomeKey: activeSubproject %@",
 	    [[project activeSubproject] projectName]);*/
-  NSLog(@"windowDidBecomeKey: project %@",
-	[project projectName]);
 
   if ([[project projectManager] rootActiveProject] != project)
     {
@@ -808,7 +802,6 @@
       if (windowsDict != nil)
 	{
 	  browserString = [windowsDict objectForKey:@"ProjectBrowser"];
-	  NSLog(@"Browser size '%@'", browserString);
 	  if (browserString != nil && ![browserString isEqualToString:@""])
 	    {
 	      browserRect = NSRectFromString(browserString);

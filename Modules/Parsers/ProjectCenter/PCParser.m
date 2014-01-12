@@ -1,7 +1,7 @@
 /*
 **  CodeParser.m
 **
-**  Copyright (c) 2003-2013
+**  Copyright (c) 2003-2014
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -140,7 +140,6 @@ CodeType codeType(unichar *ch)
   void (*impInvisible)(id, SEL, unichar); 
   void (*impSymbol)(id, SEL, unichar); 
 
-  NSLog(@"CodeParser begin...");
 
   impString = (void (*)(id, SEL, id))
               [[_handler class] instanceMethodForSelector:selString]; 
@@ -211,7 +210,6 @@ CodeType codeType(unichar *ch)
             }
         }
     }
-  NSLog(@"CodeParser end...");
 }
 
 @end

@@ -1,7 +1,7 @@
 /*
   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
  
-  Copyright (C) 2003-2004 Free Software Foundation
+  Copyright (C) 2003-2014 Free Software Foundation
  
   Authors: Serg Stoyan
  
@@ -34,10 +34,8 @@
 // ==== Main
 // ============================================================================
 
-//- (id)initWithFrame:(NSRect)frameRect
 - (id)initWithCoder:(NSCoder *)coder
 {
-//  NSLog(@"PCButton: initWithCoder");
   self = [super initWithCoder:coder];
   [_cell setGradientType:NSGradientConcaveWeak];
   [_cell setImageDimsWhenDisabled:YES];
@@ -64,11 +62,7 @@
 }
 
 - (void)dealloc
-{
-#ifdef DEVELOPMENT
-  NSLog(@"PCButton %@: dealloc", [self stringValue]);
-#endif
-  
+{ 
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   if (_hasTooltips)
