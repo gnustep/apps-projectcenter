@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -526,7 +526,7 @@
     }
 
   // Check build tool path
-  if (!buildTool || ![fm fileExistsAtPath:buildTool])
+  if (!buildTool || !([fm fileExistsAtPath:buildTool] || [fm fileExistsAtPath:[buildTool stringByAppendingPathExtension: @"exe"]]))
     {
       NSRunAlertPanel(@"Project Build",
   		      @"Build tool '%@' not found. Check preferences.\n"
