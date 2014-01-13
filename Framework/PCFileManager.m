@@ -330,6 +330,42 @@ static PCFileManager *_mgr = nil;
   return YES;
 }
 
+// ===========================================================================
+// ==== Find Executable
+// Tries to find the first matching executable tool fromt he given, nil-terminated
+// list. Returns the full path for it.
+// ===========================================================================
+- (NSString*) findExecutableToolFrom: (NSArray*)candidates
+{
+  NSFileManager	*manager;
+  NSEnumerator	*relPath;
+  NSEnumerator	*pathEnumerator;
+  NSString	*directory;
+
+  manager = [NSFileManager defaultManager];
+  pathEnumerator = [NSSearchPathForDirectoriesInDomains(NSDeveloperDirectory, NSAllDomainsMask, YES) objectEnumerator];
+
+  while (nil != (directory = [pathEnumerator nextObject]))
+    {
+      NSEnumerator *candidateEnumerator = [candidates objectEnumerator];
+      NSString     *candidate;
+
+      while (nil != (candidate = [candidateEnumerator nextObject]))
+        {
+          NSString *path = [directory stringByAppendingPathComponent: candidate];
+
+          NSLog(@"final candidate path is: %@", path);
+          
+          if ([manager isExecutableFileAtPath: path])
+	    {
+	      return path;
+            }
+        }
+    }
+  return nil;
+}
+
+
 @end
 
 @implementation PCFileManager (UInterface)

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -111,6 +111,9 @@ enum {
   removeDirsIfEmpty:(BOOL)removeDirs;
 
 - (BOOL)moveFile:(NSString *)file intoDirectory:(NSString *)directory;
+
+// find an executable from list and return full path
+- (NSString*) findExecutableToolFrom: (NSArray*)candidates;
 
 @end
 
