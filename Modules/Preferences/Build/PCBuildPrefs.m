@@ -63,10 +63,6 @@
 
 - (void)dealloc
 {
-#ifdef DEBUG
-  NSLog (@"PCBuildPrefs: dealloc");
-#endif
-
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(buildingView);
@@ -74,12 +70,28 @@
   [super dealloc];
 }
 
+
 // Protocol
 - (void)readPreferences
 {
-  NSString *val;
-  BOOL     bVal;
-  int      state;
+  NSString       *val;
+  BOOL           bVal;
+  int            state;
+  NSString       *buildToolDefault;
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+
+  /* some heuristic to find the best make default */
+  buildToolDefault = [pcfm findExecutableToolFrom:
+                           [NSArray arrayWithObjects:
+                                      @"usr/local/bin/gmake",
+                                    @"usr/bin/gmake",
+                                    @"usr/local/bin/make",
+                                    @"usr/bin/make",
+                                    @"bin/make",
+                                    nil]];
+
+
+  NSLog(@"Build tool found: %@", buildToolDefault);
 
   val = [prefs stringForKey:SuccessSound defaultValue:@""];
   [successField setStringValue:val];
@@ -89,8 +101,9 @@
   val = [prefs stringForKey:RootBuildDirectory defaultValue:@""];
   [rootBuildDirField setStringValue:val];
 
-  val = [prefs stringForKey:BuildTool defaultValue:PCDefaultBuildTool];
-  [buildToolField setStringValue:val];
+  val = [prefs stringForKey:BuildTool defaultValue:buildToolDefault];
+  if (val)
+    [buildToolField setStringValue:val];
 
   bVal = [prefs boolForKey:DeleteCacheWhenQuitting defaultValue:YES];
   state = bVal ? NSOnState : NSOffState;

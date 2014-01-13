@@ -63,10 +63,6 @@
 
 - (void)dealloc
 {
-#ifdef DEBUG
-  NSLog (@"PCMiscPrefs: dealloc");
-#endif
-
   [[NSNotificationCenter defaultCenter] removeObserver:self];
 
   RELEASE(miscView);
@@ -80,6 +76,17 @@
   NSString *val;
   BOOL     bVal;
   int      state;
+  NSString       *debuggerToolDefault;
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+
+  /* some heuristic to find the best debugger default */
+  debuggerToolDefault = [pcfm findExecutableToolFrom:
+                                [NSArray arrayWithObjects:
+                                      @"usr/local/bin/gdb",
+                                    @"usr/bin/gdb",
+                                    @"bin/gdb",
+                                    nil]];
+  NSLog(@"Debugger tool found: %@", debuggerToolDefault);
 
   bVal = [prefs boolForKey:PromptOnQuit defaultValue:YES];
   state = bVal ? NSOnState : NSOffState;
@@ -101,8 +108,9 @@
   state = bVal ? NSOnState : NSOffState;
   [useTearOffWindows setState:state];
 
-  val = [prefs stringForKey:Debugger defaultValue:PCDefaultDebugger];
-  [debuggerField setStringValue:val];
+  val = [prefs stringForKey:Debugger defaultValue:debuggerToolDefault];
+  if (val)
+    [debuggerField setStringValue:val];
 
   val = [prefs stringForKey:Editor defaultValue:@"ProjectCenter"];
   [editorField setStringValue:val];
