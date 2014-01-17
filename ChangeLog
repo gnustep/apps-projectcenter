@@ -1,3 +1,8 @@
+2014-01-17 German Arias <germanandre@gmx.es>
+
+	* English.lproj/ProjectCenter.gorm: Connect option "Line Number..."
+	to first responder (I was sure I did this before, but no).
+
 2014-01-13 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCFileManager.m
