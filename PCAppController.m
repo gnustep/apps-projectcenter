@@ -70,6 +70,40 @@
 {
   [menuController setAppController:self];
   [menuController setProjectManager:projectManager];
+
+#ifdef WIN32
+  NSMenuItem *item;
+  NSMenu *typeMenu = [NSMenu new];
+
+  [[typeMenu addItemWithTitle: @"Aggregate"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Application"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Bundle"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Framework"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Library"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Resource Set"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+  [[typeMenu addItemWithTitle: @"Tool"
+		       action: @selector(projectNew:)
+		keyEquivalent: @""] setTarget: menuController];
+
+  item = [[[[NSApp mainMenu] itemWithTitle: _(@"Project")] submenu]
+	   itemWithTitle: _(@"New...")];
+  [item setTitle: _(@"New")];
+  [item setKeyEquivalent: @""];
+  [item setSubmenu: typeMenu];
+  [typeMenu release];
+#endif
 }
 
 //============================================================================

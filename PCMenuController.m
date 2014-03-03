@@ -106,7 +106,7 @@
 
 - (void)projectNew:(id)sender
 {
-  [projectManager newProject];
+  [projectManager newProject: sender];
 }
 
 - (void)projectSave:(id)sender

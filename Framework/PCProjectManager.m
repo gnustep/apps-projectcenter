@@ -805,16 +805,20 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return project;
 }
 
-- (void)newProject
+- (void)newProject: (id)sender
 {
-  NSArray   *files;
+  NSArray   *files, *types = nil;
   NSString  *filePath;
   NSString  *projectType;
   PCProject *project;
 
+#ifdef WIN32
+  types = [NSArray arrayWithObject: @"pcproj"];
+#endif
+
   [self createProjectTypeAccessaryView];
   
-  files = [fileManager filesOfTypes:nil
+  files = [fileManager filesOfTypes:types
 			  operation:PCSaveFileOperation
 			   multiple:NO
 			      title:@"New Project"
@@ -837,7 +841,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	    }
 	}
       
+#ifdef WIN32
+      projectType = [(NSMenuItem *)sender title];
+#else
       projectType = [projectTypePopup titleOfSelectedItem];
+#endif
 
       if (!(project = [self createProjectOfType:projectType path:filePath]))
 	{
