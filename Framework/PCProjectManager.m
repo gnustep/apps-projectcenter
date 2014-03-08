@@ -824,6 +824,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			      title:@"New Project"
 			    accView:projectTypeAccessaryView];
   filePath = [files objectAtIndex:0];
+
+#ifdef WIN32
+  filePath = [filePath stringByDeletingPathExtension];
+#endif
+
   if (filePath != nil) 
     {
       if ([filePath rangeOfString: @" "].location != NSNotFound ||

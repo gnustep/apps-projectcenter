@@ -1,3 +1,8 @@
+2014-03-07 German Arias <germanandre@gmx.es>
+
+	* Framework/PCProjectManager.m: Remove the extension returned by native
+	panel.
+
 2014-03-02 German Arias <germanandre@gmx.es>
 
 	* PCAppController.m: For Windows add a menu with all types of projects.
