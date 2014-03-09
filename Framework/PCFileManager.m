@@ -644,9 +644,11 @@ static PCFileManager *_mgr = nil;
 {
   NSFileHandle *fh;
   NSData       *data;
-  unsigned int i, n;
-  const char   *buf;
-  unsigned int printable;
+  NSUInteger i, printable = 0;
+  NSString *content;
+  NSCharacterSet *alpha = [NSCharacterSet alphanumericCharacterSet];
+  NSCharacterSet *spaces = [NSCharacterSet whitespaceAndNewlineCharacterSet];
+  NSCharacterSet *marks = [NSCharacterSet punctuationCharacterSet];
 
   fh = [NSFileHandle fileHandleForReadingAtPath:filename];
   if (fh == nil)
@@ -660,16 +662,18 @@ static PCFileManager *_mgr = nil;
       return YES;
     }
 
-  buf = [data bytes];
-  for (i = printable = 0, n = [data length]; i < n; i++)
+  content = [NSString stringWithContentsOfFile: filename];
+  for (i = 0; i < [content length]; i++)
     {
-      if (isprint((int)(unsigned char)buf[i]) || isspace((int)(unsigned char)buf[i]))
+      if ([alpha characterIsMember: [content characterAtIndex: i]] ||
+	  [spaces characterIsMember: [content characterAtIndex: i]] ||
+	  [marks characterIsMember: [content characterAtIndex: i]])
 	{
 	  printable++;
 	}
     }
 
-  return (((double) printable / n) > 0.9);
+  return (((double) printable / i) > 0.9);
 }
 
 - (NSArray *)filesWithExtension:(NSString *)extension

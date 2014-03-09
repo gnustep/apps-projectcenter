@@ -1,3 +1,8 @@
+2014-03-08 German Arias <germanandre@gmx.es>
+
+	* Framework/PCFileManager.m (-isTextFile:): Rewrite this method to work
+	on Windows.
+
 2014-03-07 German Arias <germanandre@gmx.es>
 
 	* Framework/PCProjectManager.m: Remove the extension returned by native
