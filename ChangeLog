@@ -1,3 +1,8 @@
+2014-03-27 German Arias <germanandre@gmx.es>
+
+	* Framework/PCFileCreator.m: Be sure to use an UTF8 string for the user
+	name on Windows.
+
 2014-03-08 German Arias <germanandre@gmx.es>
 
 	* Framework/PCFileManager.m (-isTextFile:): Rewrite this method to work

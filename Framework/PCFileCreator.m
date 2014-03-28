@@ -297,12 +297,26 @@ static NSDictionary  *dict = nil;
 
   while ((subRange = [file rangeOfString:@"$USERNAME$"]).length)
     {
+#ifdef WIN32
+      // Be sure to use an UTF8 string.
+      [file replaceCharactersInRange: subRange
+			  withString: [NSString stringWithCString:
+						  [NSUserName() UTF8String]]];
+#else
       [file replaceCharactersInRange:subRange withString:NSUserName()];
+#endif
     }
     
   while ((subRange = [file rangeOfString:@"$FULLUSERNAME$"]).length)
     {
+#ifdef WIN32
+      // Be sure to use an UTF8 string.
+      [file replaceCharactersInRange: subRange
+			  withString: [NSString stringWithCString:
+					        [NSFullUserName() UTF8String]]];
+#else
       [file replaceCharactersInRange:subRange withString:NSFullUserName()];
+#endif
     }
 
   while ((subRange = [file rangeOfString:@"$PROJECTNAME$"]).length)
