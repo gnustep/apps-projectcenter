@@ -1,3 +1,9 @@
+2014-03-30 German Arias <germanandre@gmx.es>
+
+	* Framework/PCFileCreator.m: Fix last change to ensure all string in the
+	file is UTF-8, since GNU make can't handle UTF-16 (this change is for
+	Windows).
+
 2014-03-27 German Arias <germanandre@gmx.es>
 
 	* Framework/PCFileCreator.m: Be sure to use an UTF8 string for the user

@@ -278,7 +278,13 @@ static NSDictionary  *dict = nil;
   NSString *fn = [aFile stringByDeletingPathExtension];
   NSRange  subRange;
 
+#ifdef WIN32
+  file = [[NSMutableString stringWithContentsOfFile: newFile
+                                           encoding: NSUTF8StringEncoding
+                                              error: NULL] retain];
+#else
   file = [[NSMutableString stringWithContentsOfFile:newFile] retain];
+#endif
 
   while ((subRange = [file rangeOfString:@"$FULLFILENAME$"]).length)
     {
@@ -335,7 +341,16 @@ static NSDictionary  *dict = nil;
 	withString:[[NSNumber numberWithInt:year] stringValue]];
     }
 
+#ifdef WIN32
+  [file writeToFile: newFile 
+	 atomically: YES
+	   encoding: NSUTF8StringEncoding
+	      error: NULL];
+#else
   [file writeToFile:newFile atomically:YES];
+#endif
+
+
   [file release];
 }
 
