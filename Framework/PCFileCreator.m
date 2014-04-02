@@ -278,13 +278,7 @@ static NSDictionary  *dict = nil;
   NSString *fn = [aFile stringByDeletingPathExtension];
   NSRange  subRange;
 
-#ifdef WIN32
-  file = [[NSMutableString stringWithContentsOfFile: newFile
-                                           encoding: NSUTF8StringEncoding
-                                              error: NULL] retain];
-#else
   file = [[NSMutableString stringWithContentsOfFile:newFile] retain];
-#endif
 
   while ((subRange = [file rangeOfString:@"$FULLFILENAME$"]).length)
     {
@@ -303,26 +297,12 @@ static NSDictionary  *dict = nil;
 
   while ((subRange = [file rangeOfString:@"$USERNAME$"]).length)
     {
-#ifdef WIN32
-      // Be sure to use an UTF8 string.
-      [file replaceCharactersInRange: subRange
-			  withString: [NSString stringWithCString:
-						  [NSUserName() UTF8String]]];
-#else
       [file replaceCharactersInRange:subRange withString:NSUserName()];
-#endif
     }
     
   while ((subRange = [file rangeOfString:@"$FULLUSERNAME$"]).length)
     {
-#ifdef WIN32
-      // Be sure to use an UTF8 string.
-      [file replaceCharactersInRange: subRange
-			  withString: [NSString stringWithCString:
-					        [NSFullUserName() UTF8String]]];
-#else
       [file replaceCharactersInRange:subRange withString:NSFullUserName()];
-#endif
     }
 
   while ((subRange = [file rangeOfString:@"$PROJECTNAME$"]).length)
@@ -341,14 +321,7 @@ static NSDictionary  *dict = nil;
 	withString:[[NSNumber numberWithInt:year] stringValue]];
     }
 
-#ifdef WIN32
-  [file writeToFile: newFile 
-	 atomically: YES
-	   encoding: NSUTF8StringEncoding
-	      error: NULL];
-#else
   [file writeToFile:newFile atomically:YES];
-#endif
 
 
   [file release];
