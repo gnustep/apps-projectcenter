@@ -6,6 +6,13 @@
 	);
 	Super = NSObject;
     };
+    PCAuxiliaryWindow = {
+	Actions = (
+	);
+	Outlets = (
+	);
+	Super = NSWindow;
+    };
     SaveModifiedFilesDelegate = {
 	Actions = (
 	    "buttonClicked:"

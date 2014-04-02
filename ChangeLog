@@ -1,5 +1,10 @@
 2014-04-02 German Arias <germanandre@gmx.es>
 
+	* Framework/English.lproj/SaveModified.gorm: Use class PCAuxiliaryWindow
+	to not display menu.
+
+2014-04-02 German Arias <germanandre@gmx.es>
+
 	* Framework/PCFileCreator.m: Removed two last commits. There is
 	something wrong with these.
 
