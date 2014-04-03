@@ -1,5 +1,12 @@
 2014-04-02 German Arias <germanandre@gmx.es>
 
+	* Framework/PCFileCreator.m (-replaceTagsInFileAtPath:withProject:):
+	Ensure UTF-8 when read and write a file	in Windows.
+	* Modules/Editors/ProjectCenter/PCEditorView.m (-insertText:): Ensure
+	UTF-8 when insert a text in Windows.
+
+2014-04-02 German Arias <germanandre@gmx.es>
+
 	* Framework/English.lproj/SaveModified.gorm: Use class PCAuxiliaryWindow
 	to not display menu.
 

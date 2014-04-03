@@ -519,7 +519,12 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
               memset(&buf[1], ' ', offset);
               buf[offset+1] = '\0';
 
-              [super insertText:[NSString stringWithCString:buf]];
+#ifdef WIN32
+              [super insertText:[NSString stringWithCString: buf
+					  encoding: NSUTF8StringEncoding]];
+#else
+	      [super insertText:[NSString stringWithCString:buf]];
+#endif
               free(buf);
 /*            }
           else
@@ -558,12 +563,20 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
         }
       else
         {
+#ifdef WIN32
+	  [super insertText: [NSString stringWithCString: [text UTF8String]]];
+#else
           [super insertText: text];
+#endif
         }
     }
   else
     {
+#ifdef WIN32
+      [super insertText: [NSString stringWithCString: [text UTF8String]]];
+#else
       [super insertText: text];
+#endif
     }
 }
 
