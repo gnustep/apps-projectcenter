@@ -1,3 +1,10 @@
+2014-04-06 German Arias <germanandre@gmx.es>
+
+	* Headers/ProjectCenter/PCProjectLauncher.h: Add new variable
+	_isErrorRunning.
+	* Framework/PCProjectLauncher.m: Remove observer in -logStdOut: and
+	-logErrOut:. And wait until receive all data in -runDidTerminate:.
+
 2014-04-02 German Arias <germanandre@gmx.es>
 
 	* Framework/PCFileCreator.m (-replaceTagsInFileAtPath:withProject:):

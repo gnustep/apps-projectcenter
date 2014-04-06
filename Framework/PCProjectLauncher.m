@@ -399,6 +399,7 @@ enum {
   [debugButton setEnabled:NO];
 
   _isRunning = YES;
+  _isErrorRunning = YES;
   RELEASE(args);
 }
 
@@ -409,7 +410,16 @@ enum {
       return;
     }
 
-  [NOTIFICATION_CENTER removeObserver:self];
+  [NOTIFICATION_CENTER removeObserver: self
+				 name: NSTaskDidTerminateNotification
+			       object: launchTask];
+
+  // Wait if there are data available.
+  if (_isRunning || _isErrorRunning)
+    {
+      [[NSRunLoop currentRunLoop] runMode: NSDefaultRunLoopMode
+			       beforeDate: [NSDate distantFuture]];
+    }
 
   [runButton setState:NSOffState];
   [debugButton setState:NSOffState];
@@ -419,7 +429,6 @@ enum {
 
   RELEASE(launchTask);
   launchTask = nil;
-  _isRunning = NO;
   _isDebugging = NO;
 
 }
@@ -428,24 +437,38 @@ enum {
 {
   NSData *data;
 
-  if ((data = [readHandle availableData]))
+  if ((data = [readHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:NO];
+      [readHandle waitForDataInBackgroundAndNotifyForModes:nil];
     }
+  else
+    {
+      [NOTIFICATION_CENTER removeObserver: self 
+			             name: NSFileHandleDataAvailableNotification
+			           object: readHandle];
 
-  [readHandle waitForDataInBackgroundAndNotifyForModes:nil];
+      _isRunning = NO;
+    }
 }
 
 - (void)logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
    
-  if ((data = [errorReadHandle availableData]))
+  if ((data = [errorReadHandle availableData]) && [data length] > 0)
     {
       [self logData:data error:YES];
+      [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
     }
-                       
-  [errorReadHandle waitForDataInBackgroundAndNotifyForModes:nil];
+  else
+    {
+      [NOTIFICATION_CENTER removeObserver: self 
+			             name: NSFileHandleDataAvailableNotification
+			           object: errorReadHandle];
+
+      _isErrorRunning = NO;
+    }
 }
 
 @end

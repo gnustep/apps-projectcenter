@@ -50,6 +50,7 @@
 
   id<CodeDebugger> debugger;
   BOOL          _isRunning;
+  BOOL          _isErrorRunning;
   BOOL          _isDebugging;
 }
 
