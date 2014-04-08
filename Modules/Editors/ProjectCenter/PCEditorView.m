@@ -495,6 +495,11 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)insertText:text
 {
+  /* NOTE: On Windows we ensure to get a string in UTF-8 encoding. The problem
+   * is the highlighter that don't use a consistent codification causing a
+   * problem on Windows platform. Anyway, the plugin for Gemas editor works
+   * better and don't show this problem.
+   */
   if ([text isKindOfClass:[NSString class]])
     {
       NSString * string = text;
