@@ -1,3 +1,8 @@
+2014-05-03 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectBuilder.m
+	Add recognition of fatal errors.
+
 2014-04-08 German Arias <germanandre@gmx.es>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.m (-insertText:): Add a

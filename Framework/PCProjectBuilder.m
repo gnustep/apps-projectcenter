@@ -920,7 +920,7 @@
   NSString       *pathComponent;
   NSString       *path;
 
-//  NSLog(@"parseMakeLine: %@", lineString);
+  //  NSLog(@"parseMakeLine: %@", lineString);
 
   makeLineComponents = [NSMutableArray 
     arrayWithArray:[lineString componentsSeparatedByString:@" "]];
@@ -1097,13 +1097,13 @@
 		 forKey:NSUnderlineStyleAttributeName];
 
   lastEL = currentEL;
-
+  //  NSLog(@"error string: %@", string);
 /*  if (lastEL == ELFile) NSLog(@"+++ELFile");
   if (lastEL == ELFunction) NSLog(@"+++ELFunction");
   if (lastEL == ELIncluded) NSLog(@"+++ELIncluded");
   if (lastEL == ELError) NSLog(@"+++ELError");
   if (lastEL == ELNone) NSLog(@"+++ELNone");*/
-
+//  NSLog(@"components: %lu, %@", (unsigned long)[components count], components);
   if ([errorArray count] > 0)
     {
       lastFile = [[errorArray lastObject] objectForKey:@"File"];
@@ -1148,6 +1148,7 @@
 	}
 
       // type
+      typeIndex = NSNotFound;
       if ((typeIndex = [components indexOfObject:@" warning"]) != NSNotFound)
 	{
 	  type = [components objectAtIndex:typeIndex];
@@ -1158,12 +1159,20 @@
 	  type = [components objectAtIndex:typeIndex];
 	  errorsCount++;
 	}
+      else if ((typeIndex = [components indexOfObject:@" fatal error"]) != NSNotFound)
+	{
+	  type = [components objectAtIndex:typeIndex];
+	  errorsCount++;
+	}
+
+      //      NSLog(@"typeIndex: %u", (unsigned int)typeIndex);
       // position
       if (typeIndex == 2) // :line:
 	{
 	  int      lInt = atoi([[components objectAtIndex:1] cString]);
 	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
 
+          //          NSLog(@"type 2, parsed l: %i", lInt);
 	  position = [NSString stringWithFormat:@"{x=%i; y=0}", 
 		   [lNumber intValue]];
 	}
@@ -1174,6 +1183,7 @@
 	  NSNumber *lNumber = [NSNumber numberWithInt:lInt];
 	  NSNumber *cNumber = [NSNumber numberWithInt:cInt];
 
+          //          NSLog(@"type 3, parsed l,c: %i, %i", lInt, cInt);
 	  position = [NSString stringWithFormat:@"{x=%i; y=%i}", 
 	      	   [lNumber intValue], [cNumber intValue]];
 	}
