@@ -1014,7 +1014,9 @@
     {// Do current path detection
       [self parseMakeLine:string];
     }
-  else if ([self line:string startsWithString:@"gcc"])
+  else if ([self line:string startsWithString:@"gcc"] ||
+           [self line:string startsWithString:@"egcc"] ||
+           [self line:string startsWithString:@"clang"])
     {// Parse compiler output
       parsedString = [self parseCompilerLine:string];
     }
