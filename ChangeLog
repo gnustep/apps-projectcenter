@@ -1,6 +1,11 @@
 2014-05-03 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectBuilder.m
+	Enhance clang support.
+
+2014-05-03 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectBuilder.m
 	Recognize also egcc and clang as compilers.
 
 2014-05-03 Riccardo Mottola <rm@gnu.org>
