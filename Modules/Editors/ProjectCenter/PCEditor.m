@@ -990,10 +990,10 @@
     }
 }
 
-- (void)scrollToLineNumber:(unsigned int)lineNumber
+- (void)scrollToLineNumber:(NSUInteger)lineNumber
 {
-  unsigned int offset;
-  unsigned int i;
+  NSUInteger   offset;
+  NSUInteger   i;
   NSString     *line;
   NSEnumerator *e;
   NSArray      *lines;

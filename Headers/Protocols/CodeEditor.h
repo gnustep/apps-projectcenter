@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2005 Free Software Foundation
+   Copyright (C) 2005-2014 Free Software Foundation
 
    Authors: Serg Stoyan
 
@@ -82,7 +82,7 @@
 // ===========================================================================
 
 - (void)fileStructureItemSelected:(NSString *)item;
-- (void)scrollToLineNumber:(unsigned int)lineNumber;
+- (void)scrollToLineNumber:(NSUInteger)lineNumber;
 
 @end
 

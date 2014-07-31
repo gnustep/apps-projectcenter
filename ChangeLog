@@ -1,3 +1,12 @@
+2014-07-30 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCEditorManager.m
+	* Framework/PCProjectBuilder.m
+	* Headers/Protocols/CodeEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Convert line numbers to NSUInteger / integerValue
+
 2014-05-06 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectBuilder.m

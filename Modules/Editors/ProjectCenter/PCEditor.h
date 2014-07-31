@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2010 Free Software Foundation
+   Copyright (C) 2002-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -125,7 +125,7 @@
 - (void)fileStructureItemSelected:(NSString *)item;  // CodeEditor protocol
 - (void)scrollToClassName:(NSString *)className;
 - (void)scrollToMethodName:(NSString *)methodName;
-- (void)scrollToLineNumber:(unsigned int)lineNumber; // CodeEditor protocol
+- (void)scrollToLineNumber:(NSUInteger)lineNumber; // CodeEditor protocol
 
 @end
 

@@ -1324,9 +1324,10 @@
 				   windowed:NO];
   if (editor)
     {
+      // TODO / FIXME using a NSPoint here is weak since it is Float vs. integer line numbers
       position = NSPointFromString([error objectForKey:@"Position"]);
       [projectEditor orderFrontEditorForFile:[error objectForKey:@"File"]];
-      [editor scrollToLineNumber:(unsigned int)position.x];
+      [editor scrollToLineNumber:(NSUInteger)position.x];
 
 /*      NSLog(@"%i: %@(%@): %@", 
 	    position.x, 

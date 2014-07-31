@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2004 Free Software Foundation
+   Copyright (C) 2002-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -534,7 +535,7 @@ NSString *PCEditorDidResignActiveNotification =
 				editable: YES
 				windowed: NO];
   [self orderFrontEditorForFile:filePath];
-  [editor scrollToLineNumber: [line intValue]];
+  [editor scrollToLineNumber: [line integerValue]];
 }
 
 @end
