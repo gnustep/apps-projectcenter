@@ -1,3 +1,8 @@
+2014-08-03 German Arias <germanandre@gmx.es>
+
+	* Modules/Editors/ProjectCenter/PCEditor.m: Don't use
+	PCAuxiliaryWindow. This avoid the use of FindPanel.
+
 2014-07-30 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCEditorManager.m
