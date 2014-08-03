@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2010 Free Software Foundation
+   Copyright (C) 2010-2014 Free Software Foundation
 
    Authors: Riccardo Mottola
 
@@ -29,5 +29,8 @@
 @protocol CodeEditorView
 
 - (NSObject <CodeEditor> *)editor;
+
+- (void)performGoToLinePanelAction:(id)sender;
+- (void)goToLineNumber:(NSUInteger)lineNumber;
 
 @end

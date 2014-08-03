@@ -1,3 +1,13 @@
+2014-08-04 Riccardo Mottola <rm@gnu.org>
+
+	* English.lproj/ProjectCenter.gorm
+	* Headers/Protocols/CodeEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	* Modules/Editors/ProjectCenter/PCEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Move GoToLine to the View akin to the NSTextView find panel and
+	declare it in the editor view protocol.
+
 2014-08-03 German Arias <germanandre@gmx.es>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m: Don't use

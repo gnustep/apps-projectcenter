@@ -990,30 +990,8 @@
 
 - (void)scrollToLineNumber:(NSUInteger)lineNumber
 {
-  NSUInteger   offset;
-  NSUInteger   i;
-  NSString     *line;
-  NSEnumerator *e;
-  NSArray      *lines;
-  NSRange      range;
-
-  lines = [[_intEditorView string] componentsSeparatedByString: @"\n"];
-  e = [lines objectEnumerator];
-
-  for (offset = 0, i = 1;
-       (line = [e nextObject]) != nil && i < lineNumber;
-       i++, offset += [line length] + 1);
-
-  if (line != nil)
-    {
-      range = NSMakeRange(offset, [line length]);
-    }
-  else
-    {
-      range = NSMakeRange([[_intEditorView string] length], 0);
-    }
-  [_intEditorView setSelectedRange:range];
-  [_intEditorView scrollRangeToVisible:range];
+  [_intEditorView goToLineNumber:lineNumber];
+  [_extEditorView goToLineNumber:lineNumber];
 }
 
 @end

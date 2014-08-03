@@ -616,4 +616,42 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return _insertionPointRect;
 }
 
+- (void)usesFindPanel
+{
+  return YES;
+}
+
+- (void)performGoToLinePanelAction:(id)sender
+{
+  NSLog(@"perform go to line!");
+}
+
+- (void)goToLineNumber:(NSUInteger)lineNumber
+{
+  NSUInteger   offset;
+  NSUInteger   i;
+  NSString     *line;
+  NSEnumerator *e;
+  NSArray      *lines;
+  NSRange      range;
+
+  lines = [[self string] componentsSeparatedByString: @"\n"];
+  e = [lines objectEnumerator];
+
+  for (offset = 0, i = 1;
+       (line = [e nextObject]) != nil && i < lineNumber;
+       i++, offset += [line length] + 1);
+
+  if (line != nil)
+    {
+      range = NSMakeRange(offset, [line length]);
+    }
+  else
+    {
+      range = NSMakeRange([[self string] length], 0);
+    }
+  [self setSelectedRange:range];
+  [self scrollRangeToVisible:range];
+}
+
 @end

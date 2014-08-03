@@ -7,8 +7,7 @@
 	    "findNext:",
 	    "findPrevious:",
 	    "findShowPanel:",
-	    "openGoToLinePanel:",
-	    "newAction:"
+	    "performGoToLinePanelAction:"
 	);
 	Super = NSObject;
     };

@@ -4,7 +4,7 @@
     Interface declaration of the EditorTextView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2010 Free Software Foundation
+    Copyright (C) 2005-2014 Free Software Foundation
       Saso Kiselkov
       Riccardo Mottola
 
@@ -49,5 +49,11 @@
 - (void)insertText:text;
 
 - (NSRect)selectionRect;
+
+// =====
+// CodeEditorView protocol
+// =====
+- (void)performGoToLinePanelAction:(id)sender;
+- (void)goToLineNumber:(NSUInteger)lineNumber;
 
 @end
