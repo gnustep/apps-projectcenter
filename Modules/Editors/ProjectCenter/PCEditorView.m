@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2010 Free Software Foundation
+    Copyright (C) 2005-2014 Free Software Foundation
       Saso Kiselkov
       Serg Stoyan
       Riccardo Mottola
@@ -616,7 +616,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return _insertionPointRect;
 }
 
-- (void)usesFindPanel
+- (BOOL)usesFindPanel
 {
   return YES;
 }

@@ -1,5 +1,10 @@
 2014-08-04 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Fix return value.
+
+2014-08-04 Riccardo Mottola <rm@gnu.org>
+
 	* English.lproj/ProjectCenter.gorm
 	* Headers/Protocols/CodeEditorView.h
 	* Modules/Editors/ProjectCenter/PCEditor.m
