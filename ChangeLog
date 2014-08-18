@@ -1,3 +1,15 @@
+2014-08-18 16:07-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Projects/Aggregate/Resources/Inspector.gorm
+	* Modules/Projects/Application/Resources/Inspector.gorm
+	* Modules/Projects/Application/Resources/Main.gorm
+	* Modules/Projects/Bundle/Resources/Inspector.gorm
+	* Modules/Projects/Framework/Resources/Inspector.gorm
+	* Modules/Projects/Library/Resources/Inspector.gorm
+	* Modules/Projects/ResourceSet/Resources/Inspector.gorm
+	* Modules/Projects/Tool/Resources/Inspector.gorm: Update all
+	gorm files to latest version.
+
 2014-08-04 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.m
