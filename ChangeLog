@@ -1,3 +1,13 @@
+2014-08-25  Wolfgang Lux  <wolfgang.lux@gmail.com>
+
+	* Modules/Editors/ProjectCenter/PCEditor.m (unhighlightCharacter:):
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	(highlightCharacterAt:inEditor:):
+	Fix condition order to prevent out of range array accesses, which
+	may lead to a segfault when unhighlighting two matching parentheses.
+
+	Fix by Markus <desterium@t-online.de>.
+
 2014-08-18 16:07-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Projects/Aggregate/Resources/Inspector.gorm

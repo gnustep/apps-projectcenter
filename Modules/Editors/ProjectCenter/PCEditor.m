@@ -1228,7 +1228,7 @@ NSUInteger FindDelimiterInString(NSString * string,
   [textStorage beginEditing];
 
 //  if (isCharacterHighlit)
-  for (i = 0; (highlited_chars[i] != -1 && i < 2); i++)
+  for (i = 0; i < 2 && highlited_chars[i] != -1; i++)
     {
       NSRange       r = NSMakeRange(highlited_chars[i], 1);
 //      NSRange       r = NSMakeRange(highlitCharacterLocation, i);
@@ -1282,7 +1282,7 @@ NSUInteger FindDelimiterInString(NSString * string,
 {
   int i;
 
-  for (i = 0; highlited_chars[i] != -1; i++) {};
+  for (i = 0; i < 2 && highlited_chars[i] != -1; i++) {};
 
 //  if (isCharacterHighlit == NO)
   if (i < 2)
