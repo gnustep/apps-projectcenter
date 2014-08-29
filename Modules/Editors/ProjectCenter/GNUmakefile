@@ -29,7 +29,8 @@ ProjectCenter_RESOURCE_FILES= \
     Resources/FileH.tiff \
     Resources/FileHH.tiff \
     Resources/FileM.tiff \
-    Resources/FileMH.tiff
+    Resources/FileMH.tiff \
+    Resources/LineJumper.gorm
 
 #
 # Header files
@@ -38,7 +39,8 @@ ProjectCenter_HEADERS= \
     PCEditor.h \
     PCEditorView.h \
     SyntaxDefinition.h \
-    SyntaxHighlighter.h
+    SyntaxHighlighter.h \
+    LineJumper.h
 
 #
 # Class files
@@ -48,7 +50,8 @@ ProjectCenter_OBJC_FILES= \
     PCEditorView.m \
     TextPattern.m \
     SyntaxDefinition.m \
-    SyntaxHighlighter.m 
+    SyntaxHighlighter.m \
+    LineJumper.m
 
 include ../../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make

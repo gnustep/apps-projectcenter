@@ -42,6 +42,7 @@
 
 #import "PCEditor.h"
 #import "SyntaxHighlighter.h"
+#import "LineJumper.h"
 
 static inline float my_abs(float aValue)
 {
@@ -623,7 +624,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)performGoToLinePanelAction:(id)sender
 {
-  NSLog(@"perform go to line!");
+  LineJumper *lj;
+
+  lj = [LineJumper sharedInstance];
+  [lj orderFrontLinePanel:self];
 }
 
 - (void)goToLineNumber:(NSUInteger)lineNumber
