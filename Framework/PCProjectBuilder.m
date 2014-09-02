@@ -873,7 +873,7 @@
   NSInteger position = 0;
   NSRange   range = NSMakeRange(position,1);
 
-  while ([[lineString substringFromRange:range] isEqualToString:@" "])
+  while ([[lineString substringWithRange:range] isEqualToString:@" "])
     {
       range.location = ++position;
     }

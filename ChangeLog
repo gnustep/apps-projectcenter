@@ -1,3 +1,9 @@
+2014-09-02 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCAddFilesPanel.m
+	* Framework/PCProjectBuilder.m
+	Do not use GS internals but standard methods.
+
 2014-08-29 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/GNUmakefile

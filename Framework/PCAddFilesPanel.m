@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004-2011 Free Software Foundation
+   Copyright (C) 2004-2014 Free Software Foundation
 
    Authors: Serg Stoyan
             Riccardo Mottola
@@ -107,9 +107,9 @@ static PCAddFilesPanel *addFilesPanel = nil;
 {
   NSString  *category = [fileTypePopup titleOfSelectedItem];
 
-  if ([_delegate respondsToSelector:@selector(categoryChangedTo:)])
+  if ([[self delegate] respondsToSelector:@selector(categoryChangedTo:)])
     {
-      [_delegate categoryChangedTo:category];
+      [[self delegate] categoryChangedTo:category];
     }
 }
 
