@@ -1,3 +1,8 @@
+2014-09-08 German Arias <germanandre@gmx.es>
+
+	* Modules/Editors/ProjectCenter/Resources/LineJumper.gorm: Remove
+	modifier key for button.
+
 2014-09-02 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCAddFilesPanel.m
