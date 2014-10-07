@@ -812,9 +812,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString  *projectType;
   PCProject *project;
 
-#ifdef WIN32
-  types = [NSArray arrayWithObject: @"pcproj"];
-#endif
 
   [self createProjectTypeAccessaryView];
   
@@ -846,11 +843,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	    }
 	}
       
-#ifdef WIN32
-      projectType = [(NSMenuItem *)sender title];
-#else
       projectType = [projectTypePopup titleOfSelectedItem];
-#endif
 
       if (!(project = [self createProjectOfType:projectType path:filePath]))
 	{

@@ -1,3 +1,9 @@
+2014-10-07 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectManager.m
+	* PCAppController.m
+	Revert windows-specific hacks by German to make project-type choice work. They would crash when using PC without the WinUX theme.
+
 2014-09-08 German Arias <germanandre@gmx.es>
 
 	* Modules/Editors/ProjectCenter/Resources/LineJumper.gorm: Remove
