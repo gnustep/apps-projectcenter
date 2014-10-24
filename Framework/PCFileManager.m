@@ -338,7 +338,6 @@ static PCFileManager *_mgr = nil;
 - (NSString*) findExecutableToolFrom: (NSArray*)candidates
 {
   NSFileManager	*manager;
-  NSEnumerator	*relPath;
   NSEnumerator	*pathEnumerator;
   NSString	*directory;
 
