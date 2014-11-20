@@ -1,5 +1,10 @@
 2014-11-20 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Parsers/ProjectCenter/PCParser.m
+	Force last action on parser if file lacks a new line at EOF.
+
+2014-11-20 Riccardo Mottola <rm@gnu.org>
+
 	* Modules/Parsers/ProjectCenter/ObjCCommentHandler.m
 	Fix parser to ignore comments inside strings.
 

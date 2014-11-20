@@ -210,6 +210,10 @@ CodeType codeType(unichar *ch)
             }
         }
     }
+  /* send an extra new line if the file did not terminate with such.
+     Forces the parser to close pending actions */
+  if (codeType(_uchar+_length) != SpaceAndNewLineCodeType)
+    (*impSpaceAndNewLine)(_handler, selSpaceAndNewLine, 0X0A);
 }
 
 @end
