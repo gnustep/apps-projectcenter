@@ -47,17 +47,20 @@
 
 - (void)symbol:(unichar)element 
 {
-  if (_preChar == '/')
+  if (!_stringBegin)
     {
-      if (element == '*')
-        _commentType = MultipleLineComment;
-      else if (element == '/')
-        _commentType = SingleLineComment;
-         
-    }
-  else if ((element == '/') && (_preChar == '*'))
-    {
-      _commentType = NoComment;
+      if (_preChar == '/')
+	{
+	  if (element == '*')
+	    _commentType = MultipleLineComment;
+	  else if (element == '/')
+	    _commentType = SingleLineComment;
+	  
+	}
+      else if ((element == '/') && (_preChar == '*'))
+	{
+	  _commentType = NoComment;
+	}
     }
 
   if (_commentType == NoComment)

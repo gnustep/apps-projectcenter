@@ -1,3 +1,8 @@
+2014-11-20 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Parsers/ProjectCenter/ObjCCommentHandler.m
+	Fix parser to ignore comments inside strings.
+
 2014-10-07 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectManager.m
