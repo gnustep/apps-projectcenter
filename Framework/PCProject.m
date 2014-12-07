@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2014 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -973,7 +973,7 @@ NSString
 {
   if ([key isEqualToString:PCClasses])
     {
-      return [NSArray arrayWithObjects:@"m",nil];
+      return [NSArray arrayWithObjects:@"m",@"mm",nil];
     }
   else if ([key isEqualToString:PCHeaders])
     {

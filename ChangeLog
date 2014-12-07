@@ -1,3 +1,8 @@
+2014-12-08 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProject.m
+	Accept also Objective-C++ classes as Class files
+
 2014-11-20 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Parsers/ProjectCenter/PCParser.m
