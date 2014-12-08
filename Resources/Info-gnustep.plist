@@ -41,10 +41,18 @@
       NSDocumentClass = PCClassDocument;
       NSHumanReadableName = "Objective C class file";
       NSIcon = ProjectCenter.editor/Resources/FileM.tiff;
-      NSName = GSPClassType;
+      NSName = GSClassType;
       NSRole = Editor;
       NSUnixExtensions = ( m );
     },
+    {
+      NSDocumentClass = PCClassDocument;
+      NSHumanReadableName = "Objective C++ class file";
+      NSIcon = ProjectCenter.editor/Resources/FileMM.tiff;
+      NSName = GSClassType;
+      NSRole = Editor;
+      NSUnixExtensions = ( mm );
+    },    
     {
       NSDocumentClass = PCHeaderDocument;
       NSHumanReadableName = "C or Objective C header file";
