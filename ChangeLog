@@ -1,3 +1,8 @@
+2014-12-15 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCMakefileFactory.m
+	Create mm sections in makefiles for Objective-C++
+
 2014-12-08 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProject.m
