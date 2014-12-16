@@ -342,7 +342,7 @@ static PCMakefileFactory *_factory = nil;
   NSEnumerator   *oenum;
   NSMutableArray *marray = nil;
   NSMutableArray *mmarray = nil;
-    NSString       *file;
+  NSString       *file;
   
   if (array == nil || [array count] == 0)
     {
@@ -370,17 +370,19 @@ static PCMakefileFactory *_factory = nil;
 	}
     }
 
-  [self appendString:COMMENT_CLASSES];
-  [self appendString:
-    [NSString stringWithFormat: @"%@_OBJC_FILES = \\\n",target]];
+  if (marray)
+    {
+      [self appendString:COMMENT_CLASSES];
+      [self appendString: [NSString stringWithFormat: @"%@_OBJC_FILES = \\\n",target]];
+      [self appendString: [marray componentsJoinedByString: @" \\\n"]];
+    }
 
-  [self appendString: [marray componentsJoinedByString: @" \\\n"]];
-
-  [self appendString:COMMENT_OCPPCLASSES];
-  [self appendString:
-    [NSString stringWithFormat: @"%@_OBJCC_FILES = \\\n",target]];
-
-  [self appendString: [mmarray componentsJoinedByString: @" \\\n"]];  
+  if (mmarray)
+    {
+      [self appendString:COMMENT_OCPPCLASSES];
+      [self appendString: [NSString stringWithFormat: @"%@_OBJCC_FILES = \\\n",target]];
+      [self appendString: [mmarray componentsJoinedByString: @" \\\n"]];
+    }
 }
 
 - (void)appendOtherSources:(NSArray *)array
