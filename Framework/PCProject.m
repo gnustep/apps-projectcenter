@@ -472,11 +472,11 @@ NSString
 - (BOOL)save
 {
   NSFileManager  *fm = [NSFileManager defaultManager];
-  int            spCount = [loadedSubprojects count];
+  NSUInteger      spCount = [loadedSubprojects count];
   int            i;
-  NSString *wrapperFile = [projectName stringByAppendingPathExtension: @"pcproj"];
+  NSString *wrapperFile;
   NSString *file = @"PC.project";
-  NSString *backup = [wrapperPath stringByAppendingPathExtension:@"backup"];
+  NSString *backup;
   NSMutableDictionary *dict = [projectDict mutableCopy];
   NSData *dictData = nil;
 
@@ -484,10 +484,12 @@ NSString
   [dict removeObjectForKey: PCWindows];
   [dict removeObjectForKey: PCLastEditing];
 
-  // initialize the wrapper...
+  // initialize the wrappers..
+  wrapperFile = [projectName stringByAppendingPathExtension: @"pcproj"];
   projectFileWrapper = [[NSFileWrapper alloc] initDirectoryWithFileWrappers: 
 						[NSMutableDictionary dictionaryWithCapacity: 3]];  
   wrapperPath = [projectPath stringByAppendingPathComponent: wrapperFile];
+  backup = [wrapperPath stringByAppendingPathExtension:@"backup"];
 
   // load subprojects...
   for (i = 0; i < spCount; i++)

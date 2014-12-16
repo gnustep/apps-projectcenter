@@ -1,5 +1,10 @@
 2014-12-16 Riccardo Mottola <rm@gnu.org>
 
+	* Framework/PCProject.m
+	Initialize backup wrapper after wrapperPath since it depends on it!
+
+2014-12-16 Riccardo Mottola <rm@gnu.org>
+
 	* Framework/PCMakefileFactory.m
 	Generate sections only if there are classes.
 
