@@ -379,8 +379,8 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   float          fontSize;
   NSFont         *font = nil;
 
-  fontName = [df objectForKey:@"EditorFont"];
-  fontSize = [df floatForKey:@"EditorFontSize"];
+  fontName = [df objectForKey:@"EditorTextFont"];
+  fontSize = [df floatForKey:@"EditorTextFontSize"];
 
   if (fontName != nil)
     {
