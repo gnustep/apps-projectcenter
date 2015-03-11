@@ -1,3 +1,13 @@
+2015-03-11 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
+	* Modules/Preferences/EditorFSC/Resources/EditorFSCPrefs.gorm
+	Provide Editor and Fixed font preferences, instead of plain and rich.
+
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Use the preferences Editor font instead of the system one.
+
 2014-12-16 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProject.m
