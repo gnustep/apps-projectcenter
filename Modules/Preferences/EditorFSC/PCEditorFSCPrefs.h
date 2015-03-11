@@ -1,9 +1,10 @@
 // 
 // GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 //
-// Copyright (C) 2001-2009 Free Software Foundation
+// Copyright (C) 2001-2015 Free Software Foundation
 //
 // Authors: Sergii Stoian
+//          Riccardo Mottola
 //
 // Description: 
 //
@@ -26,10 +27,10 @@
 #import <AppKit/AppKit.h>
 #import <Protocols/Preferences.h>
 
-#define EditorPlainTextFont     @"EditorPlainTextFont"
-#define EditorPlainTextFontSize @"EditorPlainTextFontSize"
-#define EditorRichTextFont      @"EditorRichTextFont"
-#define EditorRichTextFontSize  @"EditorRichTextFontSize"
+#define EditorTextFont          @"EditorTextFont"
+#define EditorTextFontSize      @"EditorTextFontSize"
+#define ConsoleFixedFont        @"ConsoleFixedFont"
+#define ConsoleFixedFontSize    @"ConsoleFixedFontSize"
 
 #define EditorLines             @"EditorLines"
 #define EditorColumns           @"EditorColumns"
@@ -45,10 +46,10 @@
 
   IBOutlet NSBox       *editorFSCView;
 
-  IBOutlet NSButton    *plainTextFontButton;
-  IBOutlet NSTextField *plainTextFontField;
-  IBOutlet NSButton    *richTextFontButton;
-  IBOutlet NSTextField *richTextFontField;
+  IBOutlet NSButton    *editorFontButton;
+  IBOutlet NSTextField *editorFontField;
+  IBOutlet NSButton    *consoleFixedFontButton;
+  IBOutlet NSTextField *consoleFixedFontField;
 
   IBOutlet NSTextField *editorLinesField;
   IBOutlet NSTextField *editorColumnsField;
@@ -57,15 +58,15 @@
   IBOutlet NSColorWell *backgroundColorWell;
   IBOutlet NSColorWell *selectionColorWell;
 
-  NSFont               *currentPlainFont;
-  NSFont               *currentRichFont;
+  NSFont               *currentEditorFont;
+  NSFont               *currentConsoleFixedFont;
   NSColor              *currentBackgroundColor;
   NSColor              *currentForegroundColor;
   NSColor              *currentSelectionColor;
 }
 
-- (void)setEditorPlainTextFont:(id)sender;
-- (void)setEditorRichTextFont:(id)sender;
+- (void)setEditorTextFont:(id)sender;
+- (void)setConsoleFixedFont:(id)sender;
 
 - (void)setEditorSize:(id)sender;
 - (void)setEditorColor:(id)sender;

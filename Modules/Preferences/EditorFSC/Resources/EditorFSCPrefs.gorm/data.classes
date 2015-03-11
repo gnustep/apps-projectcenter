@@ -1,18 +1,28 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "setConsoleFixedFont:",
+	    "setEditorColor:",
+	    "setEditorSize:",
+	    "setEditorTextFont:"
+	);
+	Super = NSObject;
+    };
     PCEditorFSCPrefs = {
 	Actions = (
-	    "setEditorPlainTextFont:",
-	    "setEditorRichTextFont:",
+	    "setEditorTextFont:",
+	    "setConsoleFixedFont:",
 	    "setEditorSize:",
 	    "setEditorColor:"
 	);
 	Outlets = (
+	    prefs,
 	    editorFSCView,
-	    plainTextFontButton,
-	    plainTextFontField,
-	    richTextFontButton,
-	    richTextFontField,
+	    editorFontButton,
+	    editorFontField,
+	    consoleFixedFontButton,
+	    consoleFixedFontField,
 	    editorLinesField,
 	    editorColumnsField,
 	    foregroundColorWell,
