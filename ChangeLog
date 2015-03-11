@@ -1,5 +1,10 @@
 2015-03-11 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
+	Bug Fix: Set the font manager with the picked font, not always the same.
+
+2015-03-11 Riccardo Mottola <rm@gnu.org>
+
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
 	* Modules/Preferences/EditorFSC/Resources/EditorFSCPrefs.gorm

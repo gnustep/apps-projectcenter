@@ -102,11 +102,11 @@
 // --- Utility methods
 // ----------------------------------------------------------------------------
 
-- (void)pickFont:(NSFont *)currentFont
+- (void)pickFont:(NSFont *)pickedFont
 {
   NSFontManager *fontManager = [NSFontManager sharedFontManager];
 
-  [fontManager setSelectedFont:currentEditorFont isMultiple:NO];
+  [fontManager setSelectedFont:pickedFont isMultiple:NO];
   [fontManager orderFrontFontPanel:self];
 }
 
