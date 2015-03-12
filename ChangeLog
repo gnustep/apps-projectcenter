@@ -1,3 +1,8 @@
+2015-03-12 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Projects/Framework/PCFrameworkProject.m
+	Generate the PACKAGE_NAME for Frameworks.
+
 2015-03-11 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m

@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2005-2013 Free Software Foundation
+   Copyright (C) 2005-2015 Free Software Foundation
 
    Authors: Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -273,6 +274,8 @@
   [mff appendString:@"\n#\n# Framework\n#\n"];
   [mff appendString:[NSString stringWithFormat:@"VERSION = %@\n",
     [projectDict objectForKey:PCRelease]]];
+  [mff appendString:
+	 [NSString stringWithFormat:@"PACKAGE_NAME = %@\n", projectName]];
   [mff appendString:[NSString stringWithFormat:@"FRAMEWORK_NAME = %@\n",
     projectName]];
   [mff appendString:[NSString 
