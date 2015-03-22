@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2010 Free Software Foundation
+   Copyright (C) 2002-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -26,6 +26,8 @@
 
 #import "PCEditor.h"
 #import "PCEditorView.h"
+
+#import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
 @implementation PCEditor (UInterface)
 
@@ -260,6 +262,7 @@
   NSAttributedString  *attributedString = [NSAttributedString alloc];
   NSMutableDictionary *attributes = [NSMutableDictionary new];
   NSFont              *font;
+  id <PCPreferences>  prefs;
 
   // Inform about future file opening
   [[NSNotificationCenter defaultCenter]
@@ -269,12 +272,23 @@
   _editorManager = editorManager;
   _path = [filePath copy];
   _isEditable = editable;
+  prefs = [[_editorManager projectManager] prefController];
 
   // Prepare
   font = [NSFont userFixedPitchFontOfSize:0.0];
   if (editable)
     {
-      textBackground = backgroundColor;
+      NSColor *col;
+      NSString *str;
+
+      str = [prefs stringForKey:EditorBackgroundColor];
+      if (str)
+        {
+          col = [prefs colorFromString:str];
+        }
+      else
+        col = backgroundColor;
+      textBackground = col;
     }
   else
     {

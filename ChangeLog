@@ -1,5 +1,10 @@
 2015-03-22 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Actually use the background color preference.
+
+2015-03-22 Riccardo Mottola <rm@gnu.org>
+
 	* Headers/Protocols/Preferences.h
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
 	* PCPrefController.m
