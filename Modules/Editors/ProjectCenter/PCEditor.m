@@ -27,7 +27,9 @@
 #import "PCEditor.h"
 #import "PCEditorView.h"
 
+#import <Protocols/Preferences.h>
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
+#import <ProjectCenter/PCProjectManager.h>
 
 @implementation PCEditor (UInterface)
 
