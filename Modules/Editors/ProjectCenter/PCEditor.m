@@ -281,15 +281,8 @@
   if (editable)
     {
       NSColor *col;
-      NSString *str;
 
-      str = [prefs stringForKey:EditorBackgroundColor];
-      if (str)
-        {
-          col = [prefs colorFromString:str];
-        }
-      else
-        col = backgroundColor;
+      col = [prefs colorForKey:EditorBackgroundColor defaultValue:backgroundColor];
       textBackground = col;
     }
   else
@@ -299,6 +292,7 @@
 
   [attributes setObject:font forKey:NSFontAttributeName];
   [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
+  [attributes setObject:[prefs colorForKey:EditorForegroundColor defaultValue:textColor] forKey:NSForegroundColorAttributeName];
 
   text  = [NSString stringWithContentsOfFile:_path];
   attributedString = [attributedString initWithString:text attributes:attributes];
