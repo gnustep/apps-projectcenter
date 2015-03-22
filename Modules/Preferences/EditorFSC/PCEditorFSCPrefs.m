@@ -243,7 +243,6 @@
 - (void)setEditorColor:(id)sender
 {
   NSColor  *color;
-  NSColor  *currentColor;
   NSString *colorString;
   NSString *key;
   NSString *colorSpaceName;
@@ -252,49 +251,37 @@
     {
       NSLog(@"foregroundColorWell");
       color = [foregroundColorWell color];
-      currentColor = currentForegroundColor;
       key = EditorForegroundColor;
     }
   else if (sender == backgroundColorWell)
     {
       NSLog(@"backgroundColorWell");
       color = [backgroundColorWell color];
-      currentColor = currentBackgroundColor;
       key = EditorBackgroundColor;
     }
   else // selectionColorWell
     {
       NSLog(@"selectionColorWell");
       color = [selectionColorWell color];
-      currentColor = currentSelectionColor;
       key = EditorSelectionColor;
     }
 
   colorSpaceName =  [color colorSpaceName];
-  NSLog(@"Color's colorspace name: '%@'", colorSpaceName);
-  if ([colorSpaceName isEqualToString:@"NSCalibratedRGBColorSpace"])
-    {
-/*      [sender setColor:currentColor];
-      NSRunAlertPanel(@"Set Color", 
-		      @"Please, use RGB color.\n"
-		      @"Color in color well left unchanged",
-		      @"Close", nil, nil);*/
-      colorString = [NSString stringWithFormat:@"RGB %0.1f %0.1f %0.1f",
-		  [color redComponent], 
-		  [color greenComponent],
-		  [color blueComponent]];
-    }
-  else if ([colorSpaceName isEqualToString:@"NSCalibratedWhiteColorSpace"])
+
+  if ([colorSpaceName isEqualToString:@"NSCalibratedWhiteColorSpace"])
     {
       colorString = [NSString stringWithFormat:@"White %0.1f", 
 		  [color whiteComponent]];
     }
   else
     {
-      return;
+      if (![colorSpaceName isEqualToString:NSCalibratedRGBColorSpace])
+	color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+      colorString = [NSString stringWithFormat:@"RGB %0.1f %0.1f %0.1f",
+			      [color redComponent], 
+			      [color greenComponent],
+			      [color blueComponent]];
     }
-
-  currentColor = color;
 
   NSLog(@"Selected color: '%@'", colorString);
 
