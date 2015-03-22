@@ -1,5 +1,10 @@
 2015-03-22 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
+	Use Preferences color methods.
+
+2015-03-22 Riccardo Mottola <rm@gnu.org>
+
 	* Headers/Protocols/Preferences.h
 	* PCPrefController.m
 	Direct preferences method for setting and getting colors.

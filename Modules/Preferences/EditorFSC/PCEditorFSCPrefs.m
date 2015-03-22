@@ -187,16 +187,13 @@
   [editorColumnsField setStringValue:val];
 
   // Colors
-  val = [prefs stringForKey:EditorForegroundColor defaultValue:@"White 0.0"];
-  currentForegroundColor = [prefs colorFromString:val];
+  currentForegroundColor = [prefs colorForKey:EditorForegroundColor defaultValue:[NSColor whiteColor]];
   [foregroundColorWell setColor:currentForegroundColor];
 
-  val = [prefs stringForKey:EditorBackgroundColor defaultValue:@"White 1.0"];
-  currentBackgroundColor = [prefs colorFromString:val];
+  currentBackgroundColor = [prefs colorForKey:EditorBackgroundColor defaultValue:[NSColor blackColor]];
   [backgroundColorWell setColor:currentBackgroundColor];
 
-  val = [prefs stringForKey:EditorSelectionColor defaultValue:@"White 0.66"];
-  currentSelectionColor = [prefs colorFromString:val];
+  currentSelectionColor = [prefs colorForKey:EditorSelectionColor defaultValue:[NSColor darkGrayColor]];
   [selectionColorWell setColor:currentSelectionColor];
 }
 
@@ -243,49 +240,25 @@
 - (void)setEditorColor:(id)sender
 {
   NSColor  *color;
-  NSString *colorString;
   NSString *key;
-  NSString *colorSpaceName;
 
   if (sender == foregroundColorWell)
     {
-      NSLog(@"foregroundColorWell");
       color = [foregroundColorWell color];
       key = EditorForegroundColor;
     }
   else if (sender == backgroundColorWell)
     {
-      NSLog(@"backgroundColorWell");
       color = [backgroundColorWell color];
       key = EditorBackgroundColor;
     }
   else // selectionColorWell
     {
-      NSLog(@"selectionColorWell");
       color = [selectionColorWell color];
       key = EditorSelectionColor;
     }
 
-  colorSpaceName =  [color colorSpaceName];
-
-  if ([colorSpaceName isEqualToString:@"NSCalibratedWhiteColorSpace"])
-    {
-      colorString = [NSString stringWithFormat:@"White %0.1f", 
-		  [color whiteComponent]];
-    }
-  else
-    {
-      if (![colorSpaceName isEqualToString:NSCalibratedRGBColorSpace])
-	color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
-      colorString = [NSString stringWithFormat:@"RGB %0.1f %0.1f %0.1f",
-			      [color redComponent], 
-			      [color greenComponent],
-			      [color blueComponent]];
-    }
-
-  NSLog(@"Selected color: '%@'", colorString);
-
-  [prefs setString:colorString forKey:key notify:YES];
+  [prefs setColor:color forKey:key notify:YES];
 }
 
 @end
