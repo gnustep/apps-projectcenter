@@ -1,3 +1,10 @@
+2015-03-22 Riccardo Mottola <rm@gnu.org>
+
+	* Headers/Protocols/Preferences.h
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
+	* PCPrefController.m
+	Move colorFromString from PCEditorFSCPrefs to PCPrefsController and make it thus generally available.
+
 2015-03-12 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/Framework/PCFrameworkProject.m

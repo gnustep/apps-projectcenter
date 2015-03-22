@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2005 Free Software Foundation
+   Copyright (C) 2005-2015 Free Software Foundation
 
    Authors: Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -31,6 +32,8 @@
 #define PCPreferencesDidChangeNotification @"PCPreferencesDidChangeNotification"
 
 @protocol PCPreferences <NSObject>
+
+- (NSColor *)colorFromString:(NSString *)colorString;
 
 - (NSString *)stringForKey:(NSString *)key;
 - (NSString *)stringForKey:(NSString *)key

@@ -147,32 +147,7 @@
     }
 }
 
-- (NSColor *)colorFromString:(NSString *)colorString
-{
-  NSArray  *colorComponents;
-  NSString *colorSpaceName;
-  NSColor  *color;
 
-  colorComponents = [colorString componentsSeparatedByString:@" "];
-  colorSpaceName = [colorComponents objectAtIndex:0];
-
-  if ([colorSpaceName isEqualToString:@"White"]) // Treat as WhiteColorSpace
-    {
-      color = [NSColor 
-	colorWithCalibratedWhite:[[colorComponents objectAtIndex:1] floatValue]
-       			   alpha:1.0];
-    }
-  else // Treat as RGBColorSpace
-    {
-      color = [NSColor 
-	colorWithCalibratedRed:[[colorComponents objectAtIndex:1] floatValue]
-			 green:[[colorComponents objectAtIndex:2] floatValue]
-			  blue:[[colorComponents objectAtIndex:3] floatValue]
-			 alpha:1.0];
-    }
-
-  return color;
-}
 
 // ----------------------------------------------------------------------------
 // --- Protocol
@@ -213,15 +188,15 @@
 
   // Colors
   val = [prefs stringForKey:EditorForegroundColor defaultValue:@"White 0.0"];
-  currentForegroundColor = [self colorFromString:val];
+  currentForegroundColor = [prefs colorFromString:val];
   [foregroundColorWell setColor:currentForegroundColor];
 
   val = [prefs stringForKey:EditorBackgroundColor defaultValue:@"White 1.0"];
-  currentBackgroundColor = [self colorFromString:val];
+  currentBackgroundColor = [prefs colorFromString:val];
   [backgroundColorWell setColor:currentBackgroundColor];
 
   val = [prefs stringForKey:EditorSelectionColor defaultValue:@"White 0.66"];
-  currentSelectionColor = [self colorFromString:val];
+  currentSelectionColor = [prefs colorFromString:val];
   [selectionColorWell setColor:currentSelectionColor];
 }
 

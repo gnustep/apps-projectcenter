@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2008 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -28,6 +28,7 @@
 #import <Protocols/Preferences.h>
 
 @implementation PCPrefController
+
 
 // ===========================================================================
 // ==== Class methods
@@ -72,7 +73,40 @@ static PCPrefController *_prefCtrllr = nil;
 {
 }
 
-// Accessory
+// ----------------------------------------------------------------------------
+// --- color utility method
+// ----------------------------------------------------------------------------
+- (NSColor *)colorFromString:(NSString *)colorString
+{
+  NSArray  *colorComponents;
+  NSString *colorSpaceName;
+  NSColor  *color;
+
+  colorComponents = [colorString componentsSeparatedByString:@" "];
+  colorSpaceName = [colorComponents objectAtIndex:0];
+
+  if ([colorSpaceName isEqualToString:@"White"]) // Treat as WhiteColorSpace
+    {
+      color = [NSColor 
+	colorWithCalibratedWhite:[[colorComponents objectAtIndex:1] floatValue]
+       			   alpha:1.0];
+    }
+  else // Treat as RGBColorSpace
+    {
+      color = [NSColor 
+	colorWithCalibratedRed:[[colorComponents objectAtIndex:1] floatValue]
+			 green:[[colorComponents objectAtIndex:2] floatValue]
+			  blue:[[colorComponents objectAtIndex:3] floatValue]
+			 alpha:1.0];
+    }
+
+  return color;
+}
+
+// ----------------------------------------------------------------------------
+// --- Accessors
+// ----------------------------------------------------------------------------
+
 - (NSString *)stringForKey:(NSString *)key
 {
   return [self stringForKey:key defaultValue:nil];
