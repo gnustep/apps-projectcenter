@@ -34,6 +34,7 @@
 @protocol PCPreferences <NSObject>
 
 - (NSColor *)colorFromString:(NSString *)colorString;
+- (NSString *)stringFromColor:(NSColor *)color;
 
 - (NSString *)stringForKey:(NSString *)key;
 - (NSString *)stringForKey:(NSString *)key
@@ -47,6 +48,10 @@
 - (float)floatForKey:(NSString *)key
 	defaultValue:(float)defaultValue;
 
+- (NSColor *)colorForKey:(NSString *)key;
+- (NSColor *)colorForKey:(NSString *)key
+        defaultValue:(NSColor *)defaultValue;
+
 - (void)setString:(NSString *)stringValue 
 	   forKey:(NSString *)aKey
 	   notify:(BOOL)notify;
@@ -56,7 +61,9 @@
 - (void)setFloat:(float)floatValue
 	  forKey:(NSString *)aKey
 	  notify:(BOOL)notify;
-
+- (void)setColor:(NSColor *)color
+	  forKey:(NSString *)aKey
+	  notify:(BOOL)notify;
 @end
 
 @protocol PCPrefsSection <NSObject>

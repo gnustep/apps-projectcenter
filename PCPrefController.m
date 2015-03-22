@@ -103,6 +103,30 @@ static PCPrefController *_prefCtrllr = nil;
   return color;
 }
 
+- (NSString *)stringFromColor:(NSColor *)color
+{
+  NSString *colorString;
+
+  colorString = nil;
+  if ([[color colorSpaceName] isEqualToString:NSCalibratedWhiteColorSpace])
+    {
+      colorString = [NSString stringWithFormat:@"White %0.1f", 
+		  [color whiteComponent]];
+    }
+  else
+    {
+      if (![[color colorSpaceName] isEqualToString:NSCalibratedRGBColorSpace])
+	color = [color colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+      colorString = [NSString stringWithFormat:@"RGB %0.1f %0.1f %0.1f",
+			      [color redComponent], 
+			      [color greenComponent],
+			      [color blueComponent]];
+    }
+
+  NSLog(@"serialized color: '%@'", colorString);
+  return colorString;
+}
+
 // ----------------------------------------------------------------------------
 // --- Accessors
 // ----------------------------------------------------------------------------
@@ -176,6 +200,33 @@ static PCPrefController *_prefCtrllr = nil;
     }
 }
 
+- (NSColor *)colorForKey:(NSString *)key
+{
+  return [self colorForKey:key defaultValue:nil];
+}
+
+- (NSColor *)colorForKey:(NSString *)key
+	    defaultValue:(NSColor *)defaultValue
+{
+  NSString *stringValue = [[NSUserDefaults standardUserDefaults]
+			    objectForKey:key];
+
+  if (stringValue)
+    {
+      NSColor *color;
+
+      color = [self colorFromString:stringValue];
+      return color;
+    }
+  else if (defaultValue)
+    {
+      [self setColor:defaultValue forKey:key notify:NO];
+      return defaultValue;
+    }
+
+  return defaultValue; // returns nil
+}
+
 - (void)setString:(NSString *)stringValue 
 	   forKey:(NSString *)aKey
 	   notify:(BOOL)notify
@@ -214,6 +265,24 @@ static PCPrefController *_prefCtrllr = nil;
 {
   NSString *stringValue = [NSString stringWithFormat:@"%0.1f", floatValue];
 
+  [[NSUserDefaults standardUserDefaults] setObject:stringValue
+					    forKey:aKey];
+
+  if (notify)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCPreferencesDidChangeNotification
+		      object:self];
+    }
+}
+
+- (void)setColor:(NSColor *)color 
+	   forKey:(NSString *)aKey
+	   notify:(BOOL)notify
+{
+  NSString *stringValue;
+
+  stringValue = [self stringFromColor:color];
   [[NSUserDefaults standardUserDefaults] setObject:stringValue
 					    forKey:aKey];
 
