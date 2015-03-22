@@ -123,7 +123,6 @@ static PCPrefController *_prefCtrllr = nil;
 			      [color blueComponent]];
     }
 
-  NSLog(@"serialized color: '%@'", colorString);
   return colorString;
 }
 
