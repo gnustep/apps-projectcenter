@@ -43,6 +43,7 @@
 #import "PCEditor.h"
 #import "SyntaxHighlighter.h"
 #import "LineJumper.h"
+#import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
 static inline float my_abs(float aValue)
 {
@@ -379,10 +380,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   float          fontSize;
   NSFont         *font = nil;
 
-  fontName = [df objectForKey:@"EditorTextFont"];
-  fontSize = [df floatForKey:@"EditorTextFontSize"];
+  fontName = [df objectForKey:EditorTextFont];
+  fontSize = [df floatForKey:EditorTextFontSize];
 
-  if (fontName != nil)
+  if (fontName != nil && fontSize > 0)
     {
       font = [NSFont fontWithName:fontName size:fontSize];
     }
