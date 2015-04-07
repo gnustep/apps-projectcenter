@@ -1,7 +1,7 @@
 /*
 **  PCDebugger
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2015
 **
 **  Author: Gregory Casamento <greg_casamento@yahoo.com>
 **
@@ -23,6 +23,8 @@
 #import <AppKit/AppKit.h>
 #import "PCDebugger.h"
 #import "PCDebuggerView.h"
+
+#import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -95,6 +97,27 @@ static NSImage  *downImage = nil;
     }
 }
 
++ (NSFont *)defaultConsoleFont
+{
+  NSUserDefaults *df = [NSUserDefaults standardUserDefaults];
+  NSString       *fontName;
+  float          fontSize;
+  NSFont         *font = nil;
+
+  fontName = [df objectForKey:ConsoleFixedFont];
+  fontSize = [df floatForKey:ConsoleFixedFontSize];
+
+  if (fontName != nil && fontSize > 0)
+    {
+      font = [NSFont fontWithName:fontName size:fontSize];
+    }
+  if (font == nil)
+    {
+      font = [NSFont userFixedPitchFontOfSize:0];
+    }
+
+  return font;
+}
 - (id) init
 {
   if((self = [super init]) != nil)
@@ -141,7 +164,7 @@ static NSImage  *downImage = nil;
   [debuggerWindow setToolbar: toolbar];
   RELEASE(toolbar);
 
-  [debuggerView setFont: [NSFont userFixedPitchFontOfSize: 0]];
+  [debuggerView setFont: [PCDebugger defaultConsoleFont]];
   [debuggerWindow setFrameAutosaveName: @"PCDebuggerWindow"];
   [self setStatus: @"Idle."];
 }

@@ -3,6 +3,9 @@
 	* Modules/Editors/ProjectCenter/PCEditorView.m
 	Use constants and not strings as keys.
 
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	Use console font for the view.
+
 2015-03-22 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
