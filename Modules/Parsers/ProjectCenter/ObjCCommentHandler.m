@@ -38,7 +38,7 @@
 {
   if (_commentType == SingleLineComment)
     {
-      if ((element == 0x0A) || (element == 0x0D))
+      if ((element == 0x0A) || (element == 0x0D) || (element == 0x04))
         {
           _commentType = NoComment;
         }

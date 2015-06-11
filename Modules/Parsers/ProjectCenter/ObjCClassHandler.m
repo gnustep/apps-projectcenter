@@ -63,7 +63,7 @@
 
 - (void)addClassToArray
 {
-//  NSLog(@"OCCH: class: %@", class);
+  NSLog(@"OCCH: class: %@", class);
   if ([class length])
     {
       NSDictionary *dict;
@@ -173,8 +173,11 @@
 
   [super spaceAndNewLine:element];
 
-  if ((element == 0x0A) || (element == 0x0D))
+  if ((element == 0x0A) || (element == 0x0D) || (element == 0x04))
     {
+//      NSLog(@"Newline");
+//      if(element == 0x04)
+//	NSLog(@"and EOF");
       newline = YES;
     }
 
@@ -199,7 +202,7 @@
 //	      NSLog(@"keyword: %@", keyword);
 	      if ([keyword isEqualToString:@"end"])
 		{
-//		  NSLog(@"@end reached");
+		  NSLog(@"@end reached");
 		  [self addClassToArray];
 		  step = ClassNone;
 		}
