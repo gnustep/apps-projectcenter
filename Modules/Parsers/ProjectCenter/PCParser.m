@@ -1,9 +1,10 @@
 /*
 **  CodeParser.m
 **
-**  Copyright (c) 2003-2014
+**  Copyright (c) 2003-2015
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -43,6 +44,9 @@ typedef enum _CodeType {
 - (id)init
 {
   self = [super init];
+  _handler = nil;
+  _uchar = NULL;
+  _length = 0;
   return self;
 }
 
