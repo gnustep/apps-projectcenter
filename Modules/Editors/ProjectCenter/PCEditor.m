@@ -488,10 +488,16 @@
     }
 
   bundle = [NSBundle bundleForClass:NSClassFromString(@"PCEditor")];
+
   imagePath = [bundle pathForResource:imageName ofType:@"tiff"];
-
-  image = [[NSImage alloc] initWithContentsOfFile:imagePath];
-
+  if (imagePath)
+    {
+      image = [[NSImage alloc] initWithContentsOfFile:imagePath];
+    }
+  else
+    {
+      NSLog(@"no image for %@", imageName);
+    }
   return AUTORELEASE(image);
 }
 
