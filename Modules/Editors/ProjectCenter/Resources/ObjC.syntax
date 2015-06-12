@@ -1,6 +1,7 @@
 {
   FileTypes = (
     "m",
+    "mm",
     "h"
   );
   Contexts = (
