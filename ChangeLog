@@ -1,3 +1,11 @@
+2015-06-12 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/Resources/Info.table
+	Enable Obj-C++ extension.
+
+	* Framework/PCEditorManager.m
+	Use the internal editor if it is available, even if no parser is available.
+
 2015-04-07 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.m
