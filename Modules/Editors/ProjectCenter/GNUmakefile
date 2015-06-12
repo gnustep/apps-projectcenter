@@ -30,6 +30,7 @@ ProjectCenter_RESOURCE_FILES= \
     Resources/FileHH.tiff \
     Resources/FileM.tiff \
     Resources/FileMH.tiff \
+    Resources/FileMM.tiff \
     Resources/LineJumper.gorm
 
 #
