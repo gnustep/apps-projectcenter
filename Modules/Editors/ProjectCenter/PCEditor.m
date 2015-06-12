@@ -550,7 +550,7 @@
   [aParser setString:[_storage string]];
 
   // If item is .m or .h file show class list
-  if ([[item pathExtension] isEqualToString:@"m"]
+  if ([[item pathExtension] isEqualToString:@"m"] || [[item pathExtension] isEqualToString:@"mm"]
       || [[item pathExtension] isEqualToString:@"h"])
     {
       ASSIGN(parserClasses, [aParser classNames]);
