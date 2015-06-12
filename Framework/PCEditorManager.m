@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2014 Free Software Foundation
+   Copyright (C) 2002-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -210,33 +210,33 @@ NSString *PCEditorDidResignActiveNotification =
 		     objectForBundleWithName:@"ProjectCenter"
 		     type:@"editor"
 		     protocol:@protocol(CodeEditor)];
-	  if (editor == nil)
-	    {
-	      return nil;
-	    }
 	}
-      
-      // Parser
-      parser = [bundleManager objectForBundleType:@"parser"
-			      protocol:@protocol(CodeParser)
-			      fileName:fileName];
-      if(parser != nil)
-	{
-	  [editor setParser:parser];
-	  [editor openFileAtPath:filePath 
-		  editorManager:self 
-		  editable:editable];
-	  [_editorsDict setObject:editor forKey:filePath];
-	  RELEASE(editor);
-	}
+
+      /* if we have a valid editor, we try to set a parser */
+      if (editor)
+        {
+          // Parser
+          parser = [bundleManager objectForBundleType:@"parser"
+                                             protocol:@protocol(CodeParser)
+                                             fileName:fileName];
+          if(parser != nil)
+            {
+              [editor setParser:parser];
+            }
+          [editor openFileAtPath:filePath 
+                   editorManager:self 
+                        editable:editable];
+          [_editorsDict setObject:editor forKey:filePath];
+          RELEASE(editor);
+        }
       else
-	{
-	  //
-	  // If we don't have an editor or a parser, we fall back to opening the
-	  // file with the editor designated by the system.
-	  //
-	  [[NSWorkspace sharedWorkspace] openFile: filePath];
-	}
+        {
+          //
+          // If we don't have an editor, we fall back to opening the
+          // file with the editor designated by the system.
+          //
+          [[NSWorkspace sharedWorkspace] openFile: filePath];
+        }
     }
   
   if(editor != nil)
