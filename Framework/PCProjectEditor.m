@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2010 Free Software Foundation
+   Copyright (C) 2002-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -226,8 +226,8 @@
   [editor setCategoryPath:categoryPath];
   [self orderFrontEditorForFile:filePath];
 
-/*  pathLastObject = [pathArray lastObject];
-  NSLog(@"pathArray: c: %i %@", [pathArray count], pathArray);
+  pathLastObject = [pathArray lastObject];
+/*  NSLog(@"pathArray: c: %i %@", [pathArray count], pathArray);
   NSLog(@"pathArray: lastObject %@", [pathArray lastObject]);
   NSLog(@"lastObject[1]: %@", 
   [pathLastObject substringWithRange:NSMakeRange(0,1)]);*/

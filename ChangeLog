@@ -1,3 +1,8 @@
+2015-06-13 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectEditor.m
+	Re-enable wrongly uncommented statement.
+
 2015-06-12 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m
