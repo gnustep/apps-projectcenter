@@ -191,15 +191,27 @@ NSString *PCEditorDidResignActiveNotification =
 		  @"Couldn't open editor for file '%@'.\n"
 		  @"File is not plain text.",
 		  @"Close", nil, nil, filePath);*/
+          PCLogInfo(self, @"Not a text file %@", filePath);
 	  return nil;
 	}
+    }
+  else
+    {
+      NSString *app;
+      
+      /* Check for bundles and if possible let them be opened by Workspace */
+      app = [[NSWorkspace sharedWorkspace] getBestAppInRole:@"Editor" forExtension:[fileName pathExtension]];
+      if (app)
+        {
+          if ([[NSWorkspace sharedWorkspace] openFile: filePath])
+            return nil;
+        }
     }
 
 //  NSLog(@"EditorManager 1: %@", _editorsDict);
   editor = [_editorsDict objectForKey: filePath];
   if (editor == nil)
     {
-      NSLog(@"Opening new editor. Editor: %@", editorName);
       // Editor
       editor = [bundleManager objectForBundleWithName:editorName
 			      type:@"editor"

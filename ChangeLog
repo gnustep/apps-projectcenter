@@ -3,6 +3,9 @@
 	* Framework/PCProjectEditor.m
 	Re-enable wrongly uncommented statement.
 
+	* Framework/PCEditorManager.m
+	If we have a directory, we check if it is a bundle that an app can open it and open it through NSWorkspace.
+
 2015-06-12 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m
