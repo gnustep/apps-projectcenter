@@ -1,3 +1,11 @@
+2015-06-16 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/GNUmakefile
+	* Framework/PCFileCreator.m
+	* Headers/ProjectCenter/PCFileCreator.h
+	* Framework/Resources/ocppclass.template
+	Enable project addition of obj-c++ classes.
+
 2015-06-13 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectEditor.m

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2013 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -44,6 +44,7 @@ static NSDictionary  *dict = nil;
       NSDictionary *headerDict;
       NSDictionary *ccDict;
       NSDictionary *chDict;
+      NSDictionary *classPpDict;
       NSDictionary *protocolDict;
       NSDictionary *gsmarkupDict;
       NSString     *descr;
@@ -108,6 +109,17 @@ static NSDictionary  *dict = nil;
 	template,@"TemplateFile",
         nil];
 
+      // Objective C++ Class
+      descr = @"Generic Objective-C++ class.\n\n"
+		@"This is a plain subclass of NSObject which includes"
+		@" only Foundation.h. Extend it with c++";
+      template = [bundle pathForResource:@"ocppclass" ofType:@"template"];
+      classPpDict = [NSDictionary dictionaryWithObjectsAndKeys:
+	PCClasses, @"ProjectKey",
+	descr, @"TypeDescription",
+	template,@"TemplateFile",
+	nil];
+      
       // GSMarkup
       descr = @"Generic GSMarkup File.\n\n"
 		@"This is the interface description of GNUstep Renaissance.";
@@ -125,6 +137,7 @@ static NSDictionary  *dict = nil;
         protocolDict, ProtocolFile,
         headerDict, ObjCHeader,
         classDict, ObjCClass,
+	classPpDict, ObjCppClass,	   
         gsmarkupDict, GSMarkupFile,
 	nil];
     }
@@ -194,6 +207,12 @@ static NSDictionary  *dict = nil;
     {
       newFile = [path stringByAppendingPathExtension:@"m"];
       [files setObject:[dict objectForKey:ObjCClass] forKey:newFile];
+    }
+  // Objective-C++ Class
+  else if ([type isEqualToString:ObjCppClass]) 
+    {
+      newFile = [path stringByAppendingPathExtension:@"mm"];
+      [files setObject:[dict objectForKey:ObjCppClass] forKey:newFile];
     }
   // C File
   else if ([type isEqualToString:CFile]) 

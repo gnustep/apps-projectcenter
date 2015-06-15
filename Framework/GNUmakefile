@@ -104,6 +104,7 @@ ProjectCenter_RESOURCE_FILES = \
   Resources/header.template \
   Resources/postamble.template \
   Resources/protocol.template \
+  Resources/ocppclass.template \
 
 #
 # Localization

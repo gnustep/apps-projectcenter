@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -33,6 +33,7 @@
 #define ObjCHeader	@"Objective-C Header"
 #define CFile		@"C File"
 #define CHeader	        @"C Header"
+#define ObjCppClass	@"Objective-C++ Class"
 #define GSMarkupFile	@"GNUstep Markup"
 
 @class PCProject;
