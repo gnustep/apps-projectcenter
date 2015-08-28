@@ -187,10 +187,10 @@
   [editorColumnsField setStringValue:val];
 
   // Colors
-  currentForegroundColor = [prefs colorForKey:EditorForegroundColor defaultValue:[NSColor whiteColor]];
+  currentForegroundColor = [prefs colorForKey:EditorForegroundColor defaultValue:[NSColor blackColor]];
   [foregroundColorWell setColor:currentForegroundColor];
 
-  currentBackgroundColor = [prefs colorForKey:EditorBackgroundColor defaultValue:[NSColor blackColor]];
+  currentBackgroundColor = [prefs colorForKey:EditorBackgroundColor defaultValue:[NSColor colorWithCalibratedWhite:0.9 alpha:0]];
   [backgroundColorWell setColor:currentBackgroundColor];
 
   currentSelectionColor = [prefs colorForKey:EditorSelectionColor defaultValue:[NSColor darkGrayColor]];
