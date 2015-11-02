@@ -178,9 +178,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 }
 
 // Go backward to first '\n' char or start of file
-- (int)lineStartIndexForIndex:(int)index forString:(NSString *)string
+- (NSInteger)lineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int line_start;
+  NSInteger line_start;
 
   // Get line start index moving from index backwards
   for (line_start = index;line_start > 0;line_start--)
@@ -198,10 +198,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return line_start > index ? index : line_start;
 }
 
-- (int)lineEndIndexForIndex:(int)index forString:(NSString *)string
+- (NSInteger)lineEndIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int line_end;
-  int string_length = [string length];
+  NSInteger line_end;
+  NSInteger string_length = [string length];
 
   // Get line start index moving from index backwards
   for (line_end = index;line_end < string_length;line_end++)
@@ -212,30 +212,30 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 	}
     }
 
-  NSLog(@"index: %i end: %i", index, line_end);
+  NSLog(@"index: %li end: %li", (long)index, (long)line_end);
 
   return line_end < string_length ? line_end : string_length;
 }
 
-- (int)previousLineStartIndexForIndex:(int)index forString:(NSString *)string
+- (NSInteger)previousLineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int cur_line_start;
-  int prev_line_start;
+  NSInteger cur_line_start;
+  NSInteger prev_line_start;
 
   cur_line_start = [self lineStartIndexForIndex:index forString:string];
   prev_line_start = [self lineStartIndexForIndex:cur_line_start-1
  				       forString:string];
 
-  NSLog(@"index: %i prev_start: %i", index, prev_line_start);
+  NSLog(@"index: %li prev_start: %li", (long)index, (long)prev_line_start);
 
   return prev_line_start;
 }
 
-- (int)nextLineStartIndexForIndex:(int)index forString:(NSString *)string
+- (NSInteger)nextLineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int cur_line_end;
-  int next_line_start;
-  int string_length = [string length];
+  NSInteger cur_line_end;
+  NSInteger next_line_start;
+  NSInteger string_length = [string length];
 
   cur_line_end = [self lineEndIndexForIndex:index forString:string];
   next_line_start = cur_line_end + 1;
@@ -250,12 +250,13 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
     }
 }
 
-- (unichar)firstCharOfLineForIndex:(int)index forString:(NSString *)string
+- (unichar)firstCharOfLineForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int line_start = [self lineStartIndexForIndex:index forString:string];
-  int i;
+  NSInteger line_start = [self lineStartIndexForIndex:index forString:string];
+  NSInteger i;
   unichar c;
 
+  c = 0;
   // Get leading whitespaces range
   for (i = line_start; i >= 0; i++)
     {
@@ -271,30 +272,25 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return c;
 }
 
-- (unichar)firstCharOfPrevLineForIndex:(int)index forString:(NSString *)string
+- (unichar)firstCharOfPrevLineForIndex:(NSInteger)index forString:(NSString *)string
 {
-  int line_start = [self previousLineStartIndexForIndex:index 
+  NSInteger line_start = [self previousLineStartIndexForIndex:index 
 						   forString:string];
 
   return [self firstCharOfLineForIndex:line_start forString:string];
 }
 
-- (unichar)firstCharOfNextLineForIndex:(int)index
-{
-  return 0;
-}
-
 - (void)performIndentation
 {
-  NSString *string = [self string];
-  int      location;
-  int      line_start;
-  int      offset;
-  unichar  c, plfc, clfc;
-  NSRange  wsRange;
+  NSString  *string = [self string];
+  NSInteger location;
+  NSInteger line_start;
+  NSInteger offset;
+  unichar   c, plfc, clfc;
+  NSRange   wsRange;
   NSMutableString *indentString;
   NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
-  int i;
+  NSInteger i;
 //  int point;
 
   location = [self selectedRange].location;
