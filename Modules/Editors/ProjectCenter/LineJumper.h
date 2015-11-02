@@ -15,6 +15,7 @@
 - (NSTextView<CodeEditorView> *)editorViewToUse;
 
 /* panel UI methods */
+- (void)orderFrontLinePanel:(id)sender;
 - (IBAction)goToLine:(id)sender;
 
 @end

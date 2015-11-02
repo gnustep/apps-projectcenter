@@ -3,6 +3,10 @@
 	* Modules/Editors/ProjectCenter/PCEditorView.m
 	Cleanups and NSInteger conversion.
 
+	* Modules/Editors/ProjectCenter/LineJumper.h
+	* Modules/Editors/ProjectCenter/LineJumper.m
+	declare missing method
+
 2015-06-16 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/GNUmakefile

@@ -43,7 +43,8 @@ static id sharedLineJumper = nil;
   return nil;
 }
 
-- (NSPanel *)linePanel {
+- (NSPanel *)linePanel
+{
     if (!lineField)
       [self loadUI];
     return (NSPanel *)[lineField window];
