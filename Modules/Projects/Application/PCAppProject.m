@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2012 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -228,7 +228,7 @@
   [projectDict setObject:[NSArray arrayWithObjects:[mainNibFile lastPathComponent], @"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup", nil] 
     forKey:PCInterfaces];
 
-  // Info-gnutstep.plist
+  // Info-gnustep.plist
   _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
   infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
   [infoDict setObject:projectName forKey:@"ApplicationName"];
@@ -237,6 +237,7 @@
     forKey:@"NSMainNibFile"];
   [infoDict setObject:[projectDict objectForKey:PCPrincipalClass]
     forKey:@"NSPrincipalClass"];
+  [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
 
   // Write to ProjectNameInfo.plist
   _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
@@ -410,6 +411,7 @@
   [self writeInfoEntry:@"ApplicationIcon" forKey:PCAppIcon];
   [self writeInfoEntry:@"ApplicationName" forKey:PCProjectName];
   [self writeInfoEntry:@"ApplicationRelease" forKey:PCRelease];
+  [self writeInfoEntry:@"CFBundleIdentifier" forKey:PCBundleIdentifier];
   [self writeInfoEntry:@"Authors" forKey:PCAuthors];
   [self writeInfoEntry:@"Copyright" forKey:PCCopyright];
   [self writeInfoEntry:@"CopyrightDescription" forKey:PCCopyrightDescription];

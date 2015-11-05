@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    Author: Serg Stoyan <stoyan@on.com.ua>
+           Riccardo Mottola <rm@gnu.org>
 
    This file is part of GNUstep.
 
@@ -37,8 +38,9 @@
 // ----------------------------------------------------------------------------
 // --- Actions
 // ----------------------------------------------------------------------------
-- (void)setAppType:(id)sender;
-- (void)setAppClass:(id)sender;
+- (IBAction)setAppType:(id)sender;
+- (IBAction)setAppClass:(id)sender;
+- (IBAction)setBundleIdentifier:(id)sender;
 
 - (void)clearAppIcon:(id)sender;
 - (BOOL)setAppIconWithFileAtPath:(NSString *)path;

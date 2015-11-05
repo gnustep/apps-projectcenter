@@ -147,6 +147,7 @@ static NSString * const PCLinkerOptions        = @"LINKEROPTIONS";
 static NSString * const PCObjCCompilerOptions  = @"OBJC_COMPILEROPTIONS";
 static NSString * const PCPrincipalClass       = @"PRINCIPAL_CLASS";
 static NSString * const PCAuthors              = @"PROJECT_AUTHORS";
+static NSString * const PCBundleIdentifier     = @"BUNDLE_IDENTIFIER";
 static NSString * const PCCopyright            = @"PROJECT_COPYRIGHT";
 static NSString * const PCCopyrightDescription = @"PROJECT_COPYRIGHT_DESC";
 static NSString * const PCProjectCreator       = @"PROJECT_CREATOR";

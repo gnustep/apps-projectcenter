@@ -1,3 +1,13 @@
+2015-11-05 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Projects/Application/PCAppProject+Inspector.h
+	* Modules/Projects/Application/PCAppProject+Inspector.m
+	* Headers/ProjectCenter/PCDefines.h
+	* Modules/Projects/Application/PCAppProject.h
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/Application/Resources/Inspector.gorm
+	CFBundleIdentifier support for Apps.
+
 2015-11-02 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.m

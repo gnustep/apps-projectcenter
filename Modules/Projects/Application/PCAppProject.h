@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2015 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 	    
    Description: This is the project type 'Application' for GNUstep. You never 
                 should create it yourself but use PCAppProj for doing this. 
@@ -54,6 +55,7 @@
   IBOutlet PCAppTextField *appImageField;
   IBOutlet PCAppTextField *helpFileField;
   IBOutlet PCAppTextField *mainNIBField;
+  IBOutlet NSTextField    *bundleIdentifierField;
 
   IBOutlet NSTextView     *helpText;
   IBOutlet PCFileNameIcon *iconView;
