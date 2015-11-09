@@ -45,17 +45,6 @@
 #import "LineJumper.h"
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
-static inline float my_abs(float aValue)
-{
-  if (aValue >= 0)
-    {
-      return aValue;
-    }
-  else
-    {
-      return -aValue;
-    }
-}
 
 /**
  * Computes the indenting offset of the last line before the passed
