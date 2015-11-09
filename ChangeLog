@@ -1,3 +1,8 @@
+2015-11-09 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectInspector.m
+	Allocate a Mutable Array before assagning an Array to a MutableArray
+
 2015-11-05 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/Application/PCAppProject+Inspector.h

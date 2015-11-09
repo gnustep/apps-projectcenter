@@ -417,15 +417,15 @@
   
   if ([selectedTitle isEqualToString:@"Header Directories Search Order"])
     {
-      ASSIGN(searchItems, searchHeaders);
+      ASSIGN(searchItems, [NSMutableArray arrayWithArray:searchHeaders]);
     }
   else if ([selectedTitle isEqualToString:@"Library Directories Search Order"])
     {
-      ASSIGN(searchItems, searchLibs);
+      ASSIGN(searchItems, [NSMutableArray arrayWithArray:searchLibs]);
     }
   else if ([selectedTitle isEqualToString:@"Build Targets"])
     {
-      ASSIGN(searchItems,[project buildTargets]);
+      ASSIGN(searchItems,[NSMutableArray arrayWithArray:[project buildTargets]]);
     }
   else  
     {
