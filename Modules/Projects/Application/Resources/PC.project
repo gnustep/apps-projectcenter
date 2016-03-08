@@ -36,6 +36,7 @@
     PROJECT_NAME = "";
     PROJECT_TYPE = "Application";
     PROJECT_URL = "";
+    BUNDLE_IDENTIFIER = "";
     SEARCH_HEADER_DIRS = ();
     SEARCH_LIB_DIRS = ();
     SUBPROJECTS = ();
