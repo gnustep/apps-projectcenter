@@ -1,3 +1,8 @@
+2016-03-08 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectLauncher.m
+	Update debug executable path search to run, make it work on windows.
+
 2015-11-09 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectInspector.m
