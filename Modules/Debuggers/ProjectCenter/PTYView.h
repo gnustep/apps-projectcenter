@@ -26,10 +26,13 @@
 @interface PTYView : NSTextView
 {
   NSTask *task;
-  NSFileHandle *stdinHandle;
-  NSFileHandle *stdoutHandle;
+  NSFileHandle *master_handle;
+  NSFileHandle *slave_handle;
   NSFileHandle *error_handle;
+  int master_fd, slave_fd;
 }
+
+- (int)openpty;
 
 - (void)logString:(NSString *)str
           newLine:(BOOL)newLine;

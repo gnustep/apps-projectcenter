@@ -1,3 +1,10 @@
+2016-03-15 18:47-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PTYView.h
+	* Modules/Debuggers/ProjectCenter/PTYView.m:
+	Undo previous change.  Move Riccardo's change to
+	branch ptyview_with_pipes.
+
 2016-03-14 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.h
