@@ -1,9 +1,10 @@
 /*
 **  PTYView
 **
-**  Copyright (c) 2008-2012 Free Software Foundation
+**  Copyright (c) 2008-2016 Free Software Foundation
 **
-**  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**  Author: Gregory Casamento <greg.casamento@gmail.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -45,113 +46,14 @@
 #include <stdlib.h>
 #include <string.h>
 
+#import "PTYView.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-/* check for solaris */
-#if defined (__SVR4) && defined (__sun)
-#define __SOLARIS__ 1
-#define USE_FORKPTY_REPLACEMENT 1
-#endif
-
-#if defined(__SOLARIS__)
-#include <stropts.h>
-#endif
-
-
-#if !(defined (__NetBSD__)) && !(defined (__SOLARIS__)) && !(defined (__OpenBSD__)) && !(defined(__FreeBSD__))
-#  include <pty.h>
-#endif
-
-#import "PTYView.h"
-
-#ifdef USE_FORKPTY_REPLACEMENT
-int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, const struct winsize *winp)
-{
-    int fdm, fds;
-    char *slaveName;
-    
-    fdm = open("/dev/ptmx", O_RDWR); /* open master */
-    if (fdm == -1)
-    {
-    	perror("openpty:open(master)");
-	return -1;
-    }
-    if(grantpt(fdm))                    /* grant access to the slave */
-    {
-    	perror("openpty:grantpt(master)");
-	close(fdm);
-	return -1;
-    }
-    if(unlockpt(fdm))                /* unlock the slave terminal */
-    {
-    	perror("openpty:unlockpt(master)");
-	close(fdm);
-	return -1;
-    }
-    
-    slaveName = ptsname(fdm);        /* get name of the slave */
-    if (slaveName == NULL)
-    {
-    	perror("openpty:ptsname(master)");
-	close(fdm);
-	return -1;
-    }
-    if (name)                        /* of name ptr not null, copy it name back */
-        strcpy(name, slaveName);
-    
-    fds = open(slaveName, O_RDWR | O_NOCTTY); /* open slave */
-    if (fds == -1)
-    {
-    	perror("openpty:open(slave)");
-	close (fdm);
-	return -1;
-    }
-    
-    /* ldterm and ttcompat are automatically pushed on the stack on some systems*/
-#ifdef __SOLARIS__
-    if (ioctl(fds, I_PUSH, "ptem") == -1) /* pseudo terminal module */
-    {
-    	perror("openpty:ioctl(I_PUSH, ptem");
-	close(fdm);
-	close(fds);
-	return -1;
-    }
-    if (ioctl(fds, I_PUSH, "ldterm") == -1)  /* ldterm must stay atop ptem */
-    {
-	perror("forkpty:ioctl(I_PUSH, ldterm");
-	close(fdm);
-	close(fds);
-	return -1;
-    }
-#endif
-    
-    /* set terminal parameters if present */
-    // if (termp)
-    //	ioctl(fds, TCSETS, termp);
-    //if (winp)
-    //    ioctl(fds, TIOCSWINSZ, winp);
-    
-    *amaster = fdm;
-    *aslave = fds;
-    return 0;
-}
-#endif
 
 @implementation PTYView
-/**
- * Creates master device. 
- */
-- (int) openpty
-{
-  if (openpty(&master_fd, &slave_fd, NULL, NULL, NULL) == -1)
-    {
-      NSLog(@"Call to openpty(...) failed.");
-    }
-  return master_fd;
-}
 
 /**
  * Log string to the view.
@@ -205,7 +107,7 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 - (void) logStdOut:(NSNotification *)aNotif
 {
   NSData *data;
-  NSFileHandle *handle = master_handle;
+  NSFileHandle *handle = stdoutHandle;
 
   if ((data = [handle availableData]) && [data length] > 0)
     {
@@ -284,74 +186,73 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
       withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
+  NSPipe *inPipe;
+  NSPipe *outPipe;
+  
   task = [[NSTask alloc] init];
   [task setArguments: array];
   [task setCurrentDirectoryPath: directory];
   [task setLaunchPath: path];
 
-  master_fd = [self openpty];
-  if(master_fd > 0)
+  inPipe = [NSPipe pipe];
+  outPipe = [NSPipe pipe];
+  stdinHandle = [[inPipe fileHandleForWriting] retain];
+  stdoutHandle = [[outPipe fileHandleForReading] retain];
+  [task setStandardOutput: outPipe];
+  [task setStandardInput: inPipe];
+
+  [stdoutHandle waitForDataInBackgroundAndNotify];
+
+  // Log standard error, if requested.
+  if(logError)
     {
-      if(slave_fd > 0)
-	{
-	  slave_handle = [[NSFileHandle alloc] initWithFileDescriptor: slave_fd]; 
-	  master_handle = [[NSFileHandle alloc] initWithFileDescriptor: master_fd];
-	  [task setStandardOutput: slave_handle];
-	  [task setStandardInput: slave_handle];
+      [task setStandardError: [NSPipe pipe]];
+      error_handle = [[task standardError] fileHandleForReading];
+      [error_handle waitForDataInBackgroundAndNotify];
 
-	  [master_handle waitForDataInBackgroundAndNotify];
-
-	  // Log standard error, if requested.
-	  if(logError)
-	    {
-	      [task setStandardError: [NSPipe pipe]];
-	      error_handle = [[task standardError] fileHandleForReading];
-	      [error_handle waitForDataInBackgroundAndNotify];
-
-	      [NOTIFICATION_CENTER addObserver:self 
-				   selector:@selector(logErrOut:)
-				   name:NSFileHandleDataAvailableNotification
-				   object:error_handle];
-	    }
-
-	  // set up notifications to get data.
-	  [NOTIFICATION_CENTER addObserver:self 
-			       selector:@selector(logStdOut:)
-			       name:NSFileHandleDataAvailableNotification
-			       object:master_handle];
-
-
-	  [NOTIFICATION_CENTER addObserver:self 
-			       selector:@selector(taskDidTerminate:) 
-			       name:NSTaskDidTerminateNotification
-			       object:task];
-
-	  // run the task...
-	  NS_DURING
-	    {
-	      [self logString: [self startMessage]
-		    newLine:YES];
-	      [task launch];
-	    }
-	  NS_HANDLER
-	    {
-	      NSRunAlertPanel(@"Problem Launching Debugger",
-			      [localException reason],
-			      @"OK", nil, nil, nil);
-	      
-	      
-	      NSLog(@"Task Terminated Unexpectedly...");
-	      [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
-		    newLine:YES];      
-	      
-	      //Clean up after task is terminated
-	      [[NSNotificationCenter defaultCenter] 
-		postNotificationName: NSTaskDidTerminateNotification
-		object: task];
-	    }
-	  NS_ENDHANDLER
-	}
+      [NOTIFICATION_CENTER addObserver:self 
+			      selector:@selector(logErrOut:)
+				  name:NSFileHandleDataAvailableNotification
+				object:error_handle];
     }
+
+  // set up notifications to get data.
+  [NOTIFICATION_CENTER addObserver:self 
+			  selector:@selector(logStdOut:)
+			      name:NSFileHandleDataAvailableNotification
+			    object:stdoutHandle];
+
+
+  [NOTIFICATION_CENTER addObserver:self 
+			  selector:@selector(taskDidTerminate:) 
+			      name:NSTaskDidTerminateNotification
+			    object:task];
+
+  // run the task...
+  NS_DURING
+    {
+      [self logString: [self startMessage]
+	      newLine:YES];
+      [task launch];
+    }
+  NS_HANDLER
+    {
+      NSRunAlertPanel(@"Problem Launching Debugger",
+		      [localException reason],
+		      @"OK", nil, nil, nil);
+	      
+	      
+      NSLog(@"Task Terminated Unexpectedly...");
+      [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
+	      newLine:YES];      
+	      
+      //Clean up after task is terminated
+      [[NSNotificationCenter defaultCenter] 
+		postNotificationName: NSTaskDidTerminateNotification
+			      object: task];
+    }
+  NS_ENDHANDLER
+
 }
 
 - (void) terminate
@@ -374,7 +275,8 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
   unichar *str = (unichar *)[string cStringUsingEncoding: [NSString defaultCStringEncoding]];
   int len = strlen((char *)str);
   NSData *data = [NSData dataWithBytes: str length: len];
-  [master_handle writeData: data];  
+  [stdinHandle writeData: data];
+  [stdinHandle synchronizeFile];
 }
 
 /**
@@ -383,7 +285,7 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 - (void) putChar:(unichar)ch
 {
   NSData *data = [NSData dataWithBytes: &ch length: 1];
-  [master_handle writeData: data];
+  [stdinHandle writeData: data];
 } 
 
 - (void) interrupt
