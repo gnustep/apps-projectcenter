@@ -302,18 +302,26 @@
     
     chars = [theEvent characters];
     if ([chars length] == 1)
-    {
+      {
         unichar c;
         c = [chars characterAtIndex: 0];
+
+        //        NSLog(@"char: %d", c);
 
 	if (c == 3) // ETX, Control-C
 	  {
 	    [self interrupt];  // send the interrupt signal to the subtask
 	  }
+        if (c == 13) // CR
+          {
+            [self putString: @"\n"];
+          }
 	else
 	  {
-	    [self putChar: c];
+	    [self putString: chars];
 	  }
-    }    
+      }
+    else
+      NSLog(@"characters: |%@|", chars);
 }
 @end
