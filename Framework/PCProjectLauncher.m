@@ -284,6 +284,8 @@ enum {
 			    fileName: [executablePath stringByDeletingLastPathComponent]];
   [debugger debugExecutableAtPath: executablePath
 	    withDebugger: gdbPath];
+  if (!debugger)
+    NSLog(@"No debugger module found");
 
   // turn debug button off...
   // [debugButton setState:NSOffState];
