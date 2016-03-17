@@ -144,7 +144,7 @@
   // if the line is not filtered, print it...
   if(printLine)
     {
-      [super logString: str newLine: newLine];
+      [super logString: str newLine: newLine withColor:debuggerColor];
     }
 }
 

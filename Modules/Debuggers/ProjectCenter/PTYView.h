@@ -29,12 +29,16 @@
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;
   NSFileHandle *error_handle;
+
+  NSColor *userInputColor;
+  NSColor *debuggerColor;
+  NSColor *messageColor;
+  NSColor *errorColor;
 }
 
 - (void)logString:(NSString *)str
-          newLine:(BOOL)newLine;
-
-- (void)logData:(NSData *)data;
+          newLine:(BOOL)newLine
+        withColor:(NSColor *)color;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 

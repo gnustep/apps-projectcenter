@@ -31,17 +31,6 @@
 #include <fcntl.h>
 #include <sys/types.h>
 
-#if defined (__FreeBSD__)
-#include <sys/ioctl.h>
-#include <termios.h>
-#include <libutil.h>
-#elif defined (__OpenBSD__)
-#include <termios.h>
-#include <util.h>
-#else
-#include <sys/termios.h>
-#endif
-
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
@@ -55,51 +44,74 @@
 
 @implementation PTYView
 
+- (void)commonInitCode
+{
+  userInputColor = [[NSColor blueColor] retain];
+  debuggerColor = [[NSColor blackColor] retain];
+  messageColor = [[NSColor brownColor] retain];
+  errorColor = [[NSColor redColor] retain];
+}
+
+- (id)initWithCoder:(NSCoder *)coder
+{
+  if ((self = [super initWithCoder:coder]))
+    {
+      [self commonInitCode];
+    }
+  return self;
+}
+
+
+- (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer *)container
+{
+  if ((self = [super initWithFrame:frameRect textContainer:container]))
+    {
+      [self commonInitCode];
+    }
+  return self;
+}
+
+
 /**
  * Log string to the view.
  */
 - (void) logString:(NSString *)str
 	   newLine:(BOOL)newLine
+         withColor:(NSColor *)color
 {
-  NSRange range;
-
-  [self replaceCharactersInRange:
-    NSMakeRange([[self string] length],0) withString:str];
+  NSMutableDictionary *textAttributes;
+  NSAttributedString *attrStr;
 
   if (newLine)
     {
-      [self replaceCharactersInRange:
-	NSMakeRange([[self string] length], 0) withString:@"\n"];
+      str = [str stringByAppendingString:@"\n"];
+    }
+
+  textAttributes = nil;
+  if (color)
+    {
+      textAttributes = [NSMutableDictionary dictionary];
+      [textAttributes  setObject:color forKey:NSForegroundColorAttributeName];
+    }
+
+  if (textAttributes)
+    {
+      attrStr = [[NSAttributedString alloc] initWithString: str
+                                                attributes: textAttributes];
+    }
+  else
+    {
+      attrStr = [[NSAttributedString alloc] initWithString: str];
     }
   
-  //
-  // Is it backspace?  If so, remove one character from the terminal to reflect
-  // the deletion.   For some reason backspace sends multiple characters, so I have to remove
-  // one more character than what is sent in order to appropriately delete from the buffer.
-  //
-  range = [str rangeOfString: @"\b"];
-  if (range.location != NSNotFound)
-    {
-      NSString *newString = [[self string] substringToIndex: [[self string] length] - 4];
-      [self setString: newString];
-    }
+  [[self textStorage] appendAttributedString: attrStr];
+  [attrStr release];
+
 
   [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
   [self setNeedsDisplay:YES];
 }
 
-/**
- * Log data.
- */
-- (void) logData:(NSData *)data
-{
-  NSString *dataString;
-  dataString = [[NSString alloc] 
-		 initWithData:data 
-		 encoding:[NSString defaultCStringEncoding]];
-  [self logString: dataString newLine: NO];
-  RELEASE(dataString);
-}
 
 /**
  * Log standard out.
@@ -111,7 +123,12 @@
 
   if ((data = [handle availableData]) && [data length] > 0)
     {
-      [self logData: data];
+      NSString *dataString;
+      dataString = [[NSString alloc] 
+                     initWithData:data 
+                         encoding:[NSString defaultCStringEncoding]];
+      [self logString: dataString newLine: NO withColor:debuggerColor];
+      RELEASE(dataString);
     }
   
   if (task)
@@ -136,8 +153,13 @@
 
   if ((data = [handle availableData]) && [data length] > 0)
     {
-      // [self logString: @"\n" newLine: NO];
-      [self logData: data];
+      NSString *dataString;
+  
+      dataString = [[NSString alloc] 
+                     initWithData:data
+                         encoding:[NSString defaultCStringEncoding]];
+      [self logString: dataString newLine: NO withColor:errorColor];
+      RELEASE(dataString);
     }
 
   if (task)
@@ -159,7 +181,8 @@
 {
   NSLog(@"Task Terminated...");
   [self logString: [self stopMessage]
-	newLine:YES];
+	newLine:YES
+        withColor:messageColor];
 }
 
 /**
@@ -232,7 +255,8 @@
   NS_DURING
     {
       [self logString: [self startMessage]
-	      newLine:YES];
+	      newLine:YES
+            withColor:messageColor];
       [task launch];
     }
   NS_HANDLER
@@ -244,7 +268,8 @@
 	      
       NSLog(@"Task Terminated Unexpectedly...");
       [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
-	      newLine:YES];      
+	      newLine:YES
+            withColor:messageColor];      
 	      
       //Clean up after task is terminated
       [[NSNotificationCenter defaultCenter] 
@@ -267,6 +292,10 @@
 {
   [NOTIFICATION_CENTER removeObserver: self]; 
   [self terminate];
+  [userInputColor release];
+  [debuggerColor release];
+  [messageColor release];
+  [errorColor release];
   [super dealloc];
 }
 
@@ -279,11 +308,26 @@
   [stdinHandle synchronizeFile];
 }
 
-/* for input as typed from the user, it needs to be shown too*/
+/* for input as typed from the user */
 - (void) typeString: (NSString *)string
 {
+  NSUInteger strLen;
+
+  strLen = [string length];
   [self putString:string];
-  [self logString:string newLine:NO];
+
+  // if we have a single backspace or delete character
+  if (strLen == 1 && [string characterAtIndex:strLen-1] == '\177')
+    {
+      NSUInteger textLen;
+
+      textLen = [[self string] length];
+      [self setSelectedRange:NSMakeRange(textLen-1, 1)];
+      [self delete:nil];
+      return;
+    }
+  
+  [self logString:string newLine:NO withColor:userInputColor];
 }
 
 /**
@@ -306,7 +350,7 @@
 - (void) keyDown: (NSEvent*)theEvent
 {
     NSString *chars;
-    
+
     chars = [theEvent characters];
     if ([chars length] == 0)
       {
@@ -315,14 +359,13 @@
       {
         unichar c;
         c = [chars characterAtIndex: 0];
-
-        //        NSLog(@"char: %d", c);
+        //NSLog(@"char: %d", c);
 
 	if (c == 3) // ETX, Control-C
 	  {
 	    [self interrupt];  // send the interrupt signal to the subtask
 	  }
-        if (c == 13) // CR
+        else if (c == 13) // CR
           {
             [self typeString: @"\n"];
           }
