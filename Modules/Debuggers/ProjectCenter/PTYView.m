@@ -87,22 +87,16 @@
       str = [str stringByAppendingString:@"\n"];
     }
 
-  textAttributes = nil;
+  textAttributes = [NSMutableDictionary dictionary];
+  [textAttributes setObject:[NSFont userFixedPitchFontOfSize:0] forKey:NSFontAttributeName];
   if (color)
     {
-      textAttributes = [NSMutableDictionary dictionary];
+
       [textAttributes  setObject:color forKey:NSForegroundColorAttributeName];
     }
 
-  if (textAttributes)
-    {
-      attrStr = [[NSAttributedString alloc] initWithString: str
-                                                attributes: textAttributes];
-    }
-  else
-    {
-      attrStr = [[NSAttributedString alloc] initWithString: str];
-    }
+  attrStr = [[NSAttributedString alloc] initWithString: str
+                                            attributes: textAttributes];
   
   [[self textStorage] appendAttributedString: attrStr];
   [attrStr release];
