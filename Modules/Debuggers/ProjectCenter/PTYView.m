@@ -279,6 +279,13 @@
   [stdinHandle synchronizeFile];
 }
 
+/* for input as typed from the user, it needs to be shown too*/
+- (void) typeString: (NSString *)string
+{
+  [self putString:string];
+  [self logString:string newLine:NO];
+}
+
 /**
  * Put a single character into the stream.
  */
@@ -301,7 +308,10 @@
     NSString *chars;
     
     chars = [theEvent characters];
-    if ([chars length] == 1)
+    if ([chars length] == 0)
+      {
+      }
+    else if ([chars length] == 1)
       {
         unichar c;
         c = [chars characterAtIndex: 0];
@@ -314,11 +324,11 @@
 	  }
         if (c == 13) // CR
           {
-            [self putString: @"\n"];
+            [self typeString: @"\n"];
           }
 	else
 	  {
-	    [self putString: chars];
+	    [self typeString: chars];
 	  }
       }
     else
