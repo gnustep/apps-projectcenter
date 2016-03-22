@@ -1,9 +1,10 @@
 /*
 **  PCDebugger
 **
-**  Copyright (c) 2008-2015
+**  Copyright (c) 2008-2016
 **
-**  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**  Author: Gregory Casamento <greg.casamento@gmail.com>
+**          Riccardo Mottola <rm@gnu.org>>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -26,7 +27,7 @@
 
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import "PCDebuggerViewDelegateProtocol.h"
-#import "PTYView.h"
+#import "PipeView.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]

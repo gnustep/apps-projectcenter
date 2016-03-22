@@ -35,7 +35,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#import "PTYView.h"
+#import "PipeView.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
