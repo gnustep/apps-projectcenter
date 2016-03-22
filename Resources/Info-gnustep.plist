@@ -17,6 +17,7 @@
     "Riccardo Mottola");
   NSIcon = "ProjectCenter.tiff";
   NSExecutable = ProjectCenter;
+  CFBundleIdentifier = org.gnustep.ProjectCenter;
   NSMainNibFile = ProjectCenter.gorm;
   NSPrincipalClass = NSApplication;
   NSRole = "Editor";
