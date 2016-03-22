@@ -1,3 +1,9 @@
+2016-03-23 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCBundleManager.m
+	* Framework/PCProjectLauncher.m
+	Merge from branch: check bundle loading and warn.
+
 2016-03-15 18:47-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PTYView.h

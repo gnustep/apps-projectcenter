@@ -41,7 +41,7 @@
 #endif
 
 #ifndef IMAGE
-#define IMAGE(X) [[[NSImage alloc] initWithContentsOfFile:[[NSBundle mainBundle] pathForImageResource:(X)]] autorelease]
+#define IMAGE(X) [NSImage imageNamed: X]
 #endif
 
 enum {
@@ -284,6 +284,8 @@ enum {
 			    fileName: [executablePath stringByDeletingLastPathComponent]];
   [debugger debugExecutableAtPath: executablePath
 	    withDebugger: gdbPath];
+  if (!debugger)
+    NSLog(@"No debugger module found");
 
   // turn debug button off...
   // [debugButton setState:NSOffState];

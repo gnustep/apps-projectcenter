@@ -129,6 +129,7 @@
   reqBundlesInfo = [self infoForBundlesType:extension];
   enumerator = [[reqBundlesInfo allKeys] objectEnumerator];
 
+  infoTable = nil;
   while ((bundlePath = [enumerator nextObject]))
     {
       infoTable = [reqBundlesInfo objectForKey:bundlePath];
@@ -167,6 +168,7 @@
   NSString     *bundlePath;
   NSDictionary *infoTable;
 
+  infoTable = nil;
   while ((bundlePath = [enumerator nextObject]))
     {
       infoTable = [reqBundlesInfo objectForKey:bundlePath];
@@ -235,6 +237,7 @@
 
   if (!className)
     {
+      NSLog(@"Bundle for class called with empty className");
       return nil;
     }
 
