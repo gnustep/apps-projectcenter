@@ -27,7 +27,7 @@
 
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import "PCDebuggerViewDelegateProtocol.h"
-#import "PipeView.h"
+#import "PipeDelegate.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]

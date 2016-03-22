@@ -39,7 +39,7 @@ ProjectCenter_HEADERS= \
     PCDebugger.h \
     PCDebugggerView.h \
     PCDebuggerViewDelegateProtocol.h \
-    PipeView.h
+    PipeDelegate.h
 
 #
 # Class files
@@ -47,7 +47,7 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCDebugger.m \
     PCDebuggerView.m \
-    PipeView.m
+    PipeDelegate.m
 
 
 #ADDITIONAL_NATIVE_LIBS += util
