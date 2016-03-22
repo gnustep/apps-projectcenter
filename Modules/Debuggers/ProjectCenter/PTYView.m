@@ -1,5 +1,5 @@
 /*
-**  PTYView
+**  PipeDelegate.m
 **
 **  Copyright (c) 2008-2016 Free Software Foundation
 **
@@ -42,35 +42,55 @@
 #endif
 
 
-@implementation PTYView
+@implementation PipeDelegate
 
-- (void)commonInitCode
-{
-  userInputColor = [[NSColor blueColor] retain];
-  debuggerColor = [[NSColor blackColor] retain];
-  messageColor = [[NSColor brownColor] retain];
-  errorColor = [[NSColor redColor] retain];
-}
 
-- (id)initWithCoder:(NSCoder *)coder
+- (id)init
 {
-  if ((self = [super initWithCoder:coder]))
+  if ((self = [super init]))
     {
-      [self commonInitCode];
+      userInputColor = [[NSColor blueColor] retain];
+      debuggerColor = [[NSColor blackColor] retain];
+      messageColor = [[NSColor brownColor] retain];
+      errorColor = [[NSColor redColor] retain];
     }
   return self;
 }
 
-
-- (id)initWithFrame:(NSRect)frameRect textContainer:(NSTextContainer *)container
+- (NSTextView *)textView
 {
-  if ((self = [super initWithFrame:frameRect textContainer:container]))
-    {
-      [self commonInitCode];
-    }
-  return self;
+  return tView;
 }
 
+- (void)setTextView: (NSTextView *)tv
+{
+  if (tView != tv)
+    {
+      [tView release];
+      tView = tv;
+      [tView retain];
+    }
+}
+
+- (NSColor *)userInputColor
+{
+  return userInputColor;
+}
+
+- (NSColor *)debuggerColor
+{
+  return debuggerColor;
+}
+
+- (NSColor *)messageColor
+{
+  return messageColor;
+}
+
+- (NSColor *)errorColor
+{
+  return errorColor;
+}
 
 /**
  * Log string to the view.
@@ -98,12 +118,12 @@
   attrStr = [[NSAttributedString alloc] initWithString: str
                                             attributes: textAttributes];
   
-  [[self textStorage] appendAttributedString: attrStr];
+  [[tView textStorage] appendAttributedString: attrStr];
   [attrStr release];
 
 
-  [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
-  [self setNeedsDisplay:YES];
+  [tView scrollRangeToVisible:NSMakeRange([[tView string] length], 0)];
+  [tView setNeedsDisplay:YES];
 }
 
 
@@ -290,6 +310,7 @@
   [debuggerColor release];
   [messageColor release];
   [errorColor release];
+  [tView release];
   [super dealloc];
 }
 
@@ -315,9 +336,9 @@
     {
       NSUInteger textLen;
 
-      textLen = [[self string] length];
-      [self setSelectedRange:NSMakeRange(textLen-1, 1)];
-      [self delete:nil];
+      textLen = [[tView string] length];
+      [tView setSelectedRange:NSMakeRange(textLen-1, 1)];
+      [tView delete:nil];
       return;
     }
   

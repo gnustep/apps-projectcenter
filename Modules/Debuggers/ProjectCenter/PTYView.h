@@ -1,9 +1,10 @@
 /*
-**  PTYView
+**  PipeDelegate
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2016
 **
-**  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**  Author: Gregory Casamento <greg.casamento@gmail.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -23,8 +24,11 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@interface PTYView : NSTextView
+#import "PCDebuggerViewDelegateProtocol.h"
+
+@interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
 {
+  NSTextView *tView;
   NSTask *task;
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;
@@ -36,10 +40,6 @@
   NSColor *errorColor;
 }
 
-- (void)logString:(NSString *)str
-          newLine:(BOOL)newLine
-        withColor:(NSColor *)color;
-
 - (void)logStdOut:(NSNotification *)aNotif;
 
 - (void)logErrOut:(NSNotification *)aNotif;
@@ -50,16 +50,6 @@
 
 - (NSString *) stopMessage;
 
-- (void) runProgram: (NSString *)path
- inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
-   logStandardError: (BOOL)logError;
-
-- (void) terminate;
-
-- (void) interrupt;
-
-- (void) putString: (NSString *)string;
-
 - (void) putChar:(unichar)ch;
+
 @end

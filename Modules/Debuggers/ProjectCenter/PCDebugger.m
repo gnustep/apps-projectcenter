@@ -25,6 +25,8 @@
 #import "PCDebuggerView.h"
 
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
+#import "PCDebuggerViewDelegateProtocol.h"
+#import "PTYView.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -122,6 +124,7 @@ static NSImage  *downImage = nil;
 {
   if((self = [super init]) != nil)
     {
+      id <PCDebuggerViewDelegateProtocol> viewDelegate;
       // initialization here...
       if([NSBundle loadNibNamed: @"PCDebugger" owner: self] == NO)
 	{
@@ -129,6 +132,10 @@ static NSImage  *downImage = nil;
 	}
 
       [(PCDebuggerView *)debuggerView setDebugger:self];
+      viewDelegate = [[PipeDelegate alloc] init];
+      [debuggerView setDelegate:viewDelegate];
+      [viewDelegate setTextView:debuggerView];
+      [viewDelegate release];
     }
   return self;
 }

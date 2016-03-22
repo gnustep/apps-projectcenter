@@ -38,6 +38,7 @@ ProjectCenter_RESOURCE_FILES= \
 ProjectCenter_HEADERS= \
     PCDebugger.h \
     PCDebugggerView.h \
+    PCDebuggerViewDelegateProtocol.h \
     PTYView.h
 
 #

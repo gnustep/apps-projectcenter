@@ -1,10 +1,9 @@
 /*
-**  PCDebuggerView
+**  PCDebuggerViewDelegateProtocol.h
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2016
 **
-**  Author: Gregory Casamento <greg.casamento@gmail.com>
-**          Riccardo Mottola <rm@gnu.org>
+**  Author: Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -21,32 +20,36 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#import <Foundation/NSString.h>
-#import <AppKit/NSTextView.h>
+@class NSColor;
+@class NSTextView;
+@class NSArray;
+@class NSString;
 
-#import "PCDebuggerViewDelegateProtocol.h"
+@protocol PCDebuggerViewDelegateProtocol
 
-@class PCDebugger;
+- (NSColor *)userInputColor;
+- (NSColor *)debuggerColor;
+- (NSColor *)messageColor;
+- (NSColor *)errorColor;
 
-@interface PCDebuggerView : NSTextView
-{
-  PCDebugger *debugger;
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
-  NSString *currentFile;
-  int subProcessId;
-}
-
-- (void) setDebugger:(PCDebugger *)theDebugger;
-- (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
-- (void) setCurrentFile: (NSString *)fileName;
-- (NSString *) currentFile;
-- (int) subProcessId;
+- (NSTextView *)textView;
+- (void)setTextView: (NSTextView *)tv;
 
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
       withArguments: (NSArray *)array
    logStandardError: (BOOL)logError;
 
+- (void)logString:(NSString *)str
+          newLine:(BOOL)newLine
+        withColor:(NSColor *)color;
+
+- (void) terminate;
+
+- (void) interrupt;
+
 - (void) putString: (NSString *)string;
+
+- (void) keyDown: (NSEvent*)theEvent;
 
 @end
