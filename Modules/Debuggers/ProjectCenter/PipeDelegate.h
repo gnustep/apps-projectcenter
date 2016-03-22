@@ -1,5 +1,5 @@
 /*
-**  PCDebuggerView
+**  PipeDelegate
 **
 **  Copyright (c) 2008-2016
 **
@@ -21,32 +21,35 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#import <Foundation/NSString.h>
-#import <AppKit/NSTextView.h>
+#import <Foundation/Foundation.h>
+#import <AppKit/AppKit.h>
 
 #import "PCDebuggerViewDelegateProtocol.h"
 
-@class PCDebugger;
-
-@interface PCDebuggerView : NSTextView
+@interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
 {
-  PCDebugger *debugger;
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
-  NSString *currentFile;
-  int subProcessId;
+  NSTextView *tView;
+  NSTask *task;
+  NSFileHandle *stdinHandle;
+  NSFileHandle *stdoutHandle;
+  NSFileHandle *error_handle;
+
+  NSColor *userInputColor;
+  NSColor *debuggerColor;
+  NSColor *messageColor;
+  NSColor *errorColor;
 }
 
-- (void) setDebugger:(PCDebugger *)theDebugger;
-- (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
-- (void) setCurrentFile: (NSString *)fileName;
-- (NSString *) currentFile;
-- (int) subProcessId;
+- (void)logStdOut:(NSNotification *)aNotif;
 
-- (void) runProgram: (NSString *)path
- inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
-   logStandardError: (BOOL)logError;
+- (void)logErrOut:(NSNotification *)aNotif;
 
-- (void) putString: (NSString *)string;
+- (void) taskDidTerminate: (NSNotification *)notif;
+
+- (NSString *) startMessage;
+
+- (NSString *) stopMessage;
+
+- (void) putChar:(unichar)ch;
 
 @end

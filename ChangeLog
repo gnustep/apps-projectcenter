@@ -1,5 +1,15 @@
 2016-03-23 Riccardo Mottola <rm@gnu.org>
 
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.h
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerViewDelegateProtocol.h
+	Merge in from pipes branch: stdio/stdout over pipes handled in a separate delegate class.
+
+2016-03-23 Riccardo Mottola <rm@gnu.org>
+
 	* Framework/PCBundleManager.m
 	* Framework/PCProjectLauncher.m
 	Merge from branch: check bundle loading and warn.

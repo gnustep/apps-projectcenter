@@ -1,9 +1,10 @@
 /*
 **  PCDebuggerView
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2016
 **
-**  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**  Author: Gregory Casamento <greg.casamento@gmail.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -39,6 +40,17 @@
 {
   debugger = theDebugger;
 }
+
+- (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd
+{
+  if (viewDelegate != vd)
+    {
+      [viewDelegate release];
+      viewDelegate = vd;
+      [viewDelegate retain];
+    }
+}
+
 
 /**
  * Log string to the view.
@@ -144,7 +156,7 @@
   // if the line is not filtered, print it...
   if(printLine)
     {
-      [super logString: str newLine: newLine];
+      [viewDelegate logString: str newLine: newLine withColor:[viewDelegate debuggerColor]];
     }
 }
 
@@ -157,38 +169,6 @@
 {
   return currentFile;
 }
-
-/**
- * lookup the process id.
- */
-/*
-- (int) subProcessId
-{
-  int task_pid = [task processIdentifier];
-  int child_pid = 0;
-  NSArray *entries = [[NSFileManager defaultManager] directoryContentsAtPath: @"/proc"];
-  NSEnumerator *en = [entries objectEnumerator];
-  NSString *entry = nil;
-  
-  // FIXME: I'm looking for a generic way to do this, what we have here is very /proc specific.
-  // which I don't like since it ties this functionality to systems which have /proc.
-  while((entry = [en nextObject]) != nil)
-    {
-      int pid = [entry intValue];
-      if (pid != 0)
-	{
-	  int ppid = getppid(pid);
-	  if (ppid == task_pid)
-	    {
-	      child_pid = pid;
-	      break;
-	    }
-	}
-    }
-  
-  return child_pid;
-}
-*/
 
 - (int) subProcessId
 {
@@ -204,15 +184,41 @@
       kill(pid,SIGINT);
 #endif
     }
+  [super putString:@"-exec-interrupt"];
 }
 
 - (void) terminate
 {
-  [super terminate];
+  [viewDelegate terminate];
 }
 
 - (void) mouseDown: (NSEvent *)event
 {
   // do nothing...
 }
+
+/**
+ * Start the program.
+ */
+- (void) runProgram: (NSString *)path
+ inCurrentDirectory: (NSString *)directory
+      withArguments: (NSArray *)array
+   logStandardError: (BOOL)logError
+{
+  [viewDelegate runProgram: path
+        inCurrentDirectory: directory
+             withArguments: array
+          logStandardError: logError];
+}
+
+- (void) putString: (NSString *)string
+{
+  [viewDelegate putString:string];
+}
+
+- (void) keyDown: (NSEvent*)theEvent
+{
+  [viewDelegate keyDown:theEvent];
+}
+
 @end

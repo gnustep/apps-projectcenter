@@ -38,7 +38,9 @@ ProjectCenter_RESOURCE_FILES= \
 ProjectCenter_HEADERS= \
     PCDebugger.h \
     PCDebugggerView.h \
-    PTYView.h
+    PCDebuggerViewDelegateProtocol.h \
+    PTYView.h \
+    PipeDelegate.h
 
 #
 # Class files
@@ -46,10 +48,11 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCDebugger.m \
     PCDebuggerView.m \
-    PTYView.m
+    PTYView.m \
+    PipeDelegate.m
 
 
-ADDITIONAL_NATIVE_LIBS += util
+#ADDITIONAL_NATIVE_LIBS += util
 
 include ../../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
