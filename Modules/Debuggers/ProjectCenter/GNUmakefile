@@ -39,7 +39,6 @@ ProjectCenter_HEADERS= \
     PCDebugger.h \
     PCDebugggerView.h \
     PCDebuggerViewDelegateProtocol.h \
-    PTYView.h \
     PipeDelegate.h
 
 #
@@ -48,10 +47,10 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCDebugger.m \
     PCDebuggerView.m \
-    PTYView.m \
     PipeDelegate.m
 
 
+#for PTYView
 #ADDITIONAL_NATIVE_LIBS += util
 
 include ../../GNUmakefile.bundles
