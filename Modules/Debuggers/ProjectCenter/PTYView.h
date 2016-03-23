@@ -1,7 +1,7 @@
 /*
 **  PTYView
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2016
 **
 **  Author: Gregory Casamento <greg_casamento@yahoo.com>
 **
@@ -23,8 +23,11 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-@interface PTYView : NSTextView
+#import "PCDebuggerViewDelegateProtocol.h"
+
+@interface PTYView : NSObject <PCDebuggerViewDelegateProtocol>
 {
+  NSTextView *tView;
   NSTask *task;
   NSFileHandle *master_handle;
   NSFileHandle *slave_handle;
@@ -33,9 +36,6 @@
 }
 
 - (int)openpty;
-
-- (void)logString:(NSString *)str
-          newLine:(BOOL)newLine;
 
 - (void)logData:(NSData *)data;
 

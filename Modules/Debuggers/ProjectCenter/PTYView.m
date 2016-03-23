@@ -1,9 +1,10 @@
 /*
 **  PTYView
 **
-**  Copyright (c) 2008-2012 Free Software Foundation
+**  Copyright (c) 2008-2016 Free Software Foundation
 **
-**  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**  Author: Gregory Casamento <greg.casamento@gmail.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -141,6 +142,22 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 #endif
 
 @implementation PTYView
+
+- (NSTextView *)textView
+{
+  return tView;
+}
+
+- (void)setTextView: (NSTextView *)tv
+{
+  if (tView != tv)
+    {
+      [tView release];
+      tView = tv;
+      [tView retain];
+    }
+}
+
 /**
  * Creates master device. 
  */
@@ -158,16 +175,17 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
  */
 - (void) logString:(NSString *)str
 	   newLine:(BOOL)newLine
+         withColor:(NSColor *)color
 {
   NSRange range;
 
-  [self replaceCharactersInRange:
-    NSMakeRange([[self string] length],0) withString:str];
+  [tView replaceCharactersInRange:
+    NSMakeRange([[tView string] length],0) withString:str];
 
   if (newLine)
     {
-      [self replaceCharactersInRange:
-	NSMakeRange([[self string] length], 0) withString:@"\n"];
+      [tView replaceCharactersInRange:
+	NSMakeRange([[tView string] length], 0) withString:@"\n"];
     }
   
   //
@@ -178,12 +196,12 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
   range = [str rangeOfString: @"\b"];
   if (range.location != NSNotFound)
     {
-      NSString *newString = [[self string] substringToIndex: [[self string] length] - 4];
-      [self setString: newString];
+      NSString *newString = [[tView string] substringToIndex: [[tView string] length] - 4];
+      [tView setString: newString];
     }
 
-  [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
-  [self setNeedsDisplay:YES];
+  [tView scrollRangeToVisible:NSMakeRange([[tView string] length], 0)];
+  [tView setNeedsDisplay:YES];
 }
 
 /**
@@ -195,7 +213,7 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
   dataString = [[NSString alloc] 
 		 initWithData:data 
 		 encoding:[NSString defaultCStringEncoding]];
-  [self logString: dataString newLine: NO];
+  [self logString: dataString newLine: NO withColor:nil];
   RELEASE(dataString);
 }
 
@@ -257,7 +275,8 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 {
   NSLog(@"Task Terminated...");
   [self logString: [self stopMessage]
-	newLine:YES];
+          newLine:YES
+        withColor:nil];
 }
 
 /**
@@ -330,7 +349,8 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 	  NS_DURING
 	    {
 	      [self logString: [self startMessage]
-		    newLine:YES];
+                      newLine:YES
+                    withColor:nil];
 	      [task launch];
 	    }
 	  NS_HANDLER
@@ -342,7 +362,8 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 	      
 	      NSLog(@"Task Terminated Unexpectedly...");
 	      [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
-		    newLine:YES];      
+                      newLine:YES
+                    withColor:nil];      
 	      
 	      //Clean up after task is terminated
 	      [[NSNotificationCenter defaultCenter] 
@@ -366,6 +387,7 @@ int openpty(int *amaster, int *aslave, char *name, const struct termios *termp, 
 {
   [NOTIFICATION_CENTER removeObserver: self]; 
   [self terminate];
+  [tView release];
   [super dealloc];
 }
 
