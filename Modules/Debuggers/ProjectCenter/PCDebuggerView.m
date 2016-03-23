@@ -184,7 +184,7 @@
       kill(pid,SIGINT);
 #endif
     }
-  [super putString:@"-exec-interrupt"];
+  [viewDelegate putString:@"-exec-interrupt"];
 }
 
 - (void) terminate
