@@ -72,7 +72,7 @@
   NSTableView             *docTypesList;
   IBOutlet NSTableColumn  *typeColumn;       // NSName
   IBOutlet NSTableColumn  *nameColumn;       // NSHumanReadableName
-  IBoutlet NSTableColumn  *extensionsColumn; // NSUnixExtensions
+  IBOutlet NSTableColumn  *extensionsColumn; // NSUnixExtensions
   IBOutlet NSTableColumn  *iconColumn;       // NSIcon
   IBOutlet NSTableColumn  *roleColumn;       // NSRole
   IBOutlet NSTableColumn  *classColumn;      // NSDocumentClass
