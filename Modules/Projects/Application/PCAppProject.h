@@ -70,12 +70,12 @@
   IBOutlet NSScrollView   *docTypesScroll;
 
   NSTableView             *docTypesList;
-  NSTableColumn           *typeColumn;       // NSName
-  NSTableColumn           *nameColumn;       // NSHumanReadableName
-  NSTableColumn           *extensionsColumn; // NSUnixExtensions
-  NSTableColumn           *iconColumn;       // NSIcon
-  NSTableColumn           *roleColumn;       // NSRole
-  NSTableColumn           *classColumn;      // NSDocumentClass
+  IBOutlet NSTableColumn  *typeColumn;       // NSName
+  IBOutlet NSTableColumn  *nameColumn;       // NSHumanReadableName
+  IBoutlet NSTableColumn  *extensionsColumn; // NSUnixExtensions
+  IBOutlet NSTableColumn  *iconColumn;       // NSIcon
+  IBOutlet NSTableColumn  *roleColumn;       // NSRole
+  IBOutlet NSTableColumn  *classColumn;      // NSDocumentClass
   NSMutableArray          *docTypesItems;
 
   IBOutlet NSTextField    *docTypeLabel;
