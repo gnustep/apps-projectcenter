@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2015 Free Software Foundation
+   Copyright (C) 2001-2016 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -69,7 +69,7 @@
   IBOutlet NSButton       *docBasedAppButton;
   IBOutlet NSScrollView   *docTypesScroll;
 
-  NSTableView             *docTypesList;
+  IBOutlet NSTableView    *docTypesList;
   IBOutlet NSTableColumn  *typeColumn;       // NSName
   IBOutlet NSTableColumn  *nameColumn;       // NSHumanReadableName
   IBOutlet NSTableColumn  *extensionsColumn; // NSUnixExtensions

@@ -7,6 +7,7 @@
 	    "clearHelpFile:",
 	    "clearMainNib:",
 	    "docFieldSet:",
+	    "newAction:",
 	    "removeDocType:",
 	    "setAppClass:",
 	    "setAppType:",
@@ -26,7 +27,8 @@
 	    "setAppClass:",
 	    "setAppType:",
 	    "setBundleIdentifier:",
-	    "setDocBasedApp:"
+	    "setDocBasedApp:",
+	    "showDocTypesPanel:"
 	);
 	Outlets = (
 	    projectAttributesView,
@@ -55,7 +57,13 @@
 	    docRoleLabel,
 	    docRoleField,
 	    docClassLabel,
-	    docClassField
+	    docClassField,
+	    classColumn,
+	    extensionsColumn,
+	    nameColumn,
+	    roleColumn,
+	    typeColumn,
+	    docTypesList
 	);
 	Super = PCProject;
     };
