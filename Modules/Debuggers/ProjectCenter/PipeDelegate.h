@@ -28,6 +28,7 @@
 
 @interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
 {
+  PCDebugger *debugger;
   NSTextView *tView;
   NSTask *task;
   NSFileHandle *stdinHandle;

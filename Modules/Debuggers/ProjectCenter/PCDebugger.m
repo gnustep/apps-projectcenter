@@ -136,6 +136,7 @@ static NSImage  *downImage = nil;
       viewDelegate = [[PipeDelegate alloc] init];
       [debuggerView setDelegate:viewDelegate];
       [viewDelegate setTextView:debuggerView];
+      [viewDelegate setDebugger:self];
       [viewDelegate release];
     }
   return self;

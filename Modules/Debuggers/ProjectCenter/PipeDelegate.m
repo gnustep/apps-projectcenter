@@ -36,6 +36,7 @@
 #include <string.h>
 
 #import "PipeDelegate.h"
+#import "PCDebugger.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -69,6 +70,21 @@
       [tView release];
       tView = tv;
       [tView retain];
+    }
+}
+
+- (PCDebugger *)debugger
+{
+  return debugger;
+}
+  
+- (void)setDebugger:(PCDebugger *)dbg
+{
+  if (debugger != dbg)
+    {
+      [debugger release];
+      debugger = dbg;
+      [debugger retain];
     }
 }
 

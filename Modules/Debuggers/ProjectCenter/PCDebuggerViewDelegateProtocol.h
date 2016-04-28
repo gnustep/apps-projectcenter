@@ -26,6 +26,7 @@
 @class NSTextView;
 @class NSArray;
 @class NSString;
+@class PCDebugger;
 
 @protocol PCDebuggerViewDelegateProtocol <NSObject>
 
@@ -36,6 +37,8 @@
 
 - (NSTextView *)textView;
 - (void)setTextView: (NSTextView *)tv;
+- (PCDebugger *)debugger;
+- (void)setDebugger:(PCDebugger *)dbg;
 
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
