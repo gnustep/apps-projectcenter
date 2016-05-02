@@ -400,6 +400,14 @@
           {
             [self typeString: @"\n"];
           }
+	else if (c == 127) // del (usually backspace)
+          {
+	    NSString *tss = [[tView textStorage] string];
+	    if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
+	      {
+		[self typeString: chars];
+	      }
+          }
 	else
 	  {
 	    [self typeString: chars];

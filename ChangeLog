@@ -4,6 +4,9 @@
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m
 	Refactor path to executablePath.
 
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	Do not permit deletion beyond the new line or the gdb prompt.
+
 2016-03-23 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m
