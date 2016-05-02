@@ -145,7 +145,7 @@ static NSImage  *downImage = nil;
 -(void) debugExecutableAtPath: (NSString *)filePath
 		 withDebugger: (NSString *)debugger
 {
-  ASSIGN(path,filePath);
+  ASSIGN(executablePath,filePath);
   ASSIGN(debuggerPath,debugger);
   [debuggerWindow setTitle: [NSString stringWithFormat: @"Debugger (%@)",filePath]];
   [self show];
@@ -160,8 +160,8 @@ static NSImage  *downImage = nil;
 - (void) startDebugger
 {
   [debuggerView runProgram: debuggerPath
-		inCurrentDirectory: [path stringByDeletingLastPathComponent]
-                withArguments: [[NSArray alloc] initWithObjects: @"-f", path, nil]
+		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
+                withArguments: [[NSArray alloc] initWithObjects: @"-f", executablePath, nil]
 		logStandardError: YES];
 }   
 
@@ -198,14 +198,14 @@ static NSImage  *downImage = nil;
   debuggerView = view;
 }
 
-- (NSString *)path
+- (NSString *)executablePath
 {
-  return path;
+  return executablePath;
 }
 
-- (void)setPath:(NSString *)p
+- (void)setExecutablePath:(NSString *)p
 {
-  ASSIGN(path,p);
+  ASSIGN(executablePath,p);
 }
 
 // action methods for toolbar...

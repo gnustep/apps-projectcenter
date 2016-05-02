@@ -1,7 +1,7 @@
 /*
 **  PCDebugger
 **
-**  Copyright (c) 2008
+**  Copyright (c) 2008-2016
 **
 **  Author: Gregory Casamento <greg_casamento@yahoo.com>
 **
@@ -32,10 +32,13 @@
   id             debuggerView;
   id             debuggerWindow;
   id             statusField;
-  NSString       *path;
+  NSString       *executablePath;
   NSString       *debuggerPath;
 }
 
 - (void) setStatus: (NSString *) status;
 - (NSString *) status;
+- (NSString *)executablePath;
+- (void)setExecutablePath:(NSString *)p;
+
 @end
