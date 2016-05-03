@@ -208,6 +208,28 @@ static NSImage  *downImage = nil;
   ASSIGN(executablePath,p);
 }
 
+// kill process
+- (void) interrupt
+{
+  int pid = [debuggerView subProcessId];
+  if(pid != 0)
+    {
+#ifndef	__MINGW32__
+      kill(pid,SIGINT);
+#else
+      // on windows we run tskill as a shell command
+      NSTask *t;
+      NSArray *args;
+
+      args = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%d", pid], nil];
+      t = [NSTask new];
+      [t setLaunchPath:@"tskill.exe"];
+      [t launch];
+      [t release];
+#endif
+    }
+}
+
 // action methods for toolbar...
 - (void) go: (id) sender
 {

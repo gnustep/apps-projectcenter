@@ -40,5 +40,6 @@
 - (NSString *) status;
 - (NSString *)executablePath;
 - (void)setExecutablePath:(NSString *)p;
+- (void) interrupt;
 
 @end

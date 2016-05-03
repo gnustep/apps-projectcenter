@@ -175,18 +175,6 @@
   return subProcessId;
 }
 
-- (void) interrupt
-{
-  int pid = [self subProcessId];
-  if(pid != 0)
-    {
-#ifndef	__MINGW32__
-      kill(pid,SIGINT);
-#endif
-    }
-  [viewDelegate putString:@"-exec-interrupt"];
-}
-
 - (void) terminate
 {
   [viewDelegate terminate];
