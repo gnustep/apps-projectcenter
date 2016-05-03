@@ -138,6 +138,8 @@ static NSImage  *downImage = nil;
       [viewDelegate setTextView:debuggerView];
       [viewDelegate setDebugger:self];
       [viewDelegate release];
+
+      subProcessId = 0;
     }
   return self;
 }
@@ -221,17 +223,16 @@ static NSImage  *downImage = nil;
 // kill process
 - (void) interrupt
 {
-  int pid = [debuggerView subProcessId];
-  if(pid != 0)
+  if(subProcessId != 0)
     {
 #ifndef	__MINGW32__
-      kill(pid,SIGINT);
+      kill(subProcessId,SIGINT);
 #else
       // on windows we run tskill as a shell command
       NSTask *t;
       NSArray *args;
 
-      args = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%d", pid], nil];
+      args = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%d", subProcessId], nil];
       t = [NSTask new];
       [t setLaunchPath:@"tskill.exe"];
       [t launch];
