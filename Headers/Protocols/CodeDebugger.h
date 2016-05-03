@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2008 Free Software Foundation
+   Copyright (C) 2008-2016 Free Software Foundation
 
    Authors: Gregory Casamento
 
@@ -45,8 +45,8 @@
 - (void)setDebuggerWindow: (NSWindow *)window;
 - (NSView *)debuggerView;
 - (void)setDebuggerView: (id)view;
-- (NSString *)path;
-- (void)setPath:(NSString *)path;
+- (NSString *)executablePath;
+- (void)setExecutablePath:(NSString *)path;
 
 // ===========================================================================
 // ==== Accessor methods
