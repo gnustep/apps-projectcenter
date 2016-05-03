@@ -163,7 +163,7 @@ static NSImage  *downImage = nil;
 {
   [debuggerView runProgram: debuggerPath
 		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-                withArguments: [[NSArray alloc] initWithObjects: @"-f", executablePath, nil]
+                withArguments: [[NSArray alloc] initWithObjects: @"-q", @"--interpreter=mi", @"-f", executablePath, nil]
 		logStandardError: YES];
 }   
 

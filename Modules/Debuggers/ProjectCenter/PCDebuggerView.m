@@ -58,92 +58,7 @@
 - (void) logString:(NSString *)str
 	   newLine:(BOOL)newLine
 {
-  NSRange range;
-  BOOL printLine = YES;
-
-  range = [str rangeOfString: @"\032\032"]; // Breakpoint"];
-  if (range.location != NSNotFound)
-    {
-      NSScanner *scanner = [NSScanner scannerWithString: str];      
-      NSCharacterSet *empty = [NSCharacterSet characterSetWithCharactersInString: @""];
-      NSString *file = nil;
-      NSString *line = nil;
-      NSString *bytes = nil;
-      int l = 0, b = 0;
-      
-      [scanner setCharactersToBeSkipped: empty];
-      [scanner scanUpToString: @"\032\032" intoString: NULL];
-      [scanner scanString: @"\032\032" intoString: NULL];
-      [scanner scanUpToString: @":" intoString: &file];
-      [scanner scanString: @":" intoString: NULL];
-      [scanner scanUpToString: @":" intoString: &line];
-      if (line != nil)
-	{
-	  l = [line intValue];
-	  [scanner scanString: @":" intoString: NULL];
-	  [scanner scanUpToString: @":" intoString: &bytes];
-
-	  if (bytes != nil)
-	    {
-	      b = [bytes intValue];     
-	      if (l != 0 && b != 0) // if the line & bytes are parsable, then send the notification.
-		{
-		  NSDictionary *dict = [NSDictionary 
-					 dictionaryWithObjectsAndKeys:
-					   file, @"file", line, @"line", nil];
-		  NSString *statusString = [NSString stringWithFormat: @"Stopped, %@:%@",file,line];
-
-		  [debugger setStatus: statusString];
-		  [NOTIFICATION_CENTER 
-		    postNotificationName: PCProjectBreakpointNotification
-		    object: dict];
-		  [[self window] makeKeyAndOrderFront: self];
-		  printLine = NO;
-		}
-	    }
-	}
-    }
-
-  // Check certain status messages from GDB and set the state correctly.
-  range = [str rangeOfString: @"Starting program:"];
-  if (range.location != NSNotFound)
-    {
-      [debugger setStatus: @"Running..."];
-    }
-
-  // Check certain status messages from GDB and set the state correctly.
-  range = [str rangeOfString: @"Program received signal"];
-  if (range.location != NSNotFound)
-    {
-      [debugger setStatus: @"Stopped"];
-    }
-
-  // Check certain status messages from GDB and set the state correctly.
-  range = [str rangeOfString: @"Terminated"];
-  if (range.location != NSNotFound)
-    {
-      [debugger setStatus: @"Terminated"];
-    }
-
-  // Check certain status messages from GDB and set the state correctly.
-  range = [str rangeOfString: @"Program exited"];
-  if (range.location != NSNotFound)
-    {
-      [debugger setStatus: @"Terminated"];
-    }
-
-  // FIXME: Filter this error, until we find a better way to deal with it.
-  range = [str rangeOfString: @"[tcsetpgrp failed in terminal_inferior:"];
-  if (range.location != NSNotFound)
-    {
-      printLine = NO;
-    }
-
-  // if the line is not filtered, print it...
-  if(printLine)
-    {
-      [viewDelegate logString: str newLine: newLine withColor:[viewDelegate debuggerColor]];
-    }
+  [viewDelegate logString: str newLine: newLine withColor:[viewDelegate debuggerColor]];
 }
 
 - (void) setCurrentFile: (NSString *)fileName
@@ -155,7 +70,6 @@
 {
   return currentFile;
 }
-
 
 - (void) terminate
 {

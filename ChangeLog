@@ -1,3 +1,11 @@
+2016-05-03 18:00-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Changes
+	to allow pid to be passed back to PCDebugger by calling
+	setSubProcessId once the pid is parsed from the mi output.
+
 2016-05-03 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h

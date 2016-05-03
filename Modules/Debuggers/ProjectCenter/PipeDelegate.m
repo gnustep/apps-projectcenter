@@ -142,6 +142,65 @@
   [tView setNeedsDisplay:YES];
 }
 
+- (BOOL) parseStringLine: (NSString *)stringInput
+{
+  BOOL found = NO;
+  NSScanner *stringScanner = [NSScanner scannerWithString: stringInput];
+  NSString *command = NULL;
+  [stringScanner scanString: @"=" intoString: &command];
+  if(command != nil)
+    {
+      NSString *dictionaryName = NULL;
+      found = YES;
+      
+      [stringScanner scanUpToString: @"," intoString: &dictionaryName];
+
+      if([dictionaryName isEqualToString: @"thread-group-started"])
+	{	  
+	  NSLog(@"%@",dictionaryName);
+	}
+
+      if(dictionaryName != nil)
+	{	  
+	  NSString *key = NULL;
+	  NSString *value = NULL;
+	  
+	  while([stringScanner isAtEnd] == NO)
+	    {
+	      [stringScanner scanString: @"," intoString: NULL];
+	      [stringScanner scanUpToString: @"=" intoString: &key];
+	      [stringScanner scanString: @"=" intoString: NULL];
+	      [stringScanner scanString: @"\"" intoString: NULL];
+	      [stringScanner scanUpToString: @"\"" intoString: &value];
+	      [stringScanner scanString: @"\"" intoString: NULL];
+
+	      if([key isEqualToString:@"pid"] && 
+		 [dictionaryName isEqualToString: @"thread-group-started"])
+		{
+		  [debugger setSubProcessId: [value intValue]];
+		}
+	    }
+	}
+    }
+
+  return found;
+}
+
+- (void) parseString: (NSString *)inputString
+{
+  NSArray *components = [inputString componentsSeparatedByString:@"\n"];
+  NSEnumerator *en = [components objectEnumerator];
+  NSString *item = nil;
+
+  while((item = [en nextObject]) != nil) 
+    {
+      BOOL command = [self parseStringLine: item];
+      if(!command) 
+	{
+	  [self logString: item newLine: YES withColor:debuggerColor];
+	}
+    }
+}
 
 /**
  * Log standard out.
@@ -157,7 +216,12 @@
       dataString = [[NSString alloc] 
                      initWithData:data 
                          encoding:[NSString defaultCStringEncoding]];
-      [self logString: dataString newLine: NO withColor:debuggerColor];
+      
+      // if( !
+      [self parseString: dataString]; // )
+    // {
+    //	  [self logString: dataString newLine: NO withColor:debuggerColor];
+    //	}
       RELEASE(dataString);
     }
   
@@ -188,7 +252,11 @@
       dataString = [[NSString alloc] 
                      initWithData:data
                          encoding:[NSString defaultCStringEncoding]];
-      [self logString: dataString newLine: NO withColor:errorColor];
+
+      // if(![self parseString: dataString])
+	{
+	  [self logString: dataString newLine: NO withColor:errorColor];
+	}
       RELEASE(dataString);
     }
 
