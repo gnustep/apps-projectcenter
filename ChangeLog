@@ -1,3 +1,10 @@
+2016-05-03 19:40-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Add parsers
+	to handle output from various types of MI data.  Code to handle
+	each individual case is being written.
+
 2016-05-03 18:00-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m

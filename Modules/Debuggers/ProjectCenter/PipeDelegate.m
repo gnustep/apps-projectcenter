@@ -42,7 +42,6 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-
 @implementation PipeDelegate
 
 
@@ -54,6 +53,7 @@
       debuggerColor = [[NSColor blackColor] retain];
       messageColor = [[NSColor brownColor] retain];
       errorColor = [[NSColor redColor] retain];
+      promptColor = [[NSColor purpleColor] retain];
     }
   return self;
 }
@@ -118,6 +118,7 @@
   NSMutableDictionary *textAttributes;
   NSAttributedString *attrStr;
 
+
   if (newLine)
     {
       str = [str stringByAppendingString:@"\n"];
@@ -142,13 +143,20 @@
   [tView setNeedsDisplay:YES];
 }
 
-- (BOOL) parseStringLine: (NSString *)stringInput
+- (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
 {
   BOOL found = NO;
   NSScanner *stringScanner = [NSScanner scannerWithString: stringInput];
-  NSString *command = NULL;
-  [stringScanner scanString: @"=" intoString: &command];
-  if(command != nil)
+  NSString *prefix = NULL;
+
+  [stringScanner scanString: @"(gdb)" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBPromptRecord;
+    }
+
+  [stringScanner scanString: @"=" intoString: &prefix];
+  if(prefix != nil)
     {
       NSString *dictionaryName = NULL;
       found = YES;
@@ -181,9 +189,64 @@
 		}
 	    }
 	}
+      return PCDBAsyncInfoRecord;
     }
 
-  return found;
+  [stringScanner scanString: @"*" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBAsyncStatusRecord;
+    }
+
+  [stringScanner scanString: @"<-" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBBreakpointRecord;
+    }
+  
+  [stringScanner scanString: @"->" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBBreakpointRecord;
+    }
+
+  [stringScanner scanString: @"~" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBConsoleStreamRecord;
+    }
+
+  [stringScanner scanString: @"@" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBTargetStreamRecord;
+    }
+
+  [stringScanner scanString: @"&" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBDebugStreamRecord;
+    }
+
+  [stringScanner scanString: @"^" intoString: &prefix];
+  if(prefix != nil)
+    {
+      return PCDBResultRecord;
+    }
+
+  return PCDBNotFoundRecord;
+}
+
+- (NSString *)unescapeOutputRecord: (NSString *)recordString
+{
+  NSString *unescapedString = [recordString copy];
+
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"~\"" withString: @""];
+  unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\"" withString: @"\""];
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
+  
+  return unescapedString;
 }
 
 - (void) parseString: (NSString *)inputString
@@ -191,15 +254,32 @@
   NSArray *components = [inputString componentsSeparatedByString:@"\n"];
   NSEnumerator *en = [components objectEnumerator];
   NSString *item = nil;
-
+  
   while((item = [en nextObject]) != nil) 
     {
-      BOOL command = [self parseStringLine: item];
-      if(!command) 
+      PCDebuggerOutputTypes outtype = [self parseStringLine: item];
+      if(outtype == PCDBConsoleStreamRecord || 
+	 outtype == PCDBTargetStreamRecord) 
 	{
-	  [self logString: item newLine: YES withColor:debuggerColor];
+	  NSString *unescapedString = [self unescapeOutputRecord: item]; 
+	  [self logString: unescapedString newLine: NO withColor:debuggerColor];
+	}
+      else if(outtype == PCDBPromptRecord)
+	{
+	  [self logString: item newLine: NO withColor:promptColor];
 	}
     }
+
+  /*
+  stringRange = [inputString rangeOfString: "(gdb)" options: NULL];
+  if(stringRange.location == NSNotFound) 
+    {
+      [self logString: inputString newLine: NO withColor:debuggerColor];
+    }
+  else
+    {
+    }
+  */
 }
 
 /**
@@ -366,7 +446,7 @@
 	      
       NSLog(@"Task Terminated Unexpectedly...");
       [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
-	      newLine:YES
+	      newLine:NO
             withColor:messageColor];      
 	      
       //Clean up after task is terminated

@@ -26,6 +26,21 @@
 
 #import "PCDebuggerViewDelegateProtocol.h"
 
+typedef enum PCDebuggerOutputType_enum {
+  PCDBNotFoundRecord = 0,
+  PCDBPromptRecord, 
+  PCDBResultRecord,
+  PCDBConsoleStreamRecord,
+  PCDBTargetStreamRecord,
+  PCDBDebugStreamRecord,
+  PCDBAsyncStatusRecord,
+  PCDBAsyncInfoRecord,
+  PCDBBreakpointRecord,
+  PCDBFrameRecord,
+  PCDBThreadRecord,
+  PCDBAdaExceptionRecord
+} PCDebuggerOutputTypes;
+
 @interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
 {
   PCDebugger *debugger;
@@ -39,6 +54,7 @@
   NSColor *debuggerColor;
   NSColor *messageColor;
   NSColor *errorColor;
+  NSColor *promptColor;
 }
 
 - (void)logStdOut:(NSNotification *)aNotif;
