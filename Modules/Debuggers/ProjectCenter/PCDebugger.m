@@ -251,7 +251,7 @@ static NSImage  *downImage = nil;
 - (void) pause: (id) sender
 {
   [self setStatus: @"Stopped."];
-  [debuggerView interrupt];
+  [self interrupt];
 }
 
 - (void) continue: (id) sender
@@ -263,7 +263,7 @@ static NSImage  *downImage = nil;
 - (void) restart: (id) sender
 {
   [self setStatus: @"Restarting..."];
-  [debuggerView interrupt];
+  [self interrupt];
   [debuggerView putString: @"run\n"];
   [self setStatus: @"Running..."];
 }
