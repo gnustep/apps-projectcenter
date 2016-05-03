@@ -33,14 +33,13 @@
   PCDebugger *debugger;
   id <PCDebuggerViewDelegateProtocol> viewDelegate;
   NSString *currentFile;
-  int subProcessId;
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
 - (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;
-- (int) subProcessId;
+
 
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory

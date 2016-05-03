@@ -208,6 +208,16 @@ static NSImage  *downImage = nil;
   ASSIGN(executablePath,p);
 }
 
+- (int) subProcessId
+{
+  return subProcessId;
+}
+
+- (void) setSubProcessId: (int)pid
+{
+  subProcessId = pid;
+}
+
 // kill process
 - (void) interrupt
 {

@@ -104,20 +104,6 @@
 	}
     }
 
-  // NOTE: This works on certain versions of gdb, but we need to come up with another way of getting
-  // the process id in a more generic way.
-  range = [str rangeOfString: @"[New Thread"];
-  if (range.location != NSNotFound)
-    {
-      NSScanner *scanner = [NSScanner scannerWithString: str];      
-      NSString *process = nil;
-
-      [scanner scanUpToString: @"(LWP" intoString: NULL];
-      [scanner scanString: @"(LWP" intoString: NULL];
-      [scanner scanUpToString: @")" intoString: &process];
-      subProcessId = [process intValue];
-    }
-
   // Check certain status messages from GDB and set the state correctly.
   range = [str rangeOfString: @"Starting program:"];
   if (range.location != NSNotFound)
@@ -170,10 +156,6 @@
   return currentFile;
 }
 
-- (int) subProcessId
-{
-  return subProcessId;
-}
 
 - (void) terminate
 {

@@ -34,6 +34,7 @@
   id             statusField;
   NSString       *executablePath;
   NSString       *debuggerPath;
+  int            subProcessId;
 }
 
 - (void) setStatus: (NSString *) status;
@@ -41,5 +42,7 @@
 - (NSString *)executablePath;
 - (void)setExecutablePath:(NSString *)p;
 - (void) interrupt;
+- (int) subProcessId;
+- (void) setSubProcessId:(int)pid;
 
 @end
