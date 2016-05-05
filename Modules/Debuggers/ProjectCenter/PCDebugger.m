@@ -234,6 +234,7 @@ static NSImage  *downImage = nil;
 
       args = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%d", subProcessId], nil];
       t = [NSTask new];
+      [t setArguments: args];
       [t setLaunchPath:@"tskill.exe"];
       [t launch];
       [t release];
