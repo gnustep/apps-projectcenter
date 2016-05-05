@@ -245,6 +245,8 @@
   unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\"" withString: @"\""];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\t" withString: @"\t"];
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\032" withString: @" "];
   
   return unescapedString;
 }
