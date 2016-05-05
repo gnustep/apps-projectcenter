@@ -302,6 +302,12 @@
 	{
 	  [self logString: item newLine: NO withColor:promptColor];
 	}
+      /*
+      else if(outtype == PCDBNotFoundRecord)
+	{
+	  [self logString: item newLine: NO withColor:promptColor];
+	}
+      */
     }
 
   /*
