@@ -231,6 +231,38 @@
   [stringScanner scanString: @"^" intoString: &prefix];
   if(prefix != nil)
     {
+      NSString *result = nil;
+      
+      [stringScanner scanString: @"done" intoString: &result];
+      if(result != nil)
+	{
+	  [debugger setStatus: @"Done"];
+	  return PCDBResultRecord;
+	}
+      [stringScanner scanString: @"running" intoString: &result];
+      if(result != nil)
+	{
+	  [debugger setStatus: @"Running"];
+	  return PCDBResultRecord;
+	}
+      [stringScanner scanString: @"connected" intoString: &result];
+      if(result != nil)
+	{
+	  [debugger setStatus: @"Connected"];
+	  return PCDBResultRecord;
+	}
+      [stringScanner scanString: @"error" intoString: &result];
+      if(result != nil)
+	{
+	  [debugger setStatus: @"Error"];
+	  return PCDBResultRecord;
+	}
+      [stringScanner scanString: @"exit" intoString: &result];
+      if(result != nil)
+	{
+	  [debugger setStatus: @"Exit"];
+	  return PCDBResultRecord;
+	}
       return PCDBResultRecord;
     }
 
