@@ -213,6 +213,28 @@
   [stringScanner scanString: @"~" intoString: &prefix];
   if(prefix != nil)
     {
+      if ([debugger gdbVersion] == 0.0)
+        {
+          NSString *str1 = nil;
+          NSString *str2 = nil;
+          
+          [stringScanner scanString: @"\"GNU gdb" intoString: &str1];
+          if (str1 != nil)
+            {
+              [stringScanner scanString: @" (GDB)" intoString: &str2];
+            }
+
+          if (str2 != nil || str1 != nil)
+            {
+              float v;
+
+              if ([stringScanner scanFloat:&v])
+                {
+                  NSLog(@"GDB version string: %f", v);
+                  [debugger setGdbVersion:v];
+                }
+            }
+        }
       return PCDBConsoleStreamRecord;
     }
 
@@ -288,7 +310,7 @@
   NSArray *components = [inputString componentsSeparatedByString:@"\n"];
   NSEnumerator *en = [components objectEnumerator];
   NSString *item = nil;
-  
+
   while((item = [en nextObject]) != nil) 
     {
       PCDebuggerOutputTypes outtype = [self parseStringLine: item];
