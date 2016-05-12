@@ -35,6 +35,7 @@
   NSString       *executablePath;
   NSString       *debuggerPath;
   int            subProcessId;
+  float          gdbVersion;
 }
 
 - (void) setStatus: (NSString *) status;
@@ -44,5 +45,7 @@
 - (void) interrupt;
 - (int) subProcessId;
 - (void) setSubProcessId:(int)pid;
+- (float) gdbVersion;
+- (void) setGdbVersion:(float)ver;
 
 @end

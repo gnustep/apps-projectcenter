@@ -140,6 +140,7 @@ static NSImage  *downImage = nil;
       [viewDelegate release];
 
       subProcessId = 0;
+      gdbVersion = 0.0;
     }
   return self;
 }
@@ -163,7 +164,7 @@ static NSImage  *downImage = nil;
 {
   [debuggerView runProgram: debuggerPath
 		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-                withArguments: [[NSArray alloc] initWithObjects: @"-q", @"--interpreter=mi", @"-f", executablePath, nil]
+                withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil]
 		logStandardError: YES];
 }   
 
@@ -218,6 +219,16 @@ static NSImage  *downImage = nil;
 - (void) setSubProcessId: (int)pid
 {
   subProcessId = pid;
+}
+
+- (float) gdbVersion
+{
+  return gdbVersion;
+}
+
+- (void) setGdbVersion:(float)ver
+{
+  gdbVersion = ver;
 }
 
 // kill process
