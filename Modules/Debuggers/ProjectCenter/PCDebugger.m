@@ -21,6 +21,14 @@
 **  Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
+#ifdef	__MINGW32__
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501 // Minimal target is Windows XP
+
+#include <windows.h>
+
+#endif
+
 #import <AppKit/AppKit.h>
 #import "PCDebugger.h"
 #import "PCDebuggerView.h"
@@ -29,14 +37,7 @@
 #import "PCDebuggerViewDelegateProtocol.h"
 #import "PipeDelegate.h"
 
-#ifdef	__MINGW32__
-#undef _WIN32_WINNT
-#define _WIN32_WINNT 0x0501 // Minimal target is Windows XP
 
-#include <windows.h>
-#include <winbase.h>
-WINBASEAPI BOOL WINAPI DebugBreakProcess(HANDLE);
-#endif
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
