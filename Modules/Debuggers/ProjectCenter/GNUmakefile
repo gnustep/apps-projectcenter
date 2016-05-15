@@ -50,8 +50,7 @@ ProjectCenter_OBJC_FILES= \
     PipeDelegate.m
 
 
-#for PTYView
-#ADDITIONAL_NATIVE_LIBS += util
+#ADDITIONAL_OBJC_LIBS=
 
 include ../../GNUmakefile.bundles
 include $(GNUSTEP_MAKEFILES)/bundle.make
