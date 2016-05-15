@@ -235,6 +235,21 @@
                 }
             }
         }
+      if (([debugger gdbVersion] < 7) && [debugger subProcessId] == 0)
+        {
+          NSString *str1;
+          // we attempt to parse: [New thread 6800.0x18ec]
+          [stringScanner scanString: @"\"[New thread" intoString: &str1];
+          if (str1 != nil)
+            {
+              int v;
+              if([stringScanner scanInt:&v])
+                {
+                  NSLog(@"sub process id: %d", v);
+                  [debugger setSubProcessId:v];
+                }
+            }
+        }
       return PCDBConsoleStreamRecord;
     }
 

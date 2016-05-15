@@ -3,6 +3,9 @@
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m
 	On windows kill with DebugBreakProcess() and not tskill. Available only on WinXP or higher.
 
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	For GDB < v. 7 (on win), attempt to grab process id from Windows thread information.
+
 2016-05-05 15:43-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Minor changes.
