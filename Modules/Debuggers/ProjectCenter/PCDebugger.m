@@ -29,6 +29,15 @@
 #import "PCDebuggerViewDelegateProtocol.h"
 #import "PipeDelegate.h"
 
+#ifdef	__MINGW32__
+#undef _WIN32_WINNT
+#define _WIN32_WINNT 0x0501 // Minimal target is Windows XP
+
+#include <windows.h>
+#include <winbase.h>
+WINBASEAPI BOOL WINAPI DebugBreakProcess(HANDLE);
+#endif
+
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
@@ -239,16 +248,25 @@ static NSImage  *downImage = nil;
 #ifndef	__MINGW32__
       kill(subProcessId,SIGINT);
 #else
-      // on windows we run tskill as a shell command
-      NSTask *t;
-      NSArray *args;
-
-      args = [NSArray arrayWithObjects:[NSString stringWithFormat:@"%d", subProcessId], nil];
-      t = [NSTask new];
-      [t setArguments: args];
-      [t setLaunchPath:@"tskill.exe"];
-      [t launch];
-      [t release];
+      HANDLE proc;
+      NSLog(@"Windows - sending interrupt to %d", subProcessId);
+      proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)subProcessId);
+      if (proc == NULL)
+        {
+          DWORD lastError = GetLastError();
+          NSLog(@"error opening process %lu", (unsigned long)lastError);
+          return;
+        }
+      if (DebugBreakProcess(proc))
+        {
+          DWORD lastError = GetLastError();
+          NSLog(@"error sending break %lu", (unsigned long)lastError);
+        }
+      else
+        {
+          NSLog(@"break sent successfully");
+        }
+      CloseHandle(proc);
 #endif
     }
 }
