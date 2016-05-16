@@ -250,7 +250,7 @@ static NSImage  *downImage = nil;
       kill(subProcessId,SIGINT);
 #else
       HANDLE proc;
-      NSLog(@"Windows - sending interrupt to %d", subProcessId);
+
       proc = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)subProcessId);
       if (proc == NULL)
         {
@@ -275,7 +275,8 @@ static NSImage  *downImage = nil;
 // action methods for toolbar...
 - (void) go: (id) sender
 {
-  // [self setStatus: @"Running..."];
+  /* each run makes a new PID but we parse it only if non-zero */
+  [self setSubProcessId:0];
   [debuggerView putString: @"run\n"];
 }
 
@@ -295,6 +296,8 @@ static NSImage  *downImage = nil;
 {
   // [self setStatus: @"Restarting..."];
   [self interrupt];
+  /* each run makes a new PID but we parse it only if non-zero */
+  [self setSubProcessId:0];
   [debuggerView putString: @"run\n"];
   // [self setStatus: @"Running..."];
 }
