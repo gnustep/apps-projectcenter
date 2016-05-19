@@ -13,8 +13,9 @@ $(BUNDLE_NAME)_STANDARD_INSTALL = no
 DO_LIB_LINK=no
 ifeq ($(GNUSTEP_TARGET_OS), mingw32)
     DO_LIB_LINK=yes
-endif
-ifeq ($(GNUSTEP_TARGET_OS), cygwin)
+else ifeq ($(GNUSTEP_TARGET_OS), mingw64)
+    DO_LIB_LINK=yes
+else ifeq ($(GNUSTEP_TARGET_OS), cygwin)
     DO_LIB_LINK=yes
 endif
 ifeq ($(DO_LIB_LINK), yes)
