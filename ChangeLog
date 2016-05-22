@@ -1,3 +1,9 @@
+2016-05-22 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Comply to protocol.
+
 2016-05-15 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m

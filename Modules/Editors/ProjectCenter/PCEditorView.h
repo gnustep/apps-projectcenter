@@ -4,7 +4,7 @@
     Interface declaration of the EditorTextView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2014 Free Software Foundation
+    Copyright (C) 2005-2016 Free Software Foundation
       Saso Kiselkov
       Riccardo Mottola
 
@@ -42,7 +42,7 @@
 + (NSFont *)defaultEditorItalicFont;
 + (NSFont *)defaultEditorBoldItalicFont;
 
-- (void)setEditor:(PCEditor *)anEditor;
+- (void)setEditor:(NSObject <CodeEditor> *)anEditor;
 
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType;
 

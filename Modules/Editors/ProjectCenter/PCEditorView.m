@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2014 Free Software Foundation
+    Copyright (C) 2005-2016 Free Software Foundation
       Saso Kiselkov
       Serg Stoyan
       Riccardo Mottola
@@ -429,12 +429,12 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   [super dealloc];
 }
 
-- (void)setEditor:(PCEditor *)anEditor
+- (void)setEditor:(NSObject <CodeEditor> *)anEditor
 {
-  editor = anEditor;
+  editor = (PCEditor *)anEditor;
 }
 
-- (PCEditor *)editor
+- (NSObject <CodeEditor> *)editor
 {
   return editor;
 }
