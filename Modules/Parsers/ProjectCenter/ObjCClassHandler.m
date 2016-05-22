@@ -1,7 +1,7 @@
 /*
 **  ObjCClassHandler.m
 **
-**  Copyright (c) 2003
+**  Copyright (c) 2003-2016 The Free Software Foundation
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **
@@ -49,7 +49,6 @@
 
 - (void)dealloc
 {
-  NSLog(@"ClassHandler: dealloc");
   RELEASE(keyword);
   RELEASE(class);
   RELEASE(classes);
@@ -199,10 +198,8 @@
 	  else*/
 	  if ((newline || element == ' ') && (step == ClassSymbol))
     	    {
-//	      NSLog(@"keyword: %@", keyword);
 	      if ([keyword isEqualToString:@"end"])
 		{
-		  NSLog(@"@end reached");
 		  [self addClassToArray];
 		  step = ClassNone;
 		}
