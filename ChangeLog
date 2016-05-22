@@ -4,6 +4,10 @@
 	* Modules/Editors/ProjectCenter/PCEditorView.m
 	Comply to protocol.
 
+	* Modules/Editors/ProjectCenter/SyntaxHighlighter.h
+	* Modules/Editors/ProjectCenter/SyntaxHighlighter.m
+	Transition to NSInteger/NSUInteger
+
 2016-05-15 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m

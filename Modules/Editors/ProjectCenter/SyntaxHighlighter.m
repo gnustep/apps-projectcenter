@@ -75,10 +75,10 @@ RangeOfWordInString(NSString * string, NSRange startRange)
   SEL sel = @selector(characterAtIndex:);
   unichar (*characterAtIndex)(id, SEL, unsigned int) = 
     (unichar (*)(id, SEL, unsigned int)) [string methodForSelector: sel];
-  int ahead, after;
-  unsigned int length = [string length];
+  NSInteger ahead, after;
+  NSUInteger length = [string length];
 
-  for (ahead = 1; ahead <= (int) startRange.location; ahead++)
+  for (ahead = 1; ahead <= (NSInteger) startRange.location; ahead++)
     {
       if (my_isspace(characterAtIndex(string,
                                       sel,
@@ -100,8 +100,8 @@ RangeOfWordInString(NSString * string, NSRange startRange)
     }
 
   {
-    unsigned int start = startRange.location - ahead,
-                 length = startRange.length + ahead + after;
+    NSUInteger start = startRange.location - ahead;
+    NSUInteger length = startRange.length + ahead + after;
 
     if (start > 0)
       {
@@ -120,10 +120,10 @@ RangeOfWordInString(NSString * string, NSRange startRange)
 static inline BOOL
 LocateString(NSString * str,
              unichar * buf,
-             unsigned int length,
-             unsigned int offset)
+             NSUInteger length,
+             NSUInteger offset)
 {
-  unsigned int i, n;
+  NSUInteger i, n;
 
   for (i = 0, n = [str length]; i < n; i++)
     {
@@ -148,16 +148,16 @@ LocateString(NSString * str,
 - (void) fixUpKeywordsInRange: (NSRange) r;
 - (void) lazilyFixUpKeywordsInRange: (NSRange) r;
 
-- (void) assignGraphicalAttributesOfContext: (unsigned int) context
+- (void) assignGraphicalAttributesOfContext: (NSUInteger) context
                                     toRange: (NSRange) r;
 
 - (void) assignGraphicalAttributesOfKeyword: (unsigned int) keyword
-                                  inContext: (unsigned int) context
+                                  inContext: (NSUInteger) context
                                     toRange: (NSRange) r;
 
-- (int) contextBeforeRange: (NSRange) r;
-- (int) contextAfterRange: (NSRange) r;
-- (int) contextAtEndOfRange: (NSRange) r;
+- (NSUInteger) contextBeforeRange: (NSRange) r;
+- (NSUInteger) contextAfterRange: (NSRange) r;
+- (NSUInteger) contextAtEndOfRange: (NSRange) r;
 
 - (void) beginEditingIfNeeded;
 - (void) endEditingIfNeeded;
@@ -178,7 +178,7 @@ LocateString(NSString * str,
   const char * beginningChars = [syntax contextBeginningCharacters];
   unsigned numBeginningChars = [syntax numberOfContextBeginningCharacters];
 
-  unsigned int i;
+  NSUInteger i;
   unichar * string;
   unsigned int context;
 
@@ -198,7 +198,7 @@ LocateString(NSString * str,
           unsigned int j = 0;
           TextPattern * pattern = NULL;
           NSRange ctxtRange;
-          int l = 0;
+          NSInteger l = 0;
           TextPattern ** skips = [syntax contextSkipsForContext: 0];
           const char * skipChars = [syntax contextSkipCharactersForContext: 0];
           unsigned int numSkipChars = [syntax
@@ -285,13 +285,13 @@ LocateString(NSString * str,
       // exceptions
       else
         {
-          int l = 0;
+          NSInteger l = 0;
           TextPattern * ending = [syntax contextEndingForContext: context - 1];
           NSRange ctxtRange;
           TextPattern ** skips = [syntax contextSkipsForContext: context];
           const char * skipChars = [syntax contextSkipCharactersForContext:
             context];
-          unsigned int numSkipChars = [syntax
+          NSUInteger numSkipChars = [syntax
             numberOfContextSkipCharactersForContext: context];
 
           for (;i < r.length; i++)
@@ -334,7 +334,7 @@ LocateString(NSString * str,
               // add an attribute telling the context into the
               // text storage
               [textStorage addAttribute: ContextAttributeName
-                                  value: [NSNumber numberWithInt: context]
+                                  value: [NSNumber numberWithInteger: context]
                                   range: ctxtRange];
               [self assignGraphicalAttributesOfContext: context
                                                toRange: ctxtRange];
@@ -344,7 +344,7 @@ LocateString(NSString * str,
           if (ctxtRange.length > 0)
             {
               [textStorage addAttribute: ContextAttributeName
-                                  value: [NSNumber numberWithInt: 0]
+                                  value: [NSNumber numberWithInteger: 0]
                                   range: ctxtRange];
               [self assignGraphicalAttributesOfContext: context
                                                toRange: ctxtRange];
@@ -362,7 +362,7 @@ LocateString(NSString * str,
 - (void) fixUpKeywordsInRange: (NSRange) r
 {
   unichar * string;
-  unsigned int i;
+  NSUInteger i;
 
   string = malloc(r.length * sizeof(unichar));
   [[textStorage string] getCharacters: string range: r];
@@ -371,11 +371,11 @@ LocateString(NSString * str,
     {
       NSRange contextRange;
       TextPattern ** patterns;
-      int context;
+      NSInteger context;
 
       context = [[textStorage attribute: ContextAttributeName
                                 atIndex: i + r.location
-                         effectiveRange: &contextRange] intValue];
+                         effectiveRange: &contextRange] integerValue];
 
       contextRange = NSIntersectionRange(r, contextRange);
       contextRange.location -= r.location;
@@ -385,8 +385,8 @@ LocateString(NSString * str,
       while (i < NSMaxRange(contextRange))
         {
           unichar c = string[i];
-          unsigned int l = 0;
-          unsigned int j;
+          NSUInteger l = 0;
+          NSUInteger j;
           TextPattern * pattern;
 
           // skip whitespace - it can't start a keyword
@@ -430,7 +430,7 @@ LocateString(NSString * str,
 
 - (void) lazilyFixUpKeywordsInRange: (NSRange) r
 {
-  unsigned int i;
+  NSUInteger i;
   BOOL localDidBeginEditing = NO;
 
   for (i = r.location; i < NSMaxRange(r);)
@@ -468,7 +468,7 @@ LocateString(NSString * str,
     }
 }
 
-- (void) assignGraphicalAttributesOfContext: (unsigned int) ctxt
+- (void) assignGraphicalAttributesOfContext: (NSUInteger) ctxt
                                     toRange: (NSRange) r
 {
   BOOL bold, italic;
@@ -526,8 +526,8 @@ LocateString(NSString * str,
     }
 }
 
-- (void) assignGraphicalAttributesOfKeyword: (unsigned int) keyword
-                                  inContext: (unsigned int) context
+- (void) assignGraphicalAttributesOfKeyword: (NSUInteger) keyword
+                                  inContext: (NSUInteger) context
                                     toRange: (NSRange) r
 {
   BOOL bold, italic;
@@ -609,7 +609,7 @@ LocateString(NSString * str,
     }
 }
 
-- (int) contextBeforeRange: (NSRange) r
+- (NSUInteger) contextBeforeRange: (NSRange) r
 {
   NSRange tmp;
 
@@ -625,10 +625,11 @@ LocateString(NSString * str,
     }
 }
 
-- (int) contextAfterRange: (NSRange) r
+- (NSUInteger) contextAfterRange: (NSRange) r
 {
   NSRange tmp;
-  unsigned int i, length;
+  NSUInteger i;
+  NSUInteger length;
 
   i = NSMaxRange(r);
   length = [textStorage length];
@@ -649,10 +650,10 @@ LocateString(NSString * str,
     }
 }
 
-- (int) contextAtEndOfRange: (NSRange) r
+- (NSUInteger) contextAtEndOfRange: (NSRange) r
 {
   NSRange tmp;
-  int i = (int) NSMaxRange(r) - 1;
+  NSInteger i = (int) NSMaxRange(r) - 1;
 
   if (i < 0)
     {
@@ -662,7 +663,7 @@ LocateString(NSString * str,
     {
       return [[textStorage attribute: ContextAttributeName
                              atIndex: i
-                      effectiveRange: &tmp] intValue];
+                      effectiveRange: &tmp] integerValue];
     }
 }
 

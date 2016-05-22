@@ -45,7 +45,7 @@
          * italicFont,
          * boldItalicFont;
 
-  unsigned int lastProcessedContextIndex;
+  NSUInteger lastProcessedContextIndex;
 
   NSRange delayedProcessedRange;
   BOOL    didBeginEditing;
