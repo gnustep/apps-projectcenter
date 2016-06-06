@@ -97,6 +97,9 @@
 
 - (void) putString: (NSString *)string
 {
+  NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
+  [[self textStorage] appendAttributedString:attr];
+  [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
   [viewDelegate putString:string];
 }
 

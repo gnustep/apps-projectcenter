@@ -1,3 +1,8 @@
+2016-06-06 11:47-EDT Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Add code to
+	make commands appear when the button is pressed.
+
 2016-05-22 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.h
