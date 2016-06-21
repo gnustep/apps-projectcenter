@@ -131,3 +131,4 @@ ProjectCenter_main.m
 include $(GNUSTEP_MAKEFILES)/aggregate.make
 include $(GNUSTEP_MAKEFILES)/application.make
 -include GNUmakefile.postamble
+include $(GNUSTEP_MAKEFILES)/Master/nsis.make
