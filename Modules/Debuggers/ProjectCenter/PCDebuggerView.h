@@ -36,6 +36,7 @@
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
+- (id <PCDebuggerViewDelegateProtocol>)delegate;
 - (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;

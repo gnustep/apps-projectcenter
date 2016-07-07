@@ -41,6 +41,11 @@
   debugger = theDebugger;
 }
 
+- (id <PCDebuggerViewDelegateProtocol>)delegate
+{
+  return viewDelegate;
+}
+
 - (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd
 {
   if (viewDelegate != vd)
