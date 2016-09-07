@@ -30,6 +30,7 @@
 #import <Foundation/NSScanner.h>
 
 #import <AppKit/NSColor.h>
+#import <AppKit/NSTextStorage.h>
 
 NSDictionary * ParseSyntaxGraphics(NSDictionary * specification)
 {
