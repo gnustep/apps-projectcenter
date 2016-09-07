@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2013 Free Software Foundation
+   Copyright (C) 2001-2016 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -109,7 +109,6 @@
   NSBundle      *projectBundle = nil;
   NSString      *_file = nil;
   NSString      *_2file = nil;
-  NSString      *_resourcePath = nil;
   PCFileCreator *pcfc = [PCFileCreator sharedCreator];
 
   NSAssert(path,@"No valid project path provided!");
@@ -152,9 +151,6 @@
 
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
-
-  // Resources
-  _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
 
   // Save the project to disc
   [self writeMakefile];
