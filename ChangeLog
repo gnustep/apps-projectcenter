@@ -1,3 +1,11 @@
+2016-09-29 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerViewDelegateProtocol.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	Add skeleton to handle breakpoints, add breakpoint types.
+
 2016-06-06 11:47-EDT Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m: Add code to

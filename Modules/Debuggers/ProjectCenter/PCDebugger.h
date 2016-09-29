@@ -27,6 +27,14 @@
 
 #import <Protocols/CodeDebugger.h>
 
+extern const NSString *PCBreakTypeKey;
+extern NSString *PCBreakTypeByLine;
+extern NSString *PCBreakTypeMethod;
+
+extern const NSString *PCBreakMethod;
+extern const NSString *PCBreakFilename;
+extern const NSString *PCBreakLineNumber;
+
 @interface PCDebugger : NSObject <CodeDebugger>
 {
   id             debuggerView;
@@ -36,6 +44,7 @@
   NSString       *debuggerPath;
   int            subProcessId;
   float          gdbVersion;
+  NSMutableArray *breakpoints;
 }
 
 - (void) setStatus: (NSString *) status;

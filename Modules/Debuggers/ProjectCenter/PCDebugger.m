@@ -53,6 +53,13 @@ static NSImage  *stepOutImage = nil;
 static NSImage  *upImage = nil;
 static NSImage  *downImage = nil;
 
+const NSString *PCBreakTypeKey = @"BreakType";
+NSString *PCBreakTypeByLine = @"BreakTypeLine";
+NSString *PCBreakTypeMethod = @"BreakTypeMethod";
+const NSString *PCBreakMethod = @"BreakMethod";
+const NSString *PCBreakFilename = @"BreakFilename";
+const NSString *PCBreakLineNumber = @"BreakLineNumber";
+
 @implementation PCDebugger
 + (void) initialize
 {
@@ -131,6 +138,7 @@ static NSImage  *downImage = nil;
 
   return font;
 }
+
 - (id) init
 {
   if((self = [super init]) != nil)
@@ -151,6 +159,8 @@ static NSImage  *downImage = nil;
 
       subProcessId = 0;
       gdbVersion = 0.0;
+
+      breakpoints = nil;
     }
   return self;
 }
@@ -176,7 +186,29 @@ static NSImage  *downImage = nil;
 		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
                 withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil]
 		logStandardError: YES];
-}   
+  
+  // is this really the best place?
+  [self initBreakpoints];
+}
+
+- (void) initBreakpoints
+{
+  id <PCDebuggerViewDelegateProtocol> viewDelegate;
+
+  breakpoints = [[NSMutableArray alloc] init];
+  NSDictionary *dP;
+  NSLog(@"initing breakpoints");
+
+  /* CRUDE EXAMPLES * TODO FIXME *
+  dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeMethod, PCBreakTypeKey, @"[NSException raise]", PCBreakMethod, nil];
+  //  [breakpoints addObject:dP];
+  dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeByLine, PCBreakTypeKey, @"AppController.m", PCBreakFilename, [NSNumber numberWithInt:100], PCBreakLineNumber, nil];
+  [breakpoints addObject:dP];
+  */ 
+
+  viewDelegate = [debuggerView delegate];
+  [viewDelegate setBreakpoints:breakpoints];
+}
 
 - (void) awakeFromNib
 {
@@ -345,7 +377,7 @@ static NSImage  *downImage = nil;
 
 - (void) dealloc
 {
-  [debuggerWindow close];
+  [breakpoints release];
   [super dealloc];
 }
 @end

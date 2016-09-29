@@ -49,6 +49,8 @@
           newLine:(BOOL)newLine
         withColor:(NSColor *)color;
 
+- (void) setBreakpoints:(NSArray *)breakpoints;
+
 - (void) terminate;
 
 - (void) interrupt;

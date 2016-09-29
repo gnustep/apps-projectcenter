@@ -641,4 +641,51 @@
     else
       NSLog(@"characters: |%@|", chars);
 }
+
+- (void) setBreakpoints:(NSArray *)breakpoints
+{
+  NSDictionary *bp;
+  NSEnumerator *e;
+  
+  // TODO
+  e = [breakpoints objectEnumerator];
+  while ((bp = [e nextObject]))
+    {
+      NSString *bpType;
+      NSString *bpString;
+
+      bpType = [bp objectForKey:PCBreakTypeKey];
+      bpString = nil;
+      if ([bpType isEqualToString:PCBreakTypeByLine])
+        {
+          NSString *fileName;
+          NSNumber *lineNumber;
+
+          fileName = [bp objectForKey:PCBreakFilename];
+          lineNumber = [bp objectForKey:PCBreakLineNumber];
+	  bpString = [NSString stringWithFormat:@"%@:%@", fileName, lineNumber];
+        }
+      else if ([bpType isEqualToString:PCBreakTypeMethod])
+        {
+          NSString *methodName;
+
+          methodName = [bp objectForKey:PCBreakMethod];
+	  bpString = methodName;
+        }
+      else
+        {
+          NSLog(@"Unknown breakpoint type: %@", bpType);
+        }
+      if (bpString)
+	{
+	  NSString *command;
+
+	  /* TODO: split into a separate insert function */
+	  command = [NSString stringWithFormat:@"-break-insert -f %@", bpString];
+	  NSLog(@"gdb mi command is: %@", command);
+	  [self putString: command];
+	}
+    }
+}
+
 @end
