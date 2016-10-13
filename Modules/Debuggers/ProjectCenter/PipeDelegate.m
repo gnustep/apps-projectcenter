@@ -663,14 +663,14 @@
 
           fileName = [bp objectForKey:PCBreakFilename];
           lineNumber = [bp objectForKey:PCBreakLineNumber];
-	  bpString = [NSString stringWithFormat:@"%@:%@", fileName, lineNumber];
+	  bpString = [NSString stringWithFormat:@"-break-insert -f %@:%@", fileName, lineNumber];
         }
       else if ([bpType isEqualToString:PCBreakTypeMethod])
         {
           NSString *methodName;
 
           methodName = [bp objectForKey:PCBreakMethod];
-	  bpString = methodName;
+          bpString = [NSString stringWithFormat:@"-interpreter-exec console \"break %@\"", methodName];
         }
       else
         {
@@ -681,7 +681,7 @@
 	  NSString *command;
 
 	  /* TODO: split into a separate insert function */
-	  command = [NSString stringWithFormat:@"-break-insert -f %@", bpString];
+	  command = bpString;
 	  NSLog(@"gdb mi command is: %@", command);
 	  [self putString: command];
 	}
