@@ -54,6 +54,8 @@
       messageColor = [[NSColor brownColor] retain];
       errorColor = [[NSColor redColor] retain];
       promptColor = [[NSColor purpleColor] retain];
+      
+      debuggerStarted = NO;
     }
   return self;
 }
@@ -152,6 +154,11 @@
   [stringScanner scanString: @"(gdb)" intoString: &prefix];
   if(prefix != nil)
     {
+      if(debuggerStarted == NO)
+	{
+	  [NOTIFICATION_CENTER postNotificationName:PCDBDebuggerStartedNotification
+	   object: nil];
+	}
       return PCDBPromptRecord;
     }
 

@@ -59,6 +59,7 @@ NSString *PCBreakTypeMethod = @"BreakTypeMethod";
 const NSString *PCBreakMethod = @"BreakMethod";
 const NSString *PCBreakFilename = @"BreakFilename";
 const NSString *PCBreakLineNumber = @"BreakLineNumber";
+NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 @implementation PCDebugger
 + (void) initialize
@@ -161,6 +162,11 @@ const NSString *PCBreakLineNumber = @"BreakLineNumber";
       gdbVersion = 0.0;
 
       breakpoints = nil;
+
+      [[NSNotificationCenter defaultCenter] addObserver: self
+       selector: @selector(handleNotification:)
+       name: PCDBDebuggerStartedNotification
+       object: nil];
     }
   return self;
 }
@@ -187,8 +193,11 @@ const NSString *PCBreakLineNumber = @"BreakLineNumber";
                 withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil]
 		logStandardError: YES];
   
-  // is this really the best place?
-  [self initBreakpoints];
+}
+
+- (void) handleNotification: (NSNotification *)notification
+{
+  [self initBreakpoints];  
 }
 
 - (void) initBreakpoints

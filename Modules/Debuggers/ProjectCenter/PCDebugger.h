@@ -34,6 +34,7 @@ extern NSString *PCBreakTypeMethod;
 extern const NSString *PCBreakMethod;
 extern const NSString *PCBreakFilename;
 extern const NSString *PCBreakLineNumber;
+extern NSString *PCDBDebuggerStartedNotification;
 
 @interface PCDebugger : NSObject <CodeDebugger>
 {
