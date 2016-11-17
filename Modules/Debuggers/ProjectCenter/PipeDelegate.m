@@ -158,6 +158,7 @@
 	{
 	  [NOTIFICATION_CENTER postNotificationName:PCDBDebuggerStartedNotification
 	   object: nil];
+	  debuggerStarted = YES;
 	}
       return PCDBPromptRecord;
     }

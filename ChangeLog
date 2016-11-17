@@ -1,3 +1,8 @@
+2016-11-17 09:20-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Change flag to yes
+	in parseLine method to indicate debugger has started.
+
 2016-11-17 09:18-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
