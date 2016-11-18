@@ -1,3 +1,13 @@
+2016-11-18 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Projects/Application/PCAppProject+Inspector.h
+	* Modules/Projects/Application/PCAppProject+Inspector.m
+	* Modules/Projects/Application/Resources/Inspector.gorm
+	Connect add/remove buttons.
+
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	Commands need new-line.
+
 2016-11-17 09:20-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Change flag to yes

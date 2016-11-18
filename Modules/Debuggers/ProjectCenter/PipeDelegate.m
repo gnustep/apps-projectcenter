@@ -671,14 +671,14 @@
 
           fileName = [bp objectForKey:PCBreakFilename];
           lineNumber = [bp objectForKey:PCBreakLineNumber];
-	  bpString = [NSString stringWithFormat:@"-break-insert -f %@:%@", fileName, lineNumber];
+	  bpString = [NSString stringWithFormat:@"-break-insert -f %@:%@\n", fileName, lineNumber];
         }
       else if ([bpType isEqualToString:PCBreakTypeMethod])
         {
           NSString *methodName;
 
           methodName = [bp objectForKey:PCBreakMethod];
-          bpString = [NSString stringWithFormat:@"-interpreter-exec console \"break %@\"", methodName];
+          bpString = [NSString stringWithFormat:@"-interpreter-exec console \"break %@\"\n", methodName];
         }
       else
         {
