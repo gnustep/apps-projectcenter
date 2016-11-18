@@ -2,6 +2,7 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
+	    "addDocType:",
 	    "clearAppIcon:",
 	    "clearFile:",
 	    "clearHelpFile:",
@@ -28,7 +29,9 @@
 	    "setAppType:",
 	    "setBundleIdentifier:",
 	    "setDocBasedApp:",
-	    "showDocTypesPanel:"
+	    "showDocTypesPanel:",
+	    "addDocType:",
+	    "removeDocType:"
 	);
 	Outlets = (
 	    projectAttributesView,

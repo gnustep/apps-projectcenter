@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2016 Free Software Foundation
 
    Author: Serg Stoyan <stoyan@on.com.ua>
+           Riccardo Mottola <rm@gnu.org>
 
    This file is part of GNUstep.
 
@@ -261,7 +262,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
   [docTypesPanel makeKeyAndOrderFront: nil];
 }
 
-- (void)setDocBasedApp: (id)sender
+- (IBAction)setDocBasedApp: (id)sender
 {
   NSString *docBased = [projectDict objectForKey: PCDocumentBasedApp];
 
@@ -341,7 +342,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
     }
 }
 
-- (void)addDocType: (id)sender
+- (IBAction)addDocType: (id)sender
 {
   NSInteger           row;
   NSMutableDictionary *entry = [NSMutableDictionary dictionaryWithCapacity: 6];
@@ -375,7 +376,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
 		      notify: YES];
 }
 
-- (void)removeDocType: (id)sender
+- (IBAction)removeDocType: (id)sender
 {
   int selectedRow = [docTypesList selectedRow];
 

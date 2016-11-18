@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2015 Free Software Foundation
+   Copyright (C) 2001-2016 Free Software Foundation
 
    Author: Serg Stoyan <stoyan@on.com.ua>
            Riccardo Mottola <rm@gnu.org>
@@ -50,7 +50,9 @@
 - (void)clearMainNib:(id)sender;
 - (BOOL)setMainNibWithFileAtPath:(NSString *)path;
 
-- (void)setDocBasedApp:(id)sender;
+- (IBAction)setDocBasedApp:(id)sender;
+- (IBAction)addDocType: (id)sender;
+- (IBAction)removeDocType: (id)sender;
 
 - (NSInteger)numberOfRowsInTableView:(NSTableView *)aTableView;
 - (id)            tableView:(NSTableView *)aTableView
