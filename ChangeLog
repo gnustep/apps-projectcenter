@@ -1,3 +1,10 @@
+2016-11-19 11:22-EST Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerViewDelegateProtocol.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Added/implemented
+	debuggerSetup method.
+
 2016-11-18 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/Application/PCAppProject+Inspector.h
@@ -8,6 +15,7 @@
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
 	Commands need new-line.
 
+>>>>>>> .r40226
 2016-11-17 09:20-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Change flag to yes

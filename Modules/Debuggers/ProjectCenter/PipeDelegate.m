@@ -696,4 +696,9 @@
     }
 }
 
+- (void) debuggerSetup
+{
+  NSString *command = @"set confirm off\n";
+  [self typeString: command];
+}
 @end

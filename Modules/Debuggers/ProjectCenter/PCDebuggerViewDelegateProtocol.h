@@ -59,4 +59,6 @@
 
 - (void) keyDown: (NSEvent*)theEvent;
 
+- (void) debuggerSetup;
+
 @end

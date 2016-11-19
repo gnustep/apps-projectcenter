@@ -1,5 +1,5 @@
 /*
-**  PCDebugger
+**  PCDebugger.m
 **
 **  Copyright (c) 2008-2016
 **
@@ -195,11 +195,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   
 }
 
-- (void) handleNotification: (NSNotification *)notification
-{
-  [self initBreakpoints];  
-}
-
 - (void) initBreakpoints
 {
   id <PCDebuggerViewDelegateProtocol> viewDelegate;
@@ -218,6 +213,20 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   viewDelegate = [debuggerView delegate];
   [viewDelegate setBreakpoints:breakpoints];
 }
+
+- (void) debuggerSetup
+{
+  id <PCDebuggerViewDelegateProtocol> viewDelegate;
+  viewDelegate = [debuggerView delegate];
+  [viewDelegate debuggerSetup];
+}
+
+- (void) handleNotification: (NSNotification *)notification
+{
+  [self initBreakpoints];
+  [self debuggerSetup];
+}
+
 
 - (void) awakeFromNib
 {
