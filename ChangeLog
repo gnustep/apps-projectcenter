@@ -1,3 +1,9 @@
+2016-11-25 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	skip and report empty lines as PCDBEmptyRecord
+
 2016-11-19 11:22-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m

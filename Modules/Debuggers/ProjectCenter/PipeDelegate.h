@@ -38,7 +38,8 @@ typedef enum PCDebuggerOutputType_enum {
   PCDBBreakpointRecord,
   PCDBFrameRecord,
   PCDBThreadRecord,
-  PCDBAdaExceptionRecord
+  PCDBAdaExceptionRecord,
+  PCDBEmptyRecord
 } PCDebuggerOutputTypes;
 
 @interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>

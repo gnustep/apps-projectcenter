@@ -148,9 +148,15 @@
 - (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
 {
   BOOL found = NO;
-  NSScanner *stringScanner = [NSScanner scannerWithString: stringInput];
+  NSScanner *stringScanner;
   NSString *prefix = NULL;
 
+  if ([stringInput length] == 0)
+    return PCDBEmptyRecord;
+
+  stringScanner = [NSScanner scannerWithString: stringInput];
+
+  //NSLog(@"parsing: |%@|", stringInput);
   [stringScanner scanString: @"(gdb)" intoString: &prefix];
   if(prefix != nil)
     {
@@ -310,7 +316,7 @@
 	}
       return PCDBResultRecord;
     }
-
+  NSLog(@"No match found parse: |%@|", stringInput);
   return PCDBNotFoundRecord;
 }
 
