@@ -324,9 +324,11 @@
 {
   NSString *unescapedString = [recordString copy];
 
-  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"~\"" withString: @""];
-  unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
-  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\"" withString: @"\""];
+  if ([unescapedString hasPrefix:@"~\""])
+    unescapedString = [unescapedString substringFromIndex:2];
+  if ([unescapedString hasSuffix:@"\""])\
+    unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
+  unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\t" withString: @"\t"];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\032" withString: @" "];
@@ -346,7 +348,7 @@
       if(outtype == PCDBConsoleStreamRecord || 
 	 outtype == PCDBTargetStreamRecord) 
 	{
-	  NSString *unescapedString = [self unescapeOutputRecord: item]; 
+	  NSString *unescapedString = [self unescapeOutputRecord: item];
 	  [self logString: unescapedString newLine: NO withColor:debuggerColor];
 	}
       else if(outtype == PCDBPromptRecord)
