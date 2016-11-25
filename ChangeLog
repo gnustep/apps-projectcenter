@@ -15,7 +15,6 @@
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
 	Commands need new-line.
 
->>>>>>> .r40226
 2016-11-17 09:20-EST Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m: Change flag to yes

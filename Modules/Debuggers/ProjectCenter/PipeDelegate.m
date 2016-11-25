@@ -699,6 +699,7 @@
 - (void) debuggerSetup
 {
   NSString *command = @"set confirm off\n";
-  [self typeString: command];
+  
+  [self putString: command];
 }
 @end
