@@ -1,7 +1,7 @@
 /*
 **  CodeParser.m
 **
-**  Copyright (c) 2003-2015
+**  Copyright (c) 2003-2016
 **
 **  Author: Yen-Ju  <yjchenx@hotmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -216,7 +216,7 @@ CodeType codeType(unichar *ch)
     }
   /* send an extra new line if the file did not terminate with such.
      Forces the parser to close pending actions */
-  if (codeType(_uchar+_length) != SpaceAndNewLineCodeType)
+  if (codeType(_uchar+(_length-1)) != SpaceAndNewLineCodeType)
     (*impSpaceAndNewLine)(_handler, selSpaceAndNewLine, 0X0A);
 }
 
