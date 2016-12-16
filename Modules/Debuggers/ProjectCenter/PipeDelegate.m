@@ -332,16 +332,23 @@
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\t" withString: @"\t"];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\032" withString: @" "];
-  
+
   return unescapedString;
 }
 
 - (void) parseString: (NSString *)inputString
 {
-  NSArray *components = [inputString componentsSeparatedByString:@"\n"];
-  NSEnumerator *en = [components objectEnumerator];
+  NSArray *components;
+  NSEnumerator *en;
   NSString *item = nil;
 
+#if defined(__MINGW32__)
+  components = [inputString componentsSeparatedByString:@"\r\n"];
+#else
+  components = [inputString componentsSeparatedByString:@"\n"];
+#endif
+  en = [components objectEnumerator];
+ 
   while((item = [en nextObject]) != nil) 
     {
       PCDebuggerOutputTypes outtype = [self parseStringLine: item];

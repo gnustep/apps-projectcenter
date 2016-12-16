@@ -1,3 +1,8 @@
+2016-12-16 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	Conditionally split on windows with CR-LF
+
 2016-11-28 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Parsers/ProjectCenter/PCParser.m
