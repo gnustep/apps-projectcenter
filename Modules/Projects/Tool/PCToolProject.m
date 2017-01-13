@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2013 Free Software Foundation
+   Copyright (C) 2001-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -137,7 +137,7 @@
 // --- ProjectType protocol
 // ----------------------------------------------------------------------------
 
-- (PCProject *)createProjectAt:(NSString *)path
+- (PCProject *)createProjectAt:(NSString *)path withOption:(NSString *)option
 {
   PCFileManager  *pcfm = [PCFileManager defaultManager];
   PCFileCreator  *pcfc = [PCFileCreator sharedCreator];

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2015 Free Software Foundation
+   Copyright (C) 2001-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -141,7 +141,7 @@
 // --- ProjectType protocol
 // ----------------------------------------------------------------------------
 
-- (PCProject *)createProjectAt:(NSString *)path
+- (PCProject *)createProjectAt:(NSString *)path withOption:(NSString *)projOption
 {
   PCFileManager  *pcfm = [PCFileManager defaultManager];
   PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
@@ -203,38 +203,46 @@
   // into English.lproj and copied into all available .lproj subdirs.
   _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
 
-  // Main NIB
-  _file = [projBundle pathForResource:@"Main" ofType:@"gorm"];
-  mainNibFile = [NSString stringWithFormat:@"%@.gorm", projectName];
-  mainNibFile = [_resourcePath stringByAppendingPathComponent:mainNibFile];
-  [pcfm copyFile:_file toFile:mainNibFile];
+  if ([projOption isEqualToString: PCProjectInterfaceGorm])
+    {
+      // Main NIB (Gorm)
+      _file = [projBundle pathForResource:@"Main" ofType:@"gorm"];
+      mainNibFile = [NSString stringWithFormat:@"%@.gorm", projectName];
+      mainNibFile = [_resourcePath stringByAppendingPathComponent:mainNibFile];
+      [pcfm copyFile:_file toFile:mainNibFile];
+        
+      [projectDict setObject:[mainNibFile lastPathComponent]
+                      forKey:PCMainInterfaceFile];
+      [projectDict setObject:[NSArray arrayWithObjects:[mainNibFile lastPathComponent], nil] 
+                      forKey:PCInterfaces];
+    }
+  else if ([projOption isEqualToString: PCProjectInterfaceRenaissance])
+    {
+      // Renaissance
+      _file = [projBundle pathForResource:@"Main" ofType:@"gsmarkup"];
+      _2file = [_resourcePath stringByAppendingPathComponent:@"Main.gsmarkup"];
+      [pcfm copyFile:_file toFile:_2file];
+      _file = [projBundle pathForResource:@"MainMenu-GNUstep" ofType:@"gsmarkup"];
+      _2file = [_resourcePath 
+                 stringByAppendingPathComponent:@"MainMenu-GNUstep.gsmarkup"];
+      [pcfm copyFile:_file toFile:_2file];
+      _file = [projBundle pathForResource:@"MainMenu-OSX" ofType:@"gsmarkup"];
+      _2file = [_resourcePath 
+                 stringByAppendingPathComponent:@"MainMenu-OSX.gsmarkup"];
+      [pcfm copyFile:_file toFile:_2file];
 
-  [projectDict setObject:[mainNibFile lastPathComponent]
-                  forKey:PCMainInterfaceFile];
-
-  // Renaissance
-  _file = [projBundle pathForResource:@"Main" ofType:@"gsmarkup"];
-  _2file = [_resourcePath stringByAppendingPathComponent:@"Main.gsmarkup"];
-  [pcfm copyFile:_file toFile:_2file];
-  _file = [projBundle pathForResource:@"MainMenu-GNUstep" ofType:@"gsmarkup"];
-  _2file = [_resourcePath 
-    stringByAppendingPathComponent:@"MainMenu-GNUstep.gsmarkup"];
-  [pcfm copyFile:_file toFile:_2file];
-  _file = [projBundle pathForResource:@"MainMenu-OSX" ofType:@"gsmarkup"];
-  _2file = [_resourcePath 
-    stringByAppendingPathComponent:@"MainMenu-OSX.gsmarkup"];
-  [pcfm copyFile:_file toFile:_2file];
-
-  [projectDict setObject:[NSArray arrayWithObjects:[mainNibFile lastPathComponent], @"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup", nil] 
-    forKey:PCInterfaces];
+      [projectDict setObject:[NSArray arrayWithObjects:@"Main.gsmarkup", @"MainMenu-GNUstep.gsmarkup", @"MainMenu-OSX.gsmarkup", nil]
+                      forKey:PCInterfaces];
+    }
 
   // Info-gnustep.plist
   _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
   infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
   [infoDict setObject:projectName forKey:@"ApplicationName"];
   [infoDict setObject:projectName forKey:@"NSExecutable"];
-  [infoDict setObject:[mainNibFile lastPathComponent] 
-    forKey:@"NSMainNibFile"];
+  if (mainNibFile)
+    [infoDict setObject:[mainNibFile lastPathComponent] 
+                 forKey:@"NSMainNibFile"];
   [infoDict setObject:[projectDict objectForKey:PCPrincipalClass]
     forKey:@"NSPrincipalClass"];
   [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];

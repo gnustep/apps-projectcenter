@@ -102,7 +102,7 @@
 - (void)loadInfoFile;
 - (void)dealloc;
 
-- (PCProject *)createProjectAt:(NSString *)path;
+- (PCProject *)createProjectAt:(NSString *)path withOption:projOption;
 
 @end
 

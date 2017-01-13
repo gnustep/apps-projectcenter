@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2004 Free Software Foundation
+   Copyright (C) 2001-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 	    
    Description: This is the project type 'Bundle' for GNUstep. You never 
                 should create it yourself but use PCBundleProj for doing this. 
@@ -50,7 +51,7 @@
 - (id)init;
 - (void)dealloc;
 
-- (PCProject *)createProjectAt:(NSString *)path;
+- (PCProject *)createProjectAt:(NSString *)path withOption:projOption;
 
 @end
 

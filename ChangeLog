@@ -1,3 +1,21 @@
+2017-01-13 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectManager.m
+	* Headers/Protocols/ProjectType.h
+	* Modules/Projects/Aggregate/PCAggregateProject.h
+	* Modules/Projects/Aggregate/PCAggregateProject.m
+	* Modules/Projects/Application/PCAppProject.h
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/Bundle/PCBundleProject.h
+	* Modules/Projects/Bundle/PCBundleProject.m
+	* Modules/Projects/Framework/PCFrameworkProject.h
+	* Modules/Projects/Framework/PCFrameworkProject.m
+	* Modules/Projects/ResourceSet/PCResourceSetProject.h
+	* Modules/Projects/ResourceSet/PCResourceSetProject.m
+	* Modules/Projects/Tool/PCToolProject.h
+	* Modules/Projects/Tool/PCToolProject.m
+	Pass options to createProjectAt and use those to create Gorm/Renaissance subtypes, enable the former by default.
+
 2016-12-16 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PipeDelegate.m

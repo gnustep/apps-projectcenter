@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2016 Free Software Foundation
+   Copyright (C) 2001-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -104,7 +104,7 @@
 // --- ProjectType protocol
 // ----------------------------------------------------------------------------
 
-- (PCProject *)createProjectAt:(NSString *)path
+- (PCProject *)createProjectAt:(NSString *)path withOption:projOption
 {
   NSBundle      *projectBundle = nil;
   NSString      *_file = nil;

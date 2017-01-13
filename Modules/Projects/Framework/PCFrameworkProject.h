@@ -1,9 +1,10 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004 Free Software Foundation
+   Copyright (C) 2004-2017 Free Software Foundation
 
    Authors: Serg Stoyan
+            Riccardo Mottola
 	    
    Description: This is the project type 'Library' for GNUstep. You never 
                 should create it yourself but use PCFrameworkProj for doing 
@@ -50,7 +51,7 @@
 - (id)init;
 - (void)dealloc;
 
-- (PCProject *)createProjectAt:(NSString *)path;
+- (PCProject *)createProjectAt:(NSString *)path withOption:projOption;
 
 @end
 

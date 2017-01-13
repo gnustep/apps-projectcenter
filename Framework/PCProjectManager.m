@@ -759,6 +759,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *className = [projectTypes objectForKey:projectType];
   PCProject<ProjectType> *projectCreator;
   PCProject              *project = nil;
+  NSString               *subType = nil;
  
   if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) != nil)
     {
@@ -766,6 +767,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       return project;
     }
 
+  if ([projectType isEqualToString:@"Application"])
+    subType = PCProjectInterfaceGorm;
+ 
   projectCreator = [bundleManager objectForClassName:className 
 					  bundleType:@"project"
 					    protocol:@protocol(ProjectType)];
@@ -791,7 +795,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 
   // Create project
-  if (!(project = [projectCreator createProjectAt:aPath])) 
+  if (!(project = [projectCreator createProjectAt:aPath withOption:subType])) 
     {
       NSRunAlertPanel(@"New Project",
 		      @"Project %@ could not be created.\nReport bug, please!",
