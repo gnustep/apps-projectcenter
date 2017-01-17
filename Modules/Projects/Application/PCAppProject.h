@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2016 Free Software Foundation
+   Copyright (C) 2001-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -102,7 +102,7 @@
 - (void)loadInfoFile;
 - (void)dealloc;
 
-- (PCProject *)createProjectAt:(NSString *)path withOption:projOption;
+- (PCProject *)createProjectAt:(NSString *)path withOption:(NSString *)projOption;
 
 @end
 

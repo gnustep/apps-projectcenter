@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2017 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -1346,11 +1346,15 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString               *className = [projectTypes objectForKey:projectType];
   PCProject<ProjectType> *projectCreator;
   PCProject              *subproject = nil;
+  NSString               *subType = nil;
+
+  if ([projectType isEqualToString:@"Application"])
+    subType = PCProjectInterfaceGorm;
 
   projectCreator = [bundleManager objectForClassName:className 
 					  bundleType:@"project"
 					    protocol:@protocol(ProjectType)];
-  if (!(subproject = [projectCreator createProjectAt:aPath])) 
+  if (!(subproject = [projectCreator createProjectAt:aPath withOption:subType])) 
     {
       NSRunAlertPanel(@"New Subproject",
 		      @"Internal error!"
