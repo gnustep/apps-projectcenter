@@ -245,7 +245,10 @@
                  forKey:@"NSMainNibFile"];
   [infoDict setObject:[projectDict objectForKey:PCPrincipalClass]
     forKey:@"NSPrincipalClass"];
-  [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
+  
+  // most probably empty
+  if ([projectDict objectForKey:PCBundleIdentifier])
+    [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
 
   // Write to ProjectNameInfo.plist
   _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
