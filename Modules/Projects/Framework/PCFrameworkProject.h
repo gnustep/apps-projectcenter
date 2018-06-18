@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2004-2017 Free Software Foundation
+   Copyright (C) 2004-2018 Free Software Foundation
 
    Authors: Serg Stoyan
             Riccardo Mottola
@@ -60,6 +60,7 @@
 - (BOOL)writeMakefile;
 - (void)appendHead:(PCMakefileFactory *)mff;
 - (void)appendPublicHeaders:(PCMakefileFactory *)mff;
+- (void)appendGSDoc:(PCMakefileFactory *)mff;
 - (void)appendTail:(PCMakefileFactory *)mff;
 
 @end

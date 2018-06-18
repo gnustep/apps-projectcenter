@@ -1,7 +1,13 @@
+2018-08-19 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Projects/Framework/PCFrameworkProject.h
+	* Modules/Projects/Framework/PCFrameworkProject.m
+	Add some GSDoc makefile aids
+
 2017-08-16 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/Application/PCAppProject.m
-	Fix for nill bundle identifier.
+	Fix for nil bundle identifier.
 
 2017-01-17 Riccardo Mottola <rm@gnu.org>
 
