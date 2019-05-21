@@ -1,11 +1,12 @@
 /*
   GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
  
-  Copyright (C) 2003-2004 Free Software Foundation
+  Copyright (C) 2003-2019 Free Software Foundation
  
   Authors: Serg Stoyan
+           Riccardo Mottola
  
-  This file is part of GNUstep.
+  This file is part of ProjectCenter.
  
   This application is free software; you can redistribute it and/or
   modify it under the terms of the GNU General Public
@@ -25,7 +26,7 @@
 #ifndef _PCButton_h_
 #define _PCButton_h_
 
-#import <AppKit/AppKit.h>
+#import <AppKit/NSButton.h>
 
 /*
  * Button
@@ -33,14 +34,6 @@
 
 @interface PCButton : NSButton 
 {
-  NSToolTipTag        mainToolTip;
-
-  NSTimer             *ttTimer;
-  NSWindow            *ttWindow;
-  NSMutableDictionary *ttTitleAttrs;
-  NSColor             *ttBackground;
-
-  BOOL                _hasTooltips;
 }
 
 @end
