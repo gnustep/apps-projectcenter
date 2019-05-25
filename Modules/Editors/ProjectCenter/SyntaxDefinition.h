@@ -59,29 +59,29 @@
 - (const char *) contextBeginningCharacters;
 - (unsigned int) numberOfContextBeginningCharacters;
 
-- (const char *) contextSkipCharactersForContext: (unsigned int) ctxt;
-- (unsigned int) numberOfContextSkipCharactersForContext: (unsigned int) ctxt;
+- (const char *) contextSkipCharactersForContext: (NSUInteger) ctxt;
+- (unsigned int) numberOfContextSkipCharactersForContext: (NSUInteger) ctxt;
 
-- (TextPattern **) contextSkipsForContext: (unsigned int) ctxt;
-- (TextPattern *) contextEndingForContext: (unsigned int) ctxt;
+- (TextPattern **) contextSkipsForContext: (NSUInteger) ctxt;
+- (TextPattern *) contextEndingForContext: (NSUInteger) ctxt;
 
 // Inquiring about graphical attributes of contexts
-- (NSColor *) foregroundColorForContext: (unsigned int) context;
-- (NSColor *) backgroundColorForContext: (unsigned int) context;
-- (BOOL) isItalicFontForContext: (unsigned int) context;
-- (BOOL) isBoldFontForContext: (unsigned int) context;
+- (NSColor *) foregroundColorForContext: (NSUInteger) context;
+- (NSColor *) backgroundColorForContext: (NSUInteger) context;
+- (BOOL) isItalicFontForContext: (NSUInteger) context;
+- (BOOL) isBoldFontForContext: (NSUInteger) context;
 
 // Obtaining keyword patterns
-- (TextPattern **) keywordsInContext: (unsigned int) context;
+- (TextPattern **) keywordsInContext: (NSUInteger) context;
 
 // Inquiring about graphical attributes of keywords
-- (NSColor *) foregroundColorForKeyword: (unsigned int) keyword
-                              inContext: (unsigned int) context;
-- (NSColor *) backgroundColorForKeyword: (unsigned int) keyword
-                              inContext: (unsigned int) context;
-- (BOOL) isItalicFontForKeyword: (unsigned int) keyword
-                      inContext: (unsigned int) context;
-- (BOOL) isBoldFontForKeyword: (unsigned int) keyword
-                    inContext: (unsigned int) context;
+- (NSColor *) foregroundColorForKeyword: (NSUInteger) keyword
+                              inContext: (NSUInteger) context;
+- (NSColor *) backgroundColorForKeyword: (NSUInteger) keyword
+                              inContext: (NSUInteger) context;
+- (BOOL) isItalicFontForKeyword: (NSUInteger) keyword
+                      inContext: (NSUInteger) context;
+- (BOOL) isBoldFontForKeyword: (NSUInteger) keyword
+                    inContext: (NSUInteger) context;
 
 @end

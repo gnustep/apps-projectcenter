@@ -470,12 +470,12 @@ static NSMutableDictionary * syntaxDefinitions = nil;
   return sizeof(contextBeginningChars);
 }
 
-- (const char *)contextSkipCharactersForContext:(unsigned int)ctxt
+- (const char *)contextSkipCharactersForContext:(NSUInteger)ctxt
 {
   return contextSkipChars[ctxt];
 }
 
-- (unsigned int)numberOfContextSkipCharactersForContext:(unsigned int)ctxt
+- (unsigned int)numberOfContextSkipCharactersForContext:(NSUInteger)ctxt
 {
   return 128;
 }
@@ -483,31 +483,31 @@ static NSMutableDictionary * syntaxDefinitions = nil;
 /**
  * Returns the context ending symbol for the context identified by `ctxt'.
  */
-- (TextPattern *)contextEndingForContext:(unsigned int)ctxt
+- (TextPattern *)contextEndingForContext:(NSUInteger)ctxt
 {
   return contextEndings[ctxt];
 }
 
-- (TextPattern **)contextSkipsForContext:(unsigned int)ctxt
+- (TextPattern **)contextSkipsForContext:(NSUInteger)ctxt
 {
   return contextSkips[ctxt];
 }
 
-- (NSColor *)foregroundColorForContext:(unsigned int)context
+- (NSColor *)foregroundColorForContext:(NSUInteger)context
 {
   return [[contextGraphics
     objectAtIndex: context]
     objectForKey: @"ForegroundColor"];
 }
 
-- (NSColor *)backgroundColorForContext:(unsigned int)context
+- (NSColor *)backgroundColorForContext:(NSUInteger)context
 {
   return [[contextGraphics
     objectAtIndex: context]
     objectForKey: @"BackgroundColor"];
 }
 
-- (BOOL)isItalicFontForContext:(unsigned int)context
+- (BOOL)isItalicFontForContext:(NSUInteger)context
 {
   return [[[contextGraphics
     objectAtIndex: context]
@@ -515,7 +515,7 @@ static NSMutableDictionary * syntaxDefinitions = nil;
     boolValue];
 }
 
-- (BOOL)isBoldFontForContext:(unsigned int)context
+- (BOOL)isBoldFontForContext:(NSUInteger)context
 {
   return [[[contextGraphics
     objectAtIndex: context]
@@ -527,7 +527,7 @@ static NSMutableDictionary * syntaxDefinitions = nil;
  * Returns a NULL pointer terminated list of text patterns representing
  * keywords to be matched inside context `context'.
  */
-- (TextPattern **)keywordsInContext:(unsigned int)context
+- (TextPattern **)keywordsInContext:(NSUInteger)context
 {
   return keywords[context];
 }
@@ -537,23 +537,23 @@ static NSMutableDictionary * syntaxDefinitions = nil;
  * in `contextName' should be colored. The argument `keyword' is the
  * index of the keyword in the array returned by -keywordsInContext:.
  */
-- (NSColor *)foregroundColorForKeyword:(unsigned int)keyword
-			     inContext:(unsigned int)context
+- (NSColor *)foregroundColorForKeyword:(NSUInteger)keyword
+			     inContext:(NSUInteger)context
 {
   return [[[keywordGraphics objectAtIndex:context]
 			    objectAtIndex:keyword]
 			     objectForKey:@"ForegroundColor"];
 }
 
-- (NSColor *)backgroundColorForKeyword:(unsigned int)keyword
-			     inContext:(unsigned int)context
+- (NSColor *)backgroundColorForKeyword:(NSUInteger)keyword
+			     inContext:(NSUInteger)context
 {
   return [[[keywordGraphics objectAtIndex:context]
 			    objectAtIndex:keyword]
 			     objectForKey:@"BackgroundColor"];
 }
-- (BOOL)isItalicFontForKeyword:(unsigned int)keyword
-		     inContext:(unsigned int)context
+- (BOOL)isItalicFontForKeyword:(NSUInteger)keyword
+		     inContext:(NSUInteger)context
 {
   return [[[[keywordGraphics objectAtIndex:context]
 			     objectAtIndex:keyword]
@@ -565,8 +565,8 @@ static NSMutableDictionary * syntaxDefinitions = nil;
  * Returns YES if the font with which the keyword identified by `keyword'
  * should be bold and NO if it should be normal weigth.
  */
-- (BOOL)isBoldFontForKeyword:(unsigned int)keyword
-       		   inContext:(unsigned int)context
+- (BOOL)isBoldFontForKeyword:(NSUInteger)keyword
+       		   inContext:(NSUInteger)context
 {
   return [[[[keywordGraphics objectAtIndex:context]
 			     objectAtIndex:keyword]

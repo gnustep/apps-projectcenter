@@ -1,10 +1,16 @@
-2018-05-22 Riccardo Mottola <rm@gnu.org>
+2019-05-25 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/SyntaxDefinition.h
+	* Modules/Editors/ProjectCenter/SyntaxDefinition.m
+	Uniform context type to NSUInteger.
+
+2019-05-22 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCButton.m
 	* Headers/ProjectCenter/PCButton.h
 	Remove custom ToolTip implementation now present in GUI.
 
-2018-08-19 Riccardo Mottola <rm@gnu.org>
+2018-06-19 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Projects/Framework/PCFrameworkProject.h
 	* Modules/Projects/Framework/PCFrameworkProject.m
