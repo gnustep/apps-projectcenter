@@ -1,0 +1,13 @@
+*.app
+*.debug
+*.profile
+*.plugin
+*.framework
+*.debugger
+*.editor
+*.parser
+*.preferences
+*.project
+derived_src
+obj
+*~

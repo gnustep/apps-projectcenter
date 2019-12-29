@@ -151,7 +151,7 @@ LocateString(NSString * str,
 - (void) assignGraphicalAttributesOfContext: (NSUInteger) context
                                     toRange: (NSRange) r;
 
-- (void) assignGraphicalAttributesOfKeyword: (unsigned int) keyword
+- (void) assignGraphicalAttributesOfKeyword: (NSUInteger) keyword
                                   inContext: (NSUInteger) context
                                     toRange: (NSRange) r;
 
@@ -180,7 +180,7 @@ LocateString(NSString * str,
 
   NSUInteger i;
   unichar * string;
-  unsigned int context;
+  NSUInteger context;
 
   string = (unichar *) malloc(r.length * sizeof(unichar));
   [[textStorage string] getCharacters: string range: r];
@@ -195,7 +195,7 @@ LocateString(NSString * str,
       // default context - look for beginning symbols
       if (context == 0)
         {
-          unsigned int j = 0;
+          NSUInteger j = 0;
           TextPattern * pattern = NULL;
           NSRange ctxtRange;
           NSInteger l = 0;

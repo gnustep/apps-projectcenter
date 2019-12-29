@@ -35,14 +35,10 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectLauncher *projectLauncher = nil;
   PCProject         *activeProject = nil;
   
   projectManager = aManager;
   activeProject = [projectManager rootActiveProject];
-  projectLauncher = [activeProject projectLauncher];
-
-  projectLauncher = [[aManager activeProject] projectLauncher];
 
   self = [super initWithContentRect: NSMakeRect (0, 300, 480, 322)
                          styleMask: (NSTitledWindowMask 

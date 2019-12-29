@@ -26,8 +26,6 @@
 #import <ProjectCenter/PCButton.h>
 #import <ProjectCenter/PCDefines.h>
 
-#import <AppKit/NSBezierPath.h>
-
 @implementation PCButton
 
 // ============================================================================
@@ -47,13 +45,6 @@
     }
   return self;
 }
-
-- (void)dealloc
-{ 
-  [super dealloc];
-}
-
-
 
 @end
 

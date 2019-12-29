@@ -1337,6 +1337,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   // Create subproject
   subproject = [self createSubprojectOfType:spType path:spPath];
 
+  //  PCLogInfo(self, @"{createSubproject} add to %@", [activeProject projectName]);
+  [activeProject addSubproject:subproject];
+
   return;
 }
 
@@ -1365,9 +1368,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [subproject setIsSubproject:YES];
   [subproject setSuperProject:activeProject];
   [subproject setProjectManager:self];
-
-//  PCLogInfo(self, @"{createSubproject} add to %@", [activeProject projectName]);
-  [activeProject addSubproject:subproject];
 
   return subproject;
 }

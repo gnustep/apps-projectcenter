@@ -158,6 +158,12 @@
   return self;
 }
 
+- (PCProject *)createProjectAt:(NSString *)path withOption:(NSString *)option
+{
+  // FIXME: Just to implement the protocol
+  return [self createProjectAt:path];
+}
+
 // ----------------------------------------------------------------------------
 // --- File Handling
 // ----------------------------------------------------------------------------

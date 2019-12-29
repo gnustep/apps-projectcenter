@@ -147,7 +147,6 @@
 
 - (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
 {
-  BOOL found = NO;
   NSScanner *stringScanner;
   NSString *prefix = NULL;
 
@@ -173,7 +172,6 @@
   if(prefix != nil)
     {
       NSString *dictionaryName = NULL;
-      found = YES;
       
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 

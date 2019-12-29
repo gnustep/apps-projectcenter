@@ -599,7 +599,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 {
   NSString  *categoryName = nil;
   NSString  *fileName = nil;
-  NSString  *fileExtension = nil;
   NSString  *iconName = nil;
   NSImage   *icon = nil;
   PCProject *activeProject = [[project projectManager] activeProject];
@@ -611,7 +610,6 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	{
 	  return icon;
 	}
-      fileExtension = [fileName pathExtension];
     }
   else
     {

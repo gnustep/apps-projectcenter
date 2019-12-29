@@ -43,7 +43,6 @@
 //----------------------------------------------------------------------------
 
 - (id)init;
-- (void)dealloc;
 
 - (PCProject *)createProjectAt:(NSString *)path;
 

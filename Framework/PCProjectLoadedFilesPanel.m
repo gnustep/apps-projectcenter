@@ -35,13 +35,11 @@
 
 - (id)initWithProjectManager:(PCProjectManager *)aManager
 {
-  PCProjectLoadedFiles *projectLoadedFiles = nil;
   PCProject            *activeProject = nil;
 
   projectManager = aManager;
   activeProject = [projectManager rootActiveProject];
   currentProject = activeProject;
-  projectLoadedFiles = [activeProject projectLoadedFiles];
 
   PCLogStatus(self, @"[init]");
 

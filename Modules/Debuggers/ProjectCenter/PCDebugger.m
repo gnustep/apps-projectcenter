@@ -200,10 +200,10 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   id <PCDebuggerViewDelegateProtocol> viewDelegate;
 
   breakpoints = [[NSMutableArray alloc] init];
+  /* CRUDE EXAMPLES * TODO FIXME *
   NSDictionary *dP;
   NSLog(@"initing breakpoints");
 
-  /* CRUDE EXAMPLES * TODO FIXME *
   dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeMethod, PCBreakTypeKey, @"[NSException raise]", PCBreakMethod, nil];
   //  [breakpoints addObject:dP];
   dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeByLine, PCBreakTypeKey, @"AppController.m", PCBreakFilename, [NSNumber numberWithInt:100], PCBreakLineNumber, nil];

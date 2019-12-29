@@ -1,3 +1,18 @@
+2019-12-29  Fred Kiefer <FredKiefer@gmx.de>
+
+	* Framework/PCButton.m
+	* Framework/PCProjectBrowser.m
+	* Framework/PCProjectLauncherPanel.m
+	* Framework/PCProjectLoadedFilesPanel.m
+	* Framework/PCProjectManager.m
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	* Modules/Editors/ProjectCenter/SyntaxHighlighter.m
+	* Modules/Projects/Library/PCLibProject.h
+	* Modules/Projects/Library/PCLibProject.m
+	Remove compiler warnings.
+	* .gitignore: Add file
+
 2019-05-25 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/SyntaxDefinition.h
