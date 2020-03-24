@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2016 Free Software Foundation
+    Copyright (C) 2005-2020 Free Software Foundation
       Saso Kiselkov
       Serg Stoyan
       Riccardo Mottola
@@ -44,7 +44,7 @@
 #import "SyntaxHighlighter.h"
 #import "LineJumper.h"
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
-
+#import "PCPrefController.h"
 
 /**
  * Computes the indenting offset of the last line before the passed
@@ -360,22 +360,17 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 + (NSFont *)defaultEditorFont
 {
-  NSUserDefaults *df = [NSUserDefaults standardUserDefaults];
+  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
   NSString       *fontName;
-  float          fontSize;
+  CGFloat         fontSize;
   NSFont         *font = nil;
 
-  fontName = [df objectForKey:EditorTextFont];
-  fontSize = [df floatForKey:EditorTextFontSize];
+  fontName = [prefs stringForKey:EditorTextFont];
+  fontSize = [prefs floatForKey:EditorTextFontSize];
 
-  if (fontName != nil && fontSize > 0)
-    {
-      font = [NSFont fontWithName:fontName size:fontSize];
-    }
+  font = [NSFont fontWithName:fontName size:fontSize];
   if (font == nil)
-    {
-      font = [NSFont userFixedPitchFontOfSize:fontSize];
-    }
+    font = [NSFont userFixedPitchFontOfSize:0]; 
 
   return font;
 }

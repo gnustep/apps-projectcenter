@@ -1,7 +1,7 @@
 /*
 **  PCDebuggerView
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2020
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -40,6 +40,9 @@
 - (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;
+
+- (void)setFont:(NSFont *)font;
+
 
 
 - (void) runProgram: (NSString *)path

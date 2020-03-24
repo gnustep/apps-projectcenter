@@ -1,7 +1,7 @@
 /*
 **  PipeDelegate.m
 **
-**  Copyright (c) 2008-2016 Free Software Foundation
+**  Copyright (c) 2008-2020 Free Software Foundation
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -90,6 +90,17 @@
     }
 }
 
+- (void)setFont:(NSFont *)aFont
+{
+  if (font != aFont)
+    {
+      [font release];
+      font = aFont;
+      [font retain];
+    }
+}
+
+
 - (NSColor *)userInputColor
 {
   return userInputColor;
@@ -127,7 +138,7 @@
     }
 
   textAttributes = [NSMutableDictionary dictionary];
-  [textAttributes setObject:[NSFont userFixedPitchFontOfSize:0] forKey:NSFontAttributeName];
+  [textAttributes setObject:font forKey:NSFontAttributeName];
   if (color)
     {
 

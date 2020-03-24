@@ -56,6 +56,7 @@ typedef enum PCDebuggerOutputType_enum {
   NSColor *messageColor;
   NSColor *errorColor;
   NSColor *promptColor;
+  NSFont  *font;
 
   BOOL debuggerStarted;
 }

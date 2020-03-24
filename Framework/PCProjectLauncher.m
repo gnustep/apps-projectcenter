@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2016 Free Software Foundation
+   Copyright (C) 2000-2020 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -35,6 +35,9 @@
 #import <ProjectCenter/PCLogController.h>
 
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
+#import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
+
+#import "PCPrefController.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -145,7 +148,16 @@ enum {
 
   if ((self = [super init]))
     {
-      NSFont *font = [NSFont userFixedPitchFontOfSize: 10.0];
+      PCPrefController *prefs = [PCPrefController sharedPCPreferences];
+      NSFont *font;
+      NSString *fontName;
+      CGFloat  fontSize;
+
+      fontName = [prefs stringForKey:ConsoleFixedFont];
+      fontSize = [prefs floatForKey:ConsoleFixedFontSize];
+      font = [NSFont fontWithName:fontName size:fontSize];
+      if (font == nil)
+        font = [NSFont userFixedPitchFontOfSize:0];
 
       project = aProject;
 

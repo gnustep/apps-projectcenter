@@ -57,6 +57,11 @@
 }
 
 
+- (void)setFont:(NSFont *)aFont
+{
+  [viewDelegate setFont:aFont];
+}
+
 /**
  * Log string to the view.
  */

@@ -1,7 +1,7 @@
 /*
 **  PCDebuggerViewDelegateProtocol.h
 **
-**  Copyright (c) 2016
+**  Copyright (c) 2016-2020
 **
 **  Author: Riccardo Mottola <rm@gnu.org>
 **
@@ -29,6 +29,8 @@
 @class PCDebugger;
 
 @protocol PCDebuggerViewDelegateProtocol <NSObject>
+
+- (void)setFont:(NSFont *)font;
 
 - (NSColor *)userInputColor;
 - (NSColor *)debuggerColor;

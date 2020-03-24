@@ -1,5 +1,17 @@
 2020-03-24 Riccardo Mottola <rm@gnu.org>
 
+	* Framework/PCProjectLauncher.m
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.h
+	* Modules/Debuggers/ProjectCenter/PCDebuggerViewDelegateProtocol.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.h
+	* Modules/Debuggers/ProjectCenter/PipeDelegate.m
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Uniform  font defaults to use PCPreferenceController, fix Debugger to
+	actually make setFont work thorugh the view-delegate chain.
+
+2020-03-24 Riccardo Mottola <rm@gnu.org>
+
 	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
 	Fix loading of font from preferences.
 

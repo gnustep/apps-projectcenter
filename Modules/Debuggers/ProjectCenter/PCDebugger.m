@@ -1,7 +1,7 @@
 /*
 **  PCDebugger.m
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2020
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>>
@@ -36,7 +36,7 @@
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import "PCDebuggerViewDelegateProtocol.h"
 #import "PipeDelegate.h"
-
+#import "PCPrefController.h"
 
 
 #ifndef NOTIFICATION_CENTER
@@ -120,22 +120,17 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 + (NSFont *)defaultConsoleFont
 {
-  NSUserDefaults *df = [NSUserDefaults standardUserDefaults];
+  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
   NSString       *fontName;
-  float          fontSize;
+  CGFloat         fontSize;
   NSFont         *font = nil;
 
-  fontName = [df objectForKey:ConsoleFixedFont];
-  fontSize = [df floatForKey:ConsoleFixedFontSize];
+  fontName = [prefs stringForKey:ConsoleFixedFont];
+  fontSize = [prefs floatForKey:ConsoleFixedFontSize];
 
-  if (fontName != nil && fontSize > 0)
-    {
-      font = [NSFont fontWithName:fontName size:fontSize];
-    }
+  font = [NSFont fontWithName:fontName size:fontSize];
   if (font == nil)
-    {
-      font = [NSFont userFixedPitchFontOfSize:0];
-    }
+    font = [NSFont userFixedPitchFontOfSize:0];
 
   return font;
 }
@@ -144,6 +139,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   if((self = [super init]) != nil)
     {
+    NSLog(@"PCDebugger Init");
       id <PCDebuggerViewDelegateProtocol> viewDelegate;
       // initialization here...
       if([NSBundle loadNibNamed: @"PCDebugger" owner: self] == NO)
@@ -157,6 +153,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       [viewDelegate setTextView:debuggerView];
       [viewDelegate setDebugger:self];
       [viewDelegate release];
+      [debuggerView setFont: [PCDebugger defaultConsoleFont]];
 
       subProcessId = 0;
       gdbVersion = 0.0;
@@ -236,7 +233,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   [debuggerWindow setToolbar: toolbar];
   RELEASE(toolbar);
 
-  [debuggerView setFont: [PCDebugger defaultConsoleFont]];
   [debuggerWindow setFrameAutosaveName: @"PCDebuggerWindow"];
   [self setStatus: @"Idle."];
 }
