@@ -1,3 +1,8 @@
+2020-03-24 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Preferences/EditorFSC/PCEditorFSCPrefs.m
+	Fix loading of font from preferences.
+
 2019-12-29  Fred Kiefer <FredKiefer@gmx.de>
 
 	* Framework/PCButton.m

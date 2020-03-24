@@ -1,7 +1,7 @@
 // 
 // GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 //
-// Copyright (C) 2001-2015 Free Software Foundation
+// Copyright (C) 2001-2020 Free Software Foundation
 //
 // Authors: Sergii Stoian
 //          Riccardo Mottola
@@ -175,7 +175,7 @@
 		    defaultValue:[consoleFixedFont fontName]];
   fontSize = [prefs floatForKey:ConsoleFixedFontSize
 		   defaultValue:[consoleFixedFont pointSize]];
-  consoleFixedFont = [NSFont fontWithName:fontName size:fontSize];
+  currentConsoleFixedFont = [NSFont fontWithName:fontName size:fontSize];
   [consoleFixedFontField setStringValue:[NSString stringWithFormat:@"%@ %0.1f", 
     [currentConsoleFixedFont fontName], [currentConsoleFixedFont pointSize]]];
   [consoleFixedFontField setFont:currentConsoleFixedFont];
