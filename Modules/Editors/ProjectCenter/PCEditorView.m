@@ -455,12 +455,14 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)drawRect:(NSRect)r
 {
-  NSRange drawnRange;
-
   if (highlighter)
     {
+      NSRange drawnRange;
+
       drawnRange = [[self layoutManager] 
 	glyphRangeForBoundingRect:r inTextContainer:[self textContainer]];
+      drawnRange = [[self layoutManager] characterRangeForGlyphRange:drawnRange
+                                                    actualGlyphRange:NULL];
       [highlighter highlightRange:drawnRange];
     }
 

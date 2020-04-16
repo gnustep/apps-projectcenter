@@ -1,3 +1,8 @@
+2020-04-16 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditorView.m:(drawRect:)
+	Fix range to use characters and not glyphs, sicne highlighting is based on chars.
+
 2020-03-24 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectLauncher.m
