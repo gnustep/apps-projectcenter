@@ -442,13 +442,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
   if ([self nameOfSelectedFile] != nil) 
     {
+      BOOL foundFile = NO;
       BOOL foundApp = NO;
       // PCLogInfo(self, @"{doubleClick} filePath: %@", filePath);*/
 
       workspace = [NSWorkspace sharedWorkspace];
-      foundApp = [workspace getInfoForFile:filePath 
+      foundFile = [workspace getInfoForFile:filePath 
 			    application:&appName 
 				   type:&type];
+      foundApp = foundFile && appName;
       // NSLog (@"Open file: %@ with app: %@", filePath, appName);
 
       // If 'Editor' role was set in .GNUstepExtPrefs application
