@@ -707,6 +707,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL: [NSURL fileURLWithPath:projectPathToSave]];
     }
 
+  if (flag)
+    [self setActiveProject: project];
   
   return project;
 }
