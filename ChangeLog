@@ -1,3 +1,9 @@
+2020-09-08 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectLauncher.m
+	Access Preferences through its protocol, since the launcher is in the
+	Framework.
+
 2020-04-16 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.m:(drawRect:)

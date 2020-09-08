@@ -33,11 +33,12 @@
 #import <ProjectCenter/PCBundleManager.h>
 #import <ProjectCenter/PCButton.h>
 #import <ProjectCenter/PCLogController.h>
+#import <Protocols/Preferences.h>
+
 
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
-#import "PCPrefController.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
@@ -148,7 +149,7 @@ enum {
 
   if ((self = [super init]))
     {
-      PCPrefController *prefs = [PCPrefController sharedPCPreferences];
+      id <PCPreferences> prefs = [[project projectManager] prefController];
       NSFont *font;
       NSString *fontName;
       CGFloat  fontSize;
