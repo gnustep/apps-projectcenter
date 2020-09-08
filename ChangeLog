@@ -4,6 +4,12 @@
 	* Modules/Editors/ProjectCenter/SyntaxHighlighter.m
 	Add setters for fonts.
 
+	* Modules/Editors/ProjectCenter/PCEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Separate font accessors in to class and instance methods.
+	Do not use preferences in class methods, since they are outside the
+	protocol.
+
 2020-09-08 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectLauncher.m

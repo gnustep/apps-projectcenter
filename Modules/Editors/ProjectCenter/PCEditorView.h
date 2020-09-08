@@ -42,6 +42,12 @@
 + (NSFont *)defaultEditorItalicFont;
 + (NSFont *)defaultEditorBoldItalicFont;
 
+- (NSFont *)editorFont;
+- (NSFont *)editorBoldFont;
+- (NSFont *)editorItalicFont;
+- (NSFont *)editorBoldItalicFont;
+
+
 - (void)setEditor:(NSObject <CodeEditor> *)anEditor;
 
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType;

@@ -40,11 +40,12 @@
 
 #import <ctype.h>
 
+#import <ProjectCenter/PCProjectManager.h>
+
 #import "PCEditor.h"
 #import "SyntaxHighlighter.h"
 #import "LineJumper.h"
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
-#import "PCPrefController.h"
 
 /**
  * Computes the indenting offset of the last line before the passed
@@ -360,18 +361,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 + (NSFont *)defaultEditorFont
 {
-  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
-  NSString       *fontName;
-  CGFloat         fontSize;
   NSFont         *font = nil;
 
-  fontName = [prefs stringForKey:EditorTextFont];
-  fontSize = [prefs floatForKey:EditorTextFontSize];
-
-  font = [NSFont fontWithName:fontName size:fontSize];
-  if (font == nil)
-    font = [NSFont userFixedPitchFontOfSize:0]; 
-
+  font = [NSFont userFixedPitchFontOfSize:0];
   return font;
 }
 
@@ -394,6 +386,50 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 + (NSFont *)defaultEditorBoldItalicFont
 {
   NSFont *font = [self defaultEditorFont];
+
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSBoldFontMask |
+                                                        NSItalicFontMask];
+}
+
+- (NSFont *)editorFont
+{
+  id <PCPreferences> prefs;
+  NSString          *fontName;
+  CGFloat            fontSize;
+  NSFont            *font = nil;
+
+  prefs = [[[editor editorManager] projectManager] prefController];
+
+  fontName = [prefs stringForKey:EditorTextFont];
+  fontSize = [prefs floatForKey:EditorTextFontSize];
+
+  font = [NSFont fontWithName:fontName size:fontSize];
+  if (font == nil)
+    font = [NSFont userFixedPitchFontOfSize:0]; 
+
+  return font;
+}
+
+- (NSFont *)editorBoldFont
+{
+  NSFont *font = [self editorFont];
+
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSBoldFontMask];
+}
+
+- (NSFont *)editorItalicFont
+{
+  NSFont *font = [self editorFont];
+
+  return [[NSFontManager sharedFontManager] convertFont:font
+                                            toHaveTrait:NSItalicFontMask];
+}
+
+- (NSFont *)editorBoldItalicFont
+{
+  NSFont *font = [self editorFont];
 
   return [[NSFontManager sharedFontManager] convertFont:font
                                             toHaveTrait:NSBoldFontMask |
@@ -475,6 +511,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 	 [[[SyntaxHighlighter alloc] initWithFileType:fileType
 					  textStorage:[self textStorage]]
 					  autorelease]);
+  [highlighter setNormalFont: [self editorFont]];
+  [highlighter setBoldFont: [self editorBoldFont]];
+  [highlighter setItalicFont: [self editorItalicFont]];
+  [highlighter setBoldItalicFont: [self editorBoldItalicFont]];
 }
 
 - (void)insertText:text
