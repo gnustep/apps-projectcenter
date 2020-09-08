@@ -732,6 +732,27 @@ LocateString(NSString * str,
     }
 }
 
+- (void)setNormalFont:(NSFont *)f
+{
+  ASSIGN(normalFont, f);
+}
+
+- (void)setBoldFont:(NSFont *)f
+{
+  ASSIGN(boldFont, f);
+}
+
+- (void)setItalicFont:(NSFont *)f
+{
+  ASSIGN(italicFont, f);
+}
+
+- (void)setBoldItalicFont:(NSFont *)f
+{
+  ASSIGN(boldItalicFont, f);
+}
+
+
 - (void) dealloc
 {
   NSDebugLLog(@"SyntaxHighlighter", @"SyntaxHighlighter: dealloc");

@@ -5,6 +5,7 @@
     ProjectManager application.
 
     Copyright (C) 2005  Saso Kiselkov
+                  2020  Riccardo Mottola
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -40,10 +41,10 @@
   NSTextStorage    *textStorage;
   SyntaxDefinition *syntax;
 
-  NSFont * normalFont,
-         * boldFont,
-         * italicFont,
-         * boldItalicFont;
+  NSFont *normalFont;
+  NSFont *boldFont;
+  NSFont *italicFont;
+  NSFont *boldItalicFont;
 
   NSUInteger lastProcessedContextIndex;
 
@@ -53,6 +54,11 @@
 
 - initWithFileType:(NSString *)fileType
        textStorage:(NSTextStorage *)aStorage;
+
+- (void)setNormalFont:(NSFont *)f;
+- (void)setBoldFont:(NSFont *)f;
+- (void)setItalicFont:(NSFont *)f;
+- (void)setBoldItalicFont:(NSFont *)f;
 
 - (void)highlightRange:(NSRange)r;
 
