@@ -8,6 +8,7 @@
 *.parser
 *.preferences
 *.project
+*.swp
 derived_src
 obj
 *~
