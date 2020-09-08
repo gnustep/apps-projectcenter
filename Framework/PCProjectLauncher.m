@@ -149,18 +149,19 @@ enum {
 
   if ((self = [super init]))
     {
-      id <PCPreferences> prefs = [[project projectManager] prefController];
+      id <PCPreferences> prefs;
       NSFont *font;
       NSString *fontName;
       CGFloat  fontSize;
 
+      project = aProject;
+
+      prefs = [[project projectManager] prefController];
       fontName = [prefs stringForKey:ConsoleFixedFont];
       fontSize = [prefs floatForKey:ConsoleFixedFontSize];
       font = [NSFont fontWithName:fontName size:fontSize];
       if (font == nil)
         font = [NSFont userFixedPitchFontOfSize:0];
-
-      project = aProject;
 
       textAttributes = 
 	[NSDictionary dictionaryWithObject:font forKey:NSFontAttributeName];
