@@ -36,7 +36,6 @@
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import "PCDebuggerViewDelegateProtocol.h"
 #import "PipeDelegate.h"
-#import "PCPrefController.h"
 
 
 #ifndef NOTIFICATION_CENTER
@@ -118,15 +117,16 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
     }
 }
 
-+ (NSFont *)defaultConsoleFont
+- (NSFont *)consoleFont
 {
-  PCPrefController *prefs = [PCPrefController sharedPCPreferences];
+  NSUserDefaults *defs;
   NSString       *fontName;
   CGFloat         fontSize;
   NSFont         *font = nil;
 
-  fontName = [prefs stringForKey:ConsoleFixedFont];
-  fontSize = [prefs floatForKey:ConsoleFixedFontSize];
+  defs = [NSUserDefaults standardUserDefaults];
+  fontName = [defs stringForKey:ConsoleFixedFont];
+  fontSize = [defs floatForKey:ConsoleFixedFontSize];
 
   font = [NSFont fontWithName:fontName size:fontSize];
   if (font == nil)
@@ -153,7 +153,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       [viewDelegate setTextView:debuggerView];
       [viewDelegate setDebugger:self];
       [viewDelegate release];
-      [debuggerView setFont: [PCDebugger defaultConsoleFont]];
+      [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
       gdbVersion = 0.0;
