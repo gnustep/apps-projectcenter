@@ -96,6 +96,9 @@
 
   // keep one undo manager for the editor
   NSUndoManager *undoManager;
+
+  // keeps the file's modification time when just opened
+  NSDate *modTime;
 }
 
 - (BOOL)editorShouldClose;
