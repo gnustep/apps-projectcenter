@@ -1,3 +1,8 @@
+2021-02-03 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCEditorManager.m:
+	Do not open an external editor if an in-window is requested.
+
 2020-09-08 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/SyntaxHighlighter.h

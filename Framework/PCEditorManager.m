@@ -170,7 +170,7 @@ NSString *PCEditorDidResignActiveNotification =
   id<CodeParser>  parser;
   BOOL exists = [fm fileExistsAtPath:filePath isDirectory:&isDir];
 
-  // Determine if file not exist or file is directory
+  // Determine if file does not exist or file is directory
   if (!exists)
     {
       NSRunAlertPanel(@"Open Editor",
@@ -198,10 +198,14 @@ NSString *PCEditorDidResignActiveNotification =
   else
     {
       NSString *app;
+
+      /* we don't have in-window editors for any bundles right now */
+      if (!windowed)
+        return;
       
-      /* Check for bundles and if possible let them be opened by Workspace */
+      /* Check for bundles and if possible let them be opened by Workspace but only if windowed */
       app = [[NSWorkspace sharedWorkspace] getBestAppInRole:@"Editor" forExtension:[fileName pathExtension]];
-      if (app)
+      if (windowed && app != nil)
         {
           if ([[NSWorkspace sharedWorkspace] openFile: filePath])
             return nil;
