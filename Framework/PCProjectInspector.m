@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2021 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -977,9 +977,19 @@
 
 - (void)fileNameDidChange:(id)sender
 {
-  if ([fileName isEqualToString:[fileNameField stringValue]])
+  NSString *newName;
+
+  newName = [fileNameField stringValue];
+  if ([fileName isEqualToString:newName])
     {
+      [fileNameField setStringValue:fileName];
       return;
+    }
+  if ([[newName stringByTrimmingCharactersInSet:
+                [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
+    {
+      [fileNameField setStringValue:fileName];
+      return NO;
     }
 
 /*  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
