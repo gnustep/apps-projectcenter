@@ -658,7 +658,7 @@
       ret = NSRunAlertPanel(@"Save/Overwrite/Diff File",
 			    @"Couldn't save '%@' because the file is modified externally!\nOverwrite would create a copy of the file with the extension .pcbackup<number>.",
 			    @"Cancel", nil, @"Overwrite", [_path lastPathComponent]);
-      // the NSAlertAlternateReturn is set to nil for future decision on it... post probable to implement a diff feature
+      // the NSAlertAlternateReturn is set to nil for future decision on it... probable to implement a diff feature
       if (ret == NSAlertDefaultReturn)
 	{
 	  return NO;
