@@ -108,6 +108,10 @@
   state = bVal ? NSOnState : NSOffState;
   [useTearOffWindows setState:state];
 
+  bVal = [prefs boolForKey:KeepPanels defaultValue:NO];
+  state = bVal ? NSOnState : NSOffState;
+  [keepPanels setState:state];
+
   val = [prefs stringForKey:Debugger defaultValue:debuggerToolDefault];
   if (val)
     [debuggerField setStringValue:val];
@@ -190,6 +194,20 @@
 
   state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool:state forKey:UseTearOffWindows notify:YES];
+}
+
+- (void)setKeepPanels:(id)sender
+{
+  BOOL state;
+
+  if (keepPanels == nil)
+    {
+      keepPanels = sender;
+      return;
+    }
+
+  state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool:state forKey:KeepPanels notify:YES];  
 }
 
 - (void)setDebugger:(id)sender
@@ -311,6 +329,7 @@
   [editorField setStringValue:path];
   [prefs setString:path forKey:Editor notify:YES];
 }
+
 
 @end
 

@@ -35,6 +35,7 @@
 #define RememberWindows      @"RememberWindows"
 #define DisplayLog           @"DisplayLog"
 #define UseTearOffWindows    @"UseTearOffWindows"
+#define KeepPanels           @"KeepPanelsWithinActiveProject"
 #define Debugger             @"Debugger"
 #define Editor               @"Editor"
 
@@ -49,6 +50,7 @@
   IBOutlet NSButton    *rememberWindows;
   IBOutlet NSButton    *displayLog;
   IBOutlet NSButton    *useTearOffWindows;
+  IBOutlet NSButton    *keepPanels;
 
   IBOutlet NSTextField *debuggerField;
   IBOutlet NSButton    *debuggerButton;
