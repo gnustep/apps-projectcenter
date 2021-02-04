@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2013 Free Software Foundation
+   Copyright (C) 2001-2021 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -19,6 +19,7 @@
    License along with this library; if not, write to the Free
    Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
 */
+
 #import <ProjectCenter/PCLogController.h>
 #import <ProjectCenter/PCFileManager.h>
 
@@ -48,7 +49,7 @@
   if ((self = [super init]))
     {
       infoController = [[PCInfoController alloc] init];
-      // Termporary workaround to initialize defaults values
+      // Temporary workaround to initialize defaults values
       prefController = [PCPrefController sharedPCPreferences];
       logController  = [PCLogController sharedLogController];
 
@@ -119,13 +120,13 @@
       || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
     {
       [projectManager openProjectAt: fileName makeActive: YES];
-      [[[projectManager activeProject] projectWindow] 
-	makeKeyAndOrderFront:self];
     }
   else
     {
       [projectManager openFileAtPath:fileName];
     }
+
+  [[[projectManager activeProject] projectWindow] makeKeyAndOrderFront:self];
   
   return YES;
 }
@@ -136,8 +137,6 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)notification
 {
-//  NSString *connectionName = [NSString stringWithFormat:@"ProjectCenter"];
-
   if ([prefController boolForKey:DisplayLog])
     {
       [logController showPanel];
