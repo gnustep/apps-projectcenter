@@ -201,7 +201,7 @@ NSString *PCEditorDidResignActiveNotification =
 
       /* we don't have in-window editors for any bundles right now */
       if (!windowed)
-        return;
+        return nil;
       
       /* Check for bundles and if possible let them be opened by Workspace but only if windowed */
       app = [[NSWorkspace sharedWorkspace] getBestAppInRole:@"Editor" forExtension:[fileName pathExtension]];
