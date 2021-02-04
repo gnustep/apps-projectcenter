@@ -635,56 +635,43 @@
 
 - (BOOL)saveFile
 {
-  BOOL saved = NO;
+  BOOL          saved = NO;
+  NSUInteger    count;
+  NSString      *backup;
+  NSFileManager *fm;
+  NSDictionary  *attr;
+  NSDate        *mtime;
+  NSUInteger    ret;
   
   if (_isEdited == NO)
     {
       return YES;
     }
 
-  NSFileManager *fm = [NSFileManager defaultManager];
-  NSDictionary *attr = [fm fileAttributesAtPath: _path traverseLink: NO];
-  NSDate *mtime = [attr fileModificationDate];
-  NSUInteger ret = NSAlertOtherReturn;
+  fm = [NSFileManager defaultManager];
+  attr = [fm fileAttributesAtPath: _path traverseLink: NO];
+  mtime = [attr fileModificationDate];
+  ret = NSAlertOtherReturn;
+  
   if (![modTime isEqual: mtime])
     {
       ret = NSRunAlertPanel(@"Save/Overwrite/Diff File",
 			    @"Couldn't save '%@' because the file is modified externally!\nOverwrite would create a copy of the file with the extension .pcbackup<number>.",
-			    @"Cancel", @"Diff", @"Overwrite", [_path lastPathComponent]);
+			    @"Cancel", nil, @"Overwrite", [_path lastPathComponent]);
+      // the NSAlertAlternateReturn is set to nil for future decision on it... post probable to implement a diff feature
       if (ret == NSAlertDefaultReturn)
 	{
 	  return NO;
 	}
       else if (ret == NSAlertAlternateReturn)
 	{
-	  // open EasyDiff
-	  NSString *ours = [_path stringByAppendingString: @".pc_unsaved"];
-	  [[_storage string] writeToFile: ours atomically:YES];
-	  NSArray *args = [NSArray arrayWithObjects: _path, ours, nil];
-	  
-	  NS_DURING
-	    {
-	      NSTask *diff = [NSTask launchedTaskWithLaunchPath: @"EasyDiff" arguments: args];
-	      
-	      [diff waitUntilExit];
-	      
-	    }
-	  NS_HANDLER
-	    {
-	      NSRunAlertPanel(@"Diff",
-			      @"Couldn't start EasyDiff: %@",
-			      @"Cancel", nil, nil, [localException reason]);
-	    }
-	  NS_ENDHANDLER;
-	  
-	  [fm removeItemAtPath: ours error: NULL];
-	  
+	  // here is propbably a code implementing diff feature
 	  return NO;
 	}
       else if (ret == NSAlertOtherReturn)
 	{
-	  NSUInteger count = 1;
-	  NSString *backup = [_path stringByAppendingString: @".pcbackup"];
+	  count = 1;
+	  backup = [_path stringByAppendingString: @".pcbackup"];
 	  while ([fm fileExistsAtPath: backup])
 	    {
 	      count++;
