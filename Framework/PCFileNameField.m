@@ -129,5 +129,17 @@ NSString *PCFileNameFieldNoFiles = @"No files selected";
   [super textDidEndEditing:aNotification];
 }
 
+- (BOOL)textShouldEndEditing:(NSText *)textObject
+{
+  NSString *text = [textObject string];
+  if ([text length] == 0 ||
+      [[text stringByTrimmingCharactersInSet:
+	      [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
+    {
+      return NO;
+    }
+
+  return YES;
+}
 @end
 
