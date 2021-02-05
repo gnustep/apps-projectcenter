@@ -1,3 +1,9 @@
+2021-02-04 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectManager.m
+	* PCAppController.m:
+	Cleanup a bit the setting of the active project and the key win.
+
 2021-02-03 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectInspector.m
@@ -7,12 +13,14 @@
 2021-02-03 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCEditorManager.m:
+
 	Do not open an external editor if an in-window is requested.
 
 2020-09-08 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/SyntaxHighlighter.h
 	* Modules/Editors/ProjectCenter/SyntaxHighlighter.m
+
 	Add setters for fonts.
 
 	* Modules/Editors/ProjectCenter/PCEditorView.h
