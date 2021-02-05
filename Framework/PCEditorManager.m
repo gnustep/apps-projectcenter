@@ -170,7 +170,7 @@ NSString *PCEditorDidResignActiveNotification =
   id<CodeParser>  parser;
   BOOL exists = [fm fileExistsAtPath:filePath isDirectory:&isDir];
 
-  // Determine if file not exist or file is directory
+  // Determine if file does not exist or file is directory
   if (!exists)
     {
       NSRunAlertPanel(@"Open Editor",
