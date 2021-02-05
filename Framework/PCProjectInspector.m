@@ -989,7 +989,7 @@
                 [NSCharacterSet whitespaceAndNewlineCharacterSet]] length] == 0)
     {
       [fileNameField setStringValue:fileName];
-      return NO;
+      return;
     }
 
 /*  PCLogInfo(self, @"{%@} file name changed from: %@ to: %@",
