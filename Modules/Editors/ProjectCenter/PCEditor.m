@@ -269,7 +269,8 @@
   NSFont              *font;
   id <PCPreferences>  prefs;
   NSFileManager       *fm = [NSFileManager defaultManager];
-
+  NSDictionary        *attr;
+  
   // Inform about future file opening
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillOpenNotification
@@ -279,7 +280,7 @@
   _path = [filePath copy];
   _isEditable = editable;
   prefs = [[_editorManager projectManager] prefController];
-  NSDictionary *attr = [fm fileAttributesAtPath: _path traverseLink: NO];
+  attr = [fm fileAttributesAtPath: _path traverseLink: NO];
   modTime = [[attr fileModificationDate] retain];
 
   // Prepare
