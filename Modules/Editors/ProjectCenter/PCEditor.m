@@ -206,6 +206,8 @@
       highlited_chars[1] = -1;
 
       undoManager = [[NSUndoManager alloc] init];
+
+      modTime = nil;
     }
 
   return self;
@@ -242,6 +244,7 @@
   RELEASE(readOnlyColor);
 
   RELEASE(undoManager);
+  RELEASE(modTime);
 
   [super dealloc];
 }
@@ -265,6 +268,7 @@
   NSMutableDictionary *attributes = [NSMutableDictionary new];
   NSFont              *font;
   id <PCPreferences>  prefs;
+  NSFileManager       *fm = [NSFileManager defaultManager];
 
   // Inform about future file opening
   [[NSNotificationCenter defaultCenter]
@@ -275,6 +279,8 @@
   _path = [filePath copy];
   _isEditable = editable;
   prefs = [[_editorManager projectManager] prefController];
+  NSDictionary *attr = [fm fileAttributesAtPath: _path traverseLink: NO];
+  modTime = [[attr fileModificationDate] retain];
 
   // Prepare
   font = [NSFont userFixedPitchFontOfSize:0.0];
@@ -300,6 +306,7 @@
   _storage = [[NSTextStorage alloc] init];
   [_storage setAttributedString:attributedString];
   RELEASE(attributedString);
+  RELEASE(attributes);
 
 //  [self _createInternalView];
 /*  if (categoryPath) // category == nil if we're non project editor
@@ -628,11 +635,53 @@
 
 - (BOOL)saveFile
 {
-  BOOL saved = NO;
+  BOOL          saved = NO;
+  NSUInteger    count;
+  NSString      *backup;
+  NSFileManager *fm;
+  NSDictionary  *attr;
+  NSDate        *mtime;
+  NSUInteger    ret;
 
   if (_isEdited == NO)
     {
       return YES;
+    }
+
+  fm = [NSFileManager defaultManager];
+  attr = [fm fileAttributesAtPath: _path traverseLink: NO];
+  mtime = [attr fileModificationDate];
+  ret = NSAlertOtherReturn;
+
+  if (![modTime isEqual: mtime])
+    {
+      ret = NSRunAlertPanel(@"Overwrite File",
+			    @"Couldn't save '%@' because the file is modified externally!\nOverwrite would create a copy of the file with the extension .pcbackup<number>.",
+			    @"Cancel", nil, @"Overwrite", [_path lastPathComponent]);
+      // the NSAlertAlternateReturn is set to nil for future decision on it... probable to implement a diff feature
+      if (ret == NSAlertDefaultReturn)
+	{
+	  return NO;
+	}
+      else if (ret == NSAlertAlternateReturn)
+	{
+	  // here is propbably a code implementing diff feature
+	  return NO;
+	}
+      else if (ret == NSAlertOtherReturn)
+	{
+	  count = 1;
+	  backup = [_path stringByAppendingString: @".pcbackup"];
+	  while ([fm fileExistsAtPath: backup])
+	    {
+	      count++;
+	      backup = [_path stringByAppendingFormat: @".pcbackup%u", count];
+	    }
+	  if (![fm copyItemAtPath: _path toPath: backup error: NULL])
+	    {
+	      return NO;
+	    }
+	}
     }
 
   [[NSNotificationCenter defaultCenter]
@@ -652,10 +701,15 @@
   if (saved == YES)
     {
       [self setIsEdited:NO];
+
+      attr = [fm fileAttributesAtPath: _path traverseLink: NO];
+      ASSIGN(modTime, [attr fileModificationDate]);
+
       [[NSNotificationCenter defaultCenter]
 	postNotificationName:PCEditorDidSaveNotification
 		      object:self];
     }
+
   else
     {
       NSRunAlertPanel(@"Save File",
