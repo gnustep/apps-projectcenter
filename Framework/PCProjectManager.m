@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2017 Free Software Foundation
+   Copyright (C) 2000-2021 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -552,7 +552,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString     *projectPath = nil;
   NSString     *projectFileType = nil;
   PCProject    *project = nil;
-  NSDictionary *wap = nil;
   NSString     *projectPathToSave;
 
   // Check project path for invalid characters
@@ -675,14 +674,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [self startSaveTimer];
       [project validateProjectDict];
       
-      if (!project) 
-	{
-	  return nil;
-	}
-      
       [loadedProjects setObject:project forKey:[project projectPath]];
+      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL: [NSURL fileURLWithPath:projectPathToSave]];
+      PCLogStatus(self, @"Saved opened Document as %@", projectPathToSave);
+
       if (flag)
 	{
+          NSDictionary *wap = nil;
 	  [project setProjectManager:self];
 	  
 	  // Windows and panels
@@ -699,14 +697,17 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	    {
 	      [[project projectWindow] showProjectLoadedFiles:self];
 	    }
-	  
-	  [[project projectWindow] makeKeyAndOrderFront:self];
-	  [self setActiveProject: project];
 	}
-      PCLogStatus(self, @"Saved opened Document as %@", projectPathToSave);
-      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL: [NSURL fileURLWithPath:projectPathToSave]];
+    }
+  else
+    {
+      PCLogStatus(self, @"Project %@ already Open", [project projectName]);
     }
 
+  if (flag)
+    {
+      [self setActiveProject: project];
+    }
   
   return project;
 }

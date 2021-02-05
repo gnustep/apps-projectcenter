@@ -658,8 +658,9 @@
 
 - (void)makeKeyAndOrderFront:(id)sender
 {
-//  PCLogInfo(self, @"makeKeyAndOrderFront sender: %@", [sender className]);
-  [projectWindow makeKeyAndOrderFront:nil];
+//  PCLogInfo(self, @"makeKeyAndOrderFront % @ sender: %@", [projectWindow title], [sender className]);
+//  NSLog(@"makeKeyAndOrderFront %@ sender: %@", [projectWindow title], [sender className]);
+  [projectWindow makeKeyAndOrderFront:self];
 }
 
 - (void)makeKeyWindow
