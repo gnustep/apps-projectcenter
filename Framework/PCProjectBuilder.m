@@ -220,6 +220,11 @@
   [logOutput setSelectable:YES];
   [logOutput setAutoresizingMask:NSViewWidthSizable | NSViewHeightSizable];
   [logOutput setBackgroundColor:[NSColor lightGrayColor]];
+  [logOutput setSelectedTextAttributes:
+    [NSDictionary dictionaryWithObjectsAndKeys:
+      [NSColor whiteColor], NSBackgroundColorAttributeName,
+      [NSColor blackColor], NSForegroundColorAttributeName,
+      nil]];
   [[logOutput textContainer] setWidthTracksTextView:YES];
   [[logOutput textContainer] setHeightTracksTextView:YES];
   [logOutput setHorizontallyResizable:NO];

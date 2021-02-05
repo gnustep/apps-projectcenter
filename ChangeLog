@@ -1,3 +1,14 @@
+2021-02-03 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectInspector.m
+	Check for invalid filenames and in case, reset to the original
+	file name.
+
+2021-02-03 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCEditorManager.m:
+	Do not open an external editor if an in-window is requested.
+
 2020-09-08 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/SyntaxHighlighter.h
