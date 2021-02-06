@@ -380,7 +380,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
       [[NSNotificationCenter defaultCenter]
 	postNotificationName:PCActiveProjectDidChangeNotification
-	              object:activeProject];
+		      object:activeProject];
     }
 }
 
@@ -707,6 +707,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (flag)
     {
       [self setActiveProject: project];
+      [[project projectWindow] makeKeyAndOrderFront:self];
     }
   
   return project;
@@ -751,7 +752,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (filePath != nil)
     {
       [self openProjectAt:filePath makeActive:YES];
-      [[[self activeProject] projectWindow] makeKeyAndOrderFront:self];
     }
 }
 
