@@ -751,6 +751,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   if (filePath != nil)
     {
       [self openProjectAt:filePath makeActive:YES];
+      [[[self activeProject] projectWindow] makeKeyAndOrderFront:self];
     }
 }
 
