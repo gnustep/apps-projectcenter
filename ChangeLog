@@ -1,3 +1,9 @@
+2021-02-06 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Respect background selection preferences and infer text
+	as inverse.
+
 2021-02-04 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectManager.m
