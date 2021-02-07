@@ -215,7 +215,6 @@
   editor = [self openEditorForFile:filePath 
 			  editable:editable 
 			  windowed:windowed];
-  
   if (!editor)
     {
       NSLog(@"We don't have editor for file: %@", fileName);

@@ -325,7 +325,6 @@
   _storage = [[NSTextStorage alloc] init];
   [_storage setAttributedString:attributedString];
   RELEASE(attributedString);
-  RELEASE(attributes);
 
 //  [self _createInternalView];
 /*  if (categoryPath) // category == nil if we're non project editor
