@@ -60,6 +60,11 @@ NSString
 
 @implementation PCProject
 
+- (NSString *)description
+{
+  return [NSString stringWithFormat: @"%@: %@ (%@)", [self className], projectName, projectPath];
+}
+
 // ============================================================================
 // ==== Init and free
 // ============================================================================

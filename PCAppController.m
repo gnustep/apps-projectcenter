@@ -126,8 +126,6 @@
       [projectManager openFileAtPath:fileName];
     }
 
-  [[[projectManager activeProject] projectWindow] makeKeyAndOrderFront:self];
-  
   return YES;
 }
 
