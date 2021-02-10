@@ -1468,10 +1468,13 @@ NSString
 
       _editorCategory = [[_editor categoryPath] mutableCopy];
       range = [_editorCategory rangeOfString:fromFile];
-      [_editorCategory replaceCharactersInRange:range withString:toFile];
-      
-      [_editor setCategoryPath:_editorCategory];
-      [projectBrowser setPath:_editorCategory];
+      if (range.location != NSNotFound)
+	{
+	  [_editorCategory replaceCharactersInRange:range withString:toFile];
+
+	  [_editor setCategoryPath:_editorCategory];
+	  [projectBrowser setPath:_editorCategory];
+	}
       RELEASE(_editorCategory);
     }
   else

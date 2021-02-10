@@ -218,6 +218,7 @@
   if (!editor)
     {
       NSLog(@"We don't have editor for file: %@", fileName);
+      [self setActiveEditor: nil];
       return nil;
     }
 
