@@ -817,7 +817,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString  *filePath;
   NSString  *projectType;
   PCProject *project;
-
+  NSString  *projectPath;
 
   [self createProjectTypeAccessaryView];
   
@@ -858,7 +858,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  return;
 	}
 
-      [loadedProjects setObject:project forKey: [project projectPath]];
+      projectPath = [project projectPath];
+      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:projectPath]];
+      [loadedProjects setObject:project forKey:projectPath];
       [self setActiveProject:project];
       [[project projectWindow] orderFront:self];
     }
