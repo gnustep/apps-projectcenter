@@ -1,3 +1,9 @@
+2021-02-12 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCFileManager.m
+	Open in project directory preferentially if no last open
+	dir (quick version, ignores file type).
+
 2021-02-06 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m
