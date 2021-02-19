@@ -654,8 +654,6 @@
 - (BOOL)saveFile
 {
   BOOL          saved = NO;
-  NSUInteger    count;
-  NSString      *backup;
   NSFileManager *fm;
   NSDictionary  *attr;
   NSDate        *mtime;
