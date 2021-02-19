@@ -674,7 +674,7 @@
   if (![modTime isEqual: mtime])
     {
       ret = NSRunAlertPanel(@"Overwrite File",
-			    @"Couldn't save '%@' because the file is modified externally!\nOverwrite would create a copy of the file with the extension .pcbackup<number>.",
+			    @"Couldn't save '%@' because the file is modified externally!",
 			    @"Cancel", nil, @"Overwrite", [_path lastPathComponent]);
       // the NSAlertAlternateReturn is set to nil for future decision on it... probable to implement a diff feature
       if (ret == NSAlertDefaultReturn)
@@ -685,20 +685,6 @@
 	{
 	  // here is propbably a code implementing diff feature
 	  return NO;
-	}
-      else if (ret == NSAlertOtherReturn)
-	{
-	  count = 1;
-	  backup = [_path stringByAppendingString: @".pcbackup"];
-	  while ([fm fileExistsAtPath: backup])
-	    {
-	      count++;
-	      backup = [_path stringByAppendingFormat: @".pcbackup%u", count];
-	    }
-	  if (![fm copyItemAtPath: _path toPath: backup error: NULL])
-	    {
-	      return NO;
-	    }
 	}
     }
 
