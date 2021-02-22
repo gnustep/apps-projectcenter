@@ -706,15 +706,7 @@
 
 - (BOOL)saveFileTo:(NSString *)path
 {
-  NSFileManager  *fm = [NSFileManager defaultManager];
-
-  if ([[_storage string] writeToFile:path atomically:YES])
-    {
-      ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:path traverseLink:NO] fileModificationDate]);
-      return YES;
-    }
-
-  return NO;
+  return [[_storage string] writeToFile:path atomically:YES];
 }
 
 - (BOOL)revertFileToSaved
