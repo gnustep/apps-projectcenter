@@ -710,7 +710,7 @@
 
   if ([[_storage string] writeToFile:path atomically:YES])
     {
-      ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate]);
+      ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:path traverseLink:NO] fileModificationDate]);
       return YES;
     }
 
