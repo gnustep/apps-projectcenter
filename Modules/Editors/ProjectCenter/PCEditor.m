@@ -670,7 +670,16 @@
   // Check if the file was ever written and its time is the same as the current file modification date
   if (!(_lastSaveDate && [fileModDate isEqualToDate:_lastSaveDate]))
     {
-      PCLogInfo(self, @"File modified externally?");
+      NSInteger choice;
+
+      PCLogInfo(self, @"File modified externally. %@ - %@", _lastSaveDate, fileModDate);
+      choice = NSRunAlertPanel(@"Overwrite File?",
+			       @"File %@ was modified externally. Overwrite?",
+			       @"Cancel", nil, @"Proceed", [_path lastPathComponent]);
+      if (choice == NSAlertDefaultReturn)
+	{
+	  return NO;
+	}
     }
     
   [[NSNotificationCenter defaultCenter]
@@ -681,6 +690,10 @@
  
   if (saved == YES)
     {
+      [self setIsEdited:NO];
+
+      // re-read date just saved
+      ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate]);
       // Send the notification to Gorm...
       if([[_path pathExtension] isEqual: @"h"])
 	{
@@ -689,7 +702,6 @@
 			  object: _path];
 	}
 
-      [self setIsEdited:NO];
       [[NSNotificationCenter defaultCenter]
 	postNotificationName:PCEditorDidSaveNotification
 	  	      object:self];
