@@ -675,9 +675,17 @@
       PCLogInfo(self, @"File modified externally. %@ - %@", _lastSaveDate, fileModDate);
       choice = NSRunAlertPanel(@"Overwrite File?",
 			       @"File %@ was modified externally. Overwrite?",
-			       @"Cancel", nil, @"Proceed", [_path lastPathComponent]);
+			       @"Cancel", @"Reload", @"Proceed", [_path lastPathComponent]);
       if (choice == NSAlertDefaultReturn)
 	{
+	  return NO;
+	}
+      else if (choice == NSAlertAlternateReturn)
+	{
+	  NSLog(@"Self");
+	  if ([self revertFileToSaved] == YES)
+	    return NO;
+	  NSLog(@"reload failed");
 	  return NO;
 	}
     }
