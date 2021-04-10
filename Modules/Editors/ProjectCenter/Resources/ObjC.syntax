@@ -9,17 +9,17 @@
       Keywords = (
         {
           Pattern = "<auto>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<break>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<case>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -34,17 +34,17 @@
         },
         {
           Pattern = "<continue>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<default>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<do>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -54,7 +54,7 @@
         },
         {
           Pattern = "<else>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -74,17 +74,17 @@
         },
         {
           Pattern = "<for>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<goto>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<if>";
-          ForegroundColor = "0.0 0.0 0.";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -99,12 +99,12 @@
         },
         {
           Pattern = "<register>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
           Pattern = "<return>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -119,7 +119,7 @@
         },
         {
           Pattern = "<sizeof>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -134,7 +134,7 @@
         },
         {
           Pattern = "<switch>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -149,7 +149,7 @@
         },
         {
           Pattern = "<inline>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
@@ -169,7 +169,7 @@
         },
         {
           Pattern = "<while>";
-          ForegroundColor = "0.0 0.0 0.0";
+          ForegroundColor = "0.6 0.45 0.75";
           Bold = YES;
         },
         {
