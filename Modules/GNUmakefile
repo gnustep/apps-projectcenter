@@ -39,7 +39,8 @@ SUBPROJECTS = \
 	Preferences/Build       \
 	Preferences/Saving      \
 	Preferences/Misc        \
-	Preferences/EditorFSC
+	Preferences/EditorFSC	\
+	Preferences/Indentation
 
 SUBPROJECTS += Debuggers/ProjectCenter
 

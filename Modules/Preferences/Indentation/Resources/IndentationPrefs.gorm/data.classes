@@ -1,0 +1,40 @@
+{
+    "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "setIndentWhenTyping:",
+	    "setIndentForOpenCurlyBrace:",
+	    "setIndentForCloseCurlyBrace:",
+	    "setIndentForSemicolon:",
+	    "setIndentForColon:",
+	    "setIndentForHash:",
+	    "setIndentForReturn:",
+	    "setIndentForSoloOpenBrace:"
+	);
+	Super = NSObject;
+    };
+    PCIndentationPrefs = {
+	Actions = (
+	    "setIndentWhenTyping:",
+	    "setIndentForOpenCurlyBrace:",
+	    "setIndentForCloseCurlyBrace:",
+	    "setIndentForSemicolon:",
+	    "setIndentForColon:",
+	    "setIndentForHash:",
+	    "setIndentForReturn:",
+	    "setIndentForSoloOpenBrace:"
+	);
+	Outlets = (
+	    "_indentWhenTyping",
+	    "_indentForOpenCurly",
+	    "_indentForCloseCurly",
+	    "_indentForSemicolon",
+	    "_indentForColon",
+	    "_indentForHash",
+	    "_indentForReturn",
+	    "_indentForSoloOpenCurly",
+	    "_indentNumberOfSpaces"
+	);
+	Super = NSObject;
+    };
+}
