@@ -33,7 +33,8 @@
 	    "_indentForHash",
 	    "_indentForReturn",
 	    "_indentForSoloOpenCurly",
-	    "_indentNumberOfSpaces"
+	    "_indentNumberOfSpaces",
+	    "_view"
 	);
 	Super = NSObject;
     };
