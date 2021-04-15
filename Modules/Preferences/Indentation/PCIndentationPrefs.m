@@ -22,6 +22,7 @@
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free
 // Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
+//
 /* All rights reserved */
 
 #import <AppKit/AppKit.h>
@@ -44,55 +45,126 @@
   return self;
 }
 
+- (void) dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
+  RELEASE(_view);
+  [super dealloc];
+}
+
 - (void) readPreferences
 {
+  NSString *val;
+  BOOL     bVal;
+  int      state;
+  NSString *spacesDefault = @"2";
+  
+  bVal = [prefs boolForKey: IndentWhenTyping
+              defaultValue: YES];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentWhenTyping setState:state];
+
+  bVal = [prefs boolForKey: IndentForOpenCurly
+              defaultValue: YES];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForOpenCurly setState:state];
+
+  bVal = [prefs boolForKey: IndentForCloseCurly
+              defaultValue: YES];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForCloseCurly setState: state];
+     
+  bVal = [prefs boolForKey: IndentForSemicolon
+              defaultValue: NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForSemicolon setState: state];
+
+  bVal = [prefs boolForKey: IndentForColon
+              defaultValue: NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForColon setState: state];
+
+  bVal = [prefs boolForKey: IndentForHash
+              defaultValue: NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForHash setState: state];
+
+  bVal = [prefs boolForKey: IndentForReturn
+              defaultValue: NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForReturn setState: state];
+
+  bVal = [prefs boolForKey:IndentForColon
+              defaultValue:NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForColon setState:state];
+
+  bVal = [prefs boolForKey: IndentForSoloOpenCurly
+              defaultValue: NO];
+  state = bVal ? NSOnState : NSOffState;
+  [_indentForSoloOpenCurly setState: state];
+
+  val = [prefs stringForKey: IndentForNumberOfSpaces
+               defaultValue: spacesDefault];
+  if (val)
+    {
+      [_indentNumberOfSpaces setStringValue: val];
+    }
 }
 
 - (void) setIndentWhenTyping: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentWhenTyping notify: YES];
 }
 
 
 - (void) setIndentForOpenCurlyBrace: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForOpenCurly notify: YES];
 }
 
 
 - (void) setIndentForCloseCurlyBrace: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForCloseCurly notify: YES];
 }
 
 
 - (void) setIndentForSemicolon: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForSemicolon notify: YES];
 }
 
 
 - (void) setIndentForColon: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForColon notify: YES];
 }
 
 
 - (void) setIndentForHash: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForHash notify: YES];
 }
 
 
 - (void) setIndentForReturn: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForReturn notify: YES];
 }
 
 
 - (void) setIndentForSoloOpenBrace: (id)sender
 {
-  /* insert your code here */
+  BOOL state = ([sender state] == NSOffState) ? NO : YES;
+  [prefs setBool: state forKey: IndentForSoloOpenCurly notify: YES];
 }
 
 - (NSView *) view

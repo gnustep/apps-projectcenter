@@ -94,7 +94,8 @@ Modules/Debuggers/ProjectCenter/ProjectCenter.debugger \
 Modules/Preferences/Build/Build.preferences \
 Modules/Preferences/Saving/Saving.preferences \
 Modules/Preferences/Misc/Misc.preferences \
-Modules/Preferences/EditorFSC/EditorFSC.preferences
+Modules/Preferences/EditorFSC/EditorFSC.preferences \
+Modules/Preferences/Indentation/Indentation.preferences 
 
 #
 # Localization
