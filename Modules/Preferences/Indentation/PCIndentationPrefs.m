@@ -53,6 +53,7 @@
   int      state;
   NSString *spacesDefault = @"2";
   NSString *spacesIndentDefault = @"4";
+  NSString *spacesIndex = @"1";
   
   bVal = [prefs boolForKey: IndentWhenTyping
               defaultValue: YES];
@@ -107,7 +108,7 @@
     }
 
   val = [prefs stringForKey: IndentUsingSpaces
-               defaultValue: @"1"];
+               defaultValue: spacesIndex];
   if (val)
     {
       [_indentUsingSpaces selectItemAtIndex: [val intValue]];
