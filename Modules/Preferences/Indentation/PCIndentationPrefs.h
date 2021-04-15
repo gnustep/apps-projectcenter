@@ -38,7 +38,7 @@
 #define IndentForSoloOpenCurly  @"IndentForSoloOpenCurly"
 #define IndentForNumberOfSpaces @"IndentForNumberOfSpaces"
 
-@interface PCIndentationPrefs : NSObject <PCPrefsSection>
+@interface PCIndentationPrefs : NSObject <PCPrefsSection, NSTextFieldDelegate>
 {
   id <PCPreferences> prefs;
 
