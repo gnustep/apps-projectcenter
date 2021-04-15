@@ -100,7 +100,7 @@
   [_indentForColon setState:state];
 
   bVal = [prefs boolForKey: IndentForSoloOpenCurly
-              defaultValue: NO];
+              defaultValue: YES];
   state = bVal ? NSOnState : NSOffState;
   [_indentForSoloOpenCurly setState: state];
 
