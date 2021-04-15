@@ -55,6 +55,7 @@
   id _indentNumberOfSpaces;
 }
 
+// Indentation
 - (void) setIndentWhenTyping: (id)sender;
 - (void) setIndentForOpenCurlyBrace: (id)sender;
 - (void) setIndentForCloseCurlyBrace: (id)sender;
@@ -63,5 +64,10 @@
 - (void) setIndentForHash: (id)sender;
 - (void) setIndentForReturn: (id)sender;
 - (void) setIndentForSoloOpenBrace: (id)sender;
+- (void) setIndentNumberOfSpaces: (id)sender;
 
+// Tabs/Spaces
+- (void) setIndentUsingSpaces: (id)sender;
+- (void) setIndentWidth: (id)sender;
+- (void) setTabWidth: (id)sender;
 @end

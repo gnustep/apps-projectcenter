@@ -30,6 +30,7 @@
 
 @implementation PCIndentationPrefs
 
+// Protocol
 - (id)initWithPrefController:(id <PCPreferences>)aPrefs
 {
   self = [super init];
@@ -43,13 +44,6 @@
   RETAIN(_view);
 
   return self;
-}
-
-- (void) dealloc
-{
-  [[NSNotificationCenter defaultCenter] removeObserver: self];
-  RELEASE(_view);
-  [super dealloc];
 }
 
 - (void) readPreferences
@@ -90,7 +84,7 @@
   [_indentForHash setState: state];
 
   bVal = [prefs boolForKey: IndentForReturn
-              defaultValue: NO];
+              defaultValue: YES];
   state = bVal ? NSOnState : NSOffState;
   [_indentForReturn setState: state];
 
@@ -112,12 +106,17 @@
     }
 }
 
+- (NSView *) view
+{
+  return _view;
+}
+
+// Indentation
 - (void) setIndentWhenTyping: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool: state forKey: IndentWhenTyping notify: YES];
 }
-
 
 - (void) setIndentForOpenCurlyBrace: (id)sender
 {
@@ -132,13 +131,11 @@
   [prefs setBool: state forKey: IndentForCloseCurly notify: YES];
 }
 
-
 - (void) setIndentForSemicolon: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool: state forKey: IndentForSemicolon notify: YES];
 }
-
 
 - (void) setIndentForColon: (id)sender
 {
@@ -146,13 +143,11 @@
   [prefs setBool: state forKey: IndentForColon notify: YES];
 }
 
-
 - (void) setIndentForHash: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool: state forKey: IndentForHash notify: YES];
 }
-
 
 - (void) setIndentForReturn: (id)sender
 {
@@ -167,8 +162,27 @@
   [prefs setBool: state forKey: IndentForSoloOpenCurly notify: YES];
 }
 
-- (NSView *) view
+- (void) setIndentNumberOfSpaces: (id)sender
 {
-  return _view;
+}
+
+// Tabs/Spaces
+- (void) setIndentUsingSpaces: (id)sender
+{
+}
+
+- (void) setIndentWidth: (id)sender
+{
+}
+
+- (void) setTabWidth: (id)sender
+{
+}
+
+- (void) dealloc
+{
+  [[NSNotificationCenter defaultCenter] removeObserver: self];
+  RELEASE(_view);
+  [super dealloc];
 }
 @end
