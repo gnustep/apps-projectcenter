@@ -36,7 +36,10 @@
 #define IndentForHash           @"IndentForHash"
 #define IndentForReturn         @"IndentForReturn"
 #define IndentForSoloOpenCurly  @"IndentForSoloOpenCurly"
-#define IndentForNumberOfSpaces @"IndentForNumberOfSpaces"
+#define IndentNumberOfSpaces    @"IndentNumberOfSpaces"
+#define IndentUsingSpaces       @"IndentUsingSpaces"
+#define IndentWidth             @"IndentWidth"
+#define TabWidth                @"TabWidth"
 
 @interface PCIndentationPrefs : NSObject <PCPrefsSection, NSTextFieldDelegate>
 {
@@ -53,6 +56,10 @@
   id _indentForReturn;
   id _indentForSoloOpenCurly;
   id _indentNumberOfSpaces;
+
+  id _indentUsingSpaces;
+  id _indentWidth;
+  id _tabWidth;
 }
 
 // Indentation
@@ -70,4 +77,5 @@
 - (void) setIndentUsingSpaces: (id)sender;
 - (void) setIndentWidth: (id)sender;
 - (void) setTabWidth: (id)sender;
+
 @end

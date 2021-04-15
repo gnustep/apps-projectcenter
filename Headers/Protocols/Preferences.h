@@ -47,7 +47,8 @@
 - (float)floatForKey:(NSString *)key;
 - (float)floatForKey:(NSString *)key
 	defaultValue:(float)defaultValue;
-
+- (int) integerForKey: (NSString *)key
+         defaultValue: (int)defaultValue;
 - (NSColor *)colorForKey:(NSString *)key;
 - (NSColor *)colorForKey:(NSString *)key
         defaultValue:(NSColor *)defaultValue;
@@ -61,6 +62,9 @@
 - (void)setFloat:(float)floatValue
 	  forKey:(NSString *)aKey
 	  notify:(BOOL)notify;
+- (void) setInteger: (int)intValue
+             forKey: (NSString *)aKey
+             notify: (BOOL)notify;
 - (void)setColor:(NSColor *)color
 	  forKey:(NSString *)aKey
 	  notify:(BOOL)notify;

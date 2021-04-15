@@ -98,11 +98,32 @@
   state = bVal ? NSOnState : NSOffState;
   [_indentForSoloOpenCurly setState: state];
 
-  val = [prefs stringForKey: IndentForNumberOfSpaces
+  val = [prefs stringForKey: IndentNumberOfSpaces
                defaultValue: spacesDefault];
   if (val)
     {
       [_indentNumberOfSpaces setStringValue: val];
+    }
+
+  val = [prefs stringForKey: IndentUsingSpaces
+               defaultValue: spacesDefault];
+  if (val)
+    {
+      [_indentUsingSpaces setStringValue: val];
+    }
+
+  val = [prefs stringForKey: IndentWidth
+               defaultValue: spacesDefault];
+  if (val)
+    {
+      [_indentWidth setStringValue: val];
+    }
+  
+  val = [prefs stringForKey: TabWidth
+               defaultValue: spacesDefault];
+  if (val)
+    {
+      [_tabWidth setStringValue: val];
     }
 }
 
@@ -123,7 +144,6 @@
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool: state forKey: IndentForOpenCurly notify: YES];
 }
-
 
 - (void) setIndentForCloseCurlyBrace: (id)sender
 {
@@ -155,7 +175,6 @@
   [prefs setBool: state forKey: IndentForReturn notify: YES];
 }
 
-
 - (void) setIndentForSoloOpenBrace: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
@@ -164,19 +183,27 @@
 
 - (void) setIndentNumberOfSpaces: (id)sender
 {
+  int val = [sender intValue];
+  [prefs setInteger: val forKey: IndentNumberOfSpaces notify: YES];
 }
 
 // Tabs/Spaces
 - (void) setIndentUsingSpaces: (id)sender
 {
+  NSUInteger idx = [sender indexOfSelectedItem];
+  [prefs setInteger: idx forKey: IndentUsingSpaces notify: YES];
 }
 
 - (void) setIndentWidth: (id)sender
 {
+  int val = [sender intValue];
+  [prefs setInteger: val forKey: IndentWidth notify: YES];
 }
 
 - (void) setTabWidth: (id)sender
 {
+  int val = [sender intValue];
+  [prefs setInteger: val forKey: TabWidth notify: YES];
 }
 
 - (void) dealloc

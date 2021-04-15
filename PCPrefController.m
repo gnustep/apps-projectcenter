@@ -199,6 +199,22 @@ static PCPrefController *_prefCtrllr = nil;
     }
 }
 
+- (int) integerForKey: (NSString *)key defaultValue: (int)defaultValue
+{
+  NSString *stringValue = [[NSUserDefaults standardUserDefaults]
+			    objectForKey:key];
+
+  if (stringValue)
+    {
+      return [stringValue intValue];
+    }
+  else
+    {
+      [self setInteger: defaultValue forKey: key notify: NO];
+      return defaultValue;
+    }
+}
+
 - (NSColor *)colorForKey:(NSString *)key
 {
   return [self colorForKey:key defaultValue:nil];
@@ -263,6 +279,23 @@ static PCPrefController *_prefCtrllr = nil;
 	  notify:(BOOL)notify
 {
   NSString *stringValue = [NSString stringWithFormat:@"%0.1f", floatValue];
+
+  [[NSUserDefaults standardUserDefaults] setObject:stringValue
+					    forKey:aKey];
+
+  if (notify)
+    {
+      [[NSNotificationCenter defaultCenter] 
+	postNotificationName:PCPreferencesDidChangeNotification
+		      object:self];
+    }
+}
+
+- (void) setInteger: (int)intValue
+             forKey: (NSString *)aKey
+             notify: (BOOL)notify
+{
+  NSString *stringValue = [NSString stringWithFormat:@"%d", intValue];
 
   [[NSUserDefaults standardUserDefaults] setObject:stringValue
 					    forKey:aKey];
