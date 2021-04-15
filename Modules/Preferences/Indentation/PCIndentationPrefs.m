@@ -52,6 +52,7 @@
   BOOL     bVal;
   int      state;
   NSString *spacesDefault = @"2";
+  NSString *spacesIndentDefault = @"4";
   
   bVal = [prefs boolForKey: IndentWhenTyping
               defaultValue: YES];
@@ -106,21 +107,21 @@
     }
 
   val = [prefs stringForKey: IndentUsingSpaces
-               defaultValue: spacesDefault];
+               defaultValue: @"1"];
   if (val)
     {
-      [_indentUsingSpaces setStringValue: val];
+      [_indentUsingSpaces selectItemAtIndex: [val intValue]];
     }
 
   val = [prefs stringForKey: IndentWidth
-               defaultValue: spacesDefault];
+               defaultValue: spacesIndentDefault];
   if (val)
     {
       [_indentWidth setStringValue: val];
     }
   
   val = [prefs stringForKey: TabWidth
-               defaultValue: spacesDefault];
+               defaultValue: spacesIndentDefault];
   if (val)
     {
       [_tabWidth setStringValue: val];
