@@ -62,6 +62,7 @@
 	return;
     }
 
+  [infoWindow center];
   [infoWindow makeKeyAndOrderFront:self];
   [versionField setStringValue:[NSString stringWithFormat:@"Version %@", [infoDict objectForKey:@"ApplicationRelease"]]];
 		

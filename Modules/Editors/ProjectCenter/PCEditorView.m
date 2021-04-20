@@ -183,11 +183,12 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 	}
     }
 
-  NSLog(@"index: %i start: %i", index, line_start);
+  NSLog(@"index: %li start: %li", index, line_start);
 
   return line_start > index ? index : line_start;
 }
 
+// Go forward to last character in line
 - (NSInteger)lineEndIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
   NSInteger line_end;
@@ -207,6 +208,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return line_end < string_length ? line_end : string_length;
 }
 
+// Go backward to first '\n' on the previous line 
 - (NSInteger)previousLineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
   NSInteger cur_line_start;
@@ -221,6 +223,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return prev_line_start;
 }
 
+// Go forward to the next '\n' on the next line...
 - (NSInteger)nextLineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
   NSInteger cur_line_end;
@@ -281,12 +284,12 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   NSMutableString *indentString;
   NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
   NSInteger i;
-//  int point;
+  //  int point;
 
   location = [self selectedRange].location;
 
-//  point = [self nextLineStartIndexForIndex:location forString:string];
-//  [self setSelectedRange:NSMakeRange(point, 0)];
+  //  point = [self nextLineStartIndexForIndex:location forString:string];
+  //  [self setSelectedRange:NSMakeRange(point, 0)];
 
   clfc = [self firstCharOfLineForIndex:location forString:string];
   plfc = [self firstCharOfPrevLineForIndex:location forString:string];
@@ -311,7 +314,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
       if (![wsCharSet characterIsMember:c])
 	{
 	  offset = offset - line_start;
-	  NSLog(@"offset: %i", offset);
+	  NSLog(@"offset: %li", offset);
 	  break;
 	}
     }
@@ -327,8 +330,8 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
     }
 
   // Get offset from BOL of previous line
-//  offset = ComputeIndentingOffset([self string], line_start-1);
-  NSLog(@"Indent offset: %i", offset);
+  //  offset = ComputeIndentingOffset([self string], line_start-1);
+  NSLog(@"Indent offset: %li", offset);
 
   // Replace current line whitespaces with new ones
   indentString = [[NSMutableString alloc] initWithString:@""];
@@ -489,19 +492,23 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   guides = [NSMutableArray new];*/
 }
 
-- (void)drawRect:(NSRect)r
+- (void) _highlightWithBoundingRect: (NSRect)r
 {
   if (highlighter)
     {
       NSRange drawnRange;
-
+      
       drawnRange = [[self layoutManager] 
-	glyphRangeForBoundingRect:r inTextContainer:[self textContainer]];
+                     glyphRangeForBoundingRect:r inTextContainer:[self textContainer]];
       drawnRange = [[self layoutManager] characterRangeForGlyphRange:drawnRange
                                                     actualGlyphRange:NULL];
       [highlighter highlightRange:drawnRange];
     }
+}
 
+- (void)drawRect:(NSRect)r
+{
+  [self _highlightWithBoundingRect: r];
   [super drawRect:r];
 }
 
@@ -517,7 +524,8 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   [highlighter setBoldItalicFont: [self editorBoldItalicFont]];
 }
 
-- (void)insertText:text
+// Overrides insertText: in NSTextView
+- (void) insertText: text
 {
   /* NOTE: On Windows we ensure to get a string in UTF-8 encoding. The problem
    * is the highlighter that don't use a consistent codification causing a
@@ -536,59 +544,45 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
       if ([string isEqualToString:@"\n"])
         {
-/*          if ([[NSUserDefaults standardUserDefaults]
-            boolForKey:@"ReturnDoesAutoindent"])
-            {*/
+          if ([[NSUserDefaults standardUserDefaults]
+                boolForKey:@"IndentForReturn"])
+            {
 	      int  location = [self selectedRange].location;
               int  offset = ComputeIndentingOffset([self string], location);
               char *buf;
-
+              
               buf = (char *) malloc((offset + 2) * sizeof(unichar));
 	      buf[0] = '\n';
               memset(&buf[1], ' ', offset);
               buf[offset+1] = '\0';
-
+              
 #ifdef WIN32
               [super insertText:[NSString stringWithCString: buf
-					  encoding: NSUTF8StringEncoding]];
+                                                   encoding: NSUTF8StringEncoding]];
 #else
 	      [super insertText:[NSString stringWithCString:buf]];
 #endif
               free(buf);
-/*            }
+            }
           else
             {
               [super insertText:text];
-            }*/
+            }
         }
-      else if ([string isEqualToString:@"\t"])
+      else if ([string isEqualToString: @"\t"])
         {
 	  [self performIndentation];
-/*          switch ([[NSUserDefaults standardUserDefaults]
-            integerForKey:@"TabConversion"])
-            {
-            case 0:  // no conversion
-              [super insertText:text];
-              break;
-            case 1:  // 2 spaces
-              [super insertText:@"  "];
-              break;
-            case 2:  // 4 spaces
-              [super insertText:@"    "];
-              break;
-            case 3:  // 8 spaces
-              [super insertText:@"        "];
-              break;
-            case 4:  // aligned to tab boundaries of 2 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:2];
-              break;
-            case 5:  // aligned to tab boundaries of 4 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:4];
-              break;
-            case 6:  // aligned to tab boundaries of 8 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:8];
-              break; 
-            }*/
+        }
+      else if ([string isEqualToString: @"{"])
+        {
+          int tabSize = [[[NSUserDefaults standardUserDefaults] objectForKey: @"IndentWidth"] intValue];
+          // [self setTextColor: [NSColor whiteColor]];
+          [super insertText: @"{"];
+          [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
+          [super insertText: @"\n"];
+          [super insertText: @"\n"];
+          [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
+          [super insertText: @"}"];
         }
       else
         {
