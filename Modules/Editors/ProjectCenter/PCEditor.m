@@ -30,6 +30,8 @@
 #import <Protocols/Preferences.h>
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCLogController.h>
+
 
 @implementation PCEditor (UInterface)
 
@@ -261,6 +263,8 @@
 
   RELEASE(undoManager);
 
+  RELEASE(_lastSaveDate);
+
   [super dealloc];
 }
 
@@ -283,6 +287,7 @@
   NSMutableDictionary *attributes = [NSMutableDictionary new];
   NSFont              *font;
   id <PCPreferences>  prefs;
+  NSFileManager       *fm;
 
   // Inform about future file opening
   [[NSNotificationCenter defaultCenter]
@@ -319,6 +324,9 @@
   _storage = [[NSTextStorage alloc] init];
   [_storage setAttributedString:attributedString];
   RELEASE(attributedString);
+
+  fm = [NSFileManager defaultManager];
+  ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate]);
 
 //  [self _createInternalView];
 /*  if (categoryPath) // category == nil if we're non project editor
@@ -647,30 +655,61 @@
 
 - (BOOL)saveFile
 {
-  BOOL saved = NO;
+  BOOL           saved = NO;
+  NSFileManager  *fm;
+  NSDate         *fileModDate;
 
   if (_isEdited == NO)
     {
       return YES;
+    }
+
+  fm = [NSFileManager defaultManager];
+
+  fileModDate = [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate];
+  // Check if the file was ever written and its time is the same as the current file modification date
+  if (!(_lastSaveDate && [fileModDate isEqualToDate:_lastSaveDate]))
+    {
+      NSInteger choice;
+
+      PCLogInfo(self, @"File modified externally. %@ - %@", _lastSaveDate, fileModDate);
+      choice = NSRunAlertPanel(@"Overwrite File?",
+			       @"File %@ was modified externally. Overwrite?",
+			       @"Cancel", @"Reload", @"Proceed", [_path lastPathComponent]);
+      if (choice == NSAlertDefaultReturn)
+	{
+	  return NO;
+	}
+      else if (choice == NSAlertAlternateReturn)
+	{
+	  NSLog(@"Self");
+	  if ([self revertFileToSaved] == YES)
+	    return NO;
+	  NSLog(@"reload failed");
+	  return NO;
+	}
     }
     
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorWillSaveNotification
 		  object:self];
 
-  // Send the notification to Gorm...
-  if([[_path pathExtension] isEqual: @"h"])
-    {
-      [[NSDistributedNotificationCenter defaultCenter]
-	postNotificationName: @"GormParseClassNotification"
-	object: _path];
-    }
-
   saved = [[_storage string] writeToFile:_path atomically:YES];
  
   if (saved == YES)
     {
       [self setIsEdited:NO];
+
+      // re-read date just saved
+      ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate]);
+      // Send the notification to Gorm...
+      if([[_path pathExtension] isEqual: @"h"])
+	{
+	  [[NSDistributedNotificationCenter defaultCenter]
+	    postNotificationName: @"GormParseClassNotification"
+			  object: _path];
+	}
+
       [[NSNotificationCenter defaultCenter]
 	postNotificationName:PCEditorDidSaveNotification
 	  	      object:self];
@@ -696,6 +735,7 @@
   NSAttributedString *as = nil;
   NSDictionary       *at = nil;
   NSFont             *ft = nil;
+  NSFileManager      *fm;
 
   if (_isEdited == NO)
     {
@@ -729,6 +769,9 @@
 
   [_intEditorView setNeedsDisplay:YES];
   [_extEditorView setNeedsDisplay:YES];
+
+  fm = [NSFileManager defaultManager];
+  ASSIGN(_lastSaveDate, [[fm fileAttributesAtPath:_path traverseLink:NO] fileModificationDate]);
   
   [[NSNotificationCenter defaultCenter]
     postNotificationName:PCEditorDidRevertNotification

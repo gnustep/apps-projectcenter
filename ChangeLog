@@ -1,3 +1,10 @@
+2021-02-19 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Keep track of the file modification date on each open/save,
+	compare it to the current file to detect external modifications.
+
 2021-02-12 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCFileManager.m
