@@ -151,6 +151,7 @@
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSString       *mainNibFile = nil;
   NSMutableArray *_array = nil;
+  NSString       *helpFile = nil;
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -249,6 +250,10 @@
   // most probably empty
   if ([projectDict objectForKey:PCBundleIdentifier])
     [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
+
+  // Help file if present
+  if ([projectDict objectForKey:PCHelpFile])
+    [infoDict setObject:[projectDict objectForKey:@"GSHelpContentsFile"] forKey:@"GSHelpContentsFile"];
 
   // Write to ProjectNameInfo.plist
   _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
@@ -440,6 +445,7 @@
       [infoDict removeObjectForKey:@"NSMainNibFile"];
     }
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
+  [self writeInfoEntry:@"GSHelpContentsFile" forKey:PCHelpFile];
   [infoDict setObject:@"Application" forKey:@"NSRole"];
   [self writeInfoEntry:@"NSTypes" forKey:PCDocumentTypes];
   [self writeInfoEntry:@"URL" forKey:PCURL];

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2016 Free Software Foundation
+   Copyright (C) 2001-2021 Free Software Foundation
 
    Author: Serg Stoyan <stoyan@on.com.ua>
            Riccardo Mottola <rm@gnu.org>
@@ -46,6 +46,7 @@
 - (BOOL)setAppIconWithFileAtPath:(NSString *)path;
 
 - (void)clearHelpFile:(id)sender;
+- (IBAction)setHelpFile:(id)sender;
 
 - (void)clearMainNib:(id)sender;
 - (BOOL)setMainNibWithFileAtPath:(NSString *)path;

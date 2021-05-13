@@ -8,7 +8,7 @@
 	    "clearHelpFile:",
 	    "clearMainNib:",
 	    "docFieldSet:",
-	    "newAction:",
+	    "setHelpFile:",
 	    "removeDocType:",
 	    "setAppClass:",
 	    "setAppType:",
@@ -31,7 +31,8 @@
 	    "setDocBasedApp:",
 	    "showDocTypesPanel:",
 	    "addDocType:",
-	    "removeDocType:"
+	    "removeDocType:",
+	    "setHelpFile:"
 	);
 	Outlets = (
 	    projectAttributesView,

@@ -1,3 +1,12 @@
+2021-05-13 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Projects/Application/PCAppProject+Inspector.h
+	* Modules/Projects/Application/PCAppProject+Inspector.m
+	* Modules/Projects/Application/PCAppProject.m
+	* Modules/Projects/Application/Resources/Inspector.gorm
+	Fix HelpFile by saving the property in the app project and generating
+	the plist.
+
 2021-02-19 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.h

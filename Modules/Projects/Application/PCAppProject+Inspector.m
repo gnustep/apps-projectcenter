@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2016 Free Software Foundation
+   Copyright (C) 2001-2021 Free Software Foundation
 
    Author: Serg Stoyan <stoyan@on.com.ua>
            Riccardo Mottola <rm@gnu.org>
@@ -218,6 +218,13 @@ cleanup(NSMutableDictionary *m, NSString *k)
 {
   [infoDict removeObjectForKey:@"GSHelpContentsFile"];
   [self setProjectDictObject:@"" forKey:PCHelpFile notify:YES];
+}
+
+- (IBAction)setHelpFile:(id)sender
+{
+  [self setProjectDictObject:[helpFileField stringValue]
+                      forKey:PCHelpFile
+		      notify:YES];
 }
 
 // Main Interface File
