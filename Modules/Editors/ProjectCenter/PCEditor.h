@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2002-2014 Free Software Foundation
+   Copyright (C) 2002-2021 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -50,6 +50,7 @@
   BOOL            _isEditable;
   BOOL            _isWindowed;
   BOOL            _isExternal;
+  NSDate          *_lastSaveDate;
 
   // Search
   NSView          *goToLineView;
