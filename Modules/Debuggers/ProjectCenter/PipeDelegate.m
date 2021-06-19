@@ -80,7 +80,7 @@
   return debugger;
 }
   
-- (void)setDebugger:(PCDebugger *)dbg
+- (void)setDebugger: (PCDebugger *)dbg
 {
   if (debugger != dbg)
     {
@@ -90,7 +90,7 @@
     }
 }
 
-- (void)setFont:(NSFont *)aFont
+- (void)setFont: (NSFont *)aFont
 {
   if (font != aFont)
     {
@@ -124,9 +124,9 @@
 /**
  * Log string to the view.
  */
-- (void) logString:(NSString *)str
-	   newLine:(BOOL)newLine
-         withColor:(NSColor *)color
+- (void) logString: (NSString *)str
+	   newLine: (BOOL)newLine
+         withColor: (NSColor *)color
 {
   NSMutableDictionary *textAttributes;
   NSAttributedString *attrStr;
@@ -394,7 +394,7 @@
 /**
  * Log standard out.
  */ 
-- (void) logStdOut:(NSNotification *)aNotif
+- (void) logStdOut: (NSNotification *)aNotif
 {
   NSData *data;
   NSFileHandle *handle = stdoutHandle;
@@ -429,7 +429,7 @@
 /**
  * Log error out.
  */ 
-- (void) logErrOut:(NSNotification *)aNotif
+- (void) logErrOut: (NSNotification *)aNotif
 {
   NSData *data;
   NSFileHandle *handle = error_handle;
@@ -621,7 +621,7 @@
 /**
  * Put a single character into the stream.
  */
-- (void) putChar:(unichar)ch
+- (void) putChar: (unichar)ch
 {
   NSData *data = [NSData dataWithBytes: &ch length: 1];
   [stdinHandle writeData: data];
@@ -674,7 +674,7 @@
       NSLog(@"characters: |%@|", chars);
 }
 
-- (void) setBreakpoints:(NSArray *)breakpoints
+- (void) setBreakpoints: (NSArray *)breakpoints
 {
   NSDictionary *bp;
   NSEnumerator *e;

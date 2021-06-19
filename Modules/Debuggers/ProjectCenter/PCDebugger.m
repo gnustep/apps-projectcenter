@@ -42,11 +42,11 @@
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-static NSImage	*goImage = nil;
-static NSImage	*pauseImage = nil;
-static NSImage	*continueImage = nil;
-static NSImage	*restartImage = nil;
-static NSImage	*nextImage = nil;
+static NSImage  *goImage = nil;
+static NSImage  *pauseImage = nil;
+static NSImage  *continueImage = nil;
+static NSImage  *restartImage = nil;
+static NSImage  *nextImage = nil;
 static NSImage  *stepInImage = nil;
 static NSImage  *stepOutImage = nil;
 static NSImage  *upImage = nil;

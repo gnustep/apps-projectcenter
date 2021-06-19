@@ -577,8 +577,8 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
         {
           int tabSize = [[[NSUserDefaults standardUserDefaults] objectForKey: @"IndentWidth"] intValue];
           // [self setTextColor: [NSColor whiteColor]];
-          [super insertText: @"{"];
           [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
+          [super insertText: @"{"];
           [super insertText: @"\n"];
           [super insertText: @"\n"];
           [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
