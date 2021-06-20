@@ -123,6 +123,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
 - (void)performIndentation;
+- (void)refreshHighlighting;
 
 @end
 
@@ -328,6 +329,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
     {
       offset -= 2; 
     }
+  
 
   // Get offset from BOL of previous line
   //  offset = ComputeIndentingOffset([self string], line_start-1);
@@ -356,6 +358,15 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   [self setSelectedRange:NSMakeRange(point, 0)];*/
 
   [indentString release];
+}
+
+- (void) refreshHighlighting
+{
+  NSString *str = [self string];
+  NSRange wsRange = NSMakeRange(0, [str length]);
+  [[self textStorage]
+    replaceCharactersInRange: wsRange 
+                  withString: str];
 }
 
 @end
@@ -580,9 +591,9 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
           [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
           [super insertText: @"{"];
           [super insertText: @"\n"];
-          [super insertText: @"\n"];
           [self insertSpaceFillAlignedAtTabsOfSize: tabSize];
           [super insertText: @"}"];
+          [self refreshHighlighting];
         }
       else
         {
