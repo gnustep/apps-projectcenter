@@ -95,28 +95,6 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
     }
 
   return firstCharOffset >= 0 ? firstCharOffset : 0;
-
-/*  if (firstCharOffset >= 0)
-    {
-      // if the indenting of the current line is lower than the indenting
-      // of the previous actual line, we return the lower indenting
-      if (startOffsetFromLineStart >= 0 &&
-        startOffsetFromLineStart < firstCharOffset)
-        {
-          return startOffsetFromLineStart;
-        }
-      // otherwise we return the actual indenting, so that any excess
-      // space is trimmed and the lines are aligned according the last
-      // indenting level
-      else
-        {
-          return firstCharOffset;
-        }
-    }
-   else
-    {
-      return 0;
-    }*/
 }
 
 @interface PCEditorView (Private)
@@ -280,12 +258,11 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   NSInteger location;
   NSInteger line_start;
   NSInteger offset;
-  unichar   c, plfc, clfc;
-  NSRange   wsRange;
+  unichar    c, plfc, clfc;
+  NSRange    wsRange;
   NSMutableString *indentString;
-  NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
+  NSCharacterSet *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
   NSInteger i;
-  //  int point;
 
   location = [self selectedRange].location;
 
@@ -362,11 +339,13 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
 - (void) refreshHighlighting
 {
+  NSRange selectedRange = [self selectedRange];
   NSString *str = [self string];
   NSRange wsRange = NSMakeRange(0, [str length]);
   [[self textStorage]
     replaceCharactersInRange: wsRange 
                   withString: str];
+  [self setSelectedRange: selectedRange];
 }
 
 @end
@@ -484,25 +463,6 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return editor;
 }
 
-- (void)awakeFromNib
-{
-/*  NSData * data;
-  NSUserDefaults * df = [NSUserDefaults standardUserDefaults];
-
-  drawCrosshairs = [df boolForKey: @"DrawCrosshairs"];
-  if (drawCrosshairs)
-    {
-      if ((data = [df dataForKey: @"CrosshairColor"]) == nil ||
-        (crosshairColor = [NSUnarchiver unarchiveObjectWithData: data]) == nil)
-        {
-          crosshairColor = [NSColor lightGrayColor];
-        }
-      [crosshairColor retain];
-    }
-
-  guides = [NSMutableArray new];*/
-}
-
 - (void) _highlightWithBoundingRect: (NSRect)r
 {
   if (highlighter)
@@ -539,13 +499,14 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 - (void) insertText: text
 {
   /* NOTE: On Windows we ensure to get a string in UTF-8 encoding. The problem
-   * is the highlighter that don't use a consistent codification causing a
+   * is the highlighter doesn't use a consistent codification causing a
    * problem on Windows platform. Anyway, the plugin for Gemas editor works
-   * better and don't show this problem.
+   * better and doesn't show this problem.
    */
   if ([text isKindOfClass:[NSString class]])
     {
       NSString * string = text;
+      BOOL indentWhenTyping = [[[NSUserDefaults standardUserDefaults] objectForKey: @"IndentWhenTyping"] boolValue];
 
       if ([text characterAtIndex:0] == 27)
 	{
@@ -568,10 +529,10 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
               buf[offset+1] = '\0';
               
 #ifdef WIN32
-              [super insertText:[NSString stringWithCString: buf
-                                                   encoding: NSUTF8StringEncoding]];
+              [super insertText: [NSString stringWithCString: buf
+                                                    encoding: NSUTF8StringEncoding]];
 #else
-	      [super insertText:[NSString stringWithCString:buf]];
+	      [super insertText: [NSString stringWithCString:buf]];
 #endif
               free(buf);
             }
@@ -584,7 +545,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
         {
 	  [self performIndentation];
         }
-      else if ([string isEqualToString: @"{"])
+      else if ([string isEqualToString: @"{"]  && indentWhenTyping)
         {
           int tabSize = [[[NSUserDefaults standardUserDefaults] objectForKey: @"IndentWidth"] intValue];
           // [self setTextColor: [NSColor whiteColor]];
