@@ -289,7 +289,7 @@
   [stringScanner scanString: @"~" intoString: &prefix];
   if(prefix != nil)
     {
-      if ([debugger gdbVersion] == 0.0)
+      if ([debugger debuggerVersion] == 0.0)
         {
           NSString *str1 = nil;
           NSString *str2 = nil;
@@ -307,11 +307,11 @@
               if ([stringScanner scanFloat:&v])
                 {
                   NSLog(@"GDB version string: %f", v);
-                  [debugger setGdbVersion:v];
+                  [debugger setDebuggerVersion:v];
                 }
             }
         }
-      if (([debugger gdbVersion] < 7) && [debugger subProcessId] == 0)
+      if (([debugger debuggerVersion] < 7) && [debugger subProcessId] == 0)
         {
           NSString *str1;
           // we attempt to parse: [New thread 6800.0x18ec]
