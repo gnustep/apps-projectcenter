@@ -263,6 +263,26 @@
 		{
 		  [debugger setSubProcessId: [value intValue]];
 		}
+	      else if ([key isEqualToString:@"bkpt"])
+		{
+		  // gdb specific
+		  NSString *fileName;
+		  NSString *lineNum;
+
+		  fileName = [value objectForKey:@"file"];
+		  lineNum = [value objectForKey:@"line"];
+		  NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
+		  if (fileName != nil && lineNum != nil)
+		    {
+		      [debugger setLastFileNameParsed: fileName];
+		      [debugger setLastLineNumberParsed: [lineNum intValue]];
+		    }
+		  else
+		    {
+		      [debugger setLastFileNameParsed: nil];
+		      [debugger setLastLineNumberParsed: NSNotFound];
+		    }
+		}
 	    }
 	}
       return PCDBAsyncInfoRecord;
