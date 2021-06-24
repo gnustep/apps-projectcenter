@@ -1,9 +1,10 @@
 /*
 **  PCDebugger
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg_casamento@yahoo.com>
+**          Riccardo Mottola <rm@gnu.org>
 **
 **  This program is free software; you can redistribute it and/or modify
 **  it under the terms of the GNU General Public License as published by
@@ -44,7 +45,10 @@ extern NSString *PCDBDebuggerStartedNotification;
   NSString       *executablePath;
   NSString       *debuggerPath;
   int            subProcessId;
-  float          gdbVersion;
+  float          debuggerVersion;
+  NSDictionary   *lastInfoParsed;
+  NSString       *lastFileNameParsed;
+  NSUInteger     lastLineNumberParsed;
   NSMutableArray *breakpoints;
 }
 
@@ -55,7 +59,13 @@ extern NSString *PCDBDebuggerStartedNotification;
 - (void) interrupt;
 - (int) subProcessId;
 - (void) setSubProcessId:(int)pid;
-- (float) gdbVersion;
-- (void) setGdbVersion:(float)ver;
+- (float) debuggerVersion;
+- (void) setDebuggerVersion:(float)ver;
+- (NSDictionary *)lastInfoParsed;
+- (void)setSetInfoParsed: (NSDictionary *)dict;
+- (NSString *)lastFileNameParsed;
+- (void) setLastFileNameParsed: (NSString *)fname;
+- (NSUInteger)lastLineNumberParsed;
+- (void)setLastLineNumberParsed: (NSUInteger)num;
 
 @end
