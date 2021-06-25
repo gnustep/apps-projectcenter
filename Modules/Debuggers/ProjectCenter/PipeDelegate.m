@@ -156,6 +156,46 @@
   [tView setNeedsDisplay:YES];
 }
 
+/*
+ parse subpart of the MI reply which may look like this:
+ bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0804872c",func="main",file="main.m",fullname="/home/multix/code/gnustep-svc/DirectoryTest/main.m",line="23",thread-groups=["i1"],times="1",original-location="main.m:23"}
+ */
+- (NSDictionary *) parseKeyValueString: (NSString *)stringInput
+{
+  if (nil != stringInput)
+    {
+      NSMutableDictionary *mdict;
+      NSScanner *stringScanner;
+      NSString *key = NULL;
+      NSString *value = NULL;
+
+      mdict = [[NSMutableDictionary alloc] init];
+      stringScanner = [NSScanner scannerWithString: stringInput];
+
+      while([stringScanner isAtEnd] == NO)
+	{
+	  [stringScanner scanUpToString: @"=" intoString: &key];
+	  [stringScanner scanString: @"=" intoString: NULL];
+
+	  [stringScanner scanString: @"\"" intoString: NULL];
+	  [stringScanner scanUpToString: @"\"" intoString: &value];
+	  [stringScanner scanString: @"\"" intoString: NULL];
+	  [stringScanner scanString: @"," intoString: NULL];
+
+	  // we fail to parse if the value is in []
+	  //	  NSLog(@"parse KVS: key %@ value %@", key, value);
+	  if (key != nil && value != nil)
+	    [mdict setObject:value forKey:key];
+	}
+      return [mdict autorelease];
+    }
+  return nil;
+}
+
+/*
+  Parses a line coming from the debugger. It could be eiher a stanard outpu or it may come from the machine
+  interface of gdb.
+ */
 - (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
 {
   NSScanner *stringScanner;
@@ -183,6 +223,8 @@
   if(prefix != nil)
     {
       NSString *dictionaryName = NULL;
+
+      NSLog(@"scanning MI |%@|", stringInput);
       
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
@@ -194,21 +236,52 @@
       if(dictionaryName != nil)
 	{	  
 	  NSString *key = NULL;
-	  NSString *value = NULL;
+	  id value = nil;
 	  
 	  while([stringScanner isAtEnd] == NO)
 	    {
 	      [stringScanner scanString: @"," intoString: NULL];
 	      [stringScanner scanUpToString: @"=" intoString: &key];
 	      [stringScanner scanString: @"=" intoString: NULL];
-	      [stringScanner scanString: @"\"" intoString: NULL];
-	      [stringScanner scanUpToString: @"\"" intoString: &value];
-	      [stringScanner scanString: @"\"" intoString: NULL];
+	      if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
+		{
+		  [stringScanner scanString: @"{" intoString: NULL];
+		  [stringScanner scanUpToString: @"}" intoString: &value];
+		  [stringScanner scanString: @"}" intoString: NULL];
+		  value = [self parseKeyValueString: value];
+		}
+	      else
+		{
+		  [stringScanner scanString: @"\"" intoString: NULL];
+		  [stringScanner scanUpToString: @"\"" intoString: &value];
+		  [stringScanner scanString: @"\"" intoString: NULL];
+		}
+	      NSLog(@"key %@ value %@", key, value);
 
 	      if([key isEqualToString:@"pid"] && 
 		 [dictionaryName isEqualToString: @"thread-group-started"])
 		{
 		  [debugger setSubProcessId: [value intValue]];
+		}
+	      else if ([key isEqualToString:@"bkpt"])
+		{
+		  // gdb specific
+		  NSString *fileName;
+		  NSString *lineNum;
+
+		  fileName = [value objectForKey:@"file"];
+		  lineNum = [value objectForKey:@"line"];
+		  NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
+		  if (fileName != nil && lineNum != nil)
+		    {
+		      [debugger setLastFileNameParsed: fileName];
+		      [debugger setLastLineNumberParsed: [lineNum intValue]];
+		    }
+		  else
+		    {
+		      [debugger setLastFileNameParsed: nil];
+		      [debugger setLastLineNumberParsed: NSNotFound];
+		    }
 		}
 	    }
 	}
@@ -236,7 +309,7 @@
   [stringScanner scanString: @"~" intoString: &prefix];
   if(prefix != nil)
     {
-      if ([debugger gdbVersion] == 0.0)
+      if ([debugger debuggerVersion] == 0.0)
         {
           NSString *str1 = nil;
           NSString *str2 = nil;
@@ -254,11 +327,11 @@
               if ([stringScanner scanFloat:&v])
                 {
                   NSLog(@"GDB version string: %f", v);
-                  [debugger setGdbVersion:v];
+                  [debugger setDebuggerVersion:v];
                 }
             }
         }
-      if (([debugger gdbVersion] < 7) && [debugger subProcessId] == 0)
+      if (([debugger debuggerVersion] < 7) && [debugger subProcessId] == 0)
         {
           NSString *str1;
           // we attempt to parse: [New thread 6800.0x18ec]

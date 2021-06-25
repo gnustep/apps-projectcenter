@@ -1,7 +1,7 @@
 /*
 **  PCDebugger.m
 **
-**  Copyright (c) 2008-2020
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>>
@@ -156,7 +156,11 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
-      gdbVersion = 0.0;
+      debuggerVersion = 0.0;
+
+      lastInfoParsed = nil;
+      lastFileNameParsed = nil;
+      lastLineNumberParsed = NSNotFound;
 
       breakpoints = nil;
 
@@ -187,7 +191,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   [debuggerView runProgram: debuggerPath
 		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-                withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil]
+	     withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil] // gdb dependent - should be generalized
 		logStandardError: YES];
   
 }
@@ -277,14 +281,44 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   subProcessId = pid;
 }
 
-- (float) gdbVersion
+- (float) debuggerVersion
 {
-  return gdbVersion;
+  return debuggerVersion;
 }
 
-- (void) setGdbVersion:(float)ver
+- (void) setDebuggerVersion:(float)ver
 {
-  gdbVersion = ver;
+  debuggerVersion = ver;
+}
+
+- (NSDictionary *)lastInfoParsed
+{
+  return lastInfoParsed;
+}
+
+- (void)setSetInfoParsed: (NSDictionary *)dict
+{
+  lastInfoParsed = dict;
+}
+
+- (NSString *)lastFileNameParsed
+{
+  return lastFileNameParsed;
+}
+
+- (void) setLastFileNameParsed: (NSString *)fname
+{
+  lastFileNameParsed = fname;
+}
+
+- (NSUInteger)lastLineNumberParsed
+{
+  return lastLineNumberParsed;
+}
+
+- (void)setLastLineNumberParsed: (NSUInteger)num
+{
+  lastLineNumberParsed = num;
 }
 
 // kill process
