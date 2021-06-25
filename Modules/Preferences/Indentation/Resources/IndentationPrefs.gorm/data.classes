@@ -43,7 +43,8 @@
 	    "_view",
 	    "_indentUsingSpaces",
 	    "_tabWidth",
-	    "_indentWidth"
+	    "_indentWidth",
+	    "_indentDefault"
 	);
 	Super = NSObject;
     };

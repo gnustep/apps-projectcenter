@@ -60,6 +60,7 @@
   state = bVal ? NSOnState : NSOffState;
   [_indentWhenTyping setState:state];
 
+  /*
   bVal = [prefs boolForKey: IndentForOpenCurly
               defaultValue: YES];
   state = bVal ? NSOnState : NSOffState;
@@ -89,11 +90,12 @@
               defaultValue: YES];
   state = bVal ? NSOnState : NSOffState;
   [_indentForReturn setState: state];
-
+  
   bVal = [prefs boolForKey:IndentForColon
               defaultValue:NO];
   state = bVal ? NSOnState : NSOffState;
   [_indentForColon setState:state];
+  */
 
   bVal = [prefs boolForKey: IndentForSoloOpenCurly
               defaultValue: YES];
@@ -127,6 +129,13 @@
     {
       [_tabWidth setStringValue: val];
     }
+  
+  val = [prefs stringForKey: IndentDefault
+               defaultValue: spacesIndentDefault];
+  if (val)
+    {
+      [_indentDefault setStringValue: val];
+    }
 }
 
 - (NSView *) view
@@ -141,6 +150,7 @@
   [prefs setBool: state forKey: IndentWhenTyping notify: YES];
 }
 
+/*
 - (void) setIndentForOpenCurlyBrace: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
@@ -176,7 +186,8 @@
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
   [prefs setBool: state forKey: IndentForReturn notify: YES];
 }
-
+*/
+  
 - (void) setIndentForSoloOpenBrace: (id)sender
 {
   BOOL state = ([sender state] == NSOffState) ? NO : YES;
@@ -187,6 +198,12 @@
 {
   int val = [sender intValue];
   [prefs setInteger: val forKey: IndentNumberOfSpaces notify: YES];
+}
+
+- (void) setIndentDefault: (id)sender
+{
+  int val = [sender intValue];
+  [prefs setInteger: val forKey: IndentDefault notify: YES];
 }
 
 // Tabs/Spaces
