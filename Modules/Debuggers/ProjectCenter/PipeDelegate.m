@@ -156,6 +156,29 @@
   [tView setNeedsDisplay:YES];
 }
 
+- (NSArray *) parseArray: (NSString *)stringInput
+{
+  if (nil != stringInput)
+    {
+      NSMutableArray *mArray;
+      NSScanner *stringScanner;
+      NSString *value;
+
+      mArray = [[NSMutableArray alloc] init];
+      stringScanner = [NSScanner scannerWithString: stringInput];
+      while([stringScanner isAtEnd] == NO)
+	{
+	  [stringScanner scanString: @"{" intoString: NULL];
+	  [stringScanner scanUpToString: @"}" intoString: &value];
+	  [stringScanner scanString: @"}" intoString: NULL];
+	  NSLog(@"Array Element: %@", value);
+	  [mArray addObject: value];
+	}
+      return [mArray autorelease];
+    }
+  return nil;
+}
+
 /*
  parse subpart of the MI reply which may look like this:
  bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0804872c",func="main",file="main.m",fullname="/home/multix/code/gnustep-svc/DirectoryTest/main.m",line="23",thread-groups=["i1"],times="1",original-location="main.m:23"}
@@ -243,7 +266,14 @@
 	      [stringScanner scanString: @"," intoString: NULL];
 	      [stringScanner scanUpToString: @"=" intoString: &key];
 	      [stringScanner scanString: @"=" intoString: NULL];
-	      if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
+	      if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '[')
+		{
+		  [stringScanner scanString: @"[" intoString: NULL];
+		  [stringScanner scanUpToString: @"]" intoString: &value];
+		  [stringScanner scanString: @"]" intoString: NULL];
+		  value = [self parseArray: value];
+		}
+	      else if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
 		{
 		  [stringScanner scanString: @"{" intoString: NULL];
 		  [stringScanner scanUpToString: @"}" intoString: &value];
