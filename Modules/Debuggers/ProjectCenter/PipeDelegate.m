@@ -200,12 +200,20 @@
 	  [stringScanner scanUpToString: @"=" intoString: &key];
 	  [stringScanner scanString: @"=" intoString: NULL];
 
-	  [stringScanner scanString: @"\"" intoString: NULL];
-	  [stringScanner scanUpToString: @"\"" intoString: &value];
-	  [stringScanner scanString: @"\"" intoString: NULL];
-	  [stringScanner scanString: @"," intoString: NULL];
-
-	  // we fail to parse if the value is in []
+	  if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '[')
+	    {
+	      [stringScanner scanString: @"[" intoString: NULL];
+	      [stringScanner scanUpToString: @"]" intoString: &value];
+	      [stringScanner scanString: @"]" intoString: NULL];
+	      value = [self parseArray: value];
+	    }
+	  else
+	    {
+	      [stringScanner scanString: @"\"" intoString: NULL];
+	      [stringScanner scanUpToString: @"\"" intoString: &value];
+	      [stringScanner scanString: @"\"" intoString: NULL];
+	      [stringScanner scanString: @"," intoString: NULL];
+	    }
 	  //	  NSLog(@"parse KVS: key %@ value %@", key, value);
 	  if (key != nil && value != nil)
 	    [mdict setObject:value forKey:key];
