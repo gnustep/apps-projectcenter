@@ -34,8 +34,8 @@
 #import "PCDebuggerView.h"
 
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
-#import "PCDebuggerViewDelegateProtocol.h"
-#import "PipeDelegate.h"
+#import "PCDebuggerWrapperProtocol.h"
+#import "GDBWrapper.h"
 
 
 #ifndef NOTIFICATION_CENTER
@@ -140,7 +140,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   if((self = [super init]) != nil)
     {
     NSLog(@"PCDebugger Init");
-      id <PCDebuggerViewDelegateProtocol> viewDelegate;
+      id <PCDebuggerWrapperProtocol> debuggerWrapper;
       // initialization here...
       if([NSBundle loadNibNamed: @"PCDebugger" owner: self] == NO)
 	{
@@ -148,11 +148,11 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 	}
 
       [(PCDebuggerView *)debuggerView setDebugger:self];
-      viewDelegate = [[PipeDelegate alloc] init];
-      [debuggerView setDelegate:viewDelegate];
-      [viewDelegate setTextView:debuggerView];
-      [viewDelegate setDebugger:self];
-      [viewDelegate release];
+      debuggerWrapper = [[GDBWrapper alloc] init];
+      [debuggerView setDebuggerWrapper:debuggerWrapper];
+      [debuggerWrapper setTextView:debuggerView];
+      [debuggerWrapper setDebugger:self];
+      [debuggerWrapper release];
       [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
@@ -190,15 +190,15 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void) startDebugger
 {
   [debuggerView runProgram: debuggerPath
-		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-	     withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil] // gdb dependent - should be generalized
+	inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
+	     withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil] // FIXME gdb dependent - should be generalized in the wrapepr
 		logStandardError: YES];
   
 }
 
 - (void) initBreakpoints
 {
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
+  id <PCDebuggerWrapperProtocol> debuggerWrapper;
 
   breakpoints = [[NSMutableArray alloc] init];
   /* CRUDE EXAMPLES * TODO FIXME *
@@ -211,15 +211,15 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   [breakpoints addObject:dP];
   */ 
 
-  viewDelegate = [debuggerView delegate];
-  [viewDelegate setBreakpoints:breakpoints];
+  debuggerWrapper = [debuggerView debuggerWrapper];
+  [debuggerWrapper setBreakpoints:breakpoints];
 }
 
 - (void) debuggerSetup
 {
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
-  viewDelegate = [debuggerView delegate];
-  [viewDelegate debuggerSetup];
+  id <PCDebuggerWrapperProtocol> debuggerWrapper;
+  debuggerWrapper = [debuggerView debuggerWrapper];
+  [debuggerWrapper debuggerSetup];
 }
 
 - (void) handleNotification: (NSNotification *)notification

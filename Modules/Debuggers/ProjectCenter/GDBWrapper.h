@@ -1,7 +1,7 @@
 /*
-**  PipeDelegate
+**  GDBWrapper
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -24,7 +24,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#import "PCDebuggerViewDelegateProtocol.h"
+#import "PCDebuggerWrapperProtocol.h"
 
 typedef enum PCDebuggerOutputType_enum {
   PCDBNotFoundRecord = 0,
@@ -42,7 +42,7 @@ typedef enum PCDebuggerOutputType_enum {
   PCDBEmptyRecord
 } PCDebuggerOutputTypes;
 
-@interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
+@interface GDBWrapper : NSObject <PCDebuggerWrapperProtocol>
 {
   PCDebugger *debugger;
   NSTextView *tView;

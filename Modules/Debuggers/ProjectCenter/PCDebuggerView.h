@@ -1,7 +1,7 @@
 /*
 **  PCDebuggerView
 **
-**  Copyright (c) 2008-2020
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -24,20 +24,20 @@
 #import <Foundation/NSString.h>
 #import <AppKit/NSTextView.h>
 
-#import "PCDebuggerViewDelegateProtocol.h"
+#import "PCDebuggerWrapperProtocol.h"
 
 @class PCDebugger;
 
 @interface PCDebuggerView : NSTextView
 {
   PCDebugger *debugger;
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
+  id <PCDebuggerWrapperProtocol> debuggerWrapper;
   NSString *currentFile;
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
-- (id <PCDebuggerViewDelegateProtocol>)delegate;
-- (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd;
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper;
+- (void) setDebuggerWrapper:(id <PCDebuggerWrapperProtocol>) dw;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;
 

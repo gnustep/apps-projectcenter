@@ -1,7 +1,7 @@
 /*
-**  PipeDelegate.m
+**  GDBWrapper.m
 **
-**  Copyright (c) 2008-2020 Free Software Foundation
+**  Copyright (c) 2008-2021 Free Software Foundation
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -35,14 +35,14 @@
 #include <stdlib.h>
 #include <string.h>
 
-#import "PipeDelegate.h"
+#import "GDBWrapper.h"
 #import "PCDebugger.h"
 
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
 
-@implementation PipeDelegate
+@implementation GDBWrapper
 
 
 - (id)init

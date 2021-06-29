@@ -37,9 +37,9 @@ ProjectCenter_RESOURCE_FILES= \
 #
 ProjectCenter_HEADERS= \
     PCDebugger.h \
-    PCDebugggerView.h \
-    PCDebuggerViewDelegateProtocol.h \
-    PipeDelegate.h
+    PCDebuggerView.h \
+    PCDebuggerWrapperProtocol.h \
+    GDBWrapper.h
 
 #
 # Class files
@@ -47,7 +47,7 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCDebugger.m \
     PCDebuggerView.m \
-    PipeDelegate.m
+    GDBWrapper.m
 
 
 #ADDITIONAL_OBJC_LIBS=

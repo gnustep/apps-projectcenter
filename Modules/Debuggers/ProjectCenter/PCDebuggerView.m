@@ -1,7 +1,7 @@
 /*
 **  PCDebuggerView
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -41,25 +41,25 @@
   debugger = theDebugger;
 }
 
-- (id <PCDebuggerViewDelegateProtocol>)delegate
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper
 {
-  return viewDelegate;
+  return debuggerWrapper;
 }
 
-- (void) setDelegate:(id <PCDebuggerViewDelegateProtocol>) vd
+- (void) setDebuggerWrapper:(id <PCDebuggerWrapperProtocol>) dw
 {
-  if (viewDelegate != vd)
+  if (debuggerWrapper != dw)
     {
-      [viewDelegate release];
-      viewDelegate = vd;
-      [viewDelegate retain];
+      [debuggerWrapper release];
+      debuggerWrapper = dw;
+      [debuggerWrapper retain];
     }
 }
 
 
 - (void)setFont:(NSFont *)aFont
 {
-  [viewDelegate setFont:aFont];
+  [debuggerWrapper setFont:aFont];
 }
 
 /**
@@ -68,7 +68,7 @@
 - (void) logString:(NSString *)str
 	   newLine:(BOOL)newLine
 {
-  [viewDelegate logString: str newLine: newLine withColor:[viewDelegate debuggerColor]];
+  [debuggerWrapper logString: str newLine: newLine withColor:[debuggerWrapper debuggerColor]];
 }
 
 - (void) setCurrentFile: (NSString *)fileName
@@ -83,7 +83,7 @@
 
 - (void) terminate
 {
-  [viewDelegate terminate];
+  [debuggerWrapper terminate];
 }
 
 - (void) mouseDown: (NSEvent *)event
@@ -99,10 +99,10 @@
       withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
-  [viewDelegate runProgram: path
-        inCurrentDirectory: directory
-             withArguments: array
-          logStandardError: logError];
+  [debuggerWrapper runProgram: path
+	   inCurrentDirectory: directory
+		withArguments: array
+	     logStandardError: logError];
 }
 
 - (void) putString: (NSString *)string
@@ -110,12 +110,12 @@
   NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
   [[self textStorage] appendAttributedString:attr];
   [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
-  [viewDelegate putString:string];
+  [debuggerWrapper putString:string];
 }
 
 - (void) keyDown: (NSEvent*)theEvent
 {
-  [viewDelegate keyDown:theEvent];
+  [debuggerWrapper keyDown:theEvent];
 }
 
 @end
