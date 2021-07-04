@@ -156,8 +156,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
-      debuggerVersion = 0.0;
-
       lastInfoParsed = nil;
       lastFileNameParsed = nil;
       lastLineNumberParsed = NSNotFound;
@@ -279,16 +277,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void) setSubProcessId: (int)pid
 {
   subProcessId = pid;
-}
-
-- (float) debuggerVersion
-{
-  return debuggerVersion;
-}
-
-- (void) setDebuggerVersion:(float)ver
-{
-  debuggerVersion = ver;
 }
 
 - (NSDictionary *)lastInfoParsed

@@ -56,6 +56,7 @@
       promptColor = [[NSColor purpleColor] retain];
       
       debuggerStarted = NO;
+      debuggerVersion = 0.0;
     }
   return self;
 }
@@ -119,6 +120,16 @@
 - (NSColor *)errorColor
 {
   return errorColor;
+}
+
+- (float) debuggerVersion
+{
+  return debuggerVersion;
+}
+
+- (void) setDebuggerVersion:(float)ver
+{
+  debuggerVersion = ver;
 }
 
 /**
@@ -347,7 +358,7 @@
   [stringScanner scanString: @"~" intoString: &prefix];
   if(prefix != nil)
     {
-      if ([debugger debuggerVersion] == 0.0)
+      if (debuggerVersion == 0.0)
         {
           NSString *str1 = nil;
           NSString *str2 = nil;

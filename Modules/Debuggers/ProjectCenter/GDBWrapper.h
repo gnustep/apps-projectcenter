@@ -59,7 +59,11 @@ typedef enum PCDebuggerOutputType_enum {
   NSFont  *font;
 
   BOOL debuggerStarted;
+  float          debuggerVersion;
 }
+
+- (float) debuggerVersion;
+- (void) setDebuggerVersion:(float)ver;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 
