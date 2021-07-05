@@ -201,8 +201,9 @@
       NSMutableDictionary *mdict;
       NSScanner *stringScanner;
       NSString *key = NULL;
-      NSString *value = NULL;
+      id value = nil;
 
+      NSLog(@"scanning KV: %@", stringInput);
       mdict = [[NSMutableDictionary alloc] init];
       stringScanner = [NSScanner scannerWithString: stringInput];
 
@@ -210,13 +211,22 @@
 	{
 	  [stringScanner scanUpToString: @"=" intoString: &key];
 	  [stringScanner scanString: @"=" intoString: NULL];
-
+	  NSLog(@"key found: %@", key);
 	  if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '[')
 	    {
 	      [stringScanner scanString: @"[" intoString: NULL];
 	      [stringScanner scanUpToString: @"]" intoString: &value];
 	      [stringScanner scanString: @"]" intoString: NULL];
+	      [stringScanner scanString: @"," intoString: NULL];
 	      value = [self parseArray: value];
+	    }
+	  else if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
+	    {
+	      [stringScanner scanString: @"{" intoString: NULL];
+	      [stringScanner scanUpToString: @"}" intoString: &value];
+	      [stringScanner scanString: @"}" intoString: NULL];
+	      [stringScanner scanString: @"," intoString: NULL];
+	      value = [self parseKeyValueString: value];
 	    }
 	  else
 	    {
@@ -225,7 +235,6 @@
 	      [stringScanner scanString: @"\"" intoString: NULL];
 	      [stringScanner scanString: @"," intoString: NULL];
 	    }
-	  //	  NSLog(@"parse KVS: key %@ value %@", key, value);
 	  if (key != nil && value != nil)
 	    [mdict setObject:value forKey:key];
 	}
@@ -235,7 +244,7 @@
 }
 
 /*
-  Parses a line coming from the debugger. It could be eiher a stanard outpu or it may come from the machine
+  Parses a line coming from the debugger. It could be eiher a stanard output or it may come from the machine
   interface of gdb.
  */
 - (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
@@ -248,7 +257,7 @@
 
   stringScanner = [NSScanner scannerWithString: stringInput];
 
-  //NSLog(@"parsing: |%@|", stringInput);
+  NSLog(@"parsing: |%@|", stringInput);
   [stringScanner scanString: @"(gdb)" intoString: &prefix];
   if(prefix != nil)
     {
@@ -266,73 +275,51 @@
     {
       NSString *dictionaryName = NULL;
 
-      NSLog(@"scanning MI |%@|", stringInput);
+      NSLog(@"scanning AsyncInfo |%@|", stringInput);
       
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
-      if([dictionaryName isEqualToString: @"thread-group-started"])
-	{	  
-	  NSLog(@"%@",dictionaryName);
-	}
-
       if(dictionaryName != nil)
-	{	  
-	  NSString *key = NULL;
+	{
+	  NSString *key = nil;
 	  id value = nil;
+	  NSDictionary *dict;
 	  
-	  while([stringScanner isAtEnd] == NO)
+	  [stringScanner scanString: @"," intoString: NULL];
+	  dict = [self parseKeyValueString: [stringInput substringFromIndex:[stringScanner scanLocation]]];
+	  NSLog(@"type %@ value %@", dictionaryName, dict);
+
+	  if([dict objectForKey:@"pid"] != nil && 
+	     [dictionaryName isEqualToString: @"thread-group-started"])
 	    {
-	      [stringScanner scanString: @"," intoString: NULL];
-	      [stringScanner scanUpToString: @"=" intoString: &key];
-	      [stringScanner scanString: @"=" intoString: NULL];
-	      if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '[')
+	      [debugger setSubProcessId: [[dict objectForKey:@"pid"] intValue]];
+	    }
+	  else if ([dict objectForKey:@"bkpt"] != nil)
+	    {
+	      NSDictionary *bkpDict;
+	      // gdb specific
+	      NSString *fileName;
+	      NSString *lineNum;
+
+	      bkpDict = [value objectForKey:@"bkpt"];
+	      fileName = [bkpDict objectForKey:@"file"];
+	      lineNum = [bkpDict objectForKey:@"line"];
+	      NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
+	      if (fileName != nil && lineNum != nil)
 		{
-		  [stringScanner scanString: @"[" intoString: NULL];
-		  [stringScanner scanUpToString: @"]" intoString: &value];
-		  [stringScanner scanString: @"]" intoString: NULL];
-		  value = [self parseArray: value];
-		}
-	      else if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
-		{
-		  [stringScanner scanString: @"{" intoString: NULL];
-		  [stringScanner scanUpToString: @"}" intoString: &value];
-		  [stringScanner scanString: @"}" intoString: NULL];
-		  value = [self parseKeyValueString: value];
+		  [debugger setLastFileNameParsed: fileName];
+		  [debugger setLastLineNumberParsed: [lineNum intValue]];
 		}
 	      else
 		{
-		  [stringScanner scanString: @"\"" intoString: NULL];
-		  [stringScanner scanUpToString: @"\"" intoString: &value];
-		  [stringScanner scanString: @"\"" intoString: NULL];
-		}
-	      NSLog(@"key %@ value %@", key, value);
-
-	      if([key isEqualToString:@"pid"] && 
-		 [dictionaryName isEqualToString: @"thread-group-started"])
-		{
-		  [debugger setSubProcessId: [value intValue]];
-		}
-	      else if ([key isEqualToString:@"bkpt"])
-		{
-		  // gdb specific
-		  NSString *fileName;
-		  NSString *lineNum;
-
-		  fileName = [value objectForKey:@"file"];
-		  lineNum = [value objectForKey:@"line"];
-		  NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
-		  if (fileName != nil && lineNum != nil)
-		    {
-		      [debugger setLastFileNameParsed: fileName];
-		      [debugger setLastLineNumberParsed: [lineNum intValue]];
-		    }
-		  else
-		    {
-		      [debugger setLastFileNameParsed: nil];
-		      [debugger setLastLineNumberParsed: NSNotFound];
-		    }
+		  [debugger setLastFileNameParsed: nil];
+		  [debugger setLastLineNumberParsed: NSNotFound];
 		}
 	    }
+	}
+      else
+	{
+	  NSLog(@"error parsing type of: %@", stringInput);
 	}
       return PCDBAsyncInfoRecord;
     }
@@ -340,6 +327,26 @@
   [stringScanner scanString: @"*" intoString: &prefix];
   if(prefix != nil)
     {
+      NSString *dictionaryName = NULL;
+      NSDictionary *dict = nil;
+
+      NSLog(@"scanning AsyncStatus |%@|", stringInput);
+      
+      [stringScanner scanUpToString: @"," intoString: &dictionaryName];
+
+      if(dictionaryName != nil)
+	{
+	  id value = nil;
+	  
+	  [stringScanner scanString: @"," intoString: NULL];
+	  value = [self parseKeyValueString: [stringInput substringFromIndex:[stringScanner scanLocation]]];
+	  NSLog(@"type %@ value %@", dictionaryName, dict);
+	}
+
+      if ([dictionaryName isEqualToString:@"stopped"])
+	{
+	  [debugger setStatus:@"Stopped"];
+	}
       return PCDBAsyncStatusRecord;
     }
 
@@ -380,7 +387,7 @@
                 }
             }
         }
-      if (([debugger debuggerVersion] < 7) && [debugger subProcessId] == 0)
+      if ((debuggerVersion < 7) && [debugger subProcessId] == 0)
         {
           NSString *str1;
           // we attempt to parse: [New thread 6800.0x18ec]
@@ -447,7 +454,7 @@
 	}
       return PCDBResultRecord;
     }
-  NSLog(@"No match found parse: |%@|", stringInput);
+  NSLog(@"No match found parsing: |%@|", stringInput);
   return PCDBNotFoundRecord;
 }
 
@@ -500,17 +507,6 @@
 	}
       */
     }
-
-  /*
-  stringRange = [inputString rangeOfString: "(gdb)" options: NULL];
-  if(stringRange.location == NSNotFound) 
-    {
-      [self logString: inputString newLine: NO withColor:debuggerColor];
-    }
-  else
-    {
-    }
-  */
 }
 
 /**
