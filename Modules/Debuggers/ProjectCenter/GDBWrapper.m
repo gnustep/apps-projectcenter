@@ -383,7 +383,7 @@
               if ([stringScanner scanFloat:&v])
                 {
                   NSLog(@"GDB version string: %f", v);
-                  [debugger setDebuggerVersion:v];
+                  [self setDebuggerVersion:v];
                 }
             }
         }
