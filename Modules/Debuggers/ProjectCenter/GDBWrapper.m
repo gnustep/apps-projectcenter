@@ -333,7 +333,7 @@
 	      NSString *lineNum;
 
 	      bkpDict = [value objectForKey:@"bkpt"];
-	      fileName = [bkpDict objectForKey:@"file"];
+	      fileName = [bkpDict objectForKey:@"fullname"];
 	      lineNum = [bkpDict objectForKey:@"line"];
 	      NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
 	      if (fileName != nil && lineNum != nil)
@@ -375,6 +375,27 @@
       if ([dictionaryName isEqualToString:@"stopped"])
 	{
 	  [debugger setStatus:@"Stopped"];
+	  if ([dict objectForKey:@"reason"] != nil)
+	    {
+	      NSDictionary *frameDict;
+	      NSString *fileName;
+	      NSString *lineNum;
+
+	      frameDict = [dict objectForKey:@"frame"];
+	      fileName = [frameDict objectForKey:@"fullname"];
+	      lineNum = [frameDict objectForKey:@"line"];
+	      NSLog(@"parsed from GDB %@ : %@:%@", [dict objectForKey:@"reason"], fileName, lineNum);
+	      if (fileName != nil && lineNum != nil)
+		{
+		  [debugger setLastFileNameParsed: fileName];
+		  [debugger setLastLineNumberParsed: [lineNum intValue]];
+		}
+	      else
+		{
+		  [debugger setLastFileNameParsed: nil];
+		  [debugger setLastLineNumberParsed: NSNotFound];
+		}
+	    }
 	}
       return PCDBAsyncStatusRecord;
     }
