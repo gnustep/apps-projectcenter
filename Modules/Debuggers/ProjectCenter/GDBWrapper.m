@@ -188,7 +188,10 @@
   NSLog(@"parseArray in: %@", [string substringFromIndex: [scanner scanLocation]]);
   mArray = [[NSMutableArray alloc] init];
 
-  [scanner scanString: @"[" intoString: NULL];
+  // we chomp up the first opening [
+  if (![scanner isAtEnd])
+    [scanner scanString: @"[" intoString: NULL];
+
   elementEnd = NO;
   value = nil;
   while([scanner isAtEnd] == NO  && elementEnd == NO)
@@ -199,7 +202,6 @@
 	}
       else if ([string characterAtIndex:[scanner scanLocation]] == '{')
 	{
-	  [scanner scanString: @"{" intoString: NULL];
 	  value = [self parseKeyValue: scanner];
 	}
       else if ([string characterAtIndex:[scanner scanLocation]] == ']')
@@ -239,6 +241,11 @@
 
   value = nil;
   elementEnd = NO;
+
+  // we chomp up the first opening { which may not be always present
+  if (![scanner isAtEnd])
+    [scanner scanString: @"{" intoString: NULL];
+
   while([scanner isAtEnd] == NO && elementEnd == NO)
     {
       [scanner scanUpToString: @"=" intoString: &key];
