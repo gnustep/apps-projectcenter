@@ -701,6 +701,7 @@
   [debuggerColor release];
   [messageColor release];
   [errorColor release];
+  [debugger release];
   [tView release];
   [super dealloc];
 }
