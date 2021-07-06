@@ -187,7 +187,7 @@
   NSString *string = [scanner string];
   BOOL elementEnd;
 
-  NSLog(@"parseArray in: %@", [string substringFromIndex: [scanner scanLocation]]);
+  //  NSLog(@"parseArray in: %@", [string substringFromIndex: [scanner scanLocation]]);
   mArray = [[NSMutableArray alloc] init];
 
   // we chomp up the first opening [
@@ -217,7 +217,7 @@
 	  [scanner scanString: @"," intoString: NULL];
 	}
 
-      NSLog(@"Array Element: %@", value);
+      //      NSLog(@"Array Element: %@", value);
       if (value)
 	{
 	  [mArray addObject: value];
@@ -238,7 +238,7 @@
   NSString *string = [scanner string];
   BOOL elementEnd;
 
-  NSLog(@"scanning KV: %@", [[scanner string] substringFromIndex:[scanner scanLocation]]);
+  //  NSLog(@"scanning KV: %@", [[scanner string] substringFromIndex:[scanner scanLocation]]);
   mdict = [[NSMutableDictionary alloc] init];
 
   value = nil;
@@ -252,7 +252,7 @@
     {
       [scanner scanUpToString: @"=" intoString: &key];
       [scanner scanString: @"=" intoString: NULL];
-      NSLog(@"KV key found: %@", key);
+      //      NSLog(@"KV key found: %@", key);
       if ([string characterAtIndex:[scanner scanLocation]] == '\"')
 	{
 	  value = [self parseString: scanner];
