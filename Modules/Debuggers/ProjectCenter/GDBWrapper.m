@@ -167,84 +167,115 @@
   [tView setNeedsDisplay:YES];
 }
 
-- (NSArray *) parseArray: (NSString *)stringInput
+- (NSString *) parseString: (NSScanner *)scanner
 {
-  if (nil != stringInput)
-    {
-      NSMutableArray *mArray;
-      NSScanner *stringScanner;
-      NSString *value;
+  NSString *str;
 
-      mArray = [[NSMutableArray alloc] init];
-      stringScanner = [NSScanner scannerWithString: stringInput];
-      while([stringScanner isAtEnd] == NO)
+  [scanner scanString: @"\"" intoString: NULL];
+  [scanner scanUpToString: @"\"" intoString: &str];
+  [scanner scanString: @"\"" intoString: NULL];
+
+  return str;
+}
+
+- (NSArray *) parseArray: (NSScanner *)scanner
+{
+  NSMutableArray *mArray;
+  id value;
+  NSString *string = [scanner string];
+  BOOL elementEnd;
+
+  NSLog(@"parseArray in: %@", [string substringFromIndex: [scanner scanLocation]]);
+  mArray = [[NSMutableArray alloc] init];
+
+  [scanner scanString: @"[" intoString: NULL];
+  elementEnd = NO;
+  value = nil;
+  while([scanner isAtEnd] == NO  && elementEnd == NO)
+    {
+      if ([string characterAtIndex:[scanner scanLocation]] == '\"')
 	{
-	  [stringScanner scanString: @"{" intoString: NULL];
-	  [stringScanner scanUpToString: @"}" intoString: &value];
-	  [stringScanner scanString: @"}" intoString: NULL];
-	  NSLog(@"Array Element: %@", value);
+	  value = [self parseString: scanner];
+	}
+      else if ([string characterAtIndex:[scanner scanLocation]] == '{')
+	{
+	  [scanner scanString: @"{" intoString: NULL];
+	  value = [self parseKeyValue: scanner];
+	}
+      else if ([string characterAtIndex:[scanner scanLocation]] == ']')
+	{
+	  [scanner scanString: @"]" intoString: NULL];
+	  elementEnd = YES;
+	}
+
+      if (![scanner isAtEnd] && [string characterAtIndex:[scanner scanLocation]] == ',')
+	{
+	  [scanner scanString: @"," intoString: NULL];
+	}
+
+      NSLog(@"Array Element: %@", value);
+      if (value)
+	{
 	  [mArray addObject: value];
 	}
-      return [mArray autorelease];
     }
-  return nil;
+  return [mArray autorelease];
 }
 
 /*
  parse subpart of the MI reply which may look like this:
  bkpt={number="1",type="breakpoint",disp="keep",enabled="y",addr="0x0804872c",func="main",file="main.m",fullname="/home/multix/code/gnustep-svc/DirectoryTest/main.m",line="23",thread-groups=["i1"],times="1",original-location="main.m:23"}
  */
-- (NSDictionary *) parseKeyValueString: (NSString *)stringInput
+- (NSDictionary *) parseKeyValue: (NSScanner *)scanner
 {
-  if (nil != stringInput)
+  NSMutableDictionary *mdict;
+  NSString *key = NULL;
+  id value;
+  NSString *string = [scanner string];
+  BOOL elementEnd;
+
+  NSLog(@"scanning KV: %@", [[scanner string] substringFromIndex:[scanner scanLocation]]);
+  mdict = [[NSMutableDictionary alloc] init];
+
+  value = nil;
+  elementEnd = NO;
+  while([scanner isAtEnd] == NO && elementEnd == NO)
     {
-      NSMutableDictionary *mdict;
-      NSScanner *stringScanner;
-      NSString *key = NULL;
-      id value = nil;
-
-      NSLog(@"scanning KV: %@", stringInput);
-      mdict = [[NSMutableDictionary alloc] init];
-      stringScanner = [NSScanner scannerWithString: stringInput];
-
-      while([stringScanner isAtEnd] == NO)
+      [scanner scanUpToString: @"=" intoString: &key];
+      [scanner scanString: @"=" intoString: NULL];
+      NSLog(@"KV key found: %@", key);
+      if ([string characterAtIndex:[scanner scanLocation]] == '\"')
 	{
-	  [stringScanner scanUpToString: @"=" intoString: &key];
-	  [stringScanner scanString: @"=" intoString: NULL];
-	  NSLog(@"key found: %@", key);
-	  if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '[')
-	    {
-	      [stringScanner scanString: @"[" intoString: NULL];
-	      [stringScanner scanUpToString: @"]" intoString: &value];
-	      [stringScanner scanString: @"]" intoString: NULL];
-	      [stringScanner scanString: @"," intoString: NULL];
-	      value = [self parseArray: value];
-	    }
-	  else if ([stringInput characterAtIndex:[stringScanner scanLocation]] == '{')
-	    {
-	      [stringScanner scanString: @"{" intoString: NULL];
-	      [stringScanner scanUpToString: @"}" intoString: &value];
-	      [stringScanner scanString: @"}" intoString: NULL];
-	      [stringScanner scanString: @"," intoString: NULL];
-	      value = [self parseKeyValueString: value];
-	    }
-	  else
-	    {
-	      [stringScanner scanString: @"\"" intoString: NULL];
-	      [stringScanner scanUpToString: @"\"" intoString: &value];
-	      [stringScanner scanString: @"\"" intoString: NULL];
-	      [stringScanner scanString: @"," intoString: NULL];
-	    }
-	  if (key != nil && value != nil)
-	    [mdict setObject:value forKey:key];
+	  value = [self parseString: scanner];
 	}
-      return [mdict autorelease];
+      else if ([string characterAtIndex:[scanner scanLocation]] == '[')
+	{
+	  value = [self parseArray: scanner];
+	}
+      else if ([string characterAtIndex:[scanner scanLocation]] == '{')
+	{
+	  value = [self parseKeyValue: scanner];
+	}
+
+      if (![scanner isAtEnd] && [string characterAtIndex:[scanner scanLocation]] == '}')
+	{
+	  [scanner scanString: @"}" intoString: NULL];
+	  elementEnd = YES;
+	}
+
+      if (![scanner isAtEnd] && [string characterAtIndex:[scanner scanLocation]] == ',')
+	{
+	  [scanner scanString: @"," intoString: NULL];
+	}
+
+      if (key != nil && value != nil)
+	[mdict setObject:value forKey:key];
     }
-  return nil;
+  return [mdict autorelease];
 }
 
 /*
-  Parses a line coming from the debugger. It could be eiher a stanard output or it may come from the machine
+  Parses a line coming from the debugger. It could be eiher a standard output or it may come from the machine
   interface of gdb.
  */
 - (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput
@@ -286,7 +317,7 @@
 	  NSDictionary *dict;
 	  
 	  [stringScanner scanString: @"," intoString: NULL];
-	  dict = [self parseKeyValueString: [stringInput substringFromIndex:[stringScanner scanLocation]]];
+	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
 
 	  if([dict objectForKey:@"pid"] != nil && 
@@ -336,10 +367,8 @@
 
       if(dictionaryName != nil)
 	{
-	  id value = nil;
-	  
 	  [stringScanner scanString: @"," intoString: NULL];
-	  value = [self parseKeyValueString: [stringInput substringFromIndex:[stringScanner scanLocation]]];
+	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
 	}
 
@@ -474,7 +503,7 @@
   return unescapedString;
 }
 
-- (void) parseString: (NSString *)inputString
+- (void) parseLine: (NSString *)inputString
 {
   NSArray *components;
   NSEnumerator *en;
@@ -525,7 +554,7 @@
                          encoding:[NSString defaultCStringEncoding]];
       
       // if( !
-      [self parseString: dataString]; // )
+      [self parseLine: dataString]; // )
     // {
     //	  [self logString: dataString newLine: NO withColor:debuggerColor];
     //	}
