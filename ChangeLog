@@ -1,3 +1,10 @@
+2021-07-06 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	Change parsing of MI interface to a LAR parser and avoid issue
+	of recursive [] {} values in the previous parser.
+
 2021-06-22 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
