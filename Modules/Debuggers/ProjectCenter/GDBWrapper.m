@@ -167,6 +167,8 @@
   [tView setNeedsDisplay:YES];
 }
 
+/* == parsing methods == */
+
 - (NSString *) parseString: (NSScanner *)scanner
 {
   NSString *str;
@@ -565,6 +567,8 @@
       */
     }
 }
+
+/* == end of parsing methods */
 
 /**
  * Log standard out.
