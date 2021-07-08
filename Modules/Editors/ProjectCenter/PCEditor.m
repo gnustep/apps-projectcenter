@@ -226,6 +226,12 @@
       highlited_chars[1] = -1;
 
       undoManager = [[NSUndoManager alloc] init];
+
+      [[NSNotificationCenter defaultCenter] addObserver: self
+					       selector: @selector(processNotification:)
+						   name: @"PCUpdateEditorNotification"
+						 object: nil];
+      
     }
 
   return self;
@@ -409,6 +415,18 @@
   [[NSNotificationCenter defaultCenter] 
     postNotificationName:PCEditorDidCloseNotification
                   object:self];
+}
+
+- (void) processNotification: (NSNotification *)notification
+{
+  NSDictionary *d = [notification object];
+  NSString *fileName = [d objectForKey: @"lastFileName"];
+  NSNumber *line = [d objectForKey: @"lastLineNumber"];
+  NSUInteger l = [line integerValue];
+  [self openFileAtPath: fileName
+	 editorManager: _editorManager
+	      editable: YES];
+  [self scrollToLineNumber: l];
 }
 
 // ===========================================================================
