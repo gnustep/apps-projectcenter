@@ -52,12 +52,12 @@ static NSImage  *stepOutImage = nil;
 static NSImage  *upImage = nil;
 static NSImage  *downImage = nil;
 
-const NSString *PCBreakTypeKey = @"BreakType";
+NSString *PCBreakTypeKey = @"BreakType";
 NSString *PCBreakTypeByLine = @"BreakTypeLine";
 NSString *PCBreakTypeMethod = @"BreakTypeMethod";
-const NSString *PCBreakMethod = @"BreakMethod";
-const NSString *PCBreakFilename = @"BreakFilename";
-const NSString *PCBreakLineNumber = @"BreakLineNumber";
+NSString *PCBreakMethod = @"BreakMethod";
+NSString *PCBreakFilename = @"BreakFilename";
+NSString *PCBreakLineNumber = @"BreakLineNumber";
 NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 @implementation PCDebugger

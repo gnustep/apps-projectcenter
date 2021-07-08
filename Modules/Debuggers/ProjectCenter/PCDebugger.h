@@ -29,13 +29,13 @@
 #import <Protocols/CodeDebugger.h>
 #import "PCDebuggerWrapperProtocol.h"
 
-extern const NSString *PCBreakTypeKey;
+extern NSString *PCBreakTypeKey;
 extern NSString *PCBreakTypeByLine;
 extern NSString *PCBreakTypeMethod;
+extern NSString *PCBreakMethod;
+extern NSString *PCBreakFilename;
+extern NSString *PCBreakLineNumber;
 
-extern const NSString *PCBreakMethod;
-extern const NSString *PCBreakFilename;
-extern const NSString *PCBreakLineNumber;
 extern NSString *PCDBDebuggerStartedNotification;
 
 @interface PCDebugger : NSObject <CodeDebugger>
