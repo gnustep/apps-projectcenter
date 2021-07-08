@@ -293,12 +293,20 @@ enum {
     
 
   // Debugger
-  debugger = [bundleManager objectForBundleType: @"debugger"
-			    protocol: @protocol(CodeDebugger)
-			    fileName: [executablePath stringByDeletingLastPathComponent]];
-  [debugger debugExecutableAtPath: executablePath
-	    withDebugger: gdbPath];
-  if (!debugger)
+  if (nil == debugger)
+    {
+      debugger = [bundleManager objectForBundleType: @"debugger"
+					   protocol: @protocol(CodeDebugger)
+					   fileName: [executablePath stringByDeletingLastPathComponent]];
+      [debugger debugExecutableAtPath: executablePath
+			 withDebugger: gdbPath];
+    }
+  else
+    {
+      [debugger show];
+    }
+
+  if (nil == debugger)
     NSLog(@"No debugger module found");
 
   // turn debug button off...

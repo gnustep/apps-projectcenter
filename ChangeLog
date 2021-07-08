@@ -1,3 +1,8 @@
+2021-07-09 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectLauncher.m
+	If we already instantiated a Debugger, reuse it.
+
 2021-07-06 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
