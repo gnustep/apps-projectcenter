@@ -56,15 +56,6 @@
   [[debugger debuggerWrapper] logString: str newLine: newLine withColor:[[debugger debuggerWrapper] debuggerColor]];
 }
 
-- (void) setCurrentFile: (NSString *)fileName
-{
-  ASSIGN(currentFile,fileName);
-}
-
-- (NSString *) currentFile
-{
-  return currentFile;
-}
 
 - (void) terminate
 {

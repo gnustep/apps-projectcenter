@@ -34,9 +34,6 @@
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
-- (void) setCurrentFile: (NSString *)fileName;
-- (NSString *) currentFile;
-
 - (void)setFont:(NSFont *)font;
 
 
