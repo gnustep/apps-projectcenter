@@ -139,8 +139,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   if((self = [super init]) != nil)
     {
-    NSLog(@"PCDebugger Init");
-      id <PCDebuggerWrapperProtocol> debuggerWrapper;
+      NSLog(@"PCDebugger Init");
       // initialization here...
       if([NSBundle loadNibNamed: @"PCDebugger" owner: self] == NO)
 	{
@@ -149,10 +148,8 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
       [(PCDebuggerView *)debuggerView setDebugger:self];
       debuggerWrapper = [[GDBWrapper alloc] init];
-      [debuggerView setDebuggerWrapper:debuggerWrapper];
       [debuggerWrapper setTextView:debuggerView];
       [debuggerWrapper setDebugger:self];
-      [debuggerWrapper release];
       [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
@@ -196,8 +193,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) initBreakpoints
 {
-  id <PCDebuggerWrapperProtocol> debuggerWrapper;
-
   breakpoints = [[NSMutableArray alloc] init];
   /* CRUDE EXAMPLES * TODO FIXME *
   NSDictionary *dP;
@@ -208,15 +203,11 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeByLine, PCBreakTypeKey, @"AppController.m", PCBreakFilename, [NSNumber numberWithInt:100], PCBreakLineNumber, nil];
   [breakpoints addObject:dP];
   */ 
-
-  debuggerWrapper = [debuggerView debuggerWrapper];
   [debuggerWrapper setBreakpoints:breakpoints];
 }
 
 - (void) debuggerSetup
 {
-  id <PCDebuggerWrapperProtocol> debuggerWrapper;
-  debuggerWrapper = [debuggerView debuggerWrapper];
   [debuggerWrapper debuggerSetup];
 }
 
@@ -237,6 +228,11 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
   [debuggerWindow setFrameAutosaveName: @"PCDebuggerWindow"];
   [self setStatus: @"Idle."];
+}
+
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper
+{
+  return debuggerWrapper;
 }
 
 - (NSWindow *)debuggerWindow
@@ -413,6 +409,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) dealloc
 {
+  [debuggerWrapper release];
   [breakpoints release];
   [super dealloc];
 }

@@ -27,6 +27,7 @@
 #import <Foundation/Foundation.h>
 
 #import <Protocols/CodeDebugger.h>
+#import "PCDebuggerWrapperProtocol.h"
 
 extern const NSString *PCBreakTypeKey;
 extern NSString *PCBreakTypeByLine;
@@ -49,8 +50,10 @@ extern NSString *PCDBDebuggerStartedNotification;
   NSString       *lastFileNameParsed;
   NSUInteger     lastLineNumberParsed;
   NSMutableArray *breakpoints;
+  id <PCDebuggerWrapperProtocol> debuggerWrapper;
 }
 
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper;
 - (void) setStatus: (NSString *) status;
 - (NSString *) status;
 - (NSString *)executablePath;

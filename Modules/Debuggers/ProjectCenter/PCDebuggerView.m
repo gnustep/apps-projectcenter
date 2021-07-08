@@ -41,25 +41,10 @@
   debugger = theDebugger;
 }
 
-- (id <PCDebuggerWrapperProtocol>)debuggerWrapper
-{
-  return debuggerWrapper;
-}
-
-- (void) setDebuggerWrapper:(id <PCDebuggerWrapperProtocol>) dw
-{
-  if (debuggerWrapper != dw)
-    {
-      [debuggerWrapper release];
-      debuggerWrapper = dw;
-      [debuggerWrapper retain];
-    }
-}
-
 
 - (void)setFont:(NSFont *)aFont
 {
-  [debuggerWrapper setFont:aFont];
+  [[debugger debuggerWrapper] setFont:aFont];
 }
 
 /**
@@ -68,7 +53,7 @@
 - (void) logString:(NSString *)str
 	   newLine:(BOOL)newLine
 {
-  [debuggerWrapper logString: str newLine: newLine withColor:[debuggerWrapper debuggerColor]];
+  [[debugger debuggerWrapper] logString: str newLine: newLine withColor:[[debugger debuggerWrapper] debuggerColor]];
 }
 
 - (void) setCurrentFile: (NSString *)fileName
@@ -83,7 +68,7 @@
 
 - (void) terminate
 {
-  [debuggerWrapper terminate];
+  [[debugger debuggerWrapper] terminate];
 }
 
 - (void) mouseDown: (NSEvent *)event
@@ -99,10 +84,10 @@
       withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
-  [debuggerWrapper runProgram: path
-	   inCurrentDirectory: directory
-		withArguments: array
-	     logStandardError: logError];
+  [[debugger debuggerWrapper] runProgram: path
+		      inCurrentDirectory: directory
+			   withArguments: array
+			logStandardError: logError];
 }
 
 - (void) putString: (NSString *)string
@@ -110,12 +95,12 @@
   NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
   [[self textStorage] appendAttributedString:attr];
   [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
-  [debuggerWrapper putString:string];
+  [[debugger debuggerWrapper] putString:string];
 }
 
 - (void) keyDown: (NSEvent*)theEvent
 {
-  [debuggerWrapper keyDown:theEvent];
+  [[debugger debuggerWrapper] keyDown:theEvent];
 }
 
 @end

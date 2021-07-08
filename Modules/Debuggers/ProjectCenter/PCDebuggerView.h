@@ -24,20 +24,16 @@
 #import <Foundation/NSString.h>
 #import <AppKit/NSTextView.h>
 
-#import "PCDebuggerWrapperProtocol.h"
 
 @class PCDebugger;
 
 @interface PCDebuggerView : NSTextView
 {
   PCDebugger *debugger;
-  id <PCDebuggerWrapperProtocol> debuggerWrapper;
   NSString *currentFile;
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
-- (id <PCDebuggerWrapperProtocol>)debuggerWrapper;
-- (void) setDebuggerWrapper:(id <PCDebuggerWrapperProtocol>) dw;
 - (void) setCurrentFile: (NSString *)fileName;
 - (NSString *) currentFile;
 
