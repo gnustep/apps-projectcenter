@@ -425,6 +425,7 @@
 		  [debugger setLastFileNameParsed: nil];
 		  [debugger setLastLineNumberParsed: NSNotFound];
 		}
+	      [debugger updateEditor];
 	    }
 	}
       return PCDBAsyncStatusRecord;

@@ -59,6 +59,7 @@ NSString *PCBreakMethod = @"BreakMethod";
 NSString *PCBreakFilename = @"BreakFilename";
 NSString *PCBreakLineNumber = @"BreakLineNumber";
 NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
+NSString *PCUpdateEditorNotification = @"PCUpdateEditorNotification";
 
 @implementation PCDebugger
 + (void) initialize
@@ -303,6 +304,15 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void)setLastLineNumberParsed: (NSUInteger)num
 {
   lastLineNumberParsed = num;
+}
+
+- (void) updateEditor
+{
+  NSNumber *n = [NSNumber numberWithInteger: lastLineNumberParsed];
+  NSDictionary *d = [NSDictionary dictionaryWithObjectsAndKeys:
+				    lastFileNameParsed, @"LastFileName", n, @"LastLineNumber", nil];
+  [NOTIFICATION_CENTER postNotificationName: PCUpdateEditorNotification
+				     object: d];
 }
 
 // kill process
