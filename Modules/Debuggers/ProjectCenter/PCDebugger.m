@@ -179,7 +179,8 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void) show
 {
   [debuggerWindow makeKeyAndOrderFront: self];
-  [self startDebugger];
+  if (![debuggerWrapper debuggerStarted])
+    [self startDebugger];
 }
 
 - (void) startDebugger

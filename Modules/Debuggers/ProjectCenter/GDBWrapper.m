@@ -91,6 +91,11 @@
     }
 }
 
+- (BOOL)debuggerStarted
+{
+  return debuggerStarted;
+}
+
 - (void)setFont:(NSFont *)aFont
 {
   if (font != aFont)

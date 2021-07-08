@@ -42,6 +42,8 @@
 - (PCDebugger *)debugger;
 - (void)setDebugger:(PCDebugger *)dbg;
 
+- (BOOL)debuggerStarted;
+
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
       withArguments: (NSArray *)array
