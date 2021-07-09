@@ -30,7 +30,6 @@
 @interface PCDebuggerView : NSTextView
 {
   PCDebugger *debugger;
-  NSString *currentFile;
 }
 
 - (void) setDebugger:(PCDebugger *)theDebugger;
