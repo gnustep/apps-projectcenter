@@ -170,7 +170,6 @@
 				tSelCol, NSForegroundColorAttributeName,
 				nil];
   [ev setSelectedTextAttributes:selAttributes];
-  [ev setSelectedTextAttributes:selAttributes];
 
   // Activate undo
   [ev setAllowsUndo: YES];
