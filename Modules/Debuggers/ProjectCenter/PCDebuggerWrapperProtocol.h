@@ -42,11 +42,13 @@
 - (PCDebugger *)debugger;
 - (void)setDebugger:(PCDebugger *)dbg;
 
+- (NSString *)debuggerPath;
+- (void)setDebuggerPath:(NSString *)path;
+
 - (BOOL)debuggerStarted;
 
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
    logStandardError: (BOOL)logError;
 
 - (void)logString:(NSString *)str

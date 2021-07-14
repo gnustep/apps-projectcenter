@@ -91,6 +91,21 @@
     }
 }
 
+- (NSString *)debuggerPath
+{
+  return debuggerPath;
+}
+
+- (void)setDebuggerPath:(NSString *)path
+{
+  if (debuggerPath != path)
+    {
+      [debuggerPath release];
+      debuggerPath = path;
+      [debuggerPath retain];
+    }
+}
+
 - (BOOL)debuggerStarted
 {
   return debuggerStarted;
@@ -677,16 +692,19 @@
  */
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
   NSPipe *inPipe;
   NSPipe *outPipe;
+  NSArray *argArray;
+
+  argArray = [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", path, nil];
   
   task = [[NSTask alloc] init];
-  [task setArguments: array];
+  [task setArguments: argArray];
+  [argArray release];
   [task setCurrentDirectoryPath: directory];
-  [task setLaunchPath: path];
+  [task setLaunchPath: debuggerPath];
 
   inPipe = [NSPipe pipe];
   outPipe = [NSPipe pipe];
@@ -767,6 +785,7 @@
   [debuggerColor release];
   [messageColor release];
   [errorColor release];
+  [debuggerPath release];
   [debugger release];
   [tView release];
   [super dealloc];

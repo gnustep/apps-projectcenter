@@ -72,12 +72,10 @@
  */
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
    logStandardError: (BOOL)logError
 {
   [[debugger debuggerWrapper] runProgram: path
 		      inCurrentDirectory: directory
-			   withArguments: array
 			logStandardError: logError];
 }
 

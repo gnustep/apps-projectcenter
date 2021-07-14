@@ -171,7 +171,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 		 withDebugger: (NSString *)debugger
 {
   ASSIGN(executablePath,filePath);
-  ASSIGN(debuggerPath,debugger);
+  [debuggerWrapper setDebuggerPath: debugger];
   [debuggerWindow setTitle: [NSString stringWithFormat: @"Debugger (%@)",filePath]];
   [self show];
 }
@@ -185,9 +185,8 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) startDebugger
 {
-  [debuggerView runProgram: debuggerPath
+  [debuggerView runProgram: executablePath
 	inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-	     withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil] // FIXME gdb dependent - should be generalized in the wrapepr
 		logStandardError: YES];
   
 }

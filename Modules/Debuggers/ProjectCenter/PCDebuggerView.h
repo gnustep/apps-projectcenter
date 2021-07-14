@@ -39,7 +39,6 @@
 
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
    logStandardError: (BOOL)logError;
 
 - (void) putString: (NSString *)string;

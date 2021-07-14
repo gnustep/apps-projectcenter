@@ -44,7 +44,6 @@ extern NSString *PCDBDebuggerStartedNotification;
   id             debuggerWindow;
   id             statusField;
   NSString       *executablePath;
-  NSString       *debuggerPath;
   int            subProcessId;
   NSDictionary   *lastInfoParsed;
   NSString       *lastFileNameParsed;

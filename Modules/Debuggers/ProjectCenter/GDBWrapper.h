@@ -44,6 +44,7 @@ typedef enum PCDebuggerOutputType_enum {
 
 @interface GDBWrapper : NSObject <PCDebuggerWrapperProtocol>
 {
+  NSString *debuggerPath;
   PCDebugger *debugger;
   NSTextView *tView;
   NSTask *task;
