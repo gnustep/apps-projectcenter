@@ -806,19 +806,23 @@
   NSUInteger strLen;
 
   strLen = [string length];
-  [self putString:string];
-
-  // if we have a single backspace or delete character
-  if (strLen == 1 && [string characterAtIndex:strLen-1] == '\177')
+  if (strLen == 1)
     {
-      NSUInteger textLen;
+      // if we have a single backspace or delete character
+      if([string characterAtIndex:0] == '\177') // del (maybe backspace)
+	{
+	  NSUInteger textLen;
+	  NSString *tss = [[tView textStorage] string];
 
-      textLen = [[tView string] length];
-      [tView setSelectedRange:NSMakeRange(textLen-1, 1)];
-      [tView delete:nil];
-      return;
+	  if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
+	    {
+	      textLen = [[tView string] length];
+	      [tView setSelectedRange:NSMakeRange(textLen-1, 1)];
+	      [tView delete:nil];
+	    }
+	}
+      [self putChar: [string characterAtIndex:0]];
     }
-  
   [self logString:string newLine:NO withColor:userInputColor];
 }
 
@@ -860,14 +864,6 @@
         else if (c == 13) // CR
           {
             [self typeString: @"\n"];
-          }
-	else if (c == 127) // del (usually backspace)
-          {
-	    NSString *tss = [[tView textStorage] string];
-	    if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
-	      {
-		[self typeString: chars];
-	      }
           }
 	else
 	  {
