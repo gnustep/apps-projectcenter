@@ -342,7 +342,6 @@
 
       if(dictionaryName != nil)
 	{
-	  NSString *key = nil;
 	  id value = nil;
 	  NSDictionary *dict;
 	  
@@ -885,7 +884,16 @@
           {
             [self typeString: @"\n"];
           }
-	else if (c < 255)  // helps ignoring arrows, pgup/pgdown which gets 2-byte chars
+	else if (c == 127) // del (usually backspace)
+          {
+	    NSString *tss = [[tView textStorage] string];
+	    if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
+	      {
+		chars = @"\x08";
+		[self typeString: chars];
+	      }
+          }
+	else
 	  {
 	    [self typeString: chars];
 	  }
