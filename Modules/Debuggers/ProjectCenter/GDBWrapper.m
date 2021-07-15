@@ -326,7 +326,6 @@
 
       if(dictionaryName != nil)
 	{
-	  NSString *key = nil;
 	  id value = nil;
 	  NSDictionary *dict;
 	  
@@ -848,6 +847,7 @@
 	    NSString *tss = [[tView textStorage] string];
 	    if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
 	      {
+		chars = @"\x08";
 		[self typeString: chars];
 	      }
           }

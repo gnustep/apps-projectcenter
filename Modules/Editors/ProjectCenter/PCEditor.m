@@ -423,10 +423,13 @@
   NSString *fileName = [d objectForKey: @"lastFileName"];
   NSNumber *line = [d objectForKey: @"lastLineNumber"];
   NSUInteger l = [line integerValue];
+
   [self openFileAtPath: fileName
 	 editorManager: _editorManager
 	      editable: YES];
-  [self scrollToLineNumber: l];
+	      [self scrollToLineNumber: l];
+
+  NSLog(@"]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]]] %@:%lu", fileName, l);
 }
 
 // ===========================================================================
