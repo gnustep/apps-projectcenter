@@ -47,6 +47,7 @@ typedef enum PCDebuggerOutputType_enum {
   NSString *debuggerPath;
   PCDebugger *debugger;
   NSTextView *tView;
+  NSMutableString *singleInputLine;
   NSTask *task;
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;

@@ -57,6 +57,7 @@
       
       debuggerStarted = NO;
       debuggerVersion = 0.0;
+      singleInputLine = [[NSMutableString alloc] init];
     }
   return self;
 }
@@ -788,6 +789,7 @@
   [debuggerPath release];
   [debugger release];
   [tView release];
+  [singleInputLine release];
   [super dealloc];
 }
 
@@ -801,6 +803,9 @@
 }
 
 /* for input as typed from the user */
+/* since the underlying tty to gdb doesn't handle control characters,
+   we fake editing with a single line of text being a buffer, it is displayed
+   but sent complete to gdb only on Enter, backspace being handled */
 - (void) typeString: (NSString *)string
 {
   NSUInteger strLen;
@@ -811,17 +816,31 @@
       // if we have a single backspace or delete character
       if([string characterAtIndex:0] == '\177') // del (maybe backspace)
 	{
-	  NSUInteger textLen;
-	  NSString *tss = [[tView textStorage] string];
-
-	  if (![tss hasSuffix:@"\n"] && ![tss hasSuffix:@"(gdb) "])
+	  if ([singleInputLine length])
 	    {
-	      textLen = [[tView string] length];
-	      [tView setSelectedRange:NSMakeRange(textLen-1, 1)];
+	      [singleInputLine deleteCharactersInRange: NSMakeRange([singleInputLine length]-1, 1)];
+	      [tView setSelectedRange:NSMakeRange([[tView string] length]-1, 1)];
 	      [tView delete:nil];
+	      return;
 	    }
 	}
-      [self putChar: [string characterAtIndex:0]];
+      else if([string characterAtIndex:0] == '\n')
+	{
+	  NSLog(@"full command is: |%@|", singleInputLine);
+	  // we end our single line and pipe it down
+	  [singleInputLine appendString:string];
+	  [self putString:singleInputLine];
+	  [singleInputLine setString:@""];
+	}
+      else
+	{
+	  [singleInputLine appendString:string];
+	}
+    }
+  else
+    {
+      NSLog(@"strlen > 1 |%@|", string);
+      [singleInputLine appendString:string];
     }
   [self logString:string newLine:NO withColor:userInputColor];
 }
@@ -855,7 +874,7 @@
       {
         unichar c;
         c = [chars characterAtIndex: 0];
-        //NSLog(@"char: %d", c);
+	//        NSLog(@"char: %o", c);
 
 	if (c == 3) // ETX, Control-C
 	  {
@@ -865,7 +884,7 @@
           {
             [self typeString: @"\n"];
           }
-	else
+	else if (c < 255)  // helps ignoring arrows, pgup/pgdown which gets 2-byte chars
 	  {
 	    [self typeString: chars];
 	  }
