@@ -52,7 +52,7 @@ typedef enum PCDebuggerOutputType_enum {
   NSTask *task;
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;
-  NSFileHandle *error_handle;
+  NSFileHandle *errorHandle;
 
   NSColor *userInputColor;
   NSColor *debuggerColor;

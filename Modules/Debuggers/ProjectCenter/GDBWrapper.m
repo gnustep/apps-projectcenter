@@ -666,7 +666,7 @@
 - (void) logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
-  NSFileHandle *handle = error_handle;
+  NSFileHandle *handle = errorHandle;
 
   if ((data = [handle availableData]) && [data length] > 0)
     {
@@ -754,13 +754,13 @@
   if(logError)
     {
       [task setStandardError: [NSPipe pipe]];
-      error_handle = [[task standardError] fileHandleForReading];
-      [error_handle waitForDataInBackgroundAndNotify];
+      errorHandle = [[task standardError] fileHandleForReading];
+      [errorHandle waitForDataInBackgroundAndNotify];
 
       [NOTIFICATION_CENTER addObserver:self 
 			      selector:@selector(logErrOut:)
 				  name:NSFileHandleDataAvailableNotification
-				object:error_handle];
+				object:errorHandle];
     }
 
   // set up notifications to get data.
