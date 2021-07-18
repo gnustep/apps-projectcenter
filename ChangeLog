@@ -1,3 +1,9 @@
+2021-07-16 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.h
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.m
+	Don't send keystrokes directly to gdb, but accumulate a line until return and send, allows to handle backspaces.
+
 2021-07-09 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectLauncher.m
