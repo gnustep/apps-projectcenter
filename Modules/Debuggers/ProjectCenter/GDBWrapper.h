@@ -32,9 +32,10 @@ typedef enum PCDebuggerOutputType_enum {
   PCDBResultRecord,
   PCDBConsoleStreamRecord,
   PCDBTargetStreamRecord,
-  PCDBDebugStreamRecord,
+  PCDBLogStreamRecord,
   PCDBAsyncStatusRecord,
-  PCDBAsyncInfoRecord,
+  PCDBAsyncExecRecord,
+  PCDBAsyncNotifyRecord,
   PCDBBreakpointRecord,
   PCDBFrameRecord,
   PCDBThreadRecord,
@@ -51,7 +52,7 @@ typedef enum PCDebuggerOutputType_enum {
   NSTask *task;
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;
-  NSFileHandle *error_handle;
+  NSFileHandle *errorHandle;
 
   NSColor *userInputColor;
   NSColor *debuggerColor;
@@ -62,6 +63,8 @@ typedef enum PCDebuggerOutputType_enum {
 
   BOOL debuggerStarted;
   float          debuggerVersion;
+  NSDictionary *lastMIDictionary;
+  NSString     *lastMIString;
 }
 
 - (float) debuggerVersion;
