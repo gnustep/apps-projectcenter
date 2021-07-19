@@ -272,6 +272,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) setSubProcessId: (int)pid
 {
+  NSLog(@"PCDebugger setSubProcessId: %d", pid);
   subProcessId = pid;
 }
 
