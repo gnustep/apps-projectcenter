@@ -273,6 +273,7 @@ NSString *PCUpdateEditorNotification = @"PCUpdateEditorNotification";
 
 - (void) setSubProcessId: (int)pid
 {
+  NSLog(@"PCDebugger setSubProcessId: %d", pid);
   subProcessId = pid;
 }
 

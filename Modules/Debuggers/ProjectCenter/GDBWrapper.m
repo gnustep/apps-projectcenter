@@ -331,12 +331,13 @@
       return PCDBPromptRecord;
     }
 
+  // notify-async-output
   [stringScanner scanString: @"=" intoString: &prefix];
   if(prefix != nil)
     {
       NSString *dictionaryName = NULL;
 
-      NSLog(@"scanning AsyncInfo |%@|", stringInput);
+      NSLog(@"scanning NotifyAsyncInfo |%@|", stringInput);
       
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
@@ -348,6 +349,7 @@
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
+	  lastMIDictionary = dict;
 
 	  if([dict objectForKey:@"pid"] != nil && 
 	     [dictionaryName isEqualToString: @"thread-group-started"])
@@ -381,16 +383,17 @@
 	{
 	  NSLog(@"error parsing type of: %@", stringInput);
 	}
-      return PCDBAsyncInfoRecord;
+      return PCDBAsyncNotifyRecord;
     }
 
+  // exec-async-output
   [stringScanner scanString: @"*" intoString: &prefix];
   if(prefix != nil)
     {
       NSString *dictionaryName = NULL;
       NSDictionary *dict = nil;
 
-      NSLog(@"scanning AsyncStatus |%@|", stringInput);
+      NSLog(@"scanning ExecAsyncStatus |%@|", stringInput);
       
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
@@ -399,6 +402,7 @@
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
+	  lastMIDictionary = dict;
 	}
 
       if ([dictionaryName isEqualToString:@"stopped"])
@@ -427,21 +431,22 @@
 	      [debugger updateEditor];
 	    }
 	}
+      return PCDBAsyncExecRecord;
+    }
+
+  // status-async-output
+  [stringScanner scanString: @"+" intoString: &prefix];
+  if(prefix != nil)
+    {
+      NSString *dictionaryName = NULL;
+      NSDictionary *dict = nil;
+
+      NSLog(@"scanning AsyncStatus |%@|", stringInput);
+
       return PCDBAsyncStatusRecord;
     }
 
-  [stringScanner scanString: @"<-" intoString: &prefix];
-  if(prefix != nil)
-    {
-      return PCDBBreakpointRecord;
-    }
-  
-  [stringScanner scanString: @"->" intoString: &prefix];
-  if(prefix != nil)
-    {
-      return PCDBBreakpointRecord;
-    }
-
+  // console-stream-output
   [stringScanner scanString: @"~" intoString: &prefix];
   if(prefix != nil)
     {
@@ -485,23 +490,28 @@
       return PCDBConsoleStreamRecord;
     }
 
+  // target-stream-output
   [stringScanner scanString: @"@" intoString: &prefix];
   if(prefix != nil)
     {
+      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
       return PCDBTargetStreamRecord;
     }
 
+  // log-stream-output
   [stringScanner scanString: @"&" intoString: &prefix];
   if(prefix != nil)
     {
-      return PCDBDebugStreamRecord;
+      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      return PCDBLogStreamRecord;
     }
 
+  // result-record
   [stringScanner scanString: @"^" intoString: &prefix];
   if(prefix != nil)
     {
       NSString *result = nil;
-      
+
       [stringScanner scanString: @"done" intoString: &result];
       if(result != nil)
 	{
@@ -534,6 +544,22 @@
 	}
       return PCDBResultRecord;
     }
+
+
+  [stringScanner scanString: @"<-" intoString: &prefix];
+  if(prefix != nil)
+    {
+      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      return PCDBBreakpointRecord;
+    }
+  
+  [stringScanner scanString: @"->" intoString: &prefix];
+  if(prefix != nil)
+    {
+      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      return PCDBBreakpointRecord;
+    }
+
   NSLog(@"No match found parsing: |%@|", stringInput);
   return PCDBNotFoundRecord;
 }
@@ -544,7 +570,7 @@
 
   if ([unescapedString hasPrefix:@"~\""])
     unescapedString = [unescapedString substringFromIndex:2];
-  if ([unescapedString hasSuffix:@"\""])\
+  if ([unescapedString hasSuffix:@"\""])
     unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\\"" withString: @"\""];
   unescapedString = [unescapedString stringByReplacingOccurrencesOfString: @"\\n" withString: @"\n"];
@@ -580,12 +606,20 @@
 	{
 	  [self logString: item newLine: NO withColor:promptColor];
 	}
-      /*
-      else if(outtype == PCDBNotFoundRecord)
+      else if(outtype == PCDBAsyncStatusRecord || outtype == PCDBAsyncExecRecord || outtype == PCDBAsyncNotifyRecord)
 	{
 	  [self logString: item newLine: NO withColor:promptColor];
 	}
-      */
+      else if(outtype == PCDBLogStreamRecord)
+	{
+	  NSString *unescapedString = [self unescapeOutputRecord: lastMIString];
+	  // this should usually stay silent, log for debugging purposes
+	  [self logString: unescapedString newLine: NO withColor:debuggerColor];
+	}
+      else if(outtype == PCDBNotFoundRecord)
+	{
+	  [self logString: item newLine: NO withColor:errorColor];
+	}
     }
 }
 
@@ -632,7 +666,7 @@
 - (void) logErrOut:(NSNotification *)aNotif
 {
   NSData *data;
-  NSFileHandle *handle = error_handle;
+  NSFileHandle *handle = errorHandle;
 
   if ((data = [handle availableData]) && [data length] > 0)
     {
@@ -720,13 +754,13 @@
   if(logError)
     {
       [task setStandardError: [NSPipe pipe]];
-      error_handle = [[task standardError] fileHandleForReading];
-      [error_handle waitForDataInBackgroundAndNotify];
+      errorHandle = [[task standardError] fileHandleForReading];
+      [errorHandle waitForDataInBackgroundAndNotify];
 
       [NOTIFICATION_CENTER addObserver:self 
 			      selector:@selector(logErrOut:)
 				  name:NSFileHandleDataAvailableNotification
-				object:error_handle];
+				object:errorHandle];
     }
 
   // set up notifications to get data.
