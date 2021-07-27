@@ -363,47 +363,39 @@ NSString *PCUpdateEditorNotification = @"PCUpdateEditorNotification";
 
 - (void) continue: (id) sender
 {
-  // [self setStatus: @"Continue..."];
   [debuggerView putString: @"continue\n"];
 }
 
 - (void) restart: (id) sender
 {
-  // [self setStatus: @"Restarting..."];
   [self interrupt];
   /* each run makes a new PID but we parse it only if non-zero */
   [self setSubProcessId:0];
   [debuggerView putString: @"run\n"];
-  // [self setStatus: @"Running..."];
 }
 
 - (void) next: (id) sender
 {
-  // [self setStatus: @"Going to next line."];
   [debuggerView putString: @"next\n"];
 }
 
 - (void) stepInto: (id) sender
 {
-  // [self setStatus: @"Stepping into method."];
   [debuggerView putString: @"step\n"];  
 }
 
 - (void) stepOut: (id) sender
 {
-  // [self setStatus: @"Finishing method."];
   [debuggerView putString: @"finish\n"];  
 }
 
 - (void) up: (id) sender
 {
-  // [self setStatus: @"Up to calling method."];
   [debuggerView putString: @"up\n"];  
 }
 
 - (void) down: (id) sender
 {
-  // [self setStatus: @"Down to called method."];
   [debuggerView putString: @"down\n"];  
 }
 

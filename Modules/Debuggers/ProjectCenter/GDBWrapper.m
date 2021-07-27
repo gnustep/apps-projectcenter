@@ -512,6 +512,8 @@
     {
       NSString *result = nil;
 
+      NSLog(@"scanning Result Record |%@|", stringInput);
+
       [stringScanner scanString: @"done" intoString: &result];
       if(result != nil)
 	{
