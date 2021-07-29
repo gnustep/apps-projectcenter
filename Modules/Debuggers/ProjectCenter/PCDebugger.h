@@ -27,14 +27,15 @@
 #import <Foundation/Foundation.h>
 
 #import <Protocols/CodeDebugger.h>
+#import "PCDebuggerWrapperProtocol.h"
 
-extern const NSString *PCBreakTypeKey;
+extern NSString *PCBreakTypeKey;
 extern NSString *PCBreakTypeByLine;
 extern NSString *PCBreakTypeMethod;
+extern NSString *PCBreakMethod;
+extern NSString *PCBreakFilename;
+extern NSString *PCBreakLineNumber;
 
-extern const NSString *PCBreakMethod;
-extern const NSString *PCBreakFilename;
-extern const NSString *PCBreakLineNumber;
 extern NSString *PCDBDebuggerStartedNotification;
 
 @interface PCDebugger : NSObject <CodeDebugger>
@@ -43,15 +44,15 @@ extern NSString *PCDBDebuggerStartedNotification;
   id             debuggerWindow;
   id             statusField;
   NSString       *executablePath;
-  NSString       *debuggerPath;
   int            subProcessId;
-  float          debuggerVersion;
   NSDictionary   *lastInfoParsed;
   NSString       *lastFileNameParsed;
   NSUInteger     lastLineNumberParsed;
   NSMutableArray *breakpoints;
+  id <PCDebuggerWrapperProtocol> debuggerWrapper;
 }
 
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper;
 - (void) setStatus: (NSString *) status;
 - (NSString *) status;
 - (NSString *)executablePath;
@@ -59,8 +60,6 @@ extern NSString *PCDBDebuggerStartedNotification;
 - (void) interrupt;
 - (int) subProcessId;
 - (void) setSubProcessId:(int)pid;
-- (float) debuggerVersion;
-- (void) setDebuggerVersion:(float)ver;
 - (NSDictionary *)lastInfoParsed;
 - (void)setSetInfoParsed: (NSDictionary *)dict;
 - (NSString *)lastFileNameParsed;

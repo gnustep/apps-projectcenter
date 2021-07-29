@@ -1,7 +1,7 @@
 /*
-**  PipeDelegate
+**  GDBWrapper
 **
-**  Copyright (c) 2008-2016
+**  Copyright (c) 2008-2021
 **
 **  Author: Gregory Casamento <greg.casamento@gmail.com>
 **          Riccardo Mottola <rm@gnu.org>
@@ -24,7 +24,7 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
-#import "PCDebuggerViewDelegateProtocol.h"
+#import "PCDebuggerWrapperProtocol.h"
 
 typedef enum PCDebuggerOutputType_enum {
   PCDBNotFoundRecord = 0,
@@ -32,9 +32,10 @@ typedef enum PCDebuggerOutputType_enum {
   PCDBResultRecord,
   PCDBConsoleStreamRecord,
   PCDBTargetStreamRecord,
-  PCDBDebugStreamRecord,
+  PCDBLogStreamRecord,
   PCDBAsyncStatusRecord,
-  PCDBAsyncInfoRecord,
+  PCDBAsyncExecRecord,
+  PCDBAsyncNotifyRecord,
   PCDBBreakpointRecord,
   PCDBFrameRecord,
   PCDBThreadRecord,
@@ -42,14 +43,16 @@ typedef enum PCDebuggerOutputType_enum {
   PCDBEmptyRecord
 } PCDebuggerOutputTypes;
 
-@interface PipeDelegate : NSObject <PCDebuggerViewDelegateProtocol>
+@interface GDBWrapper : NSObject <PCDebuggerWrapperProtocol>
 {
+  NSString *debuggerPath;
   PCDebugger *debugger;
   NSTextView *tView;
+  NSMutableString *singleInputLine;
   NSTask *task;
   NSFileHandle *stdinHandle;
   NSFileHandle *stdoutHandle;
-  NSFileHandle *error_handle;
+  NSFileHandle *errorHandle;
 
   NSColor *userInputColor;
   NSColor *debuggerColor;
@@ -59,7 +62,13 @@ typedef enum PCDebuggerOutputType_enum {
   NSFont  *font;
 
   BOOL debuggerStarted;
+  float          debuggerVersion;
+  NSDictionary *lastMIDictionary;
+  NSString     *lastMIString;
 }
+
+- (float) debuggerVersion;
+- (void) setDebuggerVersion:(float)ver;
 
 - (void)logStdOut:(NSNotification *)aNotif;
 
@@ -72,5 +81,21 @@ typedef enum PCDebuggerOutputType_enum {
 - (NSString *) stopMessage;
 
 - (void) putChar:(unichar)ch;
+
+// methods for a look-ahead recursive parser which attempts to parse
+// gdb's output to a Dictionary/Array structure representable in a plist
+
+// LAR parser - single string element (-> NSString value)
+- (NSString *) parseString: (NSScanner *)scanner;
+
+// LAR parser - array element (-> NSArray value)
+- (NSArray *) parseArray: (NSScanner *)scanner;
+
+// LAR parser - key-value list (-> NSDictionary value)
+- (NSDictionary *) parseKeyValue: (NSScanner *)scanner;
+
+// parses a single line from the debugger or the machine interface
+// it splits out the type then recurses in the LAR methods
+- (PCDebuggerOutputTypes) parseStringLine: (NSString *)stringInput;
 
 @end

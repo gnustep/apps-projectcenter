@@ -34,8 +34,8 @@
 #import "PCDebuggerView.h"
 
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
-#import "PCDebuggerViewDelegateProtocol.h"
-#import "PipeDelegate.h"
+#import "PCDebuggerWrapperProtocol.h"
+#import "GDBWrapper.h"
 
 
 #ifndef NOTIFICATION_CENTER
@@ -52,12 +52,12 @@ static NSImage  *stepOutImage = nil;
 static NSImage  *upImage = nil;
 static NSImage  *downImage = nil;
 
-const NSString *PCBreakTypeKey = @"BreakType";
+NSString *PCBreakTypeKey = @"BreakType";
 NSString *PCBreakTypeByLine = @"BreakTypeLine";
 NSString *PCBreakTypeMethod = @"BreakTypeMethod";
-const NSString *PCBreakMethod = @"BreakMethod";
-const NSString *PCBreakFilename = @"BreakFilename";
-const NSString *PCBreakLineNumber = @"BreakLineNumber";
+NSString *PCBreakMethod = @"BreakMethod";
+NSString *PCBreakFilename = @"BreakFilename";
+NSString *PCBreakLineNumber = @"BreakLineNumber";
 NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 @implementation PCDebugger
@@ -139,8 +139,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   if((self = [super init]) != nil)
     {
-    NSLog(@"PCDebugger Init");
-      id <PCDebuggerViewDelegateProtocol> viewDelegate;
+      NSLog(@"PCDebugger Init");
       // initialization here...
       if([NSBundle loadNibNamed: @"PCDebugger" owner: self] == NO)
 	{
@@ -148,16 +147,12 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 	}
 
       [(PCDebuggerView *)debuggerView setDebugger:self];
-      viewDelegate = [[PipeDelegate alloc] init];
-      [debuggerView setDelegate:viewDelegate];
-      [viewDelegate setTextView:debuggerView];
-      [viewDelegate setDebugger:self];
-      [viewDelegate release];
+      debuggerWrapper = [[GDBWrapper alloc] init];
+      [debuggerWrapper setTextView:debuggerView];
+      [debuggerWrapper setDebugger:self];
       [debuggerView setFont: [self consoleFont]];
 
       subProcessId = 0;
-      debuggerVersion = 0.0;
-
       lastInfoParsed = nil;
       lastFileNameParsed = nil;
       lastLineNumberParsed = NSNotFound;
@@ -176,7 +171,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 		 withDebugger: (NSString *)debugger
 {
   ASSIGN(executablePath,filePath);
-  ASSIGN(debuggerPath,debugger);
+  [debuggerWrapper setDebuggerPath: debugger];
   [debuggerWindow setTitle: [NSString stringWithFormat: @"Debugger (%@)",filePath]];
   [self show];
 }
@@ -184,22 +179,20 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void) show
 {
   [debuggerWindow makeKeyAndOrderFront: self];
-  [self startDebugger];
+  if (![debuggerWrapper debuggerStarted])
+    [self startDebugger];
 }
 
 - (void) startDebugger
 {
-  [debuggerView runProgram: debuggerPath
-		inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
-	     withArguments: [[NSArray alloc] initWithObjects: @"--interpreter=mi", @"-f", executablePath, nil] // gdb dependent - should be generalized
+  [debuggerView runProgram: executablePath
+	inCurrentDirectory: [executablePath stringByDeletingLastPathComponent]
 		logStandardError: YES];
   
 }
 
 - (void) initBreakpoints
 {
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
-
   breakpoints = [[NSMutableArray alloc] init];
   /* CRUDE EXAMPLES * TODO FIXME *
   NSDictionary *dP;
@@ -210,16 +203,12 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   dP = [NSDictionary dictionaryWithObjectsAndKeys: PCBreakTypeByLine, PCBreakTypeKey, @"AppController.m", PCBreakFilename, [NSNumber numberWithInt:100], PCBreakLineNumber, nil];
   [breakpoints addObject:dP];
   */ 
-
-  viewDelegate = [debuggerView delegate];
-  [viewDelegate setBreakpoints:breakpoints];
+  [debuggerWrapper setBreakpoints:breakpoints];
 }
 
 - (void) debuggerSetup
 {
-  id <PCDebuggerViewDelegateProtocol> viewDelegate;
-  viewDelegate = [debuggerView delegate];
-  [viewDelegate debuggerSetup];
+  [debuggerWrapper debuggerSetup];
 }
 
 - (void) handleNotification: (NSNotification *)notification
@@ -239,6 +228,11 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
   [debuggerWindow setFrameAutosaveName: @"PCDebuggerWindow"];
   [self setStatus: @"Idle."];
+}
+
+- (id <PCDebuggerWrapperProtocol>)debuggerWrapper
+{
+  return debuggerWrapper;
 }
 
 - (NSWindow *)debuggerWindow
@@ -278,17 +272,8 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) setSubProcessId: (int)pid
 {
+  NSLog(@"PCDebugger setSubProcessId: %d", pid);
   subProcessId = pid;
-}
-
-- (float) debuggerVersion
-{
-  return debuggerVersion;
-}
-
-- (void) setDebuggerVersion:(float)ver
-{
-  debuggerVersion = ver;
 }
 
 - (NSDictionary *)lastInfoParsed
@@ -368,47 +353,39 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) continue: (id) sender
 {
-  // [self setStatus: @"Continue..."];
   [debuggerView putString: @"continue\n"];
 }
 
 - (void) restart: (id) sender
 {
-  // [self setStatus: @"Restarting..."];
   [self interrupt];
   /* each run makes a new PID but we parse it only if non-zero */
   [self setSubProcessId:0];
   [debuggerView putString: @"run\n"];
-  // [self setStatus: @"Running..."];
 }
 
 - (void) next: (id) sender
 {
-  // [self setStatus: @"Going to next line."];
   [debuggerView putString: @"next\n"];
 }
 
 - (void) stepInto: (id) sender
 {
-  // [self setStatus: @"Stepping into method."];
   [debuggerView putString: @"step\n"];  
 }
 
 - (void) stepOut: (id) sender
 {
-  // [self setStatus: @"Finishing method."];
   [debuggerView putString: @"finish\n"];  
 }
 
 - (void) up: (id) sender
 {
-  // [self setStatus: @"Up to calling method."];
   [debuggerView putString: @"up\n"];  
 }
 
 - (void) down: (id) sender
 {
-  // [self setStatus: @"Down to called method."];
   [debuggerView putString: @"down\n"];  
 }
 
@@ -425,6 +402,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) dealloc
 {
+  [debuggerWrapper release];
   [breakpoints release];
   [super dealloc];
 }

@@ -1,3 +1,21 @@
+2021-07-16 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.h
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.m
+	Don't send keystrokes directly to gdb, but accumulate a line until return and send, allows to handle backspaces.
+
+2021-07-09 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectLauncher.m
+	If we already instantiated a Debugger, reuse it.
+
+2021-07-06 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	Change parsing of MI interface to a LAR parser and avoid issue
+	of recursive [] {} values in the previous parser.
+
 2021-06-22 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h

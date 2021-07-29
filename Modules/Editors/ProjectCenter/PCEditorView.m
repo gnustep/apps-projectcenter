@@ -470,25 +470,6 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   return editor;
 }
 
-- (void)awakeFromNib
-{
-/*  NSData * data;
-  NSUserDefaults * df = [NSUserDefaults standardUserDefaults];
-
-  drawCrosshairs = [df boolForKey: @"DrawCrosshairs"];
-  if (drawCrosshairs)
-    {
-      if ((data = [df dataForKey: @"CrosshairColor"]) == nil ||
-        (crosshairColor = [NSUnarchiver unarchiveObjectWithData: data]) == nil)
-        {
-          crosshairColor = [NSColor lightGrayColor];
-        }
-      [crosshairColor retain];
-    }
-
-  guides = [NSMutableArray new];*/
-}
-
 - (void)drawRect:(NSRect)r
 {
   if (highlighter)

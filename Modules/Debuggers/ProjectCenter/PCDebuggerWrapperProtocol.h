@@ -1,7 +1,7 @@
 /*
-**  PCDebuggerViewDelegateProtocol.h
+**  PCDebuggerWrapperProtocol.h
 **
-**  Copyright (c) 2016-2020
+**  Copyright (c) 2016-2021
 **
 **  Author: Riccardo Mottola <rm@gnu.org>
 **
@@ -28,7 +28,7 @@
 @class NSString;
 @class PCDebugger;
 
-@protocol PCDebuggerViewDelegateProtocol <NSObject>
+@protocol PCDebuggerWrapperProtocol <NSObject>
 
 - (void)setFont:(NSFont *)font;
 
@@ -42,9 +42,13 @@
 - (PCDebugger *)debugger;
 - (void)setDebugger:(PCDebugger *)dbg;
 
+- (NSString *)debuggerPath;
+- (void)setDebuggerPath:(NSString *)path;
+
+- (BOOL)debuggerStarted;
+
 - (void) runProgram: (NSString *)path
  inCurrentDirectory: (NSString *)directory
-      withArguments: (NSArray *)array
    logStandardError: (BOOL)logError;
 
 - (void)logString:(NSString *)str
