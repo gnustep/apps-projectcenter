@@ -37,8 +37,10 @@
 {
   id              _editorManager;
 
+  NSTextField     *_extStatusField;
   NSScrollView    *_extScrollView;
   PCEditorView    *_extEditorView;
+  NSTextField     *_intStatusField;
   NSScrollView    *_intScrollView;
   PCEditorView    *_intEditorView;
   NSTextStorage   *_storage;
