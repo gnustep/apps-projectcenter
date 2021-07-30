@@ -40,6 +40,7 @@
   unsigned int style;
   NSRect       rect;
   float        windowWidth;
+  NSView       *containerView;
 
 //  PCLogInfo(self, @"[_createWindow]");
 
@@ -65,7 +66,7 @@
   rect = [[_window contentView] frame];
   
   // Scroll view
-  _extScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  _extScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,15,windowWidth,320-15)];
   [_extScrollView setHasHorizontalScroller:NO];
   [_extScrollView setHasVerticalScroller:YES];
   [_extScrollView setAutoresizingMask:
@@ -75,15 +76,27 @@
   // Text view
   _extEditorView = [self _createEditorViewWithFrame:rect];
 
+  // container View with Status
+  _extStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,windowWidth,15)];
+  [_extStatusField setBezeled:NO];
+  [_extStatusField setEditable:NO];
+  [_extStatusField setSelectable:NO];
+  [_extStatusField setDrawsBackground:NO];
+  [_extStatusField setAutoresizingMask: NSViewWidthSizable];
+  containerView = [[NSView alloc] init];
+  [containerView addSubview:_extStatusField];
+  [containerView addSubview:_extScrollView];
+  
   // Include editor view
   [_extScrollView setDocumentView:_extEditorView];
   [_extEditorView setNeedsDisplay:YES];
   RELEASE(_extEditorView);
 
   // Include scroll view
-  [_window setContentView:_extScrollView];
+  [_window setContentView:containerView];
   [_window makeFirstResponder:_extEditorView];
   RELEASE(_extScrollView);
+  RELEASE(containerView);
 
   // Honor "edited" state
   [_window setDocumentEdited:_isEdited];
@@ -92,6 +105,7 @@
 - (void)_createInternalView
 {
   NSRect rect = NSMakeRect(0,0,512,320);
+  NSView       *containerView;
 
   // Scroll view
   _intScrollView = [[NSScrollView alloc] initWithFrame:rect];
@@ -104,12 +118,24 @@
   // Text view
   _intEditorView = [self _createEditorViewWithFrame:rect];
 
+  // container View with Status
+  _intStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,512,15)];
+  [_intStatusField setBezeled:NO];
+  [_intStatusField setEditable:NO];
+  [_intStatusField setSelectable:NO];
+  [_intStatusField setDrawsBackground:NO];
+  [_intStatusField setAutoresizingMask: NSViewWidthSizable];
+  containerView = [[NSView alloc] init];
+  [containerView addSubview:_intStatusField];
+  [containerView addSubview:_intScrollView];
+
   /*
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
   [_intEditorView setNeedsDisplay:YES];
   RELEASE(_intEditorView);
+  RELEASE(containerView);
 }
 
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
