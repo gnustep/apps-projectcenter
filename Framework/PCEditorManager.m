@@ -554,5 +554,19 @@ NSString *PCEditorDidResignActiveNotification =
   [editor scrollToLineNumber: [line integerValue]];
 }
 
+- (void)gotoFile: (NSString *)fileName atLine: (NSUInteger)line
+{
+  id<CodeEditor> editor = [self openEditorForFile: fileName
+				editable: YES
+				windowed: NO];
+  
+  PCProject      *project = [_projectManager rootActiveProject];
+  [[project projectBrowser] setPath: fileName];
+  [_projectManager openFileAtPath: fileName];
+  
+  // [self orderFrontEditorForFile:fileName];
+  [editor scrollToLineNumber: line];
+}
+
 @end
 

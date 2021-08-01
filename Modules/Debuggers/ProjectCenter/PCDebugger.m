@@ -33,6 +33,10 @@
 #import "PCDebugger.h"
 #import "PCDebuggerView.h"
 
+#import <ProjectCenter/PCProjectManager.h>
+#import <ProjectCenter/PCEditorManager.h>
+#import "PCAppController.h"
+
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 #import "PCDebuggerWrapperProtocol.h"
 #import "GDBWrapper.h"
@@ -304,6 +308,17 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void)setLastLineNumberParsed: (NSUInteger)num
 {
   lastLineNumberParsed = num;
+}
+
+- (void) updateEditor
+{
+  NSLog(@"******************  UPDATE EDITOR HIT ***********************");
+  PCAppController *controller = (PCAppController *)[NSApp delegate];
+  PCProjectManager *pm = [controller projectManager];
+  PCEditorManager *em = [pm editorManager];
+  [em gotoFile: lastFileNameParsed
+	atLine: lastLineNumberParsed];
+  NSLog(@"******************  UPDATE EDITOR HIT ***********************");
 }
 
 // kill process

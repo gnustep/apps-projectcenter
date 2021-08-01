@@ -66,5 +66,6 @@ extern NSString *PCDBDebuggerStartedNotification;
 - (void) setLastFileNameParsed: (NSString *)fname;
 - (NSUInteger)lastLineNumberParsed;
 - (void)setLastLineNumberParsed: (NSUInteger)num;
+- (void)updateEditor;
 
 @end

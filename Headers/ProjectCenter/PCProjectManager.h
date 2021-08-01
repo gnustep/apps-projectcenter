@@ -164,6 +164,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 // Also called by PCAppController
 - (void)openFileAtPath:(NSString *)filePath;
+- (void)openFileAtPath:(NSString *)filePath windowed: (BOOL)windowed;
 - (void)openFile;
 - (void)newFile;
 - (BOOL)saveFile;
