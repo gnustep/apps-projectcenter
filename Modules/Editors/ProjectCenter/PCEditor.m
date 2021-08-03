@@ -104,8 +104,7 @@
 
 - (void)_createInternalView
 {
-  NSRect rect = NSMakeRect(0,0,512,320);
-  NSView       *containerView;
+  NSRect rect = NSMakeRect(0,0,512,320 - 15);
 
   // Scroll view
   _intScrollView = [[NSScrollView alloc] initWithFrame:rect];
@@ -125,17 +124,19 @@
   [_intStatusField setSelectable:NO];
   [_intStatusField setDrawsBackground:NO];
   [_intStatusField setAutoresizingMask: NSViewWidthSizable];
-  containerView = [[NSView alloc] init];
-  [containerView addSubview:_intStatusField];
-  [containerView addSubview:_intScrollView];
+  _containerView = [[NSView alloc] init];
+  [_containerView addSubview:_intStatusField];
+  [_containerView addSubview:_intScrollView];
 
+  NSLog(@"%@", _intStatusField);
+  NSLog(@"%@", [_intStatusField superview]);
   /*
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
   [_intEditorView setNeedsDisplay:YES];
   RELEASE(_intEditorView);
-  RELEASE(containerView);
+  // RELEASE(containerView);
 }
 
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
@@ -460,7 +461,7 @@
 
 - (NSView *)editorView 
 {
-  if (!_intScrollView)
+  if (!_containerView)
     {
       [self _createInternalView];
     }
@@ -469,11 +470,11 @@
 
 - (NSView *)componentView
 {
-  if (!_intScrollView)
+  if (!_containerView)
     {
       [self _createInternalView];
     }
-  return _intScrollView;
+  return _containerView;
 }
 
 - (NSString *)path
@@ -900,7 +901,7 @@
 {
   if ([sender isEqual:_window])
     {
-      if (_intScrollView) 
+      if (_containerView) 
 	{
 	  // Just close if this file also displayed in int view
 	  _isWindowed = NO;
