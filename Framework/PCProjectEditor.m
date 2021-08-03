@@ -177,6 +177,48 @@
   return NO;
 }
 
+- (id<CodeEditor>) openEditorForFilePath: (NSString *)filePath
+				windowed: (BOOL)windowed
+{
+  PCProject      *activeProject = [[_project projectManager] activeProject];
+  NSString       *fileName = [filePath lastPathComponent];
+  BOOL           editable = YES;
+  id<CodeEditor> editor = nil;
+  
+  NSLog(@"PCPE: fileName: %@, filePath: %@, project: %@", 
+	fileName, filePath, [activeProject projectName]);
+
+  // Determine if file should be opened for read only
+  if (![_project isEditableFile:fileName])
+    {
+      editable = NO;
+    }
+
+  // Set the 'editor' var either by requesting already opened
+  // editor or by creating the new one.
+  editor = [self openEditorForFile:filePath 
+			  editable:editable 
+			  windowed:windowed];
+  if (!editor)
+    {
+      NSLog(@"We don't have editor for file: %@", fileName);
+      [self setActiveEditor: nil];
+      return nil;
+    }
+
+  // Category path was changed by user's clicking inside browser.
+  // That's why new category path must be transfered to editor.
+  NSString *categoryPath = [NSString stringWithFormat: @"/Classes/%@/", fileName];
+  [editor setCategoryPath:categoryPath];
+  [self orderFrontEditorForFile:filePath];
+
+  // Reload last column because editor has just been loaded
+  [[_project projectBrowser] reloadLastColumnAndNotify:NO]; 
+  [editor fileStructureItemSelected:fileName];
+
+  return editor;
+}
+
 // Called by PCProjectBrowser
 // categoryPath:
 // 1. "/Classes/Class.m/- init"

@@ -30,9 +30,11 @@
 #import <ProjectCenter/PCBundleManager.h>
 #import <ProjectCenter/PCEditorManager.h>
 #import <ProjectCenter/PCProject.h>
-
+#import <ProjectCenter/PCProjectEditor.h>
 #import <ProjectCenter/PCLogController.h>
 #import <ProjectCenter/PCSaveModified.h>
+
+#import <Protocols/CodeEditor.h>
 
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
@@ -556,13 +558,10 @@ NSString *PCEditorDidResignActiveNotification =
 
 - (void)gotoFile: (NSString *)fileName atLine: (NSUInteger)line
 {
-  id<CodeEditor> editor = [self openEditorForFile: fileName
-				editable: YES
-				windowed: NO];
-  
   PCProject      *project = [_projectManager rootActiveProject];
-  [[project projectBrowser] setPath: fileName];
-  [_projectManager openFileAtPath: fileName];
+  PCProjectEditor *pe = [project projectEditor];
+
+  id<CodeEditor> editor = [pe openEditorForFilePath: fileName windowed: NO];
   
   // [self orderFrontEditorForFile:fileName];
   [editor scrollToLineNumber: line];
