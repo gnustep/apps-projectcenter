@@ -99,15 +99,6 @@ NSString *PCEditorDidResignActiveNotification =
 	   selector:@selector(editorDidChangeFileName:)
 	       name:PCEditorDidChangeFileNameNotification
 	     object:nil];
-
-      // Debugger
-      [[NSNotificationCenter defaultCenter]
-	addObserver:self 
-	   selector:@selector(debuggerDidHitBreakpoint:)
-	       name:PCProjectBreakpointNotification
-	     object:nil];
-
-      // Preferences
     }
 
   return self;
@@ -542,18 +533,6 @@ NSString *PCEditorDidResignActiveNotification =
   
   [_editorsDict removeObjectForKey:_oldFileName];
   [_editorsDict setObject:_editor forKey:_newFileName];
-}
-
-- (void)debuggerDidHitBreakpoint:(NSNotification *)aNotif
-{
-  id object = [aNotif object];
-  NSString *filePath = [object objectForKey: @"file"];
-  NSString *line = [object objectForKey: @"line"];
-  id<CodeEditor> editor = [self openEditorForFile: filePath
-				editable: YES
-				windowed: NO];
-  [self orderFrontEditorForFile:filePath];
-  [editor scrollToLineNumber: [line integerValue]];
 }
 
 - (void)gotoFile: (NSString *)fileName atLine: (NSUInteger)line

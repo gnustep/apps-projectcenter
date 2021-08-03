@@ -184,9 +184,15 @@
   NSString       *fileName = [filePath lastPathComponent];
   BOOL           editable = YES;
   id<CodeEditor> editor = nil;
+  NSFileManager  *mgr = [NSFileManager defaultManager];
   
   NSLog(@"PCPE: fileName: %@, filePath: %@, project: %@", 
 	fileName, filePath, [activeProject projectName]);
+
+  if (![mgr fileExistsAtPath: filePath])
+    {
+      return nil;
+    }
 
   // Determine if file should be opened for read only
   if (![_project isEditableFile:fileName])
