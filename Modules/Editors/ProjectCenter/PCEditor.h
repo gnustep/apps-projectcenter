@@ -47,6 +47,7 @@
   NSMutableString *_path;
   NSString        *_categoryPath;
   NSWindow        *_window;
+  NSView          *_containerView;
 
   BOOL            _isEdited;
   BOOL            _isEditable;
