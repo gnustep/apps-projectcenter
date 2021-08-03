@@ -941,6 +941,10 @@
 
 - (void)textViewDidChangeSelection:(NSNotification *)notification
 {
+  id object;
+
+  object = [notification object];
+
   if (editorTextViewIsPressingKey == NO)
     {
       id object;
@@ -948,6 +952,21 @@
       object = [notification object];
       if (object == _intEditorView || object == _extEditorView)
 	[self computeNewParenthesisNesting: object];
+    }
+
+  // calculate current line
+  if ([object isKindOfClass:[NSTextView class]])
+    {
+      NSTextView *tv = (NSTextView *)object;
+      NSArray *selArray;
+      NSRange lastSelection;
+      NSRange selRange;
+      NSUInteger selLine;
+
+      selArray = [tv selectedRanges];
+      lastSelection = [[selArray lastObject] rangeValue];
+      NSLog(@"last selection is %@", [selArray lastObject]);
+      [[tv string] getLineStart:NULL end:&selLine contentsEnd:NULL forRange:lastSelection];
     }
 }
 
