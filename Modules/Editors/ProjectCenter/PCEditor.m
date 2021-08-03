@@ -180,6 +180,12 @@
 	   name:NSTextDidChangeNotification
 	 object:ev];
 
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector(textViewDidChangeSelection:)
+	   name:NSTextViewDidChangeSelectionNotification
+	 object:ev];
+
   return ev;
 }
 
