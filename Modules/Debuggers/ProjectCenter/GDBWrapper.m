@@ -379,6 +379,29 @@
 		  [debugger setLastLineNumberParsed: NSNotFound];
 		}
 	    }
+
+	  if ([dictionaryName isEqualToString: @"thread-selected"])
+	    {
+	      NSDictionary *d = [dict objectForKey: @"frame"];
+	      NSString *fileName;
+	      NSString *lineNum;
+	      
+	      fileName = [d objectForKey:@"fullname"];
+	      lineNum = [d objectForKey:@"line"];
+
+	      NSLog(@"parsed from GDB thread-selected: %@:%@", fileName, lineNum);
+	      if (fileName != nil && lineNum != nil)
+		{
+		  [debugger setLastFileNameParsed: fileName];
+		  [debugger setLastLineNumberParsed: [lineNum intValue]];
+		  [debugger updateEditor];
+		}
+	      else
+		{
+		  [debugger setLastFileNameParsed: nil];
+		  [debugger setLastLineNumberParsed: NSNotFound];
+		}	      
+	    }	  
 	}
       else
 	{
@@ -423,6 +446,7 @@
 		{
 		  [debugger setLastFileNameParsed: fileName];
 		  [debugger setLastLineNumberParsed: [lineNum intValue]];
+		  [debugger updateEditor];
 		}
 	      else
 		{

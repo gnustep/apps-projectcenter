@@ -67,6 +67,9 @@
 
 - (BOOL)editorProvidesBrowserItemsForItem:(NSString *)item;
 
+- (id<CodeEditor>)openEditorForFilePath:(NSString *)categoryPath
+                               windowed:(BOOL)windowed;
+
 - (id<CodeEditor>)openEditorForCategoryPath:(NSString *)categoryPath
                                    windowed:(BOOL)windowed;
 

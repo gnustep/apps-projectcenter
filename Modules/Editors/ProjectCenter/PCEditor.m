@@ -1094,6 +1094,8 @@
 {
   [_intEditorView goToLineNumber:lineNumber];
   [_extEditorView goToLineNumber:lineNumber];
+  [_intEditorView centerSelectionInVisibleArea: self];
+  [_extEditorView centerSelectionInVisibleArea: self];
 }
 
 @end
