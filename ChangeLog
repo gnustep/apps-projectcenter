@@ -1,19 +1,30 @@
+2021-08-11 Gregory John Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCProjectBuilder.m: Fix issue where environment var
+	was causing build to fail.  Explicitly set environment for NSTask
+	for build to prevent this problem.
+
 2021-08-10 Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCEditorManager.m: Add method -gotoFile:atLine:
-	* Framework/PCProjectEditor.m: Add method openEditorForFilePath:windowed:
+	* Framework/PCProjectEditor.m: Add method openEditorForFilePath:
+	windowed:
 	* Framework/PCProjectManager.m: Add method openFileAtPath:windowed:
 	* Headers/ProjectCenter/PCEditorManager.h
 	* Headers/ProjectCenter/PCProjectEditor.h
-	* Headers/ProjectCenter/PCProjectManager.h: Declarations for above methods.
+	* Headers/ProjectCenter/PCProjectManager.h: Declarations for above
+	methods.
 	* Modules/Debuggers/ProjectCenter/GDBWrapper.h
 	* Modules/Debuggers/ProjectCenter/GDBWrapper.m: Add code to pull
-	"thread-selected" dictionary when the debugger stops by using break/pause
-	or by using up or down.  Code to syncronize editor with where the debugger
+	"thread-selected" dictionary when the debugger stops by using
+	break/pause
+	or by using up or down.  Code to syncronize editor with where the
+	debugger
 	has stopped.
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
-	* Modules/Debuggers/ProjectCenter/PCDebugger.m: updateEditor method.  This
-	method makes use of the gotoFile:atLine: method to get the file and show it
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m: updateEditor method.
+	This method makes use of the gotoFile:atLine: method to get the
+	file and show it
 	in the code editor and go to the line where it has stopped.
 	* Modules/Editors/ProjectCenter/PCEditor.m: Update internal editor
 	* Modules/Editors/ProjectCenter/PCEditorView.m: minor bugfixes.
