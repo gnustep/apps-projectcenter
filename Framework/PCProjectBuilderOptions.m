@@ -86,6 +86,7 @@
   [debugButton setRefusesFirstResponder:YES];
   [stripButton setRefusesFirstResponder:YES];
   [sharedLibsButton setRefusesFirstResponder:YES];
+  [strictButton setRefusesFirstResponder:YES];
 
   [self loadProjectProperties:nil];
 }
@@ -161,6 +162,8 @@
     key = PCBuilderStrip;
   if (sender == sharedLibsButton)
     key = PCBuilderSharedLibs;
+  if (sender == strictButton)
+    key = PCBuilderStrict;
 
   [project setProjectDictObject:value forKey:key notify:NO];
 }
@@ -191,6 +194,9 @@
   [self _setStateForButton:sharedLibsButton
 		       key:PCBuilderSharedLibs
 	      defaultState:NSOnState];
+  [self _setStateForButton:strictButton
+		       key:PCBuilderStrict
+	      defaultState:NSOffState];
 }
 
 @end

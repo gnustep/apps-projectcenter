@@ -55,7 +55,8 @@ typedef enum _ErrorLevel {
 
   // Options panel
   BOOL            verboseBuilding;
-
+  BOOL            strictBuilding;
+  
   NSString        *buildStatus;
   NSMutableString *buildStatusTarget;
   NSMutableString *buildTarget;

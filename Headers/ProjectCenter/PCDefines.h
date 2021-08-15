@@ -171,6 +171,7 @@ static NSString * const PCBuilderDebug         = @"BUILDER_DEBUG";
 static NSString * const PCBuilderStrip         = @"BUILDER_STRIP";
 static NSString * const PCBuilderVerbose       = @"BUILDER_VERBOSE";
 static NSString * const PCBuilderSharedLibs    = @"BUILDER_SHARED_LIBS";
+static NSString * const PCBuilderStrict        = @"BUILDER_STRICT";
 
 // Application specific
 static NSString * const PCAppIcon              = @"APPLICATIONICON";

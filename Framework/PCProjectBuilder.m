@@ -366,6 +366,15 @@
       verboseBuilding = NO;
     }
 
+  if ([[projectDict objectForKey:PCBuilderStrict] isEqualToString:@"YES"])
+    {
+      strictBuilding = YES;
+    }
+  else
+    {
+      strictBuilding = NO;
+    }
+  
   return args;
 }
 
@@ -598,14 +607,17 @@
 
   NSMutableDictionary *env = [[NSMutableDictionary alloc] init];
 
-  // optionally copy in existing environment first:
-  // (we could also copy values for a limited set of specific keys, if we wanted.)
   [env addEntriesFromDictionary:[[NSProcessInfo processInfo] environment]];
-  // then add/remove anything else we might want:
-  [env removeObjectForKey:@"GNUSTEP_USER_ROOT"];
+  if (strictBuilding == NO)
+    {
+      [env setObject: @"no" forKey:@"GNUSTEP_MAKE_STRICT_V2_MODE"];
+    }
+  else
+    {
+      [env setObject: @"yes" forKey:@"GNUSTEP_MAKE_STRICT_V2_MODE"];
+    }
 
   makeTask = [[NSTask alloc] init];
-  // now set the task up to use this newly-built environment:
   [makeTask setEnvironment:env];
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[project projectPath]];

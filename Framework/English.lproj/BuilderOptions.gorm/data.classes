@@ -19,7 +19,8 @@
 	    optionsPanel,
 	    stripButton,
 	    sharedLibsButton,
-	    targetPopup
+	    targetPopup,
+	    strictButton
 	);
 	Super = NSObject;
     };

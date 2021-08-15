@@ -1,6 +1,6 @@
 2021-08-11 Gregory John Casamento <greg.casamento@gmail.com>
 
-	* Framework/PCProjectBuilder.m: Fix issue where environment var
+	* Framework/PCProjectBuilder.m: Quick Fix issue where environment var
 	was causing build to fail.  Explicitly set environment for NSTask
 	for build to prevent this problem.
 

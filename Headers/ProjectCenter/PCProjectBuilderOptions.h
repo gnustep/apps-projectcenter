@@ -39,6 +39,7 @@
   NSButton      *debugButton;       // debug=no
   NSButton      *stripButton;       // strip=yes
   NSButton      *sharedLibsButton;  // shared=no
+  NSButton      *strictButton;      // GNUSTEP_MAKE_STRICT_V2_MODE yes/no
 }
 
 - (id)initWithProject:(PCProject *)aProject delegate:(id)aDelegate;
