@@ -596,25 +596,13 @@
 			      name:NSTaskDidTerminateNotification
 			    object:nil];
 
-  NSMutableDictionary *env = [[NSMutableDictionary alloc] init];
-
-  // optionally copy in existing environment first:
-  // (we could also copy values for a limited set of specific keys, if we wanted.)
-  [env addEntriesFromDictionary:[[NSProcessInfo processInfo] environment]];
-  // then add/remove anything else we might want:
-  [env removeObjectForKey:@"GNUSTEP_USER_ROOT"];
-
   makeTask = [[NSTask alloc] init];
-  // now set the task up to use this newly-built environment:
-  [makeTask setEnvironment:env];
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[project projectPath]];
   [makeTask setLaunchPath:buildTool];
   [makeTask setStandardOutput:stdOutPipe];
   [makeTask setStandardError:stdErrorPipe];
 
-  NSLog(@"buildArgs = %@, buildTool = %@, projectPath = %@", buildArgs, buildTool, [project projectPath]);
-  
   [self logBuildString:
     [NSString stringWithFormat:@"=== %@ started ===", buildStatusTarget]
 	       newLine:YES];
