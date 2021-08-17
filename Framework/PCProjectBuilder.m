@@ -596,7 +596,19 @@
 			      name:NSTaskDidTerminateNotification
 			    object:nil];
 
+  NSMutableDictionary *env = [NSMutableDictionary dictionary];
+
+  /*
+   * This change is a kludge.  It compensates for the fact that wmaker pollutes our environment
+   * with GNUSTEP_USER_ROOT.  This causes any app which might use the make command to fail since
+   * in gnustep-make this variable is deprecated.  This issue exists with version of WindowMaker
+   * 0.95.8 and prior.  WindowMaker 0.95.9 fixes this by using WMAKER_USER_ROOT instead.
+   */
+  [env addEntriesFromDictionary: [[NSProcessInfo processInfo] environment]];
+  [env removeObjectForKey: @"GNUSTEP_USER_ROOT"];
+
   makeTask = [[NSTask alloc] init];
+  [makeTask setEnvironment: env];
   [makeTask setArguments:buildArgs];
   [makeTask setCurrentDirectoryPath:[project projectPath]];
   [makeTask setLaunchPath:buildTool];
