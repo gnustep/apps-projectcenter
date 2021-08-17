@@ -603,9 +603,13 @@
    * with GNUSTEP_USER_ROOT.  This causes any app which might use the make command to fail since
    * in gnustep-make this variable is deprecated.  This issue exists with version of WindowMaker
    * 0.95.8 and prior.  WindowMaker 0.95.9 fixes this by using WMAKER_USER_ROOT instead.
+   *
+   * https://www.mail-archive.com/debian-bugs-dist@lists.debian.org/msg1664042.html
+   * the above is a link to the root cause of this issue.
    */
   [env addEntriesFromDictionary: [[NSProcessInfo processInfo] environment]];
   [env removeObjectForKey: @"GNUSTEP_USER_ROOT"];
+  // This should be removed once use of 0.95.9 is common..
 
   makeTask = [[NSTask alloc] init];
   [makeTask setEnvironment: env];
