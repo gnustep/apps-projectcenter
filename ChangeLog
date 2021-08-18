@@ -1,3 +1,8 @@
+2021-08-18 Riccardo Mottola <rm@gnu.org>
+
+	* PCInfoContronoller.m
+	Center info panel correctly the first time on load.
+
 2021-08-10 Gregory John Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCEditorManager.m: Add method -gotoFile:atLine:
