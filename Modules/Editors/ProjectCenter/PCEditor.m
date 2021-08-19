@@ -766,7 +766,11 @@
 
   // This is temporary
   ft = [NSFont userFixedPitchFontOfSize:0.0];
-  at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
+  at = [NSDictionary dictionaryWithObjectsAndKeys:
+		       ft, NSFontAttributeName,
+			 [NSNumber numberWithInt: 0], NSLigatureAttributeName,
+		     nil];
+
   as = [[NSAttributedString alloc] initWithString:text attributes:at];
 
   [self setIsEdited:NO];
