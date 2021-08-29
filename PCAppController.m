@@ -64,6 +64,8 @@
 
 - (void)dealloc
 {
+  RELEASE(infoController);
+  RELEASE(projectManager);
   [super dealloc];
 }
 
