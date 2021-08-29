@@ -37,6 +37,13 @@
 
       infoDict = [NSDictionary dictionaryWithContentsOfFile:file];
       RETAIN(infoDict);
+
+      if ([NSBundle loadNibNamed:@"Info" owner:self] == NO)
+	{
+	  return nil;
+	}
+      [versionField setStringValue:[NSString stringWithFormat:@"Version %@", [infoDict objectForKey:@"ApplicationRelease"]]];
+      [infoWindow center];
     }
 
   return self;
@@ -56,29 +63,7 @@
 
 - (void)showInfoWindow:(id)sender
 {
-  if ([NSBundle loadNibNamed:@"Info" owner:self] == NO)
-    {
-//	PCLogError(self, @"error loading Menu NIB file!");
-	return;
-    }
-  [infoWindow center];
   [infoWindow makeKeyAndOrderFront:self];
-  [versionField setStringValue:[NSString stringWithFormat:@"Version %@", [infoDict objectForKey:@"ApplicationRelease"]]];
-		
-/*#if defined(GNUSTEP)
-  if (!infoWindow)
-    {
-      infoWindow = [[GSInfoPanel alloc] initWithDictionary:infoDict];
-    }
-
-  [infoWindow setTitle:@"Info"];
-  [infoWindow center];
-  [infoWindow makeKeyAndOrderFront:self];
-#else
-  NSRunAlertPanel(@"Info",
-		  @"OPENSTEP has no support for GSInfoPanel",
-		  @"OK",nil,nil,nil);
-#endif*/
 }
 
 @end

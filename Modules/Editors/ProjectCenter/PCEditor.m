@@ -170,6 +170,7 @@
 				tSelCol, NSForegroundColorAttributeName,
 				nil];
   [ev setSelectedTextAttributes:selAttributes];
+  [ev turnOffLigatures:self];
 
   // Activate undo
   [ev setAllowsUndo: YES];
@@ -321,6 +322,8 @@
   [attributes setObject:font forKey:NSFontAttributeName];
   [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
   [attributes setObject:[prefs colorForKey:EditorForegroundColor defaultValue:textColor] forKey:NSForegroundColorAttributeName];
+  [attributes setObject:[NSNumber numberWithInt: 0] // disable ligatures
+		 forKey:NSLigatureAttributeName];
 
   text  = [NSString stringWithContentsOfFile:_path];
   attributedString = [attributedString initWithString:text attributes:attributes];
@@ -763,7 +766,11 @@
 
   // This is temporary
   ft = [NSFont userFixedPitchFontOfSize:0.0];
-  at = [NSDictionary dictionaryWithObject:ft forKey:NSFontAttributeName];
+  at = [NSDictionary dictionaryWithObjectsAndKeys:
+		       ft, NSFontAttributeName,
+			 [NSNumber numberWithInt: 0], NSLigatureAttributeName,
+		     nil];
+
   as = [[NSAttributedString alloc] initWithString:text attributes:at];
 
   [self setIsEdited:NO];
