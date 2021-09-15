@@ -319,9 +319,11 @@
       textBackground = readOnlyColor;
     }
 
+  textColor = [prefs colorForKey:EditorForegroundColor defaultValue:textColor];
+
   [attributes setObject:font forKey:NSFontAttributeName];
   [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
-  [attributes setObject:[prefs colorForKey:EditorForegroundColor defaultValue:textColor] forKey:NSForegroundColorAttributeName];
+  [attributes setObject:textColor forKey:NSForegroundColorAttributeName];
   [attributes setObject:[NSNumber numberWithInt: 0] // disable ligatures
 		 forKey:NSLigatureAttributeName];
 
