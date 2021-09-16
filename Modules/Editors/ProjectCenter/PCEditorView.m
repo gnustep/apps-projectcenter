@@ -183,7 +183,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 	}
     }
 
-  NSLog(@"index: %i start: %i", index, line_start);
+  NSLog(@"index: %li start: %li", index, line_start);
 
   return line_start > index ? index : line_start;
 }
@@ -311,7 +311,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
       if (![wsCharSet characterIsMember:c])
 	{
 	  offset = offset - line_start;
-	  NSLog(@"offset: %i", offset);
+	  NSLog(@"offset: %li", offset);
 	  break;
 	}
     }
@@ -328,7 +328,7 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
 
   // Get offset from BOL of previous line
 //  offset = ComputeIndentingOffset([self string], line_start-1);
-  NSLog(@"Indent offset: %i", offset);
+  NSLog(@"Indent offset: %li", offset);
 
   // Replace current line whitespaces with new ones
   indentString = [[NSMutableString alloc] initWithString:@""];

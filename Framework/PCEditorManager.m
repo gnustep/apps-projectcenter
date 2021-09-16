@@ -30,9 +30,11 @@
 #import <ProjectCenter/PCBundleManager.h>
 #import <ProjectCenter/PCEditorManager.h>
 #import <ProjectCenter/PCProject.h>
-
+#import <ProjectCenter/PCProjectEditor.h>
 #import <ProjectCenter/PCLogController.h>
 #import <ProjectCenter/PCSaveModified.h>
+
+#import <Protocols/CodeEditor.h>
 
 #import "Modules/Preferences/Misc/PCMiscPrefs.h"
 
@@ -97,15 +99,6 @@ NSString *PCEditorDidResignActiveNotification =
 	   selector:@selector(editorDidChangeFileName:)
 	       name:PCEditorDidChangeFileNameNotification
 	     object:nil];
-
-      // Debugger
-      [[NSNotificationCenter defaultCenter]
-	addObserver:self 
-	   selector:@selector(debuggerDidHitBreakpoint:)
-	       name:PCProjectBreakpointNotification
-	     object:nil];
-
-      // Preferences
     }
 
   return self;
@@ -542,16 +535,15 @@ NSString *PCEditorDidResignActiveNotification =
   [_editorsDict setObject:_editor forKey:_newFileName];
 }
 
-- (void)debuggerDidHitBreakpoint:(NSNotification *)aNotif
+- (void)gotoFile: (NSString *)fileName atLine: (NSUInteger)line
 {
-  id object = [aNotif object];
-  NSString *filePath = [object objectForKey: @"file"];
-  NSString *line = [object objectForKey: @"line"];
-  id<CodeEditor> editor = [self openEditorForFile: filePath
-				editable: YES
-				windowed: NO];
-  [self orderFrontEditorForFile:filePath];
-  [editor scrollToLineNumber: [line integerValue]];
+  PCProject      *project = [_projectManager rootActiveProject];
+  PCProjectEditor *pe = [project projectEditor];
+
+  id<CodeEditor> editor = [pe openEditorForFilePath: fileName windowed: NO];
+  
+  // [self orderFrontEditorForFile:fileName];
+  [editor scrollToLineNumber: line];
 }
 
 @end

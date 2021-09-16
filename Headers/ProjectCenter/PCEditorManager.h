@@ -69,6 +69,7 @@
 - (NSArray *)allEditors;
 - (void)closeActiveEditor:(id)sender;
 - (void)closeEditorForFile:(NSString *)file;
+- (void)gotoFile: (NSString *)fileName atLine: (NSUInteger)line;
 
 - (NSArray *)modifiedFiles;
 - (BOOL)hasModifiedFiles;
