@@ -967,15 +967,36 @@
   if ([object isKindOfClass:[NSTextView class]])
     {
       NSTextView *tv = (NSTextView *)object;
-      NSArray *selArray;
-      NSRange lastSelection;
-      NSRange selRange;
-      NSUInteger selLine;
+      NSString *str = [tv string];
+      NSRange selection;
+      NSUInteger selLine = NSNotFound;
 
-      selArray = [tv selectedRanges];
-      lastSelection = [[selArray lastObject] rangeValue];
-      NSLog(@"last selection is %@", [selArray lastObject]);
-      [[tv string] getLineStart:NULL end:&selLine contentsEnd:NULL forRange:lastSelection];
+      // for speed reasons we cache [NSString characterAtIndex:index]
+      SEL charAtIndexSel = @selector(characterAtIndex:);
+      unichar (*charAtIndexFunc)(NSString *, SEL, NSUInteger);
+      charAtIndexFunc = (unichar (*)())[str methodForSelector:charAtIndexSel]; 
+
+      selection = [tv selectedRange];
+      // now we calculate given the selection the line count, splitting on \n
+      // calling lineRangeForRange / paragraphForRange does the same thing
+      // we want to avoid to scan the string twice
+      {
+        NSUInteger i;
+        unichar ch;
+        NSUInteger nlCount;
+
+        nlCount = 0;
+        for (i = 0; i < selection.location; i++)
+          {
+            // ch = [str characterAtIndex:i];
+            ch = (*charAtIndexFunc)(str, charAtIndexSel, i);
+            if (ch == (unichar)0x000A) // new line
+              nlCount++;
+          }
+
+        selLine = nlCount + 1;
+      }
+      NSLog(@"%u corresponds to %u", selection.location, selLine);
     }
 }
 
