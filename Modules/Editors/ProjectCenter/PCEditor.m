@@ -1024,6 +1024,11 @@
         selLine = nlCount + 1;
       }
       NSLog(@"%u corresponds to %u", selection.location, selLine);
+      if (selLine != NSNotFound)
+        {
+          [_intStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
+          [_extStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
+        }
     }
 }
 
