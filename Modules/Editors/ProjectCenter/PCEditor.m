@@ -38,6 +38,7 @@
 - (void)_createWindow
 {
   unsigned int style;
+  NSRect       winContentRect;
   NSRect       rect;
   float        windowWidth;
   NSView       *containerView;
@@ -63,39 +64,40 @@
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];
   [_window center];
-  rect = [[_window contentView] frame];
+  winContentRect = [[_window contentView] frame];
   
   // Scroll view
   _extScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,15,windowWidth,320-15)];
   [_extScrollView setHasHorizontalScroller:NO];
   [_extScrollView setHasVerticalScroller:YES];
-  [_extScrollView setAutoresizingMask:
-    (NSViewWidthSizable|NSViewHeightSizable)];
+  [_extScrollView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
   rect = [[_extScrollView contentView] frame];
 
-  // Text view
+  // Text view in ScrollView
   _extEditorView = [self _createEditorViewWithFrame:rect];
+  [_extScrollView setDocumentView:_extEditorView];
+  RELEASE(_extEditorView);
 
-  // container View with Status
-  _extStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,windowWidth,15)];
+  // Status Line
+  _extStatusField = [[NSTextField alloc] initWithFrame: NSMakeRect(0, 0, winContentRect.size.width, 15)];
   [_extStatusField setBezeled:NO];
   [_extStatusField setEditable:NO];
   [_extStatusField setSelectable:NO];
   [_extStatusField setDrawsBackground:NO];
   [_extStatusField setAutoresizingMask: NSViewWidthSizable];
-  containerView = [[NSView alloc] init];
+
+  // Container of Scroll + Status Field
+  containerView = [[NSView alloc] initWithFrame:winContentRect];
+  [containerView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
   [containerView addSubview:_extStatusField];
   [containerView addSubview:_extScrollView];
-  
-  // Include editor view
-  [_extScrollView setDocumentView:_extEditorView];
-  [_extEditorView setNeedsDisplay:YES];
-  RELEASE(_extEditorView);
+  RELEASE(_extScrollView);
+  RELEASE(_extStatusField);
 
   // Include scroll view
   [_window setContentView:containerView];
   [_window makeFirstResponder:_extEditorView];
-  RELEASE(_extScrollView);
+
   RELEASE(containerView);
 
   // Honor "edited" state
