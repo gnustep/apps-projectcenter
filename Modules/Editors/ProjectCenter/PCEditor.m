@@ -97,7 +97,6 @@
   // Include scroll view
   [_window setContentView:containerView];
   [_window makeFirstResponder:_extEditorView];
-
   RELEASE(containerView);
 
   // Honor "edited" state
@@ -106,10 +105,11 @@
 
 - (void)_createInternalView
 {
-  NSRect rect = NSMakeRect(0,0,512,320 - 15);
+  NSRect contRect = NSMakeRect(0,0,512,320);
+  NSRect rect;
 
   // Scroll view
-  _intScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  _intScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,15,512,320-15)];
   [_intScrollView setHasHorizontalScroller:NO];
   [_intScrollView setHasVerticalScroller:YES];
   [_intScrollView setBorderType:NSBezelBorder];
@@ -119,16 +119,21 @@
   // Text view
   _intEditorView = [self _createEditorViewWithFrame:rect];
 
-  // container View with Status
+  // Status Line
   _intStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(0,0,512,15)];
   [_intStatusField setBezeled:NO];
   [_intStatusField setEditable:NO];
   [_intStatusField setSelectable:NO];
   [_intStatusField setDrawsBackground:NO];
   [_intStatusField setAutoresizingMask: NSViewWidthSizable];
-  _containerView = [[NSView alloc] init];
+
+  // Container of Scroll + Status field
+  _containerView = [[NSView alloc] initWithFrame:contRect];
+  [_containerView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
   [_containerView addSubview:_intStatusField];
   [_containerView addSubview:_intScrollView];
+  RELEASE(_intStatusField);
+  RELEASE(_intScrollView);
 
   NSLog(@"%@", _intStatusField);
   NSLog(@"%@", [_intStatusField superview]);
@@ -136,9 +141,7 @@
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
-  [_intEditorView setNeedsDisplay:YES];
   RELEASE(_intEditorView);
-  // RELEASE(containerView);
 }
 
 - (PCEditorView *)_createEditorViewWithFrame:(NSRect)fr
