@@ -60,7 +60,7 @@
  * @return The ammount of spaces the last line containing text is offset
  *      from it's start.
  */
-static int ComputeIndentingOffset(NSString * string, unsigned int start)
+static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 {
   SEL sel = @selector(characterAtIndex:);
   unichar (* charAtIndex)(NSString *, SEL, unsigned int) =
@@ -498,96 +498,29 @@ static int ComputeIndentingOffset(NSString * string, unsigned int start)
   [highlighter setBoldItalicFont: [self editorBoldItalicFont]];
 }
 
-- (void)insertText:text
+- (void) cancelOperation: (id)sender
 {
-  /* NOTE: On Windows we ensure to get a string in UTF-8 encoding. The problem
-   * is the highlighter that don't use a consistent codification causing a
-   * problem on Windows platform. Anyway, the plugin for Gemas editor works
-   * better and don't show this problem.
-   */
-  if ([text isKindOfClass:[NSString class]])
-    {
-      NSString * string = text;
+  // ignore ESC char
+}
 
-      if ([text characterAtIndex:0] == 27)
-	{
-	  NSLog(@"ESC key pressed. Ignoring it");
-	  return;
-	}
+- (void) insertNewline: (id)sender
+{
+  NSInteger location = [self selectedRange].location;
+  int  offset = ComputeIndentingOffset([self string], location);
+  char buf[offset+2];
 
-      if ([string isEqualToString:@"\n"])
-        {
-/*          if ([[NSUserDefaults standardUserDefaults]
-            boolForKey:@"ReturnDoesAutoindent"])
-            {*/
-	      int  location = [self selectedRange].location;
-              int  offset = ComputeIndentingOffset([self string], location);
-              char *buf;
+  buf[0] = '\n';
+  memset(&buf[1], ' ', offset);
+  buf[offset+1] = '\0';
 
-              buf = (char *) malloc((offset + 2) * sizeof(unichar));
-	      buf[0] = '\n';
-              memset(&buf[1], ' ', offset);
-              buf[offset+1] = '\0';
+  // let's use UTF8 to be on the safe side
+  [self insertText: [NSString stringWithCString: buf
+				       encoding: NSUTF8StringEncoding]];
+}
 
-#ifdef WIN32
-              [super insertText:[NSString stringWithCString: buf
-					  encoding: NSUTF8StringEncoding]];
-#else
-	      [super insertText:[NSString stringWithCString:buf]];
-#endif
-              free(buf);
-/*            }
-          else
-            {
-              [super insertText:text];
-            }*/
-        }
-      else if ([string isEqualToString:@"\t"])
-        {
-	  [self performIndentation];
-/*          switch ([[NSUserDefaults standardUserDefaults]
-            integerForKey:@"TabConversion"])
-            {
-            case 0:  // no conversion
-              [super insertText:text];
-              break;
-            case 1:  // 2 spaces
-              [super insertText:@"  "];
-              break;
-            case 2:  // 4 spaces
-              [super insertText:@"    "];
-              break;
-            case 3:  // 8 spaces
-              [super insertText:@"        "];
-              break;
-            case 4:  // aligned to tab boundaries of 2 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:2];
-              break;
-            case 5:  // aligned to tab boundaries of 4 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:4];
-              break;
-            case 6:  // aligned to tab boundaries of 8 spaces long tabs
-              [self insertSpaceFillAlignedAtTabsOfSize:8];
-              break; 
-            }*/
-        }
-      else
-        {
-#ifdef WIN32
-	  [super insertText: [NSString stringWithCString: [text UTF8String]]];
-#else
-          [super insertText: text];
-#endif
-        }
-    }
-  else
-    {
-#ifdef WIN32
-      [super insertText: [NSString stringWithCString: [text UTF8String]]];
-#else
-      [super insertText: text];
-#endif
-    }
+- (void) insertTab: (id)sender
+{
+  [self performIndentation];
 }
 
 /* This extra change tracking is required in order to inform the document
