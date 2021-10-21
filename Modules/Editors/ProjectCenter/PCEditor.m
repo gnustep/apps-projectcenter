@@ -175,16 +175,12 @@
   // Activate undo
   [ev setAllowsUndo: YES];
 
+  [ev setDelegate:self];
+
   [[NSNotificationCenter defaultCenter]
     addObserver:self 
        selector:@selector(textDidChange:)
 	   name:NSTextDidChangeNotification
-	 object:ev];
-
-  [[NSNotificationCenter defaultCenter]
-    addObserver:self
-       selector:@selector(textViewDidChangeSelection:)
-	   name:NSTextViewDidChangeSelectionNotification
 	 object:ev];
 
   return ev;
@@ -227,9 +223,8 @@
       previousBGColor = nil;
       previousFont = nil;
 
-      isCharacterHighlit = NO;
-      highlited_chars[0] = -1;
-      highlited_chars[1] = -1;
+      highlited_chars[0] = NSNotFound;
+      highlited_chars[1] = NSNotFound;
 
       undoManager = [[NSUndoManager alloc] init];
     }
@@ -948,6 +943,23 @@
     }
 }
 
+- (NSRange)textView:(NSTextView *)textView
+willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
+   toCharacterRange:(NSRange)newSelectedCharRange
+{
+  NSLog(@"Will change selection from %@ to %@", NSStringFromRange(oldSelectedCharRange), NSStringFromRange(newSelectedCharRange));
+
+  NSLog(@"is pressing key %d", editorTextViewIsPressingKey);
+  if (editorTextViewIsPressingKey == NO)
+    {
+      // unhighlight also invalidates old locations
+      if (textView == _intEditorView || textView == _extEditorView)
+	[self unhighlightCharacter: textView];
+    }
+
+  return newSelectedCharRange;
+}
+
 - (void)textViewDidChangeSelection:(NSNotification *)notification
 {
   id object;
@@ -956,13 +968,11 @@
 
   if (editorTextViewIsPressingKey == NO)
     {
-      id object;
-
-      object = [notification object];
       if (object == _intEditorView || object == _extEditorView)
 	[self computeNewParenthesisNesting: object];
     }
 
+  NSLog(@"textViewDidChangeSelection");
   // calculate current line
   if ([object isKindOfClass:[NSTextView class]])
     {
@@ -1356,19 +1366,17 @@ NSUInteger FindDelimiterInString(NSString * string,
 
 - (void)unhighlightCharacter: (NSTextView *)editorView
 {
-  int           i;
+  unsigned      i;
   NSTextStorage *textStorage = [editorView textStorage];
 
   [textStorage beginEditing];
 
-//  if (isCharacterHighlit)
-  for (i = 0; i < 2 && highlited_chars[i] != -1; i++)
+  for (i = 0; i < 2; i++)
     {
+      if (highlited_chars[i] == NSNotFound)
+	continue;
+
       NSRange       r = NSMakeRange(highlited_chars[i], 1);
-//      NSRange       r = NSMakeRange(highlitCharacterLocation, i);
-
-
-      isCharacterHighlit = NO;
 
       // restore the character's color and font attributes
       if (previousFont != nil)
@@ -1406,45 +1414,39 @@ NSUInteger FindDelimiterInString(NSString * string,
                                  range:r];
         }
 
-      highlited_chars[i] = -1;
+      highlited_chars[i] = NSNotFound;
     }
 
   [textStorage endEditing];
 }
 
-- (void)highlightCharacterAt:(NSUInteger)location inEditor: (NSTextView *)editorView
+- (void)highlightCharacterPair:(NSTextView *)editorView
 {
-  int i;
+  unsigned i;
 
-  for (i = 0; i < 2 && highlited_chars[i] != -1; i++) {};
-
-//  if (isCharacterHighlit == NO)
-  if (i < 2)
+  for (i = 0; i < 2; i++)
     {
+      if (highlited_chars[i] == NSNotFound)
+	return;
+
       NSTextStorage *textStorage = [editorView textStorage];
-      NSRange       r = NSMakeRange(location, 1);
+      NSRange       r = NSMakeRange(highlited_chars[i], 1);
       NSRange       tmp;
 
-//      NSLog(@"highlight");
-
-//      highlitCharacterLocation = location;
-      highlited_chars[i] = location;
-
-      isCharacterHighlit = YES;
       NSAssert(textStorage, @"textstorage can't be nil");
       [textStorage beginEditing];
 
       // store the previous character's attributes
       ASSIGN(previousFGColor,
         [textStorage attribute:NSForegroundColorAttributeName
-                       atIndex:location
+                       atIndex:r.location
                 effectiveRange:&tmp]);
       ASSIGN(previousBGColor,
         [textStorage attribute:NSBackgroundColorAttributeName
-                       atIndex:location
+                       atIndex:r.location
                 effectiveRange:&tmp]);
       ASSIGN(previousFont, [textStorage attribute:NSFontAttributeName
-                                          atIndex:location
+                                          atIndex:r.location
                                    effectiveRange:&tmp]);
 
       [textStorage addAttribute:NSFontAttributeName
@@ -1478,7 +1480,7 @@ NSUInteger FindDelimiterInString(NSString * string,
   selectedRange = [editorView selectedRange];
 
   // make sure we un-highlight a previously highlit delimiter
-  [self unhighlightCharacter :editorView];
+  //  [self unhighlightCharacter :editorView];
 
   // if we have a character at the selected location, check
   // to see if it is a delimiter character
@@ -1508,8 +1510,9 @@ NSUInteger FindDelimiterInString(NSString * string,
           // and in case a delimiter is found, highlight it
           if (result != NSNotFound)
             {
-              [self highlightCharacterAt:selectedRange.location inEditor:editorView];
-              [self highlightCharacterAt:result inEditor:editorView];
+	      highlited_chars[0] = selectedRange.location;
+	      highlited_chars[1] = result;
+	      [self highlightCharacterPair :editorView];
             }
         }
     }

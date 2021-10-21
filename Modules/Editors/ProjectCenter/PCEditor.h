@@ -74,14 +74,10 @@
   NSColor *backgroundColor;
   NSColor *readOnlyColor;
   NSColor *textBackground;
-  
-  // location of the highlit delimiter character
-  unsigned int highlitCharacterLocation;
 
-  // is YES if we are currently highlighting a delimiter character
-  // otherwise NO
-  BOOL isCharacterHighlit;
-  int  highlited_chars[2];
+  // location of the highlighted delimiter characters
+  // NSNotFound means not set
+  NSUInteger  highlited_chars[2];
 
   // the stored color and font attributes of the highlit character, so
   // that they can be restored later on when the character is un-highlit
