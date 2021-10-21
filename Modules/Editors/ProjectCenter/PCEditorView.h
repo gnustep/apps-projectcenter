@@ -52,8 +52,6 @@
 
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType;
 
-- (void)insertText:text;
-
 - (NSRect)selectionRect;
 
 // =====
