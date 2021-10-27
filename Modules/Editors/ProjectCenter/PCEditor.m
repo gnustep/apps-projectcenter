@@ -219,7 +219,6 @@
       ASSIGN(backgroundColor, [NSColor whiteColor]);
       ASSIGN(readOnlyColor, [NSColor lightGrayColor]);
       
-      previousFGColor = nil;
       previousBGColor = nil;
       previousFont = nil;
 
@@ -1390,18 +1389,6 @@ NSUInteger FindDelimiterInString(NSString * string,
           [textStorage removeAttribute:NSFontAttributeName range:r];
         }
 
-      if (previousFGColor != nil)
-        {
-          [textStorage addAttribute:NSForegroundColorAttributeName
-                              value:previousFGColor
-                              range:r];
-        }
-      else
-        {
-          [textStorage removeAttribute:NSForegroundColorAttributeName
-                                 range:r];
-        }
-
       if (previousBGColor != nil)
         {
           [textStorage addAttribute:NSBackgroundColorAttributeName
@@ -1437,10 +1424,6 @@ NSUInteger FindDelimiterInString(NSString * string,
       [textStorage beginEditing];
 
       // store the previous character's attributes
-      ASSIGN(previousFGColor,
-        [textStorage attribute:NSForegroundColorAttributeName
-                       atIndex:r.location
-                effectiveRange:&tmp]);
       ASSIGN(previousBGColor,
         [textStorage attribute:NSBackgroundColorAttributeName
                        atIndex:r.location
@@ -1455,12 +1438,6 @@ NSUInteger FindDelimiterInString(NSString * string,
       [textStorage addAttribute:NSBackgroundColorAttributeName
                           value:highlightColor
                           range:r];
-/*      [textStorage addAttribute:NSForegroundColorAttributeName
-                          value:highlightColor
-                          range:r];
-
-      [textStorage removeAttribute:NSBackgroundColorAttributeName
-                             range:r];*/
 
       [textStorage endEditing];
     }

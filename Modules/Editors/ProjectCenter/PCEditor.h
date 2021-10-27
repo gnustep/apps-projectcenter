@@ -81,7 +81,6 @@
 
   // the stored color and font attributes of the highlit character, so
   // that they can be restored later on when the character is un-highlit
-  NSColor *previousFGColor;
   NSColor *previousBGColor;
   NSColor *previousFont;
   
@@ -147,7 +146,7 @@
 @interface PCEditor (Parenthesis)
 
 - (void)unhighlightCharacter: (NSTextView *)editorView;
-- (void)highlightCharacterAt:(NSUInteger)location inEditor: (NSTextView *)editorView;
+- (void)highlightCharacterPair: (NSTextView *)editorView;
 - (void)computeNewParenthesisNesting: (NSTextView *)editorView;
 
 @end
