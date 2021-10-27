@@ -222,8 +222,8 @@
       previousBGColor = nil;
       previousFont = nil;
 
-      highlited_chars[0] = NSNotFound;
-      highlited_chars[1] = NSNotFound;
+      highlighted_chars[0] = NSNotFound;
+      highlighted_chars[1] = NSNotFound;
 
       undoManager = [[NSUndoManager alloc] init];
     }
@@ -1372,10 +1372,10 @@ NSUInteger FindDelimiterInString(NSString * string,
 
   for (i = 0; i < 2; i++)
     {
-      if (highlited_chars[i] == NSNotFound)
+      if (highlighted_chars[i] == NSNotFound)
 	continue;
 
-      NSRange       r = NSMakeRange(highlited_chars[i], 1);
+      NSRange       r = NSMakeRange(highlighted_chars[i], 1);
 
       // restore the character's color and font attributes
       if (previousFont != nil)
@@ -1401,7 +1401,7 @@ NSUInteger FindDelimiterInString(NSString * string,
                                  range:r];
         }
 
-      highlited_chars[i] = NSNotFound;
+      highlighted_chars[i] = NSNotFound;
     }
 
   [textStorage endEditing];
@@ -1413,11 +1413,11 @@ NSUInteger FindDelimiterInString(NSString * string,
 
   for (i = 0; i < 2; i++)
     {
-      if (highlited_chars[i] == NSNotFound)
+      if (highlighted_chars[i] == NSNotFound)
 	return;
 
       NSTextStorage *textStorage = [editorView textStorage];
-      NSRange       r = NSMakeRange(highlited_chars[i], 1);
+      NSRange       r = NSMakeRange(highlighted_chars[i], 1);
       NSRange       tmp;
 
       NSAssert(textStorage, @"textstorage can't be nil");
@@ -1487,8 +1487,8 @@ NSUInteger FindDelimiterInString(NSString * string,
           // and in case a delimiter is found, highlight it
           if (result != NSNotFound)
             {
-	      highlited_chars[0] = selectedRange.location;
-	      highlited_chars[1] = result;
+	      highlighted_chars[0] = selectedRange.location;
+	      highlighted_chars[1] = result;
 	      [self highlightCharacterPair :editorView];
             }
         }
