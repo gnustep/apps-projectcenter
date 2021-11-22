@@ -1410,27 +1410,27 @@ NSUInteger FindDelimiterInString(NSString * string,
 - (void)highlightCharacterPair:(NSTextView *)editorView
 {
   unsigned i;
+  NSTextStorage *textStorage = [editorView textStorage];
+
+  [textStorage beginEditing];
 
   for (i = 0; i < 2; i++)
     {
       if (highlighted_chars[i] == NSNotFound)
-	return;
+	continue;
 
-      NSTextStorage *textStorage = [editorView textStorage];
       NSRange       r = NSMakeRange(highlighted_chars[i], 1);
-      NSRange       tmp;
 
       NSAssert(textStorage, @"textstorage can't be nil");
-      [textStorage beginEditing];
 
       // store the previous character's attributes
       ASSIGN(previousBGColor,
         [textStorage attribute:NSBackgroundColorAttributeName
                        atIndex:r.location
-                effectiveRange:&tmp]);
+                effectiveRange:NULL]);
       ASSIGN(previousFont, [textStorage attribute:NSFontAttributeName
                                           atIndex:r.location
-                                   effectiveRange:&tmp]);
+                                   effectiveRange:NULL]);
 
       [textStorage addAttribute:NSFontAttributeName
                           value:highlightFont
@@ -1439,8 +1439,8 @@ NSUInteger FindDelimiterInString(NSString * string,
                           value:highlightColor
                           range:r];
 
-      [textStorage endEditing];
     }
+  [textStorage endEditing];
 }
 
 - (void)computeNewParenthesisNesting: (NSTextView *)editorView
