@@ -136,7 +136,7 @@
   RELEASE(lm);
 
   ev = [[PCEditorView alloc] initWithFrame:fr textContainer:tc];
-  [ev setBackgroundColor:textBackground];
+  [ev setBackgroundColor:textBackgroundColor];
   [ev setTextColor:textColor];
   [ev setEditor:self];
   if (_highlightSyntax)
@@ -218,8 +218,7 @@
       ASSIGN(textColor, [NSColor blackColor]);
       ASSIGN(backgroundColor, [NSColor whiteColor]);
       ASSIGN(readOnlyColor, [NSColor lightGrayColor]);
-      
-      previousBGColor = nil;
+
       previousFont = nil;
 
       highlighted_chars[0] = NSNotFound;
@@ -306,17 +305,17 @@
       NSColor *col;
 
       col = [prefs colorForKey:EditorBackgroundColor defaultValue:backgroundColor];
-      textBackground = col;
+      textBackgroundColor = col;
     }
   else
     {
-      textBackground = readOnlyColor;
+      textBackgroundColor = readOnlyColor;
     }
 
   textColor = [prefs colorForKey:EditorForegroundColor defaultValue:textColor];
 
   [attributes setObject:font forKey:NSFontAttributeName];
-  [attributes setObject:textBackground forKey:NSBackgroundColorAttributeName];
+  [attributes setObject:textBackgroundColor forKey:NSBackgroundColorAttributeName];
   [attributes setObject:textColor forKey:NSForegroundColorAttributeName];
   [attributes setObject:[NSNumber numberWithInt: 0] // disable ligatures
 		 forKey:NSLigatureAttributeName];
@@ -1389,17 +1388,9 @@ NSUInteger FindDelimiterInString(NSString * string,
           [textStorage removeAttribute:NSFontAttributeName range:r];
         }
 
-      if (previousBGColor != nil)
-        {
-          [textStorage addAttribute:NSBackgroundColorAttributeName
-                              value:previousBGColor
-                              range:r];
-        }
-      else
-        {
-          [textStorage removeAttribute:NSBackgroundColorAttributeName
-                                 range:r];
-        }
+      [textStorage addAttribute:NSBackgroundColorAttributeName
+			  value:textBackgroundColor
+			  range:r];
 
       highlighted_chars[i] = NSNotFound;
     }
@@ -1424,10 +1415,6 @@ NSUInteger FindDelimiterInString(NSString * string,
       NSAssert(textStorage, @"textstorage can't be nil");
 
       // store the previous character's attributes
-      ASSIGN(previousBGColor,
-        [textStorage attribute:NSBackgroundColorAttributeName
-                       atIndex:r.location
-                effectiveRange:NULL]);
       ASSIGN(previousFont, [textStorage attribute:NSFontAttributeName
                                           atIndex:r.location
                                    effectiveRange:NULL]);
