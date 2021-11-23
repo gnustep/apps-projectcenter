@@ -78,11 +78,6 @@
   // location of the highlighted delimiter characters
   // NSNotFound means not set
   NSUInteger  highlighted_chars[2];
-
-  // the stored font attributes of the highlit character, so
-  // that they can be restored later on when the character is un-highlit
-  // A pair is assumed to have the same attributes
-  NSColor *previousFont;
   
   // This is used to protect that -textViewDidChangeSelection: invocations
   // don't do anything when the text view changing, because this causes

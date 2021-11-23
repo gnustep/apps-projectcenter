@@ -219,8 +219,6 @@
       ASSIGN(backgroundColor, [NSColor whiteColor]);
       ASSIGN(readOnlyColor, [NSColor lightGrayColor]);
 
-      previousFont = nil;
-
       highlighted_chars[0] = NSNotFound;
       highlighted_chars[1] = NSNotFound;
 
@@ -1376,18 +1374,6 @@ NSUInteger FindDelimiterInString(NSString * string,
 
       NSRange       r = NSMakeRange(highlighted_chars[i], 1);
 
-      // restore the character's color and font attributes
-      if (previousFont != nil)
-        {
-          [textStorage addAttribute:NSFontAttributeName
-                              value:previousFont
-                              range:r];
-        }
-      else
-        {
-          [textStorage removeAttribute:NSFontAttributeName range:r];
-        }
-
       [textStorage addAttribute:NSBackgroundColorAttributeName
 			  value:textBackgroundColor
 			  range:r];
@@ -1414,14 +1400,6 @@ NSUInteger FindDelimiterInString(NSString * string,
 
       NSAssert(textStorage, @"textstorage can't be nil");
 
-      // store the previous character's attributes
-      ASSIGN(previousFont, [textStorage attribute:NSFontAttributeName
-                                          atIndex:r.location
-                                   effectiveRange:NULL]);
-
-      [textStorage addAttribute:NSFontAttributeName
-                          value:highlightFont
-                          range:r];
       [textStorage addAttribute:NSBackgroundColorAttributeName
                           value:highlightColor
                           range:r];
