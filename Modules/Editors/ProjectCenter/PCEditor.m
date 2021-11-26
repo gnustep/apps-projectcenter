@@ -986,15 +986,6 @@
 
   object = [notification object];
 
-  if (editorTextViewIsPressingKey == NO)
-    {
-      id object;
-
-      object = [notification object];
-      if (object == _intEditorView || object == _extEditorView)
-	[self computeNewParenthesisNesting: object];
-    }
-
   // calculate current line
   if ([object isKindOfClass:[NSTextView class]])
     {
@@ -1040,7 +1031,6 @@
 - (void)editorTextViewWillPressKey:sender
 {
   editorTextViewIsPressingKey = YES;
-//  NSLog(@"Will pressing key");
 
   if (sender == _intEditorView || sender == _extEditorView)
     [self unhighlightCharacter: sender];
@@ -1050,7 +1040,6 @@
 
 - (void)editorTextViewDidPressKey:sender
 {
-//  NSLog(@"Did pressing key");
   if (sender == _intEditorView || sender == _extEditorView)
     [self computeNewParenthesisNesting: sender];
   else
