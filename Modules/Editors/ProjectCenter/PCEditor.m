@@ -962,12 +962,6 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
   object = [notification object];
 
-  if (editorTextViewIsPressingKey == NO)
-    {
-      if (object == _intEditorView || object == _extEditorView)
-	[self computeNewParenthesisNesting: object];
-    }
-
   NSLog(@"textViewDidChangeSelection");
   // calculate current line
   if ([object isKindOfClass:[NSTextView class]])
@@ -1009,7 +1003,6 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 - (void)editorTextViewWillPressKey:sender
 {
   editorTextViewIsPressingKey = YES;
-//  NSLog(@"Will pressing key");
 
   if (sender == _intEditorView || sender == _extEditorView)
     [self unhighlightCharacter: sender];
@@ -1019,9 +1012,20 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
 - (void)editorTextViewDidPressKey:sender
 {
-//  NSLog(@"Did pressing key");
   if (sender == _intEditorView || sender == _extEditorView)
-    [self computeNewParenthesisNesting: sender];
+    {
+      if (nil != phlTimer)
+	{
+	  [phlTimer invalidate];
+	  phlTimer = nil;
+	}
+
+      phlTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+						  target:self
+						selector:@selector(computeNewParenthesisNestingFromTimer:)
+						userInfo:sender
+						 repeats:NO];
+    }
   else
     NSLog(@"PCEditor: unexpected sender");
 
@@ -1406,6 +1410,12 @@ NSUInteger FindDelimiterInString(NSString * string,
 
     }
   [textStorage endEditing];
+}
+
+- (void)computeNewParenthesisNestingFromTimer:(NSTimer *)timer
+{
+  phlTimer = nil;
+  [self computeNewParenthesisNesting:[timer userInfo]];
 }
 
 - (void)computeNewParenthesisNesting: (NSTextView *)editorView

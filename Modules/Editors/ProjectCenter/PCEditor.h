@@ -85,6 +85,9 @@
   // of this method.
   BOOL editorTextViewIsPressingKey;
 
+  // Slightly delay drawing of highlit parentheses
+  NSTimer *phlTimer;
+
   // keep one undo manager for the editor
   NSUndoManager *undoManager;
 }
