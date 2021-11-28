@@ -943,9 +943,8 @@
 willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
    toCharacterRange:(NSRange)newSelectedCharRange
 {
-  NSLog(@"Will change selection from %@ to %@", NSStringFromRange(oldSelectedCharRange), NSStringFromRange(newSelectedCharRange));
+  NSDebugLog(@"Will change selection from %@ to %@", NSStringFromRange(oldSelectedCharRange), NSStringFromRange(newSelectedCharRange));
 
-  NSLog(@"is pressing key %d", editorTextViewIsPressingKey);
   if (editorTextViewIsPressingKey == NO)
     {
       // unhighlight also invalidates old locations
@@ -962,7 +961,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
   object = [notification object];
 
-  NSLog(@"textViewDidChangeSelection");
+  NSDebugLog(@"received textViewDidChangeSelection notification");
   // calculate current line
   if ([object isKindOfClass:[NSTextView class]])
     {
@@ -996,7 +995,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
         selLine = nlCount + 1;
       }
-      NSLog(@"%u corresponds to %u", selection.location, selLine);
+      NSLog(@"%u corresponds to %u", (unsigned int)selection.location, (unsigned int)selLine);
     }
 }
 
@@ -1431,8 +1430,9 @@ NSUInteger FindDelimiterInString(NSString * string,
   NSAssert(editorView, @"computeNewParenthesis: editorView is nil");
   selectedRange = [editorView selectedRange];
 
-  // make sure we un-highlight a previously highlit delimiter
-  //  [self unhighlightCharacter :editorView];
+  // make sure we un-highlit a previously highlit delimiter
+  // should normally be already un-highlit by will change notif.
+  [self unhighlightCharacter :editorView];
 
   // if we have a character at the selected location, check
   // to see if it is a delimiter character
