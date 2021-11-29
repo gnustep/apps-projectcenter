@@ -1,3 +1,16 @@
+2021-11-26 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Do not send double computeNewParenthesisNesting: on key pressed.
+	Furthermore, use a timer so that in case of rapid re-computing
+	it gets invalidated before and only calculated at the last event.
+
+2021-10-19 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Remove insertText and handle keys through appropriate methods (inserTab, cancelOperation)
+
 2021-08-18 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m

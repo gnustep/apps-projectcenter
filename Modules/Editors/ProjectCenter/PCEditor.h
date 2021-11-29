@@ -76,27 +76,20 @@
   NSColor *highlightColor;
   NSColor *backgroundColor;
   NSColor *readOnlyColor;
-  NSColor *textBackground;
-  
-  // location of the highlit delimiter character
-  unsigned int highlitCharacterLocation;
+  NSColor *textBackgroundColor;
 
-  // is YES if we are currently highlighting a delimiter character
-  // otherwise NO
-  BOOL isCharacterHighlit;
-  int  highlited_chars[2];
-
-  // the stored color and font attributes of the highlit character, so
-  // that they can be restored later on when the character is un-highlit
-  NSColor *previousFGColor;
-  NSColor *previousBGColor;
-  NSColor *previousFont;
+  // location of the highlighted delimiter characters
+  // NSNotFound means not set
+  NSUInteger  highlighted_chars[2];
   
   // This is used to protect that -textViewDidChangeSelection: invocations
   // don't do anything when the text view changing, because this causes
   // further changes to the text view and infinite recursive invocations
   // of this method.
   BOOL editorTextViewIsPressingKey;
+
+  // Slightly delay drawing of highlit parentheses
+  NSTimer *phlTimer;
 
   // keep one undo manager for the editor
   NSUndoManager *undoManager;
@@ -154,7 +147,7 @@
 @interface PCEditor (Parenthesis)
 
 - (void)unhighlightCharacter: (NSTextView *)editorView;
-- (void)highlightCharacterAt:(NSUInteger)location inEditor: (NSTextView *)editorView;
+- (void)highlightCharacterPair: (NSTextView *)editorView;
 - (void)computeNewParenthesisNesting: (NSTextView *)editorView;
 
 @end
