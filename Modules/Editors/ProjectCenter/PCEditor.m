@@ -310,7 +310,7 @@
       textBackgroundColor = readOnlyColor;
     }
 
-  textColor = [prefs colorForKey:EditorForegroundColor defaultValue:textColor];
+  ASSIGN(textColor, [prefs colorForKey:EditorForegroundColor defaultValue:textColor]);
 
   [attributes setObject:font forKey:NSFontAttributeName];
   [attributes setObject:textBackgroundColor forKey:NSBackgroundColorAttributeName];
