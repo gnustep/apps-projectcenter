@@ -1,3 +1,9 @@
+2021-11-30 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditorView.h
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	Use a timer also for line calculation and status update.
+
 2021-11-26 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.m

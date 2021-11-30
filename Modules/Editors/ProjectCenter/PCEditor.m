@@ -32,14 +32,17 @@
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCLogController.h>
 
+#import <AppKit/NSFont.h>
 
 @implementation PCEditor (UInterface)
 
 - (void)_createWindow
 {
   unsigned int style;
+  NSRect       winContentRect;
   NSRect       rect;
   float        windowWidth;
+  NSView       *containerView;
 
 //  PCLogInfo(self, @"[_createWindow]");
 
@@ -62,28 +65,41 @@
   [_window setMinSize:NSMakeSize(512,320)];
   [_window setDelegate:self];
   [_window center];
-  rect = [[_window contentView] frame];
+  winContentRect = [[_window contentView] frame];
   
   // Scroll view
-  _extScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  _extScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,16,windowWidth,320-16)];
   [_extScrollView setHasHorizontalScroller:NO];
   [_extScrollView setHasVerticalScroller:YES];
-  [_extScrollView setAutoresizingMask:
-    (NSViewWidthSizable|NSViewHeightSizable)];
+  [_extScrollView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
   rect = [[_extScrollView contentView] frame];
 
-  // Text view
+  // Text view in ScrollView
   _extEditorView = [self _createEditorViewWithFrame:rect];
-
-  // Include editor view
   [_extScrollView setDocumentView:_extEditorView];
-  [_extEditorView setNeedsDisplay:YES];
   RELEASE(_extEditorView);
 
-  // Include scroll view
-  [_window setContentView:_extScrollView];
-  [_window makeFirstResponder:_extEditorView];
+  // Status Line
+  _extStatusField = [[NSTextField alloc] initWithFrame: NSMakeRect(20, 0, winContentRect.size.width, 15)];
+  [_extStatusField setBezeled:NO];
+  [_extStatusField setEditable:NO];
+  [_extStatusField setSelectable:NO];
+  [_extStatusField setDrawsBackground:NO];
+  [_extStatusField setAutoresizingMask: NSViewWidthSizable];
+  [_extStatusField setFont:[NSFont userFixedPitchFontOfSize:10.0]];
+
+  // Container of Scroll + Status Field
+  containerView = [[NSView alloc] initWithFrame:winContentRect];
+  [containerView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
+  [containerView addSubview:_extStatusField];
+  [containerView addSubview:_extScrollView];
   RELEASE(_extScrollView);
+  RELEASE(_extStatusField);
+
+  // Include scroll view
+  [_window setContentView:containerView];
+  [_window makeFirstResponder:_extEditorView];
+  RELEASE(containerView);
 
   // Honor "edited" state
   [_window setDocumentEdited:_isEdited];
@@ -91,10 +107,11 @@
 
 - (void)_createInternalView
 {
-  NSRect rect = NSMakeRect(0,0,512,320);
+  NSRect contRect = NSMakeRect(0,0,512,320);
+  NSRect rect;
 
   // Scroll view
-  _intScrollView = [[NSScrollView alloc] initWithFrame:rect];
+  _intScrollView = [[NSScrollView alloc] initWithFrame:NSMakeRect(0,16,512,320-16)];
   [_intScrollView setHasHorizontalScroller:NO];
   [_intScrollView setHasVerticalScroller:YES];
   [_intScrollView setBorderType:NSBezelBorder];
@@ -104,11 +121,29 @@
   // Text view
   _intEditorView = [self _createEditorViewWithFrame:rect];
 
+  // Status Line
+  _intStatusField = [[NSTextField alloc] initWithFrame:NSMakeRect(20,0,512,15)];
+  [_intStatusField setBezeled:NO];
+  [_intStatusField setEditable:NO];
+  [_intStatusField setSelectable:NO];
+  [_intStatusField setDrawsBackground:NO];
+  [_intStatusField setAutoresizingMask: NSViewWidthSizable];
+  [_intStatusField setFont:[NSFont userFixedPitchFontOfSize:10.0]];
+
+  // Container of Scroll + Status field
+  _containerView = [[NSView alloc] initWithFrame:contRect];
+  [_containerView setAutoresizingMask: (NSViewWidthSizable|NSViewHeightSizable)];
+  [_containerView addSubview:_intStatusField];
+  [_containerView addSubview:_intScrollView];
+  RELEASE(_intStatusField);
+  RELEASE(_intScrollView);
+
+  NSLog(@"%@", _intStatusField);
+  NSLog(@"%@", [_intStatusField superview]);
   /*
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
-  [_intEditorView setNeedsDisplay:YES];
   RELEASE(_intEditorView);
 }
 
@@ -430,7 +465,7 @@
 
 - (NSView *)editorView 
 {
-  if (!_intScrollView)
+  if (!_containerView)
     {
       [self _createInternalView];
     }
@@ -439,11 +474,11 @@
 
 - (NSView *)componentView
 {
-  if (!_intScrollView)
+  if (!_containerView)
     {
       [self _createInternalView];
     }
-  return _intScrollView;
+  return _containerView;
 }
 
 - (NSString *)path
@@ -874,7 +909,7 @@
 {
   if ([sender isEqual:_window])
     {
-      if (_intScrollView) 
+      if (_containerView) 
 	{
 	  // Just close if this file also displayed in int view
 	  _isWindowed = NO;
@@ -965,37 +1000,17 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
   // calculate current line
   if ([object isKindOfClass:[NSTextView class]])
     {
-      NSTextView *tv = (NSTextView *)object;
-      NSString *str = [tv string];
-      NSRange selection;
-      NSUInteger selLine = NSNotFound;
+      if (nil != lsTimer)
+	{
+	  [lsTimer invalidate];
+	  lsTimer = nil;
+	}
 
-      // for speed reasons we cache [NSString characterAtIndex:index]
-      SEL charAtIndexSel = @selector(characterAtIndex:);
-      unichar (*charAtIndexFunc)(NSString *, SEL, NSUInteger);
-      charAtIndexFunc = (unichar (*)())[str methodForSelector:charAtIndexSel]; 
-
-      selection = [tv selectedRange];
-      // now we calculate given the selection the line count, splitting on \n
-      // calling lineRangeForRange / paragraphForRange does the same thing
-      // we want to avoid to scan the string twice
-      {
-        NSUInteger i;
-        unichar ch;
-        NSUInteger nlCount;
-
-        nlCount = 0;
-        for (i = 0; i < selection.location; i++)
-          {
-            // ch = [str characterAtIndex:i];
-            ch = (*charAtIndexFunc)(str, charAtIndexSel, i);
-            if (ch == (unichar)0x000A) // new line
-              nlCount++;
-          }
-
-        selLine = nlCount + 1;
-      }
-      NSLog(@"%u corresponds to %u", (unsigned int)selection.location, (unsigned int)selLine);
+      lsTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+						 target:self
+					       selector:@selector(computeCurrentLineFromTimer:)
+					       userInfo:object
+						repeats:NO];
     }
 }
 
@@ -1049,8 +1064,9 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
   return YES;
 }
 
+
 // ===========================================================================
-// ==== Parser and scrolling
+// ==== Parser and scrolling and Line Status
 // ===========================================================================
 
 // === Scrolling
@@ -1135,6 +1151,52 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
   [_extEditorView goToLineNumber:lineNumber];
   [_intEditorView centerSelectionInVisibleArea: self];
   [_extEditorView centerSelectionInVisibleArea: self];
+}
+
+- (void)computeCurrentLineFromTimer: (NSTimer *)timer
+{
+  lsTimer = nil;
+  [self computeCurrentLine:[timer userInfo]];
+}
+
+- (void)computeCurrentLine: (NSTextView *)editorView
+{
+  NSTextView *tv = editorView;
+  NSString *str = [tv string];
+  NSRange selection;
+  NSUInteger selLine = NSNotFound;
+
+  // for speed reasons we cache [NSString characterAtIndex:index]
+  SEL charAtIndexSel = @selector(characterAtIndex:);
+  unichar (*charAtIndexFunc)(NSString *, SEL, NSUInteger);
+  charAtIndexFunc = (unichar (*)())[str methodForSelector:charAtIndexSel]; 
+
+  selection = [tv selectedRange];
+  // now we calculate given the selection the line count, splitting on \n
+  // calling lineRangeForRange / paragraphForRange does the same thing
+  // we want to avoid to scan the string twice
+  {
+    NSUInteger i;
+    unichar ch;
+    NSUInteger nlCount;
+
+    nlCount = 0;
+    for (i = 0; i < selection.location; i++)
+      {
+	// ch = [str characterAtIndex:i];
+	ch = (*charAtIndexFunc)(str, charAtIndexSel, i);
+	if (ch == (unichar)0x000A) // new line
+	  nlCount++;
+      }
+
+    selLine = nlCount + 1;
+  }
+  NSLog(@"%u corresponds to %u", (unsigned int)selection.location, (unsigned int)selLine);
+  if (selLine != NSNotFound)
+    {
+      [_intStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
+      [_extStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
+    }
 }
 
 @end
