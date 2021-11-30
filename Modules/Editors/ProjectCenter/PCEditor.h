@@ -93,6 +93,9 @@
 
   // keep one undo manager for the editor
   NSUndoManager *undoManager;
+
+  // optimize line status calculations
+  NSTimer *lsTimer;
 }
 
 - (BOOL)editorShouldClose;
@@ -116,13 +119,16 @@
 - (BOOL)resignFirstResponder:(PCEditorView *)view;
 
 // ===========================================================================
-// ==== Parser and scrolling
+// ==== Parser and scrolling and Line Status
 // ===========================================================================
 
 - (void)fileStructureItemSelected:(NSString *)item;  // CodeEditor protocol
 - (void)scrollToClassName:(NSString *)className;
 - (void)scrollToMethodName:(NSString *)methodName;
 - (void)scrollToLineNumber:(NSUInteger)lineNumber; // CodeEditor protocol
+
+- (void)computeCurrentLineFromTimer: (NSTimer *)timer;
+- (void)computeCurrentLine: (NSTextView *)editorView;
 
 @end
 
