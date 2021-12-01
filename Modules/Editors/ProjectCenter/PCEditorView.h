@@ -4,7 +4,7 @@
     Interface declaration of the EditorTextView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2016 Free Software Foundation
+    Copyright (C) 2005-2021 Free Software Foundation
       Saso Kiselkov
       Riccardo Mottola
 
@@ -30,11 +30,13 @@
 @class NSColor;
 @class PCEditor;
 @class SyntaxHighlighter;
+@class NSTimer;
 
 @interface PCEditorView : NSTextView <CodeEditorView>
 {
   PCEditor          *editor;
   SyntaxHighlighter *highlighter;
+  NSTimer           *hlTimer;
 }
 
 + (NSFont *)defaultEditorFont;

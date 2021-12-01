@@ -117,30 +117,6 @@ RangeOfWordInString(NSString * string, NSRange startRange)
   }
 }
 
-static inline BOOL
-LocateString(NSString * str,
-             unichar * buf,
-             NSUInteger length,
-             NSUInteger offset)
-{
-  NSUInteger i, n;
-
-  for (i = 0, n = [str length]; i < n; i++)
-    {
-      if (i >= length)
-        {
-          return NO;
-        }
-
-      if (buf[i + offset] != [str characterAtIndex: i])
-        {
-          return NO;
-        }
-    }
-
-  return YES;
-}
-
 @interface SyntaxHighlighter (Private)
 
 - (void) fixUpContextsInRange: (NSRange) r;

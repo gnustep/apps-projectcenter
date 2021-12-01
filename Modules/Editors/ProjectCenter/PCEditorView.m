@@ -4,7 +4,7 @@
     Implementation of the PCEditorView class for the
     ProjectManager application.
 
-    Copyright (C) 2005-2020 Free Software Foundation
+    Copyright (C) 2005-2021 Free Software Foundation
       Saso Kiselkov
       Serg Stoyan
       Riccardo Mottola
@@ -46,6 +46,8 @@
 #import "SyntaxHighlighter.h"
 #import "LineJumper.h"
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
+
+#define SYNTAX_HL_DELAY 0.05
 
 /**
  * Computes the indenting offset of the last line before the passed
@@ -475,15 +477,38 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   if (highlighter)
     {
       NSRange drawnRange;
+      NSValue *timerInfo;
 
       drawnRange = [[self layoutManager] 
 	glyphRangeForBoundingRect:r inTextContainer:[self textContainer]];
       drawnRange = [[self layoutManager] characterRangeForGlyphRange:drawnRange
                                                     actualGlyphRange:NULL];
-      [highlighter highlightRange:drawnRange];
+
+      timerInfo = [NSValue valueWithRange:drawnRange];
+
+      if (nil != hlTimer)
+	{
+	  [hlTimer invalidate];
+	  hlTimer = nil;
+	}
+
+      hlTimer = [NSTimer scheduledTimerWithTimeInterval:SYNTAX_HL_DELAY
+						 target:self
+					       selector:@selector(highlightRangeFromTimer:)
+					       userInfo:timerInfo
+						repeats:NO];
     }
 
   [super drawRect:r];
+}
+
+- (void)highlightRangeFromTimer:(NSTimer *)t
+{
+  NSRange range;
+
+  range = [(NSValue *)[t userInfo] rangeValue];
+  hlTimer = nil;
+  [highlighter highlightRange:range];
 }
 
 - (void)createSyntaxHighlighterForFileType:(NSString *)fileType

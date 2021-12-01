@@ -34,6 +34,9 @@
 
 #import <AppKit/NSFont.h>
 
+#define PARENTHESIS_HL_DELAY     0.1
+#define STATUS_LINE_UPDATE_DELAY 0.1
+
 @implementation PCEditor (UInterface)
 
 - (void)_createWindow
@@ -177,6 +180,7 @@
   if (_highlightSyntax)
     {
       [ev createSyntaxHighlighterForFileType:[_path pathExtension]];
+      [[ev textStorage] setFont:[ev editorFont]];
     }
 
   [ev setMinSize:NSMakeSize(0, 0)];
@@ -1006,7 +1010,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 	  lsTimer = nil;
 	}
 
-      lsTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+      lsTimer = [NSTimer scheduledTimerWithTimeInterval:STATUS_LINE_UPDATE_DELAY
 						 target:self
 					       selector:@selector(computeCurrentLineFromTimer:)
 					       userInfo:object
@@ -1034,7 +1038,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 	  phlTimer = nil;
 	}
 
-      phlTimer = [NSTimer scheduledTimerWithTimeInterval:0.1
+      phlTimer = [NSTimer scheduledTimerWithTimeInterval:PARENTHESIS_HL_DELAY
 						  target:self
 						selector:@selector(computeNewParenthesisNestingFromTimer:)
 						userInfo:sender
