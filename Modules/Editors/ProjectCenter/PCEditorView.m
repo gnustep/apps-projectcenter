@@ -185,8 +185,6 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 	}
     }
 
-  NSLog(@"index: %li start: %li", index, line_start);
-
   return line_start > index ? index : line_start;
 }
 
@@ -204,8 +202,6 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 	}
     }
 
-  NSLog(@"index: %li end: %li", (long)index, (long)line_end);
-
   return line_end < string_length ? line_end : string_length;
 }
 
@@ -217,8 +213,6 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   cur_line_start = [self lineStartIndexForIndex:index forString:string];
   prev_line_start = [self lineStartIndexForIndex:cur_line_start-1
  				       forString:string];
-
-  NSLog(@"index: %li prev_start: %li", (long)index, (long)prev_line_start);
 
   return prev_line_start;
 }

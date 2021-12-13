@@ -141,8 +141,6 @@
   RELEASE(_intStatusField);
   RELEASE(_intScrollView);
 
-  NSLog(@"%@", _intStatusField);
-  NSLog(@"%@", [_intStatusField superview]);
   /*
    * Setting up ext view / scroll view / window
    */
@@ -722,7 +720,6 @@
 	}
       else if (choice == NSAlertAlternateReturn)
 	{
-	  NSLog(@"Self");
 	  if ([self revertFileToSaved] == YES)
 	    return NO;
 	  NSLog(@"reload failed");
@@ -1195,7 +1192,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
     selLine = nlCount + 1;
   }
-  NSLog(@"%u corresponds to %u", (unsigned int)selection.location, (unsigned int)selLine);
+
   if (selLine != NSNotFound)
     {
       [_intStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
