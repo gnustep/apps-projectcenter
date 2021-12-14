@@ -1,11 +1,19 @@
 {
     "## Comment" = "Do NOT change this file, Gorm maintains it";
+    FirstResponder = {
+	Actions = (
+	    "showInfoWindow:"
+	);
+	Super = NSObject;
+    };
     PCInfoController = {
 	Actions = (
+	    "showInfoWindow:"
 	);
 	Outlets = (
 	    infoWindow,
-	    versionField
+	    versionField,
+	    copyrightField
 	);
 	Super = NSObject;
     };

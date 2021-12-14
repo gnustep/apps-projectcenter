@@ -43,6 +43,7 @@
 	  return nil;
 	}
       [versionField setStringValue:[NSString stringWithFormat:@"Version %@", [infoDict objectForKey:@"ApplicationRelease"]]];
+      [copyrightField setStringValue:[infoDict objectForKey:@"Copyright"]];
       [infoWindow center];
     }
 

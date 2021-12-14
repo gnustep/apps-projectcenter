@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001 Free Software Foundation
+   Copyright (C) 2001-2021 Free Software Foundation
 
    This file is part of GNUstep.
 
@@ -28,7 +28,8 @@
 @interface PCInfoController : NSObject
 {
   id infoWindow;
-  id versionField;
+  IBOutlet NSTextField* versionField;
+  IBOutlet NSTextField* copyrightField;
   NSDictionary *infoDict;
 }
 
