@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2001-2017 Free Software Foundation
+   Copyright (C) 2001-2022 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -252,8 +252,9 @@
     [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
 
   // Help file if present
-  if ([projectDict objectForKey:PCHelpFile])
-    [infoDict setObject:[projectDict objectForKey:@"GSHelpContentsFile"] forKey:@"GSHelpContentsFile"];
+  helpFile = [projectDict objectForKey:@"GSHelpContentsFile"];
+  if (helpFile)
+    [infoDict setObject:helpFile forKey:@"GSHelpContentsFile"];
 
   // Write to ProjectNameInfo.plist
   _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
