@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2021 Free Software Foundation
+   Copyright (C) 2000-2022 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -353,8 +353,6 @@ static PCFileManager *_mgr = nil;
       while (nil != (candidate = [candidateEnumerator nextObject]))
         {
           NSString *path = [directory stringByAppendingPathComponent: candidate];
-
-          NSLog(@"final candidate path is: %@", path);
           
           if ([manager isExecutableFileAtPath: path])
 	    {
