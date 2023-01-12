@@ -41,6 +41,7 @@
 
 - (void)_createWindow
 {
+  NSScrollView    *_extScrollView;
   unsigned int style;
   NSRect       winContentRect;
   NSRect       rect;
@@ -110,6 +111,7 @@
 
 - (void)_createInternalView
 {
+  NSScrollView    *_intScrollView;
   NSRect contRect = NSMakeRect(0,0,512,320);
   NSRect rect;
 
@@ -235,9 +237,7 @@
 {
   if ((self = [super init]))
     {
-      _extScrollView = nil;
       _extEditorView = nil;
-      _intScrollView = nil;
       _intEditorView = nil;
       _storage = nil;
       _categoryPath = nil;
@@ -281,7 +281,6 @@
   // _window is setReleasedWhenClosed:YES
   RELEASE(_path);
   RELEASE(_categoryPath);
-  RELEASE(_intScrollView);
   RELEASE(_storage);
   RELEASE(_window);
 

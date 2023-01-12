@@ -1,3 +1,11 @@
+2022-01-12 Riccardo Mottola <rm@gnu.org>
+
+	* Modules/Editors/ProjectCenter/PCEditor.h
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	Reduce scope of _extScrollView _intScrollView from ivar to local
+	variables, release after setting to content view and fix
+	double-release of _intScrollView.
+
 2021-11-30 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditorView.h
