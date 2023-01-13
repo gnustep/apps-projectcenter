@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2005-2018 Free Software Foundation
+   Copyright (C) 2005-2023 Free Software Foundation
 
    Authors: Serg Stoyan
             Riccardo Mottola
@@ -319,11 +319,11 @@
   [mff appendString:@"\n#\n# AutoGSDoc\n#\n"];
   [mff appendString: [NSString stringWithFormat:@"DOCUMENT_NAME = %@\n\n", projectName]];
   [mff appendString: [NSString stringWithFormat:@"%@_AGSDOC_FILES = %@.gsdoc \\\n", 
-                              projectName, projectName]];
+			       projectName, projectName]];
   [mff appendString: [NSString stringWithFormat:@"\t$(%@_HEADER_FILES) \\\n", 
-                              projectName, projectName]];
+                              projectName]];
   [mff appendString: [NSString stringWithFormat:@"\t$(%@_OBJC_FILES) \\\n", 
-                              projectName, projectName]];
+                              projectName]];
   [mff appendString: [NSString stringWithFormat:@"\n\n%@_AGSDOC_FLAGS += -MakeFrames YES\n", projectName]];
 }
 
