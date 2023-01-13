@@ -67,7 +67,7 @@ ParseTextPatternItem (NSString *string, unsigned int *index)
                     {
                       NSLog(_(@"Text pattern item parse error in text "
                         @"pattern \"%@\" at index %i: unexpected end of "
-                        @"pattern. Escape sequence expected."), string);
+			      @"pattern. Escape sequence expected."), string, i);
 
                       free (buf);
                       free (newItem);
@@ -126,7 +126,7 @@ ParseTextPatternItem (NSString *string, unsigned int *index)
           {
             NSLog(_(@"Text pattern item parse error in text pattern "
               @"\"%@\" at index %i: unexpected end of pattern. Escape "
-              @"sequence expected."), string);
+		    @"sequence expected."), string, i);
 
             free (newItem);
             return NULL;
@@ -172,8 +172,8 @@ ParseTextPatternItem (NSString *string, unsigned int *index)
               if (![scanner scanInt: &value])
                 {
                   NSLog(_(@"Text pattern item parse error in text pattern "
-                    @"\"%@\" at index %i: integer expected."), string,
-                    [scanner scanLocation]);
+                    @"\"%@\" at index %li: integer expected."), string,
+			(long int)[scanner scanLocation]);
 
                   FreeTextPatternItem(newItem);
 
@@ -198,8 +198,8 @@ ParseTextPatternItem (NSString *string, unsigned int *index)
                   if (![scanner scanInt: &value])
                     {
                       NSLog(_(@"Text pattern item parser error in text "
-                        @"pattern \"%@\" at index %i: integer expected."),
-                        string, [scanner scanLocation]);
+                        @"pattern \"%@\" at index %li: integer expected."),
+			    string, (long int)[scanner scanLocation]);
     
                       FreeTextPatternItem(newItem);
 
