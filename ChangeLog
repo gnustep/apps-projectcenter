@@ -1,3 +1,9 @@
+2022-01-13 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectInspector.m
+	Don't assign nil, it is useless, just destroy it: retaining nil is
+	useless.
+
 2022-01-12 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.h
