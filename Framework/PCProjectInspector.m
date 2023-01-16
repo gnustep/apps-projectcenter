@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2021 Free Software Foundation
+   Copyright (C) 2000-2023 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -429,7 +429,7 @@
     }
   else  
     {
-      ASSIGN(searchItems,nil);
+      DESTROY(searchItems);
     }
 
   [searchOrderList reloadData];

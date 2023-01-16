@@ -339,7 +339,7 @@ static NSMutableDictionary * syntaxDefinitions = nil;
                   NSLog(_(@"Missing keyword pattern declaration "
                           @"in context %i keyword %i. Ignoring all the "
                           @"remaining of the keywords in this context."),
-                          i, j);
+			  (int)i, (int)j);
                   break;
                 }
               pattern = CompileTextPattern(keywordString);
