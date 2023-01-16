@@ -1,3 +1,8 @@
+2022-01-16 Riccardo Mottola <rm@gnu.org>
+
+	* Framework/PCProjectWindow.m
+	nil the delegates of the split-view, avoid a crash on close window.
+
 2022-01-12 Riccardo Mottola <rm@gnu.org>
 
 	* Modules/Editors/ProjectCenter/PCEditor.h

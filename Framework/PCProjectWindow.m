@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2014 Free Software Foundation
+   Copyright (C) 2000-2023 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+	    Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -260,6 +261,8 @@
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
+  [h_split setDelegate:nil];
+  [v_split setDelegate:nil];
   [projectWindow close];
 
   [super dealloc];
