@@ -301,7 +301,9 @@ static NSDictionary  *dict = nil;
         if ([allowedCharacters characterIsMember:character])
           {
             [sanitizedString appendFormat:@"%C", character];
-          } else {
+          }
+        else
+          {
             [sanitizedString appendString:@"_"];
           }
       }
