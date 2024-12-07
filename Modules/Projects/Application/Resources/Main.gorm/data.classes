@@ -5,6 +5,7 @@
 	    "showPrefPanel:"
 	);
 	Outlets = (
+	    "_window"
 	);
 	Super = NSObject;
     };
