@@ -159,6 +159,10 @@
   return self;
 }
 
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  return self;
+}
+
 @end
 
 @implementation PCBundleProject (GeneratedFiles)

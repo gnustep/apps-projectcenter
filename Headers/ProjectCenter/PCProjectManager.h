@@ -143,6 +143,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath;
 - (void)newProject: (id)sender;
+- (void)newProjectFromSources: (id)sender;
 - (BOOL)saveProject;
 
 // Calls saveAllProjects if the preferences are setup accordingly.

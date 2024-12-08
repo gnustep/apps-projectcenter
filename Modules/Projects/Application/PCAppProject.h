@@ -103,6 +103,7 @@
 - (void)dealloc;
 
 - (PCProject *)createProjectAt:(NSString *)path withOption:(NSString *)projOption;
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption;
 
 @end
 

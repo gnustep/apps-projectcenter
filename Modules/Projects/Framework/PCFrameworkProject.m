@@ -151,6 +151,10 @@
   return self;
 }
 
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  return self;
+}
+
 // ----------------------------------------------------------------------------
 // --- File Handling
 // ----------------------------------------------------------------------------

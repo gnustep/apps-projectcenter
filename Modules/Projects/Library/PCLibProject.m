@@ -200,6 +200,10 @@
   return success;
 }
 
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  return self;
+}
+
 @end
 
 @implementation PCLibProject (GeneratedFiles)

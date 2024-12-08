@@ -32,13 +32,15 @@
 @class PCProject;
 @class PCProjectManager;
 @class PCAddFilesPanel;
+@class PCNewProjectFromSourcesPanel;
 
 enum {
     PCOpenFileOperation,
     PCSaveFileOperation,
     PCAddFileOperation,
     PCOpenProjectOperation,
-    PCOpenDirectoryOperation
+    PCOpenDirectoryOperation,
+    PCNewProjectFromSourcesOperation
 };
 
 @interface PCFileManager : NSObject
@@ -56,6 +58,7 @@ enum {
   IBOutlet NSButton      *nfCreateButton;
 
   PCAddFilesPanel        *addFilesPanel;
+  PCNewProjectFromSourcesPanel *newProjectFromSourcesPanel;
 
   int                    operation;
 }
@@ -114,6 +117,15 @@ enum {
 
 // find an executable from list and return full path
 - (NSString*) findExecutableToolFrom: (NSArray*)candidates;
+
+// find all source files with a main function
+- (NSArray*) findSourcesWithMain: (NSString*)path;
+
+// return the strings in the argument that end in .m
+- (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not;
+
+// find all files in the path with the passed in extensions array
+- (NSArray*) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions;
 
 @end
 

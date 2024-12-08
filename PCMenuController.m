@@ -109,6 +109,11 @@
   [projectManager newProject: sender];
 }
 
+- (void)projectNewFromSources:(id)sender
+{
+  [projectManager newProjectFromSources: sender];
+}
+
 - (void)projectSave:(id)sender
 {
   [projectManager saveProject];

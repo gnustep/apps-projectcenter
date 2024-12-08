@@ -203,6 +203,24 @@
   return self;
 }
 
+
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+
+  NSAssert(path,@"No valid project path provided!");
+
+  NSBundle *projectBundle = [NSBundle bundleForClass:[self class]];
+  
+  NSString *_file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  // search for files to add to the project
+
+  
+  return self;
+}
+
 //----------------------------------------------------------------------------
 // --- PCProject overridings
 //----------------------------------------------------------------------------

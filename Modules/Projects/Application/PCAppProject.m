@@ -274,6 +274,51 @@
   return self;
 }
 
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
+  NSString       *_file = nil;
+  NSString       *_2file = nil;
+  NSString       *_resourcePath = nil;
+  NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
+  NSString       *mainNibFile = nil;
+  NSMutableArray *_array = nil;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  // PC.project
+  _file = [projBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName: [path lastPathComponent]];
+
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+		  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // search for the main function in source files
+  NSArray *srcFilesWithMain = [pcfm findSourcesWithMain: path];
+  NSArray* objcFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:false];
+  NSArray* regularFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:true];
+
+  [projectDict setObject: objcFilesWithMain forKey: PCClasses];
+  [projectDict setObject:regularFilesWithMain forKey:PCOtherSources];
+  
+  // search for all .m and ,h files and add them to the project
+  return self;
+}
+
 // ----------------------------------------------------------------------------
 // --- PCProject overridings
 // ----------------------------------------------------------------------------

@@ -131,6 +131,11 @@
   return self;
 }
 
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  NSAssert(path,@"No valid project path provided!");
+  return self;
+}
+
 @end
 
 @implementation PCAggregateProject (GeneratedFiles)

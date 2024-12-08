@@ -811,6 +811,51 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return project;
 }
 
+- (PCProject *)createProjectFromSourcesOfType:(NSString *)projectType 
+                                         path:(NSString *)aPath
+{
+  NSString               *className = [projectTypes objectForKey:projectType];
+  PCProject<ProjectType> *projectCreator;
+  PCProject              *project = nil;
+  NSString               *subType = nil;
+ 
+  if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) != nil)
+    {
+      [[project projectWindow] makeKeyAndOrderFront:self];
+      return project;
+    }
+
+  if ([projectType isEqualToString:@"Application"])
+    subType = PCProjectInterfaceGorm;
+ 
+  projectCreator = [bundleManager objectForClassName:className 
+					  bundleType:@"project"
+					    protocol:@protocol(ProjectType)];
+  //  NSLog(@"%@ CLASS: %@", className, projectCreator);
+  if (!projectCreator)
+    {
+      NSRunAlertPanel(@"New Project",
+		      @"Could not create project directory %@.\n"
+		      @"No project creator. Report the bug, please!",
+		      @"OK", nil, nil, aPath); 
+      return nil;
+    }
+
+  // Create project
+  if (!(project = [projectCreator createProjectFromSourcesAt:aPath withOption:subType])) 
+    {
+      NSRunAlertPanel(@"New Project",
+		      @"Project %@ could not be created.\nReport bug, please!",
+		      @"OK",nil,nil,[project projectName]); 
+      return nil;
+    }
+
+  [project setProjectManager:self];
+  [self startSaveTimer];
+
+  return project;
+}
+
 - (void)newProject: (id)sender
 {
   NSArray   *files, *types = nil;
@@ -865,6 +910,59 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [[project projectWindow] orderFront:self];
     }
 }
+
+- (void)newProjectFromSources: (id)sender
+{
+  NSArray   *files, *types = nil;
+  NSString  *filePath;
+  NSString  *projectType;
+  PCProject *project;
+  NSString  *projectPath;
+
+  [self createProjectTypeAccessaryView];
+
+  files = [fileManager filesOfTypes:types
+			  operation:PCNewProjectFromSourcesOperation
+			   multiple:NO
+			      title:@"New Project From Sources"
+			    accView:projectTypeAccessaryView];
+
+  filePath = [files objectAtIndex:0];
+
+
+#ifdef WIN32
+  filePath = [filePath stringByDeletingPathExtension];
+#endif
+
+  if (filePath != nil) 
+    {
+      if ([filePath rangeOfString: @" "].location != NSNotFound ||
+	  [filePath rangeOfString: @"\t"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\r"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\n"].location != NSNotFound)
+	{
+	  if (NSRunAlertPanel 
+	      (@"New Project",
+	       @"Are you sure you want to create a project with whitespace in it's path?\n"
+	       @"GNUstep's build environment currently can't handle that reliably.",
+	       @"OK", @"Cancel", nil) != NSAlertDefaultReturn)
+	    {
+	      return;
+	    }
+	}
+      
+      projectType = [projectTypePopup titleOfSelectedItem];
+
+      if (!(project = [self createProjectFromSourcesOfType:projectType path:filePath]))
+	{
+	  // No need to open alert panel. Alert panel was already opened
+	  // in createProjectOfType:path: method.
+	  return;
+	}
+    }
+}
+
+- (void)testMethod { }
 
 - (BOOL)saveProject
 {

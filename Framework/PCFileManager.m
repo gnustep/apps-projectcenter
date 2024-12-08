@@ -31,6 +31,7 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCAddFilesPanel.h>
+#import <ProjectCenter/PCNewProjectFromSourcesPanel.h>
 
 #import <Protocols/Preferences.h>
 #import <ProjectCenter/PCLogController.h>
@@ -353,6 +354,8 @@ static PCFileManager *_mgr = nil;
       while (nil != (candidate = [candidateEnumerator nextObject]))
         {
           NSString *path = [directory stringByAppendingPathComponent: candidate];
+
+          NSLog(@"final candidate path is: %@", path);
           
           if ([manager isExecutableFileAtPath: path])
 	    {
@@ -363,6 +366,75 @@ static PCFileManager *_mgr = nil;
   return nil;
 }
 
+- (NSArray*) findSourcesWithMain: (NSString*)path
+{
+  NSFileManager *manager;
+  manager = [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *filesInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+  const id extsToSearchArr[] = {@"c", @"m"}; 
+  NSArray *extsToSearch = [NSArray arrayWithObjects: extsToSearchArr  count: 2 ];
+  NSMutableArray *filesFound = [[NSMutableArray alloc] init];
+  NSString* searchPattern = @"\\s*\\w\\s+main\\s*\\([^\\)]*\\).*";
+
+  int index;
+  for (index = 0; index < [filesInPath count]; index++)
+    {
+    NSString *filePath = [filesInPath objectAtIndex: index];
+    NSString *pathExt = [filePath pathExtension];
+    if ([extsToSearch containsObject: pathExt])
+      {
+      NSString *fileContents = [NSString stringWithContentsOfFile: [NSString stringWithFormat: @"%@/%@",path, filePath]];
+      NSRegularExpression *mainRegex = [NSRegularExpression regularExpressionWithPattern: searchPattern options:0 error: &error];
+      NSUInteger numberOfMatches = [mainRegex numberOfMatchesInString: fileContents options:0 range: NSMakeRange(0, [fileContents length])];
+      if (numberOfMatches > 0)
+      {
+	[filesFound addObject: filePath];
+      }
+    }
+  }
+  return filesFound;
+}
+
+- (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not
+{
+  NSMutableArray* result = [[NSMutableArray alloc] init];
+  int counter;
+  for (counter = 0; counter < [filenames count]; counter++)
+    {
+      NSString *filename = [filenames objectAtIndex: counter];
+       if ([filename hasSuffix: suffix] && !not)
+	 {
+	   [result addObject: [filenames objectAtIndex: counter]];
+	 }
+       else if (not && ![filename hasSuffix: suffix])
+	 {
+	   [result addObject: [filenames objectAtIndex: counter]];
+	 }
+    }
+  return result;
+}
+
+
+- (NSArray*) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions {
+
+  NSMutableArray *filesFound = [[NSMutableArray alloc] init];
+
+  NSFileManager *manager= [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *filesInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+
+  int index;
+  for (index = 0; index < [filesInPath count]; index++) {
+    NSString *filePath = [filesInPath objectAtIndex: index];
+    NSString *pathExt = [filePath pathExtension];
+    if ([extensions containsObject: pathExt]) {
+      [filesFound addObject: filePath];
+    }
+  }
+
+  return filesFound;
+}
 
 @end
 
@@ -421,6 +493,16 @@ static PCFileManager *_mgr = nil;
 	  NSString *prPathRoot = [pr projectPath];
 	  lastOpenDir = prPathRoot;
 	}
+      break;
+    case PCNewProjectFromSourcesOperation:
+      if (newProjectFromSourcesPanel == nil)
+	{
+	  newProjectFromSourcesPanel = [PCNewProjectFromSourcesPanel addProjectPanel];
+	  [newProjectFromSourcesPanel setAccessaryView: accessoryView];
+	  [newProjectFromSourcesPanel setTreatsFilePackagesAsDirectories: YES];
+	}
+      panel = newProjectFromSourcesPanel;
+      lastOpenDir = [prefs stringForKey:@"projectnewfromsourcesLasDirectory"];
       break;
     default:
       return nil;
@@ -522,6 +604,18 @@ static PCFileManager *_mgr = nil;
 	  [fileList addObjectsFromArray:[panel filenames]];
 	}
     }
+  else if (op == PCNewProjectFromSourcesOperation) {
+      NSString  *selectedProjectType = nil;
+      /*
+      [panel setCategories:[project rootCategories]];
+      selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
+      [panel selectCategory:selectedCategory];
+      */
+      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
+	{
+	  [fileList addObjectsFromArray:[panel filenames]];
+	}
+  }    
 
   if (result == NSOKButton)
     {
