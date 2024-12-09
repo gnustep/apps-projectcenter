@@ -31,6 +31,7 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCAddFilesPanel.h>
+// dlsa - addFromSources
 #import <ProjectCenter/PCNewProjectFromSourcesPanel.h>
 
 #import <Protocols/Preferences.h>

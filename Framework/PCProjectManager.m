@@ -811,6 +811,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return project;
 }
 
+// dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesOfType:(NSString *)projectType 
                                          path:(NSString *)aPath
 {
@@ -911,6 +912,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     }
 }
 
+// dlsa - addFromSources
 - (void)newProjectFromSources: (id)sender
 {
   NSArray   *files, *types = nil;

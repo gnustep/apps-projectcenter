@@ -274,6 +274,7 @@
   return self;
 }
 
+// dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];
@@ -312,6 +313,13 @@
   NSArray* objcFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:false];
   NSArray* regularFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:true];
 
+  if (DLSA_DEBUG) {
+    int srcFilesWithMainCount = [srcFilesWithMain count];
+    int objcFilesWithMainCount = [objcFilesWithMain count];
+    int regularFilesWithMainCount = [regularFilesWithMain count];
+    printf("dummy print\n");
+  }
+  
   [projectDict setObject: objcFilesWithMain forKey: PCClasses];
   [projectDict setObject:regularFilesWithMain forKey:PCOtherSources];
   

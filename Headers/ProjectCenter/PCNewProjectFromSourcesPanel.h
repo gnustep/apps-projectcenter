@@ -27,6 +27,7 @@
 
 #import <AppKit/AppKit.h>
 
+// dlsa - addFromSources
 @interface PCNewProjectFromSourcesPanel : NSOpenPanel
 {
   NSView	*projectTypeAccessaryView;

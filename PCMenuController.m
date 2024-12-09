@@ -108,7 +108,7 @@
 {
   [projectManager newProject: sender];
 }
-
+// dlsa - addFromSources
 - (void)projectNewFromSources:(id)sender
 {
   [projectManager newProjectFromSources: sender];

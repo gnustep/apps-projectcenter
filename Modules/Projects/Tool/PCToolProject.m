@@ -204,6 +204,7 @@
 }
 
 
+// dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];

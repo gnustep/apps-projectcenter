@@ -45,6 +45,7 @@
 - (id)init;
 
 - (PCProject *)createProjectAt:(NSString *)path;
+// dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption;
 
 @end

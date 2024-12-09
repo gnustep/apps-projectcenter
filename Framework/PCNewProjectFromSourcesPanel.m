@@ -27,6 +27,7 @@
 
 static PCNewProjectFromSourcesPanel *newProjectPanel = nil;
 
+// dlsa - addFromSources
 @implementation PCNewProjectFromSourcesPanel
 
 + (PCNewProjectFromSourcesPanel *)addProjectPanel

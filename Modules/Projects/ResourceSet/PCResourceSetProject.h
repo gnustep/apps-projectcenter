@@ -49,6 +49,7 @@
 - (void)dealloc;
 
 - (PCProject *)createProjectAt:(NSString *)path withOption:projOption;
+// dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption;
 
 @end

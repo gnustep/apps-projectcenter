@@ -1,4 +1,4 @@
 #!/bin/bash
 
-/usr/bin gpbs
+/usr/bin/gpbs
 

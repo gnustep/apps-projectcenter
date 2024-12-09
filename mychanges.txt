@@ -1,0 +1,38 @@
+./Framework/derived_src/NSFramework_ProjectCenter.m:static NSString *allClasses[] = {@"PCBundleManager", @"PCEditorManager", @"PCMakefileFactory", @"PCFileManager", @"PCAddFilesPanel", @"PCNewProjectFromSourcesPanel", @"PCFileCreator", @"PCSaveModified", @"PCProjectManager", @"PCProject", @"PCProjectWindow", @"PCProjectInspector", @"PCProjectBuilder", @"PCProjectBuilderOptions", @"PCProjectBuilderPanel", @"PCProjectLauncher", @"PCProjectLauncherPanel", @"PCProjectEditor", @"PCProjectBrowser", @"PCProjectLoadedFiles", @"PCProjectLoadedFilesPanel", @"PCButton", @"PCFileNameField", @"PCFileNameIcon", @"PCLogController", @"PCAuxiliaryWindow", NULL};
+./Framework/PCProjectManager.m:// dlsa - addFromSources
+./Framework/PCProjectManager.m:- (PCProject *)createProjectFromSourcesOfType:(NSString *)projectType 
+./Framework/PCProjectManager.m:  if (!(project = [projectCreator createProjectFromSourcesAt:aPath withOption:subType])) 
+./Framework/PCProjectManager.m:// dlsa - addFromSources
+./Framework/PCProjectManager.m:- (void)newProjectFromSources: (id)sender
+./Framework/PCProjectManager.m:			  operation:PCNewProjectFromSourcesOperation
+./Framework/PCProjectManager.m:      if (!(project = [self createProjectFromSourcesOfType:projectType path:filePath]))
+./Framework/PCNewProjectFromSourcesPanel.m:#import <ProjectCenter/PCNewProjectFromSourcesPanel.h>
+./Framework/PCNewProjectFromSourcesPanel.m:static PCNewProjectFromSourcesPanel *newProjectPanel = nil;
+./Framework/PCNewProjectFromSourcesPanel.m:// dlsa - addFromSources
+./Framework/PCNewProjectFromSourcesPanel.m:@implementation PCNewProjectFromSourcesPanel
+./Framework/PCNewProjectFromSourcesPanel.m:+ (PCNewProjectFromSourcesPanel *)addProjectPanel
+./Framework/PCFileManager.m:// dlsa - addFromSources
+./Framework/PCFileManager.m:#import <ProjectCenter/PCNewProjectFromSourcesPanel.h>
+./Framework/PCFileManager.m:    case PCNewProjectFromSourcesOperation:
+./Framework/PCFileManager.m:      if (newProjectFromSourcesPanel == nil)
+./Framework/PCFileManager.m:	  newProjectFromSourcesPanel = [PCNewProjectFromSourcesPanel addProjectPanel];
+./Framework/PCFileManager.m:	  [newProjectFromSourcesPanel setAccessaryView: accessoryView];
+./Framework/PCFileManager.m:	  [newProjectFromSourcesPanel setTreatsFilePackagesAsDirectories: YES];
+./Framework/PCFileManager.m:      panel = newProjectFromSourcesPanel;
+./Framework/PCFileManager.m:  else if (op == PCNewProjectFromSourcesOperation) {
+./Modules/Projects/Framework/PCFrameworkProject.m:// dlsa - addFromSources
+./Modules/Projects/Framework/PCFrameworkProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/Aggregate/PCAggregateProject.m:// dlsa - addFromSources
+./Modules/Projects/Aggregate/PCAggregateProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/ResourceSet/PCResourceSetProject.m:// dlsa - addFromSources
+./Modules/Projects/ResourceSet/PCResourceSetProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/Tool/PCToolProject.m:// dlsa - addFromSources
+./Modules/Projects/Tool/PCToolProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/Application/PCAppProject.m:// dlsa - addFromSources
+./Modules/Projects/Application/PCAppProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/Bundle/PCBundleProject.m:// dlsa - addFromSources
+./Modules/Projects/Bundle/PCBundleProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./Modules/Projects/Library/PCLibProject.m:// dlsa - addFromSources
+./Modules/Projects/Library/PCLibProject.m:- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+./PCMenuController.m:- (void)projectNewFromSources:(id)sender
+./PCMenuController.m:  [projectManager newProjectFromSources: sender];

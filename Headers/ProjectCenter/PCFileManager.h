@@ -58,6 +58,7 @@ enum {
   IBOutlet NSButton      *nfCreateButton;
 
   PCAddFilesPanel        *addFilesPanel;
+  // dlsa - addFromSources
   PCNewProjectFromSourcesPanel *newProjectFromSourcesPanel;
 
   int                    operation;

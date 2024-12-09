@@ -143,6 +143,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath;
 - (void)newProject: (id)sender;
+// dlsa - addFromSources
 - (void)newProjectFromSources: (id)sender;
 - (BOOL)saveProject;
 
