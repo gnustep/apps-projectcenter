@@ -367,6 +367,7 @@ static PCFileManager *_mgr = nil;
   return nil;
 }
 
+// dlsa - create from sources
 - (NSArray*) findSourcesWithMain: (NSString*)path
 {
   NSFileManager *manager;
@@ -397,6 +398,7 @@ static PCFileManager *_mgr = nil;
   return filesFound;
 }
 
+// dlsa - create from sources
 - (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not
 {
   NSMutableArray* result = [[NSMutableArray alloc] init];
@@ -416,11 +418,12 @@ static PCFileManager *_mgr = nil;
   return result;
 }
 
+// dlsa - create from sources
+- (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions into: (NSMutableArray*)filesFound {
 
-- (NSArray*) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions {
-
-  NSMutableArray *filesFound = [[NSMutableArray alloc] init];
-
+  if (nil == filesFound) {
+    return;
+  }
   NSFileManager *manager= [NSFileManager defaultManager];
   NSError *error;
   NSArray *filesInPath = [manager contentsOfDirectoryAtPath:path error:&error];
@@ -428,9 +431,18 @@ static PCFileManager *_mgr = nil;
   int index;
   for (index = 0; index < [filesInPath count]; index++) {
     NSString *filePath = [filesInPath objectAtIndex: index];
-    NSString *pathExt = [filePath pathExtension];
-    if ([extensions containsObject: pathExt]) {
-      [filesFound addObject: filePath];
+    NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
+    NSString *fullFilePath = [NSString pathWithComponents: pathComps];
+    BOOL isDirectory = NO;
+    [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
+    if (!isDirectory) {
+    /*
+      [self findFilesAt: fullFilePath withExtensions: extensions into: filesFound];
+      } else {*/
+      NSString *pathExt = [filePath pathExtension];
+      if ([extensions containsObject: pathExt]) {
+	[filesFound addObject: filePath];
+      }
     }
   }
 

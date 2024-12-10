@@ -285,6 +285,10 @@
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSString       *mainNibFile = nil;
   NSMutableArray *_array = nil;
+  NSArray *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
+  NSArray *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -323,7 +327,24 @@
   [projectDict setObject: objcFilesWithMain forKey: PCClasses];
   [projectDict setObject:regularFilesWithMain forKey:PCOtherSources];
   
-  // search for all .m and ,h files and add them to the project
+  // search for all .m and .h files and add them to the project
+  [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
+  [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
+
+  if (DLSA_DEBUG) {
+    // print the array of files
+    int idx;
+    for (idx = 0; idx < [_srcFiles count]; idx++) {
+      printf("%s\n", [[_srcFiles objectAtIndex: idx] cString]);
+    }
+    for (idx = 0; idx < [_hdrFiles count]; idx++) {
+      printf("%s\n", [[_hdrFiles objectAtIndex: idx] cString]);
+    }
+  }
+
+  [projectDict setObject: _srcFiles forKey: PCClasses];
+  [projectDict setObject: _hdrFiles forKey: PCHeaders];
+  
   return self;
 }
 

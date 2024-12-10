@@ -119,14 +119,14 @@ enum {
 // find an executable from list and return full path
 - (NSString*) findExecutableToolFrom: (NSArray*)candidates;
 
-// find all source files with a main function
+// dlsa - find all source files with a main function
 - (NSArray*) findSourcesWithMain: (NSString*)path;
 
-// return the strings in the argument that end in .m
+// dlsa - return the strings in the argument that end in .m
 - (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not;
 
-// find all files in the path with the passed in extensions array
-- (NSArray*) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions;
+// dlsa - find all files in the path with the passed in extensions array
+- (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions  into: (NSMutableArray*)filesFound;
 
 @end
 
