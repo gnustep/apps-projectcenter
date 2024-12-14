@@ -420,34 +420,43 @@ static PCFileManager *_mgr = nil;
 
 // dlsa - create from sources
 - (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions into: (NSMutableArray*)filesFound {
+  return [self findItemsAt:path withExtensions:extensions listDirectories: NO into: filesFound];
+}
 
-  if (nil == filesFound) {
+// dlsa - create from sources
+- (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound {
+  return [self findItemsAt:path withExtensions :nil listDirectories: YES into: directoriesFound];
+}
+
+// dlsa - create from sources
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound {
+
+  if (nil == itemsFound) {
     return;
   }
   NSFileManager *manager= [NSFileManager defaultManager];
   NSError *error;
-  NSArray *filesInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+  NSArray *itemsInPath = [manager contentsOfDirectoryAtPath:path error:&error];
 
   int index;
-  for (index = 0; index < [filesInPath count]; index++) {
-    NSString *filePath = [filesInPath objectAtIndex: index];
+  for (index = 0; index < [itemsInPath count]; index++) {
+    NSString *filePath = [itemsInPath objectAtIndex: index];
     NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
     NSString *fullFilePath = [NSString pathWithComponents: pathComps];
     BOOL isDirectory = NO;
     [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
-    if (!isDirectory) {
-    /*
-      [self findFilesAt: fullFilePath withExtensions: extensions into: filesFound];
-      } else {*/
+    if (!listdirs && !isDirectory) {
       NSString *pathExt = [filePath pathExtension];
-      if ([extensions containsObject: pathExt]) {
-	[filesFound addObject: filePath];
+      if (extensions != nil && [extensions containsObject: pathExt]) {
+	[itemsFound addObject: filePath];
+      } else if (extensions == nil || [extensions count] == 0) {
+	[itemsFound addObject: filePath];
       }
     }
   }
-
-  return filesFound;
+  return itemsFound;
 }
+
 
 @end
 

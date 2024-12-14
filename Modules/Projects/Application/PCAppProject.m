@@ -285,10 +285,17 @@
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSString       *mainNibFile = nil;
   NSMutableArray *_array = nil;
-  NSArray *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
-  NSArray *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSArray        *_srcFilesWithMain;
+  NSArray        *_objcFilesWithMain;
+  NSArray        *_regularFilesWithMain;
+  NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
+  NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
   NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
+  int            idx;
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -313,23 +320,41 @@
   [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   // search for the main function in source files
-  NSArray *srcFilesWithMain = [pcfm findSourcesWithMain: path];
-  NSArray* objcFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:false];
-  NSArray* regularFilesWithMain = [pcfm filterExtensions: srcFilesWithMain suffix: @".m" negate:true];
+  _srcFilesWithMain = [pcfm findSourcesWithMain: path];
+  _objcFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:false];
+  _regularFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:true];
+
+  if ([_objcFilesWithMain count] > 0) {
+    [projectDict setObject: [_objcFilesWithMain objectAtIndex: 0] forKey: PCPrincipalClass];
+  } else if ([_regularFilesWithMain count] > 0) {
+    [projectDict setObject: [_regularFilesWithMain objectAtIndex: 0] forKey: PCOtherSources];
+  } else {
+    // Copy the project files to the provided path
+    _file = [projBundle pathForResource:@"main" ofType:@"m"];
+    _2file = [path stringByAppendingPathComponent:
+		       [NSString stringWithFormat:@"%@_main.m", projectName]];
+    [pcfm copyFile:_file toFile:_2file];
+    [pcfc replaceTagsInFileAtPath:_2file withProject:self];
+    [projectDict 
+      setObject:[NSArray arrayWithObjects:[_2file lastPathComponent],nil]
+	 forKey:PCOtherSources];
+  }
 
   if (DLSA_DEBUG) {
-    int srcFilesWithMainCount = [srcFilesWithMain count];
-    int objcFilesWithMainCount = [objcFilesWithMain count];
-    int regularFilesWithMainCount = [regularFilesWithMain count];
+    int _srcFilesWithMainCount = [_srcFilesWithMain count];
+    int _objcFilesWithMainCount = [_objcFilesWithMain count];
+    int _regularFilesWithMainCount = [_regularFilesWithMain count];
     printf("dummy print\n");
   }
   
-  [projectDict setObject: objcFilesWithMain forKey: PCClasses];
-  [projectDict setObject:regularFilesWithMain forKey:PCOtherSources];
+  [projectDict setObject: _objcFilesWithMain forKey: PCClasses];
+  [projectDict setObject: _regularFilesWithMain forKey:PCOtherSources];
   
   // search for all .m and .h files and add them to the project
   [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
   [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
+  [pcfm findFilesAt: path withExtensions: _otherSrcsExtensionArray into: _otherSrcFiles];
+  [pcfm findDirectoriesAt: path into: _subdirs];
 
   if (DLSA_DEBUG) {
     // print the array of files
@@ -344,6 +369,17 @@
 
   [projectDict setObject: _srcFiles forKey: PCClasses];
   [projectDict setObject: _hdrFiles forKey: PCHeaders];
+  [projectDict setObject: _subdirs forKey: PCSubprojects];
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+  for (idx = 0; idx = [_subdirs count]; idx++) {
+    NSArray *pathComps = [NSArray arrayWithObjects: path, [_subdirs objectAtIndex: idx], nil];
+    NSString *subdirpath = [NSString pathWithComponents: pathComps];
+    [self createProjectFromSourcesAt: subdirpath withOption: projOption];
+  }
+  [self writeMakefile];
+  [self save];
   
   return self;
 }

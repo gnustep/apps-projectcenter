@@ -961,6 +961,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  // in createProjectOfType:path: method.
 	  return;
 	}
+      projectPath = [project projectPath];
+      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:projectPath]];
+      [loadedProjects setObject:project forKey:projectPath];
+      [self setActiveProject:project];
+      [[project projectWindow] orderFront:self];
     }
 }
 

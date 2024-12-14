@@ -128,6 +128,13 @@ enum {
 // dlsa - find all files in the path with the passed in extensions array
 - (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions  into: (NSMutableArray*)filesFound;
 
+// dlsa - find all subdirectories in the path with the passed in extensions array
+- (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound;
+
+// dlsa - finds files or subdirectories at the given path. files can optionally be of a set of extensions
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound;
+
+
 @end
 
 @interface PCFileManager (UInterface)
