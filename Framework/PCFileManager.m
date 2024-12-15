@@ -452,11 +452,42 @@ static PCFileManager *_mgr = nil;
       } else if (extensions == nil || [extensions count] == 0) {
 	[itemsFound addObject: filePath];
       }
+    } else if (listdirs && isDirectory) {
+      [itemsFound addObject: filePath];
     }
   }
   return itemsFound;
 }
 
+// dlsa - create from sources
+- (void) findItemsAt: (NSString*)path like: (NSString*)likeExpr listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound {
+
+  if (nil == itemsFound) {
+    return;
+  }
+  NSFileManager *manager= [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *itemsInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+
+  int index;
+  for (index = 0; index < [itemsInPath count]; index++) {
+    NSString *filePath = [itemsInPath objectAtIndex: index];
+    NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
+    NSScanner *scanner = [NSScanner scannerWithString: filePath];
+    NSString *fullFilePath = [NSString pathWithComponents: pathComps];
+    BOOL isDirectory = NO;
+    [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
+    BOOL scanned = [scanner scanString: likeExpr intoString: nil];
+    if (scanned) {
+      if (!listdirs && !isDirectory) {
+	[itemsFound addObject: filePath];
+      } else if (listdirs && isDirectory) {
+	[itemsFound addObject: filePath];
+      }
+    }
+    return itemsFound;
+  }
+}
 
 @end
 

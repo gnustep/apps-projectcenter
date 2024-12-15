@@ -294,7 +294,11 @@
   NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_makefiles;
   NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
+  NSString       *helpFile = nil;
+  NSString       *_executableFileName;
   int            idx;
 
   NSAssert(path,@"No valid project path provided!");
@@ -302,6 +306,7 @@
   // PC.project
   _file = [projBundle pathForResource:@"PC" ofType:@"project"];
   [projectDict initWithContentsOfFile:_file];
+  _makefiles = [projectDict objectForKey: PCSupportingFiles];
 
   // Customise the project
   [self setProjectPath:path];
@@ -325,9 +330,11 @@
   _regularFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:true];
 
   if ([_objcFilesWithMain count] > 0) {
-    [projectDict setObject: [_objcFilesWithMain objectAtIndex: 0] forKey: PCPrincipalClass];
+    _executableFileName = [_objcFilesWithMain objectAtIndex: 0];
+    [projectDict setObject:_executableFileName  forKey: PCPrincipalClass];
   } else if ([_regularFilesWithMain count] > 0) {
-    [projectDict setObject: [_regularFilesWithMain objectAtIndex: 0] forKey: PCOtherSources];
+    _executableFileName = [_regularFilesWithMain objectAtIndex: 0];
+    [projectDict setObject: _executableFileName forKey: PCOtherSources];
   } else {
     // Copy the project files to the provided path
     _file = [projBundle pathForResource:@"main" ofType:@"m"];
@@ -335,8 +342,9 @@
 		       [NSString stringWithFormat:@"%@_main.m", projectName]];
     [pcfm copyFile:_file toFile:_2file];
     [pcfc replaceTagsInFileAtPath:_2file withProject:self];
+    _executableFileName = [_2file lastPathComponent];
     [projectDict 
-      setObject:[NSArray arrayWithObjects:[_2file lastPathComponent],nil]
+      setObject:[NSArray arrayWithObjects: _executableFileName,nil]
 	 forKey:PCOtherSources];
   }
 
@@ -371,6 +379,59 @@
   [projectDict setObject: _hdrFiles forKey: PCHeaders];
   [projectDict setObject: _subdirs forKey: PCSubprojects];
 
+  // search for existing makefiles
+  [pcfm findItemsAt: path like:@"GNUmakefile" listDirectories:NO into:_gnuMakefiles];
+  BOOL moveResult = YES;
+  if ([_gnuMakefiles count] > 0) {
+    NSString *newFileName = [[_gnuMakefiles objectAtIndex:0] stringByAppendingString: @".original"];
+    NSArray *oldFileNamePath = [NSArray arrayWithObjects: path, [_gnuMakefiles objectAtIndex:0], nil];
+    NSArray *newFileNamePath = [NSArray arrayWithObjects: path, newFileName, nil];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString *fromFullPath = [NSString pathWithComponents: oldFileNamePath];
+    NSString *toFullPath = [NSString pathWithComponents: newFileNamePath];
+    NSError *error;
+    moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
+    if (!moveResult) {
+      int ret;
+      ret = NSRunAlertPanel(@"File Conflict",
+			    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+			    @"Dismiss", @"Dismiss", nil);
+    }
+    [_gnuMakefiles removeAllObjects];
+    [_gnuMakefiles addObject: newFileName];
+    [_makefiles addObjectsFromArray: _gnuMakefiles];
+  }
+  [pcfm findItemsAt: path like:@"makefile" listDirectories:NO into:_makefiles];
+  [pcfm findItemsAt: path like:@"Makefile" listDirectories:NO into:_makefiles];
+
+  // Info-gnustep.plist
+  _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
+  infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
+  [infoDict setObject:projectName forKey:@"ApplicationName"];
+  [infoDict setObject:_executableFileName forKey:@"NSExecutable"];
+  [infoDict setObject:[projectDict objectForKey:PCPrincipalClass]
+    forKey:@"NSPrincipalClass"];
+  
+  // most probably empty
+  if ([projectDict objectForKey:PCBundleIdentifier])
+    [infoDict setObject:[projectDict objectForKey:PCBundleIdentifier] forKey:@"CFBundleIdentifier"];
+
+  // Help file if present
+  helpFile = [projectDict objectForKey:@"GSHelpContentsFile"];
+  if (helpFile)
+    [infoDict setObject:helpFile forKey:@"GSHelpContentsFile"];
+
+  // Write to ProjectNameInfo.plist
+  _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
+  _2file = [projectPath stringByAppendingPathComponent:_file];
+  [infoDict writeToFile:_2file atomically:YES];
+
+  // Add Info-gnustep.plist into SUPPORTING_FILES
+  _array = [[projectDict objectForKey:PCSupportingFiles] mutableCopy];
+  [_array addObject:_file];
+  [projectDict setObject:_array forKey:PCSupportingFiles];
+  RELEASE(_array);
+
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
   for (idx = 0; idx = [_subdirs count]; idx++) {
@@ -378,7 +439,9 @@
     NSString *subdirpath = [NSString pathWithComponents: pathComps];
     [self createProjectFromSourcesAt: subdirpath withOption: projOption];
   }
-  [self writeMakefile];
+  if (moveResult) {
+    [self writeMakefile];
+  }
   [self save];
   
   return self;
@@ -543,7 +606,7 @@
   [self writeInfoEntry:@"Copyright" forKey:PCCopyright];
   [self writeInfoEntry:@"CopyrightDescription" forKey:PCCopyrightDescription];
   [self writeInfoEntry:@"FullVersionID" forKey:PCRelease];
-  [self writeInfoEntry:@"NSExecutable" forKey:PCProjectName];
+  [self writeInfoEntry:@"NSExecutable" forKey:@"NSExecutable"];
   [self writeInfoEntry:@"NSIcon" forKey:PCAppIcon];
   if ([[projectDict objectForKey:PCAppType] isEqualToString:@"GORM"])
     {
