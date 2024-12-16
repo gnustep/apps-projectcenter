@@ -132,7 +132,7 @@ enum {
 - (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound;
 
 // dlsa - finds files or subdirectories at the given path. files can optionally be of a set of extensions
-- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound;
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs exclude:(BOOL)yesno into:(NSMutableArray*)itemsFound;
 
 // dlsa - finds all files or subdirectories at the given path that have their nime as a string containing the like parameter
 - (void) findItemsAt: (NSString*)path like: (NSString*)likeExpr listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound;

@@ -300,6 +300,7 @@
   NSString       *helpFile = nil;
   NSString       *_executableFileName;
   int            idx;
+  BOOL           _executableWasGenerated = NO;
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -346,6 +347,7 @@
     [projectDict 
       setObject:[NSArray arrayWithObjects: _executableFileName,nil]
 	 forKey:PCOtherSources];
+    _executableWasGenerated = YES;
   }
 
   if (DLSA_DEBUG) {
@@ -356,8 +358,9 @@
   }
   
   [projectDict setObject: _objcFilesWithMain forKey: PCClasses];
-  [projectDict setObject: _regularFilesWithMain forKey:PCOtherSources];
-  
+  if (!_executableWasGenerated) {
+    [projectDict setObject: _regularFilesWithMain forKey:PCOtherSources];
+  }
   // search for all .m and .h files and add them to the project
   [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
   [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
@@ -375,6 +378,10 @@
     }
   }
 
+  // if the executable file was generated previously by us remove it from the classes category
+  if (_executableWasGenerated) {
+    [_srcFiles removeObject: _executableFileName];
+  }
   [projectDict setObject: _srcFiles forKey: PCClasses];
   [projectDict setObject: _hdrFiles forKey: PCHeaders];
   [projectDict setObject: _subdirs forKey: PCSubprojects];
@@ -394,8 +401,8 @@
     if (!moveResult) {
       int ret;
       ret = NSRunAlertPanel(@"File Conflict",
-			    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
-			    @"Dismiss", @"Dismiss", nil);
+	@"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+        @"Dismiss", @"Dismiss", nil);
     }
     [_gnuMakefiles removeAllObjects];
     [_gnuMakefiles addObject: newFileName];

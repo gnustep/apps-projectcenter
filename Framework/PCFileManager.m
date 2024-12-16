@@ -420,16 +420,17 @@ static PCFileManager *_mgr = nil;
 
 // dlsa - create from sources
 - (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions into: (NSMutableArray*)filesFound {
-  return [self findItemsAt:path withExtensions:extensions listDirectories: NO into: filesFound];
+  return [self findItemsAt:path withExtensions:extensions listDirectories: NO exclude: NO into: filesFound];
 }
 
 // dlsa - create from sources
 - (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound {
-  return [self findItemsAt:path withExtensions :nil listDirectories: YES into: directoriesFound];
+  NSArray *projectDataSubdirs = [NSArray arrayWithObjects: @"pcproj", @"backup", nil];
+  return [self findItemsAt:path withExtensions: projectDataSubdirs listDirectories: YES exclude: YES into: directoriesFound];
 }
 
 // dlsa - create from sources
-- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound {
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs exclude:(BOOL)yesno into:(NSMutableArray*)itemsFound {
 
   if (nil == itemsFound) {
     return;
@@ -453,7 +454,12 @@ static PCFileManager *_mgr = nil;
 	[itemsFound addObject: filePath];
       }
     } else if (listdirs && isDirectory) {
-      [itemsFound addObject: filePath];
+      NSString *pathExt = [filePath pathExtension];
+      if (extensions != nil && [extensions containsObject: pathExt] && !yesno) {
+	[itemsFound addObject: filePath];
+      } if (extensions == nil) {
+	[itemsFound addObject: filePath];
+      }
     }
   }
   return itemsFound;
@@ -474,6 +480,7 @@ static PCFileManager *_mgr = nil;
     NSString *filePath = [itemsInPath objectAtIndex: index];
     NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
     NSScanner *scanner = [NSScanner scannerWithString: filePath];
+    [scanner setCaseSensitive: YES];
     NSString *fullFilePath = [NSString pathWithComponents: pathComps];
     BOOL isDirectory = NO;
     [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
