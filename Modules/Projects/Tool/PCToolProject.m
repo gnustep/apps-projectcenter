@@ -208,17 +208,82 @@
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];
+  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
+  NSBundle *projectBundle;
+  NSString       *_file;
+  NSString       *_2file;
+  NSMutableArray *_array = nil;
+  NSArray        *_srcFilesWithMain;
+  NSArray        *_objcFilesWithMain;
+  NSArray        *_regularFilesWithMain;
+  NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
+  NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSArray        *_gormExtensionArray = [NSArray arrayWithObjects: @"gorm", nil];
+  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
+  NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_makefiles;
+  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
+  NSString       *helpFile = nil;
+  NSString       *_executableFileName;
+  int            idx;
+  BOOL           _executableWasGenerated = NO;
 
   NSAssert(path,@"No valid project path provided!");
 
-  NSBundle *projectBundle = [NSBundle bundleForClass:[self class]];
+  projectBundle = [NSBundle bundleForClass:[self class]];
   
-  NSString *_file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+  _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
   [projectDict initWithContentsOfFile:_file];
 
   // search for files to add to the project
 
-  
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName:[path lastPathComponent]];
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+                  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // Copy the project files to the provided path
+  _file = [projectBundle pathForResource:@"main" ofType:@"m"];
+  _2file = [path stringByAppendingPathComponent:@"main.m"];
+  [pcfm copyFile:_file toFile:_2file];
+  [pcfc replaceTagsInFileAtPath:_2file withProject:self];
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Info-gnutstep.plist
+  _file = [projectBundle pathForResource:@"Info" ofType:@"gnustep"];
+  infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
+  [infoDict setObject:projectName forKey:@"ToolName"];
+
+  // Write to ProjectNameInfo.plist
+  _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
+  _2file = [projectPath stringByAppendingPathComponent:_file];
+  [infoDict writeToFile:_2file atomically:YES];
+
+  // Add Info-gnustep.plist into SUPPORTING_FILES
+  _array = [[projectDict objectForKey:PCSupportingFiles] mutableCopy];
+  [_array addObject:_file];
+  [projectDict setObject:_array forKey:PCSupportingFiles];
+  RELEASE(_array);
+
+  // Save the project to disc
+  [self writeMakefile];
+  [self save];
+
   return self;
 }
 

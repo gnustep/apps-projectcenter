@@ -285,29 +285,29 @@
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSString       *mainNibFile = nil;
   NSMutableArray *_array = nil;
-  NSArray        *_srcFilesWithMain;
-  NSArray        *_objcFilesWithMain;
-  NSArray        *_regularFilesWithMain;
+  /*
   NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
   NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSArray        *_gormExtensionArray = [NSArray arrayWithObjects: @"gorm", nil];
   NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
   NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_makefiles;
+  */
   NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   NSString       *helpFile = nil;
   NSString       *_executableFileName;
   int            idx;
-  BOOL           _executableWasGenerated = NO;
+  BOOL _moveResult = YES;
 
   NSAssert(path,@"No valid project path provided!");
 
   // PC.project
   _file = [projBundle pathForResource:@"PC" ofType:@"project"];
   [projectDict initWithContentsOfFile:_file];
-  _makefiles = [projectDict objectForKey: PCSupportingFiles];
 
   // Customise the project
   [self setProjectPath:path];
@@ -326,42 +326,13 @@
   [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
   // search for the main function in source files
-  _srcFilesWithMain = [pcfm findSourcesWithMain: path];
-  _objcFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:false];
-  _regularFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:true];
+  _executableFileName = [projectManager setFileWithMainOn: projectDict scanningFrom: path withClass: self];
 
-  if ([_objcFilesWithMain count] > 0) {
-    _executableFileName = [_objcFilesWithMain objectAtIndex: 0];
-    [projectDict setObject:_executableFileName  forKey: PCPrincipalClass];
-  } else if ([_regularFilesWithMain count] > 0) {
-    _executableFileName = [_regularFilesWithMain objectAtIndex: 0];
-    [projectDict setObject: _executableFileName forKey: PCOtherSources];
-  } else {
-    // Copy the project files to the provided path
-    _file = [projBundle pathForResource:@"main" ofType:@"m"];
-    _2file = [path stringByAppendingPathComponent:
-		       [NSString stringWithFormat:@"%@_main.m", projectName]];
-    [pcfm copyFile:_file toFile:_2file];
-    [pcfc replaceTagsInFileAtPath:_2file withProject:self];
-    _executableFileName = [_2file lastPathComponent];
-    [projectDict 
-      setObject:[NSArray arrayWithObjects: _executableFileName,nil]
-	 forKey:PCOtherSources];
-    _executableWasGenerated = YES;
-  }
-
-  if (DLSA_DEBUG) {
-    int _srcFilesWithMainCount = [_srcFilesWithMain count];
-    int _objcFilesWithMainCount = [_objcFilesWithMain count];
-    int _regularFilesWithMainCount = [_regularFilesWithMain count];
-    printf("dummy print\n");
-  }
-  
-  [projectDict setObject: _objcFilesWithMain forKey: PCClasses];
-  if (!_executableWasGenerated) {
-    [projectDict setObject: _regularFilesWithMain forKey:PCOtherSources];
-  }
   // search for all .m and .h files and add them to the project
+  _moveResult = [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+  [pcfm findDirectoriesAt: path into: _subdirs];
+  [projectDict setObject: _subdirs forKey: PCSubprojects];
+  /*
   [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
   [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
   [pcfm findFilesAt: path withExtensions: _otherSrcsExtensionArray into: _otherSrcFiles];
@@ -378,13 +349,16 @@
     }
   }
 
+  // search for all .gorm files and add them to the project
+  [pcfm findFilesAt: path withExtensions: _gormExtensionArray into: _gormFiles];
+  
   // if the executable file was generated previously by us remove it from the classes category
-  if (_executableWasGenerated) {
-    [_srcFiles removeObject: _executableFileName];
-  }
+  [_srcFiles removeObject: _executableFileName];
+
   [projectDict setObject: _srcFiles forKey: PCClasses];
   [projectDict setObject: _hdrFiles forKey: PCHeaders];
   [projectDict setObject: _subdirs forKey: PCSubprojects];
+  [projectDict setObject: _gormFiles forKey: PCInterfaces];
 
   // search for existing makefiles
   [pcfm findItemsAt: path like:@"GNUmakefile" listDirectories:NO into:_gnuMakefiles];
@@ -410,6 +384,7 @@
   }
   [pcfm findItemsAt: path like:@"makefile" listDirectories:NO into:_makefiles];
   [pcfm findItemsAt: path like:@"Makefile" listDirectories:NO into:_makefiles];
+  */
 
   // Info-gnustep.plist
   _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
@@ -446,7 +421,7 @@
     NSString *subdirpath = [NSString pathWithComponents: pathComps];
     [self createProjectFromSourcesAt: subdirpath withOption: projOption];
   }
-  if (moveResult) {
+  if (_moveResult) {
     [self writeMakefile];
   }
   [self save];
