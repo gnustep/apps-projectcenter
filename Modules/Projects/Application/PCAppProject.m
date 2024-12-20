@@ -28,6 +28,8 @@
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCFileManager.h>
 #import <ProjectCenter/PCFileCreator.h>
+// dlsa - create from sources
+#import <ProjectCenter/PCProjectManager.h>
 
 #import "PCAppProject.h"
 #import "PCAppProject+Inspector.h"
@@ -278,25 +280,10 @@
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];
-  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
   NSString       *_file = nil;
   NSString       *_2file = nil;
-  NSString       *_resourcePath = nil;
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
-  NSString       *mainNibFile = nil;
   NSMutableArray *_array = nil;
-  /*
-  NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
-  NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
-  NSArray        *_gormExtensionArray = [NSArray arrayWithObjects: @"gorm", nil];
-  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
-  NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_makefiles;
-  */
   NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   NSString       *helpFile = nil;
   NSString       *_executableFileName;
@@ -332,59 +319,6 @@
   _moveResult = [projectManager setSrcFilesOn: projectDict scanningFrom: path];
   [pcfm findDirectoriesAt: path into: _subdirs];
   [projectDict setObject: _subdirs forKey: PCSubprojects];
-  /*
-  [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
-  [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
-  [pcfm findFilesAt: path withExtensions: _otherSrcsExtensionArray into: _otherSrcFiles];
-  [pcfm findDirectoriesAt: path into: _subdirs];
-
-  if (DLSA_DEBUG) {
-    // print the array of files
-    int idx;
-    for (idx = 0; idx < [_srcFiles count]; idx++) {
-      printf("%s\n", [[_srcFiles objectAtIndex: idx] cString]);
-    }
-    for (idx = 0; idx < [_hdrFiles count]; idx++) {
-      printf("%s\n", [[_hdrFiles objectAtIndex: idx] cString]);
-    }
-  }
-
-  // search for all .gorm files and add them to the project
-  [pcfm findFilesAt: path withExtensions: _gormExtensionArray into: _gormFiles];
-  
-  // if the executable file was generated previously by us remove it from the classes category
-  [_srcFiles removeObject: _executableFileName];
-
-  [projectDict setObject: _srcFiles forKey: PCClasses];
-  [projectDict setObject: _hdrFiles forKey: PCHeaders];
-  [projectDict setObject: _subdirs forKey: PCSubprojects];
-  [projectDict setObject: _gormFiles forKey: PCInterfaces];
-
-  // search for existing makefiles
-  [pcfm findItemsAt: path like:@"GNUmakefile" listDirectories:NO into:_gnuMakefiles];
-  BOOL moveResult = YES;
-  if ([_gnuMakefiles count] > 0) {
-    NSString *newFileName = [[_gnuMakefiles objectAtIndex:0] stringByAppendingString: @".original"];
-    NSArray *oldFileNamePath = [NSArray arrayWithObjects: path, [_gnuMakefiles objectAtIndex:0], nil];
-    NSArray *newFileNamePath = [NSArray arrayWithObjects: path, newFileName, nil];
-    NSFileManager *fm = [NSFileManager defaultManager];
-    NSString *fromFullPath = [NSString pathWithComponents: oldFileNamePath];
-    NSString *toFullPath = [NSString pathWithComponents: newFileNamePath];
-    NSError *error;
-    moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
-    if (!moveResult) {
-      int ret;
-      ret = NSRunAlertPanel(@"File Conflict",
-	@"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
-        @"Dismiss", @"Dismiss", nil);
-    }
-    [_gnuMakefiles removeAllObjects];
-    [_gnuMakefiles addObject: newFileName];
-    [_makefiles addObjectsFromArray: _gnuMakefiles];
-  }
-  [pcfm findItemsAt: path like:@"makefile" listDirectories:NO into:_makefiles];
-  [pcfm findItemsAt: path like:@"Makefile" listDirectories:NO into:_makefiles];
-  */
 
   // Info-gnustep.plist
   _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
@@ -416,7 +350,7 @@
 
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
-  for (idx = 0; idx = [_subdirs count]; idx++) {
+  for (idx = 0; idx < [_subdirs count]; idx++) {
     NSArray *pathComps = [NSArray arrayWithObjects: path, [_subdirs objectAtIndex: idx], nil];
     NSString *subdirpath = [NSString pathWithComponents: pathComps];
     [self createProjectFromSourcesAt: subdirpath withOption: projOption];

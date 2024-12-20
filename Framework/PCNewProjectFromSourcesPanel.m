@@ -43,11 +43,7 @@ static PCNewProjectFromSourcesPanel *newProjectPanel = nil;
 // --- "Add Project..." panel
 - (id)init
 {
-  NSRect fr;
-
   self = [super init];
-
-  fr = NSMakeRect(20,30,160,21);
 
   // Panel
   [self setAllowsMultipleSelection:YES];

@@ -213,24 +213,6 @@
   NSString       *_file;
   NSString       *_2file;
   NSMutableArray *_array = nil;
-  NSArray        *_srcFilesWithMain;
-  NSArray        *_objcFilesWithMain;
-  NSArray        *_regularFilesWithMain;
-  NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
-  NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
-  NSArray        *_gormExtensionArray = [NSArray arrayWithObjects: @"gorm", nil];
-  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
-  NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
-  NSMutableArray *_makefiles;
-  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
-  NSString       *helpFile = nil;
-  NSString       *_executableFileName;
-  int            idx;
-  BOOL           _executableWasGenerated = NO;
 
   NSAssert(path,@"No valid project path provided!");
 

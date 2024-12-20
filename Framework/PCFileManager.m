@@ -462,7 +462,6 @@ static PCFileManager *_mgr = nil;
       }
     }
   }
-  return itemsFound;
 }
 
 // dlsa - create from sources
@@ -480,11 +479,13 @@ static PCFileManager *_mgr = nil;
     NSString *filePath = [itemsInPath objectAtIndex: index];
     NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
     NSScanner *scanner = [NSScanner scannerWithString: filePath];
-    [scanner setCaseSensitive: YES];
     NSString *fullFilePath = [NSString pathWithComponents: pathComps];
     BOOL isDirectory = NO;
+    BOOL scanned = NO;
+    NSString *strReceiver = [[NSString alloc] init];
+    [scanner setCaseSensitive: YES];
     [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
-    BOOL scanned = [scanner scanString: likeExpr intoString: nil];
+    scanned = [scanner scanString: likeExpr intoString: &strReceiver];
     if (scanned) {
       if (!listdirs && !isDirectory) {
 	[itemsFound addObject: filePath];
@@ -492,7 +493,6 @@ static PCFileManager *_mgr = nil;
 	[itemsFound addObject: filePath];
       }
     }
-    return itemsFound;
   }
 }
 
@@ -665,12 +665,7 @@ static PCFileManager *_mgr = nil;
 	}
     }
   else if (op == PCNewProjectFromSourcesOperation) {
-      NSString  *selectedProjectType = nil;
-      /*
-      [panel setCategories:[project rootCategories]];
-      selectedCategory = [[project projectBrowser] nameOfSelectedCategory];
-      [panel selectCategory:selectedCategory];
-      */
+
       if ((result = [panel runModalForTypes:types]) == NSOKButton) 
 	{
 	  [fileList addObjectsFromArray:[panel filenames]];

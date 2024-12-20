@@ -340,19 +340,19 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return findPanel;
 }
 
-// search for the main function in source files
-- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectClass {
+// dlsa - search for the main function in source files
+- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectInstance {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];
   PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
-  NSBundle       *projBundle = [NSBundle bundleForClass:projectClass];
+  NSBundle       *projBundle = [NSBundle bundleForClass: projectInstance->isa];
   NSString       *_file = nil;
   NSString       *_2file = nil;
   NSArray        *_srcFilesWithMain;
   NSArray        *_objcFilesWithMain;
   NSArray        *_regularFilesWithMain;
   NSString       *_executableFileName;
-  BOOL           *_executableWasGenerated;
+  BOOL           _executableWasGenerated;
 
   _srcFilesWithMain = [pcfm findSourcesWithMain: path];
   _objcFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:false];
@@ -368,9 +368,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     // Copy the project files to the provided path
     _file = [projBundle pathForResource:@"main" ofType:@"m"];
     _2file = [path stringByAppendingPathComponent:
-		       [NSString stringWithFormat:@"%@_main.m", [projectClass projectName]]];
+      [NSString stringWithFormat:@"%@_main.m", [(PCProject*)projectInstance projectName]]];
     [pcfm copyFile:_file toFile:_2file];
-    [pcfc replaceTagsInFileAtPath:_2file withProject:self];
+    [pcfc replaceTagsInFileAtPath:_2file withProject: (PCProject*)projectInstance];
     _executableFileName = [_2file lastPathComponent];
     [projectDict 
       setObject:[NSArray arrayWithObjects: _executableFileName,nil]
@@ -382,7 +382,9 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     int _srcFilesWithMainCount = [_srcFilesWithMain count];
     int _objcFilesWithMainCount = [_objcFilesWithMain count];
     int _regularFilesWithMainCount = [_regularFilesWithMain count];
-    printf("dummy print\n");
+    printf("src files with main count : %d\n", _srcFilesWithMainCount);
+    printf("objc files with main count : %d\n", _objcFilesWithMainCount);
+    printf("regular files with main count : %d\n", _regularFilesWithMainCount);
   }
   
   [projectDict setObject: _objcFilesWithMain forKey: PCClasses];
@@ -392,14 +394,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return _executableFileName;
 }
 
-// search for all .m and .h files and add them to the project
+// dlsa - search for all .m and .h files and add them to the project
 - (BOOL) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path {
   
   PCFileManager  *pcfm = [PCFileManager defaultManager];
-  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
   NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
   NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
-  NSArray        *_gormExtensionArray = [NSArray arrayWithObjects: @"gorm", nil];
   NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
   NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
@@ -407,7 +407,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
   NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_makefiles;
-  NSMutableArray *_supportFiles;
+  NSArray        *_supportFiles = [[NSArray alloc] init];
   BOOL moveResult = YES;
 
   _makefiles = [projectDict objectForKey: PCSupportingFiles];
@@ -439,12 +439,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString *fromFullPath = [NSString pathWithComponents: oldFileNamePath];
     NSString *toFullPath = [NSString pathWithComponents: newFileNamePath];
-    NSArray *supportFiles = [projectDict objectForKey: PCSupportingFiles];
     NSError *error;
     moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
     if (!moveResult) {
-      int ret;
-      ret = NSRunAlertPanel(@"File Conflict",
+      NSRunAlertPanel(@"File Conflict",
 	@"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
         @"Dismiss", @"Dismiss", nil);
     }
@@ -455,9 +453,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [pcfm findItemsAt: path like:@"makefile" listDirectories:NO into:_makefiles];
   [pcfm findItemsAt: path like:@"Makefile" listDirectories:NO into:_makefiles];
 
-  if (nil == _supportFiles) {
-    _supportFiles = [[NSMutableArray alloc] init];
-  }
   _supportFiles = [_supportFiles arrayByAddingObjectsFromArray: _makefiles];
   [projectDict setObject: _supportFiles forKey:PCSupportingFiles];
   return moveResult;

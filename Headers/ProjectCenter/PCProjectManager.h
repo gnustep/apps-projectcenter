@@ -122,7 +122,7 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (NSPanel *)projectFinderPanel;
 
 // - dlsa - create new from sources
-- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectClass;
+- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectInstance;
 - (BOOL) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
 
 // ============================================================================
