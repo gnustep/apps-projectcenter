@@ -287,8 +287,7 @@
   NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   NSString       *helpFile = nil;
   NSString       *_executableFileName;
-  int            idx;
-  BOOL _moveResult = YES;
+  BOOL           _moveResult = YES;
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -296,6 +295,8 @@
   _file = [projBundle pathForResource:@"PC" ofType:@"project"];
   [projectDict initWithContentsOfFile:_file];
 
+  [projectManager removeEmptyEntriesFromPCOtherSources: projectDict];
+  
   // Customise the project
   [self setProjectPath:path];
   [self setProjectName: [path lastPathComponent]];
@@ -316,9 +317,17 @@
   _executableFileName = [projectManager setFileWithMainOn: projectDict scanningFrom: path withClass: self];
 
   // search for all .m and .h files and add them to the project
-  _moveResult = [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
   [pcfm findDirectoriesAt: path into: _subdirs];
   [projectDict setObject: _subdirs forKey: PCSubprojects];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", @"Dismiss", nil);
+  }
 
   // Info-gnustep.plist
   _file = [projBundle pathForResource:@"Info" ofType:@"gnustep"];
@@ -350,11 +359,7 @@
 
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
-  for (idx = 0; idx < [_subdirs count]; idx++) {
-    NSArray *pathComps = [NSArray arrayWithObjects: path, [_subdirs objectAtIndex: idx], nil];
-    NSString *subdirpath = [NSString pathWithComponents: pathComps];
-    [self createProjectFromSourcesAt: subdirpath withOption: projOption];
-  }
+
   if (_moveResult) {
     [self writeMakefile];
   }

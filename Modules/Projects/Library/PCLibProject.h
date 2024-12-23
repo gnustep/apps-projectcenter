@@ -30,6 +30,8 @@
 #import <ProjectCenter/PCDefines.h>
 #import <ProjectCenter/PCProject.h>
 #import <Protocols/ProjectType.h>
+// dlsa - create from sources
+#import <ProjectCenter/PCProjectManager.h>
 
 @class PCMakefileFactory;
 

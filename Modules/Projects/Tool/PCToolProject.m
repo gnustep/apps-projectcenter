@@ -27,6 +27,8 @@
 #import <ProjectCenter/PCMakefileFactory.h>
 #import <ProjectCenter/PCFileManager.h>
 #import <ProjectCenter/PCFileCreator.h>
+// dlsa - create from sources
+#import <ProjectCenter/PCProjectManager.h>
 
 #import "PCToolProject.h"
 
@@ -208,11 +210,13 @@
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
   PCFileManager  *pcfm = [PCFileManager defaultManager];
-  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
-  NSBundle *projectBundle;
+  NSBundle       *projectBundle;
   NSString       *_file;
   NSString       *_2file;
   NSMutableArray *_array = nil;
+  NSString       *_executableFileName;
+  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
+  BOOL           _moveResult = YES;
 
   NSAssert(path,@"No valid project path provided!");
 
@@ -221,7 +225,7 @@
   _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
   [projectDict initWithContentsOfFile:_file];
 
-  // search for files to add to the project
+  [projectManager removeEmptyEntriesFromPCOtherSources: projectDict];
 
   // Customise the project
   [self setProjectPath:path];
@@ -237,11 +241,21 @@
   [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
   [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
-  // Copy the project files to the provided path
-  _file = [projectBundle pathForResource:@"main" ofType:@"m"];
-  _2file = [path stringByAppendingPathComponent:@"main.m"];
-  [pcfm copyFile:_file toFile:_2file];
-  [pcfc replaceTagsInFileAtPath:_2file withProject:self];
+  // search for the main function in source files
+  _executableFileName = [projectManager setFileWithMainOn: projectDict scanningFrom: path withClass: self];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+  [pcfm findDirectoriesAt: path into: _subdirs];
+  [projectDict setObject: _subdirs forKey: PCSubprojects];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", @"Dismiss", nil);
+  }
 
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
@@ -250,6 +264,7 @@
   _file = [projectBundle pathForResource:@"Info" ofType:@"gnustep"];
   infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
   [infoDict setObject:projectName forKey:@"ToolName"];
+  [infoDict setObject:_executableFileName forKey:@"NSExecutable"];
 
   // Write to ProjectNameInfo.plist
   _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
@@ -263,7 +278,9 @@
   RELEASE(_array);
 
   // Save the project to disc
-  [self writeMakefile];
+  if (_moveResult) {
+    [self writeMakefile];
+  }
   [self save];
 
   return self;

@@ -80,6 +80,104 @@
   [super dealloc];
 }
 
+// dlsa - addFromSources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
+  NSString       *_file = nil;
+  NSString       *_2file = nil;
+  NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
+  NSString       *_resourcePath = nil;
+  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
+  BOOL           _moveResult = YES;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  // PC.project
+  _file = [projBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  [projectManager removeEmptyEntriesFromPCOtherSources: projectDict];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName: [path lastPathComponent]];
+
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+		  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+  [pcfm findDirectoriesAt: path into: _subdirs];
+  [projectDict setObject: _subdirs forKey: PCSubprojects];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", @"Dismiss", nil);
+  }
+
+  // Copy the project files to the provided path
+
+  // $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@", projectName];
+  _2file = [NSString stringWithFormat:@"%@.m", projectName];
+  _moveResult = [projectManager moveFileNamed: _2file atPath: path toFileName: [_2file stringByAppendingString: @".original"]];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    [NSString stringWithFormat: @"The directory already contains a %@ file that cannot be moved. The Project center file will not be generated", _2file],
+		    @"Dismiss", @"Dismiss", nil);
+  } else {
+    [pcfc createFileOfType:ObjCClass 
+		      path:[path stringByAppendingPathComponent:_file]
+		   project:self];
+    [projectDict setObject:[NSArray arrayWithObjects:_2file,nil]
+		    forKey:PCClasses];
+  }
+
+  // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@.h", projectName];
+  _moveResult = [projectManager moveFileNamed: _file atPath: path toFileName: [_file stringByAppendingString: @".original"]];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    [NSString stringWithFormat: @"The directory already contains a %@ file that cannot be moved. The Project center file will not be generated", _2file],
+		    @"Dismiss", @"Dismiss", nil);
+  } else {
+    [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+		    forKey:PCHeaders];
+    [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+		    forKey:PCPublicHeaders];
+  }
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Resources
+  _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+
+  _file = [projBundle pathForResource:@"Version" ofType:@""];
+  _2file = [_resourcePath stringByAppendingPathComponent:@"Version"];
+  [pcfm copyFile:_file toFile:_2file];
+
+  if (_moveResult) {
+    [self writeMakefile];
+  }
+  [self save];
+  
+  return self;
+}
+
 //----------------------------------------------------------------------------
 // --- PCProject overridings
 //----------------------------------------------------------------------------
@@ -198,11 +296,6 @@
     }
 
   return success;
-}
-
-// dlsa - addFromSources
-- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
-  return self;
 }
 
 @end

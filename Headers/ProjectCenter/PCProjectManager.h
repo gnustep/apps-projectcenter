@@ -123,7 +123,10 @@ extern NSString *PCActiveProjectDidChangeNotification;
 
 // - dlsa - create new from sources
 - (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectInstance;
-- (BOOL) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
+- (void) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
+- (BOOL) processMakefile: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
+- (BOOL) moveFileNamed: (NSString*)filename atPath: (NSString*)path toFileName: (NSString*)newFileName;
+- (void) removeEmptyEntriesFromPCOtherSources: (NSMutableDictionary*)projectDict;
 
 // ============================================================================
 // ==== Project management
