@@ -284,7 +284,6 @@
   NSString       *_2file = nil;
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSMutableArray *_array = nil;
-  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   NSString       *helpFile = nil;
   NSString       *_executableFileName;
   BOOL           _moveResult = YES;
@@ -318,15 +317,13 @@
 
   // search for all .m and .h files and add them to the project
   [projectManager setSrcFilesOn: projectDict scanningFrom: path];
-  [pcfm findDirectoriesAt: path into: _subdirs];
-  [projectDict setObject: _subdirs forKey: PCSubprojects];
 
   // move an existing GNUMakefile and create the one from the template and add other makefiles
   _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
   if (!_moveResult) {
     NSRunAlertPanel(@"File Conflict",
-		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
-		    @"Dismiss", @"Dismiss", nil);
+		    @"The directory already contains a GNUmakefile file that cannot be moved.\nThe Project center makefiles will not be generated",
+		    @"Dismiss",nil, nil);
   }
 
   // Info-gnustep.plist

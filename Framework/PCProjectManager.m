@@ -391,7 +391,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   PCFileManager  *pcfm = [PCFileManager defaultManager];
   NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
   NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
-  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c",nil];
+  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c", @"original",nil];
+  NSArray        *_interfaceFileExtensionArray = [NSArray arrayWithObjects: @"gorm", @"gsmarkup", nil];
   NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
   NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
@@ -400,6 +401,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
   [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
   [pcfm findFilesAt: path withExtensions: _otherSrcsExtensionArray into: _otherSrcFiles];
+  [pcfm findFilesAt: path withExtensions: _interfaceFileExtensionArray into: _gormFiles];
 
   if (DLSA_DEBUG) {
     // print the array of files
@@ -411,8 +413,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     for (idx = 0; idx < [_hdrFiles count]; idx++) {
       printf("%s\n", [[_hdrFiles objectAtIndex: idx] cString]);
     }
-    for (idx = 0; idx < [[projectDict objectForKey: PCOtherSources] count]; idx++) {
-      printf("%s\n", [[[projectDict objectForKey: PCOtherSources] objectAtIndex: idx] cString]);
+    for (idx = 0; idx < [_otherSrcFiles count]; idx++) {
+      printf("%s\n", [[_otherSrcFiles objectAtIndex: idx] cString]);
+    }
+    for (idx = 0; idx < [_gormFiles count]; idx++) {
+      printf("%s\n", [[_gormFiles objectAtIndex: idx] cString]);
     }
   }
 
@@ -422,21 +427,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   otherSrcs = [otherSrcs arrayByAddingObjectsFromArray: _otherSrcFiles];
   [projectDict setObject: otherSrcs forKey: PCOtherSources];
   [projectDict setObject: _gormFiles forKey: PCInterfaces];
-
-  if (DLSA_DEBUG) {
-    // print the array of files
-    printf("---------------------------------\n");
-    int idx;
-    for (idx = 0; idx < [_srcFiles count]; idx++) {
-      printf("%s\n", [[_srcFiles objectAtIndex: idx] cString]);
-    }
-    for (idx = 0; idx < [_hdrFiles count]; idx++) {
-      printf("%s\n", [[_hdrFiles objectAtIndex: idx] cString]);
-    }
-    for (idx = 0; idx < [otherSrcs count]; idx++) {
-      printf("%s\n", [[otherSrcs objectAtIndex: idx] cString]);
-    }
-  }
 }
 
 - (BOOL) processMakefile: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path {
@@ -473,9 +463,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
     NSFileManager *fm = [NSFileManager defaultManager];
     NSString      *fromFullPath = [NSString pathWithComponents: oldFileNamePath];
     NSString      *toFullPath = [NSString pathWithComponents: newFileNamePath];
-    BOOL           _moveResult = YES;
+    BOOL           _moveResult = NO;
     NSError       *error;
-    _moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
+    if ([fm fileExistsAtPath: fromFullPath isDirectory: NO]) {
+      _moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
+    }
     return _moveResult;
 }
 

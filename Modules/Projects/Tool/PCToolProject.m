@@ -209,13 +209,11 @@
 // dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
 
-  PCFileManager  *pcfm = [PCFileManager defaultManager];
   NSBundle       *projectBundle;
   NSString       *_file;
   NSString       *_2file;
   NSMutableArray *_array = nil;
   NSString       *_executableFileName;
-  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   BOOL           _moveResult = YES;
 
   NSAssert(path,@"No valid project path provided!");
@@ -246,15 +244,13 @@
 
   // search for all .m and .h files and add them to the project
   [projectManager setSrcFilesOn: projectDict scanningFrom: path];
-  [pcfm findDirectoriesAt: path into: _subdirs];
-  [projectDict setObject: _subdirs forKey: PCSubprojects];
 
   // move an existing GNUMakefile and create the one from the template and add other makefiles
   _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
   if (!_moveResult) {
     NSRunAlertPanel(@"File Conflict",
 		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
-		    @"Dismiss", @"Dismiss", nil);
+		    @"Dismiss", nil, nil);
   }
 
   // GNUmakefile.postamble

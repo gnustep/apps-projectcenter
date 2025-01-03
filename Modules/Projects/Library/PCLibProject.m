@@ -89,7 +89,6 @@
   NSString       *_2file = nil;
   NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
   NSString       *_resourcePath = nil;
-  NSMutableArray *_subdirs = [[NSMutableArray alloc] init];
   BOOL           _moveResult = YES;
 
   NSAssert(path,@"No valid project path provided!");
@@ -116,17 +115,12 @@
   [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
   [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
 
-  // search for all .m and .h files and add them to the project
-  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
-  [pcfm findDirectoriesAt: path into: _subdirs];
-  [projectDict setObject: _subdirs forKey: PCSubprojects];
-
   // move an existing GNUMakefile and create the one from the template and add other makefiles
   _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
   if (!_moveResult) {
     NSRunAlertPanel(@"File Conflict",
 		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
-		    @"Dismiss", @"Dismiss", nil);
+		    @"Dismiss", nil, nil);
   }
 
   // Copy the project files to the provided path
@@ -135,31 +129,22 @@
   _file = [NSString stringWithFormat:@"%@", projectName];
   _2file = [NSString stringWithFormat:@"%@.m", projectName];
   _moveResult = [projectManager moveFileNamed: _2file atPath: path toFileName: [_2file stringByAppendingString: @".original"]];
-  if (!_moveResult) {
-    NSRunAlertPanel(@"File Conflict",
-		    [NSString stringWithFormat: @"The directory already contains a %@ file that cannot be moved. The Project center file will not be generated", _2file],
-		    @"Dismiss", @"Dismiss", nil);
-  } else {
-    [pcfc createFileOfType:ObjCClass 
-		      path:[path stringByAppendingPathComponent:_file]
-		   project:self];
-    [projectDict setObject:[NSArray arrayWithObjects:_2file,nil]
-		    forKey:PCClasses];
-  }
+  _moveResult = [projectManager moveFileNamed: [NSString stringWithFormat:@"%@.h", projectName]
+				       atPath: path
+				   toFileName: [[NSString stringWithFormat:@"%@.h", projectName] stringByAppendingString: @".original"]];
+
+  [pcfc createFileOfType:ObjCClass 
+		    path:[path stringByAppendingPathComponent:_file]
+		 project:self];
 
   // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
   _file = [NSString stringWithFormat:@"%@.h", projectName];
-  _moveResult = [projectManager moveFileNamed: _file atPath: path toFileName: [_file stringByAppendingString: @".original"]];
-  if (!_moveResult) {
-    NSRunAlertPanel(@"File Conflict",
-		    [NSString stringWithFormat: @"The directory already contains a %@ file that cannot be moved. The Project center file will not be generated", _2file],
-		    @"Dismiss", @"Dismiss", nil);
-  } else {
-    [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
-		    forKey:PCHeaders];
-    [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
-		    forKey:PCPublicHeaders];
-  }
+  [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+		  forKey:PCPublicHeaders];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+
   // GNUmakefile.postamble
   [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
 

@@ -118,6 +118,46 @@
 
 // dlsa - addFromSources
 - (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  NSBundle *projectBundle = nil;
+  NSString *_file = nil;
+  BOOL           _moveResult = YES;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  projectBundle = [NSBundle bundleForClass:[self class]];
+
+  _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName:[path lastPathComponent]];
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+                  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", nil, nil);
+  }
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Save the project to disc
+  [self writeMakefile];
+  [self save];
+
   return self;
 }
 
