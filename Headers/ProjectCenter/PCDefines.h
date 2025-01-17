@@ -195,5 +195,10 @@ static NSString * const PCLibraryVar           = @"LIBRARY_VAR";
 // Will be removed (compatibility)
 static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; 
 
+// dlsa - addFromSources
+static int DLSA_DEBUG                          = 1;
+
+
+
 #endif // _PCDEFINES_H_
 

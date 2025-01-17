@@ -31,6 +31,8 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectBrowser.h>
 #import <ProjectCenter/PCAddFilesPanel.h>
+// dlsa - addFromSources
+#import <ProjectCenter/PCNewProjectFromSourcesPanel.h>
 
 #import <Protocols/Preferences.h>
 #import <ProjectCenter/PCLogController.h>
@@ -353,6 +355,8 @@ static PCFileManager *_mgr = nil;
       while (nil != (candidate = [candidateEnumerator nextObject]))
         {
           NSString *path = [directory stringByAppendingPathComponent: candidate];
+
+          NSLog(@"final candidate path is: %@", path);
           
           if ([manager isExecutableFileAtPath: path])
 	    {
@@ -363,6 +367,134 @@ static PCFileManager *_mgr = nil;
   return nil;
 }
 
+// dlsa - create from sources
+- (NSArray*) findSourcesWithMain: (NSString*)path
+{
+  NSFileManager *manager;
+  manager = [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *filesInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+  const id extsToSearchArr[] = {@"c", @"m"}; 
+  NSArray *extsToSearch = [NSArray arrayWithObjects: extsToSearchArr  count: 2 ];
+  NSMutableArray *filesFound = [[NSMutableArray alloc] init];
+  NSString* searchPattern = @"\\s*\\w\\s+main\\s*\\([^\\)]*\\).*";
+
+  int index;
+  for (index = 0; index < [filesInPath count]; index++)
+    {
+    NSString *filePath = [filesInPath objectAtIndex: index];
+    NSString *pathExt = [filePath pathExtension];
+    if ([extsToSearch containsObject: pathExt])
+      {
+      NSString *fileContents = [NSString stringWithContentsOfFile: [NSString stringWithFormat: @"%@/%@",path, filePath]];
+      NSRegularExpression *mainRegex = [NSRegularExpression regularExpressionWithPattern: searchPattern options:0 error: &error];
+      NSUInteger numberOfMatches = [mainRegex numberOfMatchesInString: fileContents options:0 range: NSMakeRange(0, [fileContents length])];
+      if (numberOfMatches > 0)
+      {
+	[filesFound addObject: filePath];
+      }
+    }
+  }
+  return filesFound;
+}
+
+// dlsa - create from sources
+- (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not
+{
+  NSMutableArray* result = [[NSMutableArray alloc] init];
+  int counter;
+  for (counter = 0; counter < [filenames count]; counter++)
+    {
+      NSString *filename = [filenames objectAtIndex: counter];
+       if ([filename hasSuffix: suffix] && !not)
+	 {
+	   [result addObject: [filenames objectAtIndex: counter]];
+	 }
+       else if (not && ![filename hasSuffix: suffix])
+	 {
+	   [result addObject: [filenames objectAtIndex: counter]];
+	 }
+    }
+  return result;
+}
+
+// dlsa - create from sources
+- (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions into: (NSMutableArray*)filesFound {
+  return [self findItemsAt:path withExtensions:extensions listDirectories: NO exclude: NO into: filesFound];
+}
+
+// dlsa - create from sources
+- (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound {
+  NSArray *projectDataSubdirs = [NSArray arrayWithObjects: @"pcproj", @"backup", nil];
+  return [self findItemsAt:path withExtensions: projectDataSubdirs listDirectories: YES exclude: YES into: directoriesFound];
+}
+
+// dlsa - create from sources
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs exclude:(BOOL)yesno into:(NSMutableArray*)itemsFound {
+
+  if (nil == itemsFound) {
+    return;
+  }
+  NSFileManager *manager= [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *itemsInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+
+  int index;
+  for (index = 0; index < [itemsInPath count]; index++) {
+    NSString *filePath = [itemsInPath objectAtIndex: index];
+    NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
+    NSString *fullFilePath = [NSString pathWithComponents: pathComps];
+    BOOL isDirectory = NO;
+    [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
+    if (!listdirs && !isDirectory) {
+      NSString *pathExt = [filePath pathExtension];
+      if (extensions != nil && [extensions containsObject: pathExt]) {
+	[itemsFound addObject: filePath];
+      } else if (extensions == nil || [extensions count] == 0) {
+	[itemsFound addObject: filePath];
+      }
+    } else if (listdirs && isDirectory) {
+      NSString *pathExt = [filePath pathExtension];
+      if (extensions != nil && [extensions containsObject: pathExt] && !yesno) {
+	[itemsFound addObject: filePath];
+      } if (extensions == nil) {
+	[itemsFound addObject: filePath];
+      }
+    }
+  }
+}
+
+// dlsa - create from sources
+- (void) findItemsAt: (NSString*)path like: (NSString*)likeExpr listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound {
+
+  if (nil == itemsFound) {
+    return;
+  }
+  NSFileManager *manager= [NSFileManager defaultManager];
+  NSError *error;
+  NSArray *itemsInPath = [manager contentsOfDirectoryAtPath:path error:&error];
+
+  int index;
+  for (index = 0; index < [itemsInPath count]; index++) {
+    NSString *filePath = [itemsInPath objectAtIndex: index];
+    NSArray *pathComps = [NSArray arrayWithObjects: path, filePath,nil];
+    NSScanner *scanner = [NSScanner scannerWithString: filePath];
+    NSString *fullFilePath = [NSString pathWithComponents: pathComps];
+    BOOL isDirectory = NO;
+    BOOL scanned = NO;
+    NSString *strReceiver = [[NSString alloc] init];
+    [scanner setCaseSensitive: YES];
+    [manager fileExistsAtPath: fullFilePath isDirectory: &isDirectory];
+    scanned = [scanner scanString: likeExpr intoString: &strReceiver];
+    if (scanned) {
+      if (!listdirs && !isDirectory) {
+	[itemsFound addObject: filePath];
+      } else if (listdirs && isDirectory) {
+	[itemsFound addObject: filePath];
+      }
+    }
+  }
+}
 
 @end
 
@@ -421,6 +553,16 @@ static PCFileManager *_mgr = nil;
 	  NSString *prPathRoot = [pr projectPath];
 	  lastOpenDir = prPathRoot;
 	}
+      break;
+    case PCNewProjectFromSourcesOperation:
+      if (newProjectFromSourcesPanel == nil)
+	{
+	  newProjectFromSourcesPanel = [PCNewProjectFromSourcesPanel addProjectPanel];
+	  [newProjectFromSourcesPanel setAccessaryView: accessoryView];
+	  [newProjectFromSourcesPanel setTreatsFilePackagesAsDirectories: YES];
+	}
+      panel = newProjectFromSourcesPanel;
+      lastOpenDir = [prefs stringForKey:@"projectnewfromsourcesLasDirectory"];
       break;
     default:
       return nil;
@@ -522,6 +664,13 @@ static PCFileManager *_mgr = nil;
 	  [fileList addObjectsFromArray:[panel filenames]];
 	}
     }
+  else if (op == PCNewProjectFromSourcesOperation) {
+
+      if ((result = [panel runModalForTypes:types]) == NSOKButton) 
+	{
+	  [fileList addObjectsFromArray:[panel filenames]];
+	}
+  }    
 
   if (result == NSOKButton)
     {

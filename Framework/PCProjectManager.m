@@ -340,6 +340,162 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return findPanel;
 }
 
+// dlsa - search for the main function in source files
+- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectInstance {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
+  NSBundle       *projBundle = [NSBundle bundleForClass: projectInstance->isa];
+  NSString       *_file = nil;
+  NSString       *_2file = nil;
+  NSArray        *_srcFilesWithMain;
+  NSArray        *_objcFilesWithMain;
+  NSArray        *_regularFilesWithMain;
+  NSString       *_executableFileName;
+
+  _srcFilesWithMain = [pcfm findSourcesWithMain: path];
+  _objcFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:false];
+  _regularFilesWithMain = [pcfm filterExtensions: _srcFilesWithMain suffix: @".m" negate:true];
+
+  if ([_objcFilesWithMain count] > 0) {
+    _executableFileName = [_objcFilesWithMain objectAtIndex: 0];
+    [projectDict setObject:_executableFileName  forKey: PCPrincipalClass];
+  } else if ([_regularFilesWithMain count] > 0) {
+    _executableFileName = [_regularFilesWithMain objectAtIndex: 0];
+  } else {
+    NSString *mainFileName = [NSString stringWithFormat:@"%@_main.m", [(PCProject*)projectInstance projectName]];
+    // Copy the project files to the provided path
+    _file = [projBundle pathForResource:@"main" ofType:@"m"];
+    _2file = [path stringByAppendingPathComponent: mainFileName];
+    [pcfm copyFile:_file toFile:_2file];
+    [pcfc replaceTagsInFileAtPath:_2file withProject: (PCProject*)projectInstance];
+    _executableFileName = mainFileName;
+  }
+
+  if (DLSA_DEBUG) {
+    int _srcFilesWithMainCount = [_srcFilesWithMain count];
+    int _objcFilesWithMainCount = [_objcFilesWithMain count];
+    int _regularFilesWithMainCount = [_regularFilesWithMain count];
+    printf("src files with main count : %d\n", _srcFilesWithMainCount);
+    printf("objc files with main count : %d\n", _objcFilesWithMainCount);
+    printf("regular files with main count : %d\n", _regularFilesWithMainCount);
+  }
+  
+  [projectDict setObject: _objcFilesWithMain forKey: PCClasses];
+  return _executableFileName;
+}
+
+// dlsa - search for all .m and .h files and add them to the project
+- (void) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path {
+  
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  NSArray        *_srcExtensionArray = [NSArray arrayWithObjects: @"m",nil];
+  NSArray        *_hdrExtensionArray = [NSArray arrayWithObjects: @"h",nil];
+  NSArray        *_otherSrcsExtensionArray = [NSArray arrayWithObjects: @"c", @"original",nil];
+  NSArray        *_interfaceFileExtensionArray = [NSArray arrayWithObjects: @"gorm", @"gsmarkup", nil];
+  NSMutableArray *_srcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_hdrFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_otherSrcFiles = [[NSMutableArray alloc] init];
+  NSMutableArray *_gormFiles = [[NSMutableArray alloc] init];
+
+  [pcfm findFilesAt: path withExtensions: _srcExtensionArray into: _srcFiles];
+  [pcfm findFilesAt: path withExtensions: _hdrExtensionArray into: _hdrFiles];
+  [pcfm findFilesAt: path withExtensions: _otherSrcsExtensionArray into: _otherSrcFiles];
+  [pcfm findFilesAt: path withExtensions: _interfaceFileExtensionArray into: _gormFiles];
+
+  if (DLSA_DEBUG) {
+    // print the array of files
+    printf("---------------------------------\n");
+    int idx;
+    for (idx = 0; idx < [_srcFiles count]; idx++) {
+      printf("%s\n", [[_srcFiles objectAtIndex: idx] cString]);
+    }
+    for (idx = 0; idx < [_hdrFiles count]; idx++) {
+      printf("%s\n", [[_hdrFiles objectAtIndex: idx] cString]);
+    }
+    for (idx = 0; idx < [_otherSrcFiles count]; idx++) {
+      printf("%s\n", [[_otherSrcFiles objectAtIndex: idx] cString]);
+    }
+    for (idx = 0; idx < [_gormFiles count]; idx++) {
+      printf("%s\n", [[_gormFiles objectAtIndex: idx] cString]);
+    }
+  }
+
+  [projectDict setObject: _srcFiles forKey: PCClasses];
+  [projectDict setObject: _hdrFiles forKey: PCHeaders];
+  NSArray *otherSrcs = [projectDict objectForKey: PCOtherSources];
+  otherSrcs = [otherSrcs arrayByAddingObjectsFromArray: _otherSrcFiles];
+  [projectDict setObject: otherSrcs forKey: PCOtherSources];
+  [projectDict setObject: _gormFiles forKey: PCInterfaces];
+}
+
+- (BOOL) processMakefile: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  NSMutableArray *_makefiles;
+  NSArray        *_supportFiles = [[NSArray alloc] init];
+  NSMutableArray *_gnuMakefiles = [[NSMutableArray alloc] init];
+  BOOL           _moveResult = YES;
+
+  _makefiles = [projectDict objectForKey: PCSupportingFiles];
+  // search for existing makefiles
+  [pcfm findItemsAt: path like:@"GNUmakefile" listDirectories:NO into:_gnuMakefiles];
+  if ([_gnuMakefiles count] > 0) {
+    NSString      *newFileName = [[_gnuMakefiles objectAtIndex:0] stringByAppendingString: @".original"];
+    _moveResult = [self moveFileNamed: [_gnuMakefiles objectAtIndex:0] atPath: path toFileName: newFileName];
+    if (_moveResult) {
+      [_gnuMakefiles removeAllObjects];
+      [_gnuMakefiles addObject: newFileName];
+      [_makefiles addObjectsFromArray: _gnuMakefiles];
+    }
+  }
+  [pcfm findItemsAt: path like:@"makefile" listDirectories:NO into:_makefiles];
+  [pcfm findItemsAt: path like:@"Makefile" listDirectories:NO into:_makefiles];
+
+  _supportFiles = [_supportFiles arrayByAddingObjectsFromArray: _makefiles];
+  [projectDict setObject: _supportFiles forKey:PCSupportingFiles];
+  return _moveResult;
+}
+
+- (BOOL) moveFileNamed: (NSString*)filename atPath: (NSString*)path toFileName: (NSString*)newFileName {
+    NSArray       *oldFileNamePath = [NSArray arrayWithObjects: path, filename, nil];
+    NSArray       *newFileNamePath = [NSArray arrayWithObjects: path, newFileName, nil];
+    NSFileManager *fm = [NSFileManager defaultManager];
+    NSString      *fromFullPath = [NSString pathWithComponents: oldFileNamePath];
+    NSString      *toFullPath = [NSString pathWithComponents: newFileNamePath];
+    BOOL           _moveResult = NO;
+    NSError       *error;
+    if ([fm fileExistsAtPath: fromFullPath isDirectory: NO]) {
+      _moveResult = [fm moveItemAtPath: fromFullPath toPath: toFullPath error: &error];
+    }
+    return _moveResult;
+}
+
+- (void) removeEmptyEntriesFromPCOtherSources: (NSMutableDictionary*)projectDict {
+
+  NSArray *otherSrcsArray = [projectDict objectForKey: PCOtherSources];
+  NSMutableArray *newOtherSrcsArray = [[NSMutableArray alloc] init];
+  int idx;
+  for (idx = 0; idx < [otherSrcsArray count]; idx++) {
+    NSObject *element = [otherSrcsArray objectAtIndex: idx];
+    if ([[element className] isEqual: @"NSString"] &&
+	!([(NSString*)element stringByTrimmingCharactersInSet: [NSCharacterSet characterSetWithCharactersInString: @" "]] == @"")) {
+      [newOtherSrcsArray addObject: element];
+    }
+  }
+  [projectDict setObject: newOtherSrcsArray forKey: PCOtherSources];
+  if (DLSA_DEBUG) {
+    // print the array of files
+    int idx;
+    printf("Start ---------------------------------\n");
+    for (idx = 0; idx < [[projectDict objectForKey: PCOtherSources] count]; idx++) {
+      printf("%s\n", [[[projectDict objectForKey: PCOtherSources] objectAtIndex: idx] cString]);
+    }
+    printf("End   ---------------------------------\n");
+  }
+}
+
+
 // ============================================================================
 // ==== Project management
 // ============================================================================
@@ -811,6 +967,53 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   return project;
 }
 
+// dlsa - addFromSources
+- (PCProject *)createProjectFromSourcesOfType:(NSString *)projectType 
+                                         path:(NSString *)aPath
+{
+  NSString               *className = [projectTypes objectForKey:projectType];
+  PCProject<ProjectType> *projectCreator;
+  PCProject              *project = nil;
+  NSString               *subType = nil;
+ 
+  if ((project = [loadedProjects objectForKey: [aPath stringByDeletingLastPathComponent]]) != nil)
+    {
+      [[project projectWindow] makeKeyAndOrderFront:self];
+      return project;
+    }
+
+  if ([projectType isEqualToString:@"Application"])
+    subType = PCProjectInterfaceGorm;
+ 
+  projectCreator = [bundleManager objectForClassName:className 
+					  bundleType:@"project"
+					    protocol:@protocol(ProjectType)];
+  //  NSLog(@"%@ CLASS: %@", className, projectCreator);
+  if (!projectCreator)
+    {
+      NSRunAlertPanel(@"New Project",
+		      @"Could not create project directory %@.\n"
+		      @"No project creator. Report the bug, please!",
+		      @"OK", nil, nil, aPath); 
+      return nil;
+    }
+
+  [projectCreator setProjectManager:self];
+
+  // Create project
+  if (!(project = [projectCreator createProjectFromSourcesAt:aPath withOption:subType])) 
+    {
+      NSRunAlertPanel(@"New Project",
+		      @"Project %@ could not be created.\nReport bug, please!",
+		      @"OK",nil,nil,[project projectName]); 
+      return nil;
+    }
+
+  [self startSaveTimer];
+
+  return project;
+}
+
 - (void)newProject: (id)sender
 {
   NSArray   *files, *types = nil;
@@ -865,6 +1068,65 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [[project projectWindow] orderFront:self];
     }
 }
+
+// dlsa - addFromSources
+- (void)newProjectFromSources: (id)sender
+{
+  NSArray   *files, *types = nil;
+  NSString  *filePath;
+  NSString  *projectType;
+  PCProject *project;
+  NSString  *projectPath;
+
+  [self createProjectTypeAccessaryView];
+
+  files = [fileManager filesOfTypes:types
+			  operation:PCNewProjectFromSourcesOperation
+			   multiple:NO
+			      title:@"New Project From Sources"
+			    accView:projectTypeAccessaryView];
+
+  filePath = [files objectAtIndex:0];
+
+
+#ifdef WIN32
+  filePath = [filePath stringByDeletingPathExtension];
+#endif
+
+  if (filePath != nil) 
+    {
+      if ([filePath rangeOfString: @" "].location != NSNotFound ||
+	  [filePath rangeOfString: @"\t"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\r"].location != NSNotFound ||
+	  [filePath rangeOfString: @"\n"].location != NSNotFound)
+	{
+	  if (NSRunAlertPanel 
+	      (@"New Project",
+	       @"Are you sure you want to create a project with whitespace in it's path?\n"
+	       @"GNUstep's build environment currently can't handle that reliably.",
+	       @"OK", @"Cancel", nil) != NSAlertDefaultReturn)
+	    {
+	      return;
+	    }
+	}
+      
+      projectType = [projectTypePopup titleOfSelectedItem];
+
+      if (!(project = [self createProjectFromSourcesOfType:projectType path:filePath]))
+	{
+	  // No need to open alert panel. Alert panel was already opened
+	  // in createProjectOfType:path: method.
+	  return;
+	}
+      projectPath = [project projectPath];
+      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:projectPath]];
+      [loadedProjects setObject:project forKey:projectPath];
+      [self setActiveProject:project];
+      [[project projectWindow] orderFront:self];
+    }
+}
+
+- (void)testMethod { }
 
 - (BOOL)saveProject
 {

@@ -112,6 +112,9 @@ extern NSString *PCProjectBreakpointNotification;
 - (BOOL)save;
 - (BOOL)close:(id)sender;
 
+// dlsa - create from sources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption;
+
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
