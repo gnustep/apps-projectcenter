@@ -22,7 +22,7 @@
 //
 // You should have received a copy of the GNU General Public
 // License along with this library; if not, write to the Free Software 
-// Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111 USA.
+// Foundation, Inc., 31 Milk Street #960789 Boston, MA 02196 USA.
 
 #import <AppKit/NSColorSpace.h>
 
