@@ -66,7 +66,7 @@
   return NO;
 }
 
-- (void) showPrefPanel: (id)sender
+- (IBAction) showPrefPanel: (id)sender
 {
 }
 
