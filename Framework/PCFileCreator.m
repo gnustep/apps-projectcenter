@@ -286,6 +286,31 @@ static NSDictionary  *dict = nil;
   return YES;
 }
 
+- (NSString *) sanitizeUppercaseFileNameString:(NSString *) input
+{
+    NSMutableString *sanitizedString = [NSMutableString stringWithCapacity:[input length]];
+    
+    // Create a character set that includes letters, digits, and the underscore character
+    NSMutableCharacterSet *allowedCharacters = [NSMutableCharacterSet alphanumericCharacterSet];
+    [allowedCharacters addCharactersInString:@"_"];
+    
+    for (NSUInteger i = 0; i < [input length]; i++)
+      {
+        unichar character = [input characterAtIndex:i];
+        
+        if ([allowedCharacters characterIsMember:character])
+          {
+            [sanitizedString appendFormat:@"%C", character];
+          }
+        else
+          {
+            [sanitizedString appendString:@"_"];
+          }
+      }
+    
+    return sanitizedString;
+}
+
 - (void)replaceTagsInFileAtPath:(NSString *)newFile
                     withProject:(PCProject *)aProject
 {
@@ -296,6 +321,8 @@ static NSDictionary  *dict = nil;
   NSString *UCfn = [[aFile stringByDeletingPathExtension] uppercaseString];
   NSString *fn = [aFile stringByDeletingPathExtension];
   NSRange  subRange;
+
+  UCfn = [self sanitizeUppercaseFileNameString: UCfn];
 
 #ifdef WIN32 	 
   file = [[NSMutableString stringWithContentsOfFile: newFile 	 
