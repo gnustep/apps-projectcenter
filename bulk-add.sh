@@ -1,0 +1,10 @@
+git add Framework/PCFileManager.m
+git add Framework/PCNewProjectFromSourcesPanel.m
+git add Framework/PCProject.m
+git add Framework/PCProjectManager.m
+git add Headers/ProjectCenter/PCProject.h
+git add Headers/ProjectCenter/PCProjectManager.h
+git add Modules/Projects/Application/PCAppProject.m
+git add Modules/Projects/Tool/PCToolProject.m
+git add bulk-add.sh
+git add gdb-breakpoints.txt

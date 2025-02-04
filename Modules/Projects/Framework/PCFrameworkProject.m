@@ -145,7 +145,80 @@
 //  _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
 
   // Save the project to disc
+
   [self writeMakefile];
+  [self save];
+
+  return self;
+}
+
+// dlsa - addFromSources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+//  PCFileManager *pcfm = [PCFileManager defaultManager];
+  PCFileCreator *pcfc = [PCFileCreator sharedCreator];
+  NSBundle      *projectBundle = nil;
+  NSString      *_file = nil;
+  NSString      *_2file = nil;
+//  NSString      *_resourcePath;
+  BOOL           _moveResult = YES;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  projectBundle = [NSBundle bundleForClass:[self class]];
+
+  _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName:[path lastPathComponent]];
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", @"Dismiss", nil);
+  }
+
+  // Copy the project files to the provided path
+
+  // $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@", projectName];
+  _2file = [NSString stringWithFormat:@"%@.m", projectName];
+  _moveResult = [projectManager moveFileNamed: _2file atPath: path toFileName: [_2file stringByAppendingString: @".original"]];
+  _moveResult = [projectManager moveFileNamed: [NSString stringWithFormat:@"%@.h", projectName]
+				       atPath: path
+				   toFileName: [[NSString stringWithFormat:@"%@.h", projectName] stringByAppendingString: @".original"]];
+
+  [pcfc createFileOfType:ObjCClass 
+                    path:[path stringByAppendingPathComponent:_file]
+                 project:self];
+
+  // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@.h", projectName];
+  [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+                  forKey:PCPublicHeaders];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Resources
+//  _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+
+  // Save the project to disc
+  if (_moveResult) {
+    [self writeMakefile];
+  }
   [self save];
 
   return self;

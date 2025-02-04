@@ -32,13 +32,15 @@
 @class PCProject;
 @class PCProjectManager;
 @class PCAddFilesPanel;
+@class PCNewProjectFromSourcesPanel;
 
 enum {
     PCOpenFileOperation,
     PCSaveFileOperation,
     PCAddFileOperation,
     PCOpenProjectOperation,
-    PCOpenDirectoryOperation
+    PCOpenDirectoryOperation,
+    PCNewProjectFromSourcesOperation
 };
 
 @interface PCFileManager : NSObject
@@ -56,6 +58,8 @@ enum {
   IBOutlet NSButton      *nfCreateButton;
 
   PCAddFilesPanel        *addFilesPanel;
+  // dlsa - addFromSources
+  PCNewProjectFromSourcesPanel *newProjectFromSourcesPanel;
 
   int                    operation;
 }
@@ -114,6 +118,24 @@ enum {
 
 // find an executable from list and return full path
 - (NSString*) findExecutableToolFrom: (NSArray*)candidates;
+
+// dlsa - find all source files with a main function
+- (NSArray*) findSourcesWithMain: (NSString*)path;
+
+// dlsa - return the strings in the argument that end in .m
+- (NSArray*) filterExtensions: (NSArray*)filenames suffix: (NSString*)suffix negate:(BOOL)not;
+
+// dlsa - find all files in the path with the passed in extensions array
+- (void) findFilesAt: (NSString*)path withExtensions: (NSArray*)extensions  into: (NSMutableArray*)filesFound;
+
+// dlsa - find all subdirectories in the path with the passed in extensions array
+- (void) findDirectoriesAt: (NSString*)path into: (NSMutableArray*)directoriesFound;
+
+// dlsa - finds files or subdirectories at the given path. files can optionally be of a set of extensions
+- (void) findItemsAt: (NSString*)path withExtensions: (NSArray*)extensions listDirectories:(BOOL)listdirs exclude:(BOOL)yesno into:(NSMutableArray*)itemsFound;
+
+// dlsa - finds all files or subdirectories at the given path that have their nime as a string containing the like parameter
+- (void) findItemsAt: (NSString*)path like: (NSString*)likeExpr listDirectories:(BOOL)listdirs into:(NSMutableArray*)itemsFound;
 
 @end
 

@@ -27,6 +27,8 @@
 #import <ProjectCenter/PCMakefileFactory.h>
 #import <ProjectCenter/PCFileManager.h>
 #import <ProjectCenter/PCFileCreator.h>
+// dlsa - create from sources
+#import <ProjectCenter/PCProjectManager.h>
 
 #import "PCToolProject.h"
 
@@ -198,6 +200,83 @@
 
   // Save the project to disc
   [self writeMakefile];
+  [self save];
+
+  return self;
+}
+
+
+// dlsa - addFromSources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+
+  NSBundle       *projectBundle;
+  NSString       *_file;
+  NSString       *_2file;
+  NSMutableArray *_array = nil;
+  NSString       *_executableFileName;
+  BOOL           _moveResult = YES;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  projectBundle = [NSBundle bundleForClass:[self class]];
+  
+  _file = [projectBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  [projectManager removeEmptyEntriesFromPCOtherSources: projectDict];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName:[path lastPathComponent]];
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+                  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // search for the main function in source files
+  _executableFileName = [projectManager setFileWithMainOn: projectDict scanningFrom: path withClass: self];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", nil, nil);
+  }
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Info-gnutstep.plist
+  _file = [projectBundle pathForResource:@"Info" ofType:@"gnustep"];
+  infoDict = [[NSMutableDictionary alloc] initWithContentsOfFile:_file];
+  [infoDict setObject:projectName forKey:@"ToolName"];
+  [infoDict setObject:_executableFileName forKey:@"NSExecutable"];
+
+  // Write to ProjectNameInfo.plist
+  _file = [NSString stringWithFormat:@"%@Info.plist",projectName];
+  _2file = [projectPath stringByAppendingPathComponent:_file];
+  [infoDict writeToFile:_2file atomically:YES];
+
+  // Add Info-gnustep.plist into SUPPORTING_FILES
+  _array = [[projectDict objectForKey:PCSupportingFiles] mutableCopy];
+  [_array addObject:_file];
+  [projectDict setObject:_array forKey:PCSupportingFiles];
+  RELEASE(_array);
+
+  // Save the project to disc
+  if (_moveResult) {
+    [self writeMakefile];
+  }
   [self save];
 
   return self;

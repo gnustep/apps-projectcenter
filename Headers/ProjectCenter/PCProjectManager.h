@@ -121,6 +121,13 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (NSPanel *)launchPanel;
 - (NSPanel *)projectFinderPanel;
 
+// - dlsa - create new from sources
+- (NSString*) setFileWithMainOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*)path withClass:(NSObject*)projectInstance;
+- (void) setSrcFilesOn: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
+- (BOOL) processMakefile: (NSMutableDictionary*)projectDict scanningFrom: (NSString*) path;
+- (BOOL) moveFileNamed: (NSString*)filename atPath: (NSString*)path toFileName: (NSString*)newFileName;
+- (void) removeEmptyEntriesFromPCOtherSources: (NSMutableDictionary*)projectDict;
+
 // ============================================================================
 // ==== Project management
 // ============================================================================
@@ -143,6 +150,8 @@ extern NSString *PCActiveProjectDidChangeNotification;
 - (PCProject *)createProjectOfType:(NSString *)projectType 
                               path:(NSString *)aPath;
 - (void)newProject: (id)sender;
+// dlsa - addFromSources
+- (void)newProjectFromSources: (id)sender;
 - (BOOL)saveProject;
 
 // Calls saveAllProjects if the preferences are setup accordingly.
