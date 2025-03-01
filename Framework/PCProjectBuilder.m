@@ -1145,9 +1145,16 @@
 	{// first message after "In file included from"
 //	  NSLog(@"Inlcuded File: %@", file);
 	  includedFile = [components objectAtIndex:0];
-      	  file = 
-	    [currentBuildPath stringByAppendingPathComponent:includedFile];
-	  currentEL = ELIncludedError;
+          if ([includedFile isAbsolutePath])
+            {
+              file = includedFile;
+            }
+          else
+            {
+      	      file = 
+	        [currentBuildPath stringByAppendingPathComponent:includedFile];
+	      currentEL = ELIncludedError;
+            }
 	}
       else
 	{
