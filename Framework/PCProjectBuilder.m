@@ -333,6 +333,22 @@
 
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
 
+  if (YES)
+    {
+      NSUInteger cpuCount;
+
+      cpuCount = [[NSProcessInfo processInfo] processorCount];
+      NSLog(@"Detected %lu CPUs/Cores", (unsigned long)cpuCount);
+      if (cpuCount > 1)
+        {
+          NSString *cpuStr;
+
+          NSLog(@"Executing Make with parallelism of %lu", (unsigned long)cpuCount);
+          cpuStr = [NSString stringWithFormat:@"-j%lu", (unsigned long)cpuCount];
+          [args addObject:cpuStr];
+        }
+    }
+
   // --- Get arguments from options
   if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"YES"])
     { // there is no clear default; the default configuration of GNUstep-make
@@ -345,14 +361,17 @@
     { // default is 'debug=yes'
       [args addObject:@"debug=no"];
     }
+
   if ([[projectDict objectForKey:PCBuilderStrip] isEqualToString:@"YES"])
     { // default is 'strip=no'
       [args addObject:@"strip=yes"];
     }
+
   if ([[projectDict objectForKey:PCBuilderSharedLibs] isEqualToString:@"NO"])
     { // default is 'shared=yes'
       [args addObject:@"shared=no"];
     }
+
   // Always add 'messages=yes' argument. Build output parsing assumes this.
   [args addObject:@"messages=yes"];
   // "Verbose ouput" option (Build Options panel) just toogle if build shows
