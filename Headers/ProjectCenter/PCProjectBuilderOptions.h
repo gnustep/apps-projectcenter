@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2007 Free Software Foundation
+   Copyright (C) 2000-2025 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Sergii Stoian
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -27,6 +28,16 @@
 
 @class PCProject;
 
+typedef enum _MakeParallelism {
+    Nis1 = 0,
+    NisCPUminus1,
+    NisCPU,
+    NisCPUplus1,
+    NisCPUdiv2,
+    NisCPUdiv4
+} MakeParallelism;
+
+
 @interface PCProjectBuilderOptions : NSObject
 {
   PCProject     *project;
@@ -34,6 +45,7 @@
 
   NSPanel       *optionsPanel;
   NSPopUpButton *targetPopup;
+  NSPopUpButton *parallelismPopup;  // number of jobs
   NSTextField   *buildArgsField;
   NSButton      *verboseButton;     // messages=yes
   NSButton      *debugButton;       // debug=no
@@ -52,6 +64,7 @@
 @interface PCProjectBuilderOptions (Delegate)
 
 - (void)targetDidSet:(NSString *)aTarget;
+- (void)parallelismDidSet:(NSInteger)aTarget;
 
 @end
 

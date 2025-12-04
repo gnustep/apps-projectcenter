@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2007 Free Software Foundation
+   Copyright (C) 2000-2025 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Sergii Stoian
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -127,7 +128,17 @@
 
 - (void)optionsPopupChanged:(id)sender
 {
-  [delegate targetDidSet:[targetPopup titleOfSelectedItem]];
+  if (sender == targetPopup)
+    {
+      [delegate targetDidSet:[targetPopup titleOfSelectedItem]];
+    }
+  else
+    {
+      NSInteger tag;
+
+      tag = [[parallelismPopup selectedItem] tag];
+      [project setProjectDictObject:[NSNumber numberWithInt:tag] forKey: PCBuilderParallelism notify:NO];
+    }
 }
 
 - (void)controlTextDidEndEditing:(NSNotification *)aNotif
@@ -173,6 +184,8 @@
   [targetPopup removeAllItems];
   [targetPopup addItemsWithTitles:[project buildTargets]];
   [targetPopup selectItemAtIndex:0];
+
+  // Setup jobs popup
 
   // Setup build arguments field
   args = [[project projectDict] objectForKey:PCBuilderArguments];

@@ -1,7 +1,7 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2014 Free Software Foundation
+   Copyright (C) 2000-2025 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
@@ -333,23 +333,70 @@
 
   [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
 
-  if (YES)
+  // --- Get arguments from options
+  if ([projectDict objectForKey:PCBuilderParallelism] != nil)
     {
+      NSString *cpuStr;
+      unsigned jobs;
+      id parallelismValue;
       NSUInteger cpuCount;
+      int parallelism;
 
       cpuCount = [[NSProcessInfo processInfo] processorCount];
       NSLog(@"Detected %lu CPUs/Cores", (unsigned long)cpuCount);
-      if (cpuCount > 1)
-        {
-          NSString *cpuStr;
 
-          NSLog(@"Executing Make with parallelism of %lu", (unsigned long)cpuCount);
-          cpuStr = [NSString stringWithFormat:@"-j%lu", (unsigned long)cpuCount];
+      parallelismValue = [projectDict objectForKey:PCBuilderParallelism];
+      if ([parallelismValue isKindOfClass:[NSNumber class]])
+        {
+          NSLog(@"got expected NSNumber class");
+          parallelism = (unsigned)[parallelismValue unsignedIntValue];
+        }
+      else
+        {
+          // From a saved project we get back a String not a Value
+          NSLog(@"got unexpected class: %@", [parallelismValue className]);
+          parallelism = (unsigned)[parallelismValue intValue];
+        }
+
+      jobs = 0;
+      switch (parallelism)
+        {
+        case (Nis1):
+          break;
+          jobs = 1;
+        case (NisCPUminus1):
+          jobs = cpuCount - 1;
+          break;
+        case (NisCPU):
+          jobs = cpuCount;
+          break;
+        case (NisCPUplus1):
+          jobs = cpuCount + 1;
+          break;
+        case (NisCPUdiv2):
+          jobs = cpuCount / 2;
+          break;
+        case (NisCPUdiv4):
+          jobs = cpuCount / 4;
+          break;
+        default:
+          NSLog(@"Unexpected CPU parallelism value");
+          jobs = 1;
+          break;
+        }
+
+      // enforce minimum job of 1
+      if (jobs == 0)
+        jobs = 1;
+
+      NSLog(@"Jobs to : %u", jobs);
+      if (jobs > 1)
+        {
+          cpuStr = [NSString stringWithFormat:@"-j%u", jobs];
           [args addObject:cpuStr];
         }
     }
 
-  // --- Get arguments from options
   if ([[projectDict objectForKey:PCBuilderDebug] isEqualToString:@"YES"])
     { // there is no clear default; the default configuration of GNUstep-make
       // uses debug=no (since release 2.2.1, it had debug=yes before), but
