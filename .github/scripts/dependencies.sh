@@ -8,7 +8,9 @@ DEP_ROOT=$HOME/staging
 install_prerequisites() {
     sudo apt-get -qq update
     sudo apt-get install -y cmake pkg-config libgnutls28-dev libgmp-dev libffi-dev libicu-dev \
-	 libxml2-dev libxslt1-dev libssl-dev libavahi-client-dev zlib1g-dev
+	 libxml2-dev libxslt1-dev libssl-dev libavahi-client-dev zlib1g-dev \
+	 libjpeg-dev libtiff-dev libpng-dev \
+	 libfreetype-dev libxt-dev libcairo2-dev
 
     if [ $LIBRARY_COMBO = 'gnu-gnu-gnu' ];
     then
@@ -16,7 +18,7 @@ install_prerequisites() {
 	then
 	  sudo apt-get install -y gobjc;
 	fi;
-        sudo apt-get install -y libobjc-8-dev libblocksruntime-dev;
+        sudo apt-get install -y libobjc-13-dev libblocksruntime-dev;
     else
 	curl -s -o - https://apt.llvm.org/llvm-snapshot.gpg.key|sudo apt-key add -;
         sudo apt-add-repository "deb http://apt.llvm.org/xenial/ llvm-toolchain-xenial-9 main" && sudo apt-get update -qq;
