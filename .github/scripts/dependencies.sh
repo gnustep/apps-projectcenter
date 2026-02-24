@@ -8,7 +8,9 @@ DEP_ROOT=$HOME/staging
 install_prerequisites() {
     sudo apt-get -qq update
     sudo apt-get install -y cmake pkg-config libgnutls28-dev libgmp-dev libffi-dev libicu-dev \
-	 libxml2-dev libxslt1-dev libssl-dev libavahi-client-dev zlib1g-dev libjpeg-dev libtiff-dev libpng-dev
+	 libxml2-dev libxslt1-dev libssl-dev libavahi-client-dev zlib1g-dev \
+	 libjpeg-dev libtiff-dev libpng-dev \
+	 libfreetype-dev
 
     if [ $LIBRARY_COMBO = 'gnu-gnu-gnu' ];
     then
