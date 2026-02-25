@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2010 Free Software Foundation
+   Copyright (C) 2000-2025 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
@@ -171,6 +172,7 @@ static NSString * const PCBuilderDebug         = @"BUILDER_DEBUG";
 static NSString * const PCBuilderStrip         = @"BUILDER_STRIP";
 static NSString * const PCBuilderVerbose       = @"BUILDER_VERBOSE";
 static NSString * const PCBuilderSharedLibs    = @"BUILDER_SHARED_LIBS";
+static NSString * const PCBuilderParallelism   = @"BUILDER_PARALLELISM";
 
 // Application specific
 static NSString * const PCAppIcon              = @"APPLICATIONICON";
