@@ -108,8 +108,8 @@
 - (void)dealloc
 {
 #ifdef DEVELOPMENT
-#endif
   NSLog (@"PCProjectEditor: dealloc");
+#endif
 
 //  [[NSNotificationCenter defaultCenter] removeObserver:self];
 
