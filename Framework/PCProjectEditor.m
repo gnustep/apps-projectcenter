@@ -155,12 +155,17 @@
   PCBundleManager *bundleManager = [[_project projectManager] bundleManager];
   NSDictionary    *infoTable = nil;
 
+  if ([item length] == 0)
+    {
+      return NO;
+    }
+
   // File selected and editor should already be loaded
   if (file != nil)
     {
       if ([[item substringToIndex:1] isEqualToString:@"@"])
 	{
-	  return YES;
+	  return NO;
 	}
     }
 
@@ -242,9 +247,16 @@
   NSString       *filePath = nil;
   BOOL           editable = YES;
   id<CodeEditor> editor;
+  NSArray *selectedPathComponents;
 
-  fileName = [[[[_project projectBrowser] pathFromSelectedCategory] 
-    pathComponents] objectAtIndex:2];
+  selectedPathComponents = [[[_project projectBrowser] pathFromSelectedCategory]
+    pathComponents];
+  if ([selectedPathComponents count] <= 2)
+    {
+      return nil;
+    }
+
+  fileName = [selectedPathComponents objectAtIndex:2];
   filePath = [activeProject pathForFile:fileName forKey:categoryKey];
 
 /*  NSLog(@"PCPE: fileName: %@ filePath: %@ project: %@", 
@@ -418,4 +430,3 @@
 }
 
 @end
-

@@ -1799,7 +1799,14 @@ NSString
     }
   else
     { // The file is selected, ask editor for browser items
-      return [[projectEditor activeEditor] browserItemsForItem:listEntry];
+      id<CodeEditor> editor = [projectEditor activeEditor];
+
+      if (editor == nil || [listEntry length] == 0)
+	{
+	  return nil;
+	}
+
+      return [editor browserItemsForItem:listEntry];
     }
 }
 
@@ -1816,6 +1823,11 @@ NSString
     }
 
   listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
+
+  if ([listEntry length] == 0)
+    {
+      return NO;
+    }
  
   // Categories
   if ([rootCategories containsObject:listEntry])
@@ -1834,6 +1846,15 @@ NSString
   if ([[projectDict objectForKey:categoryKey] containsObject:listEntry] ||
       [projectBrowser nameOfSelectedFile])
     {
+      NSString *firstSymbol = [listEntry substringToIndex:1];
+
+      if ([firstSymbol isEqualToString:@"@"] ||
+	  [firstSymbol isEqualToString:@"+"] ||
+	  [firstSymbol isEqualToString:@"-"])
+	{
+	  return NO;
+	}
+
       // TODO: Libraries
       if ([category isEqualToString:@"Libraries"])
 	{
@@ -1850,4 +1871,3 @@ NSString
 }
 
 @end
-

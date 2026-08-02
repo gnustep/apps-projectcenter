@@ -67,5 +67,6 @@ extern NSString *PCDBDebuggerStartedNotification;
 - (NSUInteger)lastLineNumberParsed;
 - (void)setLastLineNumberParsed: (NSUInteger)num;
 - (void)updateEditor;
+- (void)handleBreakpointNotification:(NSNotification *)notification;
 
 @end

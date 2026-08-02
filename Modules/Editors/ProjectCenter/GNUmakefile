@@ -39,6 +39,7 @@ ProjectCenter_RESOURCE_FILES= \
 ProjectCenter_HEADERS= \
     PCEditor.h \
     PCEditorView.h \
+    PCLineNumberRulerView.h \
     SyntaxDefinition.h \
     SyntaxHighlighter.h \
     LineJumper.h
@@ -49,6 +50,7 @@ ProjectCenter_HEADERS= \
 ProjectCenter_OBJC_FILES= \
     PCEditor.m \
     PCEditorView.m \
+    PCLineNumberRulerView.m \
     TextPattern.m \
     SyntaxDefinition.m \
     SyntaxHighlighter.m \

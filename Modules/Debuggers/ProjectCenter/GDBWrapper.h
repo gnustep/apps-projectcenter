@@ -65,6 +65,7 @@ typedef enum PCDebuggerOutputType_enum {
   float          debuggerVersion;
   NSDictionary *lastMIDictionary;
   NSString     *lastMIString;
+  NSMutableString *pendingOutput;
 }
 
 - (float) debuggerVersion;

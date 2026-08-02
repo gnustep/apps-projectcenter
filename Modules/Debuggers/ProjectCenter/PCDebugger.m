@@ -33,6 +33,7 @@
 #import "PCDebugger.h"
 #import "PCDebuggerView.h"
 
+#import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectManager.h>
 #import <ProjectCenter/PCEditorManager.h>
 #import "PCAppController.h"
@@ -63,6 +64,7 @@ NSString *PCBreakMethod = @"BreakMethod";
 NSString *PCBreakFilename = @"BreakFilename";
 NSString *PCBreakLineNumber = @"BreakLineNumber";
 NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
+static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
 
 @implementation PCDebugger
 + (void) initialize
@@ -167,6 +169,10 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
        selector: @selector(handleNotification:)
        name: PCDBDebuggerStartedNotification
        object: nil];
+      [[NSNotificationCenter defaultCenter] addObserver:self
+       selector:@selector(handleBreakpointNotification:)
+       name:PCProjectBreakpointNotification
+       object:nil];
     }
   return self;
 }
@@ -197,7 +203,35 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) initBreakpoints
 {
+  NSArray *savedBreakpoints;
+  NSEnumerator *e;
+  NSDictionary *savedBreakpoint;
+
+  [breakpoints release];
   breakpoints = [[NSMutableArray alloc] init];
+  savedBreakpoints = [[NSUserDefaults standardUserDefaults]
+    arrayForKey:PCEditorBreakpointsDefaultsKey];
+  e = [savedBreakpoints objectEnumerator];
+  while ((savedBreakpoint = [e nextObject]) != nil)
+    {
+      NSString *fileName;
+      NSNumber *lineNumber;
+      NSDictionary *bp;
+
+      fileName = [savedBreakpoint objectForKey:@"File"];
+      lineNumber = [savedBreakpoint objectForKey:@"Line"];
+      if (fileName == nil || lineNumber == nil)
+        {
+          continue;
+        }
+
+      bp = [NSDictionary dictionaryWithObjectsAndKeys:
+        PCBreakTypeByLine, PCBreakTypeKey,
+        fileName, PCBreakFilename,
+        lineNumber, PCBreakLineNumber,
+        nil];
+      [breakpoints addObject:bp];
+    }
   /* CRUDE EXAMPLES * TODO FIXME *
   NSDictionary *dP;
   NSLog(@"initing breakpoints");
@@ -219,6 +253,66 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   [self initBreakpoints];
   [self debuggerSetup];
+}
+
+- (void)handleBreakpointNotification:(NSNotification *)notification
+{
+  NSDictionary *info;
+  NSString *fileName;
+  NSNumber *lineNumber;
+  NSNumber *enabled;
+  NSDictionary *bp;
+  BOOL enableBreakpoint;
+
+  info = [notification object];
+  if (![info isKindOfClass:[NSDictionary class]])
+    {
+      return;
+    }
+
+  fileName = [info objectForKey:@"File"];
+  lineNumber = [info objectForKey:@"Line"];
+  enabled = [info objectForKey:@"Enabled"];
+  if (fileName == nil || lineNumber == nil)
+    {
+      return;
+    }
+  enableBreakpoint = (enabled == nil || [enabled boolValue]);
+
+  bp = [NSDictionary dictionaryWithObjectsAndKeys:
+    PCBreakTypeByLine, PCBreakTypeKey,
+    fileName, PCBreakFilename,
+    lineNumber, PCBreakLineNumber,
+    nil];
+  if (breakpoints == nil)
+    {
+      breakpoints = [[NSMutableArray alloc] init];
+    }
+
+  if (enableBreakpoint)
+    {
+      if (![breakpoints containsObject:bp])
+	{
+	  [breakpoints addObject:bp];
+	}
+      if ([debuggerWrapper debuggerStarted])
+	{
+	  [debuggerWrapper setBreakpoints:[NSArray arrayWithObject:bp]];
+	}
+    }
+  else
+    {
+      [breakpoints removeObject:bp];
+      if ([debuggerWrapper debuggerStarted])
+	{
+	  NSString *command;
+
+	  command = [NSString stringWithFormat:
+	    @"-interpreter-exec console \"clear %@:%@\"\n",
+	    fileName, lineNumber];
+	  [debuggerWrapper putString:command];
+	}
+    }
 }
 
 
@@ -287,7 +381,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void)setSetInfoParsed: (NSDictionary *)dict
 {
-  lastInfoParsed = dict;
+  ASSIGN(lastInfoParsed, dict);
 }
 
 - (NSString *)lastFileNameParsed
@@ -297,7 +391,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) setLastFileNameParsed: (NSString *)fname
 {
-  lastFileNameParsed = fname;
+  ASSIGN(lastFileNameParsed, fname);
 }
 
 - (NSUInteger)lastLineNumberParsed
@@ -315,8 +409,13 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   PCAppController *controller = (PCAppController *)[NSApp delegate];
   PCProjectManager *pm = [controller projectManager];
   PCEditorManager *em = [pm editorManager];
-  [em gotoFile: lastFileNameParsed
-	atLine: lastLineNumberParsed];
+  if (lastFileNameParsed != nil &&
+      lastLineNumberParsed != NSNotFound &&
+      lastLineNumberParsed > 0)
+    {
+      [em gotoFile:lastFileNameParsed
+            atLine:lastLineNumberParsed];
+    }
 }
 
 // kill process
@@ -355,7 +454,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   /* each run makes a new PID but we parse it only if non-zero */
   [self setSubProcessId:0];
-  [debuggerView putString: @"run\n"];
+  [debuggerView putString: @"-exec-run\n"];
 }
 
 - (void) pause: (id) sender
@@ -366,7 +465,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) continue: (id) sender
 {
-  [debuggerView putString: @"continue\n"];
+  [debuggerView putString: @"-exec-continue\n"];
 }
 
 - (void) restart: (id) sender
@@ -374,22 +473,22 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   [self interrupt];
   /* each run makes a new PID but we parse it only if non-zero */
   [self setSubProcessId:0];
-  [debuggerView putString: @"run\n"];
+  [debuggerView putString: @"-exec-run\n"];
 }
 
 - (void) next: (id) sender
 {
-  [debuggerView putString: @"next\n"];
+  [debuggerView putString: @"-exec-next\n"];
 }
 
 - (void) stepInto: (id) sender
 {
-  [debuggerView putString: @"step\n"];  
+  [debuggerView putString: @"-exec-step\n"];  
 }
 
 - (void) stepOut: (id) sender
 {
-  [debuggerView putString: @"finish\n"];  
+  [debuggerView putString: @"-exec-finish\n"];  
 }
 
 - (void) up: (id) sender
@@ -417,6 +516,9 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 {
   [debuggerWrapper release];
   [breakpoints release];
+  [executablePath release];
+  [lastInfoParsed release];
+  [lastFileNameParsed release];
   [super dealloc];
 }
 @end

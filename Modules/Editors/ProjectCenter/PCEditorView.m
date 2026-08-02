@@ -173,6 +173,20 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (NSInteger)lineStartIndexForIndex:(NSInteger)index forString:(NSString *)string
 {
   NSInteger line_start;
+  NSInteger string_length = [string length];
+
+  if (string_length == 0)
+    {
+      return 0;
+    }
+  if (index >= string_length)
+    {
+      index = string_length - 1;
+    }
+  if (index < 0)
+    {
+      return 0;
+    }
 
   // Get line start index moving from index backwards
   for (line_start = index;line_start > 0;line_start--)
@@ -193,6 +207,19 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSInteger line_end;
   NSInteger string_length = [string length];
 
+  if (string_length == 0)
+    {
+      return 0;
+    }
+  if (index >= string_length)
+    {
+      index = string_length - 1;
+    }
+  if (index < 0)
+    {
+      return 0;
+    }
+
   // Get line start index moving from index backwards
   for (line_end = index;line_end < string_length;line_end++)
     {
@@ -211,6 +238,10 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSInteger prev_line_start;
 
   cur_line_start = [self lineStartIndexForIndex:index forString:string];
+  if (cur_line_start == 0)
+    {
+      return 0;
+    }
   prev_line_start = [self lineStartIndexForIndex:cur_line_start-1
  				       forString:string];
 
@@ -241,13 +272,18 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSInteger line_start = [self lineStartIndexForIndex:index forString:string];
   NSInteger i;
   unichar c;
+  NSInteger string_length = [string length];
 
   c = 0;
+  if (string_length == 0 || line_start >= string_length)
+    {
+      return c;
+    }
   // Get leading whitespaces range
-  for (i = line_start; i >= 0; i++)
+  for (i = line_start; i < string_length; i++)
     {
       c = [string characterAtIndex:i];
-      if (!isspace(c))
+      if (c == '\n' || !isspace(c))
 	{
 	  break;
 	}
@@ -272,14 +308,16 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSInteger location;
   NSInteger line_start;
   NSInteger offset;
+  NSInteger string_length;
   unichar   c, plfc, clfc;
-  NSRange   wsRange;
+  NSRange   wsRange = NSMakeRange(0, 0);
   NSMutableString *indentString;
   NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
   NSInteger i;
 //  int point;
 
   location = [self selectedRange].location;
+  string_length = [string length];
 
 //  point = [self nextLineStartIndexForIndex:location forString:string];
 //  [self setSelectedRange:NSMakeRange(point, 0)];
@@ -289,27 +327,35 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
   // Get leading whitespaces range
   line_start = [self lineStartIndexForIndex:location forString:string];
-  for (offset = line_start; offset >= 0; offset++)
+  for (offset = line_start; offset < string_length; offset++)
     {
       c = [string characterAtIndex:offset];
-      if (![wsCharSet characterIsMember:c])
+      if (c == '\n' || ![wsCharSet characterIsMember:c])
 	{
 	  wsRange = NSMakeRange(line_start, offset-line_start);
 	  break;
 	}
     }
+  if (offset >= string_length)
+    {
+      wsRange = NSMakeRange(line_start, string_length - line_start);
+    }
 
   // Get indent
   line_start = [self previousLineStartIndexForIndex:location forString:string];
-  for (offset = line_start; offset >= 0; offset++)
+  for (offset = line_start; offset < string_length; offset++)
     {
       c = [string characterAtIndex:offset];
-      if (![wsCharSet characterIsMember:c])
+      if (c == '\n' || ![wsCharSet characterIsMember:c])
 	{
 	  offset = offset - line_start;
 	  NSLog(@"offset: %li", offset);
 	  break;
 	}
+    }
+  if (string_length == 0 || offset >= string_length)
+    {
+      offset = 0;
     }
 
   NSLog (@"clfc: %c plfc: %c", clfc, plfc);

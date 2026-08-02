@@ -26,6 +26,7 @@
 
 #import "PCEditor.h"
 #import "PCEditorView.h"
+#import "PCLineNumberRulerView.h"
 
 #import <Protocols/Preferences.h>
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
@@ -38,6 +39,19 @@
 #define STATUS_LINE_UPDATE_DELAY 0.1
 
 @implementation PCEditor (UInterface)
+
+- (void)_installLineNumberRulerForScrollView:(NSScrollView *)scrollView
+                                  editorView:(PCEditorView *)editorView
+{
+  PCLineNumberRulerView *ruler;
+
+  ruler = [[PCLineNumberRulerView alloc] initWithScrollView:scrollView
+                                                   textView:editorView];
+  [scrollView setVerticalRulerView:ruler];
+  [scrollView setHasVerticalRuler:YES];
+  [scrollView setRulersVisible:YES];
+  RELEASE(ruler);
+}
 
 - (void)_createWindow
 {
@@ -81,6 +95,8 @@
   // Text view in ScrollView
   _extEditorView = [self _createEditorViewWithFrame:rect];
   [_extScrollView setDocumentView:_extEditorView];
+  [self _installLineNumberRulerForScrollView:_extScrollView
+                                  editorView:_extEditorView];
   RELEASE(_extEditorView);
 
   // Status Line
@@ -147,6 +163,8 @@
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
+  [self _installLineNumberRulerForScrollView:_intScrollView
+                                  editorView:_intEditorView];
   RELEASE(_intEditorView);
 }
 
@@ -228,6 +246,42 @@
 @end
 
 @implementation PCEditor
+
+- (BOOL)_rangeIsValidForEditorSelection:(NSRange)range
+{
+  NSUInteger length;
+
+  length = [_storage length];
+  if (range.location == NSNotFound || range.length == 0)
+    {
+      return NO;
+    }
+  if (range.location > length || range.length > length - range.location)
+    {
+      NSLog(@"PCEditor: ignoring invalid parser range %@ for file %@",
+            NSStringFromRange(range), _path);
+      return NO;
+    }
+
+  return YES;
+}
+
+- (void)_selectRangeInVisibleEditor:(NSRange)range
+{
+  PCEditorView *editorView;
+
+  if (![self _rangeIsValidForEditorSelection:range])
+    {
+      return;
+    }
+
+  editorView = _intEditorView != nil ? _intEditorView : _extEditorView;
+  if (editorView != nil)
+    {
+      [editorView setSelectedRange:range];
+      [editorView scrollRangeToVisible:range];
+    }
+}
 
 // ===========================================================================
 // ==== Initialization
@@ -571,7 +625,7 @@
   NSDictionary   *method;
   NSDictionary   *class;
   NSMutableArray *items = [NSMutableArray array];
-  NSRange        classRange;
+  NSRange        classRange = NSMakeRange(NSNotFound, 0);
   NSRange        methodRange;
 
   ASSIGN(parserClasses, [aParser classNames]);
@@ -593,7 +647,9 @@
     {
       //      NSLog(@"Method> %@", method);
       methodRange = NSRangeFromString([method objectForKey:@"MethodBodyRange"]);
-      if (NSIntersectionRange(classRange, methodRange).length != 0)
+      if ([self _rangeIsValidForEditorSelection:classRange] &&
+          [self _rangeIsValidForEditorSelection:methodRange] &&
+          NSIntersectionRange(classRange, methodRange).length != 0)
 	{
 	  [items addObject:[method objectForKey:@"MethodName"]];
 	}
@@ -628,7 +684,7 @@
     }
 
   // If item starts with "@" show method list
-  if ([[item substringToIndex:1] isEqualToString:@"@"])
+  if ([item length] > 0 && [[item substringToIndex:1] isEqualToString:@"@"])
     {
 /*      ASSIGN(parserMethods, [aParser methodNames]);
 
@@ -1077,6 +1133,10 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
 
   NSLog(@"[PCEditor] selected file structure item: %@", item);
 
+  if ([item length] == 0)
+    {
+      return;
+    }
   firstSymbol = [item substringToIndex:1];
   if ([firstSymbol isEqualToString:@"@"])      // class selected
     {
@@ -1110,11 +1170,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
     }
 
   NSLog(@"classNameRange: %@", NSStringFromRange(classNameRange));
-  if (classNameRange.length != 0)
-    {
-      [_intEditorView setSelectedRange:classNameRange];
-      [_intEditorView scrollRangeToVisible:classNameRange];
-    }
+  [self _selectRangeInVisibleEditor:classNameRange];
 }
 
 - (void)scrollToMethodName:(NSString *)methodName
@@ -1138,19 +1194,25 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
     }
 
   NSLog(@"methodNameRange: %@", NSStringFromRange(methodNameRange));
-  if (methodNameRange.length != 0)
-    {
-      [_intEditorView setSelectedRange:methodNameRange];
-      [_intEditorView scrollRangeToVisible:methodNameRange];
-    }
+  [self _selectRangeInVisibleEditor:methodNameRange];
 }
 
 - (void)scrollToLineNumber:(NSUInteger)lineNumber
 {
-  [_intEditorView goToLineNumber:lineNumber];
-  [_extEditorView goToLineNumber:lineNumber];
-  [_intEditorView centerSelectionInVisibleArea: self];
-  [_extEditorView centerSelectionInVisibleArea: self];
+  if (lineNumber == 0 || lineNumber == NSNotFound)
+    {
+      return;
+    }
+  if (_intEditorView != nil)
+    {
+      [_intEditorView goToLineNumber:lineNumber];
+      [_intEditorView centerSelectionInVisibleArea:self];
+    }
+  if (_extEditorView != nil)
+    {
+      [_extEditorView goToLineNumber:lineNumber];
+      [_extEditorView centerSelectionInVisibleArea:self];
+    }
 }
 
 - (void)computeCurrentLineFromTimer: (NSTimer *)timer
@@ -1533,4 +1595,3 @@ NSUInteger FindDelimiterInString(NSString * string,
 }
 
 @end
-

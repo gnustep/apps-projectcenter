@@ -83,6 +83,7 @@
 {
   NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
   [[self textStorage] appendAttributedString:attr];
+  [attr release];
   [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
   [[debugger debuggerWrapper] putString:string];
 }

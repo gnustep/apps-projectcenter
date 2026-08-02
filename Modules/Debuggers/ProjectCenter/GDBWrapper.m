@@ -58,6 +58,7 @@
       debuggerStarted = NO;
       debuggerVersion = 0.0;
       singleInputLine = [[NSMutableString alloc] init];
+      pendingOutput = [[NSMutableString alloc] init];
     }
   return self;
 }
@@ -192,11 +193,48 @@
 
 - (NSString *) parseString: (NSScanner *)scanner
 {
-  NSString *str;
+  NSMutableString *str;
+  NSString *string;
+  NSUInteger location;
+  NSUInteger length;
 
   [scanner scanString: @"\"" intoString: NULL];
-  [scanner scanUpToString: @"\"" intoString: &str];
-  [scanner scanString: @"\"" intoString: NULL];
+  string = [scanner string];
+  location = [scanner scanLocation];
+  length = [string length];
+  str = [NSMutableString string];
+
+  while (location < length)
+    {
+      unichar ch = [string characterAtIndex:location++];
+
+      if (ch == '\\' && location < length)
+        {
+          ch = [string characterAtIndex:location++];
+          if (ch == 'n')
+            {
+              [str appendString:@"\n"];
+            }
+          else if (ch == 't')
+            {
+              [str appendString:@"\t"];
+            }
+          else
+            {
+              [str appendFormat:@"%C", ch];
+            }
+        }
+      else if (ch == '"')
+        {
+          break;
+        }
+      else
+        {
+          [str appendFormat:@"%C", ch];
+        }
+    }
+
+  [scanner setScanLocation:location];
 
   return str;
 }
@@ -219,6 +257,7 @@
   value = nil;
   while([scanner isAtEnd] == NO  && elementEnd == NO)
     {
+      value = nil;
       if ([string characterAtIndex:[scanner scanLocation]] == '\"')
 	{
 	  value = [self parseString: scanner];
@@ -271,8 +310,13 @@
 
   while([scanner isAtEnd] == NO && elementEnd == NO)
     {
+      key = nil;
+      value = nil;
       [scanner scanUpToString: @"=" intoString: &key];
-      [scanner scanString: @"=" intoString: NULL];
+      if (![scanner scanString: @"=" intoString: NULL] || [scanner isAtEnd])
+        {
+          break;
+        }
       //      NSLog(@"KV key found: %@", key);
       if ([string characterAtIndex:[scanner scanLocation]] == '\"')
 	{
@@ -343,14 +387,12 @@
 
       if(dictionaryName != nil)
 	{
-	  NSString *key = nil;
-	  id value = nil;
 	  NSDictionary *dict;
 	  
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
-	  lastMIDictionary = dict;
+	  ASSIGN(lastMIDictionary, dict);
 
 	  if([dict objectForKey:@"pid"] != nil && 
 	     [dictionaryName isEqualToString: @"thread-group-started"])
@@ -364,7 +406,7 @@
 	      NSString *fileName;
 	      NSString *lineNum;
 
-	      bkpDict = [value objectForKey:@"bkpt"];
+	      bkpDict = [dict objectForKey:@"bkpt"];
 	      fileName = [bkpDict objectForKey:@"fullname"];
 	      lineNum = [bkpDict objectForKey:@"line"];
 	      NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
@@ -426,7 +468,7 @@
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
 	  NSLog(@"type %@ value %@", dictionaryName, dict);
-	  lastMIDictionary = dict;
+	  ASSIGN(lastMIDictionary, dict);
 	}
 
       if ([dictionaryName isEqualToString:@"stopped"])
@@ -462,9 +504,6 @@
   [stringScanner scanString: @"+" intoString: &prefix];
   if(prefix != nil)
     {
-      NSString *dictionaryName = NULL;
-      NSDictionary *dict = nil;
-
       NSLog(@"scanning AsyncStatus |%@|", stringInput);
 
       return PCDBAsyncStatusRecord;
@@ -518,7 +557,7 @@
   [stringScanner scanString: @"@" intoString: &prefix];
   if(prefix != nil)
     {
-      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      ASSIGN(lastMIString, [[stringScanner string] substringFromIndex: [stringScanner scanLocation]]);
       return PCDBTargetStreamRecord;
     }
 
@@ -526,7 +565,7 @@
   [stringScanner scanString: @"&" intoString: &prefix];
   if(prefix != nil)
     {
-      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      ASSIGN(lastMIString, [[stringScanner string] substringFromIndex: [stringScanner scanLocation]]);
       return PCDBLogStreamRecord;
     }
 
@@ -575,14 +614,14 @@
   [stringScanner scanString: @"<-" intoString: &prefix];
   if(prefix != nil)
     {
-      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      ASSIGN(lastMIString, [[stringScanner string] substringFromIndex: [stringScanner scanLocation]]);
       return PCDBBreakpointRecord;
     }
   
   [stringScanner scanString: @"->" intoString: &prefix];
   if(prefix != nil)
     {
-      lastMIString = [[stringScanner string] substringFromIndex: [stringScanner scanLocation]];
+      ASSIGN(lastMIString, [[stringScanner string] substringFromIndex: [stringScanner scanLocation]]);
       return PCDBBreakpointRecord;
     }
 
@@ -592,9 +631,11 @@
 
 - (NSString *)unescapeOutputRecord: (NSString *)recordString
 {
-  NSString *unescapedString = [recordString copy];
+  NSString *unescapedString = recordString;
 
   if ([unescapedString hasPrefix:@"~\""])
+    unescapedString = [unescapedString substringFromIndex:2];
+  if ([unescapedString hasPrefix:@"@\""] || [unescapedString hasPrefix:@"&\""])
     unescapedString = [unescapedString substringFromIndex:2];
   if ([unescapedString hasSuffix:@"\""])
     unescapedString = [unescapedString substringToIndex: [unescapedString length] - 1];
@@ -609,19 +650,41 @@
 - (void) parseLine: (NSString *)inputString
 {
   NSArray *components;
-  NSEnumerator *en;
   NSString *item = nil;
+  BOOL endsWithNewline;
+  unsigned int idx;
+
+  if ([inputString length] == 0)
+    {
+      return;
+    }
+
+  endsWithNewline = [inputString hasSuffix:@"\n"];
+  [pendingOutput appendString:inputString];
 
 #if defined(__MINGW32__)
-  components = [inputString componentsSeparatedByString:@"\r\n"];
+  components = [pendingOutput componentsSeparatedByString:@"\r\n"];
 #else
-  components = [inputString componentsSeparatedByString:@"\n"];
+  components = [pendingOutput componentsSeparatedByString:@"\n"];
 #endif
-  en = [components objectEnumerator];
- 
-  while((item = [en nextObject]) != nil) 
+  [pendingOutput setString:@""];
+
+  for (idx = 0; idx < [components count]; idx++)
     {
-      PCDebuggerOutputTypes outtype = [self parseStringLine: item];
+      PCDebuggerOutputTypes outtype;
+
+      item = [components objectAtIndex:idx];
+      if ([item length] == 0)
+        {
+          continue;
+        }
+      if (!endsWithNewline && idx == [components count] - 1 &&
+          ![item hasPrefix:@"(gdb)"])
+        {
+          [pendingOutput appendString:item];
+          continue;
+        }
+      outtype = [self parseStringLine:item];
       if(outtype == PCDBConsoleStreamRecord || 
 	 outtype == PCDBTargetStreamRecord) 
 	{
@@ -846,20 +909,33 @@
   [debuggerColor release];
   [messageColor release];
   [errorColor release];
+  [promptColor release];
+  [font release];
   [debuggerPath release];
   [debugger release];
   [tView release];
   [singleInputLine release];
+  [pendingOutput release];
+  [lastMIDictionary release];
+  [lastMIString release];
   [super dealloc];
 }
 
 - (void) putString: (NSString *)string;
 {
-  unichar *str = (unichar *)[string cStringUsingEncoding: [NSString defaultCStringEncoding]];
-  int len = strlen((char *)str);
-  NSData *data = [NSData dataWithBytes: str length: len];
-  [stdinHandle writeData: data];
-  [stdinHandle synchronizeFile];
+  NSData *data;
+
+  if (stdinHandle == nil || [string length] == 0)
+    {
+      return;
+    }
+
+  data = [string dataUsingEncoding:[NSString defaultCStringEncoding]];
+  if (data != nil)
+    {
+      [stdinHandle writeData:data];
+      [stdinHandle synchronizeFile];
+    }
 }
 
 /* for input as typed from the user */
@@ -972,9 +1048,9 @@
           NSString *fileName;
           NSNumber *lineNumber;
 
-          fileName = [bp objectForKey:PCBreakFilename];
+	  fileName = [bp objectForKey:PCBreakFilename];
           lineNumber = [bp objectForKey:PCBreakLineNumber];
-	  bpString = [NSString stringWithFormat:@"-break-insert -f %@:%@\n", fileName, lineNumber];
+	  bpString = [NSString stringWithFormat:@"-break-insert -f \"%@:%@\"\n", fileName, lineNumber];
         }
       else if ([bpType isEqualToString:PCBreakTypeMethod])
         {
@@ -1001,7 +1077,7 @@
 
 - (void) debuggerSetup
 {
-  NSString *command = @"set confirm off\n";
+  NSString *command = @"-gdb-set confirm off\n";
   
   [self putString: command];
 }
