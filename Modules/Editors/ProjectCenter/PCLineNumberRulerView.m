@@ -43,6 +43,11 @@
            selector:@selector(invalidateLineNumbers:)
                name:NSTextDidChangeNotification
              object:textView];
+      [[NSNotificationCenter defaultCenter]
+        addObserver:self
+           selector:@selector(breakpointDidChange:)
+               name:PCProjectBreakpointNotification
+             object:nil];
     }
 
   return self;
@@ -208,6 +213,39 @@
 - (void)invalidateLineNumbers:(NSNotification *)notification
 {
   [self _updateRuleThickness];
+  [self setNeedsDisplay:YES];
+}
+
+- (void)breakpointDidChange:(NSNotification *)notification
+{
+  NSDictionary *info;
+  NSString *path;
+  NSNumber *line;
+  NSNumber *enabled;
+
+  info = [notification object];
+  if (![info isKindOfClass:[NSDictionary class]])
+    {
+      return;
+    }
+
+  path = [info objectForKey:@"File"];
+  line = [info objectForKey:@"Line"];
+  enabled = [info objectForKey:@"Enabled"];
+  if (path == nil || line == nil || ![path isEqualToString:[self _filePath]])
+    {
+      return;
+    }
+
+  if (enabled == nil || [enabled boolValue])
+    {
+      [_breakpoints addObject:line];
+    }
+  else
+    {
+      [_breakpoints removeObject:line];
+    }
+
   [self setNeedsDisplay:YES];
 }
 

@@ -49,6 +49,7 @@ extern NSString *PCDBDebuggerStartedNotification;
   NSString       *lastFileNameParsed;
   NSUInteger     lastLineNumberParsed;
   NSMutableArray *breakpoints;
+  NSMutableDictionary *breakpointNumbers;
   id <PCDebuggerWrapperProtocol> debuggerWrapper;
 }
 
@@ -68,5 +69,9 @@ extern NSString *PCDBDebuggerStartedNotification;
 - (void)setLastLineNumberParsed: (NSUInteger)num;
 - (void)updateEditor;
 - (void)handleBreakpointNotification:(NSNotification *)notification;
+- (void)recordBreakpointNumber:(NSString *)number
+			   file:(NSString *)file
+			   line:(NSUInteger)line;
+- (void)removeBreakpointNumber:(NSString *)number;
 
 @end

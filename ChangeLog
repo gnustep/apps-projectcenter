@@ -11,11 +11,19 @@
 	* Modules/Debuggers/ProjectCenter/GDBWrapper.m
 	Improve gdb/MI parsing, retain parsed records, buffer partial output,
 	use MI commands for debugger control, and fix breakpoint parsing and
-	command encoding.
+	command encoding.  Keep MI bookkeeping records out of the debugger
+	console, remove routine parser trace logging, track gdb breakpoint
+	numbers, and handle breakpoints deleted by debugger commands.  Avoid
+	crashes from incomplete breakpoint deletion records, and separate
+	duplicate internal prompts without moving normal prompts to the next
+	line.
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m
 	Retain debugger state correctly, guard editor updates, load saved
-	project breakpoints, and handle breakpoint add/remove notifications.
+	project breakpoints, handle breakpoint add/remove notifications, and
+	send toolbar debugger commands without echoing internal MI commands in
+	the debugger view.  Synchronize project breakpoints after debugger
+	commands create or delete breakpoints.
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m
 	Release appended input strings after writing to the debugger view.
 	* Modules/Editors/ProjectCenter/GNUmakefile
@@ -26,7 +34,8 @@
 	Add editor line numbers, gutter breakpoint markers and toggling, and
 	validate parser ranges and editor line indexing before selecting or
 	scrolling.  Store breakpoints through the project instead of user
-	defaults.
+	defaults.  Update gutter markers when debugger commands modify
+	breakpoints.
 
 2022-01-16 Riccardo Mottola <rm@gnu.org>
 

@@ -189,6 +189,20 @@
   [tView setNeedsDisplay:YES];
 }
 
+- (void) logPrompt:(NSString *)prompt
+{
+  NSString *currentString;
+
+  currentString = [tView string];
+  if ([currentString hasSuffix:@"(gdb)"] ||
+      [currentString hasSuffix:@"(gdb) "])
+    {
+      [self logString:@"\n" newLine:NO withColor:promptColor];
+    }
+
+  [self logString:prompt newLine:NO withColor:promptColor];
+}
+
 /* == parsing methods == */
 
 - (NSString *) parseString: (NSScanner *)scanner
@@ -362,7 +376,6 @@
 
   stringScanner = [NSScanner scannerWithString: stringInput];
 
-  NSLog(@"parsing: |%@|", stringInput);
   [stringScanner scanString: @"(gdb)" intoString: &prefix];
   if(prefix != nil)
     {
@@ -381,8 +394,6 @@
     {
       NSString *dictionaryName = NULL;
 
-      NSLog(@"scanning NotifyAsyncInfo |%@|", stringInput);
-      
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
       if(dictionaryName != nil)
@@ -391,7 +402,6 @@
 	  
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
-	  NSLog(@"type %@ value %@", dictionaryName, dict);
 	  ASSIGN(lastMIDictionary, dict);
 
 	  if([dict objectForKey:@"pid"] != nil && 
@@ -399,19 +409,27 @@
 	    {
 	      [debugger setSubProcessId: [[dict objectForKey:@"pid"] intValue]];
 	    }
+	  else if ([dictionaryName isEqualToString:@"breakpoint-deleted"])
+	    {
+	      [debugger removeBreakpointNumber:[dict objectForKey:@"id"]];
+	    }
 	  else if ([dict objectForKey:@"bkpt"] != nil)
 	    {
 	      NSDictionary *bkpDict;
 	      // gdb specific
 	      NSString *fileName;
 	      NSString *lineNum;
+	      NSString *number;
 
 	      bkpDict = [dict objectForKey:@"bkpt"];
 	      fileName = [bkpDict objectForKey:@"fullname"];
 	      lineNum = [bkpDict objectForKey:@"line"];
-	      NSLog(@"parsed from GDB bkpt: %@:%@", fileName, lineNum);
+	      number = [bkpDict objectForKey:@"number"];
 	      if (fileName != nil && lineNum != nil)
 		{
+		  [debugger recordBreakpointNumber:number
+					      file:fileName
+					      line:[lineNum intValue]];
 		  [debugger setLastFileNameParsed: fileName];
 		  [debugger setLastLineNumberParsed: [lineNum intValue]];
 		}
@@ -431,7 +449,6 @@
 	      fileName = [d objectForKey:@"fullname"];
 	      lineNum = [d objectForKey:@"line"];
 
-	      NSLog(@"parsed from GDB thread-selected: %@:%@", fileName, lineNum);
 	      if (fileName != nil && lineNum != nil)
 		{
 		  [debugger setLastFileNameParsed: fileName];
@@ -447,7 +464,6 @@
 	}
       else
 	{
-	  NSLog(@"error parsing type of: %@", stringInput);
 	}
       return PCDBAsyncNotifyRecord;
     }
@@ -459,15 +475,12 @@
       NSString *dictionaryName = NULL;
       NSDictionary *dict = nil;
 
-      NSLog(@"scanning ExecAsyncStatus |%@|", stringInput);
-      
       [stringScanner scanUpToString: @"," intoString: &dictionaryName];
 
       if(dictionaryName != nil)
 	{
 	  [stringScanner scanString: @"," intoString: NULL];
 	  dict = [self parseKeyValue: stringScanner];
-	  NSLog(@"type %@ value %@", dictionaryName, dict);
 	  ASSIGN(lastMIDictionary, dict);
 	}
 
@@ -483,7 +496,6 @@
 	      frameDict = [dict objectForKey:@"frame"];
 	      fileName = [frameDict objectForKey:@"fullname"];
 	      lineNum = [frameDict objectForKey:@"line"];
-	      NSLog(@"parsed from GDB %@ : %@:%@", [dict objectForKey:@"reason"], fileName, lineNum);
 	      if (fileName != nil && lineNum != nil)
 		{
 		  [debugger setLastFileNameParsed: fileName];
@@ -504,8 +516,6 @@
   [stringScanner scanString: @"+" intoString: &prefix];
   if(prefix != nil)
     {
-      NSLog(@"scanning AsyncStatus |%@|", stringInput);
-
       return PCDBAsyncStatusRecord;
     }
 
@@ -530,7 +540,6 @@
 
               if ([stringScanner scanFloat:&v])
                 {
-                  NSLog(@"GDB version string: %f", v);
                   [self setDebuggerVersion:v];
                 }
             }
@@ -545,7 +554,6 @@
               int v;
               if([stringScanner scanInt:&v])
                 {
-                  NSLog(@"sub process id: %d", v);
                   [debugger setSubProcessId:v];
                 }
             }
@@ -575,11 +583,35 @@
     {
       NSString *result = nil;
 
-      NSLog(@"scanning Result Record |%@|", stringInput);
-
       [stringScanner scanString: @"done" intoString: &result];
       if(result != nil)
 	{
+	  NSDictionary *dict = nil;
+
+	  if (![stringScanner isAtEnd] &&
+	      [[stringScanner string] characterAtIndex:[stringScanner scanLocation]] == ',')
+	    {
+	      [stringScanner scanString:@"," intoString:NULL];
+	      dict = [self parseKeyValue:stringScanner];
+	      if ([dict objectForKey:@"bkpt"] != nil)
+		{
+		  NSDictionary *bkpDict;
+		  NSString *fileName;
+		  NSString *lineNum;
+		  NSString *number;
+
+		  bkpDict = [dict objectForKey:@"bkpt"];
+		  fileName = [bkpDict objectForKey:@"fullname"];
+		  lineNum = [bkpDict objectForKey:@"line"];
+		  number = [bkpDict objectForKey:@"number"];
+		  if (fileName != nil && lineNum != nil)
+		    {
+		      [debugger recordBreakpointNumber:number
+						  file:fileName
+						  line:[lineNum intValue]];
+		    }
+		}
+	    }
 	  [debugger setStatus: @"Done"];
 	  return PCDBResultRecord;
 	}
@@ -625,7 +657,6 @@
       return PCDBBreakpointRecord;
     }
 
-  NSLog(@"No match found parsing: |%@|", stringInput);
   return PCDBNotFoundRecord;
 }
 
@@ -693,17 +724,19 @@
 	}
       else if(outtype == PCDBPromptRecord)
 	{
-	  [self logString: item newLine: NO withColor:promptColor];
+	  [self logPrompt:item];
 	}
-      else if(outtype == PCDBAsyncStatusRecord || outtype == PCDBAsyncExecRecord || outtype == PCDBAsyncNotifyRecord)
+      else if(outtype == PCDBAsyncStatusRecord ||
+	      outtype == PCDBAsyncExecRecord ||
+	      outtype == PCDBAsyncNotifyRecord ||
+	      outtype == PCDBResultRecord ||
+	      outtype == PCDBBreakpointRecord)
 	{
-	  [self logString: item newLine: NO withColor:promptColor];
+	  /* MI bookkeeping records are parsed for state, but kept out of the user console. */
 	}
       else if(outtype == PCDBLogStreamRecord)
 	{
-	  NSString *unescapedString = [self unescapeOutputRecord: lastMIString];
-	  // this should usually stay silent, log for debugging purposes
-	  [self logString: unescapedString newLine: NO withColor:debuggerColor];
+	  /* gdb log-stream records are internal command/status chatter. */
 	}
       else if(outtype == PCDBNotFoundRecord)
 	{
@@ -789,7 +822,6 @@
  */
 - (void) taskDidTerminate: (NSNotification *)notif
 {
-  NSLog(@"Task Terminated...");
   [self logString: [self stopMessage]
 	newLine:YES
         withColor:messageColor];
@@ -879,7 +911,6 @@
 		      @"OK", nil, nil, nil);
 	      
 	      
-      NSLog(@"Task Terminated Unexpectedly...");
       [self logString: @"\n=== Task Terminated Unexpectedly ===\n" 
 	      newLine:NO
             withColor:messageColor];      
@@ -962,7 +993,6 @@
 	}
       else if([string characterAtIndex:0] == '\n')
 	{
-	  NSLog(@"full command is: |%@|", singleInputLine);
 	  // we end our single line and pipe it down
 	  [singleInputLine appendString:string];
 	  [self putString:singleInputLine];
@@ -975,7 +1005,6 @@
     }
   else
     {
-      NSLog(@"strlen > 1 |%@|", string);
       [singleInputLine appendString:string];
     }
   [self logString:string newLine:NO withColor:userInputColor];
@@ -1026,7 +1055,8 @@
 	  }
       }
     else
-      NSLog(@"characters: |%@|", chars);
+      {
+      }
 }
 
 - (void) setBreakpoints:(NSArray *)breakpoints
@@ -1069,7 +1099,6 @@
 
 	  /* TODO: split into a separate insert function */
 	  command = bpString;
-	  NSLog(@"gdb mi command is: %@", command);
 	  [self putString: command];
 	}
     }
