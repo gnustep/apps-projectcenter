@@ -225,7 +225,9 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       fileName = [project absolutePathForBreakpointFile:
 	[savedBreakpoint objectForKey:@"File"]];
       lineNumber = [savedBreakpoint objectForKey:@"Line"];
-      if (fileName == nil || lineNumber == nil)
+      if (fileName == nil || lineNumber == nil ||
+	  ![project canSetBreakpointForFile:fileName
+				       line:[lineNumber unsignedIntegerValue]])
         {
           continue;
         }
@@ -282,15 +284,32 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   fileName = [info objectForKey:@"File"];
   lineNumber = [info objectForKey:@"Line"];
   enabled = [info objectForKey:@"Enabled"];
-  if (fileName == nil || lineNumber == nil)
+  if (![fileName isKindOfClass:[NSString class]] ||
+      ![lineNumber isKindOfClass:[NSNumber class]])
     {
       return;
     }
   enableBreakpoint = (enabled == nil || [enabled boolValue]);
+  if (enableBreakpoint)
+    {
+      PCAppController *controller;
+      PCProjectManager *pm;
+      PCProject *project;
+
+      controller = (PCAppController *)[NSApp delegate];
+      pm = [controller projectManager];
+      project = [pm activeProject];
+      if (project != nil &&
+	  ![project canSetBreakpointForFile:fileName
+				       line:[lineNumber unsignedIntegerValue]])
+	{
+	  return;
+	}
+    }
 
   bp = [NSDictionary dictionaryWithObjectsAndKeys:
     PCBreakTypeByLine, PCBreakTypeKey,
-    fileName, PCBreakFilename,
+    [[fileName copy] autorelease], PCBreakFilename,
     lineNumber, PCBreakLineNumber,
     nil];
   if (breakpoints == nil)
@@ -333,14 +352,26 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   PCProjectManager *pm;
   PCProject *project;
 
-  if (number == nil || file == nil || line == 0)
+  if (![number isKindOfClass:[NSString class]] ||
+      ![file isKindOfClass:[NSString class]] ||
+      line == 0)
     {
+      return;
+    }
+
+  controller = (PCAppController *)[NSApp delegate];
+  pm = [controller projectManager];
+  project = [pm activeProject];
+  if (project != nil && ![project canSetBreakpointForFile:file line:line])
+    {
+      [debuggerWrapper putString:
+	[NSString stringWithFormat:@"-break-delete %@\n", number]];
       return;
     }
 
   bp = [NSDictionary dictionaryWithObjectsAndKeys:
     PCBreakTypeByLine, PCBreakTypeKey,
-    file, PCBreakFilename,
+    [[file copy] autorelease], PCBreakFilename,
     [NSNumber numberWithUnsignedInteger:line], PCBreakLineNumber,
     nil];
 
@@ -354,9 +385,6 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       [breakpoints addObject:bp];
     }
 
-  controller = (PCAppController *)[NSApp delegate];
-  pm = [controller projectManager];
-  project = [pm activeProject];
   if (project != nil)
     {
       [project setBreakpointForFile:file line:line enabled:YES];
@@ -381,7 +409,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   PCProjectManager *pm;
   PCProject *project;
 
-  if (number == nil)
+  if (![number isKindOfClass:[NSString class]])
     {
       return;
     }
@@ -394,7 +422,8 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
   file = [bp objectForKey:PCBreakFilename];
   line = [bp objectForKey:PCBreakLineNumber];
-  if (file == nil || line == nil)
+  if (![file isKindOfClass:[NSString class]] ||
+      ![line isKindOfClass:[NSNumber class]])
     {
       [breakpointNumbers removeObjectForKey:number];
       [breakpoints removeObject:bp];
@@ -623,6 +652,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
 - (void) dealloc
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
   [debuggerWrapper release];
   [breakpoints release];
   [breakpointNumbers release];

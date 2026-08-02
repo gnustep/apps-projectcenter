@@ -985,9 +985,15 @@
 	{
 	  if ([singleInputLine length])
 	    {
+	      NSUInteger textLength;
+
 	      [singleInputLine deleteCharactersInRange: NSMakeRange([singleInputLine length]-1, 1)];
-	      [tView setSelectedRange:NSMakeRange([[tView string] length]-1, 1)];
-	      [tView delete:nil];
+	      textLength = [[tView string] length];
+	      if (textLength > 0)
+		{
+		  [tView setSelectedRange:NSMakeRange(textLength - 1, 1)];
+		  [tView delete:nil];
+		}
 	      return;
 	    }
 	}

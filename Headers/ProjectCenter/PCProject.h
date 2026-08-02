@@ -205,6 +205,7 @@ extern NSString *PCProjectBreakpointNotification;
 
 // Breakpoints are stored project-locally using paths relative to projectPath.
 - (NSArray *)breakpoints;
+- (BOOL)canSetBreakpointForFile:(NSString *)file line:(NSUInteger)line;
 - (BOOL)hasBreakpointForFile:(NSString *)file line:(NSUInteger)line;
 - (void)setBreakpointForFile:(NSString *)file line:(NSUInteger)line enabled:(BOOL)enabled;
 - (NSString *)absolutePathForBreakpointFile:(NSString *)file;

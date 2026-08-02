@@ -388,6 +388,11 @@
       return;
     }
 
+  if (![[self _project] canSetBreakpointForFile:path line:line])
+    {
+      return;
+    }
+
   hasBreakpoint = [_breakpoints containsObject:lineNumber];
   if (hasBreakpoint && point.x <= 18.0)
     {

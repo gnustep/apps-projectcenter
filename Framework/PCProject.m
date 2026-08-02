@@ -1647,29 +1647,33 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 {
   NSString *root;
 
-  if (file == nil)
+  if (file != nil)
     {
-      return nil;
-    }
-
-  if (![file isAbsolutePath])
-    {
-      return file;
-    }
-
-  root = [projectPath stringByStandardizingPath];
-  file = [file stringByStandardizingPath];
-  if ([file hasPrefix:root])
-    {
-      NSUInteger rootLength = [root length];
-
-      if ([file length] == rootLength)
+      NSLog(@"file = %@", file);
+      if (![file isKindOfClass:[NSString class]])
 	{
-	  return @"";
+	  return nil;
 	}
-      if ([file characterAtIndex:rootLength] == '/')
+
+      if (![file isAbsolutePath])
 	{
-	  return [file substringFromIndex:rootLength + 1];
+	  return file;
+	}
+
+      root = [projectPath stringByStandardizingPath];
+      file = [file stringByStandardizingPath];
+      if ([file hasPrefix:root])
+	{
+	  NSUInteger rootLength = [root length];
+	  
+	  if ([file length] == rootLength)
+	    {
+	      return @"";
+	    }
+	  if ([file characterAtIndex:rootLength] == '/')
+	    {
+	      return [file substringFromIndex:rootLength + 1];
+	    }
 	}
     }
 
@@ -1687,6 +1691,24 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
     }
 
   return breakpoints;
+}
+
+- (BOOL)canSetBreakpointForFile:(NSString *)file line:(NSUInteger)line
+{
+  NSString *extension;
+
+  if (![file isKindOfClass:[NSString class]] || [file length] == 0 || line == 0)
+    {
+      return NO;
+    }
+
+  extension = [[file pathExtension] lowercaseString];
+  if ([extension isEqualToString:@"h"])
+    {
+      return NO;
+    }
+
+  return YES;
 }
 
 - (BOOL)_writeBreakpoints:(NSArray *)breakpoints
@@ -1717,6 +1739,11 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
   NSEnumerator *e;
   NSDictionary *bp;
 
+  if (![self canSetBreakpointForFile:file line:line])
+    {
+      return NO;
+    }
+
   relativeFile = [self _relativePathForBreakpointFile:file];
   e = [[self breakpoints] objectEnumerator];
   while ((bp = [e nextObject]) != nil)
@@ -1741,6 +1768,11 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
   relativeFile = [self _relativePathForBreakpointFile:file];
   if (relativeFile == nil || [relativeFile length] == 0 || line == 0)
+    {
+      return;
+    }
+
+  if (enabled && ![self canSetBreakpointForFile:file line:line])
     {
       return;
     }
