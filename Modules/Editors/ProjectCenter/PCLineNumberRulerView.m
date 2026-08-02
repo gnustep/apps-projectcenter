@@ -7,8 +7,7 @@
 #import "PCEditor.h"
 
 #import <ProjectCenter/PCProject.h>
-
-static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
+#import <ProjectCenter/PCProjectManager.h>
 
 @implementation PCLineNumberRulerView
 
@@ -70,25 +69,46 @@ static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
   return nil;
 }
 
+- (PCProject *)_project
+{
+  id editor;
+  id editorManager;
+
+  editor = [_textView editor];
+  if (editor != nil && [editor respondsToSelector:@selector(editorManager)])
+    {
+      editorManager = [editor editorManager];
+      if (editorManager != nil &&
+	  [editorManager respondsToSelector:@selector(projectManager)])
+	{
+	  return [[editorManager projectManager] activeProject];
+	}
+    }
+
+  return nil;
+}
+
 - (void)_loadBreakpoints
 {
   NSArray *items;
   NSString *path;
+  PCProject *project;
   NSEnumerator *e;
   NSDictionary *dict;
 
   path = [self _filePath];
-  if (path == nil)
+  project = [self _project];
+  if (path == nil || project == nil)
     {
       return;
     }
 
-  items = [[NSUserDefaults standardUserDefaults]
-    arrayForKey:PCEditorBreakpointsDefaultsKey];
+  items = [project breakpoints];
   e = [items objectEnumerator];
   while ((dict = [e nextObject]) != nil)
     {
-      if ([[dict objectForKey:@"File"] isEqualToString:path])
+      if ([[project absolutePathForBreakpointFile:[dict objectForKey:@"File"]]
+	    isEqualToString:path])
         {
           NSNumber *line = [dict objectForKey:@"Line"];
           if (line != nil)
@@ -101,48 +121,17 @@ static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
 
 - (void)_setStoredBreakpointAtLine:(NSUInteger)line enabled:(BOOL)enabled
 {
-  NSUserDefaults *defaults;
-  NSArray *items;
-  NSMutableArray *newItems;
   NSString *path;
-  NSEnumerator *e;
-  NSDictionary *dict;
-  BOOL found;
+  PCProject *project;
 
   path = [self _filePath];
-  if (path == nil || line == 0)
+  project = [self _project];
+  if (path == nil || project == nil || line == 0)
     {
       return;
     }
 
-  defaults = [NSUserDefaults standardUserDefaults];
-  items = [defaults arrayForKey:PCEditorBreakpointsDefaultsKey];
-  newItems = [NSMutableArray array];
-  e = [items objectEnumerator];
-  found = NO;
-  while ((dict = [e nextObject]) != nil)
-    {
-      if ([[dict objectForKey:@"File"] isEqualToString:path] &&
-          [[dict objectForKey:@"Line"] unsignedIntegerValue] == line)
-        {
-          found = YES;
-          if (!enabled)
-            {
-              continue;
-            }
-        }
-      [newItems addObject:dict];
-    }
-
-  if (enabled && !found)
-    {
-      [newItems addObject:[NSDictionary dictionaryWithObjectsAndKeys:
-        path, @"File",
-        [NSNumber numberWithUnsignedInteger:line], @"Line",
-        nil]];
-    }
-
-  [defaults setObject:newItems forKey:PCEditorBreakpointsDefaultsKey];
+  [project setBreakpointForFile:path line:line enabled:enabled];
 }
 
 - (NSUInteger)_lineNumberForCharacterIndex:(NSUInteger)index

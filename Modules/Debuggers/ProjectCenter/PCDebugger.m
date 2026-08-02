@@ -64,7 +64,6 @@ NSString *PCBreakMethod = @"BreakMethod";
 NSString *PCBreakFilename = @"BreakFilename";
 NSString *PCBreakLineNumber = @"BreakLineNumber";
 NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
-static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
 
 @implementation PCDebugger
 + (void) initialize
@@ -206,11 +205,16 @@ static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
   NSArray *savedBreakpoints;
   NSEnumerator *e;
   NSDictionary *savedBreakpoint;
+  PCAppController *controller;
+  PCProjectManager *pm;
+  PCProject *project;
 
   [breakpoints release];
   breakpoints = [[NSMutableArray alloc] init];
-  savedBreakpoints = [[NSUserDefaults standardUserDefaults]
-    arrayForKey:PCEditorBreakpointsDefaultsKey];
+  controller = (PCAppController *)[NSApp delegate];
+  pm = [controller projectManager];
+  project = [pm activeProject];
+  savedBreakpoints = [project breakpoints];
   e = [savedBreakpoints objectEnumerator];
   while ((savedBreakpoint = [e nextObject]) != nil)
     {
@@ -218,7 +222,8 @@ static NSString *PCEditorBreakpointsDefaultsKey = @"PCEditorBreakpoints";
       NSNumber *lineNumber;
       NSDictionary *bp;
 
-      fileName = [savedBreakpoint objectForKey:@"File"];
+      fileName = [project absolutePathForBreakpointFile:
+	[savedBreakpoint objectForKey:@"File"]];
       lineNumber = [savedBreakpoint objectForKey:@"Line"];
       if (fileName == nil || lineNumber == nil)
         {

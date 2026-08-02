@@ -57,6 +57,7 @@ NSString
 *PCProjectDictDidSaveNotification = @"PCProjectDictDidSaveNotification";
 NSString 
 *PCProjectBreakpointNotification = @"PCProjectBreakpointNotification";
+static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
 @implementation PCProject
 
@@ -1631,6 +1632,160 @@ NSString
     }
 
   return YES;
+}
+
+@end
+
+@implementation PCProject (Breakpoints)
+
+- (NSString *)_breakpointsFilePath
+{
+  return [projectPath stringByAppendingPathComponent:PCProjectBreakpointsFileName];
+}
+
+- (NSString *)_relativePathForBreakpointFile:(NSString *)file
+{
+  NSString *root;
+
+  if (file == nil)
+    {
+      return nil;
+    }
+
+  if (![file isAbsolutePath])
+    {
+      return file;
+    }
+
+  root = [projectPath stringByStandardizingPath];
+  file = [file stringByStandardizingPath];
+  if ([file hasPrefix:root])
+    {
+      NSUInteger rootLength = [root length];
+
+      if ([file length] == rootLength)
+	{
+	  return @"";
+	}
+      if ([file characterAtIndex:rootLength] == '/')
+	{
+	  return [file substringFromIndex:rootLength + 1];
+	}
+    }
+
+  return file;
+}
+
+- (NSArray *)breakpoints
+{
+  NSArray *breakpoints;
+
+  breakpoints = [NSArray arrayWithContentsOfFile:[self _breakpointsFilePath]];
+  if (breakpoints == nil)
+    {
+      return [NSArray array];
+    }
+
+  return breakpoints;
+}
+
+- (BOOL)_writeBreakpoints:(NSArray *)breakpoints
+{
+  NSString *filePath;
+  NSString *directory;
+  NSFileManager *fm;
+  BOOL isDir;
+
+  filePath = [self _breakpointsFilePath];
+  directory = [filePath stringByDeletingLastPathComponent];
+  fm = [NSFileManager defaultManager];
+
+  if (![fm fileExistsAtPath:directory isDirectory:&isDir])
+    {
+      if (![fm createDirectoryAtPath:directory attributes:nil])
+	{
+	  return NO;
+	}
+    }
+
+  return [breakpoints writeToFile:filePath atomically:YES];
+}
+
+- (BOOL)hasBreakpointForFile:(NSString *)file line:(NSUInteger)line
+{
+  NSString *relativeFile;
+  NSEnumerator *e;
+  NSDictionary *bp;
+
+  relativeFile = [self _relativePathForBreakpointFile:file];
+  e = [[self breakpoints] objectEnumerator];
+  while ((bp = [e nextObject]) != nil)
+    {
+      if ([[bp objectForKey:@"File"] isEqualToString:relativeFile] &&
+	  [[bp objectForKey:@"Line"] unsignedIntegerValue] == line)
+	{
+	  return YES;
+	}
+    }
+
+  return NO;
+}
+
+- (void)setBreakpointForFile:(NSString *)file line:(NSUInteger)line enabled:(BOOL)enabled
+{
+  NSString *relativeFile;
+  NSMutableArray *newBreakpoints;
+  NSEnumerator *e;
+  NSDictionary *bp;
+  BOOL found;
+
+  relativeFile = [self _relativePathForBreakpointFile:file];
+  if (relativeFile == nil || [relativeFile length] == 0 || line == 0)
+    {
+      return;
+    }
+
+  newBreakpoints = [NSMutableArray array];
+  e = [[self breakpoints] objectEnumerator];
+  found = NO;
+  while ((bp = [e nextObject]) != nil)
+    {
+      if ([[bp objectForKey:@"File"] isEqualToString:relativeFile] &&
+	  [[bp objectForKey:@"Line"] unsignedIntegerValue] == line)
+	{
+	  found = YES;
+	  if (!enabled)
+	    {
+	      continue;
+	    }
+	}
+      [newBreakpoints addObject:bp];
+    }
+
+  if (enabled && !found)
+    {
+      [newBreakpoints addObject:[NSDictionary dictionaryWithObjectsAndKeys:
+	relativeFile, @"File",
+	[NSNumber numberWithUnsignedInteger:line], @"Line",
+	nil]];
+    }
+
+  [self _writeBreakpoints:newBreakpoints];
+}
+
+- (NSString *)absolutePathForBreakpointFile:(NSString *)file
+{
+  if (file == nil)
+    {
+      return nil;
+    }
+
+  if ([file isAbsolutePath])
+    {
+      return file;
+    }
+
+  return [projectPath stringByAppendingPathComponent:file];
 }
 
 @end

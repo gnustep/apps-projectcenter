@@ -1,6 +1,9 @@
 2026-08-02 Gregory Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCProject.m
+	* Headers/ProjectCenter/PCProject.h
+	Add project-local breakpoint storage in Breakpoints.plist using file
+	names relative to the project path.
 	* Framework/PCProjectEditor.m
 	Guard browser structure lookups for generated class and method rows,
 	and avoid expanding parser-generated entries as browser children.
@@ -12,7 +15,7 @@
 	* Modules/Debuggers/ProjectCenter/PCDebugger.h
 	* Modules/Debuggers/ProjectCenter/PCDebugger.m
 	Retain debugger state correctly, guard editor updates, load saved
-	breakpoints, and handle breakpoint add/remove notifications.
+	project breakpoints, and handle breakpoint add/remove notifications.
 	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m
 	Release appended input strings after writing to the debugger view.
 	* Modules/Editors/ProjectCenter/GNUmakefile
@@ -22,7 +25,8 @@
 	* Modules/Editors/ProjectCenter/PCLineNumberRulerView.m
 	Add editor line numbers, gutter breakpoint markers and toggling, and
 	validate parser ranges and editor line indexing before selecting or
-	scrolling.
+	scrolling.  Store breakpoints through the project instead of user
+	defaults.
 
 2022-01-16 Riccardo Mottola <rm@gnu.org>
 
