@@ -6,6 +6,7 @@
 #import "PCEditorView.h"
 #import "PCEditor.h"
 
+#import <ProjectCenter/PCDefines.h>
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectManager.h>
 
@@ -56,8 +57,8 @@
 - (void)dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-  [_attributes release];
-  [_breakpoints release];
+  RELEASE(_attributes);
+  RELEASE(_breakpoints);
   [super dealloc];
 }
 

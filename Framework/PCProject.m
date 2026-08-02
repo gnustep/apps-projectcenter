@@ -1649,7 +1649,6 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
   if (file != nil)
     {
-      NSLog(@"file = %@", file);
       if (![file isKindOfClass:[NSString class]])
 	{
 	  return nil;

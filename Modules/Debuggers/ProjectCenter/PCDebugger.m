@@ -209,7 +209,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
   PCProjectManager *pm;
   PCProject *project;
 
-  [breakpoints release];
+  RELEASE(breakpoints);
   breakpoints = [[NSMutableArray alloc] init];
   controller = (PCAppController *)[NSApp delegate];
   pm = [controller projectManager];
@@ -309,7 +309,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
   bp = [NSDictionary dictionaryWithObjectsAndKeys:
     PCBreakTypeByLine, PCBreakTypeKey,
-    [[fileName copy] autorelease], PCBreakFilename,
+    AUTORELEASE([fileName copy]), PCBreakFilename,
     lineNumber, PCBreakLineNumber,
     nil];
   if (breakpoints == nil)
@@ -371,7 +371,7 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 
   bp = [NSDictionary dictionaryWithObjectsAndKeys:
     PCBreakTypeByLine, PCBreakTypeKey,
-    [[file copy] autorelease], PCBreakFilename,
+    AUTORELEASE([file copy]), PCBreakFilename,
     [NSNumber numberWithUnsignedInteger:line], PCBreakLineNumber,
     nil];
 
@@ -414,19 +414,22 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
       return;
     }
 
-  bp = [breakpointNumbers objectForKey:number];
+  bp = RETAIN([breakpointNumbers objectForKey:number]);
   if (bp == nil)
     {
       return;
     }
 
-  file = [bp objectForKey:PCBreakFilename];
-  line = [bp objectForKey:PCBreakLineNumber];
+  file = RETAIN([bp objectForKey:PCBreakFilename]);
+  line = RETAIN([bp objectForKey:PCBreakLineNumber]);
   if (![file isKindOfClass:[NSString class]] ||
       ![line isKindOfClass:[NSNumber class]])
     {
       [breakpointNumbers removeObjectForKey:number];
       [breakpoints removeObject:bp];
+      RELEASE(file);
+      RELEASE(line);
+      RELEASE(bp);
       return;
     }
 
@@ -452,6 +455,10 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
                     [NSNumber numberWithBool:NO], @"Enabled",
                     [NSNumber numberWithBool:YES], @"FromDebugger",
                     nil]];
+
+  RELEASE(file);
+  RELEASE(line);
+  RELEASE(bp);
 }
 
 
@@ -653,12 +660,12 @@ NSString *PCDBDebuggerStartedNotification = @"PCDBDebuggerStartedNotification";
 - (void) dealloc
 {
   [[NSNotificationCenter defaultCenter] removeObserver:self];
-  [debuggerWrapper release];
-  [breakpoints release];
-  [breakpointNumbers release];
-  [executablePath release];
-  [lastInfoParsed release];
-  [lastFileNameParsed release];
+  RELEASE(debuggerWrapper);
+  RELEASE(breakpoints);
+  RELEASE(breakpointNumbers);
+  RELEASE(executablePath);
+  RELEASE(lastInfoParsed);
+  RELEASE(lastFileNameParsed);
   [super dealloc];
 }
 @end

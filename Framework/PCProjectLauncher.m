@@ -82,7 +82,6 @@ enum {
   runButton = [[PCButton alloc] initWithFrame: NSMakeRect(0,271,43,43)];
   [runButton setTitle: @"Run"];
   [runButton setImage: IMAGE(@"Run")];
-  [runButton setAlternateImage: IMAGE(@"Stop")];
   [runButton setTarget: self];
   [runButton setAction: @selector(run:)];
   [runButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -93,7 +92,6 @@ enum {
   debugButton = [[PCButton alloc] initWithFrame: NSMakeRect(44,271,43,43)];
   [debugButton setTitle: @"Debug"];
   [debugButton setImage: IMAGE(@"Debug")];
-  [debugButton setAlternateImage: IMAGE(@"Stop")];
   [debugButton setTarget: self];
   [debugButton setAction: @selector(debug:)];
   [debugButton setAutoresizingMask: (NSViewMaxXMargin | NSViewMinYMargin)];
@@ -539,4 +537,3 @@ enum {
 }
 
 @end
-

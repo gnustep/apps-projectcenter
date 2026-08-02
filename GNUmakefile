@@ -51,7 +51,6 @@ Images/Install.tiff \
 Images/MultiFiles.tiff \
 Images/Options.tiff \
 Images/Run.tiff \
-Images/Stop.tiff \
 Images/ProjectCenter_add.tiff \
 Images/ProjectCenter_cvs.tiff \
 Images/ProjectCenter_dist.tiff \

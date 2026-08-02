@@ -38,6 +38,8 @@
 #import "GDBWrapper.h"
 #import "PCDebugger.h"
 
+#import <ProjectCenter/PCDefines.h>
+
 #ifndef NOTIFICATION_CENTER
 #define NOTIFICATION_CENTER [NSNotificationCenter defaultCenter]
 #endif
@@ -49,11 +51,11 @@
 {
   if ((self = [super init]))
     {
-      userInputColor = [[NSColor blueColor] retain];
-      debuggerColor = [[NSColor blackColor] retain];
-      messageColor = [[NSColor brownColor] retain];
-      errorColor = [[NSColor redColor] retain];
-      promptColor = [[NSColor purpleColor] retain];
+      userInputColor = RETAIN([NSColor blueColor]);
+      debuggerColor = RETAIN([NSColor blackColor]);
+      messageColor = RETAIN([NSColor brownColor]);
+      errorColor = RETAIN([NSColor redColor]);
+      promptColor = RETAIN([NSColor purpleColor]);
       
       debuggerStarted = NO;
       debuggerVersion = 0.0;
@@ -72,9 +74,9 @@
 {
   if (tView != tv)
     {
-      [tView release];
+      RELEASE(tView);
       tView = tv;
-      [tView retain];
+      RETAIN(tView);
     }
 }
 
@@ -87,9 +89,9 @@
 {
   if (debugger != dbg)
     {
-      [debugger release];
+      RELEASE(debugger);
       debugger = dbg;
-      [debugger retain];
+      RETAIN(debugger);
     }
 }
 
@@ -102,9 +104,9 @@
 {
   if (debuggerPath != path)
     {
-      [debuggerPath release];
+      RELEASE(debuggerPath);
       debuggerPath = path;
-      [debuggerPath retain];
+      RETAIN(debuggerPath);
     }
 }
 
@@ -117,9 +119,9 @@
 {
   if (font != aFont)
     {
-      [font release];
+      RELEASE(font);
       font = aFont;
-      [font retain];
+      RETAIN(font);
     }
 }
 
@@ -182,7 +184,7 @@
                                             attributes: textAttributes];
   
   [[tView textStorage] appendAttributedString: attrStr];
-  [attrStr release];
+  RELEASE(attrStr);
 
 
   [tView scrollRangeToVisible:NSMakeRange([[tView string] length], 0)];
@@ -297,7 +299,7 @@
 	  [mArray addObject: value];
 	}
     }
-  return [mArray autorelease];
+  return AUTORELEASE(mArray);
 }
 
 /*
@@ -359,7 +361,7 @@
       if (key != nil && value != nil)
 	[mdict setObject:value forKey:key];
     }
-  return [mdict autorelease];
+  return AUTORELEASE(mdict);
 }
 
 /*
@@ -858,14 +860,14 @@
   
   task = [[NSTask alloc] init];
   [task setArguments: argArray];
-  [argArray release];
+  RELEASE(argArray);
   [task setCurrentDirectoryPath: directory];
   [task setLaunchPath: debuggerPath];
 
   inPipe = [NSPipe pipe];
   outPipe = [NSPipe pipe];
-  stdinHandle = [[inPipe fileHandleForWriting] retain];
-  stdoutHandle = [[outPipe fileHandleForReading] retain];
+  stdinHandle = RETAIN([inPipe fileHandleForWriting]);
+  stdoutHandle = RETAIN([outPipe fileHandleForReading]);
   [task setStandardOutput: outPipe];
   [task setStandardInput: inPipe];
 
@@ -936,19 +938,19 @@
 {
   [NOTIFICATION_CENTER removeObserver: self]; 
   [self terminate];
-  [userInputColor release];
-  [debuggerColor release];
-  [messageColor release];
-  [errorColor release];
-  [promptColor release];
-  [font release];
-  [debuggerPath release];
-  [debugger release];
-  [tView release];
-  [singleInputLine release];
-  [pendingOutput release];
-  [lastMIDictionary release];
-  [lastMIString release];
+  RELEASE(userInputColor);
+  RELEASE(debuggerColor);
+  RELEASE(messageColor);
+  RELEASE(errorColor);
+  RELEASE(promptColor);
+  RELEASE(font);
+  RELEASE(debuggerPath);
+  RELEASE(debugger);
+  RELEASE(tView);
+  RELEASE(singleInputLine);
+  RELEASE(pendingOutput);
+  RELEASE(lastMIDictionary);
+  RELEASE(lastMIString);
   [super dealloc];
 }
 
