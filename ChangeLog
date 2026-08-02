@@ -1,3 +1,29 @@
+2026-08-02 Gregory Casamento <greg.casamento@gmail.com>
+
+	* Framework/PCProject.m
+	* Framework/PCProjectEditor.m
+	Guard browser structure lookups for generated class and method rows,
+	and avoid expanding parser-generated entries as browser children.
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.h
+	* Modules/Debuggers/ProjectCenter/GDBWrapper.m
+	Improve gdb/MI parsing, retain parsed records, buffer partial output,
+	use MI commands for debugger control, and fix breakpoint parsing and
+	command encoding.
+	* Modules/Debuggers/ProjectCenter/PCDebugger.h
+	* Modules/Debuggers/ProjectCenter/PCDebugger.m
+	Retain debugger state correctly, guard editor updates, load saved
+	breakpoints, and handle breakpoint add/remove notifications.
+	* Modules/Debuggers/ProjectCenter/PCDebuggerView.m
+	Release appended input strings after writing to the debugger view.
+	* Modules/Editors/ProjectCenter/GNUmakefile
+	* Modules/Editors/ProjectCenter/PCEditor.m
+	* Modules/Editors/ProjectCenter/PCEditorView.m
+	* Modules/Editors/ProjectCenter/PCLineNumberRulerView.h
+	* Modules/Editors/ProjectCenter/PCLineNumberRulerView.m
+	Add editor line numbers, gutter breakpoint markers and toggling, and
+	validate parser ranges and editor line indexing before selecting or
+	scrolling.
+
 2022-01-16 Riccardo Mottola <rm@gnu.org>
 
 	* Framework/PCProjectWindow.m
