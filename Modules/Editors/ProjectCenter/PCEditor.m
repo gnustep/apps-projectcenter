@@ -26,6 +26,7 @@
 
 #import "PCEditor.h"
 #import "PCEditorView.h"
+#import "PCCharacterRulerView.h"
 #import "PCLineNumberRulerView.h"
 
 #import <Protocols/Preferences.h>
@@ -49,6 +50,19 @@
                                                    textView:editorView];
   [scrollView setVerticalRulerView:ruler];
   [scrollView setHasVerticalRuler:YES];
+  [scrollView setRulersVisible:YES];
+  RELEASE(ruler);
+}
+
+- (void)_installCharacterRulerForScrollView:(NSScrollView *)scrollView
+                                 editorView:(PCEditorView *)editorView
+{
+  PCCharacterRulerView *ruler;
+
+  ruler = [[PCCharacterRulerView alloc] initWithScrollView:scrollView
+                                                  textView:editorView];
+  [scrollView setHorizontalRulerView:ruler];
+  [scrollView setHasHorizontalRuler:YES];
   [scrollView setRulersVisible:YES];
   RELEASE(ruler);
 }
@@ -95,6 +109,8 @@
   // Text view in ScrollView
   _extEditorView = [self _createEditorViewWithFrame:rect];
   [_extScrollView setDocumentView:_extEditorView];
+  [self _installCharacterRulerForScrollView:_extScrollView
+                                 editorView:_extEditorView];
   [self _installLineNumberRulerForScrollView:_extScrollView
                                   editorView:_extEditorView];
   RELEASE(_extEditorView);
@@ -163,6 +179,8 @@
    * Setting up ext view / scroll view / window
    */
   [_intScrollView setDocumentView:_intEditorView];
+  [self _installCharacterRulerForScrollView:_intScrollView
+                                 editorView:_intEditorView];
   [self _installLineNumberRulerForScrollView:_intScrollView
                                   editorView:_intEditorView];
   RELEASE(_intEditorView);
