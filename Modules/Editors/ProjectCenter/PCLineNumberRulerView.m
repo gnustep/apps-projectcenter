@@ -121,7 +121,9 @@
 	    isEqualToString:path])
         {
           NSNumber *line = [dict objectForKey:@"Line"];
-          if (line != nil)
+          if (line != nil &&
+	      [project canSetBreakpointForFile:path
+					  line:[line unsignedIntegerValue]])
             {
               [_breakpoints addObject:line];
             }

@@ -1701,6 +1701,9 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
   lowercaseFileName = [fileName lowercaseString];
 
   if ([fileName isEqualToString:@"GNUmakefile"] ||
+      [[file pathExtension] caseInsensitiveCompare:@"plist"] == NSOrderedSame ||
+      [[file pathExtension] caseInsensitiveCompare:@"rtf"] == NSOrderedSame ||
+      [[file pathExtension] caseInsensitiveCompare:@"txt"] == NSOrderedSame ||
       [lowercaseFileName isEqualToString:@"gnumakefile.preamble"] ||
       [lowercaseFileName isEqualToString:@"gnumakefile.postamble"] ||
       [lowercaseFileName isEqualToString:@"makefile.preamble"] ||
