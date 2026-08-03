@@ -38,6 +38,7 @@
 #import <AppKit/NSLayoutManager.h>
 #import <AppKit/NSFont.h>
 #import <AppKit/NSParagraphStyle.h>
+#import <AppKit/NSScrollView.h>
 
 #import <ctype.h>
 
@@ -403,6 +404,43 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
 @implementation PCEditorView
 
+- (void)_updateScrollViewNotifications
+{
+  NSScrollView *scrollView;
+  NSClipView *clipView;
+
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+						  name:NSViewBoundsDidChangeNotification
+						object:nil];
+  [[NSNotificationCenter defaultCenter] removeObserver:self
+						  name:NSViewFrameDidChangeNotification
+						object:self];
+
+  scrollView = [self enclosingScrollView];
+  clipView = [scrollView contentView];
+  if (clipView != nil)
+    {
+      [clipView setPostsBoundsChangedNotifications:YES];
+      [self setPostsFrameChangedNotifications:YES];
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self
+	   selector:@selector(invalidateVisibleText:)
+	       name:NSViewBoundsDidChangeNotification
+	     object:clipView];
+      [[NSNotificationCenter defaultCenter]
+	addObserver:self
+	   selector:@selector(invalidateVisibleText:)
+	       name:NSViewFrameDidChangeNotification
+	     object:self];
+    }
+}
+
+- (void)viewDidMoveToSuperview
+{
+  [super viewDidMoveToSuperview];
+  [self _updateScrollViewNotifications];
+}
+
 + (NSFont *)defaultEditorFont
 {
   NSFont         *font = nil;
@@ -556,6 +594,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
 - (void)dealloc
 {
+  [[NSNotificationCenter defaultCenter] removeObserver:self];
   TEST_RELEASE(highlighter);
 
   [super dealloc];
@@ -599,6 +638,11 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   [super drawRect:r];
+}
+
+- (void)invalidateVisibleText:(NSNotification *)notification
+{
+  [self setNeedsDisplayInRect:[self visibleRect]];
 }
 
 - (void)highlightRangeFromTimer:(NSTimer *)t

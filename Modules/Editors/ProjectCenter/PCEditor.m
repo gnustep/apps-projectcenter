@@ -1248,6 +1248,7 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
   NSString *str = [tv string];
   NSRange selection;
   NSUInteger selLine = NSNotFound;
+  NSUInteger selColumn = NSNotFound;
 
   // for speed reasons we cache [NSString characterAtIndex:index]
   SEL charAtIndexSel = @selector(characterAtIndex:);
@@ -1262,23 +1263,33 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
     NSUInteger i;
     unichar ch;
     NSUInteger nlCount;
+    NSUInteger lineStart;
 
     nlCount = 0;
+    lineStart = 0;
     for (i = 0; i < selection.location; i++)
       {
 	// ch = [str characterAtIndex:i];
 	ch = (*charAtIndexFunc)(str, charAtIndexSel, i);
 	if (ch == (unichar)0x000A) // new line
-	  nlCount++;
+	  {
+	    nlCount++;
+	    lineStart = i + 1;
+	  }
       }
 
     selLine = nlCount + 1;
+    selColumn = selection.location - lineStart + 1;
   }
 
-  if (selLine != NSNotFound)
+  if (selLine != NSNotFound && selColumn != NSNotFound)
     {
-      [_intStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
-      [_extStatusField setStringValue: [NSString stringWithFormat:@"%u", (unsigned)selLine]];
+      NSString *status;
+
+      status = [NSString stringWithFormat:@"%u, %u",
+			 (unsigned)selLine, (unsigned)selColumn];
+      [_intStatusField setStringValue: status];
+      [_extStatusField setStringValue: status];
     }
 }
 
