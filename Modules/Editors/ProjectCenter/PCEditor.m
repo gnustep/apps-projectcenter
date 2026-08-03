@@ -230,6 +230,7 @@
   [[ev textContainer] setWidthTracksTextView:YES];
 
   [[ev textContainer] setContainerSize:NSMakeSize(fr.size.width, 1e7)];
+  [ev updateEditorParagraphStyle];
 
   [ev setEditable:_isEditable];
 
@@ -880,6 +881,8 @@
   // Operate on the text storage!
   [_storage setAttributedString:as];
   RELEASE(as);
+  [_intEditorView updateEditorParagraphStyle];
+  [_extEditorView updateEditorParagraphStyle];
 
   [_intEditorView setNeedsDisplay:YES];
   [_extEditorView setNeedsDisplay:YES];

@@ -49,6 +49,7 @@
 - (NSFont *)editorItalicFont;
 - (NSFont *)editorBoldItalicFont;
 
+- (void)updateEditorParagraphStyle;
 
 - (void)setEditor:(NSObject <CodeEditor> *)anEditor;
 

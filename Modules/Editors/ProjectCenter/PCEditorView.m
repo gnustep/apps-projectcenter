@@ -37,6 +37,7 @@
 #import <AppKit/NSCursor.h>
 #import <AppKit/NSLayoutManager.h>
 #import <AppKit/NSFont.h>
+#import <AppKit/NSParagraphStyle.h>
 
 #import <ctype.h>
 
@@ -48,6 +49,7 @@
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
 #define SYNTAX_HL_DELAY 0.05
+#define EDITOR_TAB_WIDTH 8
 
 /**
  * Computes the indenting offset of the last line before the passed
@@ -476,6 +478,63 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   return [[NSFontManager sharedFontManager] convertFont:font
                                             toHaveTrait:NSBoldFontMask |
                                                         NSItalicFontMask];
+}
+
+- (CGFloat)editorCharacterWidth
+{
+  CGFloat width;
+
+  width = [[self editorFont] widthOfString:@"8"];
+  if (width <= 0.0)
+    {
+      width = [[NSFont userFixedPitchFontOfSize:0.0] widthOfString:@"8"];
+    }
+  if (width <= 0.0)
+    {
+      width = 8.0;
+    }
+
+  return width;
+}
+
+- (NSParagraphStyle *)editorParagraphStyle
+{
+  NSMutableParagraphStyle *style;
+
+  style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy]
+            autorelease];
+  [style setTabStops:[NSArray array]];
+  [style setDefaultTabInterval:[self editorCharacterWidth] * EDITOR_TAB_WIDTH];
+
+  return style;
+}
+
+- (void)updateEditorParagraphStyle
+{
+  NSParagraphStyle *style;
+  NSMutableDictionary *typingAttributes;
+  NSTextStorage *storage;
+  NSUInteger length;
+
+  style = [self editorParagraphStyle];
+  [self setDefaultParagraphStyle:style];
+
+  typingAttributes = [[[self typingAttributes] mutableCopy] autorelease];
+  if (typingAttributes == nil)
+    {
+      typingAttributes = [NSMutableDictionary dictionary];
+    }
+  [typingAttributes setObject:style forKey:NSParagraphStyleAttributeName];
+  [self setTypingAttributes:typingAttributes];
+
+  storage = [self textStorage];
+  length = [storage length];
+  if (length > 0)
+    {
+      [storage addAttribute:NSParagraphStyleAttributeName
+                      value:style
+                      range:NSMakeRange(0, length)];
+    }
 }
 
 // ---
