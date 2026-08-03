@@ -113,6 +113,10 @@
   e = [items objectEnumerator];
   while ((dict = [e nextObject]) != nil)
     {
+      if (![dict isKindOfClass:[NSDictionary class]])
+        {
+          continue;
+        }
       if ([[project absolutePathForBreakpointFile:[dict objectForKey:@"File"]]
 	    isEqualToString:path])
         {
@@ -263,10 +267,17 @@
   NSRect visibleRect;
   NSSize inset;
   NSRect containerVisibleRect;
+  NSUInteger stringLength;
+  NSUInteger glyphLimit;
 
   [self _updateRuleThickness];
 
   bounds = [self bounds];
+  if (NSIsEmptyRect(bounds))
+    {
+      return;
+    }
+
   [[NSColor controlBackgroundColor] set];
   NSRectFill(bounds);
   [[NSColor grayColor] set];
@@ -275,6 +286,12 @@
   layoutManager = [_textView layoutManager];
   textContainer = [_textView textContainer];
   string = [_textView string];
+  stringLength = [string length];
+  if (layoutManager == nil || textContainer == nil || stringLength == 0)
+    {
+      return;
+    }
+
   inset = [_textView textContainerInset];
   visibleRect = [_textView visibleRect];
   containerVisibleRect = visibleRect;
@@ -285,10 +302,20 @@
                                         inTextContainer:textContainer];
   charRange = [layoutManager characterRangeForGlyphRange:glyphRange
                                         actualGlyphRange:NULL];
+  if (charRange.location == NSNotFound)
+    {
+      return;
+    }
+
   lineNumber = [self _lineNumberForCharacterIndex:charRange.location];
+  glyphLimit = NSMaxRange(glyphRange);
+  if (glyphLimit > [layoutManager numberOfGlyphs])
+    {
+      glyphLimit = [layoutManager numberOfGlyphs];
+    }
 
   for (glyphIndex = glyphRange.location;
-       glyphIndex < NSMaxRange(glyphRange) && glyphIndex < [string length];
+       glyphIndex < glyphLimit;
        glyphIndex++)
     {
       NSRect glyphRect;
@@ -298,10 +325,24 @@
       NSPoint point;
       CGFloat markerY;
 
-      lineRange = [string lineRangeForRange:NSMakeRange(glyphIndex, 0)];
-      if (glyphIndex != lineRange.location)
+      charRange = [layoutManager characterRangeForGlyphRange:NSMakeRange(glyphIndex, 1)
+                                            actualGlyphRange:NULL];
+      if (charRange.location == NSNotFound || charRange.location >= stringLength)
         {
-          glyphIndex = NSMaxRange(lineRange) - 1;
+          continue;
+        }
+
+      lineRange = [string lineRangeForRange:NSMakeRange(charRange.location, 0)];
+      if (charRange.location != lineRange.location)
+        {
+          NSRange nextGlyphRange;
+
+          nextGlyphRange = [layoutManager glyphRangeForCharacterRange:lineRange
+                                                  actualCharacterRange:NULL];
+          if (NSMaxRange(nextGlyphRange) > glyphIndex)
+            {
+              glyphIndex = NSMaxRange(nextGlyphRange) - 1;
+            }
           continue;
         }
 
@@ -376,6 +417,7 @@
   NSUInteger line;
   NSNumber *lineNumber;
   NSString *path;
+  PCProject *project;
   BOOL enabled;
   BOOL hasBreakpoint;
 
@@ -383,13 +425,14 @@
   line = [self _lineNumberForPoint:point];
   lineNumber = [NSNumber numberWithUnsignedInteger:line];
   path = [self _filePath];
+  project = [self _project];
 
-  if (path == nil)
+  if (path == nil || project == nil)
     {
       return;
     }
 
-  if (![[self _project] canSetBreakpointForFile:path line:line])
+  if (![project canSetBreakpointForFile:path line:line])
     {
       return;
     }

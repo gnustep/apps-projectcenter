@@ -1692,11 +1692,36 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
   return breakpoints;
 }
 
+- (BOOL)_isBreakpointExcludedFile:(NSString *)file
+{
+  NSString *fileName;
+  NSString *lowercaseFileName;
+
+  fileName = [file lastPathComponent];
+  lowercaseFileName = [fileName lowercaseString];
+
+  if ([fileName isEqualToString:@"GNUmakefile"] ||
+      [lowercaseFileName isEqualToString:@"gnumakefile.preamble"] ||
+      [lowercaseFileName isEqualToString:@"gnumakefile.postamble"] ||
+      [lowercaseFileName isEqualToString:@"makefile.preamble"] ||
+      [lowercaseFileName isEqualToString:@"makefile.postamble"])
+    {
+      return YES;
+    }
+
+  return NO;
+}
+
 - (BOOL)canSetBreakpointForFile:(NSString *)file line:(NSUInteger)line
 {
   NSString *extension;
 
   if (![file isKindOfClass:[NSString class]] || [file length] == 0 || line == 0)
+    {
+      return NO;
+    }
+
+  if ([self _isBreakpointExcludedFile:file])
     {
       return NO;
     }
