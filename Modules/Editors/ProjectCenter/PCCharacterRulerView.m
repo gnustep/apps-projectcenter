@@ -71,6 +71,16 @@
   return width;
 }
 
+- (CGFloat)_textContainerOriginX
+{
+  if ([_textView respondsToSelector:@selector(textContainerOrigin)])
+    {
+      return [_textView textContainerOrigin].x;
+    }
+
+  return [_textView textContainerInset].width;
+}
+
 - (void)invalidateCharacterRuler:(NSNotification *)notification
 {
   [self setNeedsDisplay:YES];
@@ -80,8 +90,8 @@
 {
   NSRect bounds;
   NSRect visibleRect;
-  NSSize inset;
   CGFloat charWidth;
+  CGFloat textOriginX;
   CGFloat firstColumn;
   CGFloat lastColumn;
   NSUInteger column;
@@ -101,15 +111,15 @@
   NSRectFill(NSMakeRect(NSMinX(bounds), NSMinY(bounds), NSWidth(bounds), 1.0));
 
   charWidth = [self _characterWidth];
-  inset = [_textView textContainerInset];
+  textOriginX = [self _textContainerOriginX];
   visibleRect = [_textView visibleRect];
 
-  firstColumn = floor((NSMinX(visibleRect) - inset.width) / charWidth);
+  firstColumn = floor((NSMinX(visibleRect) - textOriginX) / charWidth);
   if (firstColumn < 0.0)
     {
       firstColumn = 0.0;
     }
-  lastColumn = ceil((NSMaxX(visibleRect) - inset.width) / charWidth);
+  lastColumn = ceil((NSMaxX(visibleRect) - textOriginX) / charWidth);
 
   startColumn = (NSUInteger)firstColumn;
   endColumn = (NSUInteger)lastColumn + 1;
@@ -119,8 +129,12 @@
     {
       CGFloat x;
       CGFloat tickHeight;
+      NSPoint rulerPoint;
 
-      x = inset.width + column * charWidth - NSMinX(visibleRect);
+      rulerPoint = [self convertPoint:NSMakePoint(textOriginX
+						  + column * charWidth, 0.0)
+			      fromView:_textView];
+      x = rulerPoint.x;
       if (x < NSMinX(bounds) - charWidth || x > NSMaxX(bounds) + charWidth)
         {
           continue;
