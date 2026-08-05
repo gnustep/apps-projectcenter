@@ -128,10 +128,105 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
 - (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
 - (void)performIndentation;
+- (NSUInteger)editorTabWidth;
+- (NSInteger)leadingWhitespaceLengthOfLineAtIndex:(NSInteger)index
+                                       forString:(NSString *)string;
+- (NSInteger)indentForLineAtIndex:(NSInteger)index
+                        forString:(NSString *)string;
 
 @end
 
 @implementation PCEditorView (Private)
+
+- (NSUInteger)editorTabWidth
+{
+  return EDITOR_TAB_WIDTH;
+}
+
+- (NSInteger)leadingWhitespaceLengthOfLineAtIndex:(NSInteger)index
+                                       forString:(NSString *)string
+{
+  NSInteger line_start;
+  NSInteger offset;
+  NSInteger string_length;
+
+  line_start = [self lineStartIndexForIndex:index forString:string];
+  string_length = [string length];
+
+  for (offset = line_start; offset < string_length; offset++)
+    {
+      unichar c = [string characterAtIndex:offset];
+
+      if (c == '\n' || !isspace(c))
+	{
+	  break;
+	}
+    }
+
+  return offset - line_start;
+}
+
+- (NSInteger)indentForLineAtIndex:(NSInteger)index
+                        forString:(NSString *)string
+{
+  NSInteger offset;
+  NSInteger brace_level = 0;
+  NSInteger string_length = [string length];
+
+  if (string_length == 0)
+    {
+      return 0;
+    }
+
+  if (index <= 0)
+    {
+      return 0;
+    }
+
+  if (index > string_length)
+    {
+      index = string_length;
+    }
+
+  for (offset = index - 1; offset >= 0; offset--)
+    {
+      unichar c = [string characterAtIndex:offset];
+
+      if (c == '}')
+	{
+	  brace_level++;
+	}
+      else if (c == '{')
+	{
+	  if (brace_level == 0)
+	    {
+	      NSInteger indent;
+	      NSInteger line_start;
+	      NSInteger cur_line_start;
+
+	      indent = [self leadingWhitespaceLengthOfLineAtIndex:offset
+							forString:string];
+	      line_start = [self lineStartIndexForIndex:offset
+					     forString:string];
+	      cur_line_start = [self lineStartIndexForIndex:index
+						 forString:string];
+
+	      if (line_start == cur_line_start)
+		{
+		  return indent;
+		}
+
+	      return indent + [self editorTabWidth] + 1;
+	    }
+	  else
+	    {
+	      brace_level--;
+	    }
+	}
+    }
+
+  return ComputeIndentingOffset(string, index);
+}
 
 /**
  * Makes the receiver insert as many spaces at the current insertion
@@ -317,10 +412,12 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSMutableString *indentString;
   NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
   NSInteger i;
+  NSInteger tabWidth;
 //  int point;
 
   location = [self selectedRange].location;
   string_length = [string length];
+  tabWidth = [self editorTabWidth];
 
 //  point = [self nextLineStartIndexForIndex:location forString:string];
 //  [self setSelectedRange:NSMakeRange(point, 0)];
@@ -362,13 +459,15 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   NSLog (@"clfc: %c plfc: %c", clfc, plfc);
-  if (plfc == '{' || clfc == '{')
+  offset = [self indentForLineAtIndex:location forString:string];
+  if (clfc == '}')
     {
-      offset += 2;
+      offset -= tabWidth;
     }
-  else if (clfc == '}' && plfc != '{')
+
+  if (offset < 0)
     {
-      offset -= 2; 
+      offset = 0;
     }
 
   // Get offset from BOL of previous line
@@ -674,7 +773,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (void) insertNewline: (id)sender
 {
   NSInteger location = [self selectedRange].location;
-  int  offset = ComputeIndentingOffset([self string], location);
+  int  offset = [self indentForLineAtIndex:location forString:[self string]];
   char buf[offset+2];
 
   buf[0] = '\n';
