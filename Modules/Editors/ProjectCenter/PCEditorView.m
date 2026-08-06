@@ -133,6 +133,11 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
                                        forString:(NSString *)string;
 - (NSInteger)indentForLineAtIndex:(NSInteger)index
                         forString:(NSString *)string;
+- (NSUInteger)indexByMovingSelectionEdge:(NSUInteger)index
+                               direction:(NSInteger)direction
+                                inString:(NSString *)string;
+- (NSRange)selectionRangeWithAnchor:(NSUInteger)anchor
+                              point:(NSUInteger)point;
 
 @end
 
@@ -226,6 +231,78 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   return ComputeIndentingOffset(string, index);
+}
+
+- (NSUInteger)indexByMovingSelectionEdge:(NSUInteger)index
+                               direction:(NSInteger)direction
+                                inString:(NSString *)string
+{
+  NSUInteger string_length;
+  NSUInteger line_start;
+  NSUInteger line_end;
+  NSUInteger target_line_start;
+  NSUInteger target_contents_end;
+  NSUInteger column;
+
+  string_length = [string length];
+  if (string_length == 0)
+    {
+      return 0;
+    }
+
+  if (index > string_length)
+    {
+      index = string_length;
+    }
+
+  [string getLineStart:&line_start
+		   end:&line_end
+	   contentsEnd:NULL
+	      forRange:NSMakeRange(index, 0)];
+  column = index - line_start;
+
+  if (direction < 0)
+    {
+      if (line_start == 0)
+	{
+	  return index;
+	}
+
+      [string getLineStart:&target_line_start
+		       end:NULL
+	       contentsEnd:&target_contents_end
+		  forRange:NSMakeRange(line_start - 1, 0)];
+    }
+  else
+    {
+      if (line_end >= string_length)
+	{
+	  return index;
+	}
+
+      [string getLineStart:&target_line_start
+		       end:NULL
+	       contentsEnd:&target_contents_end
+		  forRange:NSMakeRange(line_end, 0)];
+    }
+
+  if (column > target_contents_end - target_line_start)
+    {
+      column = target_contents_end - target_line_start;
+    }
+
+  return target_line_start + column;
+}
+
+- (NSRange)selectionRangeWithAnchor:(NSUInteger)anchor
+                              point:(NSUInteger)point
+{
+  if (point < anchor)
+    {
+      return NSMakeRange(point, anchor - point);
+    }
+
+  return NSMakeRange(anchor, point - anchor);
 }
 
 /**
@@ -788,6 +865,50 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (void) insertTab: (id)sender
 {
   [self performIndentation];
+}
+
+- (void)moveUpAndModifySelection:(id)sender
+{
+  NSString *string;
+  NSRange oldRange;
+  NSRange newRange;
+  NSUInteger anchor;
+  NSUInteger point;
+  NSSelectionAffinity affinity;
+
+  string = [self string];
+  oldRange = [self selectedRange];
+  affinity = [self selectionAffinity];
+  anchor = NSMaxRange(oldRange);
+  point = [self indexByMovingSelectionEdge:oldRange.location
+				 direction:-1
+				  inString:string];
+  newRange = [self selectionRangeWithAnchor:anchor point:point];
+
+  [self setSelectedRange:newRange affinity:affinity stillSelecting:YES];
+  [self scrollRangeToVisible:NSMakeRange(point, 0)];
+}
+
+- (void)moveDownAndModifySelection:(id)sender
+{
+  NSString *string;
+  NSRange oldRange;
+  NSRange newRange;
+  NSUInteger anchor;
+  NSUInteger point;
+  NSSelectionAffinity affinity;
+
+  string = [self string];
+  oldRange = [self selectedRange];
+  affinity = [self selectionAffinity];
+  anchor = oldRange.location;
+  point = [self indexByMovingSelectionEdge:NSMaxRange(oldRange)
+				 direction:1
+				  inString:string];
+  newRange = [self selectionRangeWithAnchor:anchor point:point];
+
+  [self setSelectedRange:newRange affinity:affinity stillSelecting:YES];
+  [self scrollRangeToVisible:NSMakeRange(point, 0)];
 }
 
 /* This extra change tracking is required in order to inform the document
