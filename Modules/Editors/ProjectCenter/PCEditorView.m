@@ -50,7 +50,7 @@
 #import "Modules/Preferences/EditorFSC/PCEditorFSCPrefs.h"
 
 #define SYNTAX_HL_DELAY 0.05
-#define EDITOR_TAB_WIDTH 8
+#define EDITOR_TAB_WIDTH 2
 
 /**
  * Computes the indenting offset of the last line before the passed
@@ -133,6 +133,11 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
                                        forString:(NSString *)string;
 - (NSInteger)indentForLineAtIndex:(NSInteger)index
                         forString:(NSString *)string;
+- (NSInteger)indentAfterNewlineAtIndex:(NSInteger)index
+                             forString:(NSString *)string;
+- (BOOL)lineBeforeIndexIsControlStatement:(NSInteger)index
+                                forString:(NSString *)string;
+- (void)shiftSelectedLinesForward:(BOOL)forward;
 - (NSUInteger)indexByMovingSelectionEdge:(NSUInteger)index
                                direction:(NSInteger)direction
                                 inString:(NSString *)string;
@@ -225,7 +230,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 		  return indent;
 		}
 
-	      return indent + [self editorTabWidth] + 1;
+	      return indent + [self editorTabWidth];
 	    }
 	  else
 	    {
@@ -235,6 +240,219 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   return ComputeIndentingOffset(string, index);
+}
+
+- (NSInteger)indentAfterNewlineAtIndex:(NSInteger)index
+                             forString:(NSString *)string
+{
+  NSInteger offset;
+
+  offset = [self indentForLineAtIndex:index forString:string];
+  if (index > 0 && index <= [string length]
+      && [string characterAtIndex:index - 1] == '{')
+    {
+      offset += [self editorTabWidth];
+    }
+  else if ([self lineBeforeIndexIsControlStatement:index forString:string])
+    {
+      offset += [self editorTabWidth];
+    }
+
+  return offset;
+}
+
+- (BOOL)lineBeforeIndexIsControlStatement:(NSInteger)index
+                                forString:(NSString *)string
+{
+  NSArray *keywords;
+  NSInteger line_start;
+  NSInteger line_end;
+  NSInteger string_length;
+  NSInteger target_index;
+  NSString *line;
+  NSString *keyword;
+  NSEnumerator *e;
+
+  string_length = [string length];
+  if (string_length == 0 || index <= 0)
+    {
+      return NO;
+    }
+
+  if (index > string_length)
+    {
+      index = string_length;
+    }
+
+  target_index = index - 1;
+  if (target_index < 0)
+    {
+      return NO;
+    }
+
+  line_start = [self lineStartIndexForIndex:target_index forString:string];
+  line_end = [self lineEndIndexForIndex:target_index forString:string];
+  if (index < line_end)
+    {
+      line_end = index;
+    }
+  if (line_end <= line_start)
+    {
+      return NO;
+    }
+
+  line = [[string substringWithRange:NSMakeRange(line_start,
+						line_end - line_start)]
+	   stringByTrimmingCharactersInSet:
+	     [NSCharacterSet whitespaceCharacterSet]];
+  if ([line length] == 0 || [line hasSuffix:@";"] || [line hasSuffix:@"{"])
+    {
+      return NO;
+    }
+
+  keywords = [NSArray arrayWithObjects:@"if", @"else", @"while", @"for",
+				      @"switch", @"do", @"@try", @"@catch",
+				      @"@finally", @"@synchronized", nil];
+  e = [keywords objectEnumerator];
+  while ((keyword = [e nextObject]) != nil)
+    {
+      NSUInteger length = [keyword length];
+
+      if ([line isEqualToString:keyword])
+	{
+	  return YES;
+	}
+      if ([line hasPrefix:[keyword stringByAppendingString:@" "]])
+	{
+	  return YES;
+	}
+      if ([line length] > length
+	  && [line hasPrefix:keyword]
+	  && [line characterAtIndex:length] == '(')
+	{
+	  return YES;
+	}
+    }
+
+  return NO;
+}
+
+- (void)shiftSelectedLinesForward:(BOOL)forward
+{
+  NSString *string;
+  NSRange selected_range;
+  NSUInteger line_start;
+  NSUInteger line_end;
+  NSUInteger contents_end;
+  NSUInteger edit_end_index;
+  NSRange edit_range;
+  NSMutableString *replacement;
+  NSUInteger cursor;
+  NSUInteger tab_width;
+
+  selected_range = [self selectedRange];
+  if (selected_range.length == 0)
+    {
+      if (forward)
+	{
+	  [self performIndentation];
+	}
+      return;
+    }
+
+  string = [self string];
+  if ([string length] == 0)
+    {
+      return;
+    }
+
+  [string getLineStart:&line_start
+		   end:NULL
+	   contentsEnd:NULL
+	      forRange:NSMakeRange(selected_range.location, 0)];
+
+  edit_end_index = NSMaxRange(selected_range);
+  if (edit_end_index > selected_range.location
+      && edit_end_index <= [string length]
+      && [string characterAtIndex:edit_end_index - 1] == '\n')
+    {
+      edit_end_index--;
+    }
+  if (edit_end_index > [string length])
+    {
+      edit_end_index = [string length];
+    }
+
+  [string getLineStart:NULL
+		   end:&line_end
+	   contentsEnd:NULL
+	      forRange:NSMakeRange(edit_end_index, 0)];
+  edit_range = NSMakeRange(line_start, line_end - line_start);
+  replacement = [[NSMutableString alloc]
+		  initWithCapacity:edit_range.length + [self editorTabWidth]];
+  tab_width = [self editorTabWidth];
+
+  cursor = line_start;
+  while (cursor < line_end)
+    {
+      NSUInteger next_line_start;
+      NSUInteger line_length;
+
+      [string getLineStart:NULL
+		       end:&next_line_start
+	       contentsEnd:&contents_end
+		  forRange:NSMakeRange(cursor, 0)];
+      line_length = next_line_start - cursor;
+
+      if (forward)
+	{
+	  NSUInteger i;
+
+	  for (i = 0; i < tab_width; i++)
+	    {
+	      [replacement appendString:@" "];
+	    }
+	  [replacement appendString:
+			 [string substringWithRange:NSMakeRange(cursor,
+							       line_length)]];
+	}
+      else
+	{
+	  NSUInteger remove_count;
+
+	  remove_count = 0;
+	  if (cursor < contents_end
+	      && [string characterAtIndex:cursor] == '\t')
+	    {
+	      remove_count = 1;
+	    }
+	  else
+	    {
+	      while (remove_count < tab_width
+		     && cursor + remove_count < contents_end
+		     && [string characterAtIndex:cursor + remove_count] == ' ')
+		{
+		  remove_count++;
+		}
+	    }
+
+	  [replacement appendString:
+			 [string substringWithRange:
+				   NSMakeRange(cursor + remove_count,
+					       line_length - remove_count)]];
+	}
+
+      cursor = next_line_start;
+    }
+
+  if ([self shouldChangeTextInRange:edit_range replacementString:replacement])
+    {
+      [[self textStorage] replaceCharactersInRange:edit_range
+					withString:replacement];
+      [self setSelectedRange:NSMakeRange(line_start, [replacement length])];
+    }
+
+  [replacement release];
 }
 
 - (NSUInteger)indexByMovingSelectionEdge:(NSUInteger)index
@@ -584,6 +802,12 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     {
       offset -= tabWidth;
     }
+  else if (clfc == '{'
+	   && [self lineBeforeIndexIsControlStatement:location
+					   forString:string])
+    {
+      offset += tabWidth;
+    }
 
   if (offset < 0)
     {
@@ -761,7 +985,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   style = [[[NSParagraphStyle defaultParagraphStyle] mutableCopy]
             autorelease];
   [style setTabStops:[NSArray array]];
-  [style setDefaultTabInterval:[self editorCharacterWidth] * EDITOR_TAB_WIDTH];
+  [style setDefaultTabInterval:[self editorCharacterWidth] *
+                                [self editorTabWidth]];
 
   return style;
 }
@@ -893,7 +1118,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (void) insertNewline: (id)sender
 {
   NSInteger location = [self selectedRange].location;
-  int  offset = [self indentForLineAtIndex:location forString:[self string]];
+  int  offset = [self indentAfterNewlineAtIndex:location
+                                      forString:[self string]];
   char buf[offset+2];
 
   buf[0] = '\n';
@@ -907,7 +1133,12 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
 - (void) insertTab: (id)sender
 {
-  [self performIndentation];
+  [self shiftSelectedLinesForward:YES];
+}
+
+- (void) insertBacktab: (id)sender
+{
+  [self shiftSelectedLinesForward:NO];
 }
 
 - (void)moveUpAndModifySelection:(id)sender
