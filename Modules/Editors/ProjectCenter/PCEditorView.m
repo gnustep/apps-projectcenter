@@ -138,6 +138,10 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
                                 inString:(NSString *)string;
 - (NSRange)selectionRangeWithAnchor:(NSUInteger)anchor
                               point:(NSUInteger)point;
+- (NSUInteger)movementOriginForSelection;
+- (NSUInteger)movementEndForSelection;
+- (void)setSelectionWithAnchor:(NSUInteger)anchor
+                         point:(NSUInteger)point;
 
 @end
 
@@ -303,6 +307,45 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   return NSMakeRange(anchor, point - anchor);
+}
+
+- (NSUInteger)movementOriginForSelection
+{
+  NSRange range = [self selectedRange];
+
+  if ([self selectionAffinity] == NSSelectionAffinityUpstream)
+    {
+      return range.location;
+    }
+
+  return NSMaxRange(range);
+}
+
+- (NSUInteger)movementEndForSelection
+{
+  NSRange range = [self selectedRange];
+
+  if ([self selectionAffinity] == NSSelectionAffinityDownstream)
+    {
+      return range.location;
+    }
+
+  return NSMaxRange(range);
+}
+
+- (void)setSelectionWithAnchor:(NSUInteger)anchor
+                         point:(NSUInteger)point
+{
+  NSSelectionAffinity affinity;
+  NSRange range;
+
+  range = [self selectionRangeWithAnchor:anchor point:point];
+  affinity = (anchor < point)
+    ? NSSelectionAffinityDownstream
+    : NSSelectionAffinityUpstream;
+
+  [self setSelectedRange:range affinity:affinity stillSelecting:YES];
+  [self scrollRangeToVisible:NSMakeRange(point, 0)];
 }
 
 /**
@@ -870,45 +913,71 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (void)moveUpAndModifySelection:(id)sender
 {
   NSString *string;
-  NSRange oldRange;
-  NSRange newRange;
   NSUInteger anchor;
   NSUInteger point;
-  NSSelectionAffinity affinity;
 
   string = [self string];
-  oldRange = [self selectedRange];
-  affinity = [self selectionAffinity];
-  anchor = NSMaxRange(oldRange);
-  point = [self indexByMovingSelectionEdge:oldRange.location
+  anchor = [self movementEndForSelection];
+  point = [self indexByMovingSelectionEdge:[self movementOriginForSelection]
 				 direction:-1
 				  inString:string];
-  newRange = [self selectionRangeWithAnchor:anchor point:point];
-
-  [self setSelectedRange:newRange affinity:affinity stillSelecting:YES];
-  [self scrollRangeToVisible:NSMakeRange(point, 0)];
+  [self setSelectionWithAnchor:anchor point:point];
 }
 
 - (void)moveDownAndModifySelection:(id)sender
 {
   NSString *string;
-  NSRange oldRange;
-  NSRange newRange;
   NSUInteger anchor;
   NSUInteger point;
-  NSSelectionAffinity affinity;
 
   string = [self string];
-  oldRange = [self selectedRange];
-  affinity = [self selectionAffinity];
-  anchor = oldRange.location;
-  point = [self indexByMovingSelectionEdge:NSMaxRange(oldRange)
+  anchor = [self movementEndForSelection];
+  point = [self indexByMovingSelectionEdge:[self movementOriginForSelection]
 				 direction:1
 				  inString:string];
-  newRange = [self selectionRangeWithAnchor:anchor point:point];
+  [self setSelectionWithAnchor:anchor point:point];
+}
 
-  [self setSelectedRange:newRange affinity:affinity stillSelecting:YES];
-  [self scrollRangeToVisible:NSMakeRange(point, 0)];
+- (void)moveBackwardAndModifySelection:(id)sender
+{
+  NSUInteger anchor;
+  NSUInteger point;
+
+  anchor = [self movementEndForSelection];
+  point = [self movementOriginForSelection];
+  if (point > 0)
+    {
+      point--;
+    }
+
+  [self setSelectionWithAnchor:anchor point:point];
+}
+
+- (void)moveForwardAndModifySelection:(id)sender
+{
+  NSUInteger anchor;
+  NSUInteger point;
+  NSUInteger length;
+
+  anchor = [self movementEndForSelection];
+  point = [self movementOriginForSelection];
+  length = [[self string] length];
+  if (point < length)
+    {
+      point++;
+    }
+
+  [self setSelectionWithAnchor:anchor point:point];
+}
+
+- (void)moveLeftAndModifySelection:(id)sender
+{
+  [self moveBackwardAndModifySelection:sender];
+}
+
+- (void)moveRightAndModifySelection:(id)sender
+{
+  [self moveForwardAndModifySelection:sender];
 }
 
 /* This extra change tracking is required in order to inform the document
