@@ -247,16 +247,13 @@
   NSString       *filePath = nil;
   BOOL           editable = YES;
   id<CodeEditor> editor;
-  NSArray *selectedPathComponents;
 
-  selectedPathComponents = [[[_project projectBrowser] pathFromSelectedCategory]
-    pathComponents];
-  if ([selectedPathComponents count] <= 2)
+  fileName = [[_project projectBrowser] projectFileForCategoryPath:categoryPath];
+  if (fileName == nil)
     {
       return nil;
     }
 
-  fileName = [selectedPathComponents objectAtIndex:2];
   filePath = [activeProject pathForFile:fileName forKey:categoryKey];
 
 /*  NSLog(@"PCPE: fileName: %@ filePath: %@ project: %@", 
@@ -297,7 +294,7 @@
     {
       pathLastObject = [pathArray objectAtIndex:[pathArray count]-2];
 
-      if ([pathLastObject isEqualToString:fileName]) // file selected
+      if ([pathLastObject isEqualToString:[fileName lastPathComponent]]) // file selected
 	{ // Reload last column because editor has just been loaded
 	  [[_project projectBrowser] reloadLastColumnAndNotify:NO]; 
 	}

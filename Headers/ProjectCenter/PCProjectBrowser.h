@@ -52,6 +52,7 @@ extern NSString *PCBrowserDidSetPathNotification;
 
 // Returns nil if multiple files selected
 - (NSString *)nameOfSelectedFile;
+- (NSString *)projectFileForCategoryPath:(NSString *)categoryPath;
 - (NSString *)pathToSelectedFile;
 
 // Returns nil if multiple categories selected

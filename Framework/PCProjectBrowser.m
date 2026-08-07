@@ -96,11 +96,82 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   return browser;
 }
 
+- (NSString *)projectFileForCategoryPath:(NSString *)categoryPath
+{
+  PCProject      *activeProject = [[project projectManager] activeProject];
+  NSString       *category = [self nameOfSelectedCategory];
+  NSString       *categoryKey = nil;
+  NSArray        *projectFiles = nil;
+  NSArray        *pathComponents = nil;
+  NSArray        *fileComponents = nil;
+  NSString       *projectFile = nil;
+  NSString       *bestFile = nil;
+  BOOL            matches = YES;
+  unsigned        i;
+  unsigned        j;
+  unsigned        firstFileComponent = 0;
+  unsigned        bestComponentCount = 0;
+
+  if (categoryPath == nil || category == nil)
+    {
+      return nil;
+    }
+
+  categoryKey = [activeProject keyForCategory:category];
+  projectFiles = [[activeProject projectDict] objectForKey:categoryKey];
+  pathComponents = [categoryPath pathComponents];
+
+  for (i = 0; i < [pathComponents count]; i++)
+    {
+      if ([[pathComponents objectAtIndex:i] isEqualToString:category])
+	{
+	  firstFileComponent = i + 1;
+	  break;
+	}
+    }
+
+  if (i == [pathComponents count] || firstFileComponent >= [pathComponents count])
+    {
+      return nil;
+    }
+
+  for (i = 0; i < [projectFiles count]; i++)
+    {
+      matches = YES;
+      projectFile = [projectFiles objectAtIndex:i];
+      fileComponents = [projectFile pathComponents];
+      if ([fileComponents count] == 0 ||
+	  firstFileComponent + [fileComponents count] > [pathComponents count])
+	{
+	  continue;
+	}
+
+      for (j = 0; j < [fileComponents count]; j++)
+	{
+	  if (![[fileComponents objectAtIndex:j]
+	    isEqualToString:[pathComponents objectAtIndex:firstFileComponent + j]])
+	    {
+	      matches = NO;
+	      break;
+	    }
+	}
+
+      if (matches && [fileComponents count] > bestComponentCount)
+	{
+	  bestFile = projectFile;
+	  bestComponentCount = [fileComponents count];
+	}
+    }
+
+  return bestFile;
+}
+
 // Returns nil if multiple files or category selected
 - (NSString *)nameOfSelectedFile
 {
   NSString       *name = [[browser path] lastPathComponent];
   NSString       *category = [self nameOfSelectedCategory];
+  NSString       *projectFile = nil;
   NSMutableArray *pathArray;
   NSEnumerator   *enumerator;
   NSString       *pathItem;
@@ -125,7 +196,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	}
     }
   RELEASE(pathArray);
-    
+
+  projectFile = [self projectFileForCategoryPath:[browser path]];
+  if (projectFile != nil)
+    {
+      return projectFile;
+    }
+
   return name;
 }
 
@@ -435,15 +512,19 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     }
 
   selectedCell = [sender selectedCell];
-  fileName = [[sender selectedCell] stringValue];
+  fileName = [self projectFileForCategoryPath:[self path]];
+  if (fileName == nil)
+    {
+      fileName = [[sender selectedCell] stringValue];
+    }
   activeProject = [[project projectManager] activeProject];
   key = [activeProject keyForCategory:category];
-  filePath = [activeProject pathForFile:fileName forKey:key];
 
   if ([self nameOfSelectedFile] != nil) 
     {
       BOOL foundFile = NO;
       BOOL foundApp = NO;
+      filePath = [activeProject pathForFile:fileName forKey:key];
       // PCLogInfo(self, @"{doubleClick} filePath: %@", filePath);*/
 
       workspace = [NSWorkspace sharedWorkspace];
@@ -713,8 +794,13 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
 - (NSString *)fileNameIconPath
 {
-  NSString *fileName = [self nameOfSelectedFile];
+  NSString *fileName = [self projectFileForCategoryPath:[browser path]];
   NSString *category = [self nameOfSelectedCategory];
+
+  if (fileName == nil)
+    {
+      return nil;
+    }
 
   return [project pathForFile:fileName 
 		       forKey:[project keyForCategory:category]];
