@@ -146,6 +146,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
                              forString:(NSString *)string;
 - (BOOL)lineBeforeIndexIsControlStatement:(NSInteger)index
                                 forString:(NSString *)string;
+- (NSInteger)lineStartIndexForIndex:(NSInteger)index forString:(NSString *)string;
+- (NSInteger)lineEndIndexForIndex:(NSInteger)index forString:(NSString *)string;
 - (void)shiftSelectedLinesForward:(BOOL)forward;
 - (NSUInteger)indexByMovingSelectionEdge:(NSUInteger)index
                                direction:(NSInteger)direction

@@ -10,6 +10,10 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectManager.h>
 
+@interface PCLineNumberRulerView (PrivateMethods)
+- (void)_loadBreakpoints;
+@end
+
 @implementation PCLineNumberRulerView
 
 - (id)initWithScrollView:(NSScrollView *)scrollView textView:(PCEditorView *)textView
