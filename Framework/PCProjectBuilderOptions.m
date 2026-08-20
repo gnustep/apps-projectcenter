@@ -178,7 +178,7 @@
 
 - (void)loadProjectProperties:(NSNotification *)aNotif
 {
-  NSArray *args;
+  id args;
 
   // Setup target popup
   [targetPopup removeAllItems];
@@ -189,7 +189,18 @@
 
   // Setup build arguments field
   args = [[project projectDict] objectForKey:PCBuilderArguments];
-  [buildArgsField setStringValue:[args componentsJoinedByString:@" "]];
+  if ([args isKindOfClass:[NSArray class]])
+    {
+      [buildArgsField setStringValue:[args componentsJoinedByString:@" "]];
+    }
+  else if ([args isKindOfClass:[NSString class]])
+    {
+      [buildArgsField setStringValue:args];
+    }
+  else
+    {
+      [buildArgsField setStringValue:@""];
+    }
 
   // Setup option buttons
   [self _setStateForButton:verboseButton

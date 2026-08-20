@@ -59,6 +59,116 @@ NSString
 *PCProjectBreakpointNotification = @"PCProjectBreakpointNotification";
 static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
+static NSArray *
+PCArrayFromProjectValue(id value, BOOL splitStrings)
+{
+  if ([value isKindOfClass:[NSArray class]])
+    {
+      return value;
+    }
+  if ([value isKindOfClass:[NSString class]])
+    {
+      NSString *stringValue = [value stringByTrimmingSpaces];
+
+      if ([stringValue length] == 0)
+	{
+	  return [NSArray array];
+	}
+      if (splitStrings)
+	{
+	  NSMutableArray *items;
+
+	  items = [[stringValue componentsSeparatedByString:@" "] mutableCopy];
+	  [items removeObject:@""];
+	  [items removeObject:@" "];
+	  return [items autorelease];
+	}
+
+      return [NSArray arrayWithObject:value];
+    }
+  if (value == nil)
+    {
+      return [NSArray array];
+    }
+
+  return [NSArray arrayWithObject:value];
+}
+
+static NSArray *
+PCDictionaryArrayFromProjectValue(id value)
+{
+  NSMutableArray *items;
+  NSEnumerator   *enumerator;
+  id             item;
+
+  if ([value isKindOfClass:[NSDictionary class]])
+    {
+      return [NSMutableArray arrayWithObject:
+	[NSMutableDictionary dictionaryWithDictionary:value]];
+    }
+  if (![value isKindOfClass:[NSArray class]])
+    {
+      return [NSMutableArray array];
+    }
+
+  items = [NSMutableArray array];
+  enumerator = [value objectEnumerator];
+  while ((item = [enumerator nextObject]))
+    {
+      if ([item isKindOfClass:[NSDictionary class]])
+	{
+	  [items addObject:
+	    [NSMutableDictionary dictionaryWithDictionary:item]];
+	}
+    }
+
+  return items;
+}
+
+static NSString *
+PCResourceRelativePath(NSString *file)
+{
+  NSArray *components = nil;
+
+  if (![file isKindOfClass:[NSString class]])
+    {
+      return file;
+    }
+
+  components = [file pathComponents];
+  if ([components count] > 1 &&
+      [[components objectAtIndex:0] isEqualToString:@"Resources"])
+    {
+      return [NSString pathWithComponents:
+	[components subarrayWithRange:
+	  NSMakeRange(1, [components count] - 1)]];
+    }
+
+  return file;
+}
+
+static NSArray *
+PCResourceArrayFromProjectValue(id value)
+{
+  NSMutableArray *items = nil;
+  NSEnumerator   *enumerator = nil;
+  id             item = nil;
+
+  items = [NSMutableArray array];
+  enumerator = [PCArrayFromProjectValue(value, NO) objectEnumerator];
+  while ((item = [enumerator nextObject]))
+    {
+      [items addObject:PCResourceRelativePath(item)];
+    }
+
+  return items;
+}
+
+@interface PCProject (Private)
+- (void)addMissingProjectDictEntries;
+- (void)normalizeProjectDict;
+@end
+
 @implementation PCProject
 
 - (NSString *)description
@@ -211,6 +321,8 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
     }
 
   [self setProjectName:[projectDict objectForKey:PCProjectName]];
+  [self addMissingProjectDictEntries];
+  [self normalizeProjectDict];
   [self writeMakefile];
   [self save];
 
@@ -259,6 +371,98 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
     }
 }
 
+- (void)addMissingProjectDictEntries
+{
+  Class        projClass = [self builderClass];
+  NSString     *_file = nil;
+  NSString     *key = nil;
+  NSDictionary *origin = nil;
+  NSArray      *keys = nil;
+  NSEnumerator *enumerator = nil;
+
+  _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
+                                                        ofType:@"project"];
+
+  origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
+  keys   = [origin allKeys];
+
+  enumerator = [keys objectEnumerator];
+  while ((key = [enumerator nextObject]))
+    {
+      if ([projectDict objectForKey:key] == nil)
+	{
+	  [projectDict setObject:[origin objectForKey:key] forKey:key];
+	}
+    }
+}
+
+- (void)normalizeProjectDict
+{
+  NSString     *key = nil;
+  NSEnumerator *enumerator = nil;
+  NSArray      *resourceKeys = nil;
+
+  if ([projectDict objectForKey:PCBuilderArguments] == nil)
+    {
+      [projectDict setObject:[NSArray array] forKey:PCBuilderArguments];
+    }
+  else
+    {
+      [projectDict setObject:
+	PCArrayFromProjectValue([projectDict objectForKey:PCBuilderArguments], YES)
+		     forKey:PCBuilderArguments];
+    }
+
+  if ([projectDict objectForKey:PCBuilderTargets] != nil)
+    {
+      [projectDict setObject:
+	PCArrayFromProjectValue([projectDict objectForKey:PCBuilderTargets], YES)
+		     forKey:PCBuilderTargets];
+    }
+
+  if ([projectDict objectForKey:PCWindows] != nil &&
+      ![[projectDict objectForKey:PCWindows] isKindOfClass:[NSDictionary class]])
+    {
+      [projectDict removeObjectForKey:PCWindows];
+    }
+
+  enumerator = [rootKeys objectEnumerator];
+  while ((key = [enumerator nextObject]))
+    {
+      [projectDict setObject:
+	PCArrayFromProjectValue([projectDict objectForKey:key], NO)
+		     forKey:key];
+    }
+
+  resourceKeys = [self resourceFileKeys];
+  enumerator = [resourceKeys objectEnumerator];
+  while ((key = [enumerator nextObject]))
+    {
+      [projectDict setObject:
+	PCResourceArrayFromProjectValue([projectDict objectForKey:key])
+		     forKey:key];
+    }
+
+  [projectDict setObject:
+    PCArrayFromProjectValue([projectDict objectForKey:PCUserLanguages], NO)
+		 forKey:PCUserLanguages];
+  [projectDict setObject:
+    PCResourceArrayFromProjectValue([projectDict objectForKey:PCLocalizedResources])
+		 forKey:PCLocalizedResources];
+  [projectDict setObject:
+    PCArrayFromProjectValue([projectDict objectForKey:PCSearchHeaders], NO)
+		 forKey:PCSearchHeaders];
+  [projectDict setObject:
+    PCArrayFromProjectValue([projectDict objectForKey:PCSearchLibs], NO)
+		 forKey:PCSearchLibs];
+  [projectDict setObject:
+    PCArrayFromProjectValue([projectDict objectForKey:PCAuthors], NO)
+		 forKey:PCAuthors];
+  [projectDict setObject:
+    PCDictionaryArrayFromProjectValue([projectDict objectForKey:PCDocumentTypes])
+		 forKey:PCDocumentTypes];
+}
+
 - (void)setProjectDictObject:(id)object forKey:(NSString *)key notify:(BOOL)yn
 {
   id                  currentObject = [projectDict objectForKey:key];
@@ -287,28 +491,8 @@ static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
 - (void)updateProjectDict
 {
-  Class        projClass = [self builderClass];
-  NSString     *_file = nil;
-  NSString     *key = nil;
-  NSDictionary *origin = nil;
-  NSArray      *keys = nil;
-  NSEnumerator *enumerator = nil;
-
-  _file = [[NSBundle bundleForClass:projClass] pathForResource:@"PC"
-                                                        ofType:@"project"];
-
-  origin = [NSMutableDictionary dictionaryWithContentsOfFile:_file];
-  keys   = [origin allKeys];
-
-  enumerator = [keys objectEnumerator];
-  while ((key = [enumerator nextObject]))
-    {
-      if ([projectDict objectForKey:key] == nil)
-	{
-	  // Doesn't call setProjectDictObject:forKey for opimization
-	  [projectDict setObject:[origin objectForKey:key] forKey:key];
-	}
-    }
+  [self addMissingProjectDictEntries];
+  [self normalizeProjectDict];
 
   [self save];
 }

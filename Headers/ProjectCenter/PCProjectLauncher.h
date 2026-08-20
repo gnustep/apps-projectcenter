@@ -61,6 +61,8 @@
 
 - (BOOL)isRunning;
 - (BOOL)isDebugging;
+- (NSString *)executablePath;
+- (NSString *)applicationPath;
 - (void)performRun;
 - (void)performDebug;
 
@@ -87,4 +89,3 @@
 @end
 
 #endif
-

@@ -201,6 +201,84 @@ enum {
   return _isDebugging;
 }
 
+- (NSString *)applicationPath
+{
+  if ([[project projectTypeName] isEqualToString: @"Application"])
+    {
+      NSString *appName;
+
+      appName = [[project projectName] stringByAppendingPathExtension: @"app"];
+      return [[project projectPath] stringByAppendingPathComponent: appName];
+    }
+
+  return nil;
+}
+
+- (NSString *)executablePath
+{
+  NSMutableArray *candidates;
+  NSString      *projectPath;
+  NSString      *projectName;
+  NSString      *prjType;
+  NSString      *path;
+  NSEnumerator  *enumerator;
+  NSFileManager *fm;
+
+  projectPath = [project projectPath];
+  projectName = [project projectName];
+  prjType = [project projectTypeName];
+  candidates = [NSMutableArray array];
+
+  if ([prjType isEqualToString: @"Application"])
+    {
+      NSString *appPath;
+
+      appPath = [self applicationPath];
+      if (appPath)
+	{
+	  [candidates addObject:
+	    [appPath stringByAppendingPathComponent: projectName]];
+	}
+
+      appPath = [[projectPath stringByAppendingPathComponent: @"obj"]
+        stringByAppendingPathComponent:
+	  [projectName stringByAppendingPathExtension: @"app"]];
+      [candidates addObject:
+	[appPath stringByAppendingPathComponent: projectName]];
+    }
+  else if ([prjType isEqualToString: @"Tool"])
+    {
+      [candidates addObject:
+	[[projectPath stringByAppendingPathComponent: @"obj"]
+	  stringByAppendingPathComponent: projectName]];
+      [candidates addObject:
+	[projectPath stringByAppendingPathComponent: projectName]];
+    }
+  else
+    {
+      NSLog(@"Unknown project type to execute: %@", prjType);
+      return nil;
+    }
+
+  fm = [NSFileManager defaultManager];
+  enumerator = [candidates objectEnumerator];
+  while ((path = [enumerator nextObject]))
+    {
+#ifdef  __MINGW__
+      if ([[path pathExtension] length] == 0)
+	{
+	  path = [path stringByAppendingPathExtension: @"exe"];
+	}
+#endif
+      if ([fm isExecutableFileAtPath: path])
+	{
+	  return path;
+	}
+    }
+
+  return [candidates count] ? [candidates objectAtIndex: 0] : nil;
+}
+
 - (void)performRun
 {
   if (!_isRunning && !_isDebugging)
@@ -224,26 +302,9 @@ enum {
   NSFileManager   *fm = [NSFileManager defaultManager];
   PCBundleManager *bundleManager = [[project projectManager] bundleManager];
 
-  executablePath = [project projectPath];
- 
   if ([project isExecutable])
     {
-      NSString *prjType;
-
-      prjType = [project projectTypeName];
-      if ([prjType isEqualToString: @"Application"])
-	{
-          /* MyApplication.app/MyApplication */
-          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-          executablePath = [executablePath stringByAppendingString:@".app"];
-	  executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-	}
-      else if ([prjType isEqualToString: @"Tool"])
-	{
-	  /* obj/MyTool */
-          executablePath = [executablePath stringByAppendingPathComponent:@"obj"];
-          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-	}
+      executablePath = [self executablePath];
     }
   else
     {
@@ -253,14 +314,6 @@ enum {
       [debugButton setState:NSOffState];
       return;
     }
-
-#ifdef  __MINGW__
-  /* On windows we need to check the .exe file */
-  if ([[executablePath pathExtension] length] == 0)
-    {
-      executablePath = [executablePath stringByAppendingPathExtension: @"exe"];
-    }
-#endif
 
   NSLog(@"debug executable launch path: %@", executablePath);
   if ([fm isExecutableFileAtPath:executablePath] == NO)
@@ -319,31 +372,10 @@ enum {
   NSString        *executablePath;
   NSFileManager   *fm;
 
-  executablePath = [project projectPath];
-
   // Check if project type is executable
   if ([project isExecutable])
     {
-      NSString *prjType;
-
-      prjType = [project projectTypeName];
-      if ([prjType isEqualToString: @"Application"])
-	{
-          /* MyApplication.app/MyApplication */
-          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-          executablePath = [executablePath stringByAppendingString:@".app"];
-	  executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-	}
-      else if ([prjType isEqualToString: @"Tool"])
-	{
-	  /* obj/MyTool */
-          executablePath = [executablePath stringByAppendingPathComponent:@"obj"];
-          executablePath = [executablePath stringByAppendingPathComponent:[project projectName]];
-	}
-      else
-	{
-	  NSLog(@"Unknown project type to execute: %@", prjType);
-	}
+      executablePath = [self executablePath];
     }
   else 
     {
@@ -353,14 +385,6 @@ enum {
       [runButton setState:NSOffState];
       return;
     }
-
-#ifdef  __MINGW__
-  /* On windows we need to check the .exe file */
-  if ([[executablePath pathExtension] length] == 0)
-    {
-      executablePath = [executablePath stringByAppendingPathExtension: @"exe"];
-    }
-#endif
 
   NSLog(@"executable launch path: %@", executablePath);
 

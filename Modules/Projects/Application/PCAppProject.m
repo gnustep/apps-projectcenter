@@ -396,6 +396,35 @@
 
 @implementation PCAppProject (GeneratedFiles)
 
+- (NSArray *)validDocumentTypes
+{
+  NSMutableArray *items = nil;
+  NSEnumerator   *enumerator = nil;
+  id             item = nil;
+  id             entry = [projectDict objectForKey:PCDocumentTypes];
+
+  if ([entry isKindOfClass:[NSDictionary class]])
+    {
+      return [NSArray arrayWithObject:entry];
+    }
+  if (![entry isKindOfClass:[NSArray class]])
+    {
+      return [NSArray array];
+    }
+
+  items = [NSMutableArray array];
+  enumerator = [entry objectEnumerator];
+  while ((item = [enumerator nextObject]))
+    {
+      if ([item isKindOfClass:[NSDictionary class]])
+	{
+	  [items addObject:item];
+	}
+    }
+
+  return items;
+}
+
 - (void)writeInfoEntry:(NSString *)name forKey:(NSString *)key
 {
   id entry = [projectDict objectForKey:key];
@@ -423,6 +452,7 @@
 - (BOOL)writeInfoFile
 {
   NSString *infoFile = nil;
+  NSArray  *documentTypes = nil;
 
   [self writeInfoEntry:@"ApplicationDescription" forKey:PCDescription];
   [self writeInfoEntry:@"ApplicationIcon" forKey:PCAppIcon];
@@ -448,7 +478,12 @@
   [self writeInfoEntry:@"NSPrincipalClass" forKey:PCPrincipalClass];
   [self writeInfoEntry:@"GSHelpContentsFile" forKey:PCHelpFile];
   [infoDict setObject:@"Application" forKey:@"NSRole"];
-  [self writeInfoEntry:@"NSTypes" forKey:PCDocumentTypes];
+  documentTypes = [self validDocumentTypes];
+  [infoDict removeObjectForKey:@"NSTypes"];
+  if ([documentTypes count] > 0)
+    {
+      [infoDict setObject:documentTypes forKey:@"NSTypes"];
+    }
   [self writeInfoEntry:@"URL" forKey:PCURL];
 
   infoFile = [NSString stringWithFormat:@"%@Info.plist",projectName];

@@ -685,6 +685,10 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	  
 	  // Windows and panels
 	  wap = [projectFile objectForKey:PCWindows];
+	  if (![wap isKindOfClass:[NSDictionary class]])
+	    {
+	      wap = nil;
+	    }
 	  if ([[wap allKeys] containsObject:@"ProjectBuild"])
 	    {
 	      [[project projectWindow] showProjectBuild:self];
@@ -1458,4 +1462,3 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 }
 
 @end
-

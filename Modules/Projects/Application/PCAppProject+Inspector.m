@@ -474,7 +474,7 @@ cleanup(NSMutableDictionary *m, NSString *k)
 {
   NSDictionary *object = nil;
 
-  if (docTypesItems != nil || [docTypesItems count] > 0)
+  if (docTypesItems != nil && [docTypesItems count] > 0)
     {
       object = [docTypesItems objectAtIndex: rowIndex];
 

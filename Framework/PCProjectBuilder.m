@@ -275,9 +275,21 @@
 {
   NSString *s;
   NSString *args;
+  id       argsValue;
 
-  args = [[[project projectDict] objectForKey:PCBuilderArguments] 
-    componentsJoinedByString:@" "];
+  argsValue = [[project projectDict] objectForKey:PCBuilderArguments];
+  if ([argsValue isKindOfClass:[NSArray class]])
+    {
+      args = [argsValue componentsJoinedByString:@" "];
+    }
+  else if ([argsValue isKindOfClass:[NSString class]])
+    {
+      args = argsValue;
+    }
+  else
+    {
+      args = nil;
+    }
 
   if (!args) args = @" ";
 
@@ -329,9 +341,23 @@
 {
   NSDictionary   *projectDict = [project projectDict];
   NSMutableArray *args = [NSMutableArray new];
+  id             argsValue = [projectDict objectForKey:PCBuilderArguments];
 
 
-  [args addObjectsFromArray:[projectDict objectForKey:PCBuilderArguments]];
+  if ([argsValue isKindOfClass:[NSArray class]])
+    {
+      [args addObjectsFromArray:argsValue];
+    }
+  else if ([argsValue isKindOfClass:[NSString class]])
+    {
+      NSMutableArray *items;
+
+      items = [[argsValue componentsSeparatedByString:@" "] mutableCopy];
+      [items removeObject:@""];
+      [items removeObject:@" "];
+      [args addObjectsFromArray:items];
+      [items release];
+    }
 
   // --- Get arguments from options
   if ([projectDict objectForKey:PCBuilderParallelism] != nil)
@@ -1409,4 +1435,3 @@
 }
 
 @end
-
