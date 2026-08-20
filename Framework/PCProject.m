@@ -2210,17 +2210,45 @@ PCResourceArrayFromProjectValue(id value)
 
 - (BOOL)hasChildrenAtCategoryPath:(NSString *)categoryPath
 {
+  NSArray   *pathArray = [categoryPath componentsSeparatedByString:@"/"];
   NSString  *listEntry = nil;
   PCProject *activeProject = [projectManager activeProject];
   NSString  *category = [projectBrowser nameOfSelectedCategory];
   NSString  *categoryKey = [self keyForCategory:category];
+
+  if ([pathArray count] > 2 &&
+      [[pathArray objectAtIndex:1] isEqualToString:
+	[rootEntries objectForKey:PCSubprojects]])
+    {
+      PCProject      *_subproject = [self subprojectWithName:
+	[pathArray objectAtIndex:2]];
+      NSMutableArray *mCategoryPath = nil;
+      NSString       *spCategoryPath = nil;
+
+      if (_subproject == nil)
+	{
+	  return NO;
+	}
+
+      if ([pathArray count] == 3)
+	{
+	  return YES;
+	}
+
+      mCategoryPath = [NSMutableArray arrayWithArray:pathArray];
+      [mCategoryPath removeObjectAtIndex:1];
+      [mCategoryPath removeObjectAtIndex:1];
+      spCategoryPath = [mCategoryPath componentsJoinedByString:@"/"];
+
+      return [_subproject hasChildrenAtCategoryPath:spCategoryPath];
+    }
 
   if (self != activeProject)
     {
       return [activeProject hasChildrenAtCategoryPath:categoryPath];
     }
 
-  listEntry = [[categoryPath componentsSeparatedByString:@"/"] lastObject];
+  listEntry = [pathArray lastObject];
 
   if ([listEntry length] == 0)
     {
@@ -2250,7 +2278,8 @@ PCResourceArrayFromProjectValue(id value)
 	  [firstSymbol isEqualToString:@"+"] ||
 	  [firstSymbol isEqualToString:@"-"])
 	{
-	  return NO;
+	  return [firstSymbol isEqualToString:@"@"] &&
+	    [projectEditor editorProvidesBrowserItemsForItem:listEntry];
 	}
 
       // TODO: Libraries
