@@ -374,6 +374,11 @@
   [super dealloc];
 }
 
+- (NSString *)filePath
+{
+  return _path;
+}
+
 // --- Protocol
 - (void)setParser:(id)parser
 {

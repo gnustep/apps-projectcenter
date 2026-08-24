@@ -37,6 +37,10 @@
   PCEditor          *editor;
   SyntaxHighlighter *highlighter;
   NSTimer           *hlTimer;
+  NSUInteger         editorIndentWidth;
+  NSUInteger         editorTabWidth;
+  BOOL               editorUsesTabs;
+  BOOL               editorIndentSettingsLoaded;
 }
 
 + (NSFont *)defaultEditorFont;

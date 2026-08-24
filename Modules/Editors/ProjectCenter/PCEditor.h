@@ -116,6 +116,8 @@
 - (BOOL)becomeFirstResponder:(PCEditorView *)view;
 - (BOOL)resignFirstResponder:(PCEditorView *)view;
 
+- (NSString *)filePath;
+
 // ===========================================================================
 // ==== Parser and scrolling and Line Status
 // ===========================================================================

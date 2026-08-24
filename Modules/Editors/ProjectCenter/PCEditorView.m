@@ -29,6 +29,7 @@
 #import <Foundation/NSString.h>
 #import <Foundation/NSUserDefaults.h>
 #import <Foundation/NSArchiver.h>
+#import <Foundation/NSFileManager.h>
 
 #import <AppKit/PSOperators.h>
 #import <AppKit/NSColor.h>
@@ -138,6 +139,12 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 - (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
 - (void)performIndentation;
 - (NSUInteger)editorTabWidth;
+- (NSUInteger)editorIndentWidth;
+- (BOOL)editorUsesTabs;
+- (void)loadIndentSettingsIfNeeded;
+- (NSString *)clangFormatPathForFilePath:(NSString *)filePath;
+- (void)loadIndentSettingsFromClangFormatAtPath:(NSString *)path;
+- (NSString *)indentStringForColumnCount:(NSUInteger)columns;
 - (NSInteger)leadingWhitespaceLengthOfLineAtIndex:(NSInteger)index
                                        forString:(NSString *)string;
 - (NSInteger)indentForLineAtIndex:(NSInteger)index
@@ -165,7 +172,175 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
 - (NSUInteger)editorTabWidth
 {
-  return EDITOR_TAB_WIDTH;
+  [self loadIndentSettingsIfNeeded];
+
+  return editorTabWidth;
+}
+
+- (NSUInteger)editorIndentWidth
+{
+  [self loadIndentSettingsIfNeeded];
+
+  return editorIndentWidth;
+}
+
+- (BOOL)editorUsesTabs
+{
+  [self loadIndentSettingsIfNeeded];
+
+  return editorUsesTabs;
+}
+
+- (void)loadIndentSettingsIfNeeded
+{
+  NSString *filePath;
+  NSString *clangFormatPath;
+
+  if (editorIndentSettingsLoaded)
+    {
+      return;
+    }
+
+  editorIndentSettingsLoaded = YES;
+  editorIndentWidth = EDITOR_TAB_WIDTH;
+  editorTabWidth = EDITOR_TAB_WIDTH;
+  editorUsesTabs = NO;
+
+  filePath = [editor filePath];
+  if (filePath == nil)
+    {
+      return;
+    }
+
+  clangFormatPath = [self clangFormatPathForFilePath:filePath];
+  if (clangFormatPath != nil)
+    {
+      [self loadIndentSettingsFromClangFormatAtPath:clangFormatPath];
+    }
+}
+
+- (NSString *)clangFormatPathForFilePath:(NSString *)filePath
+{
+  NSFileManager *fm;
+  NSString *directory;
+
+  fm = [NSFileManager defaultManager];
+  directory = [filePath stringByDeletingLastPathComponent];
+  while ([directory length] > 0)
+    {
+      NSString *candidate;
+      NSString *parent;
+
+      candidate = [directory stringByAppendingPathComponent:@".clang-format"];
+      if ([fm isReadableFileAtPath:candidate])
+	{
+	  return candidate;
+	}
+
+      parent = [directory stringByDeletingLastPathComponent];
+      if ([parent isEqualToString:directory])
+	{
+	  break;
+	}
+      directory = parent;
+    }
+
+  return nil;
+}
+
+- (void)loadIndentSettingsFromClangFormatAtPath:(NSString *)path
+{
+  NSString *contents;
+  NSArray *lines;
+  NSEnumerator *e;
+  NSString *line;
+
+  contents = [NSString stringWithContentsOfFile:path];
+  if (contents == nil)
+    {
+      return;
+    }
+
+  lines = [contents componentsSeparatedByString:@"\n"];
+  e = [lines objectEnumerator];
+  while ((line = [e nextObject]) != nil)
+    {
+      NSRange commentRange;
+      NSRange separatorRange;
+      NSString *key;
+      NSString *value;
+      NSInteger number;
+
+      commentRange = [line rangeOfString:@"#"];
+      if (commentRange.location != NSNotFound)
+	{
+	  line = [line substringToIndex:commentRange.location];
+	}
+
+      separatorRange = [line rangeOfString:@":"];
+      if (separatorRange.location == NSNotFound)
+	{
+	  continue;
+	}
+
+      key = [[line substringToIndex:separatorRange.location]
+	      stringByTrimmingCharactersInSet:
+		[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+      value = [[line substringFromIndex:NSMaxRange(separatorRange)]
+		stringByTrimmingCharactersInSet:
+		  [NSCharacterSet whitespaceAndNewlineCharacterSet]];
+      if ([value hasPrefix:@"\""] && [value hasSuffix:@"\""]
+	  && [value length] >= 2)
+	{
+	  value = [value substringWithRange:NSMakeRange(1, [value length] - 2)];
+	}
+
+      number = [value integerValue];
+      if ([key isEqualToString:@"IndentWidth"] && number > 0)
+	{
+	  editorIndentWidth = number;
+	}
+      else if ([key isEqualToString:@"TabWidth"] && number > 0)
+	{
+	  editorTabWidth = number;
+	}
+      else if ([key isEqualToString:@"UseTab"])
+	{
+	  editorUsesTabs =
+	    !([value caseInsensitiveCompare:@"Never"] == NSOrderedSame
+	      || [value caseInsensitiveCompare:@"false"] == NSOrderedSame
+	      || [value caseInsensitiveCompare:@"No"] == NSOrderedSame);
+	}
+    }
+}
+
+- (NSString *)indentStringForColumnCount:(NSUInteger)columns
+{
+  NSMutableString *indentString;
+  NSUInteger tabWidth;
+
+  indentString = [NSMutableString string];
+  tabWidth = [self editorTabWidth];
+  if (tabWidth == 0)
+    {
+      tabWidth = EDITOR_TAB_WIDTH;
+    }
+
+  if ([self editorUsesTabs])
+    {
+      while (columns >= tabWidth)
+	{
+	  [indentString appendString:@"\t"];
+	  columns -= tabWidth;
+	}
+    }
+  while (columns > 0)
+    {
+      [indentString appendString:@" "];
+      columns--;
+    }
+
+  return indentString;
 }
 
 - (NSInteger)leadingWhitespaceLengthOfLineAtIndex:(NSInteger)index
@@ -241,7 +416,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 		  return indent;
 		}
 
-	      return indent + [self editorTabWidth];
+	      return indent + [self editorIndentWidth];
 	    }
 	  else
 	    {
@@ -262,11 +437,11 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   if (index > 0 && index <= [string length]
       && [string characterAtIndex:index - 1] == '{')
     {
-      offset += [self editorTabWidth];
+      offset += [self editorIndentWidth];
     }
   else if ([self lineBeforeIndexIsControlStatement:index forString:string])
     {
-      offset += [self editorTabWidth];
+      offset += [self editorIndentWidth];
     }
 
   return offset;
@@ -408,8 +583,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 	      forRange:NSMakeRange(edit_end_index, 0)];
   edit_range = NSMakeRange(line_start, line_end - line_start);
   replacement = [[NSMutableString alloc]
-		  initWithCapacity:edit_range.length + [self editorTabWidth]];
-  tab_width = [self editorTabWidth];
+		  initWithCapacity:edit_range.length + [self editorIndentWidth]];
+  tab_width = [self editorIndentWidth];
 
   cursor = line_start;
   while (cursor < line_end)
@@ -429,12 +604,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
       if (forward)
 	{
-	  NSUInteger i;
-
-	  for (i = 0; i < tab_width; i++)
-	    {
-	      [replacement appendString:@" "];
-	    }
+	  [replacement appendString:[self indentStringForColumnCount:tab_width]];
 	  [replacement appendString:
 			 [string substringWithRange:NSMakeRange(cursor,
 							       line_length)]];
@@ -600,6 +770,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   char buf[tabSize];
   NSString * string = [self string];
   unsigned int lineLength;
+  unsigned int tabWidth;
   SEL sel = @selector(characterAtIndex:);
   unichar (* charAtIndex)(NSString*, SEL, unsigned int) =
     (unichar (*)(NSString*, SEL, unsigned int))
@@ -607,15 +778,30 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   int i;
   int skip;
 
-  // computes the length of the current line
-  for (i = [self selectedRange].location - 1, lineLength = 0;
-       i >= 0;
-       i--, lineLength++)
+  tabWidth = [self editorTabWidth];
+  if (tabWidth == 0)
     {
-      if (charAtIndex(string, sel, i) == '\n')
-        {
-          break;
-        }
+      tabWidth = EDITOR_TAB_WIDTH;
+    }
+
+  // computes the column width of the current line
+  for (i = [self selectedRange].location - 1;
+       i >= 0 && charAtIndex(string, sel, i) != '\n';
+       i--)
+    {
+    }
+  for (i++, lineLength = 0;
+       i < [self selectedRange].location;
+       i++)
+    {
+      if (charAtIndex(string, sel, i) == '\t')
+	{
+	  lineLength += tabWidth - (lineLength % tabWidth);
+	}
+      else
+	{
+	  lineLength++;
+	}
     }
 
   skip = tabSize - (lineLength % tabSize);
@@ -624,8 +810,15 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
       skip = tabSize;
     }
 
-  memset(buf, ' ', skip);
-  [super insertText: [NSString stringWithCString: buf length: skip]];
+  if ([self editorUsesTabs] && skip == tabSize)
+    {
+      [super insertText:@"\t"];
+    }
+  else
+    {
+      memset(buf, ' ', skip);
+      [super insertText: [NSString stringWithCString: buf length: skip]];
+    }
 }
 
 // Go backward to first '\n' char or start of file
@@ -770,13 +963,12 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSRange   wsRange = NSMakeRange(0, 0);
   NSMutableString *indentString;
   NSCharacterSet  *wsCharSet = [NSCharacterSet whitespaceCharacterSet];
-  NSInteger i;
   NSInteger tabWidth;
 //  int point;
 
   location = [self selectedRange].location;
   string_length = [string length];
-  tabWidth = [self editorTabWidth];
+  tabWidth = [self editorIndentWidth];
 
 //  point = [self nextLineStartIndexForIndex:location forString:string];
 //  [self setSelectedRange:NSMakeRange(point, 0)];
@@ -835,11 +1027,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   // Get offset from BOL of previous line
 //  offset = ComputeIndentingOffset([self string], line_start-1);
   // Replace current line whitespaces with new ones
-  indentString = [[NSMutableString alloc] initWithString:@""];
-  for (i = offset; i > 0; i--)
-    {
-      [indentString appendString:@" "];
-    }
+  indentString = [[self indentStringForColumnCount:offset] mutableCopy];
 
   if ([self shouldChangeTextInRange:wsRange
 		  replacementString:indentString])
@@ -1136,15 +1324,11 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   NSInteger location = [self selectedRange].location;
   int  offset = [self indentAfterNewlineAtIndex:location
                                       forString:[self string]];
-  char buf[offset+2];
+  NSMutableString *replacement;
 
-  buf[0] = '\n';
-  memset(&buf[1], ' ', offset);
-  buf[offset+1] = '\0';
-
-  // let's use UTF8 to be on the safe side
-  [self insertText: [NSString stringWithCString: buf
-				       encoding: NSUTF8StringEncoding]];
+  replacement = [NSMutableString stringWithString:@"\n"];
+  [replacement appendString:[self indentStringForColumnCount:offset]];
+  [self insertText:replacement];
 }
 
 - (void) insertTab: (id)sender
