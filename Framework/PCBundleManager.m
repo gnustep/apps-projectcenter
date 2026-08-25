@@ -103,6 +103,11 @@
       // TODO: fill 'reqBundlesInfo' with element from 'bundlesInfo' if
       // exists
       infoTable = [NSDictionary dictionaryWithContentsOfFile:infoTablePath];
+      if (infoTable == nil)
+	{
+	  PCLogInfo(self, @"Ignoring bundle without Info.table at %@", bundlePath);
+	  continue;
+	}
       [reqBundlesInfo setObject:infoTable forKey:bundlePath];
       [bundlesInfo setObject:infoTable forKey:bundlePath];
     }
@@ -195,6 +200,10 @@
   infoTable = [self infoForBundleType:type
 			      keyName:@"FileTypes"
 			  keyContains:fileExtension];
+  if (infoTable == nil)
+    {
+      return nil;
+    }
 
   className = [infoTable objectForKey:@"PrincipalClassName"];
 
@@ -235,7 +244,7 @@
 {
   Class objectClass;
 
-  if (!className)
+  if (![className isKindOfClass:[NSString class]] || [className length] == 0)
     {
       NSLog(@"Bundle for class called with empty className");
       return nil;
@@ -248,6 +257,11 @@
     }
 
   objectClass = NSClassFromString(className);
+  if (objectClass == Nil)
+    {
+      NSLog(@"Class %@ not found after loading bundle!", className);
+      return nil;
+    }
 
   if (proto != nil && ![objectClass conformsToProtocol:proto])
     {
@@ -267,6 +281,11 @@
   NSString     *className;
 
   infoTable = [self infoForBundleName:name type:extension];
+  if (infoTable == nil)
+    {
+      PCLogInfo(self, @"Bundle %@.%@ NOT FOUND!", name, extension);
+      return nil;
+    }
   className = [infoTable objectForKey:@"PrincipalClassName"];
 
   return [self objectForClassName:className 
@@ -294,6 +313,7 @@
 {
   NSArray      *bundlePaths = nil;
   NSString     *bundleFullPath = nil;
+  NSString     *matchedBundlePath = nil;
   NSDictionary *infoTable = nil;
   NSEnumerator *enumerator = nil;
   NSString     *bundleName = nil;
@@ -312,6 +332,7 @@
 	  principalClass = [infoTable objectForKey:@"PrincipalClassName"];
 	  if ([className isEqualToString:principalClass])
 	    {
+	      matchedBundlePath = bundleFullPath;
 	      break;
 	    }
 	}
@@ -319,14 +340,19 @@
 
 //  NSLog(@"bundleForClassName: %@ path %@", className, bundleFullPath);
 
+  if (matchedBundlePath == nil)
+    {
+      return nil;
+    }
+
   // Extract from full bundle path it's name and extension
-  bundleName = [bundleFullPath lastPathComponent];
+  bundleName = [matchedBundlePath lastPathComponent];
   if (![self loadBundleIfNeededWithName:bundleName])
     {
       return nil;
     }
 
-  return [loadedBundles objectForKey:bundleFullPath];
+  return [loadedBundles objectForKey:matchedBundlePath];
 }
 
 - (BOOL)loadBundleIfNeededWithName:(NSString *)bundleName

@@ -134,6 +134,34 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }*/
 }
 
+static BOOL IsOpeningDelimiter(unichar c)
+{
+  return c == '{' || c == '[' || c == '(';
+}
+
+static BOOL IsClosingDelimiter(unichar c)
+{
+  return c == '}' || c == ']' || c == ')';
+}
+
+static unichar OpeningDelimiterForClosingDelimiter(unichar c)
+{
+  if (c == '}')
+    {
+      return '{';
+    }
+  if (c == ']')
+    {
+      return '[';
+    }
+  if (c == ')')
+    {
+      return '(';
+    }
+
+  return 0;
+}
+
 @interface PCEditorView (Private)
 
 - (void)insertSpaceFillAlignedAtTabsOfSize:(unsigned int)tabSize;
@@ -151,6 +179,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
                         forString:(NSString *)string;
 - (NSInteger)indentAfterNewlineAtIndex:(NSInteger)index
                              forString:(NSString *)string;
+- (NSInteger)indentForClosingDelimiterAtIndex:(NSInteger)index
+                                     forString:(NSString *)string;
 - (BOOL)lineBeforeIndexIsControlStatement:(NSInteger)index
                                 forString:(NSString *)string;
 - (NSInteger)lineStartIndexForIndex:(NSInteger)index forString:(NSString *)string;
@@ -371,6 +401,8 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 {
   NSInteger offset;
   NSInteger brace_level = 0;
+  NSInteger bracket_level = 0;
+  NSInteger paren_level = 0;
   NSInteger string_length = [string length];
 
   if (string_length == 0)
@@ -395,6 +427,14 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
       if (c == '}')
 	{
 	  brace_level++;
+	}
+      else if (c == ']')
+	{
+	  bracket_level++;
+	}
+      else if (c == ')')
+	{
+	  paren_level++;
 	}
       else if (c == '{')
 	{
@@ -423,6 +463,60 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 	      brace_level--;
 	    }
 	}
+      else if (c == '[')
+	{
+	  if (bracket_level == 0)
+	    {
+	      NSInteger indent;
+	      NSInteger line_start;
+	      NSInteger cur_line_start;
+
+	      indent = [self leadingWhitespaceLengthOfLineAtIndex:offset
+							forString:string];
+	      line_start = [self lineStartIndexForIndex:offset
+					     forString:string];
+	      cur_line_start = [self lineStartIndexForIndex:index
+						 forString:string];
+
+	      if (line_start == cur_line_start)
+		{
+		  return indent;
+		}
+
+	      return indent + [self editorIndentWidth];
+	    }
+	  else
+	    {
+	      bracket_level--;
+	    }
+	}
+      else if (c == '(')
+	{
+	  if (paren_level == 0)
+	    {
+	      NSInteger indent;
+	      NSInteger line_start;
+	      NSInteger cur_line_start;
+
+	      indent = [self leadingWhitespaceLengthOfLineAtIndex:offset
+							forString:string];
+	      line_start = [self lineStartIndexForIndex:offset
+					     forString:string];
+	      cur_line_start = [self lineStartIndexForIndex:index
+						 forString:string];
+
+	      if (line_start == cur_line_start)
+		{
+		  return indent;
+		}
+
+	      return indent + [self editorIndentWidth];
+	    }
+	  else
+	    {
+	      paren_level--;
+	    }
+	}
     }
 
   return ComputeIndentingOffset(string, index);
@@ -435,7 +529,7 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
 
   offset = [self indentForLineAtIndex:index forString:string];
   if (index > 0 && index <= [string length]
-      && [string characterAtIndex:index - 1] == '{')
+      && IsOpeningDelimiter([string characterAtIndex:index - 1]))
     {
       offset += [self editorIndentWidth];
     }
@@ -445,6 +539,66 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   return offset;
+}
+
+- (NSInteger)indentForClosingDelimiterAtIndex:(NSInteger)index
+                                     forString:(NSString *)string
+{
+  NSInteger offset;
+  NSInteger level;
+  NSInteger string_length;
+  unichar closing_delimiter;
+  unichar opening_delimiter;
+
+  string_length = [string length];
+  if (string_length == 0 || index < 0 || index >= string_length)
+    {
+      return 0;
+    }
+
+  closing_delimiter = [string characterAtIndex:index];
+  opening_delimiter = OpeningDelimiterForClosingDelimiter(closing_delimiter);
+  if (opening_delimiter == 0)
+    {
+      return 0;
+    }
+
+  level = 0;
+  for (offset = index - 1; offset >= 0; offset--)
+    {
+      unichar c = [string characterAtIndex:offset];
+
+      if (c == closing_delimiter)
+	{
+	  level++;
+	}
+      else if (c == opening_delimiter)
+	{
+	  if (level == 0)
+	    {
+	      return [self leadingWhitespaceLengthOfLineAtIndex:offset
+						      forString:string];
+	    }
+	  level--;
+	}
+      else if (IsClosingDelimiter(c))
+	{
+	  unichar other_opening_delimiter;
+
+	  other_opening_delimiter = OpeningDelimiterForClosingDelimiter(c);
+	  while (offset > 0)
+	    {
+	      offset--;
+	      c = [string characterAtIndex:offset];
+	      if (c == other_opening_delimiter)
+		{
+		  break;
+		}
+	    }
+	}
+    }
+
+  return 0;
 }
 
 - (BOOL)lineBeforeIndexIsControlStatement:(NSInteger)index
@@ -1008,9 +1162,13 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
     }
 
   offset = [self indentForLineAtIndex:location forString:string];
-  if (clfc == '}')
+  if (IsClosingDelimiter(clfc))
     {
-      offset -= tabWidth;
+      NSInteger first_char_index;
+
+      first_char_index = line_start + wsRange.length;
+      offset = [self indentForClosingDelimiterAtIndex:first_char_index
+					    forString:string];
     }
   else if (clfc == '{'
 	   && [self lineBeforeIndexIsControlStatement:location
@@ -1329,6 +1487,52 @@ static int ComputeIndentingOffset(NSString * string, NSUInteger start)
   replacement = [NSMutableString stringWithString:@"\n"];
   [replacement appendString:[self indentStringForColumnCount:offset]];
   [self insertText:replacement];
+}
+
+- (void)insertText:(id)insertString
+{
+  NSString *text;
+  NSString *string;
+  NSRange selected_range;
+  NSInteger line_start;
+  NSInteger offset;
+  BOOL should_indent;
+
+  text = nil;
+  if ([insertString isKindOfClass:[NSString class]])
+    {
+      text = insertString;
+    }
+  else if ([insertString respondsToSelector:@selector(string)])
+    {
+      text = [insertString string];
+    }
+
+  selected_range = [self selectedRange];
+  should_indent = NO;
+  if (text != nil && [text length] == 1
+      && IsClosingDelimiter([text characterAtIndex:0]))
+    {
+      string = [self string];
+      line_start = [self lineStartIndexForIndex:selected_range.location
+				      forString:string];
+      should_indent = YES;
+      for (offset = line_start; offset < selected_range.location; offset++)
+	{
+	  if (!isspace([string characterAtIndex:offset]))
+	    {
+	      should_indent = NO;
+	      break;
+	    }
+	}
+    }
+
+  [super insertText:insertString];
+
+  if (should_indent)
+    {
+      [self performIndentation];
+    }
 }
 
 - (void) insertTab: (id)sender

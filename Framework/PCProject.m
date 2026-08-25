@@ -211,25 +211,53 @@ PCResourceArrayFromProjectValue(id value)
       if(projectFileWrapper != nil)
 	{
 	  NSDictionary *wrappers = [projectFileWrapper fileWrappers];
-	  NSData *data = [[wrappers objectForKey: @"PC.project"] regularFileContents];
-	  NSData *userData = [[wrappers objectForKey: [NSUserName() stringByAppendingPathExtension: @"project"]]
-			       regularFileContents];
-	  NSMutableDictionary *dict = [[[[NSString alloc] initWithData: data
-							  encoding: NSASCIIStringEncoding] 
-					 propertyList] mutableCopy];
-	  NSDictionary *udict = [[[NSString alloc] initWithData: userData
-						   encoding: NSASCIIStringEncoding] 
-				  propertyList];
+	  NSFileWrapper *pcWrapper = [wrappers objectForKey: @"PC.project"];
+	  NSFileWrapper *userWrapper = nil;
+	  NSData *data = [pcWrapper regularFileContents];
+	  NSData *userData = nil;
+	  NSString *contents = nil;
+	  NSString *userContents = nil;
+	  NSMutableDictionary *dict = nil;
+	  NSDictionary *udict = nil;
+
+	  if (data == nil)
+	    {
+	      return nil;
+	    }
+
+	  contents = [[NSString alloc] initWithData: data
+					   encoding: NSASCIIStringEncoding];
+	  dict = [[contents propertyList] mutableCopy];
+	  [contents release];
+	  if (dict == nil)
+	    {
+	      return nil;
+	    }
+
+	  userWrapper = [wrappers objectForKey:
+	    [NSUserName() stringByAppendingPathExtension: @"project"]];
+	  userData = [userWrapper regularFileContents];
+	  if (userData != nil)
+	    {
+	      userContents = [[NSString alloc] initWithData: userData
+						   encoding: NSASCIIStringEncoding];
+	      udict = [userContents propertyList];
+	    }
 	  
 	  if (udict != nil)
 	    [dict addEntriesFromDictionary: udict]; 
-	  [udict release];
 	  [self assignProjectDict:dict atPath: aPath];
+	  [userContents release];
+	  [dict release];
 	}
     }
   else
     {
       NSMutableDictionary *dict = [NSMutableDictionary dictionaryWithContentsOfFile: aPath];
+      if (dict == nil)
+	{
+	  return nil;
+	}
       
       projectFileWrapper = [[NSFileWrapper alloc] 
 			     initDirectoryWithFileWrappers: 

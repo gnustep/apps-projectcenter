@@ -187,6 +187,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSArray      *bundlePaths;
   NSString     *key;
   NSDictionary *infoTable;
+  NSString     *projectTypeName;
+  NSString     *projectClassName;
   
   if (projectTypes == nil)
     {
@@ -199,8 +201,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       while ((key = [enumerator nextObject]))
 	{
 	  infoTable = [bundlesInfo objectForKey:key];
-	  [projectTypes setObject:[infoTable objectForKey:@"PrincipalClassName"]
-	                   forKey:[infoTable objectForKey:@"Name"]];
+	  projectTypeName = [infoTable objectForKey:@"Name"];
+	  projectClassName = [infoTable objectForKey:@"PrincipalClassName"];
+	  if ([projectTypeName length] == 0 || [projectClassName length] == 0)
+	    {
+	      PCLogInfo(self, @"Ignoring invalid project bundle info at %@", key);
+	      continue;
+	    }
+	  [projectTypes setObject:projectClassName forKey:projectTypeName];
 	}
     }
 
@@ -455,6 +463,16 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       projectClassName = [projectTypes objectForKey:projectTypeName];
     }
 
+  if ([projectClassName length] == 0)
+    {
+      NSRunAlertPanel(@"Open Project",
+		      @"Project type for '%@' is not supported!\n"
+		      @"Report the bug, please!",
+		      @"OK", nil, nil,
+		      [pDict objectForKey:PCProjectName]);
+      return nil;
+    }
+
   // Handling directory layout
   _projectPath = [aPath stringByDeletingLastPathComponent];
   _resPath = [_projectPath stringByAppendingPathComponent:@"Resources"];
@@ -553,6 +571,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString     *projectFileType = nil;
   PCProject    *project = nil;
   NSString     *projectPathToSave;
+  NSString     *projectPathToOpen = nil;
 
   // Check project path for invalid characters
   if ([aPath rangeOfString: @" "].location != NSNotFound ||
@@ -577,6 +596,11 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       [projectFileType isEqualToString:@"project"])
     {
       projectPath = [aPath stringByDeletingLastPathComponent];
+      if ([projectFileType isEqualToString:@"project"] &&
+	  [[projectPath pathExtension] isEqualToString:@"pcproj"])
+	{
+	  projectPath = [projectPath stringByDeletingLastPathComponent];
+	}
     }
   else
     {
@@ -600,6 +624,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	}
 
       projectPathToSave = projectPath;
+      projectPathToOpen = aPath;
       if (isDir)
 	{
 	  if ([projectFileType isEqualToString:@"pcproj"] == NO)
@@ -616,15 +641,24 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	    {
 	      projectPathToSave = aPath;
 	    }
+	  projectPathToOpen = aPath;
 	  aPath = [aPath stringByAppendingPathComponent:@"PC.project"];
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
 	}
       else if ([projectFileType isEqualToString:@"project"])
 	{
+	  projectPathToOpen = aPath;
+	  if ([[[aPath stringByDeletingLastPathComponent] pathExtension]
+		isEqualToString:@"pcproj"])
+	    {
+	      projectPathToOpen = [aPath stringByDeletingLastPathComponent];
+	      projectPathToSave = projectPathToOpen;
+	    }
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
 	}
       else
 	{ //TODO: Remove support of 0.3.x projects
+	  projectPathToOpen = aPath;
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
 	  if (projectFile != nil)
 	    {
@@ -640,6 +674,7 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{// Project was converted and created PC*Project with alloc&init
 	  aPath = [[aPath stringByDeletingLastPathComponent]
 		    stringByAppendingPathComponent:@"PC.project"];
+	  projectPathToOpen = aPath;
 	}
       else
 	{// No conversion were taken
@@ -653,17 +688,22 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			      @"OK", nil, nil, projectTypeName); 
 	      return nil;
 	    }
+
+	  project = [bundleManager objectForClassName:projectClassName
+					   bundleType:@"project"
+					     protocol:@protocol(ProjectType)];
 	}
       
-      project = [bundleManager objectForClassName:projectClassName
-				       bundleType:@"project"
-			  		 protocol:@protocol(ProjectType)];
-      
-      if (!project || ![project openWithWrapperAt:aPath]) 
+      if (!projectPathToOpen)
+	{
+	  projectPathToOpen = aPath;
+	}
+
+      if (!project || ![project openWithWrapperAt:projectPathToOpen]) 
 	{
 	  NSRunAlertPanel(@"Open Project",
 			  @"Unable to open project '%@'.\nReport bug, please!",
-			  @"OK",nil,nil,aPath); 
+			  @"OK",nil,nil,projectPathToOpen); 
 	  return nil;
 	}
       
@@ -748,7 +788,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	      filePath = [tempList objectAtIndex:0];
 	    }
 	}
-      filePath = [filePath stringByAppendingPathComponent:@"PC.project"];
     }
 
   NSLog(@"PCPM: openProject: %@", filePath);
