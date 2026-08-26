@@ -124,6 +124,7 @@ PCAppController.m \
 PCInfoController.m \
 PCMenuController.m \
 PCPrefController.m \
+PCProjectDocument.m \
 ProjectCenter_main.m
 
 -include GNUmakefile.preamble

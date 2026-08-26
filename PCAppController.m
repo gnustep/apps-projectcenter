@@ -36,6 +36,28 @@
 
 @implementation PCAppController
 
+static BOOL
+PCDirectoryContainsProjectWrapper(NSFileManager *fm, NSString *path)
+{
+  NSArray      *contents = [fm directoryContentsAtPath:path];
+  NSEnumerator *enumerator = [contents objectEnumerator];
+  NSString     *name;
+  BOOL          isDir = NO;
+
+  while ((name = [enumerator nextObject]) != nil)
+    {
+      if ([[name pathExtension] isEqualToString:@"pcproj"]
+	  && [fm fileExistsAtPath:[path stringByAppendingPathComponent:name]
+		      isDirectory:&isDir]
+	  && isDir)
+	{
+	  return YES;
+	}
+    }
+
+  return NO;
+}
+
 //============================================================================
 //==== Intialization & deallocation
 //============================================================================
@@ -113,6 +135,7 @@
   NSFileManager *fm = [NSFileManager defaultManager];
   BOOL          isDir = NO;
   BOOL          pcProjectIsDir = NO;
+  BOOL          isProject = NO;
   NSString      *pcProject = nil;
 
   [NSApp activateIgnoringOtherApps:YES];
@@ -126,13 +149,16 @@
   fileName = [fileName stringByStandardizingPath];
   pcProject = [fileName stringByAppendingPathComponent:@"PC.project"];
 
-  if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
-      || [[fileName pathExtension] isEqualToString:@"project"] == YES
-      || ([fm fileExistsAtPath:fileName isDirectory:&isDir] && isDir
-	  && [fm fileExistsAtPath:pcProject isDirectory:&pcProjectIsDir]
-	  && !pcProjectIsDir)) 
+  isProject = ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
+	       || [[fileName pathExtension] isEqualToString:@"project"] == YES
+	       || ([fm fileExistsAtPath:fileName isDirectory:&isDir] && isDir
+		   && (([fm fileExistsAtPath:pcProject isDirectory:&pcProjectIsDir]
+			&& !pcProjectIsDir)
+		       || PCDirectoryContainsProjectWrapper(fm, fileName))));
+
+  if (isProject) 
     {
-      [projectManager openProjectAt: fileName makeActive: YES];
+      return ([projectManager openProjectAt: fileName makeActive: YES] != nil);
     }
   else
     {
