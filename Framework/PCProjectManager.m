@@ -50,6 +50,24 @@
 
 NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 
+static NSString *
+PCAbsoluteStandardizedPath(NSString *path)
+{
+  if (path == nil)
+    {
+      return nil;
+    }
+
+  path = [path stringByExpandingTildeInPath];
+  if (![path isAbsolutePath])
+    {
+      path = [[[NSFileManager defaultManager] currentDirectoryPath]
+	stringByAppendingPathComponent:path];
+    }
+
+  return [path stringByStandardizingPath];
+}
+
 @implementation PCProjectManager
 
 // ============================================================================
@@ -573,6 +591,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSString     *projectPathToSave;
   NSString     *projectPathToOpen = nil;
 
+  aPath = PCAbsoluteStandardizedPath(aPath);
+  if (aPath == nil)
+    {
+      return nil;
+    }
+
   // Check project path for invalid characters
   if ([aPath rangeOfString: @" "].location != NSNotFound ||
       [aPath rangeOfString: @"\t"].location != NSNotFound ||
@@ -627,7 +651,13 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
       projectPathToOpen = aPath;
       if (isDir)
 	{
-	  if ([projectFileType isEqualToString:@"pcproj"] == NO)
+	  NSString *pcProject = [aPath stringByAppendingPathComponent:@"PC.project"];
+	  BOOL     pcProjectIsDir = NO;
+
+	  if ([projectFileType isEqualToString:@"pcproj"] == NO
+	      && !([[NSFileManager defaultManager] fileExistsAtPath:pcProject
+						    isDirectory:&pcProjectIsDir]
+		   && !pcProjectIsDir))
 	    {
 	      tempList = [fileManager filesWithExtension:@"pcproj"
 						  atPath:aPath
@@ -635,6 +665,8 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	      if ([tempList count] > 0)
 		{
 		  aPath = [tempList objectAtIndex:0];
+		  projectFileType = [[aPath lastPathComponent] pathExtension];
+		  projectPathToSave = aPath;
 		}
 	    }
 	  else
@@ -680,7 +712,14 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 	{// No conversion were taken
 	  projectTypeName = [projectFile objectForKey:PCProjectType];
 	  projectClassName = [projectTypes objectForKey:projectTypeName];
-	  if (projectClassName == nil)
+	  if ([projectTypeName length] == 0)
+	    {
+	      NSRunAlertPanel(@"Open Project",
+			      @"Project file '%@' has no project type.",
+			      @"OK", nil, nil, aPath);
+	      return nil;
+	    }
+	  if ([projectClassName length] == 0)
 	    {
 	      NSRunAlertPanel(@"Open Project",
 			      @"Project type '%@' is not supported!\n"
@@ -762,9 +801,6 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
   NSArray       *fileTypes = nil;
   NSArray       *files = nil;
   NSString      *filePath = nil;
-  NSFileManager *fm = [NSFileManager defaultManager];
-  BOOL          isDir;
-  NSArray       *tempList = nil;
 
   fileTypes = [NSArray arrayWithObjects:@"pcproj",@"project",nil];
   files = [fileManager filesOfTypes:fileTypes
@@ -773,22 +809,12 @@ NSString *PCActiveProjectDidChangeNotification = @"PCActiveProjectDidChange";
 			      title:@"Open Project"
 			    accView:nil];
 
-  filePath = [files objectAtIndex:0];
-
-  [fm fileExistsAtPath:filePath isDirectory:&isDir];
-  if (isDir)
+  if ([files count] == 0)
     {
-      if (![[filePath pathExtension] isEqualToString:@"pcproj"])
-	{
-	  tempList = [fileManager filesWithExtension:@"pcproj" 
-					      atPath:filePath
-					 includeDirs:YES];
-	  if ([tempList count] > 0)
-	    {
-	      filePath = [tempList objectAtIndex:0];
-	    }
-	}
+      return;
     }
+
+  filePath = [files objectAtIndex:0];
 
   NSLog(@"PCPM: openProject: %@", filePath);
 

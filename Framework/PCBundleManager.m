@@ -300,6 +300,10 @@
   NSString     *className;
 
   className = [self classNameForBundleType:extension fileName:fileName];
+  if ([className length] == 0)
+    {
+      return nil;
+    }
 
   return [self objectForClassName:className 
 		       bundleType:extension

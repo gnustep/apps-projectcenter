@@ -110,16 +110,27 @@
 
 - (BOOL)application:(NSApplication *)application openFile:(NSString *)fileName
 {
+  NSFileManager *fm = [NSFileManager defaultManager];
+  BOOL          isDir = NO;
+  BOOL          pcProjectIsDir = NO;
+  NSString      *pcProject = nil;
+
   [NSApp activateIgnoringOtherApps:YES];
 
+  fileName = [fileName stringByExpandingTildeInPath];
   if (![fileName isAbsolutePath])
     {
       NSString *cwd = [[NSFileManager defaultManager] currentDirectoryPath];
       fileName = [cwd stringByAppendingPathComponent: fileName];
     }
+  fileName = [fileName stringByStandardizingPath];
+  pcProject = [fileName stringByAppendingPathComponent:@"PC.project"];
 
   if ([[fileName pathExtension] isEqualToString:@"pcproj"] == YES
-      || [[fileName pathExtension] isEqualToString:@"project"] == YES) 
+      || [[fileName pathExtension] isEqualToString:@"project"] == YES
+      || ([fm fileExistsAtPath:fileName isDirectory:&isDir] && isDir
+	  && [fm fileExistsAtPath:pcProject isDirectory:&pcProjectIsDir]
+	  && !pcProjectIsDir)) 
     {
       [projectManager openProjectAt: fileName makeActive: YES];
     }
@@ -279,4 +290,3 @@
 }
 
 @end
-
