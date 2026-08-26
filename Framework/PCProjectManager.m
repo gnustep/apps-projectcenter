@@ -68,6 +68,58 @@ PCAbsoluteStandardizedPath(NSString *path)
   return [path stringByStandardizingPath];
 }
 
+static NSString *
+PCProjectRootPathForRecentPath(NSString *path)
+{
+  path = PCAbsoluteStandardizedPath(path);
+  if (path == nil)
+    {
+      return nil;
+    }
+
+  if ([[path lastPathComponent] isEqualToString:@"PC.project"])
+    {
+      path = [path stringByDeletingLastPathComponent];
+    }
+
+  if ([[path pathExtension] isEqualToString:@"pcproj"])
+    {
+      path = [path stringByDeletingLastPathComponent];
+    }
+
+  return path;
+}
+
+static void
+PCNoteRecentProjectPath(NSString *projectPath)
+{
+  NSDocumentController *controller;
+  NSMutableArray       *recentURLs;
+  NSString             *canonicalPath;
+  NSEnumerator         *enumerator;
+  NSURL                *url;
+
+  canonicalPath = PCProjectRootPathForRecentPath(projectPath);
+  if (canonicalPath == nil)
+    {
+      return;
+    }
+
+  controller = [NSDocumentController sharedDocumentController];
+  recentURLs = (NSMutableArray *)[controller recentDocumentURLs];
+  enumerator = [[NSArray arrayWithArray:recentURLs] objectEnumerator];
+  while ((url = [enumerator nextObject]) != nil)
+    {
+      if ([url isFileURL]
+	  && [PCProjectRootPathForRecentPath([url path]) isEqualToString:canonicalPath])
+	{
+	  [recentURLs removeObject:url];
+	}
+    }
+
+  [controller noteNewRecentDocumentURL:[NSURL fileURLWithPath:canonicalPath]];
+}
+
 @implementation PCProjectManager
 
 // ============================================================================
@@ -588,7 +640,6 @@ PCAbsoluteStandardizedPath(NSString *path)
   NSString     *projectPath = nil;
   NSString     *projectFileType = nil;
   PCProject    *project = nil;
-  NSString     *projectPathToSave;
   NSString     *projectPathToOpen = nil;
 
   aPath = PCAbsoluteStandardizedPath(aPath);
@@ -647,7 +698,6 @@ PCAbsoluteStandardizedPath(NSString *path)
 	  return nil;
 	}
 
-      projectPathToSave = projectPath;
       projectPathToOpen = aPath;
       if (isDir)
 	{
@@ -666,12 +716,7 @@ PCAbsoluteStandardizedPath(NSString *path)
 		{
 		  aPath = [tempList objectAtIndex:0];
 		  projectFileType = [[aPath lastPathComponent] pathExtension];
-		  projectPathToSave = aPath;
 		}
-	    }
-	  else
-	    {
-	      projectPathToSave = aPath;
 	    }
 	  projectPathToOpen = aPath;
 	  aPath = [aPath stringByAppendingPathComponent:@"PC.project"];
@@ -684,7 +729,6 @@ PCAbsoluteStandardizedPath(NSString *path)
 		isEqualToString:@"pcproj"])
 	    {
 	      projectPathToOpen = [aPath stringByDeletingLastPathComponent];
-	      projectPathToSave = projectPathToOpen;
 	    }
 	  projectFile = [NSMutableDictionary dictionaryWithContentsOfFile:aPath];
 	}
@@ -754,8 +798,8 @@ PCAbsoluteStandardizedPath(NSString *path)
       [project validateProjectDict];
       
       [loadedProjects setObject:project forKey:[project projectPath]];
-      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL: [NSURL fileURLWithPath:projectPathToSave]];
-      PCLogStatus(self, @"Saved opened Document as %@", projectPathToSave);
+      PCNoteRecentProjectPath([project projectPath]);
+      PCLogStatus(self, @"Saved opened Document as %@", [project projectPath]);
 
       if (flag)
 	{
@@ -928,7 +972,7 @@ PCAbsoluteStandardizedPath(NSString *path)
 	}
 
       projectPath = [project projectPath];
-      [[NSDocumentController sharedDocumentController] noteNewRecentDocumentURL:[NSURL fileURLWithPath:projectPath]];
+      PCNoteRecentProjectPath(projectPath);
       [loadedProjects setObject:project forKey:projectPath];
       [self setActiveProject:project];
       [[project projectWindow] orderFront:self];
