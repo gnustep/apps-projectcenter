@@ -1,10 +1,11 @@
 /*
    GNUstep ProjectCenter - http://www.gnustep.org/experience/ProjectCenter.html
 
-   Copyright (C) 2000-2004 Free Software Foundation
+   Copyright (C) 2000-2026 Free Software Foundation
 
    Authors: Philippe C.D. Robert
             Serg Stoyan
+            Riccardo Mottola
 
    This file is part of GNUstep.
 
