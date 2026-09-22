@@ -494,6 +494,15 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
                   object:self];
 }
 
+/*
+  double-click on a file tries to open a new editor window.
+  The code tries to respect the ProjectCenter external editor preferences
+  However, it checks if ProjectCenter is registered to open the file.
+  If an Editor is set, it too is checked for file type.
+  Otherwise, NSWorkspace is left to handle whatever apps it has registered.
+
+  Sum-Up: preferred editor needs to be a GNUstep app, not just any app.
+ */
 - (void)doubleClick:(id)sender
 {
   NSString    *category = [self nameOfSelectedCategory];
@@ -503,8 +512,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   NSString    *key;
   NSString    *filePath;
   id <PCPreferences> prefs = [[project projectManager] prefController];
-  NSWorkspace *workspace;
-  NSString    *appName, *type;
+  NSString    *type;
   
   if ((sender != browser) || [category isEqualToString:@"Libraries"])
     {
@@ -522,40 +530,57 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 
   if ([self nameOfSelectedFile] != nil) 
     {
+      NSWorkspace *workspace = [NSWorkspace sharedWorkspace];
       BOOL foundFile = NO;
-      BOOL foundApp = NO;
+      NSString *prefEditor;
+      NSDictionary *registeredAppsDict;
+      NSArray *registeredAppsArray;
+      BOOL usePCAsEditor = NO;
+      NSString *bestAppInRole;
+
+      registeredAppsDict = [workspace infoForExtension:[fileName pathExtension]];
+      registeredAppsArray = [registeredAppsDict allKeys];
+      prefEditor = [prefs stringForKey:Editor];
+      if ([[prefEditor lastPathComponent] isEqualToString:@"ProjectCenter"] || [[prefEditor lastPathComponent] isEqualToString:@"ProjectCenter.app"])
+        {
+          if ([registeredAppsArray containsObject:@"ProjectCenter.app"])
+            {
+              usePCAsEditor = YES;
+            }
+        }
+
       filePath = [activeProject pathForFile:fileName forKey:key];
-      // PCLogInfo(self, @"{doubleClick} filePath: %@", filePath);*/
 
-      workspace = [NSWorkspace sharedWorkspace];
       foundFile = [workspace getInfoForFile:filePath 
-			    application:&appName 
+			    application:&bestAppInRole
 				   type:&type];
-      foundApp = foundFile && appName;
-      // NSLog (@"Open file: %@ with app: %@", filePath, appName);
+      if (!foundFile)
+        {
+          NSLog(@"File not found");
+          return;
+        }
 
-      // If 'Editor' role was set in .GNUstepExtPrefs application
-      // name will be returned according that setting. Otherwise
-      // 'ProjectCenter.app' will be returned accoring to NSTypes
-      // from Info-gnustep.plist file of PC.
-      if(foundApp == NO || [appName isEqualToString:@"ProjectCenter.app"])
+      if ([bestAppInRole isEqualToString:@"ProjectCenter.app"])
+        {
+          usePCAsEditor = YES;
+        }
+
+      if(usePCAsEditor)
 	{
-	  appName = [prefs stringForKey:Editor];
-
-	  if (![appName isEqualToString:@"ProjectCenter"])
-	    {
-	      [workspace openFile:filePath 
-		  withApplication:appName];
-	    }
-	  else
-	    {
-	      [[activeProject projectEditor] 
+          [[activeProject projectEditor]
 		openEditorForCategoryPath:[self path]
 				 windowed:YES];
-	    }
 	}
+      else if (prefEditor != nil && [registeredAppsArray containsObject:[prefEditor lastPathComponent]])
+        {
+          [workspace openFile:filePath
+              withApplication:prefEditor];
+        }
       else
 	{
+          // PC is Not registered, Editor not registered, try the best we can.
+          NSLog(@"No editor known, handing over to NSWorkspace");
+          PCLogInfo(self, @"No editor found, handing over to NSWorkspace");
 	  [workspace openFile:filePath];
 	}
     }
