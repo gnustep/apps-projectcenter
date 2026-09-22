@@ -34,6 +34,8 @@
 
 #define EditorLines             @"EditorLines"
 #define EditorColumns           @"EditorColumns"
+#define EditorShowTopRuler      @"EditorShowTopRuler"
+#define EditorShowSideRuler     @"EditorShowSideRuler"
 
 #define EditorForegroundColor   @"EditorForegroundColor"
 #define EditorBackgroundColor   @"EditorBackgroundColor"
@@ -58,6 +60,9 @@
   IBOutlet NSColorWell *backgroundColorWell;
   IBOutlet NSColorWell *selectionColorWell;
 
+  NSButton             *showTopRulerButton;
+  NSButton             *showSideRulerButton;
+
   NSFont               *currentEditorFont;
   NSFont               *currentConsoleFixedFont;
   NSColor              *currentBackgroundColor;
@@ -70,6 +75,6 @@
 
 - (void)setEditorSize:(id)sender;
 - (void)setEditorColor:(id)sender;
+- (void)setRulerVisibility:(id)sender;
 
 @end
-

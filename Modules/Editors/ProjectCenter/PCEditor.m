@@ -41,6 +41,43 @@
 
 @implementation PCEditor (UInterface)
 
+- (BOOL)_rulerPreferenceForKey:(NSString *)key
+{
+  id <PCPreferences> prefs;
+
+  prefs = [[_editorManager projectManager] prefController];
+  return [prefs boolForKey:key defaultValue:YES];
+}
+
+- (void)_applyRulerPreferencesToScrollView:(NSScrollView *)scrollView
+{
+  PCLineNumberRulerView *lineRuler;
+
+  if (scrollView == nil)
+    {
+      return;
+    }
+
+  [scrollView setRulersVisible:YES];
+  [scrollView setHasHorizontalRuler:
+    [self _rulerPreferenceForKey:EditorShowTopRuler]];
+  [scrollView setHasVerticalRuler:YES];
+  lineRuler = (PCLineNumberRulerView *)[scrollView verticalRulerView];
+  if ([lineRuler isKindOfClass:[PCLineNumberRulerView class]])
+    {
+      [lineRuler setShowsLineNumbers:
+        [self _rulerPreferenceForKey:EditorShowSideRuler]];
+    }
+}
+
+- (void)_rulerPreferencesChanged:(NSNotification *)notification
+{
+  [self _applyRulerPreferencesToScrollView:
+    [_extEditorView enclosingScrollView]];
+  [self _applyRulerPreferencesToScrollView:
+    [_intEditorView enclosingScrollView]];
+}
+
 - (void)_installLineNumberRulerForScrollView:(NSScrollView *)scrollView
                                   editorView:(PCEditorView *)editorView
 {
@@ -49,8 +86,10 @@
   ruler = [[PCLineNumberRulerView alloc] initWithScrollView:scrollView
                                                    textView:editorView];
   [scrollView setVerticalRulerView:ruler];
-  [scrollView setHasVerticalRuler:YES];
   [scrollView setRulersVisible:YES];
+  [scrollView setHasVerticalRuler:YES];
+  [ruler setShowsLineNumbers:
+    [self _rulerPreferenceForKey:EditorShowSideRuler]];
   RELEASE(ruler);
 }
 
@@ -62,8 +101,9 @@
   ruler = [[PCCharacterRulerView alloc] initWithScrollView:scrollView
                                                   textView:editorView];
   [scrollView setHorizontalRulerView:ruler];
-  [scrollView setHasHorizontalRuler:YES];
   [scrollView setRulersVisible:YES];
+  [scrollView setHasHorizontalRuler:
+    [self _rulerPreferenceForKey:EditorShowTopRuler]];
   RELEASE(ruler);
 }
 
@@ -409,6 +449,11 @@
   _path = [filePath copy];
   _isEditable = editable;
   prefs = [[_editorManager projectManager] prefController];
+  [[NSNotificationCenter defaultCenter]
+    addObserver:self
+       selector:@selector(_rulerPreferencesChanged:)
+           name:PCPreferencesDidChangeNotification
+         object:prefs];
 
   // Prepare
   font = [NSFont userFixedPitchFontOfSize:0.0];
@@ -1258,7 +1303,8 @@ willChangeSelectionFromCharacterRange:(NSRange)oldSelectedCharRange
   // for speed reasons we cache [NSString characterAtIndex:index]
   SEL charAtIndexSel = @selector(characterAtIndex:);
   unichar (*charAtIndexFunc)(NSString *, SEL, NSUInteger);
-  charAtIndexFunc = (unichar (*)())[str methodForSelector:charAtIndexSel]; 
+  charAtIndexFunc = (unichar (*)(NSString *, SEL, NSUInteger))
+    [str methodForSelector:charAtIndexSel];
 
   selection = [tv selectedRange];
   // now we calculate given the selection the line count, splitting on \n

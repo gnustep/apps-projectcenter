@@ -11,9 +11,12 @@
   PCEditorView *_textView;
   NSDictionary *_attributes;
   NSMutableSet *_breakpoints;
+  BOOL _showsLineNumbers;
 }
 
 - (id)initWithScrollView:(NSScrollView *)scrollView textView:(PCEditorView *)textView;
 - (void)invalidateLineNumbers:(NSNotification *)notification;
+- (void)setShowsLineNumbers:(BOOL)flag;
+- (BOOL)showsLineNumbers;
 
 @end
