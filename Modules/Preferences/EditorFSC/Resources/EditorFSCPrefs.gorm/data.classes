@@ -2,6 +2,7 @@
     "## Comment" = "Do NOT change this file, Gorm maintains it";
     FirstResponder = {
 	Actions = (
+	    "setRulerVisibility:",
 	    "setConsoleFixedFont:",
 	    "setEditorColor:",
 	    "setEditorSize:",
@@ -14,7 +15,8 @@
 	    "setEditorTextFont:",
 	    "setConsoleFixedFont:",
 	    "setEditorSize:",
-	    "setEditorColor:"
+	    "setEditorColor:",
+	    "setRulerVisibility:"
 	);
 	Outlets = (
 	    prefs,
@@ -27,7 +29,9 @@
 	    editorColumnsField,
 	    foregroundColorWell,
 	    backgroundColorWell,
-	    selectionColorWell
+	    selectionColorWell,
+	    showTopRulerButton,
+	    showSideRulerButton
 	);
 	Super = NSObject;
     };

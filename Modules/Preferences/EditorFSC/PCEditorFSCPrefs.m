@@ -91,11 +91,26 @@
 
 - (void)awakeFromNib
 {
+  NSBox *windowBox = nil;
+  NSEnumerator *enumerator;
+  NSView *view;
+
   [editorFontButton setTarget:self];
   [editorFontField setAllowsEditingTextAttributes:YES];
 
   [consoleFixedFontButton setTarget:self];
   [consoleFixedFontField setAllowsEditingTextAttributes:YES];
+
+  enumerator = [[[editorFSCView contentView] subviews] objectEnumerator];
+  while ((view = [enumerator nextObject]) != nil)
+    {
+      if ([view isKindOfClass:[NSBox class]]
+          && [[(NSBox *)view title] isEqualToString:_(@"Tear-Off Window Size")])
+        {
+          windowBox = (NSBox *)view;
+          break;
+        }
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -186,6 +201,13 @@
   val = [prefs stringForKey:EditorColumns defaultValue:@"80"];
   [editorColumnsField setStringValue:val];
 
+  [showTopRulerButton setState:
+    ([prefs boolForKey:EditorShowTopRuler defaultValue:YES]
+      ? NSOnState : NSOffState)];
+  [showSideRulerButton setState:
+    ([prefs boolForKey:EditorShowSideRuler defaultValue:YES]
+      ? NSOnState : NSOffState)];
+
   // Colors
   currentForegroundColor = [prefs colorForKey:EditorForegroundColor defaultValue:[NSColor blackColor]];
   [foregroundColorWell setColor:currentForegroundColor];
@@ -261,5 +283,13 @@
   [prefs setColor:color forKey:key notify:YES];
 }
 
-@end
+- (void)setRulerVisibility:(id)sender
+{
+  NSString *key;
 
+  key = (sender == showTopRulerButton
+         ? EditorShowTopRuler : EditorShowSideRuler);
+  [prefs setBool:([sender state] == NSOnState) forKey:key notify:YES];
+}
+
+@end

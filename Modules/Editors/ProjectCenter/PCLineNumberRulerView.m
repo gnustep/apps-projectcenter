@@ -10,6 +10,8 @@
 #import <ProjectCenter/PCProject.h>
 #import <ProjectCenter/PCProjectManager.h>
 
+#define PCBreakpointGutterWidth 18.0
+
 @interface PCLineNumberRulerView (PrivateMethods)
 - (void)_loadBreakpoints;
 @end
@@ -31,6 +33,7 @@
           [NSColor darkGrayColor], NSForegroundColorAttributeName,
           nil];
       _breakpoints = [[NSMutableSet alloc] init];
+      _showsLineNumbers = YES;
 
       [self setClientView:textView];
       [self setRuleThickness:40.0];
@@ -201,6 +204,16 @@
   NSUInteger digits;
   CGFloat width;
 
+  if (!_showsLineNumbers)
+    {
+      width = PCBreakpointGutterWidth;
+      if ([self ruleThickness] != width)
+        {
+          [self setRuleThickness:width];
+        }
+      return;
+    }
+
   lineCount = [self _lineCount];
   digits = 1;
   while (lineCount >= 10)
@@ -209,16 +222,34 @@
       lineCount /= 10;
     }
 
-  width = 16.0 + digits * [[NSFont userFixedPitchFontOfSize:10.0] widthOfString:@"8"];
-  if (width < 40.0)
+  width = PCBreakpointGutterWidth + 8.0
+        + digits * [[NSFont userFixedPitchFontOfSize:10.0] widthOfString:@"8"];
+  if (width < 44.0)
     {
-      width = 40.0;
+      width = 44.0;
     }
 
   if ([self ruleThickness] != width)
     {
       [self setRuleThickness:width];
     }
+}
+
+- (void)setShowsLineNumbers:(BOOL)flag
+{
+  if (_showsLineNumbers == flag)
+    {
+      return;
+    }
+
+  _showsLineNumbers = flag;
+  [self _updateRuleThickness];
+  [self setNeedsDisplay:YES];
+}
+
+- (BOOL)showsLineNumbers
+{
+  return _showsLineNumbers;
 }
 
 - (void)invalidateLineNumbers:(NSNotification *)notification
@@ -286,6 +317,12 @@
 
   [[NSColor controlBackgroundColor] set];
   NSRectFill(bounds);
+  [[NSColor colorWithCalibratedWhite:0.82 alpha:1.0] set];
+  NSRectFill(NSMakeRect(NSMinX(bounds), NSMinY(bounds),
+                        PCBreakpointGutterWidth, NSHeight(bounds)));
+  [[NSColor grayColor] set];
+  NSRectFill(NSMakeRect(PCBreakpointGutterWidth - 1.0, NSMinY(bounds),
+                        1.0, NSHeight(bounds)));
   [[NSColor grayColor] set];
   NSRectFill(NSMakeRect(NSMaxX(bounds) - 1.0, NSMinY(bounds), 1.0, NSHeight(bounds)));
 
@@ -354,11 +391,15 @@
 
       glyphRect = [layoutManager boundingRectForGlyphRange:NSMakeRange(glyphIndex, 1)
                                            inTextContainer:textContainer];
-      label = [NSString stringWithFormat:@"%lu", (unsigned long)lineNumber];
-      labelSize = [label sizeWithAttributes:_attributes];
-      point = NSMakePoint(NSMaxX(bounds) - labelSize.width - 5.0,
-                          NSMinY(glyphRect) + inset.height - NSMinY(visibleRect));
-      [label drawAtPoint:point withAttributes:_attributes];
+      if (_showsLineNumbers)
+        {
+          label = [NSString stringWithFormat:@"%lu", (unsigned long)lineNumber];
+          labelSize = [label sizeWithAttributes:_attributes];
+          point = NSMakePoint(NSMaxX(bounds) - labelSize.width - 5.0,
+                             NSMinY(glyphRect) + inset.height
+                               - NSMinY(visibleRect));
+          [label drawAtPoint:point withAttributes:_attributes];
+        }
 
       markerY = NSMinY(glyphRect) + inset.height - NSMinY(visibleRect);
       if ([_breakpoints containsObject:[NSNumber numberWithUnsignedInteger:lineNumber]])
@@ -428,6 +469,10 @@
   BOOL hasBreakpoint;
 
   point = [self convertPoint:[event locationInWindow] fromView:nil];
+  if (point.x >= PCBreakpointGutterWidth)
+    {
+      return;
+    }
   line = [self _lineNumberForPoint:point];
   lineNumber = [NSNumber numberWithUnsignedInteger:line];
   path = [self _filePath];
@@ -444,7 +489,7 @@
     }
 
   hasBreakpoint = [_breakpoints containsObject:lineNumber];
-  if (hasBreakpoint && point.x <= 18.0)
+  if (hasBreakpoint)
     {
       [_breakpoints removeObject:lineNumber];
       enabled = NO;
