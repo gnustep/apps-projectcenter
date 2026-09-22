@@ -317,7 +317,9 @@
 
   [[NSColor controlBackgroundColor] set];
   NSRectFill(bounds);
-  [[NSColor colorWithCalibratedWhite:0.82 alpha:1.0] set];
+  [[[NSColor windowBackgroundColor]
+    blendedColorWithFraction:0.08
+                       ofColor:[NSColor blackColor]] set];
   NSRectFill(NSMakeRect(NSMinX(bounds), NSMinY(bounds),
                         PCBreakpointGutterWidth, NSHeight(bounds)));
   [[NSColor grayColor] set];
