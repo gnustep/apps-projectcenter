@@ -257,9 +257,9 @@
   NSWorkspace   *ws = [NSWorkspace sharedWorkspace];
 
   // Choose
-  if (sender == debuggerField)
+  if (sender == editorField)
     {
-      path = [debuggerField stringValue];
+      path = [editorField stringValue];
     }
   else if ([path = [editorField stringValue] isEqualToString:@""])
     {
