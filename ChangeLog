@@ -1,3 +1,12 @@
+2026-09-22  OpenAI <support@openai.com>
+
+	* Framework/PCProject.m
+	* Headers/ProjectCenter/PCDefines.h
+	* Headers/ProjectCenter/PCProject.h
+	Store breakpoints under PC_BREAKPOINTS in the per-user project settings
+	inside the project package instead of in a shared Breakpoints.plist
+	beside the package.
+
 2026-08-02 Gregory Casamento <greg.casamento@gmail.com>
 
 	* Framework/PCProject.m
