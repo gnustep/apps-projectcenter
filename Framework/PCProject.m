@@ -57,7 +57,6 @@ NSString
 *PCProjectDictDidSaveNotification = @"PCProjectDictDidSaveNotification";
 NSString 
 *PCProjectBreakpointNotification = @"PCProjectBreakpointNotification";
-static NSString *PCProjectBreakpointsFileName = @"Breakpoints.plist";
 
 static NSArray *
 PCArrayFromProjectValue(id value, BOOL splitStrings)
@@ -623,7 +622,22 @@ PCResourceArrayFromProjectValue(id value)
   if (!rememberWindows)
     {
       [projectFileDict setObject:windows forKey:PCWindows];
-      [projectFileDict writeToFile:projectFile atomically:YES];
+      [projectDict setObject:windows forKey:PCWindows];
+      if ([projectDict objectForKey:PCBreakpoints] != nil)
+	{
+	  [projectFileDict setObject:[projectDict objectForKey:PCBreakpoints]
+			      forKey:PCBreakpoints];
+	}
+      [projectFileDict setObject:[[NSCalendarDate date] description]
+			 forKey:PCLastEditing];
+      [projectFileWrapper addRegularFileWithContents:
+	[NSPropertyListSerialization dataFromPropertyList:projectFileDict
+					  format:NSPropertyListOpenStepFormat
+					  errorDescription:NULL]
+				preferredFilename:projectFile];
+      [projectFileWrapper writeToFile:wrapperPath
+			  atomically:YES
+			  updateFilenames:YES];
       [projectFileDict release];
       return YES;
     }
@@ -669,6 +683,12 @@ PCResourceArrayFromProjectValue(id value)
   // Now save it directly to username.project file
   [projectFileDict setObject:windows forKey:PCWindows];
 
+  if ([projectDict objectForKey:PCBreakpoints] != nil)
+    {
+      [projectFileDict setObject:[projectDict objectForKey:PCBreakpoints]
+			  forKey:PCBreakpoints];
+    }
+
   [projectFileDict setObject: [[NSCalendarDate date] description]
 	       forKey: PCLastEditing];
 
@@ -701,6 +721,7 @@ PCResourceArrayFromProjectValue(id value)
   // remove key..
   [dict removeObjectForKey: PCWindows];
   [dict removeObjectForKey: PCLastEditing];
+  [dict removeObjectForKey: PCBreakpoints];
 
   // initialize the wrappers..
   wrapperFile = [projectName stringByAppendingPathExtension: @"pcproj"];
@@ -745,6 +766,34 @@ PCResourceArrayFromProjectValue(id value)
 					  errorDescription: NULL];
   [projectFileWrapper addRegularFileWithContents: dictData
 		      preferredFilename: file];
+  {
+    NSMutableDictionary *userDict;
+    NSString *userFile;
+    NSData *userData;
+    id value;
+
+    userFile = [NSUserName() stringByAppendingPathExtension:@"project"];
+    userDict = [NSMutableDictionary dictionaryWithCapacity:3];
+    value = [projectDict objectForKey:PCWindows];
+    if (value != nil)
+      [userDict setObject:value forKey:PCWindows];
+    value = [projectDict objectForKey:PCLastEditing];
+    if (value != nil)
+      [userDict setObject:value forKey:PCLastEditing];
+    value = [projectDict objectForKey:PCBreakpoints];
+    if (value != nil)
+      [userDict setObject:value forKey:PCBreakpoints];
+
+    if ([userDict count] > 0)
+      {
+        userData = [NSPropertyListSerialization
+	  dataFromPropertyList:userDict
+	  format:NSPropertyListOpenStepFormat
+	  errorDescription:NULL];
+        [projectFileWrapper addRegularFileWithContents:userData
+				    preferredFilename:userFile];
+      }
+  }
   if ([projectFileWrapper
 	writeToFile:wrapperPath
 	atomically:YES 
@@ -1852,7 +1901,12 @@ PCResourceArrayFromProjectValue(id value)
 
 - (NSString *)_breakpointsFilePath
 {
-  return [projectPath stringByAppendingPathComponent:PCProjectBreakpointsFileName];
+  NSString *package;
+
+  package = [projectName stringByAppendingPathExtension:@"pcproj"];
+  package = [projectPath stringByAppendingPathComponent:package];
+  return [package stringByAppendingPathComponent:
+    [NSUserName() stringByAppendingPathExtension:@"project"]];
 }
 
 - (NSString *)_relativePathForBreakpointFile:(NSString *)file
@@ -1893,10 +1947,10 @@ PCResourceArrayFromProjectValue(id value)
 
 - (NSArray *)breakpoints
 {
-  NSArray *breakpoints;
+  id breakpoints;
 
-  breakpoints = [NSArray arrayWithContentsOfFile:[self _breakpointsFilePath]];
-  if (breakpoints == nil)
+  breakpoints = [projectDict objectForKey:PCBreakpoints];
+  if (![breakpoints isKindOfClass:[NSArray class]])
     {
       return [NSArray array];
     }
@@ -1955,6 +2009,7 @@ PCResourceArrayFromProjectValue(id value)
   NSString *filePath;
   NSString *directory;
   NSFileManager *fm;
+  NSMutableDictionary *userDict;
   BOOL isDir;
 
   filePath = [self _breakpointsFilePath];
@@ -1969,7 +2024,15 @@ PCResourceArrayFromProjectValue(id value)
 	}
     }
 
-  return [breakpoints writeToFile:filePath atomically:YES];
+  userDict = [NSMutableDictionary dictionaryWithContentsOfFile:filePath];
+  if (userDict == nil)
+    {
+      userDict = [NSMutableDictionary dictionary];
+    }
+  [userDict setObject:breakpoints forKey:PCBreakpoints];
+  [projectDict setObject:breakpoints forKey:PCBreakpoints];
+
+  return [userDict writeToFile:filePath atomically:YES];
 }
 
 - (BOOL)hasBreakpointForFile:(NSString *)file line:(NSUInteger)line
