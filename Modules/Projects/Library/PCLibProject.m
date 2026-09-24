@@ -80,6 +80,89 @@
   [super dealloc];
 }
 
+// dlsa - addFromSources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+
+  PCFileManager  *pcfm = [PCFileManager defaultManager];
+  PCFileCreator  *pcfc = [PCFileCreator sharedCreator];
+  NSString       *_file = nil;
+  NSString       *_2file = nil;
+  NSBundle       *projBundle = [NSBundle bundleForClass:[self class]];
+  NSString       *_resourcePath = nil;
+  BOOL           _moveResult = YES;
+
+  NSAssert(path,@"No valid project path provided!");
+
+  // PC.project
+  _file = [projBundle pathForResource:@"PC" ofType:@"project"];
+  [projectDict initWithContentsOfFile:_file];
+
+  [projectManager removeEmptyEntriesFromPCOtherSources: projectDict];
+
+  // Customise the project
+  [self setProjectPath:path];
+  [self setProjectName: [path lastPathComponent]];
+
+  if ([[projectName pathExtension] isEqualToString:@"subproj"])
+    {
+      projectName = [projectName stringByDeletingPathExtension];
+    }
+
+  [projectDict setObject:projectName forKey:PCProjectName];
+  [projectDict setObject:[[NSCalendarDate date] description]
+		  forKey:PCCreationDate];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectCreator];
+  [projectDict setObject:NSFullUserName() forKey:PCProjectMaintainer];
+  [projectDict setObject:[NSUserDefaults userLanguages] forKey:PCUserLanguages];
+
+  // move an existing GNUMakefile and create the one from the template and add other makefiles
+  _moveResult = [projectManager processMakefile: projectDict scanningFrom:path];
+  if (!_moveResult) {
+    NSRunAlertPanel(@"File Conflict",
+		    @"The directory already contains a GNUmakefile file that cannot be moved. The Project center makefiles will not be generated",
+		    @"Dismiss", nil, nil);
+  }
+
+  // Copy the project files to the provided path
+
+  // $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@", projectName];
+  _2file = [NSString stringWithFormat:@"%@.m", projectName];
+  _moveResult = [projectManager moveFileNamed: _2file atPath: path toFileName: [_2file stringByAppendingString: @".original"]];
+  _moveResult = [projectManager moveFileNamed: [NSString stringWithFormat:@"%@.h", projectName]
+				       atPath: path
+				   toFileName: [[NSString stringWithFormat:@"%@.h", projectName] stringByAppendingString: @".original"]];
+
+  [pcfc createFileOfType:ObjCClass 
+		    path:[path stringByAppendingPathComponent:_file]
+		 project:self];
+
+  // $PROJECTNAME$.h already created by creating $PROJECTNAME$.m
+  _file = [NSString stringWithFormat:@"%@.h", projectName];
+  [projectDict setObject:[NSArray arrayWithObjects:_file,nil]
+		  forKey:PCPublicHeaders];
+
+  // search for all .m and .h files and add them to the project
+  [projectManager setSrcFilesOn: projectDict scanningFrom: path];
+
+  // GNUmakefile.postamble
+  [[PCMakefileFactory sharedFactory] createPostambleForProject:self];
+
+  // Resources
+  _resourcePath = [path stringByAppendingPathComponent:@"Resources"];
+
+  _file = [projBundle pathForResource:@"Version" ofType:@""];
+  _2file = [_resourcePath stringByAppendingPathComponent:@"Version"];
+  [pcfm copyFile:_file toFile:_2file];
+
+  if (_moveResult) {
+    [self writeMakefile];
+  }
+  [self save];
+  
+  return self;
+}
+
 //----------------------------------------------------------------------------
 // --- PCProject overridings
 //----------------------------------------------------------------------------

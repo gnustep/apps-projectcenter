@@ -31,6 +31,7 @@ ProjectCenter_HEADER_FILES = \
   PCEditorManager.h \
   PCFileManager.h \
   PCAddFilesPanel.h \
+  PCNewProjectFromSourcesPanel.h \
   PCFileCreator.h \
   PCMakefileFactory.h \
   PCSaveModified.h \
@@ -67,6 +68,7 @@ ProjectCenter_OBJC_FILES = \
   PCMakefileFactory.m \
   PCFileManager.m \
   PCAddFilesPanel.m \
+  PCNewProjectFromSourcesPanel.m \
   PCFileCreator.m \
   PCSaveModified.m \
   \

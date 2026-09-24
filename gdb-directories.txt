@@ -1,0 +1,14 @@
+directory Modules/Debuggers/ProjectCenter
+directory Modules/Editors/ProjectCenter
+directory Modules/Parsers/ProjectCenter
+directory Modules/Preferences/EditorFSC
+directory Modules/Preferences/Misc
+directory Modules/Projects/Aggregate
+directory Modules/Projects/Application
+directory Modules/Projects/Bundle
+directory Modules/Projects/Framework
+directory Modules/Projects/Library
+directory Modules/Projects/ResourceSet
+directory Modules/Projects/Tool
+directory Framework
+directory Headers/ProjectCenter
