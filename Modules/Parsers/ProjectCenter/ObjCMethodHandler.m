@@ -60,6 +60,7 @@
 
 - (void)addMethodToArray
 {
+  NSLog(@"OCMH: method: %@", method);
   if ([method length])
     {
       NSDictionary *dict;
