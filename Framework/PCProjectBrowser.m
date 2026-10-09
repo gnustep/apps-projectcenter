@@ -660,6 +660,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
     {
       NSMutableString *categoryPath = nil;
       id              cell;
+      BOOL            isLeaf;
       
       categoryPath = [NSMutableString stringWithString:pathToCol];
       
@@ -674,7 +675,9 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
 	}
       [categoryPath appendString:[files objectAtIndex:i]];
 
-      [cell setLeaf:![project hasChildrenAtCategoryPath:categoryPath]];
+      isLeaf = ![project hasChildrenAtCategoryPath:categoryPath];
+      NSLog(@"[PCPB] checking leaf for: %@ - %d", categoryPath, isLeaf);
+      [cell setLeaf: isLeaf];
       [cell setRefusesFirstResponder:YES];
     }
 }
