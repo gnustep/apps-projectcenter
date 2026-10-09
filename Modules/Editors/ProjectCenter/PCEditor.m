@@ -730,10 +730,10 @@
 - (NSArray *)browserItemsForItem:(NSString *)item
 {
   NSEnumerator   *enumerator;
-//  NSDictionary   *method;
+  NSDictionary   *method;
   NSDictionary   *class;
   NSMutableArray *items = [NSMutableArray array];
-  
+
   NSLog(@"PCEditor: asked for browser items for: %@", item);
 
   [aParser setString:[_storage string]];
@@ -753,16 +753,17 @@
     }
 
   // If item starts with "@" show method list
+  NSLog(@"should show method list for %@", item);
   if ([item length] > 0 && [[item substringToIndex:1] isEqualToString:@"@"])
     {
-/*      ASSIGN(parserMethods, [aParser methodNames]);
+      ASSIGN(parserMethods, [aParser methodNames]);
 
       enumerator = [parserMethods objectEnumerator];
       while ((method = [enumerator nextObject]))
 	{
-	  //      NSLog(@"Method> %@", method);
+	  NSLog(@"Method> %@", method);
 	  [items addObject:[method objectForKey:@"MethodName"]];
-	}*/
+	}
       return [self _methodsForClass:item];
     }
 
