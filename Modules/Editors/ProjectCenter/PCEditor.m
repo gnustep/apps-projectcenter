@@ -658,33 +658,31 @@
 
 - (NSImage *)fileIcon
 {
-  NSString *fileExtension = [[_path lastPathComponent] uppercaseString];
-  NSString *imageName = nil;
-  NSString *imagePath = nil;
-  NSBundle *bundle = nil;
-  NSImage  *image = nil;
+  NSString *extension = [_path pathExtension];
+  NSString *imageName = @"DocumentText";
+  NSBundle *bundle = [NSBundle mainBundle];
+  NSArray *types = [[bundle infoDictionary] objectForKey:@"NSTypes"];
+  NSEnumerator *enumerator = [types objectEnumerator];
+  NSDictionary *type;
+  NSString *imagePath;
+  NSImage *image;
 
-  fileExtension = [[[_path lastPathComponent] pathExtension] uppercaseString];
+  // Match case exactly: .c is C, while .C is C++.
+  while ((type = [enumerator nextObject]) != nil)
+    {
+      if ([[type objectForKey:@"NSUnixExtensions"] containsObject:extension])
+        {
+          imageName = [[type objectForKey:@"NSIcon"] stringByDeletingPathExtension];
+          break;
+        }
+    }
+
   if (_isEdited)
     {
-      imageName = [NSString stringWithFormat:@"File%@H", fileExtension];
+      imageName = [imageName stringByAppendingString:@"Edited"];
     }
-  else
-    {
-      imageName = [NSString stringWithFormat:@"File%@", fileExtension];
-    }
-
-  bundle = [NSBundle bundleForClass:NSClassFromString(@"PCEditor")];
-
   imagePath = [bundle pathForResource:imageName ofType:@"tiff"];
-  if (imagePath)
-    {
-      image = [[NSImage alloc] initWithContentsOfFile:imagePath];
-    }
-  else
-    {
-      NSLog(@"no image for %@", imageName);
-    }
+  image = [[NSImage alloc] initWithContentsOfFile:imagePath];
   return AUTORELEASE(image);
 }
 

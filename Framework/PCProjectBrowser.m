@@ -739,7 +739,7 @@ NSString *PCBrowserDidSetPathNotification = @"PCBrowserDidSetPathNotification";
   else if ((!categoryName && !fileName) ||
 	   [fileName isEqualToString:[activeProject projectName]]) 
     {
-      iconName = [[NSString alloc] initWithString:@"FileProject"];
+      iconName = [[NSString alloc] initWithString:@"DocumentProject"];
     }
   else if ([categoryName isEqualToString: @"Classes"])
     {

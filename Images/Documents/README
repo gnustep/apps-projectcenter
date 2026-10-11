@@ -1,0 +1,23 @@
+ProjectCenter document icons
+============================
+
+SVG files are the editable sources. The application packages the 48 x 48 RGBA
+TIFF versions for compatibility with GNUstep image loading. Normal builds do
+not require an SVG renderer. To regenerate TIFFs, run:
+
+    /usr/bin/python3 Images/Documents/render-icons.py
+
+The renderer requires PyGObject, librsvg, and Pillow.
+
+Resources/Info-gnustep.plist maps extensions to icons. PCEditor uses that same
+mapping, preserving case so .c receives C and .C receives C++. C++ aliases .cc,
+.CC, .cp, .cpp, and .c++ share the C++ icon. Objective-C, Objective-C++, headers,
+property lists, syntax definitions, text files, and projects have their own
+icons. Other files opened in the text editor, including extensionless files,
+use DocumentText. Binary resources handled by other applications retain those
+applications' file associations.
+
+Edited variants add an amber dot for unsaved changes.
+
+These icons and their sources are distributed under ProjectCenter's GPL terms;
+see COPYING in the repository root.
