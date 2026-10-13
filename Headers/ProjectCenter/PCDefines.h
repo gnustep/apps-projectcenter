@@ -122,6 +122,7 @@ typedef int PCProjInfoBits;
 
 static NSString * const PCLastEditing          = @"LAST_EDITING";
 static NSString * const PCWindows              = @"PC_WINDOWS";
+static NSString * const PCBreakpoints          = @"PC_BREAKPOINTS";
 
 static NSString * const PCClasses              = @"CLASS_FILES";
 static NSString * const PCHeaders              = @"HEADER_FILES";
@@ -198,4 +199,3 @@ static NSString * const PCLibraryVar           = @"LIBRARY_VAR";
 static NSString * const PCProjectBuilderClass  = @"PROJECT_BUILDER"; 
 
 #endif // _PCDEFINES_H_
-
