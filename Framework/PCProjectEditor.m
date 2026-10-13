@@ -165,7 +165,14 @@
     {
       if ([[item substringToIndex:1] isEqualToString:@"@"])
 	{
-	  return NO;
+	  NSArray *methods;
+	  id<CodeEditor> editor = [self activeEditor];
+	  BOOL hasMethods = NO;
+
+	  methods = [editor browserItemsForItem: item];
+	  NSLog(@"[PCPE] we have class/protocol/whatever");
+	  hasMethods = [methods count];
+	  return hasMethods;
 	}
     }
 
@@ -305,6 +312,7 @@
     }
   else // TODO: rethink
     {
+      NSLog(@"[PCE] rethink? openEditorForCategoryPath - pathLastObject: %@", pathLastObject);
       [editor fileStructureItemSelected:pathLastObject];
     }
 
