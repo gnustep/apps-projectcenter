@@ -128,22 +128,34 @@
 
 - (NSColor *)userInputColor
 {
-  return userInputColor;
+  return [self debuggerColor];
 }
 
 - (NSColor *)debuggerColor
 {
-  return debuggerColor;
+  NSColor *background;
+
+  background = [[tView backgroundColor]
+    colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+  if (background == nil)
+    {
+      return [NSColor textColor];
+    }
+
+  return [NSColor colorWithCalibratedRed:1.0 - [background redComponent]
+                                 green:1.0 - [background greenComponent]
+                                  blue:1.0 - [background blueComponent]
+                                 alpha:1.0];
 }
 
 - (NSColor *)messageColor
 {
-  return messageColor;
+  return [self debuggerColor];
 }
 
 - (NSColor *)errorColor
 {
-  return errorColor;
+  return [self debuggerColor];
 }
 
 - (float) debuggerVersion
@@ -174,6 +186,11 @@
 
   textAttributes = [NSMutableDictionary dictionary];
   [textAttributes setObject:font forKey:NSFontAttributeName];
+  // Only the GDB prompt keeps its own color.
+  if (color != promptColor)
+    {
+      color = [self debuggerColor];
+    }
   if (color)
     {
 

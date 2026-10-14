@@ -141,38 +141,44 @@ static PCLogController *_logCtrllr = nil;
 {
   NSString           *messageText = nil;
   NSAttributedString *message = nil;
+  NSColor            *background;
+  NSColor            *color;
 
   messageText = 
     [NSString stringWithFormat:@" %@: %@\n",[sender className],text];
 
-  switch (tag) 
+  switch (tag)
     {
-    case INFO:
-      [textAttributes 
-	setObject:[NSColor colorWithDeviceRed:.0 green:.0 blue:.0 alpha:1.0]
-	   forKey:NSForegroundColorAttributeName];
-      break;
     case STATUS:
-      [textAttributes 
-	setObject:[NSColor colorWithDeviceRed:.0 green:.35 blue:.0 alpha:1.0]
-	   forKey:NSForegroundColorAttributeName];
+      color = [NSColor colorWithDeviceRed:.0 green:.35 blue:.0 alpha:1.0];
       break;
-      
+
     case WARNING:
-      [textAttributes 
-	setObject:[NSColor colorWithDeviceRed:.56 green:.45 blue:.0 alpha:1.0]
-	   forKey:NSForegroundColorAttributeName];
+      color = [NSColor colorWithDeviceRed:.56 green:.45 blue:.0 alpha:1.0];
       break;
 
     case ERROR:
-      [textAttributes 
-	setObject:[NSColor colorWithDeviceRed:.63 green:.0 blue:.0 alpha:1.0]
-	   forKey:NSForegroundColorAttributeName];
+      color = [NSColor colorWithDeviceRed:.63 green:.0 blue:.0 alpha:1.0];
       break;
 
+    case INFO:
     default:
+      background = [[textView backgroundColor]
+        colorUsingColorSpaceName:NSCalibratedRGBColorSpace];
+      if (background == nil)
+        {
+          color = [NSColor textColor];
+        }
+      else
+        {
+          color = [NSColor colorWithCalibratedRed:1.0 - [background redComponent]
+                                          green:1.0 - [background greenComponent]
+                                           blue:1.0 - [background blueComponent]
+                                          alpha:1.0];
+        }
       break;
     }
+  [textAttributes setObject:color forKey:NSForegroundColorAttributeName];
 
   message = [[NSAttributedString alloc] initWithString:messageText
                                             attributes:textAttributes];

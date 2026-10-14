@@ -81,10 +81,7 @@
 
 - (void) putString: (NSString *)string
 {
-  NSAttributedString* attr = [[NSAttributedString alloc] initWithString:string];
-  [[self textStorage] appendAttributedString:attr];
-  [attr release];
-  [self scrollRangeToVisible:NSMakeRange([[self string] length], 0)];
+  [self logString:string newLine:NO];
   [[debugger debuggerWrapper] putString:string];
 }
 
