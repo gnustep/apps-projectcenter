@@ -844,6 +844,11 @@ PCResourceArrayFromProjectValue(id value)
   return YES;
 }
 
+// dlsa - create from sources
+- (PCProject *)createProjectFromSourcesAt: (NSString *)path withOption: (NSString *)projOption {
+  return nil;
+}
+
 // ============================================================================
 // ==== Accessory methods
 // ============================================================================
