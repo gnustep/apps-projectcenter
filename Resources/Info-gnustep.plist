@@ -1,5 +1,4 @@
 {
-  NOTE = "Automatically generated, do not edit!";
   ApplicationName = "ProjectCenter";
   ApplicationDescription = "GNUstep Integrated Development Environment";
   ApplicationIcon = "ProjectCenter.tiff";
@@ -25,50 +24,71 @@
     {
       NSDocumentClass = PCProjectDocument;
       NSHumanReadableName = "GNUstep project";
-      NSIcon = FileProject.tiff;
+      NSIcon = DocumentProject.tiff;
       NSName = GSPCProjectFileType;
       NSRole = Editor;
-      NSUnixExtensions = ( project );
-    },
-    {
-      NSDocumentClass = PCProjectDocument;
-      NSHumanReadableName = "GNUstep project";
-      NSIcon = FileProject.tiff;
-      NSName = GSPCProjectFileType;
-      NSRole = Editor;
-      NSUnixExtensions = ( pcproj );
+      NSUnixExtensions = ( project, pcproj );
     },
     {
       NSDocumentClass = PCClassDocument;
-      NSHumanReadableName = "Objective C class file";
-      NSIcon = ProjectCenter.editor/Resources/FileM.tiff;
+      NSHumanReadableName = "Objective-C source";
+      NSIcon = DocumentObjC.tiff;
       NSName = GSClassType;
       NSRole = Editor;
-      NSUnixExtensions = ( m );
+      NSUnixExtensions = ( m, M );
     },
     {
       NSDocumentClass = PCClassDocument;
-      NSHumanReadableName = "Objective C++ class file";
-      NSIcon = ProjectCenter.editor/Resources/FileMM.tiff;
-      NSName = GSClassType;
+      NSHumanReadableName = "Objective-C++ source";
+      NSIcon = DocumentObjCPP.tiff;
+      NSName = GSObjCPPType;
       NSRole = Editor;
       NSUnixExtensions = ( mm );
-    },    
+    },
     {
       NSDocumentClass = PCHeaderDocument;
-      NSHumanReadableName = "C or Objective C header file";
-      NSIcon = ProjectCenter.editor/Resources/FileH.tiff;
+      NSHumanReadableName = "C or Objective-C header";
+      NSIcon = DocumentHeader.tiff;
       NSName = GSPCHeaderType;
       NSRole = Editor;
-      NSUnixExtensions = ( h );
+      NSUnixExtensions = ( h, H );
     },
     {
       NSDocumentClass = PCCDocument;
-      NSHumanReadableName = "C file";
-      NSIcon = ProjectCenter.editor/Resources/FileC.tiff;
+      NSHumanReadableName = "C source";
+      NSIcon = DocumentSourceC.tiff;
       NSName = GSPCCType;
       NSRole = Editor;
-      NSUnixExtensions = ( c, C, cp, cpp, c++ );
+      NSUnixExtensions = ( c );
+    },
+    {
+      NSDocumentClass = PCCDocument;
+      NSHumanReadableName = "C++ source";
+      NSIcon = DocumentSourceCPP.tiff;
+      NSName = GSPCCPPType;
+      NSRole = Editor;
+      NSUnixExtensions = ( C, cc, CC, cp, cpp, "c++" );
+    },
+    {
+      NSHumanReadableName = "Property list";
+      NSIcon = DocumentPlist.tiff;
+      NSName = GSPCPlistType;
+      NSRole = Editor;
+      NSUnixExtensions = ( plist );
+    },
+    {
+      NSHumanReadableName = "Syntax definition";
+      NSIcon = DocumentSyntax.tiff;
+      NSName = GSPCSyntaxType;
+      NSRole = Editor;
+      NSUnixExtensions = ( syntax );
+    },
+    {
+      NSHumanReadableName = "Plain text";
+      NSIcon = DocumentText.tiff;
+      NSName = GSPCTextType;
+      NSRole = Editor;
+      NSUnixExtensions = ( txt, text );
     }
   );
   URL = "See http://www.gnustep.org/";

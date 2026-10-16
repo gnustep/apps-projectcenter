@@ -3,6 +3,6 @@
   Name = "ProjectCenter";
   Description = "Default ProjectCenter code editor (C, ObjectiveC, ObjectiveC++, C++ files)";
   PrincipalClassName = "PCEditor";
-  FileTypes = (C,c,m,M,h,H,cc,CC,mm);
+  FileTypes = (C,c,m,M,h,H,cc,CC,cp,cpp,"c++",mm,plist,syntax,txt,text);
   ProvidesBrowserItems = YES;
 }
